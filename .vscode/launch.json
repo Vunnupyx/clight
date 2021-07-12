@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch RT",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/ts-node-dev",
+      "args": ["${workspaceRoot}/src/index.ts"],
+      "restart": true,
+      "outputCapture": "std",
+      "env": {}
+    },
+  ]
+}

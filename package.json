@@ -1,0 +1,31 @@
+{
+  "name": "mdc-light",
+  "version": "0.1.0",
+  "description": "Machine Data Connector Light",
+  "main": "index.js",
+  "repository": "git@gitlab.com:codestryke-tech/dmg-mori/mdc-light.git",
+  "author": "codestryke <info@codestryke.com>",
+  "license": "",
+  "private": true,
+  "dependencies": {
+    "winston": "^3.3.3"
+  },
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "build:dist": "ncc build build/main/index.js -o runtime --minify",
+    "build:all": "yarn build && yarn build:dist",
+    "docker:build:ci": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci -f ci.Dockerfile .",
+    "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
+    "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect.Dockerfile .",
+    "docker:push:mtc": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect",
+    "docker:run:mtc": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect /bin/bash"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "@vercel/ncc": "^0.28.6",
+    "jest": "^27.0.6",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.5"
+  }
+}

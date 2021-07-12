@@ -1,18 +1,8 @@
-# Copyright codestryke GmbH
-
-# The following CI/CD variables are required:
-# STAGING_REACT_APP_HASURA_URL
-# STAGING_REACT_APP_DOC_JINJA
-# STAGING_HASURA_ADMIN_SECRET
-# AWS_ACCESS_KEY_ID
-# AWS_SECRET_ACCESS_KEY
 
 stages:
   - build
-  - deploy
-  - migrate
 
-build-runtime:
+build-runtime-staging:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
@@ -31,7 +21,54 @@ build-runtime:
     - yarn build:all
   only:
     refs:
-      - master
       - staging
+    # changes:
+    #   - src/**/*
+
+build-runtime-production:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - node_modules
+  environment:
+    name: staging
+  artifacts:
+    paths:
+      - runtime
+  script:
+    - yarn
+    - yarn build:all
+  only:
+    refs:
+      - main
+    # changes:
+    #   - src/**/*
+
+build-runtime-dev:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - node_modules
+  environment:
+    name: staging
+  artifacts:
+    paths:
+      - runtime
+  script:
+    - yarn
+    - yarn build:all
+  only:
+    - branches
+  except:
+    - main
+    - staging
     # changes:
     #   - src/**/*

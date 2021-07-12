@@ -1,0 +1,74 @@
+
+stages:
+  - build
+
+build-runtime-staging:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - node_modules
+  environment:
+    name: staging
+  artifacts:
+    paths:
+      - runtime
+  script:
+    - yarn
+    - yarn build:all
+  only:
+    refs:
+      - staging
+    # changes:
+    #   - src/**/*
+
+build-runtime-production:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - node_modules
+  environment:
+    name: staging
+  artifacts:
+    paths:
+      - runtime
+  script:
+    - yarn
+    - yarn build:all
+  only:
+    refs:
+      - main
+    # changes:
+    #   - src/**/*
+
+build-runtime-dev:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - node_modules
+  environment:
+    name: staging
+  artifacts:
+    paths:
+      - runtime
+  script:
+    - yarn
+    - yarn build:all
+  only:
+    - branches
+  except:
+    - main
+    - staging
+    # changes:
+    #   - src/**/*

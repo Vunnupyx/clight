@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns:m="urn:mtconnect.org:MTConnectStreams:1.7"
+    xmlns="urn:mtconnect.org:MTConnectStreams:1.7"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.org:MTConnectStreams:1.7 http://schemas.mtconnect.org/schemas/MTConnectStreams_1.7.xsd">
+    <Header creationTime="2021-07-13T15:15:23Z" sender="5f82f0877e0a" instanceId="1626189302" version="1.7.0.3" bufferSize="131072" nextSequence="26" firstSequence="1" lastSequence="25"/>
+    <Streams>
+        <DeviceStream name="Agent" uuid="0b49a3a0-18ca-0139-8748-2cde48001122">
+            <ComponentStream component="Adapter" name="host.docker.internal:7878" componentId="_6d78727a62">
+                <Samples>
+                    <AssetUpdateRate dataItemId="_6d78727a62_asset_update_rate" sequence="15" statistic="AVERAGE" timestamp="2021-07-13T15:15:02.433538Z">UNAVAILABLE</AssetUpdateRate>
+                    <ObservationUpdateRate dataItemId="_6d78727a62_observation_update_rate" duration="10" sequence="25" statistic="AVERAGE" timestamp="2021-07-13T15:15:22.43756Z">0.2</ObservationUpdateRate>
+                </Samples>
+                <Events>
+                    <AdapterSoftwareVersion dataItemId="_6d78727a62_adapter_software_version" sequence="17" timestamp="2021-07-13T15:15:02.433568Z">UNAVAILABLE</AdapterSoftwareVersion>
+                    <AdapterURI dataItemId="_6d78727a62_adapter_uri" sequence="12" timestamp="2021-07-13T15:15:02.433487Z">shdr://host.docker.internal:7878</AdapterURI>
+                    <ConnectionStatus dataItemId="_6d78727a62_connection_status" sequence="22" timestamp="2021-07-13T15:15:12.447189Z">ESTABLISHED</ConnectionStatus>
+                    <MTConnectVersion dataItemId="_6d78727a62_mtconnect_version" sequence="14" timestamp="2021-07-13T15:15:02.433531Z">UNAVAILABLE</MTConnectVersion>
+                </Events>
+            </ComponentStream>
+            <ComponentStream component="Agent" name="Agent" componentId="agent_2cde48001122">
+                <Events>
+                    <AssetChanged dataItemId="agent_2cde48001122_asset_chg" sequence="2" timestamp="2021-07-13T15:15:02.428615Z">UNAVAILABLE</AssetChanged>
+                    <AssetRemoved dataItemId="agent_2cde48001122_asset_rem" sequence="1" timestamp="2021-07-13T15:15:02.428518Z">UNAVAILABLE</AssetRemoved>
+                    <Availability dataItemId="agent_avail" sequence="6" timestamp="2021-07-13T15:15:02.429655Z">UNAVAILABLE</Availability>
+                    <DeviceAdded dataItemId="device_added" sequence="11" timestamp="2021-07-13T15:15:02.429982Z">000</DeviceAdded>
+                    <DeviceChanged dataItemId="device_changed" sequence="3" timestamp="2021-07-13T15:15:02.429494Z">UNAVAILABLE</DeviceChanged>
+                    <DeviceRemoved dataItemId="device_removed" sequence="4" timestamp="2021-07-13T15:15:02.429513Z">UNAVAILABLE</DeviceRemoved>
+                </Events>
+            </ComponentStream>
+        </DeviceStream>
+        <DeviceStream name="VMC-3Axis" uuid="000">
+            <ComponentStream component="Controller" name="controller" componentId="cn1">
+                <Events>
+                    <EmergencyStop dataItemId="estop" sequence="24" timestamp="2021-07-13T15:15:12.454239Z">TRIGGERED</EmergencyStop>
+                </Events>
+            </ComponentStream>
+            <ComponentStream component="Device" name="VMC-3Axis" componentId="dev">
+                <Events>
+                    <Availability dataItemId="avail" sequence="23" timestamp="2021-07-13T15:15:12.454239Z">AVAILABLE</Availability>
+                    <AssetChanged dataItemId="dev_asset_chg" sequence="8" timestamp="2021-07-13T15:15:02.429952Z">UNAVAILABLE</AssetChanged>
+                    <AssetRemoved dataItemId="dev_asset_rem" sequence="7" timestamp="2021-07-13T15:15:02.429936Z">UNAVAILABLE</AssetRemoved>
+                </Events>
+            </ComponentStream>
+        </DeviceStream>
+    </Streams>
+</MTConnectStreams>

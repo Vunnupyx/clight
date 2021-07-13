@@ -88,13 +88,15 @@ namespace MTConnect
         /// <summary>
         /// This is a method to set the heartbeat interval given in milliseconds.
         /// </summary>
-        public int Heartbeat { 
-            get { return mHeartbeat; } 
-            set { 
+        public int Heartbeat
+        {
+            get { return mHeartbeat; }
+            set
+            {
                 mHeartbeat = value;
                 ASCIIEncoding encoder = new ASCIIEncoding();
                 PONG = encoder.GetBytes("* PONG " + mHeartbeat.ToString() + "\n");
-            } 
+            }
         }
 
         /// <summary>
@@ -132,11 +134,11 @@ namespace MTConnect
         /// port to 7878
         /// </summary>
         /// <param name="aPort">The optional port number (default: 7878)</param>
-        public Adapter(int aPort = 7878, bool verbose = false)
+        public Adapter(int aPort = 7878, bool verbose = true)
         {
             mPort = aPort;
             Heartbeat = 10000;
-            Verbose = verbose;            
+            Verbose = verbose;
         }
 
         /// <summary>
@@ -264,7 +266,7 @@ namespace MTConnect
         {
             UTF8Encoding encoder = new UTF8Encoding();
             StringBuilder result = new StringBuilder();
-            
+
             DateTime now = DateTime.UtcNow;
             result.Append(now.ToString("yyyy-MM-dd\\THH:mm:ss.fffffffK"));
             result.Append("|@ASSET@|");
@@ -397,7 +399,8 @@ namespace MTConnect
             {
                 Console.WriteLine("Error during write: " + e.Message);
                 try { aClient.Close(); }
-                catch (Exception f) {
+                catch (Exception f)
+                {
                     Console.WriteLine("Error during close: " + f.Message);
                 }
                 mClients.Remove(aClient);
@@ -548,7 +551,8 @@ namespace MTConnect
         /// </summary>
         public void Start()
         {
-            if (!mRunning) {
+            if (!mRunning)
+            {
                 mListener = new TcpListener(IPAddress.Any, mPort);
                 mListener.Start();
                 mListenThread = new Thread(new ThreadStart(ListenForClients));
@@ -561,11 +565,12 @@ namespace MTConnect
         /// </summary>
         public void Stop()
         {
-            if (mRunning) {
+            if (mRunning)
+            {
                 mRunning = false;
 
                 // Wait 2 seconds for the thread to exit.
-                mListenThread.Join(2*Heartbeat);
+                mListenThread.Join(2 * Heartbeat);
 
                 foreach (Object obj in mClients)
                 {

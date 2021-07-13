@@ -3,6 +3,11 @@
 1. Setup and start socat and xquartz like described here:
    https://cntnr.io/running-guis-with-docker-on-mac-os-x-a14df6a76efc
 
+```bash
+socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
+open -a Xquartz
+```
+
 2. Run "docker-compose up"
    Sometimes the xquartz connection cashes. Just restart everything again.
 

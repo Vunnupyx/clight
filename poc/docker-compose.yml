@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  mtc-adapter:
+    build:
+      context: ./adapter
+      dockerfile: Dockerfile
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "1"
+    ports:
+      - 7878:7878
+    environment:
+      DISPLAY: 192.168.0.49:0
+
+    restart: unless-stopped
+  mtc-agent:
+    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "1"
+    restart: unless-stopped

@@ -3,8 +3,9 @@ import winston from "winston";
 import { v1 as uuidv1 } from "uuid";
 import { DataItem } from "./DataItem";
 import { format } from "date-fns";
+import Config, { IMTCConfig } from "../Config";
 
-interface Socket extends net.Socket {
+export interface Socket extends net.Socket {
   id?: string;
 }
 
@@ -14,6 +15,11 @@ class MTCAdapter {
   private clients: Socket[] = [];
   private running;
   private dataItems: DataItem[] = [];
+  private config: IMTCConfig;
+
+  constructor(config: Config) {
+    this.config = config.runtimeConfig.mtconnect;
+  }
 
   private listenForClients(_client: net.Socket) {
     const client: Socket = _client;
@@ -132,14 +138,29 @@ class MTCAdapter {
   public start(): void {
     if (!this.running) {
       this.server = net.createServer();
-      this.server.listen(7878);
+      this.server.listen(this.config.listenerPort);
 
       this.server.on("connection", this.listenForClients.bind(this));
 
-      winston.debug("MTConnect Adapter listing on port 7878");
+      winston.debug(
+        `MTConnect Adapter listing on port ${this.config.listenerPort}`
+      );
     }
 
     this.running = true;
+  }
+
+  public async stop(): Promise<void> {
+    if (this.running) {
+      return new Promise((resolve) => {
+        this.server.close(() => {
+          resolve();
+        });
+      });
+    }
+
+    this.running = false;
+    return;
   }
 }
 

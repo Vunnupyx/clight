@@ -9,6 +9,9 @@ export interface Socket extends net.Socket {
   id?: string;
 }
 
+/**
+ * Creates MTConnect adapter that accepts agents and send data items to them
+ */
 class MTCAdapter {
   private TIMEOUT = 10000;
   private server: net.Server;
@@ -21,6 +24,10 @@ class MTCAdapter {
     this.config = config.runtimeConfig.mtconnect;
   }
 
+  /**
+   * Listens for incoming client
+   * @returns string
+   */
   private listenForClients(_client: net.Socket) {
     const client: Socket = _client;
     client.id = uuidv1();
@@ -32,7 +39,10 @@ class MTCAdapter {
 
     this.sendAllTo(client);
   }
-
+  /**
+   * Monitors connected clients and removes them on timeout or disconnect
+   * @param  {Socket} client
+   */
   private heartbeatClient(client: Socket) {
     client.setEncoding("utf8");
     client.on("end", () => {
@@ -51,6 +61,10 @@ class MTCAdapter {
     });
   }
 
+  /**
+   * Handles all incoming messages from agents. Especially pings.
+   * @returns string
+   */
   private receive(client: net.Socket, data: string) {
     winston.debug(`Received data: ${data}`);
 
@@ -60,6 +74,10 @@ class MTCAdapter {
     }
   }
 
+  /**
+   * Returns current utc timestamp
+   * @returns string
+   */
   private getCurrentUtcTimestamp(): string {
     const time = new Date().getTime();
     const offset = new Date().getTimezoneOffset();
@@ -68,7 +86,16 @@ class MTCAdapter {
     return format(new Date(utcTime), "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
   }
 
-  private getItemLists(all: boolean = false) {
+  /**
+   * Returns a list of all data items that should be sent together in on
+   * message and a list of all data items that should be in a single line each
+   * @param  {boolean=false} all
+   * @returns object
+   */
+  private getItemLists(all: boolean = false): {
+    together: DataItem[];
+    separate: DataItem[];
+  } {
     let together: DataItem[] = [];
     let separate: DataItem[] = [];
 
@@ -87,6 +114,10 @@ class MTCAdapter {
     };
   }
 
+  /**
+   * Sends all data items to an agent
+   * @returns void
+   */
   private sendAllTo(client: Socket) {
     const { together } = this.getItemLists(true);
 
@@ -103,21 +134,37 @@ class MTCAdapter {
     // TODO Send separate
   }
 
+  /**
+   * Adds an data item to adapter
+   * @returns void
+   */
   public addDataItem(item: DataItem) {
     if (!this.dataItems.some((_item) => _item === item)) {
       this.dataItems.push(item);
     }
   }
 
+  /**
+   * Removes all data items from adapter
+   * @returns void
+   */
   public removeAllDataItem() {
     this.dataItems = [];
   }
 
+  /**
+   * Removes a specific data item from adapter
+   * @returns void
+   */
   public removeDataItem(item: DataItem) {
     this.dataItems = this.dataItems.filter((_item) => _item !== item);
   }
 
-  public sendChanged() {
+  /**
+   * Sends changed data items to all connected agents
+   * @returns void
+   */
+  public sendChanged(): void {
     const { together } = this.getItemLists(true);
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
@@ -135,6 +182,10 @@ class MTCAdapter {
     // TODO Send separate
   }
 
+  /**
+   * Starts server on configured port
+   * @returns void
+   */
   public start(): void {
     if (!this.running) {
       this.server = net.createServer();
@@ -150,6 +201,10 @@ class MTCAdapter {
     this.running = true;
   }
 
+  /**
+   * Stops server
+   * @returns Promise
+   */
   public async stop(): Promise<void> {
     if (this.running) {
       return new Promise((resolve) => {

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import winston from "winston";
 
 interface IRuntimeConfig {
   mtconnect: IMTCConfig;
@@ -15,6 +16,9 @@ interface IConfig {
   };
 }
 
+/**
+ * Config for managing the app's config
+ */
 class Config {
   public runtimeConfig: IRuntimeConfig = {
     mtconnect: {
@@ -27,22 +31,52 @@ class Config {
     },
   };
 
+  /**
+   * Creates config and check types
+   */
   constructor() {
     this.runtimeConfig = this.loadConfig("runtime.json", this.runtimeConfig);
     this.config = this.loadConfig("config.json", this.config);
 
-    // TODO check types
+    this.checkType(
+      this.runtimeConfig.mtconnect.listenerPort,
+      "number",
+      "runtime.mtconnect.listenerPort"
+    );
+  }
+  /**
+   * Checks type of configuration value
+   * @param  {any} value
+   * @param  {string} type
+   * @param  {string} name
+   */
+  private checkType(value: any, type: string, name: string) {
+    if (!(typeof value === type)) {
+      const error = `Value for ${name} must be of type ${type}!`;
+      winston.error(error);
+      throw new Error(error);
+    }
   }
 
+  /**
+   * Loads config files by filename and adds missing values
+   * @param  {string} configName
+   * @param  {any} defaultConfig
+   * @returns any
+   */
   private loadConfig(configName: string, defaultConfig: any): any {
     const folderPath = "../../../mdclight/config";
     if (!fs.existsSync(path.join(__dirname, folderPath))) {
-      throw new Error("Configuration folder does not exist!");
+      const error = "Configuration folder does not exist!";
+      winston.error(error);
+      throw new Error(error);
     }
 
     const configPath = path.join(__dirname, `${folderPath}/${configName}`);
     if (!fs.existsSync(configPath)) {
-      throw new Error(`Configuration file ${configName} does not exist!`);
+      const error = `Configuration file ${configName} does not exist!`;
+      winston.error(error);
+      throw new Error(error);
     }
 
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));

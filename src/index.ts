@@ -8,8 +8,6 @@ Logger.init();
 
 const config = new Config();
 
-winston.info(config.runtimeConfig);
-
 winston.info("MDC light started");
 
 winston.info("Starting mtc adapter...");

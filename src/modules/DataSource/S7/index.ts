@@ -81,9 +81,10 @@ export class S7DataSource extends DataSource {
     this.cycleActive = true;
     winston.debug(`--- Cycle Check Point (${currentIntervals}) ---`);
     const currentCycleDataPoints: Array<IDataPointConfig> =
-      this.config.dataPoints.filter((dp: IDataPointConfig) =>
-        currentIntervals.includes(dp.readFrequency)
-      );
+      this.config.dataPoints.filter((dp: IDataPointConfig) => {
+        const rf = Math.max(dp.readFrequency, 1000);
+        return currentIntervals.includes(rf);
+      });
 
     try {
       const addressesToRead = [];
@@ -91,6 +92,7 @@ export class S7DataSource extends DataSource {
         addressesToRead.push(dp.address);
       }
 
+      winston.debug(`Reading ${addressesToRead}`);
       const results = await this.readData(addressesToRead);
 
       for (const dp of currentCycleDataPoints) {
@@ -128,6 +130,7 @@ export class S7DataSource extends DataSource {
       // }
     }
     this.cycleActive = false;
+    winston.debug(`Finished cycle`);
   }
 
   private onConnect(err) {

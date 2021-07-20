@@ -7,14 +7,14 @@
         {
           "id": "temp1",
           "name": "Temperature",
-          "address": "X0.0",
-          "readFrequency": 0
+          "address": "DB93,INT44",
+          "readFrequency": 1000
         }
       ],
       "protocol": "s7",
       "connection": {
-        "ipAddr": "192.168.111.140",
-        "port": 103,
+        "ipAddr": "192.168.0.114",
+        "port": 102,
         "rack": 0,
         "slot": 2
       }

@@ -68,9 +68,13 @@ export abstract class DataSource extends EventEmitter {
     if (this.schedulerListenerId) return;
     const datapointIntervals: Array<number> = this.config.dataPoints.map(
       (dataPointConfig) => {
-        return dataPointConfig.readFrequency;
+        // Limit read frequency to 1/s
+        return Math.max(dataPointConfig.readFrequency, 1000);
       }
     );
+
+    console.log(datapointIntervals);
+
     const intervals = Array.from(new Set(datapointIntervals));
     this.schedulerListenerId = this.scheduler.addListener(
       intervals,

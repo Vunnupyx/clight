@@ -6,7 +6,7 @@ import winston from "winston";
 //   ITenantConfig
 // } from '../ConfigManager/interfaces';
 import { DataSourcesManager } from "../DataSourcesManager";
-import { EventBus } from "../EventBus";
+import { EventBus, MeasurementEventBus } from "../EventBus";
 import {
   DeviceLifecycleEventTypes,
   ErrorTypes,
@@ -31,7 +31,9 @@ export class BootstrapManager {
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
     this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(LogLevel.INFO);
-    this.measurementsEventsBus = new EventBus<IMeasurementEvent>();
+    this.measurementsEventsBus = new MeasurementEventBus<IMeasurementEvent>(
+      LogLevel.DEBUG
+    );
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,

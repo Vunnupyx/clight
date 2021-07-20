@@ -1,11 +1,11 @@
 import winston from "winston";
-import { IAppEvent } from "../../common/interfaces";
+import { IAppEvent, IMeasurementEvent } from "../../common/interfaces";
 import { LogLevel } from "../Logger/interfaces";
 import { TSubscriberFn } from "./interfaces";
 
 export class EventBus<TEventType> {
   private callbacks: TSubscriberFn<TEventType>[] = [];
-  private logLevel: string;
+  protected logLevel: string;
 
   constructor(logLevel: LogLevel = null) {
     this.logLevel = logLevel;
@@ -20,7 +20,8 @@ export class EventBus<TEventType> {
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  private log(event: IAppEvent) {
+  protected log(event: IAppEvent) {
+    console.log(event);
     const { level, type } = event;
     const payload = event?.payload;
     const message = `Level: ${level}, Type: ${type}${
@@ -48,5 +49,20 @@ export class EventBus<TEventType> {
   public async push(event: TEventType): Promise<void> {
     const promises = this.callbacks.map((cb) => cb(event));
     await Promise.all(promises);
+  }
+}
+
+export class MeasurementEventBus<TEventType> extends EventBus<TEventType> {
+  /**
+   * Logs event
+   * @param  {TSubscriberFn<TEventType>} cb
+   * @returns void
+   */
+  protected log(event: IMeasurementEvent) {
+    const { measurement } = event;
+    const message = `Level: DataPoint, Type: Measurement${
+      measurement ? `, Payload: ${measurement.id}=${measurement.value}` : ""
+    }`;
+    winston.log(this.logLevel, message, { source: "EVENTBUS" });
   }
 }

@@ -4,4 +4,5 @@ WORKDIR /app
 
 COPY config .
 
+# CMD ["agent", "run"]
 CMD ["agent", "debug"]

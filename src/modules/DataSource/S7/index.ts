@@ -79,7 +79,6 @@ export class S7DataSource extends DataSource {
       return;
     }
     this.cycleActive = true;
-    winston.debug(`--- Cycle Check Point (${currentIntervals}) ---`);
     const currentCycleDataPoints: Array<IDataPointConfig> =
       this.config.dataPoints.filter((dp: IDataPointConfig) => {
         const rf = Math.max(dp.readFrequency, 1000);
@@ -130,14 +129,12 @@ export class S7DataSource extends DataSource {
       // }
     }
     this.cycleActive = false;
-    winston.debug(`Finished cycle`);
   }
 
   private onConnect(err) {
     const level = this.level;
     const { name, protocol, id } = this.config;
     if (err) {
-      console.log(err);
       // We have an error.  Maybe the PLC is not reachable.
       this.submitLifecycleEvent({
         id,

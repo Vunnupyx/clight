@@ -4,7 +4,7 @@ import { v1 as uuidv1 } from "uuid";
 import { DataItem } from "./DataItem";
 import { format } from "date-fns";
 import { ConfigManager } from "../ConfigManager";
-import { IMTCConfig } from "../ConfigManager/interfaces";
+import { IMTConnectConfig } from "../ConfigManager/interfaces";
 
 export interface Socket extends net.Socket {
   id?: string;
@@ -13,13 +13,13 @@ export interface Socket extends net.Socket {
 /**
  * Creates MTConnect adapter that accepts agents and send data items to them
  */
-export class MTCAdapter {
+export class MTConnectAdapter {
   private TIMEOUT = 10000;
   private server: net.Server;
   private clients: Socket[] = [];
   private running;
   private dataItems: DataItem[] = [];
-  private config: IMTCConfig;
+  private config: IMTConnectConfig;
 
   constructor(config: ConfigManager) {
     this.config = config.runtimeConfig.mtconnect;
@@ -173,11 +173,13 @@ export class MTCAdapter {
       for (const item of together) line += "|" + item.toString();
       line += "\n";
 
-      winston.debug(`Sending message: ${line}`);
+      winston.debug(`Sending message: ${line.replace(/\n+$/, "")}`);
 
       for (const client of this.clients) {
         client.write(line);
       }
+
+      this.dataItems.forEach((item) => item.cleanup());
     }
 
     // TODO Send separate

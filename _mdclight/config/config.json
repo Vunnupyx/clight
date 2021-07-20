@@ -1,14 +1,14 @@
 {
-  "datasources": [
+  "dataSources": [
     {
       "id": "s7_1500",
       "name": "string",
       "dataPoints": [
         {
-          "id": "temp1",
+          "id": "tempIn",
           "name": "Temperature",
           "address": "DB93,INT44",
-          "readFrequency": 1000
+          "readFrequency": 1200
         }
       ],
       "protocol": "s7",
@@ -18,6 +18,26 @@
         "rack": 0,
         "slot": 2
       }
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "mtconnect",
+      "name": "My MTConnect Machine",
+      "dataPoints": [
+        {
+          "id": "tempOut",
+          "name": "Temperature",
+          "type": "event"
+        }
+      ],
+      "protocol": "mtconnect"
+    }
+  ],
+  "mapping": [
+    {
+      "source": "tempIn",
+      "target": "tempOut"
     }
   ]
 }

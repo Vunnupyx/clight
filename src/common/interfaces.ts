@@ -31,6 +31,14 @@ export enum DataSourceProtocols {
   IOSHIELD = "ioshield",
 }
 
+export enum DataSinkProtocols {
+  MTCONNECT = "mtconnect",
+}
+
+export enum MTConnectDataItemTypes {
+  EVENT = "event",
+}
+
 export enum DeviceLifecycleEventTypes {
   LaunchSuccess = "device.launch-success",
   ConfigUpdateLaunchSuccess = "device.config-update-launch-success",

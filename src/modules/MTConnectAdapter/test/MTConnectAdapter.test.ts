@@ -1,5 +1,5 @@
 import net from "net";
-import { MTCAdapter } from "..";
+import { MTConnectAdapter } from "..";
 import { ConfigManager } from "../../ConfigManager";
 import { EventBus } from "../../EventBus";
 import { DataItem } from "../DataItem";
@@ -21,7 +21,7 @@ describe("Test MTCAdapter", () => {
       lifecycleEventsBus: new EventBus<null>(),
     });
     config.runtimeConfig.mtconnect.listenerPort = PORT;
-    adapter = new MTCAdapter(config);
+    adapter = new MTConnectAdapter(config);
     adapter.addDataItem(new DataItem("test"));
     adapter.start();
 
@@ -52,7 +52,7 @@ describe("Test MTCAdapter", () => {
       lifecycleEventsBus: new EventBus<null>(),
     });
     config.runtimeConfig.mtconnect.listenerPort = PORT;
-    adapter = new MTCAdapter(config);
+    adapter = new MTConnectAdapter(config);
     const item = new DataItem("test1");
     adapter.addDataItem(item);
     adapter.start();

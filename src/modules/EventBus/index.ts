@@ -21,10 +21,9 @@ export class EventBus<TEventType> {
    * @returns void
    */
   protected log(event: IAppEvent) {
-    console.log(event);
-    const { level, type } = event;
+    const { level, type, id } = event;
     const payload = event?.payload;
-    const message = `Level: ${level}, Type: ${type}${
+    const message = `Level: ${level}, Type: ${type}, ${id}${
       payload ? `, Payload: ${payload?.toString()}` : ""
     }`;
     winston.log(this.logLevel, message, { source: "EVENTBUS" });

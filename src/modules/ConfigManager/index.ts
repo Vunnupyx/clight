@@ -19,7 +19,9 @@ export class ConfigManager {
     },
   };
   public config: IConfig = {
-    datasources: [],
+    dataSources: [],
+    dataSinks: [],
+    mapping: [],
   };
   public id: string | null = null;
 

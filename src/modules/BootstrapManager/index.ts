@@ -5,7 +5,7 @@ import winston from "winston";
 //   IConfiguration,
 //   ITenantConfig
 // } from '../ConfigManager/interfaces';
-// import { DataSourcesManager } from "../DataSourcesManager";
+import { DataSourcesManager } from "../DataSourcesManager";
 import { EventBus } from "../EventBus";
 import {
   DeviceLifecycleEventTypes,
@@ -63,14 +63,14 @@ export class BootstrapManager {
   }
 
   private async loadModules(): Promise<void> {
-    // const dataSourcesConfigs = this.configManager.config.datasources;
-    // if (!this.dataSourcesManager) {
-    //   this.dataSourcesManager = new DataSourcesManager({
-    //     dataSourcesConfigs,
-    //     errorBus: this.errorEventsBus,
-    //     lifecycleBus: this.lifecycleEventsBus,
-    //     measurementsBus: this.measurementsEventsBus,
-    //   });
-    // }
+    const dataSourcesConfigs = this.configManager.config.datasources;
+    if (!this.dataSourcesManager) {
+      this.dataSourcesManager = new DataSourcesManager({
+        dataSourcesConfigs,
+        errorBus: this.errorEventsBus,
+        lifecycleBus: this.lifecycleEventsBus,
+        measurementsBus: this.measurementsEventsBus,
+      });
+    }
   }
 }

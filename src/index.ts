@@ -1,16 +1,26 @@
 import winston from "winston";
-import Config from "./modules/Config";
-import Logger from "./modules/Logger";
-import MTCAdapter from "./modules/MTCAdapter";
+import { ConfigManager } from "./modules/ConfigManager";
+import { EventBus } from "./modules/EventBus";
+import { Logger } from "./modules/Logger";
+import { MTCAdapter } from "./modules/MTCAdapter";
 import { Event } from "./modules/MTCAdapter/DataItem";
+import { BootstrapManager } from "./modules/BootstrapManager";
 
 Logger.init();
 
-const config = new Config();
+winston.info("MDC light starting...");
+
+const bootstrapManager = new BootstrapManager();
+bootstrapManager.launch();
 
 winston.info("MDC light started");
 
 winston.info("Starting mtc adapter...");
+const mockEventBus = new EventBus<null>();
+const config = new ConfigManager({
+  errorEventsBus: mockEventBus,
+  lifecycleEventsBus: mockEventBus,
+});
 const adapter = new MTCAdapter(config);
 
 const avail = new Event("avail");

@@ -1,4 +1,4 @@
-import SynchronousIntervalScheduler from "./index";
+import { SynchronousIntervalScheduler } from "./index";
 
 describe("Test SyncScheduler", () => {
   // Improvements: Longer run time with test for average accuracy,

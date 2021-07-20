@@ -1,13 +1,13 @@
 type SubscriberById = { [key: number]: (id: number) => void };
-type SubsribersForInterval = { [key: number]: SubscriberById };
+type SubscribersForInterval = { [key: number]: SubscriberById };
 
 /**
  * Implements a (globally) syncronous interval scheduler
  */
-export default class SynchronousIntervalScheduler {
+export class SynchronousIntervalScheduler {
   private static instance: SynchronousIntervalScheduler;
 
-  private subscribers: SubsribersForInterval = {};
+  private subscribers: SubscribersForInterval = {};
   private lastAssignedSubId = 0;
   private internalCycleInterval: ReturnType<typeof setInterval>;
   private internalCycleLastExecution: { [key: number]: number } = {};
@@ -30,13 +30,13 @@ export default class SynchronousIntervalScheduler {
    * Scheduler main loop, called with limited timer resolution
    */
   private cycle() {
-    Object.keys(this.subscribers).forEach(key => {
+    Object.keys(this.subscribers).forEach((key) => {
       const now = Date.now();
       const currentInterval = parseInt(key, 10);
       const lastRun = this.internalCycleLastExecution[key] || 0;
 
       if (now - lastRun > currentInterval) {
-        Object.keys(this.subscribers[key]).forEach(subscriberId => {
+        Object.keys(this.subscribers[key]).forEach((subscriberId) => {
           this.subscribers[key][subscriberId]([currentInterval]);
         });
         this.internalCycleLastExecution[key] = now;
@@ -55,7 +55,7 @@ export default class SynchronousIntervalScheduler {
     callback: (interval: number) => void
   ): number {
     this.lastAssignedSubId += 1;
-    cycleIntervals.forEach(cycleInterval => {
+    cycleIntervals.forEach((cycleInterval) => {
       if (!(cycleInterval in this.subscribers))
         this.subscribers[cycleInterval] = {};
       this.subscribers[cycleInterval][this.lastAssignedSubId] = callback;
@@ -68,7 +68,7 @@ export default class SynchronousIntervalScheduler {
    * @param subscriberId The id of the listener/subscription
    */
   public removeListener(subscriberId: number) {
-    Object.keys(this.subscribers).forEach(interval => {
+    Object.keys(this.subscribers).forEach((interval) => {
       if (subscriberId in this.subscribers[interval]) {
         delete this.subscribers[interval][subscriberId];
       }

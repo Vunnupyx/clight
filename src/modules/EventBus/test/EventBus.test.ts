@@ -1,4 +1,4 @@
-import EventBus from "..";
+import { EventBus } from "..";
 
 describe("Test EventBus", () => {
   test("emit should call all callbacks once with event", async () => {
@@ -19,7 +19,7 @@ describe("Test EventBus", () => {
     bus.onEvent(testCb2);
     bus.onEvent(testCb2);
 
-    await bus.emit(event);
+    await bus.push(event);
 
     expect(testCb1).toBeCalledTimes(1);
     expect(testCb2).toBeCalledTimes(1);

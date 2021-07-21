@@ -1,0 +1,5 @@
+version: "3.3"
+services:
+  mdclight:
+    image: mdc-light.Dockerfile
+    restart: always

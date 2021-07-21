@@ -19,7 +19,10 @@
     "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
     "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect.Dockerfile .",
     "docker:push:mtc": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect",
-    "docker:run:mtc": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect /bin/bash"
+    "docker:run:mtc": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect /bin/bash",
+    "docker:build:mdclight": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light -f docker/mdc-light.Dockerfile .",
+    "docker:push:mdclight": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
+    "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

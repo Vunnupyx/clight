@@ -1,15 +1,8 @@
 import winston from "winston";
-
-// import {
-//   IChangedConfigFlags,
-//   IConfiguration,
-//   ITenantConfig
-// } from '../ConfigManager/interfaces';
 import { DataSourcesManager } from "../DataSourcesManager";
 import { EventBus, MeasurementEventBus } from "../EventBus";
 import {
   DeviceLifecycleEventTypes,
-  ErrorTypes,
   EventLevels,
   IErrorEvent,
   ILifecycleEvent,
@@ -17,13 +10,17 @@ import {
 } from "../../common/interfaces";
 import { ConfigManager } from "../ConfigManager";
 import { LogLevel } from "../Logger/interfaces";
+import { MTConnectManager } from "../MTConnectManager";
+import { DataPointMapper } from "../DataPointMapper";
+import { DataSinkManager } from "../DataSinkManager";
 
 // import { VERSION as newDeviceVersion } from "../Version";
 
 export class BootstrapManager {
   private deviceId: string;
   private configManager: ConfigManager;
-  dataSourcesManager: DataSourcesManager;
+  private dataSourcesManager: DataSourcesManager;
+  private dataSinkManager: DataSinkManager;
   private errorEventsBus: EventBus<IErrorEvent>;
   private lifecycleEventsBus: EventBus<ILifecycleEvent>;
   private measurementsEventsBus: EventBus<IMeasurementEvent>;
@@ -40,13 +37,15 @@ export class BootstrapManager {
       lifecycleEventsBus: this.lifecycleEventsBus,
     });
     this.deviceId = this.configManager.id;
-
-    winston.info(`Device ID: ${this.deviceId}`);
   }
 
   public async launch() {
     try {
       await this.configManager.init();
+
+      MTConnectManager.createAdater(this.configManager);
+      DataPointMapper.createInstance(this.configManager);
+
       await this.loadModules();
       this.lifecycleEventsBus.push({
         id: "device",
@@ -65,10 +64,20 @@ export class BootstrapManager {
   }
 
   private async loadModules(): Promise<void> {
-    const dataSourcesConfigs = this.configManager.config.datasources;
+    const { dataSources: dataSourcesConfigs, dataSinks: dataSinksConfig } =
+      this.configManager.config;
+
     if (!this.dataSourcesManager) {
       this.dataSourcesManager = new DataSourcesManager({
         dataSourcesConfigs,
+        errorBus: this.errorEventsBus,
+        lifecycleBus: this.lifecycleEventsBus,
+        measurementsBus: this.measurementsEventsBus,
+      });
+    }
+    if (!this.dataSinkManager) {
+      this.dataSinkManager = new DataSinkManager({
+        dataSinksConfig,
         errorBus: this.errorEventsBus,
         lifecycleBus: this.lifecycleEventsBus,
         measurementsBus: this.measurementsEventsBus,

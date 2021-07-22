@@ -33,10 +33,6 @@ export class DataSourcesManager {
     return !!this.dataSources?.length;
   }
 
-  public setConfig(config: ReadonlyArray<IDataSourceConfig>) {
-    this.dataSourcesConfig = config;
-  }
-
   public spawnDataSources(): void {
     this.dataSources = this.dataSourcesConfig.map(createDataSource);
     this.dataSources.forEach((dataSource) => {

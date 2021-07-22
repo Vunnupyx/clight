@@ -2,10 +2,10 @@ import { IErrorEvent, ILifecycleEvent } from "../../common/interfaces";
 import { EventBus } from "../EventBus";
 
 export interface IRuntimeConfig {
-  mtconnect: IMTCConfig;
+  mtconnect: IMTConnectConfig;
 }
 
-export interface IMTCConfig {
+export interface IMTConnectConfig {
   listenerPort: number;
 }
 
@@ -29,8 +29,28 @@ export interface IDataSourceConfig {
   };
 }
 
+type MTConnectDataPointTypes = "event";
+export interface IDataSinkDataPointConfig {
+  id: string;
+  name: string;
+  type: MTConnectDataPointTypes;
+}
+
+export interface IDataSinkConfig {
+  id: string;
+  name: string;
+  dataPoints: IDataSinkDataPointConfig[];
+  protocol: string;
+}
+
+export interface IDataPointMapping {
+  source: string;
+  target: string;
+}
 export interface IConfig {
-  datasources: IDataSourceConfig[];
+  dataSources: IDataSourceConfig[];
+  dataSinks: IDataSinkConfig[];
+  mapping: IDataPointMapping[];
 }
 
 export interface IConfigManagerParams {

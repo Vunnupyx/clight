@@ -1,6 +1,7 @@
 import net from "net";
-import MTCAdapter from "..";
-import Config from "../../Config";
+import { MTConnectAdapter } from "..";
+import { ConfigManager } from "../../ConfigManager";
+import { EventBus } from "../../EventBus";
 import { DataItem } from "../DataItem";
 
 jest.mock("winston");
@@ -15,9 +16,12 @@ describe("Test MTCAdapter", () => {
 
   test("Server should send data items to new clients", (done) => {
     const PORT = 7879;
-    const config = new Config();
+    const config = new ConfigManager({
+      errorEventsBus: new EventBus<null>(),
+      lifecycleEventsBus: new EventBus<null>(),
+    });
     config.runtimeConfig.mtconnect.listenerPort = PORT;
-    adapter = new MTCAdapter(config);
+    adapter = new MTConnectAdapter(config);
     adapter.addDataItem(new DataItem("test"));
     adapter.start();
 
@@ -43,9 +47,12 @@ describe("Test MTCAdapter", () => {
 
   test("Server should send changes", (done) => {
     const PORT = 7880;
-    const config = new Config();
+    const config = new ConfigManager({
+      errorEventsBus: new EventBus<null>(),
+      lifecycleEventsBus: new EventBus<null>(),
+    });
     config.runtimeConfig.mtconnect.listenerPort = PORT;
-    adapter = new MTCAdapter(config);
+    adapter = new MTConnectAdapter(config);
     const item = new DataItem("test1");
     adapter.addDataItem(item);
     adapter.start();

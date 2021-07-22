@@ -48,7 +48,7 @@ export class MTConnectDataSink extends DataSink {
         event.measurement.id
       );
 
-      if (!targetMapping) {
+      if (!targetMapping || !this.dataItems[targetMapping.target]) {
         winston.debug(`Target for source ${event.measurement.id} not found`);
         return;
       }

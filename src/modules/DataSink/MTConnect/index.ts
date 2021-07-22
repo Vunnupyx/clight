@@ -8,6 +8,8 @@ import { MTConnectAdapter } from "../../MTConnectAdapter";
 import { DataSink } from "../DataSink";
 import { MTConnectManager } from "../../MTConnectManager";
 import {
+  DataSourceLifecycleEventTypes,
+  ILifecycleEvent,
   IMeasurementEvent,
   MTConnectDataItemTypes,
 } from "../../../common/interfaces";
@@ -32,6 +34,27 @@ export class MTConnectDataSink extends DataSink {
     super(params);
 
     this.mtcAdapter = MTConnectManager.getAdapter();
+  }
+
+  public init() {
+    this.avail = new DataItem("avail");
+    this.avail.value = "AVAILABLE";
+    this.mtcAdapter.addDataItem(this.avail);
+
+    this.config.dataPoints.forEach((dp) => {
+      let dataItem: DataItem;
+
+      switch (dp.type) {
+        case MTConnectDataItemTypes.EVENT:
+          dataItem = new Event(dp.id);
+          break;
+        default:
+          throw new Error(`Type ${dp.type} is not supported`);
+      }
+
+      this.mtcAdapter.addDataItem(dataItem);
+      this.dataItems[dp.id] = dataItem;
+    });
   }
 
   public async onMeasurements(events: IMeasurementEvent[]) {
@@ -117,25 +140,15 @@ export class MTConnectDataSink extends DataSink {
     });
   }
 
-  public init() {
-    this.avail = new DataItem("avail");
-    this.avail.value = "AVAILABLE";
-    this.mtcAdapter.addDataItem(this.avail);
-
-    this.config.dataPoints.forEach((dp) => {
-      let dataItem: DataItem;
-
-      switch (dp.type) {
-        case MTConnectDataItemTypes.EVENT:
-          dataItem = new Event(dp.id);
-          break;
-        default:
-          throw new Error(`Type ${dp.type} is not supported`);
-      }
-
-      this.mtcAdapter.addDataItem(dataItem);
-      this.dataItems[dp.id] = dataItem;
-    });
+  public async onLifecycleEvent(event: ILifecycleEvent) {
+    if (event.type === DataSourceLifecycleEventTypes.Connected) {
+      this.avail.value === "AVAILABLE";
+      winston.info(`Datasource for datasink ${this.config.id} is available`);
+    }
+    if (event.type === DataSourceLifecycleEventTypes.Disconnected) {
+      this.avail.unavailable();
+      winston.info(`Datasource for datasink ${this.config.id} is unavailable`);
+    }
   }
 
   public shutdown() {}

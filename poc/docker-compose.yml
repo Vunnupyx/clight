@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  mtc-adapter:
+    build:
+      context: ./adapter
+      dockerfile: Dockerfile
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "1"
+    ports:
+      - 7878:7878
+    environment:
+      DISPLAY: host.docker.internal:0
+    restart: unless-stopped
+  mtc-agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "1"
+    ports:
+      - 5000:5000
+    restart: unless-stopped

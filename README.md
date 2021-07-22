@@ -2,7 +2,9 @@
 
 ## Getting started
 
-To run the MDC light runtime, use the following command: `yarn dev`
+To run the MDC light runtime, use the following command: 
+`yarn` (optional) Install dependencies
+`yarn dev`
 
 ## Documentation
 

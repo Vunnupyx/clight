@@ -8,6 +8,9 @@
   "license": "",
   "private": true,
   "dependencies": {
+    "date-fns": "^2.22.1",
+    "nodes7": "^0.3.12",
+    "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
   "scripts": {
@@ -22,12 +25,14 @@
     "docker:run:mtc": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect /bin/bash",
     "docker:build:mdclight": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light -f docker/mdc-light.Dockerfile .",
     "docker:push:mdclight": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
-    "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light"
+    "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@vercel/ncc": "^0.28.6",
     "jest": "^27.0.6",
+    "ts-jest": "^27.0.3",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
   }

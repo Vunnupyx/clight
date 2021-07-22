@@ -3,3 +3,6 @@ build
 dist
 runtime
 mdclight
+coverage 
+
+.env

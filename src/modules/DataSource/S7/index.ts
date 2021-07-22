@@ -94,7 +94,6 @@ export class S7DataSource extends DataSource {
 
       winston.debug(`Reading ${addressesToRead}`);
       const results = await this.readData(addressesToRead);
-      console.log(results);
 
       let allDpError = currentCycleDataPoints.length > 0;
 

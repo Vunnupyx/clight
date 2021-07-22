@@ -1,49 +1,73 @@
 {
   "dataSources": [
     {
-      "id": "s7_1500",
-      "name": "string",
+      "id": "nc",
+      "name": "NC",
       "dataPoints": [
         {
-          "id": "tempIn",
-          "name": "Temperature",
-          "address": "DB93,INT44",
-          "readFrequency": 1200
-        },
-        {
-          "id": "string",
-          "name": "Temperature",
-          "address": "DB100,S0.255",
-          "readFrequency": 1200
-        },
-        {
-          "id": "estopIn",
+          "id": "estop",
           "name": "Emergency Stop",
-          "address": "DB93,X0.0",
-          "readFrequency": 1200
+          "address": "DB10,X106.1",
+          "readFrequency": 1000
         },
         {
           "id": "cModeAuto",
           "name": "Controller Mode Automatic",
-          "address": "DB93,X0.0",
-          "readFrequency": 1200
+          "address": "DB11,X6.0",
+          "readFrequency": 1000
         },
         {
           "id": "cModeMDA",
           "name": "Controller Mode MDA",
-          "address": "DB93,X0.1",
-          "readFrequency": 1200
+          "address": "DB11,X6.1",
+          "readFrequency": 1000
         },
         {
-          "id": "cModeJog",
-          "name": "Controller Mode Jog",
-          "address": "DB93,X0.2",
-          "readFrequency": 1200
+          "id": "cModeM",
+          "name": "Controller Mode Manual",
+          "address": "DB11,X6.2",
+          "readFrequency": 1000
+        },
+        {
+          "id": "execActive",
+          "name": "Execution Active",
+          "address": "DB21,X35.5",
+          "readFrequency": 1000
+        },
+        {
+          "id": "execOpStop",
+          "name": "Execution Optional Stop",
+          "address": "DB21,X35.6",
+          "readFrequency": 1000
+        },
+        {
+          "id": "execProgComp",
+          "name": "Execution Program Completed",
+          "address": "DB21,X35.7",
+          "readFrequency": 1000
+        },
+        {
+          "id": "execReady",
+          "name": "Execution READY",
+          "address": "DB21,X36.5",
+          "readFrequency": 1000
+        },
+        {
+          "id": "program",
+          "name": "Program",
+          "address": "DB12,S2.255",
+          "readFrequency": 1000
+        },
+        {
+          "id": "partCount",
+          "name": "Part Count",
+          "address": "DB12,INT0",
+          "readFrequency": 1000
         }
       ],
       "protocol": "s7",
       "connection": {
-        "ipAddr": "192.168.0.114",
+        "ipAddr": "192.168.214.1",
         "port": 102,
         "rack": 0,
         "slot": 2
@@ -56,13 +80,24 @@
       "name": "My MTConnect Machine",
       "dataPoints": [
         {
-          "id": "mode1",
+          "id": "mode4",
           "name": "Controller Mode",
           "type": "event",
           "map": {
             "0": "AUTOMATIC",
             "1": "MANUAL_DATA_INPUT",
-            "2": "SEMI_AUTOMATIC"
+            "2": "MANUAL"
+          }
+        },
+        {
+          "id": "execution4",
+          "name": "Execution",
+          "type": "event",
+          "map": {
+            "0": "ACTIVE",
+            "1": "OPTIONAL_STOP",
+            "2": "PROGRAM_COMPLETED",
+            "3": "READY"
           }
         },
         {
@@ -73,6 +108,16 @@
             "true": "TIGGERED",
             "false": "ARMED"
           }
+        },
+        {
+          "id": "program4",
+          "name": "Programm",
+          "type": "event"
+        },
+        {
+          "id": "part_count4",
+          "name": "Part Count",
+          "type": "event"
         }
       ],
       "protocol": "mtconnect"
@@ -80,27 +125,51 @@
   ],
   "mapping": [
     {
-      "source": "tempIn",
-      "target": "tempOut"
-    },
-    {
-      "source": "estopIn",
+      "source": "estop",
       "target": "estop"
     },
     {
       "source": "cModeAuto",
-      "target": "mode1",
+      "target": "mode4",
       "mapValue": "0"
     },
     {
       "source": "cModeMDA",
-      "target": "mode1",
+      "target": "mode4",
       "mapValue": "1"
     },
     {
-      "source": "cModeJog",
-      "target": "mode1",
+      "source": "cModeM",
+      "target": "mode4",
       "mapValue": "2"
+    },
+    {
+      "source": "execActive",
+      "target": "execution4",
+      "mapValue": "0"
+    },
+    {
+      "source": "execOpStop",
+      "target": "execution4",
+      "mapValue": "1"
+    },
+    {
+      "source": "execProgComp",
+      "target": "execution4",
+      "mapValue": "2"
+    },
+    {
+      "source": "execReady",
+      "target": "execution4",
+      "mapValue": "3"
+    },
+    {
+      "source": "program",
+      "target": "program4"
+    },
+    {
+      "source": "partCount",
+      "target": "part_count4"
     }
   ]
 }

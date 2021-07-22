@@ -1131,11 +1131,6 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-dotenv@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
-  integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
-
 dynamic-dedupe@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/dynamic-dedupe/-/dynamic-dedupe-0.3.0.tgz#06e44c223f5e4e94d78ef9db23a6515ce2f962a1"
@@ -2190,6 +2185,11 @@ node-releases@^1.1.71:
   version "1.1.73"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.73.tgz#dd4e81ddd5277ff846b80b52bb40c49edf7a7b20"
   integrity sha512-uW7fodD6pyW2FZNZnp/Z3hvWKeEW1Y8R1+1CnErE8cXFXzl5blBOoVB41CvMer6P6Q0S5FXDwcHgFd1Wj0U9zg==
+
+nodes7@^0.3.12:
+  version "0.3.12"
+  resolved "https://registry.yarnpkg.com/nodes7/-/nodes7-0.3.12.tgz#17003ea014159acb2cf8f4423475396968f5c0e5"
+  integrity sha512-C6p0NYZL+nX2LPkjEJsJNohiN6bJP2ARlfLFQSFe9BBF9ZOiEt0hPvcA2DPdu3HLkEJ78DJd8c2LXnSxh3deaw==
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"

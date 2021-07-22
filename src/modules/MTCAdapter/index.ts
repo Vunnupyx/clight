@@ -3,7 +3,8 @@ import winston from "winston";
 import { v1 as uuidv1 } from "uuid";
 import { DataItem } from "./DataItem";
 import { format } from "date-fns";
-import Config, { IMTCConfig } from "../Config";
+import { ConfigManager } from "../ConfigManager";
+import { IMTCConfig } from "../ConfigManager/interfaces";
 
 export interface Socket extends net.Socket {
   id?: string;
@@ -12,7 +13,7 @@ export interface Socket extends net.Socket {
 /**
  * Creates MTConnect adapter that accepts agents and send data items to them
  */
-class MTCAdapter {
+export class MTCAdapter {
   private TIMEOUT = 10000;
   private server: net.Server;
   private clients: Socket[] = [];
@@ -20,7 +21,7 @@ class MTCAdapter {
   private dataItems: DataItem[] = [];
   private config: IMTCConfig;
 
-  constructor(config: Config) {
+  constructor(config: ConfigManager) {
     this.config = config.runtimeConfig.mtconnect;
   }
 
@@ -218,5 +219,3 @@ class MTCAdapter {
     return;
   }
 }
-
-export default MTCAdapter;

@@ -9,6 +9,36 @@
           "name": "Temperature",
           "address": "DB93,INT44",
           "readFrequency": 1200
+        },
+        {
+          "id": "string",
+          "name": "Temperature",
+          "address": "DB100,S0.255",
+          "readFrequency": 1200
+        },
+        {
+          "id": "estopIn",
+          "name": "Emergency Stop",
+          "address": "DB93,X0.0",
+          "readFrequency": 1200
+        },
+        {
+          "id": "cModeAuto",
+          "name": "Controller Mode Automatic",
+          "address": "DB93,X0.0",
+          "readFrequency": 1200
+        },
+        {
+          "id": "cModeMDA",
+          "name": "Controller Mode MDA",
+          "address": "DB93,X0.1",
+          "readFrequency": 1200
+        },
+        {
+          "id": "cModeJog",
+          "name": "Controller Mode Jog",
+          "address": "DB93,X0.2",
+          "readFrequency": 1200
         }
       ],
       "protocol": "s7",
@@ -26,9 +56,23 @@
       "name": "My MTConnect Machine",
       "dataPoints": [
         {
-          "id": "tempOut",
-          "name": "Temperature",
-          "type": "event"
+          "id": "mode1",
+          "name": "Controller Mode",
+          "type": "event",
+          "map": {
+            "0": "AUTOMATIC",
+            "1": "MANUAL_DATA_INPUT",
+            "2": "SEMI_AUTOMATIC"
+          }
+        },
+        {
+          "id": "estop",
+          "name": "Emergency Stop",
+          "type": "event",
+          "map": {
+            "true": "TIGGERED",
+            "false": "ARMED"
+          }
         }
       ],
       "protocol": "mtconnect"
@@ -38,6 +82,25 @@
     {
       "source": "tempIn",
       "target": "tempOut"
+    },
+    {
+      "source": "estopIn",
+      "target": "estop"
+    },
+    {
+      "source": "cModeAuto",
+      "target": "mode1",
+      "mapValue": "0"
+    },
+    {
+      "source": "cModeMDA",
+      "target": "mode1",
+      "mapValue": "1"
+    },
+    {
+      "source": "cModeJog",
+      "target": "mode1",
+      "mapValue": "2"
     }
   ]
 }

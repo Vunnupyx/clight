@@ -19,7 +19,9 @@ export abstract class DataSink {
   /**
    * Each data sink should handle measurements
    */
-  public abstract onMeasurement(measurement: IMeasurementEvent): Promise<void>;
+  public abstract onMeasurements(
+    measurements: IMeasurementEvent[]
+  ): Promise<void>;
 
   /**
    * Each data sink should do all setup in the init function

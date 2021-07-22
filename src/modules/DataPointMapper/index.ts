@@ -22,6 +22,6 @@ export class DataPointMapper {
     if (!mapping) {
       return null;
     }
-    return mapping.target;
+    return mapping;
   }
 }

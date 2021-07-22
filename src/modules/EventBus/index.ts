@@ -20,13 +20,17 @@ export class EventBus<TEventType> {
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  protected log(event: IAppEvent) {
-    const { level, type, id } = event;
-    const payload = event?.payload;
-    const message = `Level: ${level}, Type: ${type}, ${id}${
-      payload ? `, Payload: ${payload?.toString()}` : ""
-    }`;
-    winston.log(this.logLevel, message, { source: "EVENTBUS" });
+  protected log(event: IAppEvent | IAppEvent[]) {
+    const events = Array.isArray(event) ? event : [event];
+
+    events.forEach((event) => {
+      const { level, type, id } = event;
+      const payload = event?.payload;
+      const message = `Level: ${level}, Type: ${type}, ${id}${
+        payload ? `, Payload: ${payload?.toString()}` : ""
+      }`;
+      winston.log(this.logLevel, message, { source: "EVENTBUS" });
+    });
   }
 
   /**
@@ -57,11 +61,13 @@ export class MeasurementEventBus<TEventType> extends EventBus<TEventType> {
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  protected log(event: IMeasurementEvent) {
-    const { measurement } = event;
-    const message = `Level: DataPoint, Type: Measurement${
-      measurement ? `, Payload: ${measurement.id}=${measurement.value}` : ""
-    }`;
-    winston.log(this.logLevel, message, { source: "EVENTBUS" });
+  protected log(events: IMeasurementEvent[]) {
+    events.forEach((event) => {
+      const { measurement } = event;
+      const message = `Level: DataPoint, Type: Measurement${
+        measurement ? `, Payload: ${measurement.id}=${measurement.value}` : ""
+      }`;
+      winston.log(this.logLevel, message, { source: "EVENTBUS" });
+    });
   }
 }

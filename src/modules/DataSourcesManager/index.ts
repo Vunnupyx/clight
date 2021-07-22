@@ -9,7 +9,7 @@ import { ILifecycleEvent, IMeasurementEvent } from "../../common/interfaces";
 
 export class DataSourcesManager {
   private dataSourcesConfig: ReadonlyArray<IDataSourceConfig>;
-  private measurementsBus: EventBus<IMeasurementEvent>;
+  private measurementsBus: EventBus<IMeasurementEvent[]>;
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSources: ReadonlyArray<DataSource | void>;
 
@@ -45,8 +45,10 @@ export class DataSourcesManager {
     });
   }
 
-  private onMeasurementEvent = (measurementEvent: IMeasurementEvent): void => {
-    this.measurementsBus.push(measurementEvent);
+  private onMeasurementEvent = (
+    measurementEvents: IMeasurementEvent[]
+  ): void => {
+    this.measurementsBus.push(measurementEvents);
   };
 
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {

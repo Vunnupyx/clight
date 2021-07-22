@@ -18,7 +18,7 @@ export interface IDataSourceLifecycleEvent extends IBaseLifecycleEvent {
 export interface IMeasurement {
   id: string;
   name: string;
-  value: string;
+  value: string | number | boolean;
 }
 
 export interface IDataSourceParams {

@@ -22,12 +22,12 @@ export class BootstrapManager {
   private dataSinkManager: DataSinkManager;
   private errorEventsBus: EventBus<IErrorEvent>;
   private lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private measurementsEventsBus: EventBus<IMeasurementEvent>;
+  private measurementsEventsBus: EventBus<IMeasurementEvent[]>;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
     this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(LogLevel.INFO);
-    this.measurementsEventsBus = new MeasurementEventBus<IMeasurementEvent>(
+    this.measurementsEventsBus = new MeasurementEventBus<IMeasurementEvent[]>(
       LogLevel.DEBUG
     );
 

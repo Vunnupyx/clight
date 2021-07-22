@@ -8,7 +8,7 @@ import { MTConnectManager } from "../MTConnectManager";
 
 export class DataSinkManager {
   private dataSinkConfig: ReadonlyArray<IDataSinkConfig>;
-  private measurementsBus: EventBus<IMeasurementEvent>;
+  private measurementsBus: EventBus<IMeasurementEvent[]>;
   // private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: ReadonlyArray<DataSink>;
 
@@ -44,7 +44,7 @@ export class DataSinkManager {
 
   private subscribeDataSinks(): void {
     this.dataSinks.forEach((ds) =>
-      this.measurementsBus.onEvent(ds.onMeasurement.bind(ds))
+      this.measurementsBus.onEvent(ds.onMeasurements.bind(ds))
     );
   }
 

@@ -94,6 +94,7 @@ export class S7DataSource extends DataSource {
       winston.debug(`Reading ${addressesToRead}`);
       const results = await this.readData(addressesToRead);
 
+      const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
         const value = results.datapoints[dp.address];
 
@@ -104,7 +105,7 @@ export class S7DataSource extends DataSource {
         };
 
         if (!this.checkError(results.error, value)) {
-          this.onDataPointMeasurement(measurement);
+          measurements.push(measurement);
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,
@@ -118,15 +119,9 @@ export class S7DataSource extends DataSource {
           });
         }
       }
+      this.onDataPointMeasurement(measurements);
     } catch (e) {
       winston.error(e);
-      // for (const dp of currentCycleDataPoints) {
-      //   this.onDataPointLifecycle({
-      //     id: dp.id,
-      //     level: EventLevels.DataPoint,
-      //     type: DataPointLifecycleEventTypes.ReadError
-      //   });
-      // }
     }
     this.cycleActive = false;
   }

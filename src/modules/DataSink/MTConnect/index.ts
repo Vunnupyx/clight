@@ -18,6 +18,9 @@ type DataItemDict = {
   [key: string]: DataItem;
 };
 
+/**
+ * Adds an mtc data sink
+ */
 export class MTConnectDataSink extends DataSink {
   protected config: IDataSinkConfig;
   private mtcAdapter: MTConnectAdapter;
@@ -25,7 +28,7 @@ export class MTConnectDataSink extends DataSink {
   private avail: DataItem;
 
   /**
-   * Create a new instance & initialize the sync scheduler
+   * Create a new instance
    * @param params The user configuration object for this data source
    */
   constructor(params: IDataSinkParams) {
@@ -34,6 +37,34 @@ export class MTConnectDataSink extends DataSink {
     this.mtcAdapter = MTConnectManager.getAdapter();
   }
 
+  /**
+   * Sets up data items and adds them to the mtc adapter
+   */
+  public init() {
+    this.avail = new DataItem("avail");
+    this.avail.value = "AVAILABLE";
+    this.mtcAdapter.addDataItem(this.avail);
+
+    this.config.dataPoints.forEach((dp) => {
+      let dataItem: DataItem;
+
+      switch (dp.type) {
+        case MTConnectDataItemTypes.EVENT:
+          dataItem = new Event(dp.id);
+          break;
+        default:
+          throw new Error(`Type ${dp.type} is not supported`);
+      }
+
+      this.mtcAdapter.addDataItem(dataItem);
+      this.dataItems[dp.id] = dataItem;
+    });
+  }
+
+  /**
+   * Handles measurements
+   * @param params The user configuration object for this data source
+   */
   public async onMeasurements(events: IMeasurementEvent[]) {
     interface IEvent {
       mapValue?: string;
@@ -114,27 +145,6 @@ export class MTConnectDataSink extends DataSink {
 
       targetDataItem.value = value;
       winston.debug(`Setting MTConnect DataItem ${target} to ${value}`);
-    });
-  }
-
-  public init() {
-    this.avail = new DataItem("avail");
-    this.avail.value = "AVAILABLE";
-    this.mtcAdapter.addDataItem(this.avail);
-
-    this.config.dataPoints.forEach((dp) => {
-      let dataItem: DataItem;
-
-      switch (dp.type) {
-        case MTConnectDataItemTypes.EVENT:
-          dataItem = new Event(dp.id);
-          break;
-        default:
-          throw new Error(`Type ${dp.type} is not supported`);
-      }
-
-      this.mtcAdapter.addDataItem(dataItem);
-      this.dataItems[dp.id] = dataItem;
     });
   }
 

@@ -2,19 +2,19 @@ import { IDataSinkConfig } from "../ConfigManager/interfaces";
 import { EventBus } from "../EventBus/index";
 import { IDataSinkManagerParams } from "./interfaces";
 import { createDataSink } from "../DataSink/DataSinkFactory";
-import { IMeasurementEvent } from "../../common/interfaces";
+import { ILifecycleEvent, IMeasurementEvent } from "../../common/interfaces";
 import { DataSink } from "../DataSink/DataSink";
 import { MTConnectManager } from "../MTConnectManager";
 
 export class DataSinkManager {
   private dataSinkConfig: ReadonlyArray<IDataSinkConfig>;
   private measurementsBus: EventBus<IMeasurementEvent[]>;
-  // private lifecycleBus: EventBus<ILifecycleEvent>;
+  private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: ReadonlyArray<DataSink>;
 
   constructor(params: IDataSinkManagerParams) {
     this.dataSinkConfig = params.dataSinksConfig;
-    // this.lifecycleBus = params.lifecycleBus;
+    this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
 
     this.spawnDataSinks();
@@ -43,16 +43,9 @@ export class DataSinkManager {
   }
 
   private subscribeDataSinks(): void {
-    this.dataSinks.forEach((ds) =>
-      this.measurementsBus.onEvent(ds.onMeasurements.bind(ds))
-    );
+    this.dataSinks.forEach((ds) => {
+      this.measurementsBus.onEvent(ds.onMeasurements.bind(ds));
+      this.lifecycleBus.onEvent(ds.onLifecycleEvent.bind(ds));
+    });
   }
-
-  // private onMeasurementEvent = (measurementEvent: IMeasurementEvent): void => {
-  //   this.measurementsBus.push(measurementEvent);
-  // };
-
-  // private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
-  //   this.lifecycleBus.push(lifeCycleEvent);
-  // };
 }

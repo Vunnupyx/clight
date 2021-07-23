@@ -1,6 +1,6 @@
 import { IDataSinkConfig } from "../ConfigManager/interfaces";
 import { IDataSinkParams } from "./interfaces";
-import { IMeasurementEvent } from "../../common/interfaces";
+import { ILifecycleEvent, IMeasurementEvent } from "../../common/interfaces";
 import { DataPointMapper } from "../DataPointMapper";
 
 export abstract class DataSink {
@@ -22,6 +22,11 @@ export abstract class DataSink {
   public abstract onMeasurements(
     measurements: IMeasurementEvent[]
   ): Promise<void>;
+
+  /**
+   * Each data sink should handle lifecycle events
+   */
+  public abstract onLifecycleEvent(event: ILifecycleEvent): Promise<void>;
 
   /**
    * Each data sink should do all setup in the init function

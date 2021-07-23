@@ -8,6 +8,8 @@ import { MTConnectAdapter } from "../../MTConnectAdapter";
 import { DataSink } from "../DataSink";
 import { MTConnectManager } from "../../MTConnectManager";
 import {
+  DataSourceLifecycleEventTypes,
+  ILifecycleEvent,
   IMeasurementEvent,
   MTConnectDataItemTypes,
 } from "../../../common/interfaces";
@@ -79,7 +81,7 @@ export class MTConnectDataSink extends DataSink {
         event.measurement.id
       );
 
-      if (!targetMapping) {
+      if (!targetMapping || !this.dataItems[targetMapping.target]) {
         winston.debug(`Target for source ${event.measurement.id} not found`);
         return;
       }
@@ -146,6 +148,17 @@ export class MTConnectDataSink extends DataSink {
       targetDataItem.value = value;
       winston.debug(`Setting MTConnect DataItem ${target} to ${value}`);
     });
+  }
+
+  public async onLifecycleEvent(event: ILifecycleEvent) {
+    if (event.type === DataSourceLifecycleEventTypes.Connected) {
+      this.avail.value === "AVAILABLE";
+      winston.info(`Datasource for datasink ${this.config.id} is available`);
+    }
+    if (event.type === DataSourceLifecycleEventTypes.Disconnected) {
+      this.avail.unavailable();
+      winston.info(`Datasource for datasink ${this.config.id} is unavailable`);
+    }
   }
 
   public shutdown() {}

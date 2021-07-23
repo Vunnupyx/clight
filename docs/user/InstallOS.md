@@ -29,19 +29,19 @@ After the command is finished your SD Card is ready.
 Now you can disconnect the IoT2050 from the power supply and insert the SD card. After you reconnect the power, the device will boot into
 the the new OS stored on the SD card.
 
-Here you can configure the network configuration:
+Here you can configure the network interfaces by editing the following files:
 
-For P1 X1:
-`nano /etc/NetworkManager/system-connections/enp2s0-default`
+For X1 P1 - eth0:
+`nano /etc/NetworkManager/system-connections/eth0-default`
 
-For P1 X2:
-`nano /etc/NetworkManager/system-connections/enp3s0-default`
+For X1 P2 - eth1:
+`nano /etc/NetworkManager/system-connections/eth1-default`
 
-After you changed the network setting you can apply them using `nmcli con up enp2s0-default` and/or `nmcli con up enp2s0-default` - depending on which file you changed.
+After you changed the network setting you can apply them using `nmcli con up eth0-default` and/or `nmcli con up eth1-default` - depending on which file you changed.
 
-## Configuring the MDClight
+## Configuring MDClight
 
-- The MDClight config is stored in `/etc/MDCLight/config`
+- The MDClight config is stored in `/etc/MDCLight/config.json`
+- See "MdcLightConfiguration" for an explanation of the configuration format
 - After you changed the configuration you need to restart the docker containers `docker restart $(docker ps -q)`
-
-Config structure: TBD
+- Check the logs with `docker-compose logs -f` to verify the configuration is correct and the data source is accessible

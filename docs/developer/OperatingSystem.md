@@ -12,15 +12,39 @@
 1. Setup a new root password when prompted
 2. Clean up unneeded or outdated packages `apt purge node-red node-red nodejs mosquitto tcf-agent`
 3. Check that no ports are still listening beside SSH (Port 22) `netstat -tulpn | grep LISTEN`
-4.
+4. Install docker
 
+```
 apt update
 apt install apt-transport-https ca-certificates curl gnupg lsb-release
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 apt update
 apt install docker-ce docker-ce-cli containerd.io
+docker run hello-world
+```
 
-curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+5. Install docker-compose
+
+```
+apt install python3-setuptools python3.7-dev
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+pip3 install --upgrade pip
+pip3 install docker-compose
+```
+
+6. Cleanup
+
+```
+rustup self uninstall
+apt purge python3-setuptools python3.7-dev
+```
+
+7. Login to registry: `docker login registry.gitlab.com``
+8. Create `docker-compose.yml`
+9. Start containers: `docker-compose.yml`
+
+## Update containers
+
+1. Pull newer containers: `docker-compose pull`
+2. Restart `docker-compose down && docker-compose up -d)`

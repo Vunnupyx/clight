@@ -1,4 +1,3 @@
-import winston from "winston";
 import { DataSourcesManager } from "../DataSourcesManager";
 import { EventBus, MeasurementEventBus } from "../EventBus";
 import {
@@ -14,21 +13,21 @@ import { MTConnectManager } from "../MTConnectManager";
 import { DataPointMapper } from "../DataPointMapper";
 import { DataSinkManager } from "../DataSinkManager";
 
-// import { VERSION as newDeviceVersion } from "../Version";
-
+/**
+ * Launches agent and handles module lifecycles
+ */
 export class BootstrapManager {
-  private deviceId: string;
   private configManager: ConfigManager;
   private dataSourcesManager: DataSourcesManager;
   private dataSinkManager: DataSinkManager;
   private errorEventsBus: EventBus<IErrorEvent>;
   private lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private measurementsEventsBus: EventBus<IMeasurementEvent>;
+  private measurementsEventsBus: EventBus<IMeasurementEvent[]>;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
     this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(LogLevel.INFO);
-    this.measurementsEventsBus = new MeasurementEventBus<IMeasurementEvent>(
+    this.measurementsEventsBus = new MeasurementEventBus<IMeasurementEvent[]>(
       LogLevel.DEBUG
     );
 
@@ -36,14 +35,16 @@ export class BootstrapManager {
       errorEventsBus: this.errorEventsBus,
       lifecycleEventsBus: this.lifecycleEventsBus,
     });
-    this.deviceId = this.configManager.id;
   }
 
+  /**
+   * Launches agent
+   */
   public async launch() {
     try {
       await this.configManager.init();
 
-      MTConnectManager.createAdater(this.configManager);
+      MTConnectManager.createAdapter(this.configManager);
       DataPointMapper.createInstance(this.configManager);
 
       await this.loadModules();
@@ -63,6 +64,10 @@ export class BootstrapManager {
     }
   }
 
+  /**
+   * Loads modules
+   * @returns Promise
+   */
   private async loadModules(): Promise<void> {
     const { dataSources: dataSourcesConfigs, dataSinks: dataSinksConfig } =
       this.configManager.config;

@@ -101,19 +101,20 @@ export abstract class DataSource extends EventEmitter {
 
   /**
    * Maps process data from each data point to the data source
-   * @deprecated (Only used for compability)
    * @param measurement A single data point read result
    */
-  protected onDataPointMeasurement = (measurement: IMeasurement): void => {
+  protected onDataPointMeasurement = (measurements: IMeasurement[]): void => {
     const { name, protocol } = this.config;
-    const measurementEvent: IDataSourceMeasurementEvent = {
-      dataSource: {
-        name,
-        protocol,
-      },
-      measurement,
-    };
-    this.submitMeasurement(measurementEvent);
+
+    this.submitMeasurement(
+      measurements.map((measurement) => ({
+        dataSource: {
+          name,
+          protocol,
+        },
+        measurement,
+      }))
+    );
   };
 
   /**
@@ -139,9 +140,9 @@ export abstract class DataSource extends EventEmitter {
    * @param dataSourceMeasurementEvent
    */
   protected submitMeasurement(
-    dataSourceMeasurementEvent: IDataSourceMeasurementEvent
+    dataSourceMeasurementEvents: IDataSourceMeasurementEvent[]
   ): void {
-    this.emit(DataSourceEventTypes.Measurement, dataSourceMeasurementEvent);
+    this.emit(DataSourceEventTypes.Measurement, dataSourceMeasurementEvents);
   }
 
   /**

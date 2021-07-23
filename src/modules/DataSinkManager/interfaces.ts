@@ -9,6 +9,6 @@ import {
 export interface IDataSinkManagerParams {
   dataSinksConfig: ReadonlyArray<IDataSinkConfig>;
   errorBus: EventBus<IErrorEvent>;
-  measurementsBus: EventBus<IMeasurementEvent>;
+  measurementsBus: EventBus<IMeasurementEvent[]>;
   lifecycleBus: EventBus<ILifecycleEvent>;
 }

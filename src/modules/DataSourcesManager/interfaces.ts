@@ -9,6 +9,6 @@ import {
 export interface IDataSourcesManagerParams {
   dataSourcesConfigs: ReadonlyArray<IDataSourceConfig>;
   errorBus: EventBus<IErrorEvent>;
-  measurementsBus: EventBus<IMeasurementEvent>;
+  measurementsBus: EventBus<IMeasurementEvent[]>;
   lifecycleBus: EventBus<ILifecycleEvent>;
 }

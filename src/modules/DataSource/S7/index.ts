@@ -38,6 +38,7 @@ export class S7DataSource extends DataSource {
         // connection_name: name,
         slot: connection.slot,
         rack: connection.rack,
+        timeout: 2000,
       },
       (err) => {
         this.onConnect(err);
@@ -94,6 +95,9 @@ export class S7DataSource extends DataSource {
       winston.debug(`Reading ${addressesToRead}`);
       const results = await this.readData(addressesToRead);
 
+      let allDpError = currentCycleDataPoints.length > 0;
+
+      const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
         const value = results.datapoints[dp.address];
 
@@ -103,14 +107,18 @@ export class S7DataSource extends DataSource {
           value,
         };
 
-        if (!this.checkError(results.error, value)) {
-          this.onDataPointMeasurement(measurement);
+        const dpError = this.checkError(results.error, value);
+
+        if (!dpError) {
+          allDpError = false;
+          measurements.push(measurement);
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,
             type: DataPointLifecycleEventTypes.ReadSuccess,
           });
         } else {
+          winston.warn(`Failed to read datapoint ${dp.id}`);
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,
@@ -118,15 +126,17 @@ export class S7DataSource extends DataSource {
           });
         }
       }
+
+      if (allDpError) {
+        winston.warn(
+          `Failed to read all datapoints for datasource. Disconnecting datasource.`
+        );
+        this.disconnect();
+      }
+
+      this.onDataPointMeasurement(measurements);
     } catch (e) {
       winston.error(e);
-      // for (const dp of currentCycleDataPoints) {
-      //   this.onDataPointLifecycle({
-      //     id: dp.id,
-      //     level: EventLevels.DataPoint,
-      //     type: DataPointLifecycleEventTypes.ReadError
-      //   });
-      // }
     }
     this.cycleActive = false;
   }

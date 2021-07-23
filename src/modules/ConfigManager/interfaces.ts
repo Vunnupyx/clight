@@ -29,11 +29,18 @@ export interface IDataSourceConfig {
   };
 }
 
-type MTConnectDataPointTypes = "event";
+type IMTConnectDataPointTypes = "event";
+
+type MapItem = {
+  [key: string]: "string";
+};
+export type IMTConnectDataMap = MapItem[];
+
 export interface IDataSinkDataPointConfig {
   id: string;
   name: string;
-  type: MTConnectDataPointTypes;
+  type: IMTConnectDataPointTypes;
+  map: IMTConnectDataMap;
 }
 
 export interface IDataSinkConfig {
@@ -46,7 +53,10 @@ export interface IDataSinkConfig {
 export interface IDataPointMapping {
   source: string;
   target: string;
+  mapValue?: string;
+  priotity?: number;
 }
+
 export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];

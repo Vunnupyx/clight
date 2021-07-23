@@ -17,7 +17,7 @@ export class MTConnectManager {
     );
   }
 
-  static createAdater(config: ConfigManager): void {
+  static createAdapter(config: ConfigManager): void {
     this.adapter = new MTConnectAdapter(config);
     this.scheduler = SynchronousIntervalScheduler.getInstance();
   }

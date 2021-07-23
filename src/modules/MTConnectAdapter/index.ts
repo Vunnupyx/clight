@@ -166,7 +166,7 @@ export class MTConnectAdapter {
    * @returns void
    */
   public sendChanged(): void {
-    const { together } = this.getItemLists(true);
+    const { together } = this.getItemLists();
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
 

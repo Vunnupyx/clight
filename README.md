@@ -6,6 +6,7 @@ To run the MDC light runtime, use the following commands:
 
 - `yarn` (optional) Install dependencies
 - `yarn dev` to start the agent
+- `IP=192.168.185.100 yarn copy_conf` to update the MDC light config on an IoT2050
 
 ## Documentation
 

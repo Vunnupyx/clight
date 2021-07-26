@@ -16,8 +16,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "build:dist": "ncc build build/main/index.js -o runtime --minify",
-    "build:mdclight": "yarn build && yarn build:dist && yarn docker:build:mdclight-prod",
+    "build:dist": "yarn build && ncc build build/main/index.js -o runtime --minify",
+    "build:mdclight": "yarn build:dist && yarn docker:build:mdclight-prod",
     "docker:build:ci": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci -f ci.Dockerfile .",
     "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
     "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect_amd64.Dockerfile .",

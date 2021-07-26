@@ -2,13 +2,13 @@
 
 ## Prepare SD Card
 
-Use dd to copy the operation system to an SD Card. Industrial SD Card are recommended.
+Use dd to copy the operation system to an SD Card. Industrial SD Cards are recommended.
 
 Command:
 `sudo dd if=<path to image> of=<your device> bs=4M oflag=sync`
 
 Example:
-`sudo dd if=/home/codestryke/Documents/meta-iot2050/build/tmp/deploy/images/iot2050/iot2050-image-example-iot2050-debian-iot2050.wic.img of=/dev/sda bs=4M oflag=sync`
+`sudo dd if=mdclight-iot2050.img of=/dev/sdb bs=4M oflag=sync`
 
 After the command is finished your SD Card is ready.
 
@@ -41,7 +41,7 @@ After you changed the network setting you can apply them using `nmcli con up eth
 
 ## Configuring MDClight
 
-- The MDClight config is stored in `/etc/MDCLight/config.json`
+- The MDClight config is stored in `/etc/MDCLight/config/config.json`
 - See "MdcLightConfiguration" for an explanation of the configuration format
 - After you changed the configuration you need to restart the docker containers `docker restart $(docker ps -q)`
 - Check the logs with `docker-compose logs -f` to verify the configuration is correct and the data source is accessible

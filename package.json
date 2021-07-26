@@ -28,7 +28,8 @@
     "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
     "docker:build:mtc-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest -f docker/mtconnect_arm64.prod.Dockerfile --push .",
     "docker:build:mdclight-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-prod_arm64:latest -f docker/mdclight_arm64.prod.Dockerfile --push .",
-    "test": "jest"
+    "test": "jest",
+    "copy_conf": "scp _mdclight/config/config.json root@$IP:/etc/MDCLight/config"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

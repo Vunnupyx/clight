@@ -2,9 +2,10 @@
 
 ## Getting started
 
-To run the MDC light runtime, use the following command:
-`yarn` (optional) Install dependencies
-`yarn dev`
+To run the MDC light runtime, use the following commands:
+
+- `yarn` (optional) Install dependencies
+- `yarn dev` to start the agent
 
 ## Documentation
 
@@ -20,3 +21,4 @@ Only the MTConnect server (provided by the MTC agent) is accessible from the out
 ## Building
 
 - `yarn build:mdclight` - Build & push the production (ARM64) docker image of the MDClight runtime
+- `docker:build:mtc-prod` - Build & push the production (ARM64) docker image of the MTConnectAgent runtime

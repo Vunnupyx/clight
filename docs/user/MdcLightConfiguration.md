@@ -113,7 +113,7 @@ A single mapping supports the following configuration items:
   "source": "cModeAuto",
   // Id of target data point
   "target": "mode1",
-  // The alue, a boolean uses for it's target value
+  // The value, a boolean uses for it's target value
   "mapValue": "0"
 }
 ```

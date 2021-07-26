@@ -63,6 +63,18 @@
           "name": "Part Count",
           "address": "DB12,INT0",
           "readFrequency": 1000
+        },
+        {
+          "id": "partCountC1Req",
+          "name": "Part Count Required",
+          "address": "DB12,INT258",
+          "readFrequency": 1000
+        },
+        {
+          "id": "partCountC1Overall",
+          "name": "Part Count Overall",
+          "address": "DB12,INT260",
+          "readFrequency": 1000
         }
       ],
       "protocol": "s7",
@@ -105,17 +117,27 @@
           "name": "Emergency Stop",
           "type": "event",
           "map": {
-            "true": "TIGGERED",
+            "true": "TRIGGERED",
             "false": "ARMED"
           }
         },
         {
           "id": "program4",
-          "name": "Programm",
+          "name": "Program",
           "type": "event"
         },
         {
-          "id": "part_count4",
+          "id": "part_count1",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_desired1",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_overall1",
           "name": "Part Count",
           "type": "event"
         }
@@ -169,7 +191,15 @@
     },
     {
       "source": "partCount",
-      "target": "part_count4"
+      "target": "part_count1"
+    },
+    {
+      "source": "partCountC1Req",
+      "target": "part_count_desired1"
+    },
+    {
+      "source": "partCountC1Overall",
+      "target": "part_count_overall1"
     }
   ]
 }

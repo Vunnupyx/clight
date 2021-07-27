@@ -155,8 +155,7 @@ export class MTConnectDataSink extends DataSink {
    */
   public async onLifecycleEvent(event: ILifecycleEvent) {
     if (event.type === DataSourceLifecycleEventTypes.Connected) {
-      console.log("AVAILABLE");
-      this.avail.value === "AVAILABLE";
+      this.avail.value = "AVAILABLE";
       winston.info(`Data source for data sink ${this.config.id} is available`);
     }
     if (event.type === DataSourceLifecycleEventTypes.Disconnected) {

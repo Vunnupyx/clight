@@ -8,73 +8,319 @@
           "id": "estop",
           "name": "Emergency Stop",
           "address": "DB10,X106.1",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "cModeAuto",
+          "id": "redLight",
+          "name": "Red Light",
+          "address": "DB12,X518.2",
+          "readFrequency": 10000
+        },
+        {
+          "id": "yellowLight",
+          "name": "Yelow Light",
+          "address": "DB12,X518.1",
+          "readFrequency": 10000
+        },
+        {
+          "id": "greenLight",
+          "name": "Green Light",
+          "address": "DB12,X518.0",
+          "readFrequency": 10000
+        },
+        {
+          "id": "blueLigth",
+          "name": "Blue Light",
+          "address": "DB12,X518.3",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeAuto1",
           "name": "Controller Mode Automatic",
           "address": "DB11,X6.0",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "cModeMDA",
+          "id": "cModeMDA1",
           "name": "Controller Mode MDA",
           "address": "DB11,X6.1",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "cModeM",
+          "id": "cModeM1",
           "name": "Controller Mode Manual",
           "address": "DB11,X6.2",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "execActive",
+          "id": "execActive1",
           "name": "Execution Active",
           "address": "DB21,X35.5",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "execOpStop",
+          "id": "execOpStop1",
           "name": "Execution Optional Stop",
           "address": "DB21,X35.6",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "execProgComp",
+          "id": "execProgComp1",
           "name": "Execution Program Completed",
           "address": "DB21,X35.7",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "execReady",
+          "id": "execReady1",
           "name": "Execution READY",
           "address": "DB21,X36.5",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "program",
+          "id": "program1",
           "name": "Program",
           "address": "DB12,S2.255",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "partCount",
+          "id": "toolnumber1",
+          "name": "Program",
+          "address": "DB12,S262.255",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCount1",
           "name": "Part Count",
           "address": "DB12,INT0",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "partCountC1Req",
+          "id": "partCountC1Req1",
           "name": "Part Count Required",
           "address": "DB12,INT258",
-          "readFrequency": 5000
+          "readFrequency": 10000
         },
         {
-          "id": "partCountC1Overall",
+          "id": "partCountC1Overall1",
           "name": "Part Count Overall",
           "address": "DB12,INT260",
-          "readFrequency": 5000
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeAuto2",
+          "name": "Controller Mode Automatic",
+          "address": "DB11,X6.0",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeMDA2",
+          "name": "Controller Mode MDA",
+          "address": "DB11,X6.1",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeM2",
+          "name": "Controller Mode Manual",
+          "address": "DB11,X6.2",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execActive2",
+          "name": "Execution Active",
+          "address": "DB21,X35.5",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execOpStop2",
+          "name": "Execution Optional Stop",
+          "address": "DB21,X35.6",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execProgComp2",
+          "name": "Execution Program Completed",
+          "address": "DB21,X35.7",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execReady2",
+          "name": "Execution READY",
+          "address": "DB21,X36.5",
+          "readFrequency": 10000
+        },
+        {
+          "id": "program2",
+          "name": "Program",
+          "address": "DB12,S2.255",
+          "readFrequency": 10000
+        },
+        {
+          "id": "toolnumber2",
+          "name": "Program",
+          "address": "DB12,S262.255",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCount2",
+          "name": "Part Count",
+          "address": "DB12,INT0",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCountC1Req2",
+          "name": "Part Count Required",
+          "address": "DB12,INT258",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCountC1Overall2",
+          "name": "Part Count Overall",
+          "address": "DB12,INT260",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeAuto3",
+          "name": "Controller Mode Automatic",
+          "address": "DB11,X6.0",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeMDA3",
+          "name": "Controller Mode MDA",
+          "address": "DB11,X6.1",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeM3",
+          "name": "Controller Mode Manual",
+          "address": "DB11,X6.2",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execActive3",
+          "name": "Execution Active",
+          "address": "DB21,X35.5",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execOpStop3",
+          "name": "Execution Optional Stop",
+          "address": "DB21,X35.6",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execProgComp3",
+          "name": "Execution Program Completed",
+          "address": "DB21,X35.7",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execReady3",
+          "name": "Execution READY",
+          "address": "DB21,X36.5",
+          "readFrequency": 10000
+        },
+        {
+          "id": "program3",
+          "name": "Program",
+          "address": "DB12,S2.255",
+          "readFrequency": 10000
+        },
+        {
+          "id": "toolnumber3",
+          "name": "Program",
+          "address": "DB12,S262.255",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCount3",
+          "name": "Part Count",
+          "address": "DB12,INT0",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCountC1Req3",
+          "name": "Part Count Required",
+          "address": "DB12,INT258",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCountC1Overall3",
+          "name": "Part Count Overall",
+          "address": "DB12,INT260",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeAuto4",
+          "name": "Controller Mode Automatic",
+          "address": "DB11,X6.0",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeMDA4",
+          "name": "Controller Mode MDA",
+          "address": "DB11,X6.1",
+          "readFrequency": 10000
+        },
+        {
+          "id": "cModeM4",
+          "name": "Controller Mode Manual",
+          "address": "DB11,X6.2",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execActive4",
+          "name": "Execution Active",
+          "address": "DB21,X35.5",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execOpStop4",
+          "name": "Execution Optional Stop",
+          "address": "DB21,X35.6",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execProgComp4",
+          "name": "Execution Program Completed",
+          "address": "DB21,X35.7",
+          "readFrequency": 10000
+        },
+        {
+          "id": "execReady4",
+          "name": "Execution READY",
+          "address": "DB21,X36.5",
+          "readFrequency": 10000
+        },
+        {
+          "id": "program4",
+          "name": "Program",
+          "address": "DB12,S2.255",
+          "readFrequency": 10000
+        },
+        {
+          "id": "toolnumber4",
+          "name": "Program",
+          "address": "DB12,S262.255",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCount4",
+          "name": "Part Count",
+          "address": "DB12,INT0",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCountC1Req4",
+          "name": "Part Count Required",
+          "address": "DB12,INT258",
+          "readFrequency": 10000
+        },
+        {
+          "id": "partCountC1Overall4",
+          "name": "Part Count Overall",
+          "address": "DB12,INT260",
+          "readFrequency": 10000
         }
       ],
       "protocol": "s7",
@@ -91,6 +337,51 @@
       "id": "mtconnect",
       "name": "My MTConnect Machine",
       "dataPoints": [
+        {
+          "id": "estop",
+          "name": "Emergency Stop",
+          "type": "event",
+          "map": {
+            "true": "TRIGGERED",
+            "false": "ARMED"
+          }
+        },
+        {
+          "id": "light_state_red",
+          "name": "Red Light",
+          "type": "event",
+          "map": {
+            "true": "ON",
+            "false": "OFF"
+          }
+        },
+        {
+          "id": "light_state_yellow",
+          "name": "Yellow Light",
+          "type": "event",
+          "map": {
+            "true": "ON",
+            "false": "OFF"
+          }
+        },
+        {
+          "id": "light_state_green",
+          "name": "Green Light",
+          "type": "event",
+          "map": {
+            "true": "ON",
+            "false": "OFF"
+          }
+        },
+        {
+          "id": "light_state_blue",
+          "name": "Blue Light",
+          "type": "event",
+          "map": {
+            "true": "ON",
+            "false": "OFF"
+          }
+        },
         {
           "id": "mode1",
           "name": "Controller Mode",
@@ -113,17 +404,13 @@
           }
         },
         {
-          "id": "estop",
-          "name": "Emergency Stop",
-          "type": "event",
-          "map": {
-            "true": "TRIGGERED",
-            "false": "ARMED"
-          }
+          "id": "program1",
+          "name": "Program",
+          "type": "event"
         },
         {
-          "id": "program1",
-          "name": "Programm",
+          "id": "toolnumber1",
+          "name": "Program",
           "type": "event"
         },
         {
@@ -140,9 +427,169 @@
           "id": "part_count_overall1",
           "name": "Part Count",
           "type": "event"
+        },
+        {
+          "id": "mode2",
+          "name": "Controller Mode",
+          "type": "event",
+          "map": {
+            "0": "AUTOMATIC",
+            "1": "MANUAL_DATA_INPUT",
+            "2": "MANUAL"
+          }
+        },
+        {
+          "id": "execution2",
+          "name": "Execution",
+          "type": "event",
+          "map": {
+            "0": "ACTIVE",
+            "1": "OPTIONAL_STOP",
+            "2": "PROGRAM_COMPLETED",
+            "3": "READY"
+          }
+        },
+        {
+          "id": "program2",
+          "name": "Program",
+          "type": "event"
+        },
+        {
+          "id": "toolnumber2",
+          "name": "Program",
+          "type": "event"
+        },
+        {
+          "id": "part_count2",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_desired2",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_overall2",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "mode3",
+          "name": "Controller Mode",
+          "type": "event",
+          "map": {
+            "0": "AUTOMATIC",
+            "1": "MANUAL_DATA_INPUT",
+            "2": "MANUAL"
+          }
+        },
+        {
+          "id": "execution3",
+          "name": "Execution",
+          "type": "event",
+          "map": {
+            "0": "ACTIVE",
+            "1": "OPTIONAL_STOP",
+            "2": "PROGRAM_COMPLETED",
+            "3": "READY"
+          }
+        },
+        {
+          "id": "program3",
+          "name": "Program",
+          "type": "event"
+        },
+        {
+          "id": "toolnumber3",
+          "name": "Program",
+          "type": "event"
+        },
+        {
+          "id": "part_count3",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_desired3",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_overall3",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "mode4",
+          "name": "Controller Mode",
+          "type": "event",
+          "map": {
+            "0": "AUTOMATIC",
+            "1": "MANUAL_DATA_INPUT",
+            "2": "MANUAL"
+          }
+        },
+        {
+          "id": "execution4",
+          "name": "Execution",
+          "type": "event",
+          "map": {
+            "0": "ACTIVE",
+            "1": "OPTIONAL_STOP",
+            "2": "PROGRAM_COMPLETED",
+            "3": "READY"
+          }
+        },
+        {
+          "id": "program4",
+          "name": "Program",
+          "type": "event"
+        },
+        {
+          "id": "toolnumber4",
+          "name": "Program",
+          "type": "event"
+        },
+        {
+          "id": "part_count4",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_desired4",
+          "name": "Part Count",
+          "type": "event"
+        },
+        {
+          "id": "part_count_overall4",
+          "name": "Part Count",
+          "type": "event"
         }
       ],
       "protocol": "mtconnect"
+    }
+  ],
+  "virtualDataPoints": [
+    {
+      "id": "vdpAnd",
+      "sources": ["greenLight", "redLight"],
+      "type": "and"
+    },
+    {
+      "id": "vdpOr",
+      "sources": ["greenLight", "redLight"],
+      "type": "or"
+    },
+    {
+      "id": "vdpNot",
+      "sources": ["greenLight", "redLight"],
+      "type": "not"
+    },
+    {
+      "id": "vdpCounter",
+      "sources": ["greenLight"],
+      "type": "counter"
     }
   ],
   "mapping": [
@@ -151,55 +598,240 @@
       "target": "estop"
     },
     {
-      "source": "cModeAuto",
+      "source": "redLight",
+      "target": "light_state_red"
+    },
+    {
+      "source": "yellowLight",
+      "target": "light_state_yellow"
+    },
+    {
+      "source": "greenLight",
+      "target": "light_state_green"
+    },
+    {
+      "source": "blueLight",
+      "target": "light_state_blue"
+    },
+    {
+      "source": "cModeAuto1",
       "target": "mode1",
       "mapValue": "0"
     },
     {
-      "source": "cModeMDA",
+      "source": "cModeMDA1",
       "target": "mode1",
       "mapValue": "1"
     },
     {
-      "source": "cModeM",
+      "source": "cModeM1",
       "target": "mode1",
       "mapValue": "2"
     },
     {
-      "source": "execActive",
+      "source": "execActive1",
       "target": "execution1",
       "mapValue": "0"
     },
     {
-      "source": "execOpStop",
+      "source": "execOpStop1",
       "target": "execution1",
       "mapValue": "1"
     },
     {
-      "source": "execProgComp",
+      "source": "execProgComp1",
       "target": "execution1",
       "mapValue": "2"
     },
     {
-      "source": "execReady",
+      "source": "execReady1",
       "target": "execution1",
       "mapValue": "3"
     },
     {
-      "source": "program",
+      "source": "program1",
       "target": "program1"
     },
     {
-      "source": "partCount",
+      "source": "toolnumber1",
+      "target": "toolnumber1"
+    },
+    {
+      "source": "partCount1",
       "target": "part_count1"
     },
     {
-      "source": "partCountC1Req",
+      "source": "partCountC1Req1",
       "target": "part_count_desired1"
     },
     {
-      "source": "partCountC1Overall",
+      "source": "partCountC1Overall1",
       "target": "part_count_overall1"
+    },
+    {
+      "source": "cModeAuto2",
+      "target": "mode2",
+      "mapValue": "0"
+    },
+    {
+      "source": "cModeMDA2",
+      "target": "mode2",
+      "mapValue": "1"
+    },
+    {
+      "source": "cModeM2",
+      "target": "mode2",
+      "mapValue": "2"
+    },
+    {
+      "source": "execActive2",
+      "target": "execution2",
+      "mapValue": "0"
+    },
+    {
+      "source": "execOpStop2",
+      "target": "execution2",
+      "mapValue": "1"
+    },
+    {
+      "source": "execProgComp2",
+      "target": "execution2",
+      "mapValue": "2"
+    },
+    {
+      "source": "execReady2",
+      "target": "execution2",
+      "mapValue": "3"
+    },
+    {
+      "source": "program2",
+      "target": "program2"
+    },
+    {
+      "source": "toolnumber2",
+      "target": "toolnumber2"
+    },
+    {
+      "source": "partCount2",
+      "target": "part_count2"
+    },
+    {
+      "source": "partCountC1Req2",
+      "target": "part_count_desired2"
+    },
+    {
+      "source": "partCountC1Overall2",
+      "target": "part_count_overall2"
+    },
+    {
+      "source": "cModeAuto3",
+      "target": "mode3",
+      "mapValue": "0"
+    },
+    {
+      "source": "cModeMDA3",
+      "target": "mode3",
+      "mapValue": "1"
+    },
+    {
+      "source": "cModeM3",
+      "target": "mode3",
+      "mapValue": "2"
+    },
+    {
+      "source": "execActive3",
+      "target": "execution3",
+      "mapValue": "0"
+    },
+    {
+      "source": "execOpStop3",
+      "target": "execution3",
+      "mapValue": "1"
+    },
+    {
+      "source": "execProgComp3",
+      "target": "execution3",
+      "mapValue": "2"
+    },
+    {
+      "source": "execReady3",
+      "target": "execution3",
+      "mapValue": "3"
+    },
+    {
+      "source": "program3",
+      "target": "program3"
+    },
+    {
+      "source": "toolnumber3",
+      "target": "toolnumber3"
+    },
+    {
+      "source": "partCount3",
+      "target": "part_count3"
+    },
+    {
+      "source": "partCountC1Req3",
+      "target": "part_count_desired3"
+    },
+    {
+      "source": "partCountC1Overall3",
+      "target": "part_count_overall3"
+    },
+    {
+      "source": "cModeAuto4",
+      "target": "mode4",
+      "mapValue": "0"
+    },
+    {
+      "source": "cModeMDA4",
+      "target": "mode4",
+      "mapValue": "1"
+    },
+    {
+      "source": "cModeM4",
+      "target": "mode4",
+      "mapValue": "2"
+    },
+    {
+      "source": "execActive4",
+      "target": "execution4",
+      "mapValue": "0"
+    },
+    {
+      "source": "execOpStop4",
+      "target": "execution4",
+      "mapValue": "1"
+    },
+    {
+      "source": "execProgComp4",
+      "target": "execution4",
+      "mapValue": "2"
+    },
+    {
+      "source": "execReady4",
+      "target": "execution4",
+      "mapValue": "3"
+    },
+    {
+      "source": "program4",
+      "target": "program4"
+    },
+    {
+      "source": "toolnumber4",
+      "target": "toolnumber4"
+    },
+    {
+      "source": "partCount4",
+      "target": "part_count4"
+    },
+    {
+      "source": "partCountC1Req4",
+      "target": "part_count_desired4"
+    },
+    {
+      "source": "partCountC1Overall4",
+      "target": "part_count_overall4"
     }
   ]
 }

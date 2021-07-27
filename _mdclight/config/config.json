@@ -29,7 +29,7 @@
           "readFrequency": 10000
         },
         {
-          "id": "blueLigth",
+          "id": "blueLight",
           "name": "Blue Light",
           "address": "DB12,X518.3",
           "readFrequency": 10000

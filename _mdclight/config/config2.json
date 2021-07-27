@@ -1,0 +1,138 @@
+{
+  "dataSources": [
+    {
+      "id": "nc",
+      "name": "NC",
+      "dataPoints": [
+        {
+          "id": "redLight",
+          "name": "Red Light",
+          "address": "DI1",
+          "readFrequency": 10000
+        },
+        {
+          "id": "yellowLight",
+          "name": "Yelow Light",
+          "address": "DI4",
+          "readFrequency": 10000
+        },
+        {
+          "id": "greenLight",
+          "name": "Green Light",
+          "address": "DI7",
+          "readFrequency": 10000
+        },
+        {
+          "id": "blueLight",
+          "name": "Blue Light",
+          "address": "DI11",
+          "readFrequency": 10000
+        }
+      ],
+      "protocol": "ioshield"
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "mtconnect",
+      "name": "My MTConnect Machine",
+      "dataPoints": [
+        {
+          "id": "light_state_red",
+          "name": "Red Light",
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
+        },
+        {
+          "id": "light_state_yellow",
+          "name": "Yellow Light",
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
+        },
+        {
+          "id": "light_state_green",
+          "name": "Green Light",
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
+        },
+        {
+          "id": "light_state_blue",
+          "name": "Blue Light",
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
+        },
+        {
+          "id": "part_count1",
+          "name": "Part Count",
+          "type": "event"
+        }
+      ],
+      "protocol": "mtconnect"
+    }
+  ],
+  "virtualDataPoints": [
+    {
+      "id": "gUbLight",
+      "sources": ["greenLight", "blueLight"],
+      "type": "and"
+    },
+    {
+      "id": "gOrLight",
+      "sources": ["greenLight", "redLight"],
+      "type": "or"
+    },
+    {
+      "id": "bLightCounter",
+      "sources": ["blueLight"],
+      "type": "counter"
+    },
+    {
+      "id": "notYLight",
+      "sources": ["yellowLight"],
+      "type": "not"
+    },
+    {
+      "id": "gUbOyLight",
+      "sources": ["gUbLight", "yellowLight"],
+      "type": "or"
+    }
+  ],
+  "mapping": [
+    {
+      "source": "greenLight",
+      "target": "light_state_green"
+    },
+    {
+      "source": "yellowLight",
+      "target": "light_state_yellow"
+    },
+    {
+      "source": "redLigth",
+      "target": "light_state_red"
+    },
+    {
+      "source": "blueLight",
+      "target": "light_state_blue"
+    },
+    {
+      "source": "bLightCounter",
+      "target": "part_count1"
+    }
+  ]
+}

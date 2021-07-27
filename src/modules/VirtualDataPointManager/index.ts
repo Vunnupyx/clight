@@ -18,6 +18,16 @@ export class VirtualDataPointManager {
     this.counters = new CounterManager();
   }
 
+  private toBoolean(value: boolean | number | string): boolean {
+    if (typeof value === "number") {
+      return value > 0;
+    }
+    if (typeof value === "string") {
+      return value.length > 0;
+    }
+    return value;
+  }
+
   private and(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
@@ -28,18 +38,10 @@ export class VirtualDataPointManager {
       );
       return null;
     }
-    if (
-      sourceEvents.some((event) => typeof event.measurement.value !== "boolean")
-    ) {
-      winston.warn(
-        `Virtual data point (${config.id}) from type ${config.type} requires all sources to be of type boolean!`
-      );
-      return null;
-    }
 
-    let retValue: boolean = sourceEvents[0].measurement.value as boolean;
+    let retValue = this.toBoolean(sourceEvents[0].measurement.value);
     for (let i = 1; i < sourceEvents.length; i++) {
-      retValue = retValue && (sourceEvents[i].measurement.value as boolean);
+      retValue = retValue && this.toBoolean(sourceEvents[i].measurement.value);
     }
 
     return retValue;
@@ -55,18 +57,10 @@ export class VirtualDataPointManager {
       );
       return null;
     }
-    if (
-      sourceEvents.some((event) => typeof event.measurement.value !== "boolean")
-    ) {
-      winston.warn(
-        `Virtual data point (${config.id}) from type ${config.type} requires all sources to be of type boolean!`
-      );
-      return null;
-    }
 
-    let retValue: boolean = sourceEvents[0].measurement.value as boolean;
+    let retValue = this.toBoolean(sourceEvents[0].measurement.value);
     for (let i = 1; i < sourceEvents.length; i++) {
-      retValue = retValue || (sourceEvents[i].measurement.value as boolean);
+      retValue = retValue || this.toBoolean(sourceEvents[i].measurement.value);
     }
 
     return retValue;
@@ -82,16 +76,8 @@ export class VirtualDataPointManager {
       );
       return null;
     }
-    if (
-      sourceEvents.some((event) => typeof event.measurement.value !== "boolean")
-    ) {
-      winston.warn(
-        `Virtual data point (${config.id}) from type ${config.type} requires all sources to be of type boolean!`
-      );
-      return null;
-    }
 
-    return !sourceEvents[0].measurement.value as boolean;
+    return !this.toBoolean(sourceEvents[0].measurement.value);
   }
 
   private count(
@@ -104,17 +90,12 @@ export class VirtualDataPointManager {
       );
       return null;
     }
-    if (
-      sourceEvents.some((event) => typeof event.measurement.value !== "boolean")
-    ) {
-      winston.warn(
-        `Virtual data point (${config.id}) from type ${config.type} requires all sources to be of type boolean!`
-      );
-      return null;
-    }
 
     const measurement = sourceEvents[0].measurement;
-    if (measurement.value && this.cache.hasChanged(measurement.id)) {
+    if (
+      this.toBoolean(measurement.value) &&
+      this.cache.hasChanged(measurement.id)
+    ) {
       return this.counters.increment(measurement.id);
     }
 

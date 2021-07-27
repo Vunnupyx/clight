@@ -20,6 +20,9 @@ type DataItemDict = {
   [key: string]: DataItem;
 };
 
+/**
+ * Adds an mtc data sink
+ */
 export class MTConnectDataSink extends DataSink {
   protected config: IDataSinkConfig;
   private mtcAdapter: MTConnectAdapter;
@@ -27,7 +30,7 @@ export class MTConnectDataSink extends DataSink {
   private avail: DataItem;
 
   /**
-   * Create a new instance & initialize the sync scheduler
+   * Create a new instance
    * @param params The user configuration object for this data source
    */
   constructor(params: IDataSinkParams) {
@@ -36,9 +39,11 @@ export class MTConnectDataSink extends DataSink {
     this.mtcAdapter = MTConnectManager.getAdapter();
   }
 
+  /**
+   * Sets up data items and adds them to the mtc adapter
+   */
   public init() {
     this.avail = new DataItem("avail");
-    this.avail.value = "AVAILABLE";
     this.mtcAdapter.addDataItem(this.avail);
 
     this.config.dataPoints.forEach((dp) => {
@@ -57,6 +62,10 @@ export class MTConnectDataSink extends DataSink {
     });
   }
 
+  /**
+   * Handles measurements
+   * @param params The user configuration object for this data source
+   */
   public async onMeasurements(events: IMeasurementEvent[]) {
     interface IEvent {
       mapValue?: string;
@@ -140,19 +149,29 @@ export class MTConnectDataSink extends DataSink {
     });
   }
 
+  /**
+   * Handles live cycle events
+   * @param params The user configuration object for this data source
+   */
   public async onLifecycleEvent(event: ILifecycleEvent) {
     if (event.type === DataSourceLifecycleEventTypes.Connected) {
+      console.log("AVAILABLE");
       this.avail.value === "AVAILABLE";
-      winston.info(`Datasource for datasink ${this.config.id} is available`);
+      winston.info(`Data source for data sink ${this.config.id} is available`);
     }
     if (event.type === DataSourceLifecycleEventTypes.Disconnected) {
       this.avail.unavailable();
-      winston.info(`Datasource for datasink ${this.config.id} is unavailable`);
+      winston.info(
+        `Data source for data sink ${this.config.id} is unavailable`
+      );
     }
   }
 
   public shutdown() {}
 
+  /**
+   * Disconnects all data items
+   */
   public disconnect() {
     Object.keys(this.dataItems).forEach((key) => {
       this.dataItems[key].unavailable();

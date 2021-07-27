@@ -14,7 +14,7 @@ import { DataPointMapper } from "../DataPointMapper";
 import { DataSinkManager } from "../DataSinkManager";
 
 /**
- * Launches agent and handles module lifecycles
+ * Launches agent and handles module life cycles
  */
 export class BootstrapManager {
   private configManager: ConfigManager;
@@ -80,6 +80,7 @@ export class BootstrapManager {
         measurementsBus: this.measurementsEventsBus,
       });
     }
+
     if (!this.dataSinkManager) {
       this.dataSinkManager = new DataSinkManager({
         dataSinksConfig,

@@ -39,19 +39,19 @@ A single data source supports the following configuration items:
       "readFrequency": 1200
     }
   ],
-  // Data source protocol. Supported protocals are: "s7", "ioshield"
+  // Data source protocol. Supported protocols are: "s7", "ioshield"
   "protocol": "s7",
   // The data sources connection info
   "connection": {
     // Ip Address
     "ipAddr": "192.168.0.114",
-    // Port. Default for protocal "s7": 102
+    // Port. Default for protocol "s7": 102
     "port": 102,
-    // Rack. Only required for protocal "s7"
+    // Rack. Only required for protocol "s7"
     // For S7 300, S7 1200 and S7 1500: Always 0
     // For S7 400: The rack, where the S7 is mounted
     "rack": 0,
-    // Slot. Only required for protocal "s7"
+    // Slot. Only required for protocol "s7"
     // For S7 300: Always 2
     // For S7 1200 and S7 1500: Always 1
     // For S7 400: The slot, where the S7 is mounted on the rack
@@ -76,12 +76,12 @@ A single data sink supports the following configuration items:
   "dataPoints": [
     {
       // Id of datapoint. MUST be unique (across all data sources)
-      // For protocal mtconnect, that id will be associated with the id of an data item
+      // For protocol mtconnect, that id will be associated with the id of an data item
       "id": "estop",
       // A descriptive name
       "name": "Emergency Stop",
       // The type of the mtcoonect data item. Currently supported: "event".
-      // Required for protocal "mtconnect".
+      // Required for protocol "mtconnect".
       "type": "event",
       // A mapping for mtconnect data element.
       // Boolean values can be mapped to string values. For example, the emergency stop could be mapped to the corresponding mtconnect value "TIGGERED" or "ARMED".
@@ -98,7 +98,7 @@ A single data sink supports the following configuration items:
       }
     }
   ],
-  // Data source protocol. Supported protocals are: "mtconnect"
+  // Data source protocol. Supported protocols are: "mtconnect"
   "protocol": "mtconnect"
 }
 ```
@@ -113,7 +113,7 @@ A single mapping supports the following configuration items:
   "source": "cModeAuto",
   // Id of target data point
   "target": "mode1",
-  // The alue, a boolean uses for it's target value
+  // The value, a boolean uses for it's target value
   "mapValue": "0"
 }
 ```

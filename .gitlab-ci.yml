@@ -18,7 +18,7 @@ build-runtime-staging:
       - runtime
   script:
     - yarn
-    - yarn build:all
+    - yarn build:dist
   only:
     refs:
       - staging
@@ -41,7 +41,7 @@ build-runtime-production:
       - runtime
   script:
     - yarn
-    - yarn build:all
+    - yarn build:dist
   only:
     refs:
       - main
@@ -64,7 +64,7 @@ build-runtime-dev:
       - runtime
   script:
     - yarn
-    - yarn build:all
+    - yarn build:dist
   only:
     - branches
   except:

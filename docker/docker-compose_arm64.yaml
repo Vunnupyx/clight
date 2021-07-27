@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  mdclight:
+    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-prod_arm64:latest
+    restart: always
+    volumes:
+      - type: bind
+        source: $HOST/etc/MDCLight/
+        target: /
+  mtconnect-agent:
+    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
+    restart: always
+    ports:
+      - "5000:5000"

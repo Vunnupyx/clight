@@ -21,7 +21,7 @@ export interface IDataSourceConfig {
   name: string;
   dataPoints: IDataPointConfig[];
   protocol: string;
-  connection: {
+  connection?: {
     ipAddr: string;
     port: number;
     rack: number;
@@ -31,16 +31,16 @@ export interface IDataSourceConfig {
 
 type IMTConnectDataPointTypes = "event";
 
-type MapItem = {
-  [key: string]: "string";
-};
-export type IMTConnectDataMap = MapItem[];
+// type MapItem = {
+//   [key: string]: "string";
+// };
+export type IMTConnectDataMap = object;
 
 export interface IDataSinkDataPointConfig {
   id: string;
   name: string;
   type: IMTConnectDataPointTypes;
-  map: IMTConnectDataMap;
+  map?: IMTConnectDataMap;
 }
 
 export interface IDataSinkConfig {

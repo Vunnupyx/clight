@@ -131,8 +131,6 @@ export class MTConnectAdapter {
       winston.debug(`Sending message: ${line}`);
       client.write(line);
     }
-
-    // TODO Send separate
   }
 
   /**
@@ -181,8 +179,6 @@ export class MTConnectAdapter {
 
       this.dataItems.forEach((item) => item.cleanup());
     }
-
-    // TODO Send separate
   }
 
   /**

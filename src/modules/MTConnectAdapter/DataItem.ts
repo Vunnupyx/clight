@@ -115,6 +115,14 @@ export class DataItem {
 
     return list;
   }
+
+  /**
+   * Returns the name of the data item
+   * @returns name
+   */
+  public get name(): string {
+    return this._name;
+  }
 }
 
 export class Event extends DataItem {}

@@ -10,11 +10,11 @@ import { MTConnectManager } from "../../MTConnectManager";
 import {
   DataSourceLifecycleEventTypes,
   ILifecycleEvent,
-  IMeasurementEvent,
   MTConnectDataItemTypes,
 } from "../../../common/interfaces";
 import { DataItem, Event } from "../../MTConnectAdapter/DataItem";
 import winston from "winston";
+import { IDataSourceMeasurementEvent } from "../../DataSource";
 
 type DataItemDict = {
   [key: string]: DataItem;
@@ -66,7 +66,7 @@ export class MTConnectDataSink extends DataSink {
    * Handles measurements
    * @param params The user configuration object for this data source
    */
-  public async onMeasurements(events: IMeasurementEvent[]) {
+  public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
     interface IEvent {
       mapValue?: string;
       map?: IMTConnectDataMap;
@@ -81,7 +81,7 @@ export class MTConnectDataSink extends DataSink {
       );
 
       if (!targetMapping || !this.dataItems[targetMapping.target]) {
-        winston.debug(`Target for source ${event.measurement.id} not found`);
+        // winston.debug(`Target for source ${event.measurement.id} not found`);
         return;
       }
 
@@ -107,13 +107,13 @@ export class MTConnectDataSink extends DataSink {
       let setEvent: IEvent;
       if (events.length > 1) {
         if (events.some((event) => typeof event.value !== "boolean")) {
-          winston.error(
+          winston.warn(
             `Multiple non boolean source events for target: ${target}!`
           );
           return;
         }
         if (events.some((event) => typeof event.mapValue === "undefined")) {
-          winston.error(`Map value for enum taget: ${target} not provided!`);
+          winston.warn(`Map value for enum taget: ${target} not provided!`);
           return;
         }
 

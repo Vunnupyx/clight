@@ -1,6 +1,7 @@
 import {
   IDataSourceEvent,
   IDataSourceLifecycleEvent,
+  IDataSourceMeasurementEvent,
   IMeasurement,
 } from "../modules/DataSource";
 
@@ -122,11 +123,6 @@ export interface IErrorEvent extends IBaseAppEvent {
   level: EventLevels;
 }
 
-export interface IMeasurementEvent extends IBaseAppEvent {
-  measurement: IMeasurement;
-  dataSource: IDataSourceEvent;
-}
-
 export type ILifecycleEvent = IDataSourceLifecycleEvent | IBaseLifecycleEvent;
 
-export type IAppEvent = ILifecycleEvent | IMeasurementEvent | IErrorEvent;
+export type IAppEvent = ILifecycleEvent | IErrorEvent;

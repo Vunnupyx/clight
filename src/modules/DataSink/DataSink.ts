@@ -1,7 +1,8 @@
 import { IDataSinkConfig } from "../ConfigManager/interfaces";
 import { IDataSinkParams } from "./interfaces";
-import { ILifecycleEvent, IMeasurementEvent } from "../../common/interfaces";
+import { ILifecycleEvent } from "../../common/interfaces";
 import { DataPointMapper } from "../DataPointMapper";
+import { IDataSourceMeasurementEvent } from "../DataSource";
 
 export abstract class DataSink {
   protected config: IDataSinkConfig;
@@ -20,7 +21,7 @@ export abstract class DataSink {
    * Each data sink should handle measurements
    */
   public abstract onMeasurements(
-    measurements: IMeasurementEvent[]
+    measurements: IDataSourceMeasurementEvent[]
   ): Promise<void>;
 
   /**

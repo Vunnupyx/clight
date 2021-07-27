@@ -35,6 +35,7 @@ describe("Test DataPointMapper", () => {
     config.config = {
       dataSources: [dataSource],
       dataSinks: [dataSink],
+      virtualDataPoints: [],
       mapping: [
         {
           source: "source1",

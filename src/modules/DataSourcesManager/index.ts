@@ -1,22 +1,28 @@
 import { IDataSourceConfig } from "../ConfigManager/interfaces";
 import { DataSourceEventTypes } from "../DataSource";
 import { DataSource } from "../DataSource/DataSource";
-
-import { EventBus } from "../EventBus/index";
+import { EventBus, MeasurementEventBus } from "../EventBus/index";
 import { IDataSourcesManagerParams } from "./interfaces";
 import { createDataSource } from "../DataSource/DataSourceFactory";
-import { ILifecycleEvent, IMeasurementEvent } from "../../common/interfaces";
+import { ILifecycleEvent } from "../../common/interfaces";
+import { DataPointCache } from "../DatapointCache";
+import { IDataSourceMeasurementEvent } from "../DataSource/interfaces";
+import { VirtualDataPointManager } from "../VirtualDataPointManager";
 
 export class DataSourcesManager {
   private dataSourcesConfig: ReadonlyArray<IDataSourceConfig>;
-  private measurementsBus: EventBus<IMeasurementEvent[]>;
+  private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSources: ReadonlyArray<DataSource | void>;
+  private dataPointCache: DataPointCache;
+  private virtualDataPointManager: VirtualDataPointManager;
 
   constructor(params: IDataSourcesManagerParams) {
     this.dataSourcesConfig = params.dataSourcesConfigs;
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
+    this.dataPointCache = params.dataPointCache;
+    this.virtualDataPointManager = params.virtualDataPointManager;
     this.spawnDataSources();
   }
 
@@ -46,9 +52,16 @@ export class DataSourcesManager {
   }
 
   private onMeasurementEvent = (
-    measurementEvents: IMeasurementEvent[]
+    measurementEvents: IDataSourceMeasurementEvent[]
   ): void => {
-    this.measurementsBus.push(measurementEvents);
+    measurementEvents.forEach((event) => {
+      this.dataPointCache.update(event);
+    });
+
+    this.measurementsBus.push([
+      ...measurementEvents,
+      ...this.virtualDataPointManager.getVirtualEvents(measurementEvents),
+    ]);
   };
 
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {

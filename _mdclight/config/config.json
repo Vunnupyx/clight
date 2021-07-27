@@ -8,61 +8,61 @@
           "id": "estop",
           "name": "Emergency Stop",
           "address": "DB10,X106.1",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "cModeAuto",
           "name": "Controller Mode Automatic",
           "address": "DB11,X6.0",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "cModeMDA",
           "name": "Controller Mode MDA",
           "address": "DB11,X6.1",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "cModeM",
           "name": "Controller Mode Manual",
           "address": "DB11,X6.2",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "execActive",
           "name": "Execution Active",
           "address": "DB21,X35.5",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "execOpStop",
           "name": "Execution Optional Stop",
           "address": "DB21,X35.6",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "execProgComp",
           "name": "Execution Program Completed",
           "address": "DB21,X35.7",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "execReady",
           "name": "Execution READY",
           "address": "DB21,X36.5",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "program",
           "name": "Program",
           "address": "DB12,S2.255",
-          "readFrequency": 1000
+          "readFrequency": 5000
         },
         {
           "id": "partCount",
           "name": "Part Count",
           "address": "DB12,INT0",
-          "readFrequency": 1000
+          "readFrequency": 5000
         }
       ],
       "protocol": "s7",
@@ -80,7 +80,7 @@
       "name": "My MTConnect Machine",
       "dataPoints": [
         {
-          "id": "mode4",
+          "id": "mode1",
           "name": "Controller Mode",
           "type": "event",
           "map": {
@@ -90,7 +90,7 @@
           }
         },
         {
-          "id": "execution4",
+          "id": "execution1",
           "name": "Execution",
           "type": "event",
           "map": {
@@ -110,12 +110,12 @@
           }
         },
         {
-          "id": "program4",
+          "id": "program1",
           "name": "Programm",
           "type": "event"
         },
         {
-          "id": "part_count4",
+          "id": "part_count1",
           "name": "Part Count",
           "type": "event"
         }
@@ -130,46 +130,46 @@
     },
     {
       "source": "cModeAuto",
-      "target": "mode4",
+      "target": "mode1",
       "mapValue": "0"
     },
     {
       "source": "cModeMDA",
-      "target": "mode4",
+      "target": "mode1",
       "mapValue": "1"
     },
     {
       "source": "cModeM",
-      "target": "mode4",
+      "target": "mode1",
       "mapValue": "2"
     },
     {
       "source": "execActive",
-      "target": "execution4",
+      "target": "execution1",
       "mapValue": "0"
     },
     {
       "source": "execOpStop",
-      "target": "execution4",
+      "target": "execution1",
       "mapValue": "1"
     },
     {
       "source": "execProgComp",
-      "target": "execution4",
+      "target": "execution1",
       "mapValue": "2"
     },
     {
       "source": "execReady",
-      "target": "execution4",
+      "target": "execution1",
       "mapValue": "3"
     },
     {
       "source": "program",
-      "target": "program4"
+      "target": "program1"
     },
     {
       "source": "partCount",
-      "target": "part_count4"
+      "target": "part_count1"
     }
   ]
 }

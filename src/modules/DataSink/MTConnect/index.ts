@@ -139,7 +139,17 @@ export class MTConnectDataSink extends DataSink {
         value = setEvent.map[setEvent.mapValue];
       } else if (typeof setEvent.value === "boolean") {
         value = setEvent.value ? setEvent.map["true"] : setEvent.map["false"];
-        if (!value) winston.error(`Map for boolean target ${target} required!`);
+        if (!value) {
+          winston.error(`Map for boolean target ${target} required!`);
+          return;
+        }
+      } else if (
+        setEvent.map &&
+        Object.keys(setEvent.map).some((key) => {
+          return key === setEvent.value.toString();
+        })
+      ) {
+        value = setEvent.map[setEvent.value];
       } else {
         value = setEvent.value;
       }

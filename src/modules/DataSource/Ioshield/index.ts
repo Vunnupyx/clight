@@ -39,11 +39,8 @@ export class IoshieldDataSource extends DataSource {
         return currentIntervals.includes(rf);
       });
 
-    console.log(currentCycleDataPoints);
     try {
       const results = await this.mraaClient.getValues();
-
-      console.log(results);
 
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
@@ -60,10 +57,8 @@ export class IoshieldDataSource extends DataSource {
         measurements.push(measurement);
       }
 
-      console.log(measurements);
       if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
-      console.log(e);
       winston.error(e);
     }
   }

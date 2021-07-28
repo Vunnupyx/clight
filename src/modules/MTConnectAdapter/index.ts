@@ -120,7 +120,7 @@ export class MTConnectAdapter {
    * @returns void
    */
   private sendAllTo(client: Socket) {
-    const { together } = this.getItemLists(true);
+    const { together, separate } = this.getItemLists(true);
 
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
@@ -130,6 +130,18 @@ export class MTConnectAdapter {
 
       winston.debug(`Sending message: ${line}`);
       client.write(line);
+    }
+
+    if (separate.length > 0) {
+      const timestamp = this.getCurrentUtcTimestamp();
+
+      for (const item of separate) {
+        const line = timestamp + "|" + item.toString() + "\n";
+
+        winston.debug(`Sending message: ${line.replace(/\n+$/, "")}`);
+
+        client.write(line);
+      }
     }
   }
 
@@ -164,21 +176,37 @@ export class MTConnectAdapter {
    * @returns void
    */
   public sendChanged(): void {
-    const { together } = this.getItemLists();
+    const { together, separate } = this.getItemLists();
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
 
       for (const item of together) line += "|" + item.toString();
       line += "\n";
 
-      winston.debug(`Sending message: ${line.replace(/\n+$/, "")}`);
+      if (this.clients.length > 0)
+        winston.debug(`Sending message: ${line.replace(/\n+$/, "")}`);
 
       for (const client of this.clients) {
         client.write(line);
       }
-
-      this.dataItems.forEach((item) => item.cleanup());
     }
+
+    if (separate.length > 0) {
+      const timestamp = this.getCurrentUtcTimestamp();
+
+      for (const item of separate) {
+        const line = timestamp + "|" + item.toString() + "\n";
+
+        if (this.clients.length > 0)
+          winston.debug(`Sending message: ${line.replace(/\n+$/, "")}`);
+
+        for (const client of this.clients) {
+          client.write(line);
+        }
+      }
+    }
+
+    this.dataItems.forEach((item) => item.cleanup());
   }
 
   /**

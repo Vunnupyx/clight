@@ -12,7 +12,7 @@ import {
   ILifecycleEvent,
   MTConnectDataItemTypes,
 } from "../../../common/interfaces";
-import { DataItem, Event } from "../../MTConnectAdapter/DataItem";
+import { Condition, DataItem, Event } from "../../MTConnectAdapter/DataItem";
 import winston from "winston";
 import { IDataSourceMeasurementEvent } from "../../DataSource";
 
@@ -27,7 +27,10 @@ export class MTConnectDataSink extends DataSink {
   protected config: IDataSinkConfig;
   private mtcAdapter: MTConnectAdapter;
   private dataItems: DataItemDict = {};
-  private avail: DataItem;
+  private avail: Event;
+  private system: Condition;
+  private logic1: Condition;
+  private motion1: Condition;
 
   /**
    * Create a new instance
@@ -43,8 +46,15 @@ export class MTConnectDataSink extends DataSink {
    * Sets up data items and adds them to the mtc adapter
    */
   public init() {
-    this.avail = new DataItem("avail");
+    this.avail = new Event("avail");
     this.mtcAdapter.addDataItem(this.avail);
+
+    this.system = new Condition("system");
+    this.mtcAdapter.addDataItem(this.system);
+    this.logic1 = new Condition("logic1");
+    this.mtcAdapter.addDataItem(this.logic1);
+    this.motion1 = new Condition("motion1");
+    this.mtcAdapter.addDataItem(this.motion1);
 
     this.config.dataPoints.forEach((dp) => {
       let dataItem: DataItem;

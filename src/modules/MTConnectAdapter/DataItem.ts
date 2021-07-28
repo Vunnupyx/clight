@@ -126,3 +126,12 @@ export class DataItem {
 }
 
 export class Event extends DataItem {}
+
+export class Condition extends DataItem {
+  protected _newLine = true;
+  public toString(): string {
+    return (
+      this.name + "|" + "NORMAL" + "|" + "" + "|" + "" + "|" + "" + "|" + ""
+    );
+  }
+}

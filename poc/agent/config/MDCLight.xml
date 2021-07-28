@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<MTConnectDevices xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:m="urn:mtconnect.org:MTConnectDevices:1.3"
-  xmlns:ms="http://www.moriwebmonitor.com"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="urn:mtconnect.org:MTConnectDevices:1.3">
-  <Header creationTime="2015-11-18T15:37:00" sender="localhost" instanceId="1237628993" bufferSize="100000" version="1.3.0"/>
+<MTConnectDevices xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="urn:mtconnect.org:MTConnectDevices:1.3" xmlns:ms="http://www.moriwebmonitor.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mtconnect.org:MTConnectDevices:1.3">
+  <Header creationTime="2015-11-18T15:37:00" sender="localhost" instanceId="1237628993" bufferSize="100000" version="1.3.0" />
   <Devices>
     <Device uuid="001" name="DMG_MORI_NTX11140602" sampleRate="1000" id="DMG_MORI_NTX11140602_0">
       <Description manufacturer="DMG MORI" serialNumber="DMG_MORI_NTX11140602" />
@@ -43,8 +39,8 @@
             <DataItem type="ms:LIGHT_STATE_GREEN" category="EVENT" id="DMG_MORI_NTX11140602_88" name="light_state_green" />
             <DataItem type="ms:LIGHT_STATE_BLUE" category="EVENT" id="DMG_MORI_NTX11140602_89" name="light_state_blue" />
             <DataItem type="ms:CONTROL_VERSION_NUMBER" category="EVENT" id="DMG_MORI_NTX11140602_90" name="controlVersion" />
-            <DataItem type="ms:MTCONNECT_ADAPTER_VERSION" category="EVENT" id="DMG_MORI_NTX11140602_91" name="mtconnect_adapter_version"/>
-            <DataItem type="ms:NUMBER_OF_ACTIVE_ALARMS" category="EVENT" id="DMG_MORI_NTX11140602_189" name="numberOfActiveAlarms"/>
+            <DataItem type="ms:MTCONNECT_ADAPTER_VERSION" category="EVENT" id="DMG_MORI_NTX11140602_91" name="mtconnect_adapter_version" />
+            <DataItem type="ms:NUMBER_OF_ACTIVE_ALARMS" category="EVENT" id="DMG_MORI_NTX11140602_189" name="numberOfActiveAlarms" />
             <DataItem type="ms:OPERATION_TIME" category="SAMPLE" id="DMG_MORI_NTX11140602_92" name="operationTime" units="SECOND" />
             <DataItem type="ms:POWER_ON_TIME" category="SAMPLE" id="DMG_MORI_NTX11140602_93" name="powerOnTime" units="SECOND" />
             <DataItem type="ms:CUTTING_TIME" category="SAMPLE" id="DMG_MORI_NTX11140602_94" name="cuttingTime" units="SECOND" />

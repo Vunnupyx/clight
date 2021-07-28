@@ -41,6 +41,7 @@ export interface IDataSinkDataPointConfig {
   name: string;
   type: IMTConnectDataPointTypes;
   map?: IMTConnectDataMap;
+  initialValue: string | number;
 }
 
 export interface IDataSinkConfig {

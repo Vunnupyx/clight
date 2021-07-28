@@ -570,28 +570,7 @@
       "protocol": "mtconnect"
     }
   ],
-  "virtualDataPoints": [
-    {
-      "id": "vdpAnd",
-      "sources": ["greenLight", "redLight"],
-      "type": "and"
-    },
-    {
-      "id": "vdpOr",
-      "sources": ["greenLight", "redLight"],
-      "type": "or"
-    },
-    {
-      "id": "vdpNot",
-      "sources": ["greenLight", "redLight"],
-      "type": "not"
-    },
-    {
-      "id": "vdpCounter",
-      "sources": ["greenLight"],
-      "type": "counter"
-    }
-  ],
+  "virtualDataPoints": [],
   "mapping": [
     {
       "source": "estop",

@@ -59,6 +59,10 @@ export class MTConnectDataSink extends DataSink {
 
       this.mtcAdapter.addDataItem(dataItem);
       this.dataItems[dp.id] = dataItem;
+
+      if (typeof dp.initialValue !== "undefined") {
+        dataItem.value = dp.initialValue;
+      }
     });
   }
 

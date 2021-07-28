@@ -17,7 +17,13 @@ export class VirtualDataPointManager {
     this.cache = cache;
     this.counters = new CounterManager();
   }
-
+  /**
+   * Calculates virtual data points from type and
+   *
+   * @param  {IDataSourceMeasurementEvent[]} sourceEvents
+   * @param  {IVirtualDataPointConfig} config
+   * @returns boolean
+   */
   private and(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
@@ -45,6 +51,13 @@ export class VirtualDataPointManager {
     return retValue;
   }
 
+  /**
+   * Calculates virtual data points from type or
+   *
+   * @param  {IDataSourceMeasurementEvent[]} sourceEvents
+   * @param  {IVirtualDataPointConfig} config
+   * @returns boolean
+   */
   private or(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
@@ -72,6 +85,13 @@ export class VirtualDataPointManager {
     return retValue;
   }
 
+  /**
+   * Calculates virtual data points from type not
+   *
+   * @param  {IDataSourceMeasurementEvent[]} sourceEvents
+   * @param  {IVirtualDataPointConfig} config
+   * @returns boolean
+   */
   private not(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
@@ -94,6 +114,13 @@ export class VirtualDataPointManager {
     return !sourceEvents[0].measurement.value as boolean;
   }
 
+  /**
+   * Calculates virtual data points from type not
+   *
+   * @param  {IDataSourceMeasurementEvent[]} sourceEvents
+   * @param  {IVirtualDataPointConfig} config
+   * @returns boolean
+   */
   private count(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
@@ -121,6 +148,12 @@ export class VirtualDataPointManager {
     return null;
   }
 
+  /**
+   * Calculates an virtual data point
+   * @param  {IDataSourceMeasurementEvent[]} sourceEvents
+   * @param  {IVirtualDataPointConfig} config
+   * @returns boolean
+   */
   private calulateValue(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
@@ -142,6 +175,12 @@ export class VirtualDataPointManager {
     }
   }
 
+  /**
+   * Calculates all virtual data points, that are related to the input events
+   * (Only if one or more events of sources are provided)
+   * @param  {IDataSourceMeasurementEvent[]} events
+   * @returns IDataSourceMeasurementEvent
+   */
   public getVirtualEvents(
     events: IDataSourceMeasurementEvent[]
   ): IDataSourceMeasurementEvent[] {

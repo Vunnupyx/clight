@@ -18,9 +18,9 @@ A single data source supports the following configuration items:
 ```json
 {
   // Id of data source. MUST be unique
-  "id": "s7_1500",
+  "id": "dataSource",
   // A descriptive name
-  "name": "My s7",
+  "name": "My data source",
   // A list of data points
   "dataPoints": [
     {
@@ -37,6 +37,8 @@ A single data source supports the following configuration items:
       // Reading a real value: "DB93,REAL100"
       // Reading a string value with an length of 10: "DB100,S0.10"
       // Reading a string value with an length of 255: "DB100,S0.255"
+      // Some examples for protocol "ioshield"
+      // Reading inputs: "DI0" - "DI9"
       "address": "DB93,X0.0",
       // Read frequency in ms
       "readFrequency": 1200
@@ -44,17 +46,17 @@ A single data source supports the following configuration items:
   ],
   // Data source protocol. Supported protocols are: "s7", "ioshield"
   "protocol": "s7",
-  // The data sources connection info
+  // The data sources connection info. Only required for protocol "s7"
   "connection": {
     // Ip Address
     "ipAddr": "192.168.0.114",
     // Port. Default for protocol "s7": 102
     "port": 102,
-    // Rack. Only required for protocol "s7"
+    // Rack.
     // For S7 300, S7 1200 and S7 1500: Always 0
     // For S7 400: The rack, where the S7 is mounted
     "rack": 0,
-    // Slot. Only required for protocol "s7"
+    // Slot.
     // For S7 300: Always 2
     // For S7 1200 and S7 1500: Always 1
     // For S7 400: The slot, where the S7 is mounted on the rack
@@ -62,6 +64,23 @@ A single data source supports the following configuration items:
   }
 }
 ```
+
+### S7 Addresses for MTConnect Values
+
+EXECUTION
+
+- ACTIVE - DB21,X35.5 (BOOL) - E_ChanActive // Channel active
+- OPERIONAL_STOP - DB21,X35.6 (BOOL) E_ChanInterrupt // Channel interrupted
+- PROGRAM_COMPLETED - DB21,X35.7 (BOOL) E_ChanReset // Channel reset
+- READY - DB21,X36.5 (BOOL) - E_ChanRO // Channel ready for operation
+
+CONTROLLER_MODE
+
+- AUTOMATIC - DB11,X6.0 (BOOL) - „BAG”.E_AUTO
+- MANUAL_DATA_INPUT DB11,X6.1 - „BAG”.E_MDA
+- MANUAL - DB11,DBX6.2 - „BAG”.E_JOG
+
+TOOL_NUMBER - NC-Var & Nathstellensignale: 2.14.2 - %DB1072.DBW28 (INT)
 
 ## Data sinks
 
@@ -168,7 +187,7 @@ If the source value is from type string: x = string.length > 0 ("" => false, "a.
 }
 ```
 
-# Mapping
+## Mapping
 
 A single mapping supports the following configuration items:
 

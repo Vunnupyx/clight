@@ -61,7 +61,7 @@
         {
           "id": "toolnumber1",
           "name": "Program",
-          "address": "DB12,S262.255",
+          "address": "DB1072,INT28",
           "readFrequency": 10000
         },
         {

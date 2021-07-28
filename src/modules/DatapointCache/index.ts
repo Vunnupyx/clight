@@ -14,19 +14,29 @@ export class DataPointCache {
   private dataPoints: EventsById = {};
 
   /**
-   * Adds or updates the last event of a data point.
-   * @param  {string} id
-   * @param  {Value} value
+   * Adds or updates one or multiple events
+   * @param  {IDataSourceMeasurementEvent | IDataSourceMeasurementEvent[]} events
    * @returns void
    */
-  public update(event: IDataSourceMeasurementEvent): void {
-    const lastEvent = this.getLastEvent(event.measurement.id);
-    this.dataPoints[event.measurement.id] = {
-      changed: lastEvent
-        ? lastEvent.measurement.value !== event.measurement.value
-        : false,
-      event,
-    };
+  public update(
+    events: IDataSourceMeasurementEvent | IDataSourceMeasurementEvent[]
+  ): void {
+    let _events = [];
+    if (Array.isArray(events)) {
+      _events = events;
+    } else {
+      _events = [events];
+    }
+
+    _events.forEach((event) => {
+      const lastEvent = this.getLastEvent(event.measurement.id);
+      this.dataPoints[event.measurement.id] = {
+        changed: lastEvent
+          ? lastEvent.measurement.value !== event.measurement.value
+          : false,
+        event,
+      };
+    });
   }
 
   /**
@@ -45,5 +55,12 @@ export class DataPointCache {
    */
   public hasChanged(id: string): boolean {
     return this.dataPoints[id] ? this.dataPoints[id].changed : true;
+  }
+
+  /**
+   * Clears all data points
+   */
+  public clearAll(): void {
+    this.dataPoints = {};
   }
 }

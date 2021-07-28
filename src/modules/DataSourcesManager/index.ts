@@ -55,9 +55,7 @@ export class DataSourcesManager {
   private onMeasurementEvent = (
     measurementEvents: IDataSourceMeasurementEvent[]
   ): void => {
-    measurementEvents.forEach((event) => {
-      this.dataPointCache.update(event);
-    });
+    this.dataPointCache.update(measurementEvents);
 
     this.measurementsBus.push([
       ...measurementEvents,

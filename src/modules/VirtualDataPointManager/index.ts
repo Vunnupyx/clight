@@ -179,7 +179,7 @@ export class VirtualDataPointManager {
       virtualEvents.push(newEvent);
     }
 
-    virtualEvents.forEach((event) => this.cache.update(event));
+    this.cache.update(virtualEvents);
 
     return virtualEvents;
   }

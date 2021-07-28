@@ -57,9 +57,16 @@ export interface IDataPointMapping {
   priotity?: number;
 }
 
+export interface IVirtualDataPointConfig {
+  id: string;
+  sources: string[];
+  type: "and" | "or" | "not" | "counter";
+}
+
 export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];
+  virtualDataPoints: IVirtualDataPointConfig[];
   mapping: IDataPointMapping[];
 }
 

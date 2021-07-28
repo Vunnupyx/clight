@@ -1,5 +1,6 @@
 import winston from "winston";
-import { IAppEvent, IMeasurementEvent } from "../../common/interfaces";
+import { IAppEvent } from "../../common/interfaces";
+import { IDataSourceMeasurementEvent } from "../DataSource";
 import { LogLevel } from "../Logger/interfaces";
 import { TSubscriberFn } from "./interfaces";
 
@@ -20,7 +21,7 @@ export class EventBus<TEventType> {
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  protected log(event: IAppEvent | IAppEvent[]) {
+  protected log(event: IAppEvent[]) {
     const events = Array.isArray(event) ? event : [event];
 
     events.forEach((event) => {
@@ -55,13 +56,16 @@ export class EventBus<TEventType> {
   }
 }
 
-export class MeasurementEventBus<TEventType> extends EventBus<TEventType> {
+export class MeasurementEventBus extends EventBus<
+  IDataSourceMeasurementEvent[]
+> {
   /**
    * Logs event
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  protected log(events: IMeasurementEvent[]) {
+  // @ts-ignore
+  protected log(events: IDataSourceMeasurementEvent[]) {
     events.forEach((event) => {
       const { measurement } = event;
       const message = `Level: DataPoint, Type: Measurement${

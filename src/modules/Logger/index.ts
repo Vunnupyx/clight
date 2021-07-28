@@ -1,6 +1,11 @@
 import winston from "winston";
 import path from "path";
 
+var getLabel = function (callingModule) {
+  var parts = callingModule.filename.split("/");
+  return parts[parts.length - 2] + "/" + parts.pop();
+};
+
 /**
  * Initializes settings for winston logger
  */

@@ -5,13 +5,15 @@ import {
   EventLevels,
   IErrorEvent,
   ILifecycleEvent,
-  IMeasurementEvent,
 } from "../../common/interfaces";
 import { ConfigManager } from "../ConfigManager";
 import { LogLevel } from "../Logger/interfaces";
 import { MTConnectManager } from "../MTConnectManager";
 import { DataPointMapper } from "../DataPointMapper";
 import { DataSinkManager } from "../DataSinkManager";
+import { DataPointCache } from "../DatapointCache";
+import { IDataSourceMeasurementEvent } from "../DataSource";
+import { VirtualDataPointManager } from "../VirtualDataPointManager";
 
 /**
  * Launches agent and handles module life cycles
@@ -22,19 +24,21 @@ export class BootstrapManager {
   private dataSinkManager: DataSinkManager;
   private errorEventsBus: EventBus<IErrorEvent>;
   private lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private measurementsEventsBus: EventBus<IMeasurementEvent[]>;
+  private measurementsEventsBus: MeasurementEventBus;
+  private dataPointCache: DataPointCache;
+  private virtualDataPointManager: VirtualDataPointManager;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
     this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(LogLevel.INFO);
-    this.measurementsEventsBus = new MeasurementEventBus<IMeasurementEvent[]>(
-      LogLevel.DEBUG
-    );
+    this.measurementsEventsBus = new MeasurementEventBus(LogLevel.DEBUG);
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,
       lifecycleEventsBus: this.lifecycleEventsBus,
     });
+
+    this.dataPointCache = new DataPointCache();
   }
 
   /**
@@ -69,12 +73,24 @@ export class BootstrapManager {
    * @returns Promise
    */
   private async loadModules(): Promise<void> {
-    const { dataSources: dataSourcesConfigs, dataSinks: dataSinksConfig } =
-      this.configManager.config;
+    const {
+      dataSources: dataSourcesConfigs,
+      dataSinks: dataSinksConfig,
+      virtualDataPoints: virtualDataPointConfig,
+    } = this.configManager.config;
+
+    if (!this.virtualDataPointManager) {
+      this.virtualDataPointManager = new VirtualDataPointManager(
+        virtualDataPointConfig,
+        this.dataPointCache
+      );
+    }
 
     if (!this.dataSourcesManager) {
       this.dataSourcesManager = new DataSourcesManager({
         dataSourcesConfigs,
+        dataPointCache: this.dataPointCache,
+        virtualDataPointManager: this.virtualDataPointManager,
         errorBus: this.errorEventsBus,
         lifecycleBus: this.lifecycleEventsBus,
         measurementsBus: this.measurementsEventsBus,
@@ -84,6 +100,7 @@ export class BootstrapManager {
     if (!this.dataSinkManager) {
       this.dataSinkManager = new DataSinkManager({
         dataSinksConfig,
+        dataPointCache: this.dataPointCache,
         errorBus: this.errorEventsBus,
         lifecycleBus: this.lifecycleEventsBus,
         measurementsBus: this.measurementsEventsBus,

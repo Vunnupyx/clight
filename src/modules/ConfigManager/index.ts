@@ -21,6 +21,7 @@ export class ConfigManager {
   public config: IConfig = {
     dataSources: [],
     dataSinks: [],
+    virtualDataPoints: [],
     mapping: [],
   };
   public id: string | null = null;

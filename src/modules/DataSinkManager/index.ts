@@ -1,14 +1,14 @@
 import { IDataSinkConfig } from "../ConfigManager/interfaces";
-import { EventBus } from "../EventBus/index";
+import { EventBus, MeasurementEventBus } from "../EventBus/index";
 import { IDataSinkManagerParams } from "./interfaces";
 import { createDataSink } from "../DataSink/DataSinkFactory";
-import { ILifecycleEvent, IMeasurementEvent } from "../../common/interfaces";
+import { ILifecycleEvent } from "../../common/interfaces";
 import { DataSink } from "../DataSink/DataSink";
 import { MTConnectManager } from "../MTConnectManager";
 
 export class DataSinkManager {
   private dataSinkConfig: ReadonlyArray<IDataSinkConfig>;
-  private measurementsBus: EventBus<IMeasurementEvent[]>;
+  private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: ReadonlyArray<DataSink>;
 

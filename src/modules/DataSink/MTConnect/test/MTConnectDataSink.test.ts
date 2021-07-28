@@ -2,8 +2,6 @@ import { MTConnectDataSink } from "..";
 import {
   DataSourceLifecycleEventTypes,
   EventLevels,
-  ILifecycleEvent,
-  IMeasurementEvent,
 } from "../../../../common/interfaces";
 import { ConfigManager } from "../../../ConfigManager";
 import {
@@ -11,6 +9,7 @@ import {
   IDataSourceConfig,
 } from "../../../ConfigManager/interfaces";
 import { DataPointMapper } from "../../../DataPointMapper";
+import { IDataSourceMeasurementEvent } from "../../../DataSource";
 import { EventBus } from "../../../EventBus";
 import { MTConnectAdapter } from "../../../MTConnectAdapter";
 import { MTConnectManager } from "../../../MTConnectManager";
@@ -85,6 +84,7 @@ describe("Test MTConnectDataSink", () => {
     config.config = {
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
+      virtualDataPoints: [],
       mapping: [{ source: "source", target: "target" }],
     };
 
@@ -101,10 +101,7 @@ describe("Test MTConnectDataSink", () => {
 
     dataSink.init();
 
-    const event: IMeasurementEvent = {
-      id: "",
-      level: EventLevels.DataPoint,
-      type: "",
+    const event: IDataSourceMeasurementEvent = {
       measurement: {
         id: "source",
         name: "",
@@ -154,6 +151,7 @@ describe("Test MTConnectDataSink", () => {
     config.config = {
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
+      virtualDataPoints: [],
       mapping: [
         { source: "source1", target: "target", mapValue: "0" },
         { source: "source2", target: "target", mapValue: "1" },
@@ -173,10 +171,7 @@ describe("Test MTConnectDataSink", () => {
 
     dataSink.init();
 
-    const event1: IMeasurementEvent = {
-      id: "",
-      level: EventLevels.DataPoint,
-      type: "",
+    const event1: IDataSourceMeasurementEvent = {
       measurement: {
         id: "source1",
         name: "",
@@ -187,10 +182,7 @@ describe("Test MTConnectDataSink", () => {
         protocol: "mtconnect",
       },
     };
-    const event2: IMeasurementEvent = {
-      id: "",
-      level: EventLevels.DataPoint,
-      type: "",
+    const event2: IDataSourceMeasurementEvent = {
       measurement: {
         id: "source2",
         name: "",
@@ -244,6 +236,7 @@ describe("Test MTConnectDataSink", () => {
     config.config = {
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
+      virtualDataPoints: [],
       mapping: [
         { source: "source1", target: "target2" },
         { source: "source2", target: "target1" },
@@ -263,10 +256,7 @@ describe("Test MTConnectDataSink", () => {
 
     dataSink.init();
 
-    const event1: IMeasurementEvent = {
-      id: "",
-      level: EventLevels.DataPoint,
-      type: "",
+    const event1: IDataSourceMeasurementEvent = {
       measurement: {
         id: "source1",
         name: "",
@@ -277,10 +267,7 @@ describe("Test MTConnectDataSink", () => {
         protocol: "mtconnect",
       },
     };
-    const event2: IMeasurementEvent = {
-      id: "",
-      level: EventLevels.DataPoint,
-      type: "",
+    const event2: IDataSourceMeasurementEvent = {
       measurement: {
         id: "source2",
         name: "",
@@ -326,8 +313,6 @@ describe("Test MTConnectDataSink", () => {
 
     const avail = addDataItemMock.mock.calls[0][0];
 
-    console.log(avail);
-
     expect(avail.isUnavailable).toBeTruthy();
 
     dataSink.onLifecycleEvent({
@@ -335,8 +320,6 @@ describe("Test MTConnectDataSink", () => {
       level: EventLevels.DataPoint,
       type: DataSourceLifecycleEventTypes.Connected,
     });
-
-    console.log(avail);
 
     expect(avail.value).toBe("AVAILABLE");
 

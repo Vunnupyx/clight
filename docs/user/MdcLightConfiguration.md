@@ -1,12 +1,13 @@
 # Configure data sources
 
-The data source config consists of 3 components
+The data source configuration consists of 4 components
 
 - dataSources: A list of southbound data sources (currently supported: s7)
 - dataSinks: A list of northbound data "sinks" (currently supported: MTConnect)
+- virtualDataPoints: A list of virtual data points to link multiple source data points together
 - mapping: A list of connections for data points of the data source and data sink
 
-An example can be found here: ../../\_mdclight/config/config.json
+There are two example configuration inside: ../../\_mdclight/config/
 
 ## Data sources
 
@@ -29,6 +30,8 @@ A single data source supports the following configuration items:
       "name": "Emergency Stop",
       // Data point address
       // Some examples for protocol "s7"
+      // Reading an input: "I0.0"
+      // Reading an input: "Q0.0"
       // Reading a boolean value: "DB93,X0.0"
       // Reading an integer value: "DB93,INT44"
       // Reading a real value: "DB93,REAL100"
@@ -100,6 +103,68 @@ A single data sink supports the following configuration items:
   ],
   // Data source protocol. Supported protocols are: "mtconnect"
   "protocol": "mtconnect"
+}
+```
+
+## Virtual data points
+
+With virtual data points you can create additional data points for further use.
+There are 4 types of operants:
+
+- and
+- or
+- not
+- counter
+
+Virtual data points must consist out of one or more sources (id's of data points from real data sources or id's of other virtual data points), an unique id (across all data sources) and the type (see above).
+
+Important: If a virtual data point is defined as source of another virtual data point, the source virtual data point must be defined before it is used!
+
+All operations are converting non boolean source values into booleans.
+If the source value is from type number: x = number > 0 (0 => false, 1, 2, 3, ...n => true)
+If the source value is from type string: x = string.length > 0 ("" => false, "a..." => true)
+
+```json
+// Implementation of a "AND Operation". If all sources are "true", the result is also true.
+{
+  "id": "andResult",
+  // Virtual data points from type "or" must contain more then 1 source
+  "sources": ["inputAnd1", "inputAnd2"],
+  "type": "and",
+},
+// Implementation of a "OR Operation". If one source is "true", the result is also true.
+{
+  "id": "orResult",
+  // Virtual data points from type "or" must contain more then 1 source
+  "sources": ["inputOr1", "inputOr2"],
+  "type": "or",
+},
+// Implementation of a "NOT Operation". If the source is "true", the result is false.
+{
+  "id": "notResult",
+  // Virtual data points from type "not" must contain exactly one source
+  "sources": ["inputNot1"],
+  "type": "not",
+},
+// Implementation of an counter. The counter counts up, on every rising flag of the source
+// Counters are persistent across reboots. If you need to reset counters, you must delete the file where there are stored.
+// The file located inside the configuration folder
+{
+  "id": "counterResult",
+  // Virtual data points from type "counter" must contain exactly one source
+  "sources": ["inputCounter1"],
+  "type": "counter",
+},
+// Examples of nested virtual data points. Sources must be defined first!
+{
+  "id": "nestedAndResult1",
+  "sources": ["andResult", "orResult"],
+  "type": "and",
+},
+{
+  "id": "nestedOrResult2",
+  "sources": ["nested1AndResult", "notResult"],
+  "d": "or",
 }
 ```
 

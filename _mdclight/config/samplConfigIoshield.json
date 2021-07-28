@@ -5,31 +5,43 @@
       "name": "NC",
       "dataPoints": [
         {
+          "id": "estop",
+          "name": "Emergency Stop",
+          "address": "DB10,X106.1",
+          "readFrequency": 10000
+        },
+        {
           "id": "redLight",
           "name": "Red Light",
-          "address": "DI1",
+          "address": "DB12,X518.2",
           "readFrequency": 10000
         },
         {
           "id": "yellowLight",
           "name": "Yelow Light",
-          "address": "DI4",
+          "address": "DB12,X518.1",
           "readFrequency": 10000
         },
         {
           "id": "greenLight",
           "name": "Green Light",
-          "address": "DI7",
+          "address": "DB12,X518.0",
           "readFrequency": 10000
         },
         {
           "id": "blueLight",
           "name": "Blue Light",
-          "address": "DI11",
+          "address": "DB12,X518.3",
           "readFrequency": 10000
         }
       ],
-      "protocol": "ioshield"
+      "protocol": "s7",
+      "connection": {
+        "ipAddr": "192.168.214.1",
+        "port": 102,
+        "rack": 0,
+        "slot": 2
+      }
     }
   ],
   "dataSinks": [
@@ -38,13 +50,22 @@
       "name": "My MTConnect Machine",
       "dataPoints": [
         {
+          "id": "estop",
+          "name": "Emergency Stop",
+          "type": "event",
+          "map": {
+            "true": "TRIGGERED",
+            "false": "ARMED"
+          }
+        },
+        {
           "id": "light_state_red",
           "name": "Red Light",
           "type": "event",
           "map": {
             "0": "OFF",
             "1": "ON",
-            "2": "BLINKING"
+            "2": "ON"
           }
         },
         {
@@ -54,7 +75,7 @@
           "map": {
             "0": "OFF",
             "1": "ON",
-            "2": "BLINKING"
+            "2": "ON"
           }
         },
         {
@@ -64,7 +85,7 @@
           "map": {
             "0": "OFF",
             "1": "ON",
-            "2": "BLINKING"
+            "2": "ON"
           }
         },
         {
@@ -74,65 +95,34 @@
           "map": {
             "0": "OFF",
             "1": "ON",
-            "2": "BLINKING"
+            "2": "ON"
           }
-        },
-        {
-          "id": "part_count1",
-          "name": "Part Count",
-          "type": "event"
         }
       ],
       "protocol": "mtconnect"
     }
   ],
-  "virtualDataPoints": [
-    {
-      "id": "gUbLight",
-      "sources": ["greenLight", "blueLight"],
-      "type": "and"
-    },
-    {
-      "id": "gOrLight",
-      "sources": ["greenLight", "redLight"],
-      "type": "or"
-    },
-    {
-      "id": "bLightCounter",
-      "sources": ["blueLight"],
-      "type": "counter"
-    },
-    {
-      "id": "notYLight",
-      "sources": ["yellowLight"],
-      "type": "not"
-    },
-    {
-      "id": "gUbOyLight",
-      "sources": ["gUbLight", "yellowLight"],
-      "type": "or"
-    }
-  ],
+  "virtualDataPoints": [],
   "mapping": [
     {
-      "source": "greenLight",
-      "target": "light_state_green"
+      "source": "estop",
+      "target": "estop"
+    },
+    {
+      "source": "redLight",
+      "target": "light_state_red"
     },
     {
       "source": "yellowLight",
       "target": "light_state_yellow"
     },
     {
-      "source": "redLigth",
-      "target": "light_state_red"
+      "source": "greenLight",
+      "target": "light_state_green"
     },
     {
       "source": "blueLight",
       "target": "light_state_blue"
-    },
-    {
-      "source": "bLightCounter",
-      "target": "part_count1"
     }
   ]
 }

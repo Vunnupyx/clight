@@ -14,6 +14,11 @@ interface S7DataPointsWithError {
   datapoints: Array<any>;
   error: boolean;
 }
+
+/**
+ * Implementation of s7 data source
+ * @returns void
+ */
 export class S7DataSource extends DataSource {
   private isDisconnected = false;
   private cycleActive = false;
@@ -21,6 +26,10 @@ export class S7DataSource extends DataSource {
     silent: true,
   });
 
+  /**
+   * Initializes s7 data source and connects to device
+   * @returns void
+   */
   public init(): void {
     const { name, protocol, id, connection } = this.config;
     this.submitLifecycleEvent({
@@ -46,6 +55,11 @@ export class S7DataSource extends DataSource {
     );
   }
 
+  /**
+   * Reading data from device
+   * @param  {} addresses
+   * @returns Promise
+   */
   private readData(addresses): Promise<S7DataPointsWithError> {
     return new Promise((resolve, reject) => {
       try {
@@ -62,6 +76,12 @@ export class S7DataSource extends DataSource {
     });
   }
 
+  /**
+   * Checks for error in result of read request
+   * @param  {boolean} s7error
+   * @param  {any} value
+   * @returns boolean
+   */
   private checkError(s7error: boolean, value: any): boolean {
     if (typeof value === "undefined") return true;
     if (!s7error) return false;
@@ -71,6 +91,11 @@ export class S7DataSource extends DataSource {
     return isError;
   }
 
+  /**
+   * Reads all data points for current intervals and creates and publishes events
+   * @param  {Array<number>} currentIntervals
+   * @returns Promise
+   */
   protected async dataSourceCycle(
     currentIntervals: Array<number>
   ): Promise<void> {
@@ -141,6 +166,10 @@ export class S7DataSource extends DataSource {
     this.cycleActive = false;
   }
 
+  /**
+   * Handles connection result from connecting to device
+   * @param  {} err
+   */
   private onConnect(err) {
     const level = this.level;
     const { name, protocol, id } = this.config;
@@ -181,6 +210,10 @@ export class S7DataSource extends DataSource {
     this.setupDataPoints();
   }
 
+  /**
+   * Disconnects from data source
+   * @returns Promise
+   */
   public async disconnect(): Promise<void> {
     const { name, protocol, id } = this.config;
     this.isDisconnected = true;

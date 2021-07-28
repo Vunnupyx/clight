@@ -179,6 +179,9 @@ export class MTConnectDataSink extends DataSink {
     }
   }
 
+  /**
+   * Shutdown data sink
+   */
   public shutdown() {}
 
   /**

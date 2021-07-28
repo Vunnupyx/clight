@@ -18,6 +18,11 @@ export class VirtualDataPointManager {
     this.counters = new CounterManager();
   }
 
+  /**
+   * Convert all data point value types to boolean to handle bool operations
+   * @param  {boolean|number|string} value
+   * @returns boolean
+   */
   private toBoolean(value: boolean | number | string): boolean {
     if (typeof value === "number") {
       return value > 0;

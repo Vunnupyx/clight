@@ -19,15 +19,7 @@ import Timeout = NodeJS.Timeout;
 import { SynchronousIntervalScheduler } from "../SyncScheduler";
 
 /**
- * Implements the new Style of data source
- * Changes include:
- * - Conceptually the `smallest` entity for each protocol is now the actual request for each procotol, also
- * called "read operation". The `Data Point` class / abstract is retired, to allow for deterministic & more efficent
- * batching of data point reads in 'read operations'
- * - All reads are executed in a syncronous scheduler interval (the same accross all data sources) this allows for more
- * efficent request batching (Sending datapoint reads for 1000ms and 5000ms in the same request - every 5th cycle execution)
- * - The data source availability (incl. disconnects & reconnects) can now be managed on a data source level for data points
- * effectively (for example: pausing all read requests, if a reconnect is in progress)
+ * Implements data source
  */
 export abstract class DataSource extends EventEmitter {
   protected config: IDataSourceConfig;

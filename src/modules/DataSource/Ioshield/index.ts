@@ -9,9 +9,16 @@ import { IDataPointConfig } from "../../ConfigManager/interfaces";
 import { IMeasurement } from "../interfaces";
 import { Iot2050MraaDI10 } from "../../Iot2050MraaDI10/Iot2050mraa";
 
+/**
+ * Implementation of io shield data source
+ */
 export class IoshieldDataSource extends DataSource {
   mraaClient: Iot2050MraaDI10;
 
+  /**
+   * Initializes ioshield data source, sets up driver and validates configuration
+   * @returns void
+   */
   public init(): void {
     const { name, protocol, id } = this.config;
     this.submitLifecycleEvent({
@@ -30,6 +37,11 @@ export class IoshieldDataSource extends DataSource {
     this.setupDataPoints();
   }
 
+  /**
+   * Reads all datapoints for current cycle and creates resulting events
+   * @param  {Array<number>} currentIntervals
+   * @returns Promise
+   */
   protected async dataSourceCycle(
     currentIntervals: Array<number>
   ): Promise<void> {
@@ -63,8 +75,15 @@ export class IoshieldDataSource extends DataSource {
     }
   }
 
+  /**
+   * Disconnects data source
+   * @returns Promise<void>
+   */
   public async disconnect(): Promise<void> {}
 
+  /**
+   * Validates data source configuration and throws errors for wrong configured data points
+   */
   private validateDataPointConfiguration() {
     const allowedDataPointAddresses = [
       "DI0",

@@ -39,6 +39,9 @@ export class ConfigManager {
     this.lifecycleEventsBus = lifecycleEventsBus;
   }
 
+  /**
+   * Initializes and parses config items
+   */
   public async init() {
     this.runtimeConfig = await this.loadConfig(
       "runtime.json",
@@ -61,12 +64,14 @@ export class ConfigManager {
    */
   private checkType(value: any, type: string, name: string) {
     if (!(typeof value === type)) {
+      const error = `Value for ${name} must be of type ${type}!`;
       this.errorEventsBus.push({
         id: "device",
         type: DeviceLifecycleEventTypes.ErrorOnParseLocalConfig,
         level: EventLevels.Device,
-        payload: `Value for ${name} must be of type ${type}!`,
+        payload: error,
       });
+      throw new Error(error);
     }
   }
 

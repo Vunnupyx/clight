@@ -21,7 +21,7 @@ export class S7DataSource extends DataSource {
     silent: true,
   });
 
-  public async init(): Promise<void> {
+  public init(): void {
     const { name, protocol, id, connection } = this.config;
     this.submitLifecycleEvent({
       id,

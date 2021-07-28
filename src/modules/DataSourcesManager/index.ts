@@ -47,6 +47,7 @@ export class DataSourcesManager {
       }
       dataSource.on(DataSourceEventTypes.Measurement, this.onMeasurementEvent);
       dataSource.on(DataSourceEventTypes.Lifecycle, this.onLifecycleEvent);
+
       dataSource.init();
     });
   }

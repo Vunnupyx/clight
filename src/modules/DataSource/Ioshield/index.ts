@@ -4,8 +4,6 @@ import { DataSource } from "../DataSource";
 import {
   DataSourceLifecycleEventTypes,
   LifecycleEventStatus,
-  DataPointLifecycleEventTypes,
-  EventLevels,
 } from "../../../common/interfaces";
 import { IDataPointConfig } from "../../ConfigManager/interfaces";
 import { IMeasurement } from "../interfaces";
@@ -14,7 +12,7 @@ import { Iot2050MraaDI10 } from "../../Iot2050MraaDI10/Iot2050mraa";
 export class IoshieldDataSource extends DataSource {
   mraaClient: Iot2050MraaDI10;
 
-  public async init(): Promise<void> {
+  public init(): void {
     const { name, protocol, id } = this.config;
     this.submitLifecycleEvent({
       id,
@@ -26,6 +24,8 @@ export class IoshieldDataSource extends DataSource {
 
     this.mraaClient = new Iot2050MraaDI10();
     this.mraaClient.init();
+
+    this.validateDataPointConfiguration();
 
     this.setupDataPoints();
   }
@@ -64,4 +64,24 @@ export class IoshieldDataSource extends DataSource {
   }
 
   public async disconnect(): Promise<void> {}
+
+  private validateDataPointConfiguration() {
+    const allowedDataPointAddresses = [
+      "DI0",
+      "DI1",
+      "DI2",
+      "DI3",
+      "DI4",
+      "DI5",
+      "DI6",
+      "DI7",
+      "DI8",
+      "DI9",
+    ];
+    this.config.dataPoints.forEach((dp) => {
+      if (!allowedDataPointAddresses.some((addr) => addr === dp.address)) {
+        throw new Error(`Invalid data point address: ${dp.address}`);
+      }
+    });
+  }
 }

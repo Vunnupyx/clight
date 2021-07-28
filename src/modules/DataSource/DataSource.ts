@@ -57,7 +57,6 @@ export abstract class DataSource extends EventEmitter {
 
   /**
    * Each data source should do all setup in the init function
-   * @deprecated
    */
   public abstract init(): void;
 

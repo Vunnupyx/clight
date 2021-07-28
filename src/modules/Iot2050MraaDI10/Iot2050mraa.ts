@@ -40,7 +40,7 @@ export class Iot2050MraaDI10 {
   /**
    * Initializes the driver and sets up necessary mraa-gpio instances
    */
-  public async init(): Promise<void> {
+  public init(): void {
     for (const pin of this.MONITOR_PINS) {
       // stdbuf is used because mraa does not flush stdout after reported pin state change
       const initialValues = child.spawn(

@@ -90,50 +90,50 @@
   ],
   "virtualDataPoints": [
     {
-      "id": "gUbLight",
+      "id": "greenAndblueLight",
       "sources": ["greenLight", "blueLight"],
       "type": "and"
     },
     {
-      "id": "gOrLight",
+      "id": "greenOrRedLight",
       "sources": ["greenLight", "redLight"],
       "type": "or"
     },
     {
-      "id": "bLightCounter",
+      "id": "blueLightCounter",
       "sources": ["blueLight"],
       "type": "counter"
     },
     {
-      "id": "notYLight",
+      "id": "notYellowLight",
       "sources": ["yellowLight"],
       "type": "not"
     },
     {
-      "id": "gUbOyLight",
+      "id": "greenAndBlueOrYellowLight",
       "sources": ["gUbLight", "yellowLight"],
       "type": "or"
     }
   ],
   "mapping": [
     {
-      "source": "gUbLight",
+      "source": "greenAndblueLight",
       "target": "light_state_green"
     },
     {
-      "source": "gOrLight",
+      "source": "greenOrRedLight",
       "target": "light_state_yellow"
     },
     {
-      "source": "notYLight",
+      "source": "notYellowLight",
       "target": "light_state_red"
     },
     {
-      "source": "gUbOyLight",
+      "source": "greenAndBlueOrYellowLight",
       "target": "light_state_blue"
     },
     {
-      "source": "bLightCounter",
+      "source": "blueLightCounter",
       "target": "part_count1"
     }
   ]

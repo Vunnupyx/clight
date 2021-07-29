@@ -10,3 +10,7 @@ RUN cd ~/agent/build
 RUN cmake -D CMAKE_BUILD_TYPE=Release ../cppagent/
 RUN make
 RUN cp agent/agent /usr/local/bin
+
+WORKDIR /agentConfiguration
+
+CMD ["agent", "debug"]

@@ -113,16 +113,15 @@ export class MTConnectDataSink extends DataSink {
           winston.warn(
             `Multiple non boolean source events for target: ${target}!`
           );
-          return;
         }
         if (events.some((event) => typeof event.mapValue === "undefined")) {
           winston.warn(`Map value for enum taget: ${target} not provided!`);
           return;
         }
 
-        const tiggeredEvents = events.filter((e) => e.value);
+        const triggeredEvents = events.filter((e) => e.value);
 
-        const sortedEvents = tiggeredEvents.sort((a, b) => {
+        const sortedEvents = triggeredEvents.sort((a, b) => {
           const mapValueA = parseInt(a.mapValue, 10);
           const mapValueB = parseInt(b.mapValue, 10);
 

@@ -42,7 +42,17 @@ apt purge python3-setuptools python3.7-dev
 
 7. Login to registry: `docker login registry.gitlab.com``
 8. Create `docker-compose.yml`
-9. Start containers: `docker-compose.yml`
+9. Start containers: `docker-compose -d up`
+
+10. Remove device specific configuration 
+```
+rm -rf /etc/ssh/ssh_host_*
+rm -rf  rm -rf /etc/MDCLight/logs/*.log
+cat /dev/null > ~/.bash_history && history -c && exit
+```
+11. And shutdown: `shutdown -h now`
+12. Remove the sd card & insert it into an SD Card reader
+13. `dd if=/dev/rdisk2 of=mdc-light-os-v1.0.5.img bs=8m`
 
 ## Update containers
 

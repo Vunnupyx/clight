@@ -11,6 +11,12 @@ There are two example configuration inside: ../../\_mdclight/config/
 
 ## Data sources
 
+There are two types of data sources: The S7-Com PLC data source "s7" and the digital input shield "ioshield". 
+S7: With the S7 data source you can read data from S7 PLCs. Reading DBs, Inputs, Outputs and memory data ("Merkers") is supported.
+IO-Shield: With the IO-Shield you can read data from digital inputs, wired directly to the IoT2050. Each digital input of the IO-Shield
+is one data point on the data source. Each data point can have tree different states: 0 - off (Low, 0V), 1 - on (High, 24V) or 2 - blinking, the
+output is changing state with a minimum frequency of 2Hz (the maximum frequency is 10Hz).
+
 A single data source supports the following configuration items:
 
 - Note: There should be only one data source configured
@@ -32,6 +38,7 @@ A single data source supports the following configuration items:
       // Some examples for protocol "s7"
       // Reading an input: "I0.0"
       // Reading an input: "Q0.0"
+      // Reading an memory bit: "M50.0"
       // Reading a boolean value: "DB93,X0.0"
       // Reading an integer value: "DB93,INT44"
       // Reading a real value: "DB93,REAL100"
@@ -106,18 +113,24 @@ A single data sink supports the following configuration items:
       // Required for protocol "mtconnect".
       "type": "event",
       // A mapping for mtconnect data element.
-      // Boolean values can be mapped to string values. For example, the emergency stop could be mapped to the corresponding mtconnect value "TIGGERED" or "ARMED".
+      // Boolean values can be mapped to string values. For example, the emergency stop could be mapped to the corresponding mtconnect value "TRIGGERED" or "ARMED".
       // If more than two string values are needed, either integer values can be used or the values can be set by separate boolean values by setting "mapValues" must be set in the mapping. If more than one boolean value is "true", then the lowest active value is used.
       // Optional for the protocol "mtconnect".
       "map": {
         // Booleans
-        "true": "TIGGERED",
+        "true": "TRIGGERED",
         "false": "ARMED",
         // Integer or "mapValues"
         "0": "AUTOMATIC",
         "1": "MANUAL_DATA_INPUT",
         "2": "SEMI_AUTOMATIC"
-      }
+        // IO-Shield full mapping
+        "0": "ON",
+        "1": "OFF",
+        "2": "BLINKING"
+      },
+      // Optional - Initial value, can also be used to set a constant value. Is overwritten as soon as data is read
+      "initialValue": "TRIGGERED"
     }
   ],
   // Data source protocol. Supported protocols are: "mtconnect"
@@ -199,5 +212,30 @@ A single mapping supports the following configuration items:
   "target": "mode1",
   // The value, a boolean uses for it's target value
   "mapValue": "0"
+}
+```
+
+## Frequently Asked Questions
+
+1. Can I use the same id for a data point of a data source and a data point of a data sink?
+Yes, data point ids only have to be unique within all data sources and separately within all data sinks. 
+Virtual data points also count as data source data points.
+
+For example, the following would be valid:
+```
+    {
+      "source": "avail",
+      "target": "avail"
+    }
+```
+2. Can I set a constant value in a data sink?
+Yes, just configure a data sink data point with an initial value and no real or virtual data point mapped to it.
+For example:
+````
+{
+  "id": "estop",
+  "name": "Emergency Stop",
+  "type": "event",
+  "initialValue": "TRIGGERED"
 }
 ```

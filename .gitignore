@@ -6,3 +6,5 @@ mdclight
 coverage 
 
 .env
+
+yarn-error.log

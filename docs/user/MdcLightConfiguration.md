@@ -104,7 +104,7 @@ A single data sink supports the following configuration items:
   "dataPoints": [
     {
       // Id of datapoint. MUST be unique (across all data sources)
-      // For protocol mtconnect, that id will be associated with the id of an data item
+      // For the protocol MTconnect, that id will be associated with the id of a MTConnect data item
       "id": "estop",
       // A descriptive name
       "name": "Emergency Stop",

@@ -2,19 +2,18 @@
 
 The data source configuration consists of 4 components
 
-- dataSources: A list of southbound data sources (currently supported: s7)
+- dataSources: A list of southbound data sources (currently supported: s7, ioshield)
 - dataSinks: A list of northbound data "sinks" (currently supported: MTConnect)
 - virtualDataPoints: A list of virtual data points to link multiple source data points together
 - mapping: A list of connections for data points of the data source and data sink
 
-There are two example configuration inside: ../../\_mdclight/config/
+There are two example configuration inside the folder: `_mdclight/config/`
 
 ## Data sources
 
 There are two types of data sources: The S7-Com PLC data source "s7" and the digital input shield "ioshield". 
 S7: With the S7 data source you can read data from S7 PLCs. Reading DBs, Inputs, Outputs and memory data ("Merkers") is supported.
-IO-Shield: With the IO-Shield you can read data from digital inputs, wired directly to the IoT2050. Each digital input of the IO-Shield
-is one data point on the data source. Each data point can have tree different states: 0 - off (Low, 0V), 1 - on (High, 24V) or 2 - blinking, the
+IO-Shield: With the IO-Shield you can read data from digital inputs, wired directly to the IoT2050. Each digital input of the IO-Shield is one data point on the data source. Each data point can have tree different states: 0 - off (Low, 0V), 1 - on (High, 24V) or 2 - blinking, the
 output is changing state with a minimum frequency of 2Hz (the maximum frequency is 10Hz).
 
 A single data source supports the following configuration items:
@@ -36,8 +35,8 @@ A single data source supports the following configuration items:
       "name": "Emergency Stop",
       // Data point address
       // Some examples for protocol "s7"
-      // Reading an input: "I0.0"
-      // Reading an input: "Q0.0"
+      // Reading an input bit: "I0.0"
+      // Reading an input bit: "Q0.0"
       // Reading an memory bit: "M50.0"
       // Reading a boolean value: "DB93,X0.0"
       // Reading an integer value: "DB93,INT44"
@@ -61,18 +60,18 @@ A single data source supports the following configuration items:
     "port": 102,
     // Rack.
     // For S7 300, S7 1200 and S7 1500: Always 0
-    // For S7 400: The rack, where the S7 is mounted
+    // For S7 400: The rack, where the S7 CPU is mounted
     "rack": 0,
     // Slot.
     // For S7 300: Always 2
     // For S7 1200 and S7 1500: Always 1
-    // For S7 400: The slot, where the S7 is mounted on the rack
+    // For S7 400: The slot, where the S7 CPU is mounted on the rack
     "slot": 2
   }
 }
 ```
 
-### S7 Addresses for MTConnect Values
+### Sinumerik 840D 4.5 PLC Interface - S7 Addresses for MTConnect Values
 
 EXECUTION
 
@@ -83,11 +82,11 @@ EXECUTION
 
 CONTROLLER_MODE
 
-- AUTOMATIC - DB11,X6.0 (BOOL) - „BAG”.E_AUTO
-- MANUAL_DATA_INPUT DB11,X6.1 - „BAG”.E_MDA
-- MANUAL - DB11,DBX6.2 - „BAG”.E_JOG
+- AUTOMATIC - DB11,X6.0 (BOOL) - „BAG”.E_AUTO // Auto active
+- MANUAL_DATA_INPUT DB11,X6.1 - „BAG”.E_MDA // MDA active
+- MANUAL - DB11,DBX6.2 - „BAG”.E_JOG // Jog active
 
-TOOL_NUMBER - NC-Var & Nathstellensignale: 2.14.2 - %DB1072.DBW28 (INT)
+TOOL_NUMBER - %DB1072.DBW28 (INT) // Tool Ident
 
 ## Data sinks
 

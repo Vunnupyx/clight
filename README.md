@@ -18,10 +18,10 @@ To run the MDC light runtime, use the following commands:
 If you want to use the ioshield data source without developing on an IoT2050, you have to install the following mocks:
 
 Setup mock for mraa-gpio CLI:
-`sudo chmod +x mraa-gpio` and  `sudo cp mraa-gpio /usr/local/bin/`
+`sudo chmod +x src/modules/Iot2050MraaDI10/mraa-gpio/mraa-gpio` and  `sudo cp src/modules/Iot2050MraaDI10/mraa-gpio/mraa-gpio /usr/local/bin/`
 
 If you don't have the command `stdbuf` installed copy the mock script also:
-`sudo chmod +x stdbuf` and `sudo cp stdbuf /usr/local/bin/`
+`sudo chmod +x src/modules/Iot2050MraaDI10/mraa-gpio/stdbuf` and `sudo cp src/modules/Iot2050MraaDI10/mraa-gpio/stdbuf /usr/local/bin/`
 
 
 ## Documentation

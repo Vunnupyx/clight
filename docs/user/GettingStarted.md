@@ -24,8 +24,8 @@ you can use the "MDC light Pilot OS".
 1. First you need to complete the Industrial OS setup wizard. For this you need to connect a keyboard and monitor to your IoT2050 device. Keep in mind that an if you
 want to use an "Display Port" to HDMI adapter, you need to use an active one.
 2. After you connected monitor and keyboard connect the IoT2050 to a power source.
-3. After boot the setup wizard should be displayed. You can mostly use default configurations, but be sure to configure a known IP address for at least one network interface, 
-this will be used later for SSH access.
+3. After boot the setup wizard should be displayed. You can mostly use default configurations, but be sure to configure a known IP address for at least one network interface, this will be used later for SSH access. If the wizard does not start and you are stuck on the "localhost" login, you can try to reboot. If that does not
+work you need to use an USB->UART adapter to access the console: [Siemens Documentation](https://support.industry.siemens.com/tf/ww/en/posts/how-to-setup-pre-installed-industrial-os-on-iot2050-advanced/266090/?page=0&pageSize=10)
 4. SSH into the device using the configured IP address, username and password.
 
 Create `/etc/fw_env.config`, for example using the command line: 

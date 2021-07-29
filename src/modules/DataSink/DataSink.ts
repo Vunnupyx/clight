@@ -4,6 +4,9 @@ import { ILifecycleEvent } from "../../common/interfaces";
 import { DataPointMapper } from "../DataPointMapper";
 import { IDataSourceMeasurementEvent } from "../DataSource";
 
+/**
+ * Base class of northbound data sinks
+ */
 export abstract class DataSink {
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;

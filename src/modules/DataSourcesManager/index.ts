@@ -9,6 +9,9 @@ import { DataPointCache } from "../DatapointCache";
 import { IDataSourceMeasurementEvent } from "../DataSource/interfaces";
 import { VirtualDataPointManager } from "../VirtualDataPointManager";
 
+/**
+ * Creates and manages all data sources
+ */
 export class DataSourcesManager {
   private dataSourcesConfig: ReadonlyArray<IDataSourceConfig>;
   private measurementsBus: MeasurementEventBus;
@@ -26,6 +29,10 @@ export class DataSourcesManager {
     this.spawnDataSources();
   }
 
+  /**
+   * Shuts down all data sources
+   * @returns Promise
+   */
   public async shutdownDataSources(): Promise<void> {
     for await (const dataSource of this.dataSources) {
       if (dataSource) {
@@ -35,10 +42,18 @@ export class DataSourcesManager {
     this.dataSources = [];
   }
 
+  /**
+   * Whether setup data sources exist or not
+   * @returns void
+   */
   public hasDataSources(): boolean {
     return !!this.dataSources?.length;
   }
 
+  /**
+   * Spawns and initializes all configured data sources
+   * @returns void
+   */
   public spawnDataSources(): void {
     this.dataSources = this.dataSourcesConfig.map(createDataSource);
     this.dataSources.forEach((dataSource) => {
@@ -47,16 +62,20 @@ export class DataSourcesManager {
       }
       dataSource.on(DataSourceEventTypes.Measurement, this.onMeasurementEvent);
       dataSource.on(DataSourceEventTypes.Lifecycle, this.onLifecycleEvent);
+
       dataSource.init();
     });
   }
 
+  /**
+   * Handles and published all emitted events and corresponding virtual events
+   * @param  {IDataSourceMeasurementEvent[]} measurementEvents
+   * @returns void
+   */
   private onMeasurementEvent = (
     measurementEvents: IDataSourceMeasurementEvent[]
   ): void => {
-    measurementEvents.forEach((event) => {
-      this.dataPointCache.update(event);
-    });
+    this.dataPointCache.update(measurementEvents);
 
     this.measurementsBus.push([
       ...measurementEvents,
@@ -64,6 +83,11 @@ export class DataSourcesManager {
     ]);
   };
 
+  /**
+   * Published livecycle events
+   * @param  {ILifecycleEvent} lifeCycleEvent
+   * @returns void
+   */
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
     this.lifecycleBus.push(lifeCycleEvent);
   };

@@ -22,14 +22,16 @@
     "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
     "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect_amd64.Dockerfile .",
     "docker:push:mtc": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect",
-    "docker:run:mtc": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect /bin/bash",
+    "docker:run:mtc": "docker run -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/schemas:/schemas -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/agent.cfg:/agent.cfg -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/MDCLight.xml:/MDCLight.xml registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest agent debug",
     "docker:build:mdclight": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light -f docker/mdc-light.Dockerfile .",
     "docker:push:mdclight": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
     "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
-    "docker:build:mtc-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest -f docker/mtconnect_arm64.prod.Dockerfile --push .",
-    "docker:build:mdclight-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-prod_arm64:latest -f docker/mdclight_arm64.prod.Dockerfile --push .",
+    "docker:build:mtc-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest -f docker/mtconnect_arm64.Dockerfile --push .",
+    "docker:build:mdclight-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-prod_arm64:latest -f docker/mdclightMraa_arm64.prod.Dockerfile --push .",
     "test": "jest",
-    "copy_conf": "scp _mdclight/config/config.json root@$IP:/etc/MDCLight/config"
+    "copy_mdc_conf": "scp _mdclight/config/config.json root@$IP:/etc/MDCLight/config",
+    "copy_mtc_conf": "scp -r MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
+    "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

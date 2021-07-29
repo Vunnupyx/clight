@@ -77,7 +77,7 @@ describe("Test MTConnectDataSink", () => {
           id: "target",
           name: "",
           type: "event",
-          map: { true: "ARMED", false: "TIGGERED" },
+          map: { true: "ARMED", false: "TRIGGERED" },
         },
       ],
     };

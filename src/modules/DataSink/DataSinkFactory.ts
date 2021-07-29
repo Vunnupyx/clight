@@ -3,6 +3,11 @@ import { IDataSinkConfig } from "../ConfigManager/interfaces";
 import { DataSink } from "./DataSink";
 import { MTConnectDataSink } from "./MTConnect";
 
+/**
+ * Creates data sink by type
+ * @param  {IDataSinkConfig} config
+ * @returns DataSink
+ */
 export const createDataSink = (config: IDataSinkConfig): DataSink => {
   const { protocol, id } = config;
 
@@ -14,6 +19,11 @@ export const createDataSink = (config: IDataSinkConfig): DataSink => {
   }
 };
 
+/**
+ * Creates MTConnect data sink
+ * @param  {IDataSinkConfig} config
+ * @returns MTConnectDataSink
+ */
 const createMTConnectDataSource = (
   config: IDataSinkConfig
 ): MTConnectDataSink => {

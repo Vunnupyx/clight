@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mraa-gpio $3 $4

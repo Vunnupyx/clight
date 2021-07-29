@@ -15,6 +15,9 @@ export class CounterManager {
   private configFolder = "../../../mdclight/config";
   private counterStoragePath = "";
 
+  /**
+   * Initializes counter manages and tries to restore old counter states
+   */
   constructor() {
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       winston.warn(
@@ -36,6 +39,11 @@ export class CounterManager {
     }
   }
 
+  /**
+   * Increments counter and returns new value
+   * @param  {string} id
+   * @returns number
+   */
   public increment(id: string): number {
     if (typeof this.counters[id] !== "undefined") {
       this.counters[id] = this.counters[id] + 1;
@@ -50,6 +58,11 @@ export class CounterManager {
     return this.counters[id];
   }
 
+  /**
+   * Returns the value of one counter by its id
+   * @param  {string} id
+   * @returns number
+   */
   public getValue(id: string): number {
     return this.counters[id] || 0;
   }

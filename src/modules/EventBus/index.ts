@@ -4,6 +4,9 @@ import { IDataSourceMeasurementEvent } from "../DataSource";
 import { LogLevel } from "../Logger/interfaces";
 import { TSubscriberFn } from "./interfaces";
 
+/**
+ * Implementation of runtimes event bus
+ */
 export class EventBus<TEventType> {
   private callbacks: TSubscriberFn<TEventType>[] = [];
   protected logLevel: string;

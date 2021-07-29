@@ -1,3 +1,4 @@
+import winston from "winston";
 import { DataSourcesManager } from "../DataSourcesManager";
 import { EventBus, MeasurementEventBus } from "../EventBus";
 import {
@@ -12,7 +13,6 @@ import { MTConnectManager } from "../MTConnectManager";
 import { DataPointMapper } from "../DataPointMapper";
 import { DataSinkManager } from "../DataSinkManager";
 import { DataPointCache } from "../DatapointCache";
-import { IDataSourceMeasurementEvent } from "../DataSource";
 import { VirtualDataPointManager } from "../VirtualDataPointManager";
 
 /**
@@ -64,7 +64,9 @@ export class BootstrapManager {
         type: DeviceLifecycleEventTypes.LaunchError,
         payload: error.toString(),
       });
-      throw error.toString();
+
+      winston.error("Error while launching. Exiting programm.");
+      process.exit(1);
     }
   }
 

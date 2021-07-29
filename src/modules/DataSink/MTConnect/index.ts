@@ -59,6 +59,10 @@ export class MTConnectDataSink extends DataSink {
 
       this.mtcAdapter.addDataItem(dataItem);
       this.dataItems[dp.id] = dataItem;
+
+      if (typeof dp.initialValue !== "undefined") {
+        dataItem.value = dp.initialValue;
+      }
     });
   }
 
@@ -109,16 +113,15 @@ export class MTConnectDataSink extends DataSink {
           winston.warn(
             `Multiple non boolean source events for target: ${target}!`
           );
-          return;
         }
         if (events.some((event) => typeof event.mapValue === "undefined")) {
           winston.warn(`Map value for enum taget: ${target} not provided!`);
           return;
         }
 
-        const tiggeredEvents = events.filter((e) => e.value);
+        const triggeredEvents = events.filter((e) => e.value);
 
-        const sortedEvents = tiggeredEvents.sort((a, b) => {
+        const sortedEvents = triggeredEvents.sort((a, b) => {
           const mapValueA = parseInt(a.mapValue, 10);
           const mapValueB = parseInt(b.mapValue, 10);
 
@@ -138,7 +141,17 @@ export class MTConnectDataSink extends DataSink {
         value = setEvent.map[setEvent.mapValue];
       } else if (typeof setEvent.value === "boolean") {
         value = setEvent.value ? setEvent.map["true"] : setEvent.map["false"];
-        if (!value) winston.error(`Map for boolean target ${target} required!`);
+        if (!value) {
+          winston.error(`Map for boolean target ${target} required!`);
+          return;
+        }
+      } else if (
+        setEvent.map &&
+        Object.keys(setEvent.map).some((key) => {
+          return key === setEvent.value.toString();
+        })
+      ) {
+        value = setEvent.map[setEvent.value];
       } else {
         value = setEvent.value;
       }
@@ -165,6 +178,9 @@ export class MTConnectDataSink extends DataSink {
     }
   }
 
+  /**
+   * Shutdown data sink
+   */
   public shutdown() {}
 
   /**

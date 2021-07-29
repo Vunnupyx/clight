@@ -6,6 +6,9 @@ import { ILifecycleEvent } from "../../common/interfaces";
 import { DataSink } from "../DataSink/DataSink";
 import { MTConnectManager } from "../MTConnectManager";
 
+/**
+ * Manages data sinks
+ */
 export class DataSinkManager {
   private dataSinkConfig: ReadonlyArray<IDataSinkConfig>;
   private measurementsBus: MeasurementEventBus;
@@ -20,7 +23,10 @@ export class DataSinkManager {
     this.spawnDataSinks();
   }
 
-  // Not in use
+  /**
+   * Not in use
+   * @returns boolean
+   */
   public async shutdownDataSink(): Promise<void> {
     for await (const dataSink of this.dataSinks) {
       if (dataSink) {
@@ -30,18 +36,28 @@ export class DataSinkManager {
     this.dataSinks = [];
   }
 
-  // Not in use
+  /**
+   * Not in use
+   * @returns boolean
+   */
   public hasDataSinks(): boolean {
     return !!this.dataSinks?.length;
   }
 
+  /**
+   * Creates all configures data sinks
+   */
   public spawnDataSinks(): void {
     this.dataSinks = this.dataSinkConfig.map(createDataSink);
     this.subscribeDataSinks();
 
+    // Starting mtc adapter
     MTConnectManager.startAdapter();
   }
 
+  /**
+   * Provide events for data sinks
+   */
   private subscribeDataSinks(): void {
     this.dataSinks.forEach((ds) => {
       this.measurementsBus.onEvent(ds.onMeasurements.bind(ds));

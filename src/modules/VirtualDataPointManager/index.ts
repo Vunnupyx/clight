@@ -168,6 +168,7 @@ export class VirtualDataPointManager {
    * @param  {IDataSourceMeasurementEvent[]} events
    * @returns IDataSourceMeasurementEvent
    */
+  // TODO Rename "getVirtualMeasurements"
   public getVirtualEvents(
     events: IDataSourceMeasurementEvent[]
   ): IDataSourceMeasurementEvent[] {

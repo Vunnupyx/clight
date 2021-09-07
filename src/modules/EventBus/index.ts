@@ -53,7 +53,9 @@ export class EventBus<TEventType> {
    * @param  {TEventType} event
    * @returns Promise
    */
+  // TODO Rename
   public async push(event: TEventType): Promise<void> {
+    // TODO These are not promises
     const promises = this.callbacks.map((cb) => cb(event));
     await Promise.all(promises);
   }

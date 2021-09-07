@@ -70,6 +70,7 @@ export class MTConnectDataSink extends DataSink {
    * Handles measurements
    * @param params The user configuration object for this data source
    */
+  // TODO Rename add "Handler" to name
   public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
     interface IEvent {
       mapValue?: string;

@@ -14,6 +14,7 @@ import { DataPointMapper } from "../DataPointMapper";
 import { DataSinkManager } from "../DataSinkManager";
 import { DataPointCache } from "../DatapointCache";
 import { VirtualDataPointManager } from "../VirtualDataPointManager";
+import { OPCUAManager } from "../OPCUAManager";
 
 /**
  * Launches agent and handles module life cycles
@@ -49,6 +50,7 @@ export class BootstrapManager {
       await this.configManager.init();
 
       MTConnectManager.createAdapter(this.configManager);
+      OPCUAManager.createAdapter(this.configManager);
       DataPointMapper.createInstance(this.configManager);
 
       await this.loadModules();

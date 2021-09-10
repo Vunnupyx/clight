@@ -5,6 +5,7 @@ import { createDataSink } from "../DataSink/DataSinkFactory";
 import { ILifecycleEvent } from "../../common/interfaces";
 import { DataSink } from "../DataSink/DataSink";
 import { MTConnectManager } from "../MTConnectManager";
+import { OPCUAManager } from "../OPCUAManager";
 
 /**
  * Manages data sinks
@@ -53,6 +54,7 @@ export class DataSinkManager {
 
     // Starting mtc adapter
     MTConnectManager.startAdapter();
+    OPCUAManager.startAdapter();
   }
 
   /**

@@ -17,6 +17,9 @@ export class ConfigManager {
     mtconnect: {
       listenerPort: 7878,
     },
+    opcua: {
+      port: 4334
+    }
   };
   public config: IConfig = {
     dataSources: [],

@@ -1,13 +1,17 @@
 import { IErrorEvent, ILifecycleEvent } from "../../common/interfaces";
 import { EventBus } from "../EventBus";
+import {OPCUAServerOptions} from 'node-opcua'
 
 export interface IRuntimeConfig {
   mtconnect: IMTConnectConfig;
+  opcua: IOPCUAConfig;
 }
 
 export interface IMTConnectConfig {
   listenerPort: number;
 }
+
+export interface IOPCUAConfig extends OPCUAServerOptions {}
 
 export interface IDataPointConfig {
   id: string;
@@ -55,7 +59,7 @@ export interface IDataPointMapping {
   source: string;
   target: string;
   mapValue?: string;
-  priotity?: number;
+  priotity?: number;  //TODO: FIX SPELLING
 }
 
 export interface IVirtualDataPointConfig {

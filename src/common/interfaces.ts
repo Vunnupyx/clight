@@ -19,6 +19,7 @@ export enum DataSourceProtocols {
 
 export enum DataSinkProtocols {
   MTCONNECT = "mtconnect",
+  OPCUA = ""
 }
 
 export enum MTConnectDataItemTypes {

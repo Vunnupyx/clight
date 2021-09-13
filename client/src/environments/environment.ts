@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiRoot: '/api',
+  apiRoot: '/api/v1',
 };
 
 /*

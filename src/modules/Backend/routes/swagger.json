@@ -22,6 +22,7 @@
       "get": {
         "description": "Returns all available datasources of the runtime",
         "parameters": [],
+        "operationId": "dataSourcesGet",
         "produces": ["application/json"],
         "responses": {
           "200": {
@@ -37,6 +38,7 @@
       "patch": {
         "summary": "enable or disable datasource",
         "description": "Only for toggling enabled property",
+        "operationId": "dataSourcePatch",
         "parameters": [
           {
             "name": "id",
@@ -64,6 +66,7 @@
         }
       },
       "get": {
+        "operationId": "dataSourceGet",
         "parameters": [
           {
             "name": "id",
@@ -86,6 +89,7 @@
     "/datasinks": {
       "get": {
         "description": "Returns all available datesinks of the runtime",
+        "operationId": "dataSinksGet",
         "parameters": [],
         "produces": ["application/json"],
         "responses": {
@@ -108,6 +112,7 @@
     },
     "/datasinks/{id}": {
       "get": {
+        "operationId": "dataSinkGet",
         "summary": "Get datasink object by id",
         "parameters": [
           {
@@ -129,6 +134,7 @@
     },
     "/dataPoints": {
       "get": {
+        "operationId": "dataPointsGet",
         "responses": {
           "200":{
             "description": "Return list of dataPoints",
@@ -139,6 +145,7 @@
         }
       },
       "post": {
+        "operationId": "dataPointsPost",
         "parameters": [
           {
             "name": "dataPoint",
@@ -170,6 +177,7 @@
     },
     "/dataPoints/{id}": {
       "get": {
+        "operationId": "dataPointGet",
         "parameters": [
           {
             "name": "id",
@@ -186,6 +194,7 @@
         }
       },
       "patch": {
+        "operationId": "dataPointPatch",
         "parameters": [
           {
             "name": "id",
@@ -214,6 +223,7 @@
         }
       },
       "delete": {
+        "operationId": "dataPointDelete",
         "parameters": [
           {
             "name": "id",
@@ -242,6 +252,7 @@
     "/vdps": {
       "get": {
         "description": "Return a list of virtual datapoints",
+        "operationId": "vdpsGet",
         "responses": {
           "200": {
             "description": "",
@@ -261,6 +272,7 @@
       },
       "post": {
         "description": "Add a virtual datapoint to the runtime",
+        "operationId": "vdpsPost",
         "responses": {
           "200": {
             "description": "Successfully create a virtual datapoint resource",
@@ -291,6 +303,7 @@
         }
       ],
       "get": {
+        "operationId": "vdpGet",
         "responses": {
           "200": {
             "description": "Returns a virtual datapoint",
@@ -301,6 +314,7 @@
         }
       },
       "delete": {
+        "operationId": "vdpDelete",
         "responses": {
           "200":{
             "description": "Delete virtual datapoint with given id."
@@ -308,6 +322,7 @@
         }
       },
       "patch": {
+        "operationId": "vdpPatch",
         "parameters": [{
           "name": "patched virtual datapoint",
           "in": "body",

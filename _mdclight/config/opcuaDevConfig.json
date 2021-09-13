@@ -1,0 +1,43 @@
+{
+  "dataSources": [
+    {
+      "id": "",
+      "name": "",
+      "dataPoints": [
+        {
+          "id": "redLight",
+          "name": "",
+          "address": "DB10,X106.1",
+          "readFrequency": 10000
+        }
+      ],
+      "protocol": "s7",
+      "connection": {
+        "ipAddr": "192.168.214.1",
+        "port": 102,
+        "rack": 0,
+        "slot": 2
+      }
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "opcua",
+      "name": "",
+      "dataPoints": [
+        {
+          "id": "ns=7;s=Light_1-SignalOn",
+          "name": ""
+        }
+      ],
+      "protocol": "opcua"
+    }
+  ],
+  "virtualDataPoints": [],
+  "mapping": [
+    {
+      "source": "redLight",
+      "target": "ns=7;s=Light_1-SignalOn"
+    }
+  ]
+}

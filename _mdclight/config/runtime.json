@@ -1,5 +1,15 @@
 {
-  "mtconnect": {
-    "listenerPort": 7878
+  "mtconnect": { "listenerPort": 7878 },
+  "opcua": {
+    "port": 26543,
+    "nodeset_filename": [
+      "_mdclight/opcu_nodeSet/Opc.Ua.Di.NodeSet2.xml",
+      "_mdclight/opcu_nodeSet/Opc.Ua.Machinery.NodeSet2.xml",
+      "_mdclight/opcu_nodeSet/Opc.Ua.IA.NodeSet2.xml",
+      "_mdclight/opcu_nodeSet/Opc.Ua.NodeSet2.xml",
+      "_mdclight/opcu_nodeSet/Opc.Ua.MachineTool.Nodeset2.xml",
+      "_mdclight/opcu_nodeSet/dmgmori-umati-types-v2.0.11.xml",
+      "_mdclight/opcu_nodeSet/dmgmori-umati-v2.0.11.xml"
+    ]
   }
 }

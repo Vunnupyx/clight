@@ -62,7 +62,11 @@ export class OPCUAAdapter {
       .start()
       .then(() => {
         this.running = true;
-        winston.info(`${logPrefix} adapter successfully started.`);
+        const endpointUrl =
+          this.server.endpoints[0].endpointDescriptions()[0].endpointUrl;
+        winston.info(
+          `${logPrefix} adapter successfully started. The primary server endpoint url is ${endpointUrl}`
+        );
       })
       .catch((err) => {
         const errorMsg = `${logPrefix} error due to ${JSON.stringify(err)}`;
@@ -134,7 +138,7 @@ export class OPCUAAdapter {
     return this.server.engine.addressSpace.getNamespaceArray();
   }
 
-  private findNode(nodeIdentifier: NodeIdLike): BaseNode | null {
+  public findNode(nodeIdentifier: NodeIdLike): BaseNode | null {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
     return this.server.engine.addressSpace.findNode(nodeIdentifier);
   }

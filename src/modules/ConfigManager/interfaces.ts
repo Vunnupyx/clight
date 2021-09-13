@@ -1,6 +1,6 @@
-import { IErrorEvent, ILifecycleEvent } from "../../common/interfaces";
-import { EventBus } from "../EventBus";
-import {OPCUAServerOptions} from 'node-opcua'
+import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
+import { EventBus } from '../EventBus';
+import { OPCUAServerOptions } from 'node-opcua';
 
 export interface IRuntimeConfig {
   mtconnect: IMTConnectConfig;
@@ -33,18 +33,18 @@ export interface IDataSourceConfig {
   };
 }
 
-type IMTConnectDataPointTypes = "event";
+type IMTConnectDataPointTypes = 'event';
 
 // type MapItem = {
 //   [key: string]: "string";
 // };
-export type IMTConnectDataMap = object;
+export type ITargetDataMap = object;
 
 export interface IDataSinkDataPointConfig {
   id: string;
   name: string;
   type: IMTConnectDataPointTypes;
-  map?: IMTConnectDataMap;
+  map?: ITargetDataMap;
   initialValue?: string | number;
 }
 
@@ -59,13 +59,13 @@ export interface IDataPointMapping {
   source: string;
   target: string;
   mapValue?: string;
-  priotity?: number;  //TODO: FIX SPELLING
+  priotity?: number; //TODO: FIX SPELLING
 }
 
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  type: "and" | "or" | "not" | "counter";
+  type: 'and' | 'or' | 'not' | 'counter';
 }
 
 export interface IConfig {

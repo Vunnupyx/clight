@@ -1,20 +1,20 @@
-import winston from "winston";
-import { DataSourcesManager } from "../DataSourcesManager";
-import { EventBus, MeasurementEventBus } from "../EventBus";
+import winston from 'winston';
+import { DataSourcesManager } from '../DataSourcesManager';
+import { EventBus, MeasurementEventBus } from '../EventBus';
 import {
   DeviceLifecycleEventTypes,
   EventLevels,
   IErrorEvent,
-  ILifecycleEvent,
-} from "../../common/interfaces";
-import { ConfigManager } from "../ConfigManager";
-import { LogLevel } from "../Logger/interfaces";
-import { MTConnectManager } from "../MTConnectManager";
-import { DataPointMapper } from "../DataPointMapper";
-import { DataSinkManager } from "../DataSinkManager";
-import { DataPointCache } from "../DatapointCache";
-import { VirtualDataPointManager } from "../VirtualDataPointManager";
-import { OPCUAManager } from "../OPCUAManager";
+  ILifecycleEvent
+} from '../../common/interfaces';
+import { ConfigManager } from '../ConfigManager';
+import { LogLevel } from '../Logger/interfaces';
+import { MTConnectManager } from '../MTConnectManager';
+import { DataPointMapper } from '../DataPointMapper';
+import { DataSinkManager } from '../DataSinkManager';
+import { DataPointCache } from '../DatapointCache';
+import { VirtualDataPointManager } from '../VirtualDataPointManager';
+import { OPCUAManager } from '../OPCUAManager';
 
 /**
  * Launches agent and handles module life cycles
@@ -36,7 +36,7 @@ export class BootstrapManager {
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,
-      lifecycleEventsBus: this.lifecycleEventsBus,
+      lifecycleEventsBus: this.lifecycleEventsBus
     });
 
     this.dataPointCache = new DataPointCache();
@@ -55,19 +55,19 @@ export class BootstrapManager {
 
       await this.loadModules();
       this.lifecycleEventsBus.push({
-        id: "device",
+        id: 'device',
         level: EventLevels.Device,
-        type: DeviceLifecycleEventTypes.LaunchSuccess,
+        type: DeviceLifecycleEventTypes.LaunchSuccess
       });
     } catch (error) {
       this.errorEventsBus.push({
-        id: "device",
+        id: 'device',
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchError,
-        payload: error.toString(),
+        payload: error.toString()
       });
 
-      winston.error("Error while launching. Exiting programm.");
+      winston.error('Error while launching. Exiting programm.');
       process.exit(1);
     }
   }
@@ -80,7 +80,7 @@ export class BootstrapManager {
     const {
       dataSources: dataSourcesConfigs,
       dataSinks: dataSinksConfig,
-      virtualDataPoints: virtualDataPointConfig,
+      virtualDataPoints: virtualDataPointConfig
     } = this.configManager.config;
 
     if (!this.virtualDataPointManager) {
@@ -97,7 +97,7 @@ export class BootstrapManager {
         virtualDataPointManager: this.virtualDataPointManager,
         errorBus: this.errorEventsBus,
         lifecycleBus: this.lifecycleEventsBus,
-        measurementsBus: this.measurementsEventsBus,
+        measurementsBus: this.measurementsEventsBus
       });
     }
 
@@ -107,8 +107,9 @@ export class BootstrapManager {
         dataPointCache: this.dataPointCache,
         errorBus: this.errorEventsBus,
         lifecycleBus: this.lifecycleEventsBus,
-        measurementsBus: this.measurementsEventsBus,
+        measurementsBus: this.measurementsEventsBus
       });
+      await this.dataSinkManager.spawnDataSinks();
     }
   }
 }

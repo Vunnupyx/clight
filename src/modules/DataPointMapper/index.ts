@@ -31,11 +31,7 @@ export class DataPointMapper {
    * @param  {string} sourceId
    * @returns string
    */
-  public getTarget(sourceId: string) {
-    const mapping = this.config.find((dp) => dp.source === sourceId);
-    if (!mapping) {
-      return null;
-    }
-    return mapping;
+  public getTargets(sourceId: string): IDataPointMapping[] {
+    return this.config.filter((dp) => dp.source === sourceId);
   }
 }

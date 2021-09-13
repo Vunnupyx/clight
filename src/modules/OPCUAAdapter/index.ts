@@ -1,4 +1,4 @@
-import { OPCUAServer, NodeIdLike, BaseNode } from 'node-opcua';
+import { OPCUAServer, NodeIdLike, BaseNode, UAVariable, SessionContext } from 'node-opcua';
 import winston from 'winston';
 
 import { ConfigManager } from '../ConfigManager';
@@ -131,16 +131,13 @@ export class OPCUAAdapter {
       });
   }
 
-  private getNameSpaces() {
-    const logPrefix = `${OPCUAAdapter.className}::getNamespace`;
-    const checked = this.initCheck(logPrefix);
-    if (checked) throw checked;
-    return this.server.engine.addressSpace.getNamespaceArray();
-  }
-
-  public findNode(nodeIdentifier: NodeIdLike): BaseNode | null {
+  public findNode(nodeIdentifier: NodeIdLike): UAVariable | null {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
-    return this.server.engine.addressSpace.findNode(nodeIdentifier);
+    const node = this.server.engine.addressSpace.findNode(nodeIdentifier) as UAVariable;
+
+    if (node) return node
+    winston.warn(`${logPrefix} Node with id ${nodeIdentifier} not found!`)
+    return null
   }
 
   /**

@@ -10,11 +10,10 @@ import { OPCUAAdapter } from '../../OPCUAAdapter';
 import { IDataSinkConfig } from '../../ConfigManager/interfaces';
 import { OPCUAManager } from '../../OPCUAManager';
 import { NorthBoundError } from '../../../common/errors';
-import { BaseNode } from 'node-opcua-address-space';
-import { Variant } from 'node-opcua-variant';
+import { Variant, BaseNode, DataType, DataValue, UAVariable } from 'node-opcua';
 
 type OPCUANodeDict = {
-  [key: string]: BaseNode;
+  [key: string]: UAVariable;
 };
 
 /**
@@ -35,12 +34,10 @@ export class OPCUADataSink extends DataSink {
 
   public init(): this {
     const logPrefix = `${OPCUADataSink.className}::init`;
-    // Map datapoints to
+
     this.config.dataPoints.forEach((dp) => {
-      winston.debug(`Setting up node ${dp.id}`);
-      // create node for every dp or add data to endpoints from xml?
+      winston.debug(`${logPrefix} Setting up node ${dp.id}`);
       this.opcuaNodes[dp.id] = this.opcuaAdapter.findNode(dp.id);
-      // winston.debug(`${dp.id}: ${this.opcuaNodes[dp.id]}`);
     });
 
     return this;
@@ -53,12 +50,7 @@ export class OPCUADataSink extends DataSink {
 
     if (node) {
       //@ts-ignore
-      node.value = {
-        get: () => {
-          winston.debug(`Get opc ua node: ${dataPointId}`);
-          return new Variant({ value });
-        }
-      };
+      node.setValueFromSource(new Variant({value, dataType: node._dataValue.value.dataType}))
 
       winston.debug(
         `${logPrefix} TargetDataPointId: ${dataPointId}, Value: ${value}`

@@ -1,22 +1,22 @@
 {
   "dataSources": [
     {
-      "id": "",
+      "id": "s7-1511",
       "name": "",
       "dataPoints": [
         {
           "id": "redLight",
           "name": "",
-          "address": "DB10,X106.1",
-          "readFrequency": 10000
+          "address": "DB3001,X0.0",
+          "readFrequency": 5000
         }
       ],
       "protocol": "s7",
       "connection": {
-        "ipAddr": "192.168.214.1",
+        "ipAddr": "192.168.0.100",
         "port": 102,
         "rack": 0,
-        "slot": 2
+        "slot": 1
       }
     }
   ],
@@ -26,8 +26,14 @@
       "name": "",
       "dataPoints": [
         {
-          "id": "ns=7;s=Light_1-SignalOn",
-          "name": ""
+          "id": "ns=7;s=Light_1-SignalOn"
+        },
+        {
+          "id": "ns=7;s=Light_1-SignalMode",
+          "map": {
+            "true": 0,
+            "false": 1
+          }
         }
       ],
       "protocol": "opcua"
@@ -37,7 +43,7 @@
   "mapping": [
     {
       "source": "redLight",
-      "target": "ns=7;s=Light_1-SignalOn"
+      "target": "ns=7;s=Light_1-SignalMode"
     }
   ]
 }

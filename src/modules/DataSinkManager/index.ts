@@ -6,6 +6,7 @@ import { ILifecycleEvent } from '../../common/interfaces';
 import { DataSink } from '../DataSink/DataSink';
 import { MTConnectManager } from '../MTConnectManager';
 import { OPCUAManager } from '../OPCUAManager';
+import winston from 'winston';
 
 /**
  * Manages data sinks
@@ -47,6 +48,7 @@ export class DataSinkManager {
    * Creates all configures data sinks
    */
   public async spawnDataSinks(): Promise<void> {
+    winston.info("Start data sinks")
     // Starting mtc adapter
     MTConnectManager.startAdapter();
     await OPCUAManager.startAdapter();

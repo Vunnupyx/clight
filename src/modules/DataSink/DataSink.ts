@@ -37,27 +37,27 @@ export abstract class DataSink {
       [key: string]: IEvent[];
     } = {};
     events.forEach((event) => {
-      const targetMapping = this.dataPointMapper.getTarget(
+      const targetMappings = this.dataPointMapper.getTargets(
         event.measurement.id
       );
 
-      if (!targetMapping) {
-        return;
-      }
+      targetMappings.forEach(targetMapping => {
+        if (!eventsByTarget[targetMapping.target]) {
+          eventsByTarget[targetMapping.target] = [];
+        }
+  
+        const dp = this.config.dataPoints.find(
+          (dp) => dp.id === targetMapping.target
+        );
+  
+        eventsByTarget[targetMapping.target].push({
+          mapValue: targetMapping.mapValue,
+          map: dp.map,
+          value: event.measurement.value
+        });
+      })
 
-      if (!eventsByTarget[targetMapping.target]) {
-        eventsByTarget[targetMapping.target] = [];
-      }
-
-      const dp = this.config.dataPoints.find(
-        (dp) => dp.id === targetMapping.target
-      );
-
-      eventsByTarget[targetMapping.target].push({
-        mapValue: targetMapping.mapValue,
-        map: dp.map,
-        value: event.measurement.value
-      });
+      
     });
 
     Object.keys(eventsByTarget).forEach((target) => {
@@ -95,13 +95,15 @@ export abstract class DataSink {
 
       if (typeof setEvent.mapValue !== 'undefined') {
         value = setEvent.map[setEvent.mapValue];
-      } else if (typeof setEvent.value === 'boolean') {
+      } else if (typeof setEvent.value === 'boolean' && setEvent.map) {
+        
         value = setEvent.value ? setEvent.map['true'] : setEvent.map['false'];
-        if (!value) {
+        if (typeof value === "undefined") {
           winston.error(`Map for boolean target ${target} required!`);
           return;
         }
       } else if (
+        typeof setEvent.value !== 'boolean' && 
         setEvent.map &&
         Object.keys(setEvent.map).some((key) => {
           return key === setEvent.value.toString();

@@ -97,7 +97,7 @@
                 "datasinks": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/datasinkArrayItem"
+                    "$ref": "#/definitions/dataSinkType"
                   }
                 }
               }
@@ -266,6 +266,10 @@
           "items": {
             "$ref": "#/definitions/dataSinkdatapoint"
           }
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": false
         }
       }
     },
@@ -406,7 +410,7 @@
         "dataPoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/dataPointArrayItem"
+            "$ref": "#/definitions/dataPointType"
           }
         }
       }

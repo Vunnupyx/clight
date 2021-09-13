@@ -153,7 +153,16 @@
           "200":{
             "description": "Response of a new created dataPoint",
             "schema":{
-              "$ref": ""
+              "type": "object",
+              "properties": {
+                "created": {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                "href": {
+                  "type": "string",
+                  "description": "url for direct resource access"
+                }
+              }
               }
           }
         }
@@ -184,13 +193,143 @@
             "description": "id of the datasource to patch",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "patchData",
+            "in": "body",
+            "description": "DataPoint object with changed properties",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dataPointType"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Response of a change request for a datapoint with given id",
             "schema": {
-              "$ref": ""
+              "$ref": "#/definitions/dataPointType"
+            }
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the datapoint to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "Delete a datapoint by id and return the deleted item.",
+            "schema":{
+              "type": "object",
+              "properties": {
+                "deleted":{
+                  "type": "object",
+                  "$ref": "#/definitions/dataPointType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vdps": {
+      "get": {
+        "description": "Return a list of virtual datapoints",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "vdps": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/virtualDataPointType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Add a virtual datapoint to the runtime",
+        "responses": {
+          "200": {
+            "description": "Successfully create a virtual datapoint resource",
+            "schema": {
+              "required": ["properties", "href"],
+              "type": "object",
+              "properties": {
+                "virtualDataPoint":{
+                  "$ref": "#/definitions/virtualDataPointType"
+                },
+                "href": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vdps/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Id of the virtual datapoint to operate on",
+          "required": true
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Returns a virtual datapoint",
+            "schema": {
+              "$ref": "#/definitions/virtualDataPointType"
+            }
+          }
+        }
+      },
+      "delete": {
+        "responses": {
+          "200":{
+            "description": "Delete virtual datapoint with given id."
+          }
+        }
+      },
+      "patch": {
+        "parameters": [{
+          "name": "patched virtual datapoint",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/virtualDataPointType"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Changed virtual dataPoint",
+            "schema":{
+              "type": "object",
+              "properties": {
+                "changed": {
+                  "$ref": "#/definitions/virtualDataPointType"
+                },
+                "href": {
+                  "type": "string",
+                  "description": "URL of the changed resource."
+                }
+              }
             }
           }
         }
@@ -208,7 +347,7 @@
         }
       }
     },
-    "virtualdatapoint": {
+    "virtualDataPointType": {
       "type": "object",
       "required": ["id", "sources", "operationType"],
       "properties": {
@@ -228,7 +367,6 @@
         }
       }
     },
-
     "sourcedatapoint": {
       "type": "object",
       "required": ["id", "name", "address", "readFrequency"],
@@ -264,7 +402,7 @@
         "datapoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/dataSinkdatapoint"
+            "$ref": "#/definitions/dataPointType"
           }
         },
         "enabled": {
@@ -273,31 +411,7 @@
         }
       }
     },
-    "dataSinkdatapoint": {
-      "type": "object",
-      "required": ["id", "name"],
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "map": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "initValue": {
-          "type": "integer",
-          "description": "Value is index for the map data items."
-        }
-      }
-    },
+
     "datasinkArrayItem": {
       "required": ["name", "id", "href"],
       "properties": {
@@ -439,6 +553,10 @@
           "description": "index af map for the init value",
           "type": "integer",
           "minimum": 0
+        },        
+        "enabled": {
+          "type": "boolean",
+          "default": true
         }
       }
     },

@@ -4,6 +4,7 @@ dist
 runtime
 mdclight
 coverage 
+.DS_Store
 
 .env
 

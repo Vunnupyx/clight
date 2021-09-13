@@ -154,7 +154,7 @@
             "description": "Response of a new created dataPoint",
             "schema":{
               "$ref": ""
-            }
+              }
           }
         }
       }
@@ -357,7 +357,7 @@
         "dataSources": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/datasourceArrayItem"
+            "$ref": "#/definitions/dataSourceType"
           }
         }
       }

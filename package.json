@@ -31,7 +31,8 @@
     "test": "jest",
     "copy_mdc_conf": "scp _mdclight/config/config.json root@$IP:/etc/MDCLight/config",
     "copy_mtc_conf": "scp -r MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
-    "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml"
+    "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
+    "postinstall": "cd client && npm install"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

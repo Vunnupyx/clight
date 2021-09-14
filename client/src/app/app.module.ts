@@ -26,7 +26,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 
     SharedModule,
     ServicesModule,
-    HttpClientModule,
 
     TranslateModule.forRoot({
       loader: {
@@ -41,5 +40,6 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 }

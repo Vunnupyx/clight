@@ -3,8 +3,10 @@ build
 dist
 runtime
 mdclight
-coverage 
+coverage
 
 .env
 
 yarn-error.log
+
+.idea

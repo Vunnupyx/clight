@@ -1,25 +1,27 @@
 <mat-toolbar color="primary">
-  <button
-    type="button"
-    aria-label="Toggle sidenav"
-    mat-icon-button
-    (click)="drawer.toggle()"
-    *ngIf="isHandset$ | async">
-    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-  </button>
-  <span class="logo">Logo</span>
-  <span class="spacer"></span>
-  <div class="white-section">
-    <div class="white-section-tab"></div>
+    <div class="mt-10 d-flex align-items-center" style="height: 56px;">
+        <button
+            type="button"
+            aria-label="Toggle sidenav"
+            mat-icon-button
+            (click)="drawer.toggle()"
+            *ngIf="isHandset$ | async">
+            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+        <span><img src="/assets/logo.svg" width="100"></span>
+    </div>
     <span class="spacer"></span>
-    <button mat-raised-button mat-icon-button class="mat-secondary layout-button" routerLink="home" routerLinkActive="active"><mat-icon>home</mat-icon></button>
-    <button mat-raised-button mat-icon-button class="mat-secondary layout-button" routerLink="settings/general" routerLinkActive="active"><mat-icon>apps</mat-icon></button>
+    <div class="white-section">
+        <div class="white-section-tab"></div>
+        <span class="spacer"></span>
+        <button mat-raised-button mat-icon-button class="mat-secondary layout-button" routerLink="home" routerLinkActive="active"><mat-icon>home</mat-icon></button>
+        <button mat-raised-button mat-icon-button class="mat-secondary layout-button" routerLink="settings/general" routerLinkActive="active"><mat-icon>apps</mat-icon></button>
+        <span class="spacer"></span>
+    </div>
     <span class="spacer"></span>
-  </div>
-  <span class="spacer"></span>
-  <span class="clock-wrapper">
-    <app-clock></app-clock>
-  </span>
+    <span class="clock-wrapper">
+        <app-clock></app-clock>
+    </span>
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">

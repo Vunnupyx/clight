@@ -17,6 +17,7 @@ import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
 
 import { SharedServicesModule } from './services/shared-services.module';
 import { StateModule } from './state/state.module';
+import { AppTranslationModule } from 'app/app.translation';
 
 @NgModule({
     declarations: [],
@@ -40,6 +41,7 @@ import { StateModule } from './state/state.module';
         MatSidenavModule,
         MatToolbarModule,
 
+        AppTranslationModule,
         SharedServicesModule,
         StateModule,
     ],

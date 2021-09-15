@@ -1,4 +1,19 @@
 {
-  "Successful": "Erfolgreich",
-  "Warning": "Warnung!"
+    "layout": {
+        "Settings": "",
+        "General": "",
+        "UpdateManager": "",
+        "DataSource": "",
+        "VirtualDataPoints": "",
+        "DataSinks": "",
+        "Share": "",
+        "SystemInformation": ""
+    },
+    "settings-general": {
+        "General": "Erfolgreich",
+        "Language": "",
+        "MDCLanguage": "",
+        "English": "English",
+        "Deutsch": "Deutsch"
+    }
 }

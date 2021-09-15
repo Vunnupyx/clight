@@ -1,8 +1,6 @@
 import { NgModule } from "@angular/core";
 import { SharedModule } from "app/shared/shared.module";
 
-import { SettingsModule } from "../settings/settings.module";
-
 import { LayoutComponent } from "./layout.component";
 import { ClockComponent } from "./clock/clock.component";
 

@@ -14,6 +14,7 @@ import { DataPointMapper } from "../DataPointMapper";
 import { DataSinkManager } from "../DataSinkManager";
 import { DataPointCache } from "../DatapointCache";
 import { VirtualDataPointManager } from "../VirtualDataPointManager";
+import { RestApiManager } from "../Backend/RESTAPIManager";
 
 /**
  * Launches agent and handles module life cycles
@@ -27,6 +28,7 @@ export class BootstrapManager {
   private measurementsEventsBus: MeasurementEventBus;
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
+  private backend: RestApiManager;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -68,6 +70,8 @@ export class BootstrapManager {
       winston.error("Error while launching. Exiting programm.");
       process.exit(1);
     }
+
+    this.backend = new RestApiManager(this.configManager).start();
   }
 
   /**

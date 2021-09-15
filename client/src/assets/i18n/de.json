@@ -15,5 +15,8 @@
         "CELOSLanguage": "",
         "English": "English",
         "Deutsch": "Deutsch"
+    },
+    "settings-data-source": {
+        "DataSource": ""
     }
 }

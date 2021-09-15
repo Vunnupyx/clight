@@ -13,7 +13,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgxIpModule } from 'ngx-ip';
 
 import { SharedServicesModule } from './services/shared-services.module';
 import { StateModule } from './state/state.module';
@@ -40,6 +43,9 @@ import { AppTranslationModule } from 'app/app.translation';
         MatSelectModule,
         MatSidenavModule,
         MatToolbarModule,
+        MatButtonToggleModule,
+        NgxDatatableModule,
+        NgxIpModule,
 
         AppTranslationModule,
         SharedServicesModule,

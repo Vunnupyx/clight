@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
 import { GeneralComponent } from "./pages/settings/general/general.component";
-import { HomeComponent } from "./pages/home/home.component";
+import { DataSourceComponent } from './pages/settings/data-source/data-source.component';
 
 const routes: Routes = [
     {
@@ -20,8 +20,8 @@ const routes: Routes = [
         component: GeneralComponent,
     },
     {
-        path: 'home',
-        component: HomeComponent,
+        path: 'settings/data-source',
+        component: DataSourceComponent,
     },
 ];
 

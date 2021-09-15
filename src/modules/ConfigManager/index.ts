@@ -9,27 +9,17 @@ import {
 } from "../../common/interfaces";
 import { EventBus } from "../EventBus";
 import { IConfig, IConfigManagerParams, IRuntimeConfig } from "./interfaces";
+import TypedEmitter from 'typed-emitter';
+
+interface IConfigManagerEvents {
+  config: (config: IConfig) => void
+}
 
 /**
  * Config for managing the app's config
  */
-export class ConfigManager extends EventEmitter {
-  public runtimeConfig: IRuntimeConfig = {
-    mtconnect: {
-      listenerPort: 7878,
-    },
-    restApi: {
-      port: 5000,
-      maxFileSizeByte: 20000000,
-    }
-  };
-  public config: IConfig = {
-    dataSources: [],
-    dataSinks: [],
-    dataPoints: [],
-    virtualDataPoints: [],
-    mapping: [],
-  };
+export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
+  
   public id: string | null = null;
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
@@ -38,6 +28,20 @@ export class ConfigManager extends EventEmitter {
   private configName = 'config.json';
   private runtimeConfigName = "runtime.json";
 
+  private set config(config: IConfig) {
+    this.config = config;
+    this.saveConfigToFile();
+    this.emit('config', this.config);
+  }
+  
+  public get runtimeConfig() : IRuntimeConfig {
+    return this.runtimeConfig;
+  }
+
+  private set runtimeConfig(config : IRuntimeConfig) {
+    this.runtimeConfig = config;
+  }
+  
   /**
    * Creates config and check types
    */
@@ -46,6 +50,24 @@ export class ConfigManager extends EventEmitter {
     const { errorEventsBus, lifecycleEventsBus } = params;
     this.errorEventsBus = errorEventsBus;
     this.lifecycleEventsBus = lifecycleEventsBus;
+
+    this.runtimeConfig = {
+      mtconnect: {
+        listenerPort: 7878,
+      },
+      restApi: {
+        port: 5000,
+        maxFileSizeByte: 20000000,
+      }    
+    };
+
+    this.config = {
+      dataSources: [],
+      dataSinks: [],
+      dataPoints: [],
+      virtualDataPoints: [],
+      mapping: [],
+    }
   }
 
   /**

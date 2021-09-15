@@ -23,6 +23,9 @@
     "build": "tsc -p tsconfig.json",
     "build:dist": "yarn build && ncc build build/main/index.js -o runtime --minify",
     "build:mdclight": "yarn build:dist && yarn docker:build:mdclight-prod",
+    "build:webserver": "cd client && yarn build",
+    "docker:build:webserver": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile client",
+    "docker:push:webserver": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server",
     "docker:build:ci": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci -f ci.Dockerfile .",
     "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
     "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect_amd64.Dockerfile .",
@@ -37,7 +40,7 @@
     "copy_mdc_conf": "scp _mdclight/config/config.json root@$IP:/etc/MDCLight/config",
     "copy_mtc_conf": "scp -r MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
     "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
-    "postinstall": "cd client && npm install"
+    "postinstall": "yarn && cd client && yarn"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

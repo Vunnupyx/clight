@@ -1,11 +1,160 @@
 
 stages:
+  - test
   - build
+  - deploy
 
-build-runtime-staging:
+test-runtime:
+  image: node:lts-alpine
+  stage: test
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - node_modules
+  environment:
+    name: test
+  script:
+    - yarn && yarn test
+
+test-client:
+  image: node:lts-alpine
+  stage: test
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - client/node_modules
+  environment:
+    name: test
+  script:
+    - cd client
+    - yarn && ng test --watch false
+
+build-webserver-production:
+  image: node:lts-alpine
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - client/node_modules
+  environment:
+    name: production
+  artifacts:
+    paths:
+      - webserver
+  script:
+    - yarn
+    - yarn build:webserver
+  only:
+    refs:
+      - main
+
+build-webserver-staging:
+  image: node:lts-alpine
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - client/node_modules
+  environment:
+    name: staging
+  artifacts:
+    paths:
+      - webserver
+  script:
+    - yarn
+    - yarn build:webserver
+  only:
+    refs:
+      - staging
+
+build-webserver-development:
+  image: node:lts-alpine
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - client/node_modules
+  environment:
+    name: development
+  artifacts:
+    paths:
+      - webserver
+  script:
+    - yarn
+    - yarn build:webserver
+  only:
+    - branches
+  except:
+    - main
+    - staging
+
+build-docker-webserver-production:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build-docker
+  environment:
+    name: production
+  script:
+    - yarn docker:build:webserver
+    - yarn docker:publish:webserver
+  only:
+    refs:
+      - main
+
+build-docker-webserver-staging:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build-docker
+  environment:
+    name: staging
+  script:
+    - yarn docker:build:webserver
+    - yarn docker:publish:webserver
+  only:
+    refs:
+      - staging
+
+build-docker-webserver-development:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build-docker
+  environment:
+    name: development
+  script:
+    - yarn docker:build:webserver
+    - yarn docker:publish:webserver
+  only:
+    - branches
+  except:
+    - main
+    - staging
+
+build-runtime-production:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - node_modules
+  environment:
+    name: production
+  artifacts:
+    paths:
+      - runtime
+  script:
+    - yarn
+    - yarn build:dist
+  only:
+    refs:
+      - main
+
+build-runtime-staging:
+  image: node:lts-alpine
   stage: build
   cache:
     key: ${CI_BUILD_REF}
@@ -22,10 +171,8 @@ build-runtime-staging:
   only:
     refs:
       - staging
-    # changes:
-    #   - src/**/*
 
-build-runtime-production:
+build-runtime-development:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
@@ -35,30 +182,7 @@ build-runtime-production:
     paths:
       - node_modules
   environment:
-    name: staging
-  artifacts:
-    paths:
-      - runtime
-  script:
-    - yarn
-    - yarn build:dist
-  only:
-    refs:
-      - main
-    # changes:
-    #   - src/**/*
-
-build-runtime-dev:
-  services:
-    - docker:dind
-  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build
-  cache:
-    key: ${CI_BUILD_REF}
-    paths:
-      - node_modules
-  environment:
-    name: staging
+    name: development
   artifacts:
     paths:
       - runtime
@@ -70,5 +194,3 @@ build-runtime-dev:
   except:
     - main
     - staging
-    # changes:
-    #   - src/**/*

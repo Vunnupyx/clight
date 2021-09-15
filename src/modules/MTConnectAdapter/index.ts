@@ -24,7 +24,7 @@ export class MTConnectAdapter {
   constructor(config: ConfigManager) {
     this.config = config.runtimeConfig.mtconnect;
     // register for config changes
-    config.on('config', this.configChangedHandler.bind(this))
+    config.on('newConfig', this.configChangedHandler.bind(this))
   }
 
   /**

@@ -110,17 +110,18 @@
       }
     },
     "/datasinks/{id}": {
+      "parameters": [
+        {
+          "name": "datasinkId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
         "operationId": "dataSinkGet",
         "summary": "Get datasink object by id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        
         "responses": {
           "200": {
             "description": "Datasink object",
@@ -131,7 +132,15 @@
         }
       }
     },
-    "/dataPoints": {
+    "/datasinks/{id}/dataPoints": {
+      "parameters": [
+        {
+          "name": "datasinkId",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
         "operationId": "dataPointsGet",
         "responses": {
@@ -174,18 +183,25 @@
         }
       }
     },
-    "/dataPoints/{id}": {
+    "/datasinks/{id}/dataPoints/{id}": {
+      "parameters": [
+        {
+          "name": "datasinkId",
+          "in": "path",
+          "description": "id of the datapoint to get",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "dataPointId",
+          "in": "path",
+          "description": "id of the datapoint to get",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
         "operationId": "dataPointGet",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "id of the datapoint to get",
-            "required": true,
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "$ref": "#/definitions/dataPointType"
@@ -195,13 +211,6 @@
       "patch": {
         "operationId": "dataPointPatch",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "id of the datasource to patch",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "patchData",
             "in": "body",
@@ -223,15 +232,6 @@
       },
       "delete": {
         "operationId": "dataPointDelete",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "id of the datapoint to get",
-            "required": true,
-            "type": "string"
-          }
-        ],
         "responses": {
           "200":{
             "description": "Delete a datapoint by id and return the deleted item.",
@@ -352,6 +352,7 @@
     "/backup":{
       "get": {
         "operationId": "backupGet",
+        "produces": ["application/x-binary"],
         "responses": {
           "200": {
             "description": "Config file as JSON.",
@@ -436,6 +437,10 @@
         },
         "description": {
           "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["s7", "nck"]
         }
       }
     },
@@ -581,23 +586,10 @@
     "dataPointType":{
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name":{
-          "type": "string"
-        },
-        "type":{
-          "type": "string",
-          "enum": ["event"]
-        },
-        "map":{
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-
-        },
+        "id": {"type": "string"},
+        "name":{"type": "string"},
+        "type":{"type": "string", "enum": ["event"]},
+        "map":{"type": "array","items": {"type": "string"}},
         "initValue":{
           "description": "index af map for the init value",
           "type": "integer",

@@ -1,0 +1,47 @@
+<mat-toolbar color="primary">
+  <button
+    type="button"
+    aria-label="Toggle sidenav"
+    mat-icon-button
+    (click)="drawer.toggle()"
+    *ngIf="isHandset$ | async">
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+  </button>
+  <span class="logo">Logo</span>
+  <span class="spacer"></span>
+  <div class="white-section">
+    <div class="white-section-tab"></div>
+    <span class="spacer"></span>
+    <button mat-raised-button mat-icon-button class="mat-secondary layout-button"><mat-icon>apps</mat-icon></button>
+    <span class="spacer"></span>
+  </div>
+  <span class="spacer"></span>
+  <span class="clock-wrapper">
+    <app-clock></app-clock>
+  </span>
+</mat-toolbar>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport="false"
+               [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+               [mode]="(isHandset$ | async) ? 'over' : 'side'"
+               [opened]="(isHandset$ | async) === false">
+    <mat-toolbar><mat-icon>account_balance_wallet</mat-icon><span class="menu-heading">Settings</span></mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item (click)="select('general')"><mat-icon>tune</mat-icon><span class="menu-text">General</span></a>
+      <a mat-list-item (click)="select('todo-items')"><mat-icon>update</mat-icon><span class="menu-text">Update Manager</span></a>
+      <a mat-list-item href="#"><mat-icon>source</mat-icon><span class="menu-text">Data Source</span></a>
+      <a mat-list-item href="#"><mat-icon>folder_open</mat-icon><span class="menu-text">Virtual Data Points</span></a>
+      <a mat-list-item href="#"><mat-icon>topic</mat-icon><span class="menu-text">Data Sinks</span></a>
+      <a mat-list-item href="#"><mat-icon>share</mat-icon><span class="menu-text">Share</span></a>
+      <a mat-list-item href="#"><mat-icon>info</mat-icon><span class="menu-text">System Information</span></a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <!-- Add Content Here -->
+
+    <!-- TODO: Remove. Use routing instead -->
+    <app-general *ngIf="selectedMenuItem==='general'"></app-general>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

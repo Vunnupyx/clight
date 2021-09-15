@@ -1,0 +1,18 @@
+<h1 class="header">General</h1>
+
+<mat-divider></mat-divider>
+
+<mat-expansion-panel class="card">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Language
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-form-field appearance="fill">
+    <mat-label class="label">MDC Language</mat-label>
+    <mat-select [value]="currentLanguage" (valueChange)="chooseLanguage($event)">
+      <mat-option value="en">English</mat-option>
+      <mat-option value="de">German</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-expansion-panel>

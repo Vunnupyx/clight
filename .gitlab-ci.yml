@@ -13,13 +13,13 @@ test-runtime:
     paths:
       - node_modules
   environment:
-    name: test
+    name: testing
   script:
     - yarn && yarn test
 
 test-client:
   image: node:lts-alpine
-  stage: test
+  stage: testing
   cache:
     key: ${CI_BUILD_REF}
     paths:
@@ -28,7 +28,7 @@ test-client:
     name: test
   script:
     - cd client
-    - yarn && ng test --watch false
+    - yarn && yarn ng test --watch false
 
 build-webserver-production:
   image: node:lts-alpine

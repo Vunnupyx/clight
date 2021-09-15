@@ -9,7 +9,7 @@
     }
   },
   "host": "localhost:5000",
-  "basePath": "/v1",
+  "basePath": "/api/v1",
   "tags": [
     {
       "name": "datasource",
@@ -34,18 +34,18 @@
         }
       }
     },
-    "/datasources/{id}": {
+    "/datasources/{datasourceId}": {
+      "parameters": [
+        {
+          "name": "datasourceId",
+          "in": "path",
+          "description": "id of the datasource",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
         "operationId": "dataSourceGet",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "id of the datasource to patch",
-            "required": true,
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Request dateSource with given ID",
@@ -56,35 +56,160 @@
         }
       },
       "patch": {
-        "summary": "enable or disable datasource",
+        "summary": "change datasource",
         "description": "Only for toggling enabled property",
         "operationId": "dataSourcePatch",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "id of the datasource to patch",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "enabled",
+            "name": "changeObject",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/enableDatasource"
+              "$ref": "#/definitions/changeDatasource"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully enable/disable datasource",
+            "description": "Successfully changed datasource",
             "schema": {
               "$ref": "#/definitions/dataSourceType"
             }
           }
         }
       }  
+    },
+    "/datasources/{datasourceId}/dataPoints": {
+      "parameters": [
+        {
+          "name": "datasourceId",
+          "in": "path",
+          "description": "id of the datasource",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "description": "Returns a list of dataPoints of this datasource",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataPoints:" :{
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/sourcedatapoint"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new datapoint for the selected datasource.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "newDatapoint",
+            "description": "New datapoint to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/sourcedatapoint"
+            }
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "The new created datapoint",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created": {
+                  "$ref": "#/definitions/sourcedatapoint"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasources/{datasourceId}/dataPoints/{datapointId}": {
+      "parameters": [
+        {
+          "name": "datasourceId",
+          "in": "path",
+          "description": "id of the datasource",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "datapointId",
+          "in": "path",
+          "description": "id of the datapoint",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "description": "returns a datapoint with given id",
+        "responses": {
+          "200":{
+            "description": "returns a datapoint with given id",
+            "schema":{
+              "$ref": "#/definitions/sourcedatapoint"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete the datapoint selected by id",
+        "responses": {
+          "200": {
+            "description": "Successfully deleted datapoint",
+            "schema":{
+              "type": "object",
+              "properties": {
+                "deleted":{
+                  "$ref": "#/definitions/sourcedatapoint"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "overwrite datapoint with selected id",
+        "parameters": [
+        {
+          "in": "body",
+          "name": "changedDatapoint",
+          "required": true,
+          "description": "The new datapoint",
+          "schema": {
+            "$ref": "#/definitions/sourcedatapoint"
+          }
+        }
+        ],
+        "responses": {
+          "200":{
+            "description": "Overwritten datapoint",
+            "schema":{
+              "type": "object",
+              "properties": {
+                "changed": {
+                  "$ref": "#/definitions/sourcedatapoint"
+                },
+                "href":{
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "/datasinks": {
       "get": {
@@ -109,7 +234,7 @@
         }
       }
     },
-    "/datasinks/{id}": {
+    "/datasinks/{datasinkId}": {
       "parameters": [
         {
           "name": "datasinkId",
@@ -132,7 +257,7 @@
         }
       }
     },
-    "/datasinks/{id}/dataPoints": {
+    "/datasinks/{datasinkId}/dataPoints": {
       "parameters": [
         {
           "name": "datasinkId",
@@ -183,7 +308,7 @@
         }
       }
     },
-    "/datasinks/{id}/dataPoints/{id}": {
+    "/datasinks/{datasinkId}/dataPoints/{dataPointId}": {
       "parameters": [
         {
           "name": "datasinkId",
@@ -271,6 +396,17 @@
       },
       "post": {
         "description": "Add a virtual datapoint to the runtime",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "newVDP",
+            "description": "New virtual datapoint",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/virtualDataPointType"
+            }
+          }
+        ],
         "operationId": "vdpsPost",
         "responses": {
           "200": {
@@ -387,13 +523,15 @@
     }
   },
   "definitions": {
-    "enableDatasource": {
-      "description": "JSON type for change enable state",
+    "changeDatasource": {
+      "description": "JSON type for change enable state or connection",
       "type": "object",
-      "required": ["enabled"],
       "properties": {
         "enabled": {
           "type": "boolean"
+        },
+        "connection": {
+          "$ref": "#/definitions/connection"
         }
       }
     },

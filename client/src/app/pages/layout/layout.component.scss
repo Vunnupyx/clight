@@ -66,6 +66,11 @@
         top: 2px;
         right: 4px;
       }
+      &.active {
+        border-bottom: 4px solid #209beb !important;
+        border-bottom-right-radius: 6px !important;
+        border-bottom-left-radius: 6px !important;
+      }
     }
   }
   .clock-wrapper {

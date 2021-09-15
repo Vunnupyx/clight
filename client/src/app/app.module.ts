@@ -12,6 +12,8 @@ import { ServicesModule } from './services/services.module'
 import { LayoutModule } from './pages/layout/layout.module'
 import { SettingsModule } from './pages/settings/settings.module';
 
+import { AppRoutingModule } from './app.routing';
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http)
 }
@@ -41,6 +43,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     LayoutModule,
     SettingsModule,
 
+    AppRoutingModule,
   ],
 
   providers: [],

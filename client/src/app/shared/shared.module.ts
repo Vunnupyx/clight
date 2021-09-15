@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +26,7 @@ import { StateModule } from './state/state.module';
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
+        RouterModule,
 
         MatAutocompleteModule,
         MatButtonModule,

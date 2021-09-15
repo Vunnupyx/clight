@@ -14,9 +14,6 @@ const COMPONENTS = [
 @NgModule({
     imports: [
         SharedModule,
-
-        // TODO: Remove. Use routing instead
-        SettingsModule,
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

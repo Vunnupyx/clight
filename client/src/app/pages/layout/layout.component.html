@@ -12,7 +12,8 @@
   <div class="white-section">
     <div class="white-section-tab"></div>
     <span class="spacer"></span>
-    <button mat-raised-button mat-icon-button class="mat-secondary layout-button"><mat-icon>apps</mat-icon></button>
+    <button mat-raised-button mat-icon-button class="mat-secondary layout-button" routerLink="home" routerLinkActive="active"><mat-icon>home</mat-icon></button>
+    <button mat-raised-button mat-icon-button class="mat-secondary layout-button" routerLink="settings/general" routerLinkActive="active"><mat-icon>apps</mat-icon></button>
     <span class="spacer"></span>
   </div>
   <span class="spacer"></span>
@@ -38,10 +39,6 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <!-- Add Content Here -->
-
-    <!-- TODO: Remove. Use routing instead -->
-    <app-general *ngIf="selectedMenuItem==='general'"></app-general>
-
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

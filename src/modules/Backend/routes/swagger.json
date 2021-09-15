@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "",
+    "description": "RESTful API for the MDC Light project.",
     "version": "1.0.0",
     "title": "MDCLight",
     "contact": {
@@ -16,6 +16,7 @@
       "description": "Everything about the data source"
     }
   ],
+  "produces": ["application/json"],
   "schemes": ["https", "http"],
   "paths": {
     "/datasources": {
@@ -23,10 +24,9 @@
         "description": "Returns all available datasources of the runtime",
         "parameters": [],
         "operationId": "dataSourcesGet",
-        "produces": ["application/json"],
         "responses": {
           "200": {
-            "description": "",
+            "description": "A list of all available datasources.",
             "schema":{
               "$ref": "#/definitions/dataSourceList"
             }
@@ -35,6 +35,26 @@
       }
     },
     "/datasources/{id}": {
+      "get": {
+        "operationId": "dataSourceGet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the datasource to patch",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request dateSource with given ID",
+            "schema":{
+              "$ref": "#/definitions/dataSourceType"
+            }
+          }
+        }
+      },
       "patch": {
         "summary": "enable or disable datasource",
         "description": "Only for toggling enabled property",
@@ -64,41 +84,20 @@
             }
           }
         }
-      },
-      "get": {
-        "operationId": "dataSourceGet",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "id of the datasource to patch",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Request dateSource with given ID",
-            "schema":{
-              "$ref": "#/definitions/dataSourceType"
-            }
-          }
-        }
-      }
+      }  
     },
     "/datasinks": {
       "get": {
         "description": "Returns all available datesinks of the runtime",
         "operationId": "dataSinksGet",
         "parameters": [],
-        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "Successful request to datasinks",
             "schema": {
               "type": "object",
               "properties": {
-                "datasinks": {
+                "dataSinks": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/dataSinkType"
@@ -189,7 +188,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": ""
+            "$ref": "#/definitions/dataPointType"
           }
         }
       },
@@ -255,7 +254,7 @@
         "operationId": "vdpsGet",
         "responses": {
           "200": {
-            "description": "",
+            "description": "List of virtual datapoints.",
             "schema": {
               "type": "object",
               "properties": {
@@ -345,6 +344,41 @@
                   "description": "URL of the changed resource."
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/backup":{
+      "get": {
+        "operationId": "backupGet",
+        "responses": {
+          "200": {
+            "description": "Config file as JSON.",
+            "schema":{
+              "type": "file",
+              "format": "binary"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "backupPost",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "in": "formData",
+            "description": "New config file to use.",
+            "name": "config",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "Config file uploaded to the system.",
+            "schema":{
+              "$ref": "#/definitions/configFile"
             }
           }
         }
@@ -587,6 +621,55 @@
         "type": {
           "type": "string",
           "enum": ["event"]
+        }
+      }
+    },
+    "configFile": {
+      "type": "object",
+      "required": ["dataSources", "dataSinks", "dataPoints", "virtualDataPoints", "mapping"],
+      "additionalProperties": false,
+      "properties": {
+        "dataSources":{
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataSourceType"
+          }
+        },
+        "dataSinks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataSinkType"
+          }
+        },
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataPointType"
+          }
+        },
+        "virtualDataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/virtualDataPointType"
+          }
+        },
+        "mapping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source", "target"],
+            "properties": {
+              "source":{
+                "type": "string"
+              },
+              "target":{
+                "type": "string"
+              },
+              "mapValue": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }

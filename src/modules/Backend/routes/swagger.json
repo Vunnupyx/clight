@@ -9,7 +9,7 @@
     }
   },
   "host": "localhost:5000",
-  "basePath": "/v1",
+  "basePath": "/api/v1",
   "tags": [
     {
       "name": "datasource",
@@ -27,7 +27,7 @@
         "responses": {
           "200": {
             "description": "A list of all available datasources.",
-            "schema":{
+            "schema": {
               "$ref": "#/definitions/dataSourceList"
             }
           }
@@ -49,7 +49,7 @@
         "responses": {
           "200": {
             "description": "Request dateSource with given ID",
-            "schema":{
+            "schema": {
               "$ref": "#/definitions/dataSourceType"
             }
           }
@@ -84,7 +84,7 @@
             }
           }
         }
-      }  
+      }
     },
     "/datasinks": {
       "get": {
@@ -124,7 +124,7 @@
         "responses": {
           "200": {
             "description": "Datasink object",
-            "schema":{
+            "schema": {
               "$ref": "#/definitions/dataSinkType"
             }
           }
@@ -135,7 +135,7 @@
       "get": {
         "operationId": "dataPointsGet",
         "responses": {
-          "200":{
+          "200": {
             "description": "Return list of dataPoints",
             "schema": {
               "$ref": "#/definitions/dataPointList"
@@ -156,9 +156,9 @@
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "Response of a new created dataPoint",
-            "schema":{
+            "schema": {
               "type": "object",
               "properties": {
                 "created": {
@@ -169,7 +169,7 @@
                   "description": "url for direct resource access"
                 }
               }
-              }
+            }
           }
         }
       }
@@ -233,12 +233,12 @@
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "Delete a datapoint by id and return the deleted item.",
-            "schema":{
+            "schema": {
               "type": "object",
               "properties": {
-                "deleted":{
+                "deleted": {
                   "type": "object",
                   "$ref": "#/definitions/dataPointType"
                 }
@@ -279,7 +279,7 @@
               "required": ["properties", "href"],
               "type": "object",
               "properties": {
-                "virtualDataPoint":{
+                "virtualDataPoint": {
                   "$ref": "#/definitions/virtualDataPointType"
                 },
                 "href": {
@@ -315,25 +315,27 @@
       "delete": {
         "operationId": "vdpDelete",
         "responses": {
-          "200":{
+          "200": {
             "description": "Delete virtual datapoint with given id."
           }
         }
       },
       "patch": {
         "operationId": "vdpPatch",
-        "parameters": [{
-          "name": "patched virtual datapoint",
-          "in": "body",
-          "required": true,
-          "schema": {
-            "$ref": "#/definitions/virtualDataPointType"
+        "parameters": [
+          {
+            "name": "patched virtual datapoint",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/virtualDataPointType"
+            }
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "Changed virtual dataPoint",
-            "schema":{
+            "schema": {
               "type": "object",
               "properties": {
                 "changed": {
@@ -349,13 +351,13 @@
         }
       }
     },
-    "/backup":{
+    "/backup": {
       "get": {
         "operationId": "backupGet",
         "responses": {
           "200": {
             "description": "Config file as JSON.",
-            "schema":{
+            "schema": {
               "type": "file",
               "format": "binary"
             }
@@ -375,9 +377,9 @@
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "Config file uploaded to the system.",
-            "schema":{
+            "schema": {
               "$ref": "#/definitions/configFile"
             }
           }
@@ -442,7 +444,7 @@
     "dataSinkType": {
       "type": "object",
       "properties": {
-        "id":{
+        "id": {
           "type": "string"
         },
         "name": {
@@ -470,7 +472,7 @@
         "id": {
           "type": "string"
         },
-        "protocol":{
+        "protocol": {
           "type": "string"
         },
         "href": {
@@ -552,11 +554,11 @@
         "ipAddr": {
           "type": "string"
         },
-        "port":{
+        "port": {
           "type": "integer",
           "minimum": 0
         },
-        "rack":{
+        "rack": {
           "type": "number",
           "minimum": 0
         },
@@ -566,7 +568,7 @@
         }
       }
     },
-    
+
     "dataPointList": {
       "type": "object",
       "properties": {
@@ -578,31 +580,30 @@
         }
       }
     },
-    "dataPointType":{
+    "dataPointType": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "name":{
+        "name": {
           "type": "string"
         },
-        "type":{
+        "type": {
           "type": "string",
           "enum": ["event"]
         },
-        "map":{
+        "map": {
           "type": "array",
           "items": {
             "type": "string"
           }
-
         },
-        "initValue":{
+        "initValue": {
           "description": "index af map for the init value",
           "type": "integer",
           "minimum": 0
-        },        
+        },
         "enabled": {
           "type": "boolean",
           "default": true
@@ -626,10 +627,16 @@
     },
     "configFile": {
       "type": "object",
-      "required": ["dataSources", "dataSinks", "dataPoints", "virtualDataPoints", "mapping"],
+      "required": [
+        "dataSources",
+        "dataSinks",
+        "dataPoints",
+        "virtualDataPoints",
+        "mapping"
+      ],
       "additionalProperties": false,
       "properties": {
-        "dataSources":{
+        "dataSources": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/dataSourceType"
@@ -659,10 +666,10 @@
             "type": "object",
             "required": ["source", "target"],
             "properties": {
-              "source":{
+              "source": {
                 "type": "string"
               },
-              "target":{
+              "target": {
                 "type": "string"
               },
               "mapValue": {

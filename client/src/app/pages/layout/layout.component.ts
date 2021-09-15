@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -16,11 +16,5 @@ export class LayoutComponent {
       shareReplay()
     );
 
-  selectedMenuItem = '';
-
   constructor(private breakpointObserver: BreakpointObserver) {}
-
-  select(menuItem: string) {
-    this.selectedMenuItem = menuItem;
-  }
 }

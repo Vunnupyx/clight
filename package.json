@@ -20,6 +20,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
+    "dev:webserver": "cd client && yarn start",
     "build": "tsc -p tsconfig.json",
     "build:dist": "yarn build && ncc build build/main/index.js -o runtime --minify",
     "build:mdclight": "yarn build:dist && yarn docker:build:mdclight-prod",

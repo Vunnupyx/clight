@@ -6,7 +6,7 @@
         "DataSource": "Data Source",
         "VirtualDataPoints": "Virtual Data Points",
         "DataSinks": "Data Sinks",
-        "Share": "Share",
+        "Network": "Network",
         "SystemInformation": "System Information"
     },
     "settings-general": {

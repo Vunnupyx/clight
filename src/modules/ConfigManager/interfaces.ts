@@ -3,8 +3,13 @@ import { EventBus } from "../EventBus";
 
 export interface IRuntimeConfig {
   mtconnect: IMTConnectConfig;
+  restApi: IRestApiConfig
 }
 
+export interface IRestApiConfig {
+  port: number,
+  maxFileSizeByte: number
+}
 export interface IMTConnectConfig {
   listenerPort: number;
 }
@@ -68,6 +73,7 @@ export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];
   virtualDataPoints: IVirtualDataPointConfig[];
+  dataPoints: IDataSinkDataPointConfig[];
   mapping: IDataPointMapping[];
 }
 

@@ -14,7 +14,7 @@ import { DataPointMapper } from "../DataPointMapper";
 import { DataSinkManager } from "../DataSinkManager";
 import { DataPointCache } from "../DatapointCache";
 import { VirtualDataPointManager } from "../VirtualDataPointManager";
-import { Backend } from "../Backend";
+import { RestApiManager } from "../Backend/RESTAPIManager";
 
 /**
  * Launches agent and handles module life cycles
@@ -28,7 +28,7 @@ export class BootstrapManager {
   private measurementsEventsBus: MeasurementEventBus;
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
-  private backend: Backend;
+  private backend: RestApiManager;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -71,7 +71,7 @@ export class BootstrapManager {
       process.exit(1);
     }
 
-    this.backend = new Backend().start();
+    this.backend = new RestApiManager(this.configManager).start();
   }
 
   /**

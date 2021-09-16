@@ -1,5 +1,4 @@
 <p *ngIf="isBusy" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(127,127,127,0.4); z-index: 10;">
-    <!-- Loading indicator here -->
 </p>
 
 <h2 class="m-25">{{ 'settings-data-source.DataSource' |translate }}</h2>
@@ -130,7 +129,4 @@
             </ngx-datatable>
         </div>
     </div>
-
-    <pre>{{unsavedRow|json}}</pre>
-    <pre>{{datapointRows|json}}</pre>
 </mat-card>

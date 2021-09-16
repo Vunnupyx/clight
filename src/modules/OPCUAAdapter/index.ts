@@ -6,6 +6,7 @@ import {
   UserManagerOptions,
   OPCUACertificateManager
 } from 'node-opcua';
+import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
 
 import { ConfigManager } from '../ConfigManager';
@@ -34,33 +35,6 @@ export class OPCUAAdapter {
     OPCUAAdapter.configValidation(config);
     this.config = config.runtimeConfig.opcua;
     this.users = config.runtimeConfig.users;
-
-    const certPath = path.join(process.cwd(), 'mdclight/config/certs');
-    if (!fs.existsSync(certPath)) {
-      winston.info(
-        `Certificate folder (${certPath}) does not exist. Creating...`
-      );
-      fs.mkdirSync(certPath);
-    }
-
-    this.serverCertificateManager = new OPCUACertificateManager({
-      rootFolder: certPath
-    });
-    this.serverCertificateManager.initialize();
-
-    this.userManager = {
-      isValidUser: (userName: string, password: string): boolean => {
-        return this.users.some(
-          (user) => userName === user.userName && password === user.password
-        );
-      }
-    };
-
-    // TODO: Inject project logger to OPCUAServer
-    this.server = new OPCUAServer({
-      ...this.config,
-      userManager: this.userManager
-    });
   }
 
   /**
@@ -118,12 +92,71 @@ export class OPCUAAdapter {
       winston.info(`${logPrefix} adapter already running.`);
       return this;
     }
-    if (this.server.initialized) {
+    if (this.server && this.server.initialized) {
       winston.info(
         `${OPCUAAdapter.className}::init adapter already initialized.`
       );
       return this;
     }
+
+    const applicationUri = this.config.serverInfo.applicationUri;
+    const certificateFolder = path.join(process.cwd(), 'mdclight/config/certs');
+    const certificateFile = path.join(
+      certificateFolder,
+      'server_certificate.pem'
+    );
+
+    this.serverCertificateManager = new OPCUACertificateManager({
+      automaticallyAcceptUnknownCertificate: true,
+      rootFolder: certificateFolder
+    });
+
+    await this.serverCertificateManager.initialize();
+
+    if (!fs.existsSync(certificateFolder)) {
+      fs.mkdirSync(certificateFolder);
+    }
+
+    if (!fs.existsSync(certificateFile)) {
+      winston.info(`Creating certificate: ${certificateFile}`);
+
+      const pkiM = new CertificateManager({
+        location: certificateFolder
+      });
+      await pkiM.initialize();
+      await pkiM.createSelfSignedCertificate({
+        applicationUri,
+        subject: '/CN=MDClightOPCUAServer',
+        startDate: new Date(),
+        dns: [],
+        validity: 365 * 5, // five year
+        outputFile: certificateFile
+      });
+      winston.info(`Certificate ${certificateFile} created`);
+    }
+
+    const privateKeyFile = this.serverCertificateManager.privateKey;
+
+    this.serverCertificateManager = new OPCUACertificateManager({
+      rootFolder: certificateFolder
+    });
+
+    this.userManager = {
+      isValidUser: (userName: string, password: string): boolean => {
+        return this.users.some(
+          (user) => userName === user.userName && password === user.password
+        );
+      }
+    };
+
+    // TODO: Inject project logger to OPCUAServer
+    this.server = new OPCUAServer({
+      ...this.config,
+      userManager: this.userManager,
+      serverCertificateManager: this.serverCertificateManager,
+      privateKeyFile,
+      certificateFile
+    });
 
     return this.server
       .initialize()

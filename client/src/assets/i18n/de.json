@@ -1,27 +1,27 @@
 {
-    "layout": {
-        "Settings": "",
-        "General": "",
-        "UpdateManager": "",
-        "DataSource": "",
-        "VirtualDataPoints": "",
-        "DataSinks": "",
-        "Network": "",
-        "SystemInformation": ""
-    },
-    "settings-general": {
-        "General": "Erfolgreich",
-        "Language": "",
-        "CELOSLanguage": "",
-        "English": "English",
-        "Deutsch": "Deutsch"
-    },
-    "settings-data-source": {
-        "DataSource": "",
-        "Edit": "",
-        "Delete": "",
-        "Save": "",
-        "Cancel": "",
-        "Select": ""
-    }
+  "layout": {
+    "Settings": "Einstellungen",
+    "General": "Allgemein",
+    "UpdateManager": "Update Manager",
+    "DataSource": "Datenquelle",
+    "VirtualDataPoints": "Virtuelle Datenpunkte",
+    "DataSinks": "Applikations Schnittstellen",
+    "Network": "Netzwerk",
+    "SystemInformation": "System Informationen"
+  },
+  "settings-general": {
+    "General": "Erfolgreich",
+    "Language": "Sprache",
+    "CELOSLanguage": "CELOS Sprache",
+    "English": "English",
+    "Deutsch": "Deutsch"
+  },
+  "settings-data-source": {
+    "DataSource": "Datenquelle",
+    "Edit": "Bearbeiten",
+    "Delete": "Löschen",
+    "Save": "Speichern",
+    "Cancel": "Abbrechen",
+    "Select": "Auswählen"
+  }
 }

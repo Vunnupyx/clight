@@ -1338,6 +1338,13 @@
     "@angular-devkit/schematics" "12.2.5"
     jsonc-parser "3.0.0"
 
+"@swimlane/ngx-datatable@^20.0.0":
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/@swimlane/ngx-datatable/-/ngx-datatable-20.0.0.tgz#843933b6015be46d9625e04afde6ac1030d303f3"
+  integrity sha512-fok9xzOA5UqhmoRKHpEz25k2wXD/ZGtAAeTQqkn/FpyLgPtdWV2OF/wNIyIZaDJ8jBlNoeHTnJnkDONnFGV93A==
+  dependencies:
+    tslib "^2.0.0"
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"

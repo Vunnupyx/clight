@@ -1,26 +1,30 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core'
+import { Component } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core';
+import { LocalStorageService } from 'app/shared';
 
 @Component({
   selector: 'app-general',
   templateUrl: './general.component.html',
   styleUrls: ['./general.component.scss']
 })
-export class GeneralComponent implements OnInit {
+export class GeneralComponent {
 
-  currentLanguage: string = ''
+    constructor(
+        private translate: TranslateService,
+        private localStorageService: LocalStorageService,
+    ) {}
 
-  constructor() { }
+    get availableLangs() {
+        return this.translate.langs;
+    }
 
-  ngOnInit(): void {
-    this.currentLanguage = 'en'
-  }
+    get currentLang() {
+        return this.translate.currentLang;
+    }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
-  }
+    onLanguageChange(value: string) {
+        this.translate.use(value);
+        this.localStorageService.set('ui-lang', value);
+    }
 
-  chooseLanguage($event: Event) {
-    console.log($event)
-    // this.currentLanguage =
-  }
 }

@@ -1,7 +1,7 @@
 import express, { Application, Request, Response, Express, Router, } from "express";
 import winston from "winston";
 import { ConfigManager } from "../../ConfigManager";
-import { IRestApiConfig } from "../../ConfigManager/interfaces";
+import { IRestApiConfig, IRuntimeConfig } from "../../ConfigManager/interfaces";
 import { RoutesManager } from "../RoutesManager";
 import { json as jsonParser} from "body-parser";
 import path from "path";
@@ -24,6 +24,7 @@ export class RestApiManager {
         const logPrefix = `${RestApiManager.className}::constructor`;
 
         this.config = config.runtimeConfig.restApi;
+        config.on('newRuntimeConfig', this.newRuntimeConfigHandle.bind(this))
         this.port = this.config.port || Number.parseInt(process.env.PORT) || 5000;
          
         // TODO: Maybe move to init method
@@ -40,11 +41,15 @@ export class RestApiManager {
     /**
      * Start RestApiManager and all dependencies.
      */
-    start(): RestApiManager {
+    public start(): RestApiManager {
       const logPrefix = `${RestApiManager.className}::start`;
       this.expressApp.listen(this.port, () =>
-      winston.info(`Backend server listening on port ${this.config.port}`)
-    );
-    return this;
-  }
+        winston.info(`Backend server listening on port ${this.config.port}`)
+      );
+      return this;
+    }
+    private newRuntimeConfigHandle(config: IRuntimeConfig) {
+      //TODO: implement restart of the express server
+    }
+
 }

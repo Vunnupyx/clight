@@ -9,37 +9,47 @@ import {
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import { IConfig, IConfigManagerParams, IRuntimeConfig } from './interfaces';
+import TypedEmitter from 'typed-emitter';
+
+interface IConfigManagerEvents {
+  newConfig: (config: IConfig) => void;
+  newRuntimeConfig: (config: IRuntimeConfig) => void;
+}
 
 /**
  * Config for managing the app's config
  */
-export class ConfigManager extends EventEmitter {
-  public runtimeConfig: IRuntimeConfig = {
-    mtconnect: {
-      listenerPort: 7878
-    },
-    opcua: {
-      port: 4334
-    },
-    restApi: {
-      port: 5000,
-      maxFileSizeByte: 20000000
-    }
-  };
-  public config: IConfig = {
-    dataSources: [],
-    dataSinks: [],
-    dataPoints: [],
-    virtualDataPoints: [],
-    mapping: []
-  };
-  public id: string | null = null;
-
-  private readonly errorEventsBus: EventBus<IErrorEvent>;
-  private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
+export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
   private configFolder = '../../../mdclight/config';
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
+  private _runtimeConfig: IRuntimeConfig;
+  private _config: IConfig;
+
+  private readonly errorEventsBus: EventBus<IErrorEvent>;
+  private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
+  private static className: string;
+
+  public id: string | null = null;
+
+  public get config(): IConfig {
+    return this._config;
+  }
+
+  public set config(config: IConfig) {
+    this._config = config;
+    this.saveConfigToFile(this.configName);
+    this.emit('newConfig', this.config);
+  }
+
+  public get runtimeConfig(): IRuntimeConfig {
+    return this._runtimeConfig;
+  }
+
+  private set runtimeConfig(config: IRuntimeConfig) {
+    this._runtimeConfig = config;
+    this.emit('newRuntimeConfig', this._runtimeConfig);
+  }
 
   /**
    * Creates config and check types
@@ -49,17 +59,37 @@ export class ConfigManager extends EventEmitter {
     const { errorEventsBus, lifecycleEventsBus } = params;
     this.errorEventsBus = errorEventsBus;
     this.lifecycleEventsBus = lifecycleEventsBus;
+
+    ConfigManager.className = this.constructor.name;
+
+    // Initial values
+    this._runtimeConfig = {
+      mtconnect: {
+        listenerPort: 7878
+      },
+      restApi: {
+        port: 5000,
+        maxFileSizeByte: 20000000
+      }
+    };
+    this._config = {
+      dataSources: [],
+      dataSinks: [],
+      dataPoints: [],
+      virtualDataPoints: [],
+      mapping: []
+    };
   }
 
   /**
    * Initializes and parses config items
    */
   public async init() {
-    this.runtimeConfig = await this.loadConfig(
+    this._runtimeConfig = await this.loadConfig<IRuntimeConfig>(
       this.runtimeConfigName,
       this.runtimeConfig
     );
-    this.config = await this.loadConfig(this.configName, this.config);
+    this._config = await this.loadConfig<IConfig>(this.configName, this.config);
 
     this.checkType(
       this.runtimeConfig.mtconnect.listenerPort,
@@ -74,10 +104,7 @@ export class ConfigManager extends EventEmitter {
   }
 
   /**
-   * Checks type of configuration value
-   * @param  {any} value
-   * @param  {string} type
-   * @param  {string} name
+   * Checks type of configuration value.
    */
   private checkType(value: any, type: string, name: string) {
     if (!(typeof value === type)) {
@@ -94,36 +121,32 @@ export class ConfigManager extends EventEmitter {
 
   /**
    * Loads config files by filename and adds missing values
-   * @param  {string} configName
-   * @param  {any} defaultConfig
-   * @returns any
    */
-  private async loadConfig(
+  private async loadConfig<ConfigType>(
     configName: string,
     defaultConfig: any
-  ): Promise<any> {
-    if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
-      await this.lifecycleEventsBus.push({
-        id: 'device',
-        type: DeviceLifecycleEventTypes.DeviceConfigDoesNotExists,
-        level: EventLevels.Device,
-        payload: 'Configuration folder does not exist!'
-      });
-      throw new Error(DeviceLifecycleEventTypes.DeviceConfigDoesNotExists);
-    }
-
+  ): Promise<ConfigType> {
+    const logPrefix = `${ConfigManager.className}::loadConfig`;
     const configPath = path.join(
       __dirname,
       `${this.configFolder}/${configName}`
     );
-    if (!fs.existsSync(configPath)) {
+    const pathExists = fs.existsSync(path.join(__dirname, this.configFolder));
+    const fileExists = fs.existsSync(configPath);
+    if (!pathExists || !fileExists) {
       await this.lifecycleEventsBus.push({
         id: 'device',
         type: DeviceLifecycleEventTypes.DeviceConfigDoesNotExists,
         level: EventLevels.Device,
-        payload: `Configuration file ${configName} does not exist!`
+        payload: `Configuration ${
+          !fileExists ? 'file' : 'folder'
+        } does not exist!`
       });
-      DeviceLifecycleEventTypes.DeviceConfigDoesNotExists;
+      return Promise.reject(
+        new Error(
+          `${logPrefix} error due to ${DeviceLifecycleEventTypes.DeviceConfigDoesNotExists}`
+        )
+      );
     }
 
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -141,10 +164,8 @@ export class ConfigManager extends EventEmitter {
 
   /**
    * Deep merge two objects.
-   * @param target
-   * @param ...sources
    */
-  private mergeDeep(target, ...sources) {
+  private mergeDeep(target: object, ...sources: object[]) {
     if (!sources.length) return target;
     const source = sources.shift();
 
@@ -173,20 +194,20 @@ export class ConfigManager extends EventEmitter {
       const index = categoryArray.findIndex((entry) => entry.id === data);
       if (index > -1) {
         categoryArray.splice(index, 1);
-        this.saveConfigToFile();
+        this.saveConfigToFile(this.configName);
         return;
       }
       throw new Error(`ConfigManager::updateConfig error due to id not found`);
     }
     // @ts-ignore
     categoryArray.push(data);
-    this.saveConfigToFile();
+    this.saveConfigToFile(this.configName);
   }
 
   /**
-   * Save the current data from config property into a JSON config file.
+   * Save the current data from config property into a JSON config file on hard drive
    */
-  private saveConfigToFile(): void {
+  private saveConfigToFile(configName: string): void {
     fs.writeFileSync(
       path.join(__dirname, this.configFolder, this.configName),
       JSON.stringify(this.config, null, 2),

@@ -1,9 +1,17 @@
-import { OPCUAServer, NodeIdLike, BaseNode, UAVariable, SessionContext } from 'node-opcua';
+import fs from 'fs';
+import {
+  OPCUAServer,
+  NodeIdLike,
+  UAVariable,
+  UserManagerOptions,
+  OPCUACertificateManager
+} from 'node-opcua';
 import winston from 'winston';
 
 import { ConfigManager } from '../ConfigManager';
-import { IOPCUAConfig } from '../ConfigManager/interfaces';
+import { IOPCUAConfig, IUser } from '../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../common/errors';
+import path from 'path';
 
 /**
  * Implementation of OPCUA adapter.
@@ -12,7 +20,11 @@ import { AdapterError, NorthBoundError } from '../../common/errors';
 export class OPCUAAdapter {
   private server: OPCUAServer;
   private config: IOPCUAConfig;
+  private users: IUser[];
   private running = false;
+
+  private userManager: UserManagerOptions;
+  private serverCertificateManager: OPCUACertificateManager;
 
   private static className: string;
   private static shutdownTimeoutMs = 1000;
@@ -21,8 +33,34 @@ export class OPCUAAdapter {
     OPCUAAdapter.className = this.constructor.name;
     OPCUAAdapter.configValidation(config);
     this.config = config.runtimeConfig.opcua;
+    this.users = config.runtimeConfig.users;
+
+    const certPath = path.join(process.cwd(), 'mdclight/config/certs');
+    if (!fs.existsSync(certPath)) {
+      winston.info(
+        `Certificate folder (${certPath}) does not exist. Creating...`
+      );
+      fs.mkdirSync(certPath);
+    }
+
+    this.serverCertificateManager = new OPCUACertificateManager({
+      rootFolder: certPath
+    });
+    this.serverCertificateManager.initialize();
+
+    this.userManager = {
+      isValidUser: (userName: string, password: string): boolean => {
+        return this.users.some(
+          (user) => userName === user.userName && password === user.password
+        );
+      }
+    };
+
     // TODO: Inject project logger to OPCUAServer
-    this.server = new OPCUAServer(this.config);
+    this.server = new OPCUAServer({
+      ...this.config,
+      userManager: this.userManager
+    });
   }
 
   /**
@@ -86,6 +124,7 @@ export class OPCUAAdapter {
       );
       return this;
     }
+
     return this.server
       .initialize()
       .then(() => {
@@ -133,11 +172,13 @@ export class OPCUAAdapter {
 
   public findNode(nodeIdentifier: NodeIdLike): UAVariable | null {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
-    const node = this.server.engine.addressSpace.findNode(nodeIdentifier) as UAVariable;
+    const node = this.server.engine.addressSpace.findNode(
+      nodeIdentifier
+    ) as UAVariable;
 
-    if (node) return node
-    winston.warn(`${logPrefix} Node with id ${nodeIdentifier} not found!`)
-    return null
+    if (node) return node;
+    winston.warn(`${logPrefix} Node with id ${nodeIdentifier} not found!`);
+    return null;
   }
 
   /**

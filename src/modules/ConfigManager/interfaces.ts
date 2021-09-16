@@ -3,9 +3,15 @@ import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
 
 export interface IRuntimeConfig {
+  users: IUser[];
   mtconnect: IMTConnectConfig;
   opcua: IOPCUAConfig;
   restApi: IRestApiConfig;
+}
+
+export interface IUser {
+  userName: string;
+  password: string;
 }
 
 export interface IRestApiConfig {

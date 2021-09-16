@@ -1,7 +1,18 @@
 {
+  "users": [
+    {
+      "userName": "user",
+      "password": "user"
+    }
+  ],
   "mtconnect": { "listenerPort": 7878 },
+  "restApi": {
+    "port": 5000,
+    "maxFileSizeByte": 20000000
+  },
   "opcua": {
-    "port": 26543,
+    "port": 4840,
+    "allowAnonymous": false,
     "nodeset_filename": [
       "_mdclight/opcu_nodeSet/Opc.Ua.Di.NodeSet2.xml",
       "_mdclight/opcu_nodeSet/Opc.Ua.Machinery.NodeSet2.xml",

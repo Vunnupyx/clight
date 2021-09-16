@@ -20,7 +20,7 @@ interface IConfigManagerEvents {
  * Config for managing the app's config
  */
 export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
-  private configFolder = '../../../mdclight/config';
+  private configFolder = path.join(process.cwd(), 'mdclight/config');
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
   private _runtimeConfig: IRuntimeConfig;
@@ -60,18 +60,26 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.errorEventsBus = errorEventsBus;
     this.lifecycleEventsBus = lifecycleEventsBus;
 
+    console.log(this.configFolder);
+
     ConfigManager.className = this.constructor.name;
 
     // Initial values
     this._runtimeConfig = {
+      users: [],
       mtconnect: {
         listenerPort: 7878
+      },
+      opcua: {
+        port: 4840,
+        nodeset_filename: []
       },
       restApi: {
         port: 5000,
         maxFileSizeByte: 20000000
       }
     };
+
     this._config = {
       dataSources: [],
       dataSinks: [],
@@ -127,11 +135,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
-    const configPath = path.join(
-      __dirname,
-      `${this.configFolder}/${configName}`
-    );
-    const pathExists = fs.existsSync(path.join(__dirname, this.configFolder));
+    const configPath = path.join(this.configFolder, configName);
+    const pathExists = fs.existsSync(this.configFolder);
     const fileExists = fs.existsSync(configPath);
     if (!pathExists || !fileExists) {
       await this.lifecycleEventsBus.push({

@@ -1,15 +1,16 @@
 import { ConfigManager } from "../ConfigManager";
-import { IDataPointMapping } from "../ConfigManager/interfaces";
+import { IConfig, IDataPointMapping } from "../ConfigManager/interfaces";
 
 /**
  * Uses the mapping "configuration" to map data sources to data sinks
  */
 export class DataPointMapper {
   private static instance: DataPointMapper;
-  private config: IDataPointMapping[] = [];
+  private mapping: IDataPointMapping[] = [];
 
   constructor(config: ConfigManager) {
-    this.config = config.config.mapping;
+    this.mapping = config.config.mapping;
+    config.on('newConfig', this.newConfigHandler.bind(this))
   }
 
   /**
@@ -32,10 +33,17 @@ export class DataPointMapper {
    * @returns string
    */
   public getTarget(sourceId: string) {
-    const mapping = this.config.find((dp) => dp.source === sourceId);
+    const mapping = this.mapping.find((dp) => dp.source === sourceId);
     if (!mapping) {
       return null;
     }
     return mapping;
+  }
+
+  /**
+   * Update mapping if config has changed.
+   */
+  private newConfigHandler(config: IConfig): void {
+    this.mapping = config.mapping;
   }
 }

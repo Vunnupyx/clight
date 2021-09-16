@@ -1,4 +1,10 @@
 {
+  "general": {
+    "manufacturer": "DMGMORI",
+    "serialNumber": "12345678901",
+    "model": "CMX 50 U",
+    "control": "SIEMENS SINUMERIK 840D sl"
+  },
   "dataSources": [
     {
       "id": "nc",

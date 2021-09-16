@@ -37,7 +37,7 @@ export class OPCUADataSink extends DataSink {
 
     this.config.dataPoints.forEach((dp) => {
       winston.debug(`${logPrefix} Setting up node ${dp.id}`);
-      this.opcuaNodes[dp.id] = this.opcuaAdapter.findNode(dp.id);
+      this.opcuaNodes[dp.id] = this.opcuaAdapter.findNode(dp.id) as UAVariable;
     });
 
     return this;
@@ -50,7 +50,10 @@ export class OPCUADataSink extends DataSink {
 
     if (node) {
       //@ts-ignore
-      node.setValueFromSource(new Variant({value, dataType: node._dataValue.value.dataType}))
+      node.setValueFromSource(
+        //@ts-ignore
+        new Variant({ value, dataType: node._dataValue.value.dataType })
+      );
 
       winston.debug(
         `${logPrefix} TargetDataPointId: ${dataPointId}, Value: ${value}`

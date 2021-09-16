@@ -60,8 +60,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.errorEventsBus = errorEventsBus;
     this.lifecycleEventsBus = lifecycleEventsBus;
 
-    console.log(this.configFolder);
-
     ConfigManager.className = this.constructor.name;
 
     // Initial values
@@ -72,7 +70,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       opcua: {
         port: 4840,
-        nodeset_filename: []
+        nodesetDir: ''
       },
       restApi: {
         port: 5000,
@@ -81,6 +79,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     };
 
     this._config = {
+      general: {
+        manufacturer: '',
+        serialNumber: '',
+        model: '',
+        control: ''
+      },
       dataSources: [],
       dataSinks: [],
       dataPoints: [],
@@ -194,6 +198,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public updateConfig(configCategory: keyof IConfig, data: object | string) {
     // trigger config save
     const categoryArray = this.config[configCategory];
+
+    if (!Array.isArray(categoryArray)) return;
+
     if (typeof data === 'string') {
       // Remove
       const index = categoryArray.findIndex((entry) => entry.id === data);

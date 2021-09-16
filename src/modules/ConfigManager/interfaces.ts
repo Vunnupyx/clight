@@ -9,6 +9,13 @@ export interface IRuntimeConfig {
   restApi: IRestApiConfig;
 }
 
+export interface IGeneralConfig {
+  manufacturer: string;
+  serialNumber: string;
+  model: string;
+  control: string;
+}
+
 export interface IUser {
   userName: string;
   password: string;
@@ -22,7 +29,9 @@ export interface IMTConnectConfig {
   listenerPort: number;
 }
 
-export interface IOPCUAConfig extends OPCUAServerOptions {}
+export interface IOPCUAConfig extends OPCUAServerOptions {
+  nodesetDir: string;
+}
 
 export interface IDataPointConfig {
   id: string;
@@ -85,6 +94,7 @@ export interface IConfig {
   virtualDataPoints: IVirtualDataPointConfig[];
   dataPoints: IDataSinkDataPointConfig[];
   mapping: IDataPointMapping[];
+  general: IGeneralConfig;
 }
 
 export interface IConfigManagerParams {

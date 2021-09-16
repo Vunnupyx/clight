@@ -1,8 +1,9 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import {
+  BaseNode,
   OPCUAServer,
   NodeIdLike,
-  UAVariable,
+  UAObject,
   UserManagerOptions,
   OPCUACertificateManager
 } from 'node-opcua';
@@ -10,7 +11,11 @@ import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
 
 import { ConfigManager } from '../ConfigManager';
-import { IOPCUAConfig, IUser } from '../ConfigManager/interfaces';
+import {
+  IGeneralConfig,
+  IOPCUAConfig,
+  IUser
+} from '../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../common/errors';
 import path from 'path';
 
@@ -22,7 +27,9 @@ export class OPCUAAdapter {
   private server: OPCUAServer;
   private config: IOPCUAConfig;
   private users: IUser[];
+  private generalConfig: IGeneralConfig;
   private running = false;
+  private nodesetDir: string;
 
   private userManager: UserManagerOptions;
   private serverCertificateManager: OPCUACertificateManager;
@@ -35,6 +42,7 @@ export class OPCUAAdapter {
     OPCUAAdapter.configValidation(config);
     this.config = config.runtimeConfig.opcua;
     this.users = config.runtimeConfig.users;
+    this.generalConfig = config.config.general;
   }
 
   /**
@@ -51,6 +59,47 @@ export class OPCUAAdapter {
       throw new NorthBoundError(`${logPrefix} no runtime config found.`);
     if (!config.runtimeConfig.opcua)
       throw new NorthBoundError(`${logPrefix} no opcua config found.`);
+  }
+
+  /**
+   * Returns configured machine name or place empty if neither manufacturer nor serialNumber configured
+   */
+  private getMachineName() {
+    if (!this.generalConfig.manufacturer && !this.generalConfig.serialNumber)
+      return 'UnnamedMachine';
+    else
+      return `${
+        this.generalConfig.manufacturer ? this.generalConfig.manufacturer : ''
+      }${
+        this.generalConfig.manufacturer && this.generalConfig.serialNumber
+          ? '-'
+          : ''
+      }${
+        this.generalConfig.serialNumber ? this.generalConfig.serialNumber : ''
+      }`;
+  }
+
+  /**
+   * Rewrites all xml nodesets into tmp folder and replaces static texts like the machineName
+   */
+  private async setupNodesets() {
+    this.nodesetDir = path.join(process.cwd(), 'mdclight/config/tmpnodesets');
+    await fs.copy(this.config.nodesetDir, this.nodesetDir);
+    const files = (await fs.readdir(this.nodesetDir)) as string[];
+    const fullFiles = files.map((file) => path.join(this.nodesetDir, file));
+
+    for (const file of fullFiles)
+      if (file.includes('dmgmori-umati-v')) {
+        fs.writeFileSync(
+          file,
+          fs
+            .readFileSync(file, 'utf8')
+            .split('{{machineName}}')
+            .join(this.getMachineName())
+        );
+      }
+
+    return fullFiles;
   }
 
   /**
@@ -86,6 +135,9 @@ export class OPCUAAdapter {
       });
   }
 
+  /**
+   * Initializes opc ua server. Also initially sets up certificates on first startup
+   */
   public async init(): Promise<OPCUAAdapter> {
     const logPrefix = `${OPCUAAdapter.className}::init`;
     if (this.running) {
@@ -129,7 +181,7 @@ export class OPCUAAdapter {
         subject: '/CN=MDClightOPCUAServer',
         startDate: new Date(),
         dns: [],
-        validity: 365 * 5, // five year
+        validity: 365 * 100,
         outputFile: certificateFile
       });
       winston.info(`Certificate ${certificateFile} created`);
@@ -149,19 +201,23 @@ export class OPCUAAdapter {
       }
     };
 
+    const nodeSets = await this.setupNodesets();
+
     // TODO: Inject project logger to OPCUAServer
     this.server = new OPCUAServer({
       ...this.config,
       userManager: this.userManager,
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,
-      certificateFile
+      certificateFile,
+      nodeset_filename: nodeSets
     });
 
     return this.server
       .initialize()
       .then(() => {
         winston.info(`${logPrefix} initialized.`);
+
         return this;
       })
       .catch((err) => {
@@ -203,11 +259,9 @@ export class OPCUAAdapter {
       });
   }
 
-  public findNode(nodeIdentifier: NodeIdLike): UAVariable | null {
+  public findNode(nodeIdentifier: NodeIdLike): BaseNode | null {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
-    const node = this.server.engine.addressSpace.findNode(
-      nodeIdentifier
-    ) as UAVariable;
+    const node = this.server.engine.addressSpace.findNode(nodeIdentifier);
 
     if (node) return node;
     winston.warn(`${logPrefix} Node with id ${nodeIdentifier} not found!`);

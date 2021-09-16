@@ -13,14 +13,14 @@
   "opcua": {
     "port": 4840,
     "allowAnonymous": false,
-    "nodeset_filename": [
-      "_mdclight/opcu_nodeSet/Opc.Ua.Di.NodeSet2.xml",
-      "_mdclight/opcu_nodeSet/Opc.Ua.Machinery.NodeSet2.xml",
-      "_mdclight/opcu_nodeSet/Opc.Ua.IA.NodeSet2.xml",
-      "_mdclight/opcu_nodeSet/Opc.Ua.NodeSet2.xml",
-      "_mdclight/opcu_nodeSet/Opc.Ua.MachineTool.Nodeset2.xml",
-      "_mdclight/opcu_nodeSet/dmgmori-umati-types-v2.0.11.xml",
-      "_mdclight/opcu_nodeSet/dmgmori-umati-v2.0.11.xml"
-    ]
+    "buildInfo": {
+      "manufacturerName": "DMG MORI",
+      "productName": "MDCLight",
+      "softwareVersion": "1.0.0"
+    },
+    "serverInfo": {
+      "applicationUri": "urn:MDClightOPCUAServer"
+    },
+    "nodesetDir": "_mdclight/opcu_nodeSet"
   }
 }

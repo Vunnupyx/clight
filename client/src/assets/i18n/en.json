@@ -15,5 +15,13 @@
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch"
+  },
+  "settings-data-source": {
+    "DataSource": "Data Source",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "Select": "Select"
   }
 }

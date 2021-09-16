@@ -3,8 +3,8 @@
     "Settings": "Einstellungen",
     "General": "Allgemein",
     "UpdateManager": "Update Manager",
-    "DataSource": "Daten Quelle",
-    "VirtualDataPoints": "Virtuelle Daten Punkte",
+    "DataSource": "Datenquelle",
+    "VirtualDataPoints": "Virtuelle Datenpunkte",
     "DataSinks": "Anwendungs Schnittstellen",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen"
@@ -15,5 +15,13 @@
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch"
+  },
+  "settings-data-source": {
+    "DataSource": "Datenquelle",
+    "Edit": "Bearbeiten",
+    "Delete": "Löschen",
+    "Save": "Speichern",
+    "Cancel": "Abbrechen",
+    "Select": "Auswählen"
   }
 }

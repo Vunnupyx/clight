@@ -1,10 +1,12 @@
 import { NgModule } from "@angular/core";
 
-import { TodoItemsService } from "./todo-items.service";
+import { DataPointService } from "./data-point.service";
+import { DataSourceService } from "./data-source.service";
 
 @NgModule({
     providers: [
-        TodoItemsService,
+        DataPointService,
+        DataSourceService,
     ]
 })
 export class ServicesModule { }

@@ -1338,6 +1338,13 @@
     "@angular-devkit/schematics" "12.2.5"
     jsonc-parser "3.0.0"
 
+"@swimlane/ngx-datatable@^20.0.0":
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/@swimlane/ngx-datatable/-/ngx-datatable-20.0.0.tgz#843933b6015be46d9625e04afde6ac1030d303f3"
+  integrity sha512-fok9xzOA5UqhmoRKHpEz25k2wXD/ZGtAAeTQqkn/FpyLgPtdWV2OF/wNIyIZaDJ8jBlNoeHTnJnkDONnFGV93A==
+  dependencies:
+    tslib "^2.0.0"
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
@@ -5059,6 +5066,11 @@ neo-async@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
+
+ngx-ip@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/ngx-ip/-/ngx-ip-1.1.4.tgz#99202938f044ec5f5c9984e6deb510748722da2c"
+  integrity sha512-EjxhYmdxh6J50F4TWxRFR0URx8CjCONG2uNf4YFW5PYvqL7V1SK2rQ6AYiIOZ48iGE/nlVQNt4KwQNOFa5tGvg==
 
 ngx-webstorage@^8.0.0:
   version "8.0.0"

@@ -16,6 +16,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxIpModule } from 'ngx-ip';
@@ -48,6 +51,9 @@ import { AppTranslationModule } from 'app/app.translation';
         MatButtonToggleModule,
         MatTooltipModule,
         MatDialogModule,
+        MatCardModule,
+        MatTabsModule,
+        MatSlideToggleModule,
         NgxDatatableModule,
         NgxIpModule,
 

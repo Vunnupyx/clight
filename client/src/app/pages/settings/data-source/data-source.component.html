@@ -1,4 +1,4 @@
-<p *ngIf="isBusy" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(127,127,127,0.4); z-index: 1;">
+<p *ngIf="isBusy" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(127,127,127,0.4); z-index: 10;">
     <!-- Loading indicator here -->
 </p>
 
@@ -6,39 +6,62 @@
 
 <mat-divider></mat-divider>
 
-<div class="container">
+<mat-card>
+    <nav mat-tab-nav-bar mat-align-tabs="center">
+        <a mat-tab-link *ngFor="let item of dataSourceList"
+            (click)="switchDataSource(item)"
+            [active]="dataSource?.id === item.id">{{item.name}}</a>
+    </nav>
+
     <div class="row">
         <div class="col-12 col-lg-4">
-            <mat-form-field appearance="legacy">
-                <mat-label>Protocol</mat-label>
-                <mat-select [ngModel]="dataSource?.protocol" name="protocol" #name="ngModel"
-                    (ngModelChange)="updateProtocol($event)">
-                    <mat-option [value]="Protocol.S7">S7 / NC</mat-option>
-                    <mat-option [value]="Protocol.IOShield">IO Shield</mat-option>
-                </mat-select>
-            </mat-form-field>
+            <div class="d-flex align-items-center">
+                <div class="mt-20 mr-30">Enabled</div>
+                <mat-slide-toggle class="ml-20 mt-20" [ngModel]="dataSource?.enabled" (ngModelChange)="updateEnabled($event)"></mat-slide-toggle>
+            </div>
+        
+            <div *ngIf="dataSource?.protocol === Protocol.S7" class="mt-20 d-flex align-items-center">
+                <div class="mt-0 mr-25 text-nowrap">IP Address</div>
+                <form #form="ngForm">
+                    <div class="d-flex align-items-center">
+                        <ngx-ip [ngModel]="dataSource?.connection?.ipAddr" name="ipAddress" inputValidation="block" separator="." [required]="true"
+                            [highlightInvalidBlocks]="true" theme="ngx-ip-theme-material"
+                            (ngModelChange)="updateIpAddress(form.valid, $event)"></ngx-ip>
+                        <ng-container *ngIf="!form.dirty">
+                            <div class="p-10"></div>
+                        </ng-container>
+                        <ng-container *ngIf="form.dirty">
+                            <mat-icon *ngIf="form.valid" class="color-success">check</mat-icon>
+                            <mat-icon *ngIf="!form.valid" class="color-error">error_outline</mat-icon>
+                        </ng-container>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div *ngIf="name.value === Protocol.S7" class="col-12 col-lg-4">
-            <div class="mt-25">IP Address</div>
-            <form #form="ngForm">
-                <div class="d-flex align-items-center">
-                    <ngx-ip [ngModel]="dataSource?.connection?.ipAddr" name="ipAddress" inputValidation="block" separator="." [required]="true"
-                        [highlightInvalidBlocks]="true" theme="ngx-ip-theme-material"
-                        (ngModelChange)="updateIpAddress(form.valid, $event)"></ngx-ip>
-                    <ng-container *ngIf="form.dirty">
-                        <mat-icon *ngIf="form.valid" class="color-success">check</mat-icon>
-                        <mat-icon *ngIf="!form.valid" class="color-error">error_outline</mat-icon>
-                    </ng-container>
+        <div class="col-12 col-lg-4 offset-lg-4">
+            <div class="mt-25">Connection</div>
+            <div class="mt-10 d-flex align-items-center justify-content-between" style="
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                    border-radius: 6px;
+                    width: 70%;
+                ">
+                <div>
+                    <div style="font-weight: 600;">Running</div>
+                    <small style="color: #999;">Service state</small>
                 </div>
-            </form>
+                <div class="mr-10">
+                    <mat-icon class="color-success">check_circle_outline</mat-icon>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-12">
-            <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
                 <h3>Data points</h3>
-                <button mat-stroke-button color="secondary" class="wh-38" [matTooltip]="'settings-data-source.AddDataPoint' | translate" matTooltipPosition="above"><mat-icon>add</mat-icon></button>
+                <button mat-mini-fab color="primary" class="wh-32 border-round ml-15" (click)="onAdd()" [matTooltip]="'settings-data-source.AddDataPoint' | translate" matTooltipPosition="above"><mat-icon style="margin-top: -10px;">add</mat-icon></button>
             </div>
             <ngx-datatable [headerHeight]="50" [rows]="datapointRows" rowHeight="auto" columnMode="flex">
                 <ngx-datatable-column name="Name" prop="name" [flexGrow]="1">
@@ -53,8 +76,8 @@
                             autofocus
                         />
                     </ng-template>
-                  </ngx-datatable-column>
-                  <ngx-datatable-column name="Type" prop="type" [flexGrow]="1">
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Type" prop="type" [flexGrow]="1">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <span *ngIf="unsavedRowIndex !== rowIndex">
                             <ng-container [ngSwitch]="value">
@@ -69,14 +92,14 @@
                             <mat-option [value]="DataPointType.NCK">NCK</mat-option>
                         </mat-select>
                     </ng-template>
-                  </ngx-datatable-column>
-                  <ngx-datatable-column name="Address" prop="address" [flexGrow]="3" cellClass="address-cell">
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Address" prop="address" [flexGrow]="3" cellClass="address-cell">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <ng-container *ngIf="unsavedRowIndex !== rowIndex">
                             <div class="mt-5">{{ value }}</div>
                         </ng-container>
                         <div *ngIf="unsavedRowIndex === rowIndex" class="d-flex align-items-center">
-                            <ng-container [ngSwitch]="row.type">
+                            <ng-container [ngSwitch]="unsavedRow!.type">
                                 <ng-container *ngSwitchCase="DataPointType.NCK">
                                     <div>{{ unsavedRow?.address }}</div>
                                     <mat-button-toggle-group class="ml-10">
@@ -91,23 +114,23 @@
                             </ng-container>
                         </div>
                     </ng-template>
-                  </ngx-datatable-column>
-                  <ngx-datatable-column name="Actions" [flexGrow]="1" cellClass="action-cell" [sortable]="false">
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Actions" [flexGrow]="1" cellClass="action-cell" [sortable]="false">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
                             <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditStart(rowIndex, row)" [matTooltip]="'settings-data-source.Edit' | translate" matTooltipPosition="above"><mat-icon>edit</mat-icon></mat-button-toggle>
                             <mat-button-toggle class="mat-button-toggle-sm" [matTooltip]="'settings-data-source.Delete' | translate" matTooltipPosition="above"><mat-icon>delete_outline</mat-icon></mat-button-toggle>
                         </mat-button-toggle-group>
                         <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
-                            <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditEnd(rowIndex)" [matTooltip]="'settings-data-source.Save' | translate" matTooltipPosition="above"><mat-icon class="color-success">check</mat-icon></mat-button-toggle>
+                            <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditEnd()" [matTooltip]="'settings-data-source.Save' | translate" matTooltipPosition="above"><mat-icon class="color-success">check</mat-icon></mat-button-toggle>
                             <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditCancel()" [matTooltip]="'settings-data-source.Cancel' | translate" matTooltipPosition="above"><mat-icon class="color-error">close</mat-icon></mat-button-toggle>
                         </mat-button-toggle-group>
                     </ng-template>
-                  </ngx-datatable-column>
+                </ngx-datatable-column>
             </ngx-datatable>
         </div>
     </div>
-</div>
 
-<pre>{{unsavedRow|json}}</pre>
-<pre>{{datapointRows|json}}</pre>
+    <pre>{{unsavedRow|json}}</pre>
+    <pre>{{datapointRows|json}}</pre>
+</mat-card>

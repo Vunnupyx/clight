@@ -40,7 +40,7 @@ export class DataPointService {
         }));
 
         try {
-            const dataPoints = await this.httpService.get<api.Sourcedatapoint[]>(`/datasources/${datasourceId}/datapoints`, undefined, DATA_POINTS_MOCK());
+            const dataPoints = await this.httpService.get<api.Sourcedatapoint[]>(`/datasources/${datasourceId}/datapoints`, undefined, DATA_POINTS_MOCK(datasourceId));
             this._store.patchState(state => {
                 state.dataPoints = dataPoints.map(x => this._parseDataPoint(x));
                 state.status = Status.Ready;
@@ -57,20 +57,21 @@ export class DataPointService {
     async addDataPoint(datasourceId: string, obj: DataPoint) {
         this._store.patchState(state => {
             state.status = Status.Creating;
-            state.dataPoints.push(obj);
         });
 
         try {
             await this.httpService.post(`/datasources/${datasourceId}/datapoints`, obj);
             this._store.patchState(state => {
                 state.status = Status.Ready;
+                // TODO: Obtain new ID from JSON response
+                obj.id = 'new id';
+                state.dataPoints.push(obj);
             });
         } catch (err) {
             errorHandler(err);
             // TODO: Show error message (toast notification?)
             this._store.patchState(state => {
                 state.status = Status.Ready;
-                state.dataPoints = state.dataPoints.filter(x => x != obj);
             });
         }
     }

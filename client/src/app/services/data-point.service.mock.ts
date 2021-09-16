@@ -1,28 +1,28 @@
 import * as api from "app/api/models";
 
-export const DATA_POINTS_MOCK = () => ([
+export const DATA_POINTS_MOCK = datasourceId => ([
     <api.Sourcedatapoint>{
-        id: 'id01',
-        name: 'name01',
-        description: 'desc 01',
+        id: `id${datasourceId}1`,
+        name: `name${datasourceId}1`,
+        description: `desc ${datasourceId}1`,
         type: 's7',
-        address: 'address1',
+        address: `address${datasourceId}1`,
         readFrequency: 1, 
     },
     <api.Sourcedatapoint>{
-        id: 'id02',
-        name: 'name02',
-        description: 'desc 02',
+        id: `id${datasourceId}2`,
+        name: `name${datasourceId}2`,
+        description: `desc ${datasourceId}2`,
         type: 's7',
-        address: 'address2',
-        readFrequency: 2, 
+        address: `address${datasourceId}2`,
+        readFrequency: 1, 
     },
     <api.Sourcedatapoint>{
-        id: 'id03',
-        name: 'name03',
-        description: 'desc 03',
+        id: `id${datasourceId}3`,
+        name: `name${datasourceId}3`,
+        description: `desc ${datasourceId}3`,
         type: 'nck',
-        address: 'address3',
-        readFrequency: 3,
+        address: `address${datasourceId}3`,
+        readFrequency: 1, 
     },
 ]);

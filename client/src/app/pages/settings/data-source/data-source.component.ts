@@ -19,6 +19,7 @@ export class DataSourceComponent implements OnInit {
     DataPointType = DataPointType;
     Protocol = DataSourceProtocol;
 
+    dataSourceList?: DataSource[];
     dataSource?: DataSource;
     datapointRows?: DataPoint[];
 
@@ -49,16 +50,20 @@ export class DataSourceComponent implements OnInit {
         if (!arr || !arr.length) {
             return;
         }
-        // TODO: Choose one datasource from array
-        this.dataSource = arr[0];
-        this.dataPointService.getDataPoints(this.dataSource.id!);
+        this.dataSourceList = arr;
+        this.switchDataSource(arr[0]);
     }
 
-    updateProtocol(val: DataSourceProtocol) {
+    switchDataSource(obj: DataSource) {
+        this.dataSource = obj;
+        this.dataPointService.getDataPoints(obj.id!);
+    }
+
+    updateEnabled(val: boolean) {
         if (!this.dataSource) {
             return;
         }
-        this.dataSource.protocol = val;
+        this.dataSource.enabled = val;
         this.dataSourceService.updateDataSource(this.dataSource);
     }
 
@@ -78,23 +83,44 @@ export class DataSourceComponent implements OnInit {
         this.datapointRows = arr;
     }
 
+    onAdd() {
+        if (!this.datapointRows) {
+            return;
+        }
+        const obj = {
+            type: DataPointType.NCK,
+        } as DataPoint;
+        this.unsavedRowIndex = this.datapointRows.length;
+        this.unsavedRow = obj;
+        this.datapointRows = this.datapointRows.concat([obj]);
+    }
+
     onEditStart(rowIndex: number, row: any) {
+        this.clearUnsavedRow();
         this.unsavedRowIndex = rowIndex;
         this.unsavedRow = clone(row);
     }
 
-    onEditEnd(rowIndex: number) {
+    onEditEnd() {
         if (!this.datapointRows) {
             return;
         }
-        this.dataPointService.updateDataPoint(this.dataSource!.id!, this.unsavedRow!);
-        delete this.unsavedRow;
-        delete this.unsavedRowIndex;
+        if (this.unsavedRow!.id) {
+            this.dataPointService.updateDataPoint(this.dataSource!.id!, this.unsavedRow!);
+        } else {
+            this.dataPointService.addDataPoint(this.dataSource!.id!, this.unsavedRow!);
+        }
+        this.clearUnsavedRow();
     }
 
     onEditCancel() {
+        this.clearUnsavedRow();
+    }
+
+    private clearUnsavedRow() {
         delete this.unsavedRow;
         delete this.unsavedRowIndex;
+        this.datapointRows = this.datapointRows!.filter(x => x.id);
     }
 
     onAddressSelect(obj: DataPoint) {

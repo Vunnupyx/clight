@@ -12,8 +12,6 @@ test-runtime:
     key: ${CI_BUILD_REF}
     paths:
       - node_modules
-  environment:
-    name: testing
   script:
     - yarn && yarn test
 
@@ -24,11 +22,9 @@ test-client:
     key: ${CI_BUILD_REF}
     paths:
       - client/node_modules
-  environment:
-    name: testing
   script:
     - cd client
-    - yarn && yarn ng test --watch false
+    - yarn && yarn ng test --watch false --browsers ChromeHeadless
 
 build-webserver-production:
   image: node:lts-alpine

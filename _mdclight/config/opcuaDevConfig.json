@@ -43,6 +43,10 @@
   "mapping": [
     {
       "source": "redLight",
+      "target": "ns=7;s=Light_1-SignalOn"
+    },
+    {
+      "source": "redLight",
       "target": "ns=7;s=Light_1-SignalMode"
     }
   ]

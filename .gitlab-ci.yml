@@ -15,16 +15,16 @@ test-runtime:
   script:
     - yarn && yarn test
 
-test-client:
-  image: node:lts-alpine
-  stage: test
-  cache:
-    key: ${CI_BUILD_REF}
-    paths:
-      - client/node_modules
-  script:
-    - cd client
-    - yarn && yarn ng test --watch false --browsers ChromeHeadless
+# test-client:
+#   image: node:lts-alpine
+#   stage: test
+#   cache:
+#     key: ${CI_BUILD_REF}
+#     paths:
+#       - client/node_modules
+#   script:
+#     - cd client
+#     - yarn && yarn ng test --watch false --browsers ChromeHeadless
 
 build-webserver-production:
   image: node:lts-alpine

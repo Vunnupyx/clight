@@ -1,3 +1,7 @@
+<p *ngIf="isBusy" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(127,127,127,0.4); z-index: 1;">
+    <!-- Loading indicator here -->
+</p>
+
 <h2 class="m-25">{{ 'settings-data-source.DataSource' |translate }}</h2>
 
 <mat-divider></mat-divider>
@@ -7,18 +11,25 @@
         <div class="col-12 col-lg-4">
             <mat-form-field appearance="legacy">
                 <mat-label>Protocol</mat-label>
-                <mat-select [ngModel] name="protocol" #name="ngModel">
-                    <mat-option [value]="Protocol.S7">S7</mat-option>
-                    <mat-option [value]="Protocol.NC">NC</mat-option>
+                <mat-select [ngModel]="dataSource?.protocol" name="protocol" #name="ngModel"
+                    (ngModelChange)="updateProtocol($event)">
+                    <mat-option [value]="Protocol.S7">S7 / NC</mat-option>
+                    <mat-option [value]="Protocol.IOShield">IO Shield</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
         <div *ngIf="name.value === Protocol.S7" class="col-12 col-lg-4">
             <div class="mt-25">IP Address</div>
             <form #form="ngForm">
-                <ngx-ip [ngModel] name="ipAddress" inputValidation="block" separator="." [required]="true"
-                    [highlightInvalidBlocks]="true" theme="ngx-ip-theme-material"></ngx-ip>
-                <pre>Valid: {{ form.valid }}</pre>
+                <div class="d-flex align-items-center">
+                    <ngx-ip [ngModel]="dataSource?.connection?.ipAddr" name="ipAddress" inputValidation="block" separator="." [required]="true"
+                        [highlightInvalidBlocks]="true" theme="ngx-ip-theme-material"
+                        (ngModelChange)="updateIpAddress(form.valid, $event)"></ngx-ip>
+                    <ng-container *ngIf="form.dirty">
+                        <mat-icon *ngIf="form.valid" class="color-success">check</mat-icon>
+                        <mat-icon *ngIf="!form.valid" class="color-error">error_outline</mat-icon>
+                    </ng-container>
+                </div>
             </form>
         </div>
     </div>
@@ -29,13 +40,13 @@
                 <h3>Data points</h3>
                 <button mat-stroke-button color="secondary" class="wh-38"><mat-icon>add</mat-icon></button>
             </div>
-            <ngx-datatable [headerHeight]="50" [rows]="datasourceRows" rowHeight="auto" columnMode="flex">
+            <ngx-datatable [headerHeight]="50" [rows]="datapointRows" rowHeight="auto" columnMode="flex">
                 <ngx-datatable-column name="Name" prop="name" [flexGrow]="1">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                       <span *ngIf="unsavedRowIndex !== rowIndex">
                         {{ value }}
                       </span>
-                      <input type="text" *ngIf="unsavedRowIndex === rowIndex"
+                      <input type="text" *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
                         [ngModel]="value"
                         (ngModelChange)="unsavedRow.name = $event"
                         autofocus
@@ -48,11 +59,11 @@
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
                             <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditStart(rowIndex, row)"><mat-icon>edit</mat-icon></mat-button-toggle>
-                            <mat-button-toggle class="mat-button-toggle-sm"><mat-icon>delete</mat-icon></mat-button-toggle>
+                            <mat-button-toggle class="mat-button-toggle-sm"><mat-icon>delete_outline</mat-icon></mat-button-toggle>
                         </mat-button-toggle-group>
                         <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
-                            <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditEnd(rowIndex)"><mat-icon>check</mat-icon></mat-button-toggle>
-                            <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditCancel()"><mat-icon>cancel</mat-icon></mat-button-toggle>
+                            <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditEnd(rowIndex)"><mat-icon class="color-success">check</mat-icon></mat-button-toggle>
+                            <mat-button-toggle class="mat-button-toggle-sm" (click)="onEditCancel()"><mat-icon class="color-error">close</mat-icon></mat-button-toggle>
                         </mat-button-toggle-group>
                     </ng-template>
                   </ngx-datatable-column>
@@ -62,4 +73,4 @@
 </div>
 
 <pre>{{unsavedRow|json}}</pre>
-<pre>{{datasourceRows|json}}</pre>
+<pre>{{datapointRows|json}}</pre>

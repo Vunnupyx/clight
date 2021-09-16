@@ -1,0 +1,17 @@
+.container {
+    display: block;
+    margin-right: 90px;
+    text-align: center;
+    .line-1 {
+        font-size: 18px;
+        color: #eee;
+        font-weight: 300;
+        height: 17px;
+    }
+    .line-2 {
+        font-size: 12px;
+        font-weight: 200;
+        color: #eee;
+        height: 14px;
+    }
+}

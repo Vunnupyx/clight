@@ -1,0 +1,684 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "RESTful API for the MDC Light project.",
+    "version": "1.0.0",
+    "title": "MDCLight",
+    "contact": {
+      "email": "info@codestryke.com"
+    }
+  },
+  "host": "localhost:5000",
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "datasource",
+      "description": "Everything about the data source"
+    }
+  ],
+  "produces": ["application/json"],
+  "schemes": ["https", "http"],
+  "paths": {
+    "/datasources": {
+      "get": {
+        "description": "Returns all available datasources of the runtime",
+        "parameters": [],
+        "operationId": "dataSourcesGet",
+        "responses": {
+          "200": {
+            "description": "A list of all available datasources.",
+            "schema": {
+              "$ref": "#/definitions/dataSourceList"
+            }
+          }
+        }
+      }
+    },
+    "/datasources/{id}": {
+      "get": {
+        "operationId": "dataSourceGet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the datasource to patch",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request dateSource with given ID",
+            "schema": {
+              "$ref": "#/definitions/dataSourceType"
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "enable or disable datasource",
+        "description": "Only for toggling enabled property",
+        "operationId": "dataSourcePatch",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the datasource to patch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "enabled",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/enableDatasource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully enable/disable datasource",
+            "schema": {
+              "$ref": "#/definitions/dataSourceType"
+            }
+          }
+        }
+      }
+    },
+    "/datasinks": {
+      "get": {
+        "description": "Returns all available datesinks of the runtime",
+        "operationId": "dataSinksGet",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful request to datasinks",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataSinks": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/dataSinkType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasinks/{id}": {
+      "get": {
+        "operationId": "dataSinkGet",
+        "summary": "Get datasink object by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datasink object",
+            "schema": {
+              "$ref": "#/definitions/dataSinkType"
+            }
+          }
+        }
+      }
+    },
+    "/dataPoints": {
+      "get": {
+        "operationId": "dataPointsGet",
+        "responses": {
+          "200": {
+            "description": "Return list of dataPoints",
+            "schema": {
+              "$ref": "#/definitions/dataPointList"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "dataPointsPost",
+        "parameters": [
+          {
+            "name": "dataPoint",
+            "in": "body",
+            "description": "New Datapoint object",
+            "schema": {
+              "$ref": "#/definitions/dataPointType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response of a new created dataPoint",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "created": {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                "href": {
+                  "type": "string",
+                  "description": "url for direct resource access"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dataPoints/{id}": {
+      "get": {
+        "operationId": "dataPointGet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the datapoint to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/definitions/dataPointType"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "dataPointPatch",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the datasource to patch",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "patchData",
+            "in": "body",
+            "description": "DataPoint object with changed properties",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dataPointType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response of a change request for a datapoint with given id",
+            "schema": {
+              "$ref": "#/definitions/dataPointType"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "dataPointDelete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the datapoint to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete a datapoint by id and return the deleted item.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "type": "object",
+                  "$ref": "#/definitions/dataPointType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vdps": {
+      "get": {
+        "description": "Return a list of virtual datapoints",
+        "operationId": "vdpsGet",
+        "responses": {
+          "200": {
+            "description": "List of virtual datapoints.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "vdps": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/virtualDataPointType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Add a virtual datapoint to the runtime",
+        "operationId": "vdpsPost",
+        "responses": {
+          "200": {
+            "description": "Successfully create a virtual datapoint resource",
+            "schema": {
+              "required": ["properties", "href"],
+              "type": "object",
+              "properties": {
+                "virtualDataPoint": {
+                  "$ref": "#/definitions/virtualDataPointType"
+                },
+                "href": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vdps/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Id of the virtual datapoint to operate on",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "vdpGet",
+        "responses": {
+          "200": {
+            "description": "Returns a virtual datapoint",
+            "schema": {
+              "$ref": "#/definitions/virtualDataPointType"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "vdpDelete",
+        "responses": {
+          "200": {
+            "description": "Delete virtual datapoint with given id."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "vdpPatch",
+        "parameters": [
+          {
+            "name": "patched virtual datapoint",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/virtualDataPointType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Changed virtual dataPoint",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "changed": {
+                  "$ref": "#/definitions/virtualDataPointType"
+                },
+                "href": {
+                  "type": "string",
+                  "description": "URL of the changed resource."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/backup": {
+      "get": {
+        "operationId": "backupGet",
+        "responses": {
+          "200": {
+            "description": "Config file as JSON.",
+            "schema": {
+              "type": "file",
+              "format": "binary"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "backupPost",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "in": "formData",
+            "description": "New config file to use.",
+            "name": "config",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Config file uploaded to the system.",
+            "schema": {
+              "$ref": "#/definitions/configFile"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "enableDatasource": {
+      "description": "JSON type for change enable state",
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "virtualDataPointType": {
+      "type": "object",
+      "required": ["id", "sources", "operationType"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "operationType": {
+          "type": "string",
+          "pattern": "[and|or|not|counter]"
+        }
+      }
+    },
+    "sourcedatapoint": {
+      "type": "object",
+      "required": ["id", "name", "address", "readFrequency"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string",
+          "pattern": "TODO:"
+        },
+        "readFrequency": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "dataSinkType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "datapoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataPointType"
+          }
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+
+    "datasinkArrayItem": {
+      "required": ["name", "id", "href"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      }
+    },
+    "virtualdatapointArrayItem": {
+      "required": ["name", "id", "href"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      }
+    },
+    "dataSourceType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/sourcedatapoint"
+          }
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "connection": {
+          "$ref": "#/definitions/connection"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "dataSourceList": {
+      "type": "object",
+      "properties": {
+        "dataSources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataSourceType"
+          }
+        }
+      }
+    },
+    "datasourceArrayItem": {
+      "required": ["name", "id", "href", "enabled"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "href": {
+          "type": "string"
+        }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "properties": {
+        "ipAddr": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rack": {
+          "type": "number",
+          "minimum": 0
+        },
+        "slot": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+
+    "dataPointList": {
+      "type": "object",
+      "properties": {
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataPointType"
+          }
+        }
+      }
+    },
+    "dataPointType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["event"]
+        },
+        "map": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "initValue": {
+          "description": "index af map for the init value",
+          "type": "integer",
+          "minimum": 0
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "dataPointArrayItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["event"]
+        }
+      }
+    },
+    "configFile": {
+      "type": "object",
+      "required": [
+        "dataSources",
+        "dataSinks",
+        "dataPoints",
+        "virtualDataPoints",
+        "mapping"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "dataSources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataSourceType"
+          }
+        },
+        "dataSinks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataSinkType"
+          }
+        },
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataPointType"
+          }
+        },
+        "virtualDataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/virtualDataPointType"
+          }
+        },
+        "mapping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source", "target"],
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "mapValue": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

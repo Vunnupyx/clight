@@ -1,0 +1,19 @@
+{
+  "layout": {
+    "Settings": "Einstellungen",
+    "General": "Allgemein",
+    "UpdateManager": "Update Manager",
+    "DataSource": "Daten Quelle",
+    "VirtualDataPoints": "Virtuelle Daten Punkte",
+    "DataSinks": "Anwendungs Schnittstellen",
+    "Network": "Netzwerk",
+    "SystemInformation": "System Informationen"
+  },
+  "settings-general": {
+    "General": "Erfolgreich",
+    "Language": "Sprache",
+    "CELOSLanguage": "CELOS Sprache",
+    "English": "English",
+    "Deutsch": "Deutsch"
+  }
+}

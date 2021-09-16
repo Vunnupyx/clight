@@ -1,42 +1,51 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
+import { EventEmitter } from 'stream';
 import {
   DeviceLifecycleEventTypes,
   EventLevels,
   IErrorEvent,
-  ILifecycleEvent,
-} from "../../common/interfaces";
-import { EventBus } from "../EventBus";
-import { IConfig, IConfigManagerParams, IRuntimeConfig } from "./interfaces";
+  ILifecycleEvent
+} from '../../common/interfaces';
+import { EventBus } from '../EventBus';
+import { IConfig, IConfigManagerParams, IRuntimeConfig } from './interfaces';
 
 /**
  * Config for managing the app's config
  */
-export class ConfigManager {
+export class ConfigManager extends EventEmitter {
   public runtimeConfig: IRuntimeConfig = {
     mtconnect: {
-      listenerPort: 7878,
+      listenerPort: 7878
     },
     opcua: {
       port: 4334
+    },
+    restApi: {
+      port: 5000,
+      maxFileSizeByte: 20000000
     }
   };
   public config: IConfig = {
     dataSources: [],
     dataSinks: [],
+    dataPoints: [],
     virtualDataPoints: [],
-    mapping: [],
+    mapping: []
   };
   public id: string | null = null;
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private configFolder = "../../../mdclight/config";
+  private configFolder = '../../../mdclight/config';
+  private configName = 'config.json';
+  private runtimeConfigName = 'runtime.json';
 
   /**
    * Creates config and check types
    */
   constructor(params: IConfigManagerParams) {
+    super();
     const { errorEventsBus, lifecycleEventsBus } = params;
     this.errorEventsBus = errorEventsBus;
     this.lifecycleEventsBus = lifecycleEventsBus;
@@ -47,15 +56,20 @@ export class ConfigManager {
    */
   public async init() {
     this.runtimeConfig = await this.loadConfig(
-      "runtime.json",
+      this.runtimeConfigName,
       this.runtimeConfig
     );
-    this.config = await this.loadConfig("config.json", this.config);
+    this.config = await this.loadConfig(this.configName, this.config);
 
     this.checkType(
       this.runtimeConfig.mtconnect.listenerPort,
-      "number",
-      "runtime.mtconnect.listenerPort"
+      'number',
+      'runtime.mtconnect.listenerPort'
+    );
+    this.checkType(
+      this.runtimeConfig.restApi.port,
+      'number',
+      'runtime.restApi.port'
     );
   }
 
@@ -69,10 +83,10 @@ export class ConfigManager {
     if (!(typeof value === type)) {
       const error = `Value for ${name} must be of type ${type}!`;
       this.errorEventsBus.push({
-        id: "device",
+        id: 'device',
         type: DeviceLifecycleEventTypes.ErrorOnParseLocalConfig,
         level: EventLevels.Device,
-        payload: error,
+        payload: error
       });
       throw new Error(error);
     }
@@ -90,10 +104,10 @@ export class ConfigManager {
   ): Promise<any> {
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       await this.lifecycleEventsBus.push({
-        id: "device",
+        id: 'device',
         type: DeviceLifecycleEventTypes.DeviceConfigDoesNotExists,
         level: EventLevels.Device,
-        payload: "Configuration folder does not exist!",
+        payload: 'Configuration folder does not exist!'
       });
       throw new Error(DeviceLifecycleEventTypes.DeviceConfigDoesNotExists);
     }
@@ -104,15 +118,15 @@ export class ConfigManager {
     );
     if (!fs.existsSync(configPath)) {
       await this.lifecycleEventsBus.push({
-        id: "device",
+        id: 'device',
         type: DeviceLifecycleEventTypes.DeviceConfigDoesNotExists,
         level: EventLevels.Device,
-        payload: `Configuration file ${configName} does not exist!`,
+        payload: `Configuration file ${configName} does not exist!`
       });
       DeviceLifecycleEventTypes.DeviceConfigDoesNotExists;
     }
 
-    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     return this.mergeDeep(defaultConfig, config);
   }
 
@@ -122,7 +136,7 @@ export class ConfigManager {
    * @returns {boolean}
    */
   private isObject(item) {
-    return item && typeof item === "object" && !Array.isArray(item);
+    return item && typeof item === 'object' && !Array.isArray(item);
   }
 
   /**
@@ -146,5 +160,37 @@ export class ConfigManager {
     }
 
     return this.mergeDeep(target, ...sources);
+  }
+
+  /**
+   *
+   */
+  public updateConfig(configCategory: keyof IConfig, data: object | string) {
+    // trigger config save
+    const categoryArray = this.config[configCategory];
+    if (typeof data === 'string') {
+      // Remove
+      const index = categoryArray.findIndex((entry) => entry.id === data);
+      if (index > -1) {
+        categoryArray.splice(index, 1);
+        this.saveConfigToFile();
+        return;
+      }
+      throw new Error(`ConfigManager::updateConfig error due to id not found`);
+    }
+    // @ts-ignore
+    categoryArray.push(data);
+    this.saveConfigToFile();
+  }
+
+  /**
+   * Save the current data from config property into a JSON config file.
+   */
+  private saveConfigToFile(): void {
+    fs.writeFileSync(
+      path.join(__dirname, this.configFolder, this.configName),
+      JSON.stringify(this.config, null, 2),
+      { encoding: 'utf-8' }
+    );
   }
 }

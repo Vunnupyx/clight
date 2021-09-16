@@ -57,7 +57,7 @@ export class S7DataSource extends DataSource {
 
   /**
    * Reading data from device
-   * @param  {} addresses
+   * @param addresses
    * @returns Promise
    */
   private readData(addresses): Promise<S7DataPointsWithError> {

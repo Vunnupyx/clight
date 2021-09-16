@@ -1,0 +1,63 @@
+import express, { Application, Response, Router }  from 'express';
+import { connector as connectorFactory, Controllers } from 'swagger-routes-express';
+import * as OpenApiValidator from 'express-openapi-validator';
+import path from 'path';
+import fs from 'fs';
+import {dataSourceHandlers, setConfigManager as dataSourcesSetConfigManager} from '../routes/apis/v1/DataSources/index';
+import {dataSinksHandlers, setConfigManager as dataSinksSetConfigManager} from '../routes/apis/v1/DataSinks/index';
+import {dataPointsHandlers, setConfigManger as dataPointsSetConfigManager} from '../routes/apis/v1/DataPoints/index';
+import { ConfigManager } from '../../ConfigManager';
+import swaggerUi from "swagger-ui-express";
+
+export class RoutesManager {
+    private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');
+    private inputValidator;
+    private app: Application;
+    private routeHandlers = {
+        ... dataSourceHandlers,
+        ... dataSinksHandlers,
+        ... require('../routes/apis/v1/DataSinks/index'),
+        ... dataPointsHandlers,
+        ... require('../routes/apis/v1/VirtualDataPoints/index'),
+    };
+
+    constructor(app: Application, configManager: ConfigManager) {
+        this.app = app;
+        const swaggerFile = JSON.parse(fs.readFileSync(this.swaggerFilePath, {encoding: 'utf8'}));
+
+        // TODO: REMOVE SWAGGER DOKU ROUTE
+        app.use(
+            "/apidocs",
+            swaggerUi.serveFiles(swaggerFile, {}),
+            swaggerUi.setup(swaggerFile)
+          );
+        
+        //TODO: OMG please refactor this!!!
+        [
+            dataSourcesSetConfigManager,
+            dataSinksSetConfigManager,
+            dataPointsSetConfigManager
+        ].forEach((func) => func(configManager))
+        
+        
+        this.inputValidator = OpenApiValidator.middleware({
+            apiSpec: swaggerFile,
+            validateRequests: false,
+            validateResponses: false
+        });
+
+        //TODO: Make code sync
+        connectorFactory(this.routeHandlers, require('../routes/swagger.json'))(app);
+        // this.app.use(this.inputValidator);
+        // this.app.use(this.requestErrorHandler);
+    }
+
+    private requestErrorHandler(err, req, res, next) {
+        console.log(`Fehler`);
+        console.log(err);
+        res.status(err.status || 500).json({
+            message: err.message,
+            errors: err.error 
+        })
+    }
+}

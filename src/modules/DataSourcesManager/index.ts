@@ -60,6 +60,8 @@ export class DataSourcesManager {
       if (!dataSource) {
         return;
       }
+
+      // TODO Does this even work?
       dataSource.on(DataSourceEventTypes.Measurement, this.onMeasurementEvent);
       dataSource.on(DataSourceEventTypes.Lifecycle, this.onLifecycleEvent);
 

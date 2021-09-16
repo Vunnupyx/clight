@@ -1,0 +1,60 @@
+
+
+<div class="page-content" style="position: relative;">
+
+  <p *ngIf="isBusy" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(127,127,127,0.4); z-index: 1;">
+    <!-- Loading indicator here -->
+  </p>
+
+  <h1>NgTodoList {{'Successful' | translate}}</h1>
+
+  <mat-expansion-panel hideToggle (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="new-item-icon">add</mat-icon>
+        New item
+      </mat-panel-title>
+      <mat-panel-description>
+        Click and start typing...
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <form *ngIf="panelOpenState" #addForm="ngForm" (submit)="onAdd(addForm.value);addForm.reset()" novalidate autocomplete="off" class="add-item-form">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Title</mat-label>
+        <input autofocus matInput [ngModel] name="title">
+      </mat-form-field>
+
+      <br />
+      <mat-form-field appearance="fill">
+        <mat-label>Description</mat-label>
+        <textarea matInput [ngModel] name="description"></textarea>
+      </mat-form-field>
+
+      <br />
+      <button mat-raised-button color="primary" type="submit">
+        <mat-icon>add</mat-icon>
+      </button>
+
+    </form>
+  </mat-expansion-panel>
+
+
+
+  <mat-selection-list #selectionList>
+    <mat-list-option *ngFor="let item of items">
+        <span matListAvatar>
+            <mat-icon>bookmark</mat-icon>
+        </span>
+      <h3 matLine> {{item.title}} </h3>
+      <p matLine>
+        <span class="item-description"> {{item.description}} </span>
+      </p>
+    </mat-list-option>
+  </mat-selection-list>
+
+  <p>
+    Items selected: {{selectionList?.selectedOptions?.selected?.length || 0}}
+  </p>
+
+</div>

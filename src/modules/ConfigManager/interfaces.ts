@@ -5,8 +5,13 @@ import { OPCUAServerOptions } from 'node-opcua';
 export interface IRuntimeConfig {
   mtconnect: IMTConnectConfig;
   opcua: IOPCUAConfig;
+  restApi: IRestApiConfig;
 }
 
+export interface IRestApiConfig {
+  port: number;
+  maxFileSizeByte: number;
+}
 export interface IMTConnectConfig {
   listenerPort: number;
 }
@@ -72,6 +77,7 @@ export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];
   virtualDataPoints: IVirtualDataPointConfig[];
+  dataPoints: IDataSinkDataPointConfig[];
   mapping: IDataPointMapping[];
 }
 

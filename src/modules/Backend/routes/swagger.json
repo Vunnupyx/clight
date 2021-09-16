@@ -557,7 +557,7 @@
     },
     "sourcedatapoint": {
       "type": "object",
-      "required": ["id", "name", "address", "readFrequency"],
+      "required": ["id", "name", "address", "readFrequency", "type"],
       "properties": {
         "id": {
           "type": "string"

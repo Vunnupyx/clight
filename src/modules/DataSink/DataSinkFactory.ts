@@ -1,7 +1,8 @@
-import { DataSinkProtocols } from "../../common/interfaces";
-import { IDataSinkConfig } from "../ConfigManager/interfaces";
-import { DataSink } from "./DataSink";
-import { MTConnectDataSink } from "./MTConnect";
+import { DataSinkProtocols } from '../../common/interfaces';
+import { IDataSinkConfig } from '../ConfigManager/interfaces';
+import { DataSink } from './DataSink';
+import { MTConnectDataSink } from './MTConnect';
+import { OPCUADataSink } from './OPCUA';
 
 /**
  * Creates data sink by type
@@ -13,7 +14,9 @@ export const createDataSink = (config: IDataSinkConfig): DataSink => {
 
   switch (protocol) {
     case DataSinkProtocols.MTCONNECT:
-      return createMTConnectDataSource(config);
+      return createMTConnectDataSink(config);
+    case DataSinkProtocols.OPCUA:
+      return createOPCUADataSink(config);
     default:
       throw Error(`Invalid protocol of data sink ${id}`);
   }
@@ -24,10 +27,14 @@ export const createDataSink = (config: IDataSinkConfig): DataSink => {
  * @param  {IDataSinkConfig} config
  * @returns MTConnectDataSink
  */
-const createMTConnectDataSource = (
+const createMTConnectDataSink = (
   config: IDataSinkConfig
 ): MTConnectDataSink => {
   const sink = new MTConnectDataSink({ config });
   sink.init();
   return sink;
 };
+
+export function createOPCUADataSink(config: IDataSinkConfig): OPCUADataSink {
+  return new OPCUADataSink({ config }).init();
+}

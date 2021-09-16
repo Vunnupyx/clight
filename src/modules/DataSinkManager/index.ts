@@ -1,10 +1,12 @@
-import { IDataSinkConfig } from "../ConfigManager/interfaces";
-import { EventBus, MeasurementEventBus } from "../EventBus/index";
-import { IDataSinkManagerParams } from "./interfaces";
-import { createDataSink } from "../DataSink/DataSinkFactory";
-import { ILifecycleEvent } from "../../common/interfaces";
-import { DataSink } from "../DataSink/DataSink";
-import { MTConnectManager } from "../MTConnectManager";
+import { IDataSinkConfig } from '../ConfigManager/interfaces';
+import { EventBus, MeasurementEventBus } from '../EventBus/index';
+import { IDataSinkManagerParams } from './interfaces';
+import { createDataSink } from '../DataSink/DataSinkFactory';
+import { ILifecycleEvent } from '../../common/interfaces';
+import { DataSink } from '../DataSink/DataSink';
+import { MTConnectManager } from '../MTConnectManager';
+import { OPCUAManager } from '../OPCUAManager';
+import winston from 'winston';
 
 /**
  * Manages data sinks
@@ -19,8 +21,6 @@ export class DataSinkManager {
     this.dataSinkConfig = params.dataSinksConfig;
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
-
-    this.spawnDataSinks();
   }
 
   /**
@@ -47,12 +47,14 @@ export class DataSinkManager {
   /**
    * Creates all configures data sinks
    */
-  public spawnDataSinks(): void {
-    this.dataSinks = this.dataSinkConfig.map(createDataSink);
-    this.subscribeDataSinks();
-
+  public async spawnDataSinks(): Promise<void> {
+    winston.info("Start data sinks")
     // Starting mtc adapter
     MTConnectManager.startAdapter();
+    await OPCUAManager.startAdapter();
+
+    this.dataSinks = this.dataSinkConfig.map(createDataSink);
+    this.subscribeDataSinks();
   }
 
   /**

@@ -1,17 +1,36 @@
-import { IErrorEvent, ILifecycleEvent } from "../../common/interfaces";
-import { EventBus } from "../EventBus";
+import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
+import { EventBus } from '../EventBus';
+import { OPCUAServerOptions } from 'node-opcua';
 
 export interface IRuntimeConfig {
+  users: IUser[];
   mtconnect: IMTConnectConfig;
-  restApi: IRestApiConfig
+  opcua: IOPCUAConfig;
+  restApi: IRestApiConfig;
+}
+
+export interface IGeneralConfig {
+  manufacturer: string;
+  serialNumber: string;
+  model: string;
+  control: string;
+}
+
+export interface IUser {
+  userName: string;
+  password: string;
 }
 
 export interface IRestApiConfig {
-  port: number,
-  maxFileSizeByte: number
+  port: number;
+  maxFileSizeByte: number;
 }
 export interface IMTConnectConfig {
   listenerPort: number;
+}
+
+export interface IOPCUAConfig extends OPCUAServerOptions {
+  nodesetDir: string;
 }
 
 export interface IDataPointConfig {
@@ -34,18 +53,18 @@ export interface IDataSourceConfig {
   };
 }
 
-type IMTConnectDataPointTypes = "event";
+type IMTConnectDataPointTypes = 'event';
 
 // type MapItem = {
 //   [key: string]: "string";
 // };
-export type IMTConnectDataMap = object;
+export type ITargetDataMap = object;
 
 export interface IDataSinkDataPointConfig {
   id: string;
   name: string;
   type: IMTConnectDataPointTypes;
-  map?: IMTConnectDataMap;
+  map?: ITargetDataMap;
   initialValue?: string | number;
 }
 
@@ -60,13 +79,13 @@ export interface IDataPointMapping {
   source: string;
   target: string;
   mapValue?: string;
-  priotity?: number;
+  priotity?: number; //TODO: FIX SPELLING
 }
 
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  type: "and" | "or" | "not" | "counter";
+  type: 'and' | 'or' | 'not' | 'counter';
 }
 
 export interface IConfig {
@@ -75,6 +94,7 @@ export interface IConfig {
   virtualDataPoints: IVirtualDataPointConfig[];
   dataPoints: IDataSinkDataPointConfig[];
   mapping: IDataPointMapping[];
+  general: IGeneralConfig;
 }
 
 export interface IConfigManagerParams {

@@ -1,20 +1,16 @@
-import {
-  IDataSinkConfig,
-  IMTConnectDataMap,
-} from "../../ConfigManager/interfaces";
-import { IDataSinkParams } from "./../interfaces";
+import { IDataSinkConfig } from '../../ConfigManager/interfaces';
+import { IDataSinkParams } from './../interfaces';
 
-import { MTConnectAdapter } from "../../MTConnectAdapter";
-import { DataSink } from "../DataSink";
-import { MTConnectManager } from "../../MTConnectManager";
+import { MTConnectAdapter } from '../../MTConnectAdapter';
+import { DataSink } from '../DataSink';
+import { MTConnectManager } from '../../MTConnectManager';
 import {
   DataSourceLifecycleEventTypes,
   ILifecycleEvent,
-  MTConnectDataItemTypes,
-} from "../../../common/interfaces";
-import { DataItem, Event } from "../../MTConnectAdapter/DataItem";
-import winston from "winston";
-import { IDataSourceMeasurementEvent } from "../../DataSource";
+  MTConnectDataItemTypes
+} from '../../../common/interfaces';
+import { DataItem, Event } from '../../MTConnectAdapter/DataItem';
+import winston from 'winston';
 
 type DataItemDict = {
   [key: string]: DataItem;
@@ -43,7 +39,7 @@ export class MTConnectDataSink extends DataSink {
    * Sets up data items and adds them to the mtc adapter
    */
   public init() {
-    this.avail = new DataItem("avail");
+    this.avail = new DataItem('avail');
     this.mtcAdapter.addDataItem(this.avail);
 
     this.config.dataPoints.forEach((dp) => {
@@ -60,106 +56,19 @@ export class MTConnectDataSink extends DataSink {
       this.mtcAdapter.addDataItem(dataItem);
       this.dataItems[dp.id] = dataItem;
 
-      if (typeof dp.initialValue !== "undefined") {
+      if (typeof dp.initialValue !== 'undefined') {
         dataItem.value = dp.initialValue;
       }
     });
   }
 
-  /**
-   * Handles measurements
-   * @param params The user configuration object for this data source
-   */
-  // TODO Rename add "Handler" to name
-  public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
-    interface IEvent {
-      mapValue?: string;
-      map?: IMTConnectDataMap;
-      value: number | string | boolean;
+  protected processDataPointValue(dataPointId, value) {
+    const dataItem = this.dataItems[dataPointId];
+
+    if (dataItem) {
+      dataItem.value = value;
+      winston.debug(`Setting MTConnect DataItem ${dataItem} to ${value}`);
     }
-    const eventsByTarget: {
-      [key: string]: IEvent[];
-    } = {};
-    events.forEach((event) => {
-      const targetMapping = this.dataPointMapper.getTarget(
-        event.measurement.id
-      );
-
-      if (!targetMapping || !this.dataItems[targetMapping.target]) {
-        return;
-      }
-
-      if (!eventsByTarget[targetMapping.target]) {
-        eventsByTarget[targetMapping.target] = [];
-      }
-
-      const dp = this.config.dataPoints.find(
-        (dp) => dp.id === targetMapping.target
-      );
-
-      eventsByTarget[targetMapping.target].push({
-        mapValue: targetMapping.mapValue,
-        map: dp.map,
-        value: event.measurement.value,
-      });
-    });
-
-    Object.keys(eventsByTarget).forEach((target) => {
-      const events = eventsByTarget[target];
-      const targetDataItem = this.dataItems[target];
-
-      let setEvent: IEvent;
-      if (events.length > 1) {
-        if (events.some((event) => typeof event.value !== "boolean")) {
-          winston.warn(
-            `Multiple non boolean source events for target: ${target}!`
-          );
-        }
-        if (events.some((event) => typeof event.mapValue === "undefined")) {
-          winston.warn(`Map value for enum taget: ${target} not provided!`);
-          return;
-        }
-
-        const triggeredEvents = events.filter((e) => e.value);
-
-        const sortedEvents = triggeredEvents.sort((a, b) => {
-          const mapValueA = parseInt(a.mapValue, 10);
-          const mapValueB = parseInt(b.mapValue, 10);
-
-          if (mapValueA < mapValueB) return -1;
-          if (mapValueA > mapValueB) return 1;
-          return 0;
-        });
-        setEvent = sortedEvents[0];
-      } else {
-        setEvent = events[0];
-      }
-
-      if (!setEvent) return;
-      let value;
-
-      if (typeof setEvent.mapValue !== "undefined") {
-        value = setEvent.map[setEvent.mapValue];
-      } else if (typeof setEvent.value === "boolean") {
-        value = setEvent.value ? setEvent.map["true"] : setEvent.map["false"];
-        if (!value) {
-          winston.error(`Map for boolean target ${target} required!`);
-          return;
-        }
-      } else if (
-        setEvent.map &&
-        Object.keys(setEvent.map).some((key) => {
-          return key === setEvent.value.toString();
-        })
-      ) {
-        value = setEvent.map[setEvent.value];
-      } else {
-        value = setEvent.value;
-      }
-
-      targetDataItem.value = value;
-      winston.debug(`Setting MTConnect DataItem ${target} to ${value}`);
-    });
   }
 
   /**
@@ -168,7 +77,7 @@ export class MTConnectDataSink extends DataSink {
    */
   public async onLifecycleEvent(event: ILifecycleEvent) {
     if (event.type === DataSourceLifecycleEventTypes.Connected) {
-      this.avail.value = "AVAILABLE";
+      this.avail.value = 'AVAILABLE';
       winston.info(`Data source for data sink ${this.config.id} is available`);
     }
     if (event.type === DataSourceLifecycleEventTypes.Disconnected) {

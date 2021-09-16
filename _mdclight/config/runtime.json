@@ -1,5 +1,26 @@
 {
-  "mtconnect": {
-    "listenerPort": 7878
+  "users": [
+    {
+      "userName": "user",
+      "password": "user"
+    }
+  ],
+  "mtconnect": { "listenerPort": 7878 },
+  "restApi": {
+    "port": 5000,
+    "maxFileSizeByte": 20000000
+  },
+  "opcua": {
+    "port": 4840,
+    "allowAnonymous": false,
+    "buildInfo": {
+      "manufacturerName": "DMG MORI",
+      "productName": "MDCLight",
+      "softwareVersion": "1.0.0"
+    },
+    "serverInfo": {
+      "applicationUri": "urn:MDClightOPCUAServer"
+    },
+    "nodesetDir": "_mdclight/opcu_nodeSet"
   }
 }

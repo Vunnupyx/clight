@@ -4,7 +4,7 @@ import { v1 as uuidv1 } from "uuid";
 import { DataItem } from "./DataItem";
 import { format } from "date-fns";
 import { ConfigManager } from "../ConfigManager";
-import { IMTConnectConfig } from "../ConfigManager/interfaces";
+import { IConfig, IMTConnectConfig } from "../ConfigManager/interfaces";
 
 export interface Socket extends net.Socket {
   id?: string;
@@ -23,6 +23,8 @@ export class MTConnectAdapter {
 
   constructor(config: ConfigManager) {
     this.config = config.runtimeConfig.mtconnect;
+    // register for config changes
+    config.on('newConfig', this.configChangedHandler.bind(this))
   }
 
   /**
@@ -215,5 +217,8 @@ export class MTConnectAdapter {
 
     this.running = false;
     return;
+  }
+  private configChangedHandler(config: IConfig) {
+    //TODO implement this
   }
 }

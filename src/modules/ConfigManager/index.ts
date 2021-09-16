@@ -21,12 +21,12 @@ export class ConfigManager extends EventEmitter {
     restApi: {
       port: 5000,
       maxFileSizeByte: 20000000,
-    }
+    },
   };
   public config: IConfig = {
     dataSources: [],
     dataSinks: [],
-    dataPoints: [],
+    // dataPoints: [],
     virtualDataPoints: [],
     mapping: [],
   };
@@ -35,7 +35,7 @@ export class ConfigManager extends EventEmitter {
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
   private configFolder = "../../../mdclight/config";
-  private configName = 'config.json';
+  private configName = "config.json";
   private runtimeConfigName = "runtime.json";
 
   /**
@@ -58,8 +58,16 @@ export class ConfigManager extends EventEmitter {
     );
     this.config = await this.loadConfig(this.configName, this.config);
 
-    this.checkType(this.runtimeConfig.mtconnect.listenerPort, "number", "runtime.mtconnect.listenerPort");
-    this.checkType(this.runtimeConfig.restApi.port, "number", "runtime.restApi.port");
+    this.checkType(
+      this.runtimeConfig.mtconnect.listenerPort,
+      "number",
+      "runtime.mtconnect.listenerPort"
+    );
+    this.checkType(
+      this.runtimeConfig.restApi.port,
+      "number",
+      "runtime.restApi.port"
+    );
   }
 
   /**
@@ -152,14 +160,14 @@ export class ConfigManager extends EventEmitter {
   }
 
   /**
-   * 
+   *
    */
   public updateConfig(configCategory: keyof IConfig, data: object | string) {
     // trigger config save
     const categoryArray = this.config[configCategory];
-    if(typeof data === 'string') {
+    if (typeof data === "string") {
       // Remove
-      const index = categoryArray.findIndex((entry) => entry.id === data );
+      const index = categoryArray.findIndex((entry) => entry.id === data);
       if (index > -1) {
         categoryArray.splice(index, 1);
         this.saveConfigToFile();
@@ -179,6 +187,7 @@ export class ConfigManager extends EventEmitter {
     fs.writeFileSync(
       path.join(__dirname, this.configFolder, this.configName),
       JSON.stringify(this.config, null, 2),
-      {encoding: 'utf-8'})
+      { encoding: "utf-8" }
+    );
   }
 }

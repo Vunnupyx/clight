@@ -8,7 +8,7 @@ import {
   ILifecycleEvent,
 } from "../../common/interfaces";
 import { EventBus } from "../EventBus";
-import { IConfig, IConfigManagerParams, IRuntimeConfig } from "./interfaces";
+import { IConfig, IConfigManagerParams, IRuntimeConfig, isDataPointMapping } from "./interfaces";
 import TypedEmitter from 'typed-emitter';
 
 interface IConfigManagerEvents {

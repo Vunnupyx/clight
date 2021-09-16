@@ -85,6 +85,7 @@ build-docker-webserver-production:
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
   stage: build-docker
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - yarn docker:build:webserver
     - yarn docker:publish:webserver
   only:
@@ -97,6 +98,7 @@ build-docker-webserver-staging:
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
   stage: build-docker
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - yarn docker:build:webserver
     - yarn docker:publish:webserver
   only:
@@ -109,6 +111,7 @@ build-docker-webserver-development:
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
   stage: build-docker
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - yarn docker:build:webserver
     - yarn docker:publish:webserver
   only:
@@ -180,7 +183,8 @@ build-docker-runtime-production:
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
   stage: build-docker
   script:
-    - - yarn docker:build:mdclight-prod
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - yarn docker:build:mdclight-prod
   only:
     refs:
       - main
@@ -191,6 +195,7 @@ build-docker-runtime-staging:
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
   stage: build-docker
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - yarn docker:build:mdclight-prod
   only:
     refs:
@@ -202,6 +207,7 @@ build-docker-runtime-development:
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
   stage: build-docker
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - yarn docker:build:mdclight-prod
   only:
     - branches

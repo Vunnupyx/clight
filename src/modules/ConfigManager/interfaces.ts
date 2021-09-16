@@ -19,6 +19,7 @@ export interface IDataPointConfig {
   name: string;
   address: string;
   readFrequency: number;
+  type: "s7" | "nck"
 }
 
 export interface IDataSourceConfig {
@@ -32,6 +33,7 @@ export interface IDataSourceConfig {
     rack: number;
     slot: number;
   };
+  enabled: boolean
 }
 
 type IMTConnectDataPointTypes = "event";
@@ -47,6 +49,7 @@ export interface IDataSinkDataPointConfig {
   type: IMTConnectDataPointTypes;
   map?: IMTConnectDataMap;
   initialValue?: string | number;
+  enabled: boolean
 }
 
 export interface IDataSinkConfig {
@@ -54,13 +57,18 @@ export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
+  enabled: boolean
 }
 
 export interface IDataPointMapping {
   source: string;
   target: string;
   mapValue?: string;
-  priotity?: number;
+  priority?: number;
+}
+
+export function isDataPointMapping(obj: any): obj is IDataPointMapping {
+  return ("source" in obj) && ("target" in obj);
 }
 
 export interface IVirtualDataPointConfig {

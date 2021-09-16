@@ -1,5 +1,11 @@
 import { DataPoint } from "./data-point";
 
+export enum DataSourceProtocol {
+    S7 = 's7nck',
+    IOShield = 'ioshield',
+}
+
+
 export class Connection {
     ipAddr?: string;
     port?: number;
@@ -13,5 +19,5 @@ export class DataSource {
     enabled?: boolean;
     id?: string;
     name?: string;
-    protocol?: string;
+    protocol?: DataSourceProtocol;
 }

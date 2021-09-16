@@ -14,6 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule } from '@angular/material/dialog';
 import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxIpModule } from 'ngx-ip';
@@ -44,6 +46,8 @@ import { AppTranslationModule } from 'app/app.translation';
         MatSidenavModule,
         MatToolbarModule,
         MatButtonToggleModule,
+        MatTooltipModule,
+        MatDialogModule,
         NgxDatatableModule,
         NgxIpModule,
 

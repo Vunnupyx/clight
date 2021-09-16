@@ -1,15 +1,12 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog';
 import { Connection } from 'app/api/models';
-import { DataPoint, DataSource } from 'app/models';
+import { DataPoint, DataPointType, DataSource, DataSourceProtocol } from 'app/models';
 import { DataPointService, DataSourceService } from 'app/services';
 import { Status } from 'app/shared/state';
 import { clone } from 'app/shared/utils';
 import { Subscription } from 'rxjs';
-
-export enum Protocol {
-    S7 = 'p_s7',
-    IOShield = 'IOShield',
-}
+import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 
 @Component({
     selector: 'app-data-source',
@@ -19,11 +16,12 @@ export enum Protocol {
 })
 export class DataSourceComponent implements OnInit {
 
-    Protocol = Protocol;
+    DataPointType = DataPointType;
+    Protocol = DataSourceProtocol;
 
     dataSource?: DataSource;
     datapointRows?: DataPoint[];
-    
+
     unsavedRow?: DataPoint;
     unsavedRowIndex: number | undefined;
 
@@ -32,9 +30,10 @@ export class DataSourceComponent implements OnInit {
     constructor(
         private dataPointService: DataPointService,
         private dataSourceService: DataSourceService,
-    ) {}
+        private dialog: MatDialog,
+    ) { }
 
-    get isBusy() { 
+    get isBusy() {
         return this.dataSourceService.status != Status.Ready
             || this.dataPointService.status != Status.Ready;
     }
@@ -45,7 +44,7 @@ export class DataSourceComponent implements OnInit {
 
         this.dataSourceService.getDataSources();
     }
-    
+
     onDataSources(arr: DataSource[]) {
         if (!arr || !arr.length) {
             return;
@@ -55,7 +54,7 @@ export class DataSourceComponent implements OnInit {
         this.dataPointService.getDataPoints(this.dataSource.id!);
     }
 
-    updateProtocol(val: string) {
+    updateProtocol(val: DataSourceProtocol) {
         if (!this.dataSource) {
             return;
         }
@@ -98,7 +97,21 @@ export class DataSourceComponent implements OnInit {
         delete this.unsavedRowIndex;
     }
 
+    onAddressSelect(obj: DataPoint) {
+        const dialogRef = this.dialog.open(SelectTypeModalComponent, {
+            // width: '500px',
+            data: { selection: obj.address },
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
+            this.unsavedRow!.address = `${result.area}.${result.component}.${result.variable}`;
+        });
+    }
+
     ngOnDestroy() {
         this.sub && this.sub.unsubscribe();
-      }
+    }
 }

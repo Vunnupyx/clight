@@ -17,6 +17,11 @@
         "Deutsch": "Deutsch"
     },
     "settings-data-source": {
-        "DataSource": ""
+        "DataSource": "",
+        "Edit": "",
+        "Delete": "",
+        "Save": "",
+        "Cancel": "",
+        "Select": ""
     }
 }

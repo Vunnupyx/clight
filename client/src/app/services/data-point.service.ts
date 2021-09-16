@@ -78,13 +78,13 @@ export class DataPointService {
     async updateDataPoint(datasourceId: string, obj: DataPoint) {
         this._store.patchState(state => {
             state.status = Status.Updating;
-            state.dataPoints = state.dataPoints.map(x => x.id != obj.id ? x : obj);
         });
 
         try {
             await this.httpService.patch(`/datasources/${datasourceId}/datapoints/${obj.id}`, obj);
             this._store.patchState(state => {
                 state.status = Status.Ready;
+                state.dataPoints = state.dataPoints.map(x => x.id != obj.id ? x : obj);
             });
         } catch (err) {
             errorHandler(err);

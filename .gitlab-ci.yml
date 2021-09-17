@@ -26,7 +26,7 @@ test-runtime:
 #     - cd client
 #     - yarn && yarn ng test --watch false --browsers ChromeHeadless
 
-build-webserver-production:
+build-webserver:
   image: node:lts-alpine
   stage: build
   cache:
@@ -42,44 +42,10 @@ build-webserver-production:
   only:
     refs:
       - main
-
-build-webserver-staging:
-  image: node:lts-alpine
-  stage: build
-  cache:
-    key: ${CI_BUILD_REF}
-    paths:
-      - client/node_modules
-  artifacts:
-    paths:
-      - client/dist
-  script:
-    - yarn
-    - yarn build:webserver
-  only:
-    refs:
       - staging
+      - develop
 
-build-webserver-development:
-  image: node:lts-alpine
-  stage: build
-  cache:
-    key: ${CI_BUILD_REF}
-    paths:
-      - client/node_modules
-  artifacts:
-    paths:
-      - client/dist
-  script:
-    - yarn
-    - yarn build:webserver
-  only:
-    - branches
-  except:
-    - main
-    - staging
-
-build-docker-webserver-production:
+build-docker-webserver:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
@@ -91,36 +57,10 @@ build-docker-webserver-production:
   only:
     refs:
       - main
-
-build-docker-webserver-staging:
-  services:
-    - docker:dind
-  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build-docker
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - yarn docker:build:webserver
-    - yarn docker:push:webserver
-  only:
-    refs:
       - staging
+      - develop
 
-build-docker-webserver-development:
-  services:
-    - docker:dind
-  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build-docker
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - yarn docker:build:webserver
-    - yarn docker:push:webserver
-  only:
-    - branches
-  except:
-    - main
-    - staging
-
-build-runtime-production:
+build-runtime:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
@@ -138,46 +78,10 @@ build-runtime-production:
   only:
     refs:
       - main
-
-build-runtime-staging:
-  image: node:lts-alpine
-  stage: build
-  cache:
-    key: ${CI_BUILD_REF}
-    paths:
-      - node_modules
-  artifacts:
-    paths:
-      - runtime
-  script:
-    - yarn
-    - yarn build:dist
-  only:
-    refs:
       - staging
+      - develop
 
-build-runtime-development:
-  services:
-    - docker:dind
-  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build
-  cache:
-    key: ${CI_BUILD_REF}
-    paths:
-      - node_modules
-  artifacts:
-    paths:
-      - runtime
-  script:
-    - yarn
-    - yarn build:dist
-  only:
-    - branches
-  except:
-    - main
-    - staging
-
-build-docker-runtime-production:
+build-docker-runtime:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
@@ -188,29 +92,5 @@ build-docker-runtime-production:
   only:
     refs:
       - main
-
-build-docker-runtime-staging:
-  services:
-    - docker:dind
-  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build-docker
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - yarn docker:build:mdclight-prod
-  only:
-    refs:
       - staging
-
-build-docker-runtime-development:
-  services:
-    - docker:dind
-  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build-docker
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - yarn docker:build:mdclight-prod
-  only:
-    - branches
-  except:
-    - main
-    - staging
+      - develop

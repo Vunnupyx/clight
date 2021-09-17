@@ -30,6 +30,10 @@
     {
       "name": "mappings",
       "description": "Everything about the mappings."
+    },
+    {
+      "name": "deviceInfos",
+      "description": "Everything about the deviceInfos."
     }
   ],
   "produces": ["application/json"],
@@ -635,6 +639,40 @@
           }
         }
       }
+    },
+    "/deviceInfos": {
+      "get": {
+        "tags": ["deviceInfos"],
+        "description": "Get device information",
+        "operationId": "deviceInfosGet",
+        "responses": {
+          "200":{
+            "description": "Returns all information about the connected device",
+            "schema": {
+              "$ref": "#/definitions/deviceInfos"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["deviceInfos"],
+        "operationId": "deviceInfosPatch",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "patchObject",
+            "description": "The changed properties",
+            "schema": {
+              "$ref": "#/definitions/deviceInfos"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -942,6 +980,23 @@
         },
         "priority": {
           "type": "integer"
+        }
+      }
+    },
+    "deviceInfos":{
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "control": {
+          "type": "string"
+        },
+        "serialNumber": {
+          "type": "string"
+        },
+        "manufacturer": {
+          "type": "string"
         }
       }
     }

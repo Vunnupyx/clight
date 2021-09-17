@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Connection } from 'app/api/models';
 import { DataPoint, DataPointType, DataSource, DataSourceProtocol } from 'app/models';
 import { DataPointService, DataSourceService } from 'app/services';
+import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { Status } from 'app/shared/state';
 import { clone } from 'app/shared/utils';
 import { Subscription } from 'rxjs';
@@ -134,6 +135,22 @@ export class DataSourceComponent implements OnInit {
                 return;
             }
             this.unsavedRow!.address = `${result.area}.${result.component}.${result.variable}`;
+        });
+    }
+
+    onDelete(obj: DataPoint) {
+        const title = `Delete`;
+        const message = `Are you sure you want to delete data point ${obj.name}?`;
+
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: new ConfirmDialogModel(title, message)
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+            if (!dialogResult) {
+                return;
+            }
+            this.dataPointService.deleteDataPoint(this.dataSource!.id!, obj);
         });
     }
 

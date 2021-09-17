@@ -3,11 +3,12 @@ import { connector as connectorFactory, Controllers } from 'swagger-routes-expre
 import * as OpenApiValidator from 'express-openapi-validator';
 import path from 'path';
 import fs from 'fs';
-import {dataSourceHandlers, setConfigManager as dataSourcesSetConfigManager} from '../routes/apis/v1/DataSources/index';
-import {dataSinksHandlers, setConfigManager as dataSinksSetConfigManager} from '../routes/apis/v1/DataSinks/index';
-import {dataPointsHandlers, setConfigManger as dataPointsSetConfigManager} from '../routes/apis/v1/DataPoints/index';
+import {dataSourceHandlers, setConfigManager as dataSourcesSetConfigManager} from '../routes/apis/v1/DataSources';
+import {dataSinksHandlers, setConfigManager as dataSinksSetConfigManager} from '../routes/apis/v1/DataSinks';
+import {dataPointsHandlers, setConfigManger as dataPointsSetConfigManager} from '../routes/apis/v1/DataPoints';
 import { virtualDatapointHandlers ,setConfigManger as vdpsSetConfigManager} from '../routes/apis/v1/VirtualDataPoints'
 import { backupHandlers, setConfigManger as backupSetConfigManager } from '../routes/apis/v1/Backup';
+import { deviceInfosHandlers, setConfigManger as deviceInfosSetConfigManager } from '../routes/apis/v1/DeviceInfos';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from "swagger-ui-express";
 
@@ -21,6 +22,7 @@ export class RoutesManager {
         ... dataPointsHandlers,
         ... backupHandlers,
         ... virtualDatapointHandlers,
+        ... deviceInfosHandlers
     };
 
     constructor(app: Application, configManager: ConfigManager) {
@@ -40,7 +42,8 @@ export class RoutesManager {
             dataSinksSetConfigManager,
             dataPointsSetConfigManager,
             backupSetConfigManager,
-            vdpsSetConfigManager
+            vdpsSetConfigManager,
+            deviceInfosSetConfigManager
         ].forEach((func) => func(configManager))
         
         

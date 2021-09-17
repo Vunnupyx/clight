@@ -11,6 +11,7 @@ import { EventBus } from '../EventBus';
 import {
   IConfig,
   IConfigManagerParams,
+  IGeneralConfig,
   IRuntimeConfig,
   isDataPointMapping
 } from './interfaces';
@@ -208,41 +209,47 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     operation: ChangeOperation,
     configCategory: Category,
     // @ts-ignore // TODO @markus pls fix
-    data: DataType[number] | string
+    data: DataType[number]
   ) {
+
     const logPrefix = `${this.constructor.name}::changeConfig`;
-    if (operation === 'delete' && typeof data !== 'string')
+    if (operation === 'delete' && typeof data !== 'string') {
       throw new Error(`${logPrefix} error due try to delete without id.`); // Combination actually not defined in type def.
-
-    const categoryArray = this.config[configCategory];
-
-    if (!Array.isArray(categoryArray)) return;
-
+    }
+    
+    let selectedCategory = this.config[configCategory];
+    
     switch (operation) {
       case 'insert': {
         if (typeof data !== 'string') {
           // @ts-ignore TODO: Fix data type
-          categoryArray.push(data);
+          selectedCategory.push(data);
         }
         break;
       }
       case 'update': {
-        if (typeof data === 'string' || isDataPointMapping(data))
-          throw new Error();
-        // @ts-ignore
-        const index = categoryArray.findIndex((entry) => entry.id === data.id);
-        if (index < 0) throw Error(`NO Entry found`); //TODO:
-        const change = categoryArray[index];
-        categoryArray.splice(index, 1);
-        //@ts-ignore
-        categoryArray.push(data);
+        if (Array.isArray(selectedCategory)) {
+          if (typeof data === 'string' || isDataPointMapping(data))
+            throw new Error();
+          // @ts-ignore
+          const index = selectedCategory.findIndex((entry) => entry.id === data.id);
+          if (index < 0) throw Error(`NO Entry found`); //TODO:
+          const change = selectedCategory[index];
+          selectedCategory.splice(index, 1);
+          //@ts-ignore
+          selectedCategory.push(data);
+        } else {
+          this._config.general = data as unknown as IGeneralConfig;
+        }
         break;
       }
       case 'delete': {
-        const index = categoryArray.findIndex((entry) => entry.id === data);
-        if (index < 0) throw Error(`No Entry found`); //TODO:
-        const change = categoryArray[index];
-        categoryArray.splice(index, 1);
+        if (Array.isArray(selectedCategory)) {
+          const index = selectedCategory.findIndex((entry) => entry.id === data);
+          if (index < 0) throw Error(`No Entry found`); //TODO:
+          const change = selectedCategory[index];
+          selectedCategory.splice(index, 1);
+        }
         break;
       }
       default: {

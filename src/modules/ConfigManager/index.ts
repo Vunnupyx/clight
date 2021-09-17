@@ -15,6 +15,7 @@ import {
   isDataPointMapping
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
+import winston from "winston";
 
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
@@ -256,9 +257,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private saveConfigToFile(configName: string): void {
     fs.writeFileSync(
-      path.join(__dirname, this.configFolder, this.configName),
-      JSON.stringify(this.config, null, 2),
-      { encoding: 'utf-8' }
-    );
+      path.join(__dirname, this.configFolder, configName),
+      JSON.stringify(this._config, null, 1),
+      {encoding: 'utf-8'});
+    winston.info(`${ConfigManager.className}::saveConfigToFile saved new config to file`);
   }
 }

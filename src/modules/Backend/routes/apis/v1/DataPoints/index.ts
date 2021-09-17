@@ -15,7 +15,9 @@ export function setConfigManger(config: ConfigManager) {
  */
 function dataPointsGetHandler(request: Request, response: Response) {
   // @ts-ignore // TODO
-  response.status(200).json({ dataPoints: configManager?.config?.dataPoints });
+  const sink = configManager?.config?.dataSinks.find(
+    (sink) => sink.id === request.params.datasinkId);
+  response.status(sink ? 200 : 404).json(sink ? { dataPoints: sink.dataPoints} : null);
 }
 
 /**

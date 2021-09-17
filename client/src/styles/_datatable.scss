@@ -464,3 +464,36 @@ $datatable-summary-row-background-hover: #ddd !default;
 }
 
 @import '~@swimlane/ngx-datatable/assets/icons.css';
+
+.ngx-datatable {
+    // Overrides for buttons
+    .mat-button-toggle-group.mat-button-toggle-group-appearance-standard {
+        box-shadow: none;
+        border: solid 1px #ccc;
+        mat-button-toggle {
+            width: 30px;
+            height: 30px;
+            .mat-button-toggle-label-content {
+                min-width: 25px !important;
+                width: 25px;
+                height: 25px;
+                line-height: 25px !important;
+                padding: 5px 1px;
+                mat-icon {
+                    font-size: 18px;
+                }
+            }
+        }
+    }
+    // Override for inputs
+    .input-cell {
+        padding-bottom: 6px !important;
+    }
+    .datatable-body-cell-label {
+        input {
+            position: relative;
+            top: -4px;
+            height: 30px;
+        }
+    }
+}

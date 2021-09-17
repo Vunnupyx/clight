@@ -1,5 +1,6 @@
 import { ConfigManager } from "../../../../../ConfigManager";
-import {Request, Response } from 'express';
+import {Request, response, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
 let configManager: ConfigManager;
 
@@ -21,7 +22,12 @@ function vdpsGetHandler (req: Request, res: Response): void {
  */
 function vdpsPostHandler (req: Request, res: Response): void {
     //TODO: Input validation
-    configManager.changeConfig('insert', 'virtualDataPoints', req.body)
+    const newData = {...req.body, ...{id: uuidv4()}};
+    configManager.changeConfig('insert', 'virtualDataPoints', newData)
+    res.status(200).json({
+        created: newData,
+        href: `/vdps/${newData.id}`
+    })
 }
 
 /**
@@ -37,7 +43,9 @@ function vdpGetHandler (req: Request, res: Response): void {
 function vdpDeleteHandler (req: Request, res: Response): void {
     const vdp = configManager?.config?.virtualDataPoints.find((point) => point.id === req.params.id);
     configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-    res.status(vdp ? 200 : 404).send();
+    res.status(vdp ? 200 : 404).json({
+        deleted: vdp
+    });
 }
 /**
  * Overwrites a virtual datapoint
@@ -45,7 +53,12 @@ function vdpDeleteHandler (req: Request, res: Response): void {
 function vdpPatchHandler (req: Request, res: Response): void {
     const vdp = configManager?.config?.virtualDataPoints.find((point) => point.id === req.params.id);
     configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-    configManager.changeConfig('insert', 'virtualDataPoints', req.params.body);
+    const newData = {...req.body, ...{id: uuidv4()}};
+    configManager.changeConfig('insert', 'virtualDataPoints', newData);
+    res.status(200).json({
+        changed: newData,
+        href: `/vdps/${newData.id}`
+    })
 }
 
 export const virtualDatapointHandlers = {

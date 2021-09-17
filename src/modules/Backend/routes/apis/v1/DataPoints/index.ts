@@ -1,5 +1,6 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
 let configManager: ConfigManager;
 
@@ -41,9 +42,13 @@ function dataPointsPostHandler(request: Request, response: Response) {
   const changedSinkObject = configManager.config.dataSinks.find(
     (sink) => sink.id === request.params.datasinkId
   );
-  changedSinkObject.dataPoints.push(request.body);
+  const newData = {...request.body,...{id: uuidv4()}}
+  changedSinkObject.dataPoints.push(newData);
   configManager?.changeConfig('update', 'dataSinks', changedSinkObject);
-  response.status(200).json(request.body);
+  response.status(200).json({
+    created: newData,
+    href: `$/datasinks/${request.params.datasinkId}/datapoints/${newData.id}`
+  });
 }
 /**
  * Change datapoint resource for datasink with selected id
@@ -53,17 +58,21 @@ function dataPointPatchHandler(request: Request, response: Response) {
   const sink = configManager?.config?.dataSinks.find(
     (sink) => sink.id === request.params.datasinkId
   );
-  const index = sink.dataPoints.findIndex(
+  const index = sink?.dataPoints?.findIndex(
     (point) => point.id === request.params.dataPointId
   );
   sink.dataPoints.splice(index, 1);
-  sink.dataPoints.push(request.body);
+  const newData = {...request.body,...{id: uuidv4()}};
+  sink.dataPoints.push(newData);
   configManager?.changeConfig('update', 'dataSinks', sink);
-  response.status(200).send();
+  response.status(200).json({
+    changed: newData,
+    href: `$/datasinks/${request.params.datasinkId}/datapoints/${newData.id}`
+  });
 }
 
 /**
- * Delete a datepoint inside of a datasink selected be datasinkid and datapointid
+ * Delete a datapoint inside of a datasink selected by datasinkid and datapointid
  */
 function dataPointDeleteHandler(request: Request, response: Response) {
   // TODO: INPUT VALIDATION
@@ -73,9 +82,12 @@ function dataPointDeleteHandler(request: Request, response: Response) {
   const index = sink.dataPoints.findIndex(
     (point) => point.id === request.params.dataPointId
   );
+  const point = sink.dataPoints[index];
   sink.dataPoints.splice(index, 1);
   configManager?.changeConfig('update', 'dataSinks', sink);
-  response.status(200).send();
+  response.status(200).json({
+    deleted: point
+  });
 }
 
 export const dataPointsHandlers = {

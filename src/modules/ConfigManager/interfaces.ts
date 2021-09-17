@@ -92,7 +92,7 @@ export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];
   virtualDataPoints: IVirtualDataPointConfig[];
-  dataPoints: IDataSinkDataPointConfig[];
+  // dataPoints: IDataSinkDataPointConfig[]; // TODO ??
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
 }

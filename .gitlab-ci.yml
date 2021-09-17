@@ -1,31 +1,66 @@
 
 stages:
+  - test
   - build
+  - build-docker
+  - deploy
 
-build-runtime-staging:
-  services:
-    - docker:dind
-  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build
+test-runtime:
+  image: node:lts-alpine
+  stage: test
   cache:
     key: ${CI_BUILD_REF}
     paths:
       - node_modules
-  environment:
-    name: staging
+  script:
+    - yarn && yarn test
+
+# test-client:
+#   image: node:lts-alpine
+#   stage: test
+#   cache:
+#     key: ${CI_BUILD_REF}
+#     paths:
+#       - client/node_modules
+#   script:
+#     - cd client
+#     - yarn && yarn ng test --watch false --browsers ChromeHeadless
+
+build-webserver:
+  image: node:lts-alpine
+  stage: build
+  cache:
+    key: ${CI_BUILD_REF}
+    paths:
+      - client/node_modules
   artifacts:
     paths:
-      - runtime
+      - client/dist
   script:
     - yarn
-    - yarn build:dist
+    - yarn build:webserver
   only:
     refs:
+      - main
       - staging
-    # changes:
-    #   - src/**/*
+      - develop
 
-build-runtime-production:
+build-docker-webserver:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
+  stage: build-docker
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - yarn docker:build:webserver
+    - yarn docker:push:webserver
+  only:
+    refs:
+      - main
+      - staging
+      - develop
+
+build-runtime:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
@@ -34,8 +69,6 @@ build-runtime-production:
     key: ${CI_BUILD_REF}
     paths:
       - node_modules
-  environment:
-    name: staging
   artifacts:
     paths:
       - runtime
@@ -45,30 +78,19 @@ build-runtime-production:
   only:
     refs:
       - main
-    # changes:
-    #   - src/**/*
+      - staging
+      - develop
 
-build-runtime-dev:
+build-docker-runtime:
   services:
     - docker:dind
   image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci
-  stage: build
-  cache:
-    key: ${CI_BUILD_REF}
-    paths:
-      - node_modules
-  environment:
-    name: staging
-  artifacts:
-    paths:
-      - runtime
+  stage: build-docker
   script:
-    - yarn
-    - yarn build:dist
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - yarn docker:build:mdclight-prod
   only:
-    - branches
-  except:
-    - main
-    - staging
-    # changes:
-    #   - src/**/*
+    refs:
+      - main
+      - staging
+      - develop

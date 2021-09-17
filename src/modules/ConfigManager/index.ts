@@ -87,7 +87,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       dataSources: [],
       dataSinks: [],
-      dataPoints: [],
       virtualDataPoints: [],
       mapping: []
     };

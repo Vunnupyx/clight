@@ -206,7 +206,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   >(
     operation: ChangeOperation,
     configCategory: Category,
-    // @ts-ignore
+    // @ts-ignore // TODO @markus pls fix
     data: DataType[number] | string
   ) {
     const logPrefix = `${this.constructor.name}::changeConfig`;
@@ -228,6 +228,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       case 'update': {
         if (typeof data === 'string' || isDataPointMapping(data))
           throw new Error();
+        // @ts-ignore
         const index = categoryArray.findIndex((entry) => entry.id === data.id);
         if (index < 0) throw Error(`NO Entry found`); //TODO:
         const change = categoryArray[index];

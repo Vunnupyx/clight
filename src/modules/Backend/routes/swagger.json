@@ -110,6 +110,7 @@
       ],
       "get": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesGetDatapoints",
         "description": "Returns a list of dataPoints of this datasource",
         "responses": {
           "200": {
@@ -130,6 +131,7 @@
       },
       "post": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesPostDatapoint",
         "description": "Create a new datapoint for the selected datasource.",
         "parameters": [
           {
@@ -176,6 +178,7 @@
       ],
       "get": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesGetDatapoint",
         "description": "returns a datapoint with given id",
         "responses": {
           "200": {
@@ -188,6 +191,7 @@
       },
       "delete": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesDeleteDatapoint",
         "description": "Delete the datapoint selected by id",
         "responses": {
           "200": {
@@ -205,6 +209,7 @@
       },
       "patch": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesPatchDatapoint",
         "description": "overwrite datapoint with selected id",
         "parameters": [
           {
@@ -676,8 +681,7 @@
           "type": "string"
         },
         "address": {
-          "type": "string",
-          "pattern": "TODO:"
+          "type": "string"
         },
         "readFrequency": {
           "type": "integer",

@@ -257,7 +257,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private saveConfigToFile(configName: string): void {
     fs.writeFileSync(
-      path.join(__dirname, this.configFolder, configName),
+      path.join(this.configFolder, configName),
       JSON.stringify(this._config, null, 1),
       {encoding: 'utf-8'});
     winston.info(`${ConfigManager.className}::saveConfigToFile saved new config to file`);

@@ -61,6 +61,7 @@ export interface IDataSinkConfig {
 }
 
 export interface IDataPointMapping {
+  id: string,
   source: string;
   target: string;
   mapValue?: string;

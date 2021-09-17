@@ -35,7 +35,8 @@ function backupGetHandle(request: Request, response: Response): void {
  * Handles upload requests of a new config file
  */
 function backupPostHandle(request: Request, response: Response): void {
-    // TODO: Implement -> bodyparser disable for this route ?
+    // TODO: Implement -> bodyparser disable for this route for input validation ?
+    configManager.config = request.body
     response.status(200).send();
 }
 

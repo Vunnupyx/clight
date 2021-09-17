@@ -14,6 +14,7 @@ export function setConfigManger(config: ConfigManager) {
  * Handle get request for a list of datapoints.
  */
 function dataPointsGetHandler(request: Request, response: Response) {
+  // @ts-ignore // TODO
   response.status(200).json({ dataPoints: configManager?.config?.dataPoints });
 }
 

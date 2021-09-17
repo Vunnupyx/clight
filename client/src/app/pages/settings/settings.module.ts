@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { SharedModule } from "app/shared/shared.module";
+import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
 
 import { GeneralComponent } from "./general/general.component";
 import { DataSourceComponent } from './data-source/data-source.component';
@@ -14,6 +15,7 @@ const COMPONENTS = [
 @NgModule({
     imports: [
         SharedModule,
+        ConfirmDialogModule,
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

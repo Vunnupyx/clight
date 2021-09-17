@@ -19,12 +19,14 @@ describe('Test DataPointMapper', () => {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [
         {
           id: 'source1',
           name: '',
           address: '',
-          readFrequency: 1000
+          readFrequency: 1000,
+          type: 's7'
         }
       ]
     };
@@ -32,6 +34,7 @@ describe('Test DataPointMapper', () => {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [{ id: 'target1', name: '', type: 'event', map: {} }]
     };
     config.config = {
@@ -41,6 +44,7 @@ describe('Test DataPointMapper', () => {
       virtualDataPoints: [],
       mapping: [
         {
+          id: '',
           source: 'source1',
           target: 'target1'
         }

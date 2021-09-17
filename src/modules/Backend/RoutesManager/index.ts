@@ -6,6 +6,8 @@ import fs from 'fs';
 import {dataSourceHandlers, setConfigManager as dataSourcesSetConfigManager} from '../routes/apis/v1/DataSources/index';
 import {dataSinksHandlers, setConfigManager as dataSinksSetConfigManager} from '../routes/apis/v1/DataSinks/index';
 import {dataPointsHandlers, setConfigManger as dataPointsSetConfigManager} from '../routes/apis/v1/DataPoints/index';
+import { virtualDatapointHandlers ,setConfigManger as vdpsSetConfigManager} from '../routes/apis/v1/VirtualDataPoints'
+import { backupHandlers, setConfigManger as backupSetConfigManager } from '../routes/apis/v1/Backup';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from "swagger-ui-express";
 
@@ -16,9 +18,9 @@ export class RoutesManager {
     private routeHandlers = {
         ... dataSourceHandlers,
         ... dataSinksHandlers,
-        ... require('../routes/apis/v1/DataSinks/index'),
         ... dataPointsHandlers,
-        ... require('../routes/apis/v1/VirtualDataPoints/index'),
+        ... backupHandlers,
+        ... virtualDatapointHandlers,
     };
 
     constructor(app: Application, configManager: ConfigManager) {
@@ -36,7 +38,9 @@ export class RoutesManager {
         [
             dataSourcesSetConfigManager,
             dataSinksSetConfigManager,
-            dataPointsSetConfigManager
+            dataPointsSetConfigManager,
+            backupSetConfigManager,
+            vdpsSetConfigManager
         ].forEach((func) => func(configManager))
         
         
@@ -53,9 +57,7 @@ export class RoutesManager {
     }
 
     private requestErrorHandler(err, req, res, next) {
-        console.log(`Fehler`);
-        console.log(err);
-        res.status(err.status || 500).json({
+            res.status(err.status || 500).json({
             message: err.message,
             errors: err.error 
         })

@@ -14,6 +14,22 @@
     {
       "name": "datasource",
       "description": "Everything about the data source"
+    },
+    {
+      "name": "datasinks",
+      "description": "Everything about the data sinks"
+    },
+    {
+      "name": "virtual datapoints",
+      "description": "Everything about the data points"
+    },
+    {
+      "name": "backup",
+      "description": "Everything about the backup and restore"
+    },
+    {
+      "name": "mappings",
+      "description": "Everything about the mappings."
     }
   ],
   "produces": ["application/json"],
@@ -21,6 +37,7 @@
   "paths": {
     "/datasources": {
       "get": {
+        "tags": ["datasource"],
         "description": "Returns all available datasources of the runtime",
         "parameters": [],
         "operationId": "dataSourcesGet",
@@ -45,6 +62,7 @@
         }
       ],
       "get": {
+        "tags": ["datasource"],
         "operationId": "dataSourceGet",
         "responses": {
           "200": {
@@ -56,6 +74,7 @@
         }
       },
       "patch": {
+        "tags": ["datasource"],
         "summary": "change datasource",
         "description": "Only for toggling enabled property",
         "operationId": "dataSourcePatch",
@@ -90,6 +109,7 @@
         }
       ],
       "get": {
+        "tags": ["datasource"],
         "description": "Returns a list of dataPoints of this datasource",
         "responses": {
           "200": {
@@ -109,6 +129,7 @@
         }
       },
       "post": {
+        "tags": ["datasource"],
         "description": "Create a new datapoint for the selected datasource.",
         "parameters": [
           {
@@ -154,6 +175,7 @@
         }
       ],
       "get": {
+        "tags": ["datasource"],
         "description": "returns a datapoint with given id",
         "responses": {
           "200": {
@@ -165,6 +187,7 @@
         }
       },
       "delete": {
+        "tags": ["datasource"],
         "description": "Delete the datapoint selected by id",
         "responses": {
           "200": {
@@ -181,6 +204,7 @@
         }
       },
       "patch": {
+        "tags": ["datasource"],
         "description": "overwrite datapoint with selected id",
         "parameters": [
           {
@@ -213,6 +237,7 @@
     },
     "/datasinks": {
       "get": {
+        "tags": ["datasinks"],
         "description": "Returns all available datesinks of the runtime",
         "operationId": "dataSinksGet",
         "parameters": [],
@@ -244,6 +269,7 @@
         }
       ],
       "get": {
+        "tags": ["datasinks"],
         "operationId": "dataSinkGet",
         "summary": "Get datasink object by id",
 
@@ -267,6 +293,7 @@
         }
       ],
       "get": {
+        "tags": ["datasinks"],
         "operationId": "dataPointsGet",
         "responses": {
           "200": {
@@ -278,6 +305,7 @@
         }
       },
       "post": {
+        "tags": ["datasinks"],
         "operationId": "dataPointsPost",
         "parameters": [
           {
@@ -326,6 +354,7 @@
         }
       ],
       "get": {
+        "tags": ["datasinks"],
         "operationId": "dataPointGet",
         "responses": {
           "200": {
@@ -334,6 +363,7 @@
         }
       },
       "patch": {
+        "tags": ["datasinks"],
         "operationId": "dataPointPatch",
         "parameters": [
           {
@@ -356,6 +386,7 @@
         }
       },
       "delete": {
+        "tags": ["datasinks"],
         "operationId": "dataPointDelete",
         "responses": {
           "200": {
@@ -375,6 +406,7 @@
     },
     "/vdps": {
       "get": {
+        "tags": ["virtual datapoints"],
         "description": "Return a list of virtual datapoints",
         "operationId": "vdpsGet",
         "responses": {
@@ -395,6 +427,7 @@
         }
       },
       "post": {
+        "tags": ["virtual datapoints"],
         "description": "Add a virtual datapoint to the runtime",
         "parameters": [
           {
@@ -438,6 +471,7 @@
         }
       ],
       "get": {
+        "tags": ["virtual datapoints"],
         "operationId": "vdpGet",
         "responses": {
           "200": {
@@ -449,6 +483,7 @@
         }
       },
       "delete": {
+        "tags": ["virtual datapoints"],
         "operationId": "vdpDelete",
         "responses": {
           "200": {
@@ -457,6 +492,7 @@
         }
       },
       "patch": {
+        "tags": ["virtual datapoints"],
         "operationId": "vdpPatch",
         "parameters": [
           {
@@ -489,6 +525,7 @@
     },
     "/backup": {
       "get": {
+        "tags": ["backup"],
         "operationId": "backupGet",
         "produces": ["application/x-binary"],
         "responses": {
@@ -502,6 +539,7 @@
         }
       },
       "post": {
+        "tags": ["backup"],
         "operationId": "backupPost",
         "consumes": ["multipart/form-data"],
         "parameters": [
@@ -519,6 +557,76 @@
             "schema": {
               "$ref": "#/definitions/configFile"
             }
+          }
+        }
+      }
+    },
+    "/mappings": {
+      "get": {
+        "tags": ["mappings"],
+        "operationId": "mappingsGet",
+        "responses": {
+          "200": {
+            "description": "List of all available mappings",
+            "schema": {
+              "$ref": "#/definitions/mapping"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["mappings"],
+        "operationId": "mapPost",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "newMapping",
+            "description": "new mapping object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/map"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully created new mapping",
+            "schema": {
+              "$ref": "#/definitions/map"
+            }
+          }
+        }
+      }
+    },
+    "/mappings/{mapId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "mapId",
+          "required": true,
+          "type": "string",
+          "description": "parameter for selection of the map"
+        }
+      ],
+      "get": {
+        "tags": ["mappings"],
+        "description": "Return a single mapping object",
+        "responses": {
+          "200": {
+            "description": "The requested mapping object",
+            "schema": {
+              "$ref": "#/definitions/map"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["mappings"],
+        "operationId": "mapDelete",
+        "description": "Delete the selected map",
+        "responses": {
+          "200": {
+            "description": "Successfully delete mapping"
           }
         }
       }
@@ -559,7 +667,7 @@
     },
     "sourcedatapoint": {
       "type": "object",
-      "required": ["id", "name", "address", "readFrequency"],
+      "required": ["id", "name", "address", "readFrequency", "type"],
       "properties": {
         "id": {
           "type": "string"
@@ -605,7 +713,6 @@
         }
       }
     },
-
     "datasinkArrayItem": {
       "required": ["name", "id", "href"],
       "properties": {
@@ -711,7 +818,6 @@
         }
       }
     },
-
     "dataPointList": {
       "type": "object",
       "properties": {
@@ -804,22 +910,34 @@
           }
         },
         "mapping": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["source", "target"],
-            "properties": {
-              "source": {
-                "type": "string"
-              },
-              "target": {
-                "type": "string"
-              },
-              "mapValue": {
-                "type": "string"
-              }
-            }
-          }
+          "$ref": "#/definitions/mapping"
+        }
+      }
+    },
+    "mapping": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/map"
+      }
+    },
+    "map": {
+      "type": "object",
+      "required": ["id", "source", "target"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "mapValue": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
         }
       }
     }

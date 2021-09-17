@@ -8,7 +8,12 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import { IConfig, IConfigManagerParams, IRuntimeConfig } from './interfaces';
+import {
+  IConfig,
+  IConfigManagerParams,
+  IRuntimeConfig,
+  isDataPointMapping
+} from './interfaces';
 import TypedEmitter from 'typed-emitter';
 
 interface IConfigManagerEvents {
@@ -16,10 +21,13 @@ interface IConfigManagerEvents {
   newRuntimeConfig: (config: IRuntimeConfig) => void;
 }
 
+type ChangeOperation = 'insert' | 'update' | 'delete';
+
 /**
  * Config for managing the app's config
  */
 export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
+  public id: string | null = null;
   private configFolder = path.join(process.cwd(), 'mdclight/config');
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
@@ -29,8 +37,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
   private static className: string;
-
-  public id: string | null = null;
 
   public get config(): IConfig {
     return this._config;
@@ -192,26 +198,55 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   *
+   * change the config with a given object or change it.
    */
-  public updateConfig(configCategory: keyof IConfig, data: object | string) {
-    // trigger config save
+  public changeConfig<
+    Category extends keyof IConfig,
+    DataType extends IConfig[Category]
+  >(
+    operation: ChangeOperation,
+    configCategory: Category,
+    // @ts-ignore
+    data: DataType[number] | string
+  ) {
+    const logPrefix = `${this.constructor.name}::changeConfig`;
+    if (operation === 'delete' && typeof data !== 'string')
+      throw new Error(`${logPrefix} error due try to delete without id.`); // Combination actually not defined in type def.
+
     const categoryArray = this.config[configCategory];
 
     if (!Array.isArray(categoryArray)) return;
 
-    if (typeof data === 'string') {
-      // Remove
-      const index = categoryArray.findIndex((entry) => entry.id === data);
-      if (index > -1) {
-        categoryArray.splice(index, 1);
-        this.saveConfigToFile(this.configName);
-        return;
+    switch (operation) {
+      case 'insert': {
+        if (typeof data !== 'string') {
+          // @ts-ignore TODO: Fix data type
+          categoryArray.push(data);
+        }
+        break;
       }
-      throw new Error(`ConfigManager::updateConfig error due to id not found`);
+      case 'update': {
+        if (typeof data === 'string' || isDataPointMapping(data))
+          throw new Error();
+        const index = categoryArray.findIndex((entry) => entry.id === data.id);
+        if (index < 0) throw Error(`NO Entry found`); //TODO:
+        const change = categoryArray[index];
+        categoryArray.splice(index, 1);
+        //@ts-ignore
+        categoryArray.push(data);
+        break;
+      }
+      case 'delete': {
+        const index = categoryArray.findIndex((entry) => entry.id === data);
+        if (index < 0) throw Error(`No Entry found`); //TODO:
+        const change = categoryArray[index];
+        categoryArray.splice(index, 1);
+        break;
+      }
+      default: {
+        throw new Error();
+      }
     }
-    // @ts-ignore
-    categoryArray.push(data);
     this.saveConfigToFile(this.configName);
   }
 

@@ -63,6 +63,7 @@ export type ITargetDataMap = object;
 
 export interface IDataSinkDataPointConfig {
   id: string;
+  address: string;
   name: string;
   type: IMTConnectDataPointTypes;
   map?: ITargetDataMap;

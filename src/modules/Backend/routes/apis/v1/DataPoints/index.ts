@@ -17,7 +17,7 @@ export function setConfigManger(config: ConfigManager) {
 function dataPointsGetHandler(request: Request, response: Response) {
   // @ts-ignore // TODO
   const sink = configManager?.config?.dataSinks.find(
-    (sink) => sink.id === request.params.datasinkId);
+    (sink) => sink.protocol === request.params.datasinkProtocol);
   response.status(sink ? 200 : 404).json(sink ? { dataPoints: sink.dataPoints} : null);
 }
 
@@ -26,7 +26,7 @@ function dataPointsGetHandler(request: Request, response: Response) {
  */
 function dataPointGetHandler(request: Request, response: Response) {
   const sink = configManager?.config?.dataSinks.find(
-    (sink) => sink.id === request.params.datasinkId
+    (sink) => sink.protocol === request.params.datasinkProtocol
   );
   const point = sink.dataPoints.find(
     (datapoint) => datapoint.id === request.params.dataPointId
@@ -40,7 +40,7 @@ function dataPointGetHandler(request: Request, response: Response) {
 function dataPointsPostHandler(request: Request, response: Response) {
   // TODO: Input validation, maybe id is already taken
   const changedSinkObject = configManager.config.dataSinks.find(
-    (sink) => sink.id === request.params.datasinkId
+    (sink) => sink.protocol === request.params.datasinkProtocol
   );
   const newData = {...request.body,...{id: uuidv4()}}
   changedSinkObject.dataPoints.push(newData);
@@ -56,7 +56,7 @@ function dataPointsPostHandler(request: Request, response: Response) {
 function dataPointPatchHandler(request: Request, response: Response) {
   //TODO: INPUT VALIDATION
   const sink = configManager?.config?.dataSinks.find(
-    (sink) => sink.id === request.params.datasinkId
+    (sink) => sink.protocol === request.params.datasinkProtocol
   );
   const index = sink?.dataPoints?.findIndex(
     (point) => point.id === request.params.dataPointId
@@ -77,7 +77,7 @@ function dataPointPatchHandler(request: Request, response: Response) {
 function dataPointDeleteHandler(request: Request, response: Response) {
   // TODO: INPUT VALIDATION
   const sink = configManager?.config?.dataSinks.find(
-    (sink) => sink.id === request.params.datasinkId
+    (sink) => sink.protocol === request.params.datasinkProtocol
   );
   const index = sink.dataPoints.findIndex(
     (point) => point.id === request.params.dataPointId

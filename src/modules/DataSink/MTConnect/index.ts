@@ -47,14 +47,14 @@ export class MTConnectDataSink extends DataSink {
 
       switch (dp.type) {
         case MTConnectDataItemTypes.EVENT:
-          dataItem = new Event(dp.id);
+          dataItem = new Event(dp.address);
           break;
         default:
           throw new Error(`Type ${dp.type} is not supported`);
       }
 
       this.mtcAdapter.addDataItem(dataItem);
-      this.dataItems[dp.id] = dataItem;
+      this.dataItems[dp.address] = dataItem;
 
       if (typeof dp.initialValue !== 'undefined') {
         dataItem.value = dp.initialValue;
@@ -78,12 +78,12 @@ export class MTConnectDataSink extends DataSink {
   public async onLifecycleEvent(event: ILifecycleEvent) {
     if (event.type === DataSourceLifecycleEventTypes.Connected) {
       this.avail.value = 'AVAILABLE';
-      winston.info(`Data source for data sink ${this.config.id} is available`);
+      winston.info(`Data source for data sink ${this.config.protocol} is available`);
     }
     if (event.type === DataSourceLifecycleEventTypes.Disconnected) {
       this.avail.unavailable();
       winston.info(
-        `Data source for data sink ${this.config.id} is unavailable`
+        `Data source for data sink ${this.config.protocol} is unavailable`
       );
     }
   }

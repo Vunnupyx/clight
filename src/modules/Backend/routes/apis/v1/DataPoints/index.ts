@@ -47,7 +47,7 @@ function dataPointsPostHandler(request: Request, response: Response) {
   configManager?.changeConfig('update', 'dataSinks', changedSinkObject);
   response.status(200).json({
     created: newData,
-    href: `$/datasinks/${request.params.datasinkId}/datapoints/${newData.id}`
+    href: `${request.originalUrl}/datapoints/${newData.id}`
   });
 }
 /**
@@ -67,12 +67,12 @@ function dataPointPatchHandler(request: Request, response: Response) {
   configManager?.changeConfig('update', 'dataSinks', sink);
   response.status(200).json({
     changed: newData,
-    href: `$/datasinks/${request.params.datasinkId}/datapoints/${newData.id}`
+    href: `${request.originalUrl}/${newData.id}`
   });
 }
 
 /**
- * Delete a datapoint inside of a datasink selected by datasinkid and datapointid
+ * Delete a datapoint inside of a datasink selected by datasinkProtocol and datapointid
  */
 function dataPointDeleteHandler(request: Request, response: Response) {
   // TODO: INPUT VALIDATION

@@ -51,10 +51,10 @@
         }
       }
     },
-    "/datasources/{datasourceId}": {
+    "/datasources/{datasourceProtocol}": {
       "parameters": [
         {
-          "name": "datasourceId",
+          "name": "datasourceProtocol",
           "in": "path",
           "description": "id of the datasource",
           "required": true,
@@ -98,10 +98,10 @@
         }
       }
     },
-    "/datasources/{datasourceId}/dataPoints": {
+    "/datasources/{datasourceProtocol}/dataPoints": {
       "parameters": [
         {
-          "name": "datasourceId",
+          "name": "datasourceProtocol",
           "in": "path",
           "description": "id of the datasource",
           "required": true,
@@ -172,10 +172,10 @@
         }
       }
     },
-    "/datasources/{datasourceId}/dataPoints/{datapointId}": {
+    "/datasources/{datasourceProtocol}/dataPoints/{datapointId}": {
       "parameters": [
         {
-          "name": "datasourceId",
+          "name": "datasourceProtocol",
           "in": "path",
           "description": "id of the datasource",
           "required": true,
@@ -298,10 +298,10 @@
         }
       }
     },
-    "/datasinks/{datasinkId}": {
+    "/datasinks/{datasinkProtocol}": {
       "parameters": [
         {
-          "name": "datasinkId",
+          "name": "datasinkProtocol",
           "in": "path",
           "required": true,
           "type": "string"
@@ -322,10 +322,10 @@
         }
       }
     },
-    "/datasinks/{datasinkId}/dataPoints": {
+    "/datasinks/{datasinkProtocol}/dataPoints": {
       "parameters": [
         {
-          "name": "datasinkId",
+          "name": "datasinkProtocol",
           "in": "path",
           "required": true,
           "type": "string"
@@ -378,10 +378,10 @@
         }
       }
     },
-    "/datasinks/{datasinkId}/dataPoints/{dataPointId}": {
+    "/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}": {
       "parameters": [
         {
-          "name": "datasinkId",
+          "name": "datasinkProtocol",
           "in": "path",
           "description": "id of the datapoint to get",
           "required": true,

@@ -29,7 +29,7 @@ function dataSourcesGetHandler (request: Request, response: Response): void {
  * Handle all get requests for a specific datasource.
  */
 function dataSourceGetHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     response.status(dataSource ? 200 : 404).json(dataSource);
 }
 
@@ -40,7 +40,7 @@ function dataSourceGetHandler (request: Request, response: Response): void {
 function dataSourcePatchHandler (request: Request, response: Response): void {
     const allowed = ['connection', 'enabled'];
     
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     if(!dataSource) {
         winston.warn(``); // TODO: Define warning;
         response.status(404).send();
@@ -62,7 +62,7 @@ function dataSourcePatchHandler (request: Request, response: Response): void {
  * Return all datapoints of the selected datasource
  */
 function dataSourcesGetDatapointsHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     response.status(dataSource ? 200 : 404).json({
         dataPoints: dataSource.dataPoints
     })
@@ -73,20 +73,20 @@ function dataSourcesGetDatapointsHandler (request: Request, response: Response):
  */
 function dataSourcesPostDatapointHandler (request: Request, response: Response): void {
     //TODO: Inputvaidlation
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     const newData = {...request.body, ...{id: uuidv4()}};
     dataSource.dataPoints.push(newData);
     configManager.changeConfig('update', 'dataSources', dataSource)
     response.status(200).json({
         created: newData,
-        href: `/datasources/${request.params.datasourceId}/datapoints/${newData.id}`,
+        href: `${request.originalUrl}/${newData.id}`,
     });
  }
 /**
  * Returns datapoint selected by datasourceid and datapointid
  */
 function dataSourcesGetDatapointHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     const point = dataSource?.dataPoints?.find((point) => point.id === request.params.datapointId)
     response.status(dataSource && point ? 200 : 404).json(point);
  }
@@ -95,7 +95,7 @@ function dataSourcesGetDatapointHandler (request: Request, response: Response): 
   * Deletes a datapoint selected by datasourceid and datapointid
   */
  function dataSourcesDeleteDatapointHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     const index = dataSource?.dataPoints?.findIndex((point) => point.id === request.params.datapointId)
     const point = dataSource?.dataPoints[index];
     if (index >= 0) {
@@ -110,7 +110,7 @@ function dataSourcesGetDatapointHandler (request: Request, response: Response): 
   */
  function dataSourcesPatchDatapointHandler (request: Request, response: Response): void { 
      //TODO: Input validation
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     const index = dataSource?.dataPoints?.findIndex((point) => point.id === request.params.datapointId)
     if(dataSource && index >= 0) {
         dataSource.dataPoints.splice(index, 1);

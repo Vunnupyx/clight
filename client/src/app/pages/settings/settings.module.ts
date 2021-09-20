@@ -1,29 +1,29 @@
 import { NgModule } from "@angular/core";
 import { SharedModule } from "app/shared/shared.module";
-import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
 
-import { GeneralComponent } from "./general/general.component";
-import { DataSourceComponent } from './data-source/data-source.component';
-import { DataSinkComponent } from "./data-sink/data-sink.component";
-import { SelectTypeModalComponent } from './data-source/select-type-modal/select-type-modal.component';
-import { SelectVarModalComponent } from "./data-sink/select-var-modal/select-var-modal.component";
+import { GeneralSettingsModule } from "./general/general.module";
+import { DataSinkModule } from "./data-sink/data-sink.module";
+import { DataSourceModule } from "./data-source/data-source.module";
+import { RouterModule, Routes } from "@angular/router";
 
-const COMPONENTS = [
-    GeneralComponent,
-    DataSourceComponent,
-    DataSinkComponent,
-    SelectTypeModalComponent,
-    SelectVarModalComponent,
+const routes: Routes = [
+    {
+        path: 'settings',
+        redirectTo: 'settings/general',
+        pathMatch: 'full',
+    },
 ];
 
 @NgModule({
     imports: [
         SharedModule,
-        ConfirmDialogModule,
+        GeneralSettingsModule,
+        DataSinkModule,
+        DataSourceModule,
+        RouterModule.forRoot(routes),
     ],
-    declarations: COMPONENTS,
-    exports: COMPONENTS,
-    entryComponents: [SelectTypeModalComponent],
+    exports: [RouterModule],
 })
 
 export class SettingsModule { }
+

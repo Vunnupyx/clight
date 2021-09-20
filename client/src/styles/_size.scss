@@ -14,3 +14,11 @@
 .border-round {
     border-radius: 100% !important;
 }
+.text-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.cursor-pointer {
+    cursor: pointer !important;
+}

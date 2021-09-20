@@ -10,4 +10,5 @@ export class DataPoint {
     map: string[];
     name: string;
     type: DataPointType;
+    dataItem?: string;
 }

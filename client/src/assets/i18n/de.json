@@ -45,6 +45,8 @@
     "AddDataPoint": "",
     "Name": "",
     "Type": "",
+    "DataItem": "",
+    "InitialValue": "",
     "Map": "",
     "Actions": "",
     "Edit": "",

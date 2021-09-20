@@ -64,9 +64,9 @@
             <ngx-datatable [headerHeight]="50" [rows]="datapointRows" rowHeight="auto" columnMode="flex">
                 <ngx-datatable-column [name]="'settings-data-source.Name' | translate" prop="name" [flexGrow]="1" cellClass="input-cell">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-                        <span *ngIf="unsavedRowIndex !== rowIndex">
+                        <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis">
                             {{ value }}
-                        </span>
+                        </div>
                         <input *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
                             type="text" class="w-100"
                             [ngModel]="value"
@@ -94,7 +94,7 @@
                 <ngx-datatable-column [name]="'settings-data-source.Address' | translate" prop="address" [flexGrow]="3" cellClass="input-cell address-cell">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                            <div class="mt-5">{{ value }}</div>
+                            <div style="margin-top: 8px">{{ value }}</div>
                         </ng-container>
                         <div *ngIf="unsavedRowIndex === rowIndex" class="d-flex align-items-center">
                             <ng-container [ngSwitch]="unsavedRow!.type">
@@ -105,7 +105,7 @@
                                     </mat-button-toggle-group>
                                 </ng-container>
                                 <ng-container *ngSwitchDefault>
-                                    <input type="text" class="w-100 mt-5"
+                                    <input type="text" class="w-100" style="margin-top: 7px;"
                                         [ngModel]="value"
                                         (ngModelChange)="unsavedRow && unsavedRow.address = $event" />
                                 </ng-container>

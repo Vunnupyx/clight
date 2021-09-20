@@ -3,12 +3,6 @@ import {
   IBaseLifecycleEvent,
   LifecycleEventStatus,
 } from "../../common/interfaces";
-
-export interface IDataSourceEvent {
-  name: string;
-  protocol: string;
-}
-
 export interface IDataSourceLifecycleEvent extends IBaseLifecycleEvent {
   dataSource: IDataSourceEvent;
   status: LifecycleEventStatus;

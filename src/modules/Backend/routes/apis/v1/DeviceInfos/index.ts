@@ -1,6 +1,5 @@
 import { ConfigManager } from "../../../../../ConfigManager";
 import {Request, Response } from 'express';
-import { ConsoleTransportOptions } from "winston/lib/winston/transports";
 
 let configManager: ConfigManager;
 
@@ -22,9 +21,7 @@ function deviceInfosGetHandler (request: Request, response: Response): void {
  * Update all properties provided by the request body.
  */
 function deviceInfosPatchHandler (request: Request, response: Response): void {
-    console.log(`MARKUS`);
     const newData = {...configManager.config.general, ...request.body};
-    console.log(newData);
     configManager.changeConfig('update', 'general', newData);
     response.status(200).json(newData);
 }

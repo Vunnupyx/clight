@@ -42,7 +42,6 @@ export interface IDataPointConfig {
 }
 
 export interface IDataSourceConfig {
-  id: string;
   name: string;
   dataPoints: IDataPointConfig[];
   protocol: string;
@@ -72,7 +71,6 @@ export interface IDataSinkDataPointConfig {
 }
 
 export interface IDataSinkConfig {
-  id: string;
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;

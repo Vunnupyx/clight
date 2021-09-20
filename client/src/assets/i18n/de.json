@@ -37,5 +37,26 @@
     "Area": "",
     "Component": "",
     "VariableName": ""
+  },
+  "settings-data-sink": {
+    "DataSink": "",
+    "Enabled": "",
+    "DataPoints": "",
+    "AddDataPoint": "",
+    "Name": "",
+    "Type": "",
+    "Map": "",
+    "Actions": "",
+    "Edit": "",
+    "Delete": "",
+    "Save": "",
+    "Cancel": "",
+    "Event": "",
+    "Condition": "",
+    "SelectAVariable": "",
+    "Area": "",
+    "Component": "",
+    "VariableName": "",
+    "SelectVariable": ""
   }
 }

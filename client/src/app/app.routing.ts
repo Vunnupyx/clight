@@ -3,6 +3,7 @@ import { RouterModule, Routes } from "@angular/router";
 
 import { GeneralComponent } from "./pages/settings/general/general.component";
 import { DataSourceComponent } from './pages/settings/data-source/data-source.component';
+import { DataSinkComponent } from "./pages/settings/data-sink/data-sink.component";
 
 const routes: Routes = [
     {
@@ -22,6 +23,10 @@ const routes: Routes = [
     {
         path: 'settings/data-source',
         component: DataSourceComponent,
+    },
+    {
+        path: 'settings/data-sink',
+        component: DataSinkComponent,
     },
 ];
 

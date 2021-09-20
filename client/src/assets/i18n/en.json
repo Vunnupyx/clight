@@ -37,5 +37,26 @@
     "Area": "Area",
     "Component": "Component",
     "VariableName": "Variable name"
-  }
+  },
+  "settings-data-sink": {
+    "DataSink": "Data Sink",
+    "Enabled": "Enabled",
+    "DataPoints": "Data points",
+    "AddDataPoint": "Add data point",
+    "Name": "Name",
+    "Type": "Type",
+    "Map": "Map",
+    "Actions": "Actions",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "Event": "Event",
+    "Condition": "Condition",
+    "SelectAVariable": "Select a variable",
+    "Area": "Area",
+    "Component": "Component",
+    "VariableName": "VariableName",
+    "SelectVariable": "SelectVariable"
+  }  
 }

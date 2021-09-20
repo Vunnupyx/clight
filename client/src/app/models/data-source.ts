@@ -1,4 +1,4 @@
-import { DataPoint } from "./data-point";
+import { SourceDataPoint } from "./source-data-point";
 
 export enum DataSourceProtocol {
     S7 = 's7nck',
@@ -15,7 +15,7 @@ export class Connection {
 
 export class DataSource {
     connection?: Connection;
-    dataPoints?: DataPoint[];
+    dataPoints?: SourceDataPoint[];
     enabled?: boolean;
     id?: string;
     name?: string;

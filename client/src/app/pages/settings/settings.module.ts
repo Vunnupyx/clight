@@ -4,12 +4,16 @@ import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confir
 
 import { GeneralComponent } from "./general/general.component";
 import { DataSourceComponent } from './data-source/data-source.component';
+import { DataSinkComponent } from "./data-sink/data-sink.component";
 import { SelectTypeModalComponent } from './data-source/select-type-modal/select-type-modal.component';
+import { SelectVarModalComponent } from "./data-sink/select-var-modal/select-var-modal.component";
 
 const COMPONENTS = [
     GeneralComponent,
     DataSourceComponent,
+    DataSinkComponent,
     SelectTypeModalComponent,
+    SelectVarModalComponent,
 ];
 
 @NgModule({

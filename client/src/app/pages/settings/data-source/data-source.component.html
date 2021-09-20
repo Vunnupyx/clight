@@ -79,15 +79,15 @@
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <span *ngIf="unsavedRowIndex !== rowIndex">
                             <ng-container [ngSwitch]="value">
-                                <ng-container *ngSwitchCase="DataPointType.PLC">PLC</ng-container>
-                                <ng-container *ngSwitchCase="DataPointType.NCK">NCK</ng-container>
+                                <ng-container *ngSwitchCase="SourceDataPointType.PLC">PLC</ng-container>
+                                <ng-container *ngSwitchCase="SourceDataPointType.NCK">NCK</ng-container>
                             </ng-container>
                         </span>
                         <mat-select *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
                             [ngModel]="value"
                             (ngModelChange)="unsavedRow && unsavedRow.type = $event">
-                            <mat-option [value]="DataPointType.PLC">PLC</mat-option>
-                            <mat-option [value]="DataPointType.NCK">NCK</mat-option>
+                            <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
+                            <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
                         </mat-select>
                     </ng-template>
                 </ngx-datatable-column>
@@ -98,7 +98,7 @@
                         </ng-container>
                         <div *ngIf="unsavedRowIndex === rowIndex" class="d-flex align-items-center">
                             <ng-container [ngSwitch]="unsavedRow!.type">
-                                <ng-container *ngSwitchCase="DataPointType.NCK">
+                                <ng-container *ngSwitchCase="SourceDataPointType.NCK">
                                     <div class="mt-5">{{ unsavedRow?.address }}</div>
                                     <mat-button-toggle-group class="mt-5 ml-10">
                                         <mat-button-toggle class="show-variables-button" (click)="onAddressSelect(row)" [matTooltip]="'settings-data-source.Select' | translate" matTooltipPosition="above"><mat-icon>open_in_new</mat-icon></mat-button-toggle>

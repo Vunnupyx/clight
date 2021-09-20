@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
-import { DataPoint } from 'app/models';
+import { SourceDataPoint } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
-import { DATA_POINTS_MOCK } from './data-point.service.mock';
+import { SOURCE_DATA_POINTS_MOCK } from './source-data-point.service.mock';
 import * as api from 'app/api/models';
 
-export class DataPointsState {
+export class SourceDataPointsState {
     status: Status;
-    dataPoints: DataPoint[];
+    sourceDataPoints: SourceDataPoint[];
 }
 
 @Injectable()
-export class DataPointService {
+export class SourceDataPointService {
 
-    private _store: Store<DataPointsState>;
+    private _store: Store<SourceDataPointsState>;
 
     constructor(
-        storeFactory: StoreFactory<DataPointsState>,
+        storeFactory: StoreFactory<SourceDataPointsState>,
         private httpService: HttpMockupService,
     ) {
        this._store = storeFactory.startFrom(this._emptyState());
@@ -29,20 +29,20 @@ export class DataPointService {
         return this._store.snapshot.status;
     }
 
-    get dataPoints() { 
-        return this._store.state.pipe(filter(x => x.status != Status.NotInitialized)).pipe(map(x => x.dataPoints));
+    get sourceDataPoints() { 
+        return this._store.state.pipe(filter(x => x.status != Status.NotInitialized)).pipe(map(x => x.sourceDataPoints));
     }
 
-    async getDataPoints(datasinkId: string) {
+    async getSourceDataPoints(datasourceId: string) {
         this._store.patchState(state => ({
             status: Status.Loading,
-            dataPoints: [],
+            sourceDataPoints: [],
         }));
 
         try {
-            const dataPoints = await this.httpService.get<api.DataPointType[]>(`/datasinks/${datasinkId}/dataPoints`, undefined, DATA_POINTS_MOCK(datasinkId));
+            const sourceDataPoints = await this.httpService.get<api.Sourcedatapoint[]>(`/datasources/${datasourceId}/dataPoints`, undefined, SOURCE_DATA_POINTS_MOCK(datasourceId));
             this._store.patchState(state => {
-                state.dataPoints = dataPoints.map(x => this._parseDataPoint(x));
+                state.sourceDataPoints = sourceDataPoints.map(x => this._parseDataPoint(x));
                 state.status = Status.Ready;
             });
         } catch (err) {
@@ -54,18 +54,18 @@ export class DataPointService {
         }
     }
 
-    async addDataPoint(datasinkId: string, obj: DataPoint) {
+    async addDataPoint(datasourceId: string, obj: SourceDataPoint) {
         this._store.patchState(state => {
             state.status = Status.Creating;
         });
 
         try {
-            await this.httpService.post(`/datasinks/${datasinkId}/dataPoints`, obj);
+            await this.httpService.post(`/datasources/${datasourceId}/dataPoints`, obj);
             this._store.patchState(state => {
                 state.status = Status.Ready;
                 // TODO: Obtain new ID from JSON response
                 obj.id = 'new id';
-                state.dataPoints.push(obj);
+                state.sourceDataPoints.push(obj);
             });
         } catch (err) {
             errorHandler(err);
@@ -76,16 +76,16 @@ export class DataPointService {
         }
     }
 
-    async updateDataPoint(datasinkId: string, obj: DataPoint) {
+    async updateDataPoint(datasourceId: string, obj: SourceDataPoint) {
         this._store.patchState(state => {
             state.status = Status.Updating;
         });
 
         try {
-            await this.httpService.patch(`/datasinks/${datasinkId}/dataPoints/${obj.id}`, obj);
+            await this.httpService.patch(`/datasources/${datasourceId}/dataPoints/${obj.id}`, obj);
             this._store.patchState(state => {
                 state.status = Status.Ready;
-                state.dataPoints = state.dataPoints.map(x => x.id != obj.id ? x : obj);
+                state.sourceDataPoints = state.sourceDataPoints.map(x => x.id != obj.id ? x : obj);
             });
         } catch (err) {
             errorHandler(err);
@@ -96,16 +96,16 @@ export class DataPointService {
         }
     }
     
-    async deleteDataPoint(datasinkId: string, obj: DataPoint) {
+    async deleteDataPoint(datasourceId: string, obj: SourceDataPoint) {
         this._store.patchState(state => {
             state.status = Status.Deleting;
         });
 
         try {
-            await this.httpService.delete(`/datasinks/${datasinkId}/dataPoints/${obj.id}`);
+            await this.httpService.delete(`/datasources/${datasourceId}/dataPoints/${obj.id}`);
             this._store.patchState(state => {
                 state.status = Status.Ready;
-                state.dataPoints = state.dataPoints.filter(x => x != obj);
+                state.sourceDataPoints = state.sourceDataPoints.filter(x => x != obj);
             });
         } catch (err) {
             errorHandler(err);
@@ -116,12 +116,12 @@ export class DataPointService {
         }
     }
 
-    private _parseDataPoint(obj: api.DataPointType) {
-        return obj as DataPoint;
+    private _parseDataPoint(obj: api.Sourcedatapoint) {
+        return obj as SourceDataPoint;
     }
 
     private _emptyState() {
-        return <DataPointsState>{
+        return <SourceDataPointsState>{
             status: Status.NotInitialized,
         };
     }

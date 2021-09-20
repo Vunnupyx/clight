@@ -1,13 +1,13 @@
 export enum DataPointType {
-    PLC = 's7',
-    NCK = 'nck',
+    Event = 'event',
+    Condition = 'condition',
 }
 
 export class DataPoint {
-    address: string;
-    description?: string;
-    id: string;
+    enabled: boolean;
+    id?: string;
+    initValue: number;
+    map: string[];
     name: string;
-    readFrequency: number;
-    type?: DataPointType;
+    type: DataPointType;
 }

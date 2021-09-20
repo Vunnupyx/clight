@@ -33,7 +33,7 @@
     }
   ],
   "produces": ["application/json"],
-  "schemes": ["https", "http"],
+  "schemes": ["http","https"],
   "paths": {
     "/datasources": {
       "get": {
@@ -76,7 +76,7 @@
       "patch": {
         "tags": ["datasource"],
         "summary": "change datasource",
-        "description": "Only for toggling enabled property",
+        "description": "Only for toggling enabled property and change of connection",
         "operationId": "dataSourcePatch",
         "parameters": [
           {
@@ -121,7 +121,14 @@
                 "dataPoints:": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/sourcedatapoint"
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/sourcedatapoint"
+                      },
+                      {
+                        "$ref": "#/definitions/uuid"
+                      }
+                    ]
                   }
                 }
               }
@@ -151,7 +158,13 @@
               "type": "object",
               "properties": {
                 "created": {
-                  "$ref": "#/definitions/sourcedatapoint"
+                  "allOf": [
+                    {"$ref": "#/definitions/sourcedatapoint"},{"$ref": "#/definitions/uuid"}
+                  ]                  
+                },
+                "href": {
+                  "type": "string",
+                  "format": "uri"
                 }
               }
             }
@@ -184,7 +197,14 @@
           "200": {
             "description": "returns a datapoint with given id",
             "schema": {
-              "$ref": "#/definitions/sourcedatapoint"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/sourcedatapoint"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
             }
           }
         }
@@ -200,7 +220,14 @@
               "type": "object",
               "properties": {
                 "deleted": {
-                  "$ref": "#/definitions/sourcedatapoint"
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/sourcedatapoint"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
+                  ]
                 }
               }
             }
@@ -229,7 +256,10 @@
               "type": "object",
               "properties": {
                 "changed": {
-                  "$ref": "#/definitions/sourcedatapoint"
+                  "allOf": [
+                    {"$ref": "#/definitions/sourcedatapoint"},
+                    {"$ref": "#/definitions/uuid"}
+                  ]
                 },
                 "href": {
                   "type": "string"
@@ -255,7 +285,11 @@
                 "dataSinks": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/dataSinkType"
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/dataSinkType"
+                      }
+                    ]                    
                   }
                 }
               }
@@ -329,11 +363,14 @@
               "type": "object",
               "properties": {
                 "created": {
-                  "$ref": "#/definitions/dataPointType"
+                  "allOf": [
+                    {"$ref": "#/definitions/dataPointType"}, {"$ref": "#/definitions/uuid"}
+                  ]                  
                 },
                 "href": {
                   "type": "string",
-                  "description": "url for direct resource access"
+                  "description": "url for direct resource access",
+                  "format": "uri"
                 }
               }
             }
@@ -363,7 +400,17 @@
         "operationId": "dataPointGet",
         "responses": {
           "200": {
-            "$ref": "#/definitions/dataPointType"
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
+              
+            }
           }
         }
       },
@@ -385,7 +432,9 @@
           "200": {
             "description": "Response of a change request for a datapoint with given id",
             "schema": {
-              "$ref": "#/definitions/dataPointType"
+              "allOf": [
+                {"$ref": "#/definitions/dataPointType"},{"$ref": "#/definitions/uuid"}
+              ]              
             }
           }
         }
@@ -400,8 +449,14 @@
               "type": "object",
               "properties": {
                 "deleted": {
-                  "type": "object",
-                  "$ref": "#/definitions/dataPointType"
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/dataPointType"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
+                  ]
                 }
               }
             }
@@ -423,7 +478,7 @@
                 "vdps": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/virtualDataPointType"
+                    "allOf": [{"$ref": "#/definitions/virtualDataPointType"}, {"$ref": "#/definitions/uuid"}]
                   }
                 }
               }
@@ -450,14 +505,15 @@
           "200": {
             "description": "Successfully create a virtual datapoint resource",
             "schema": {
-              "required": ["properties", "href"],
+              "required": ["created", "href"],
               "type": "object",
               "properties": {
-                "virtualDataPoint": {
-                  "$ref": "#/definitions/virtualDataPointType"
+                "created": {
+                  "allOf": [{"$ref": "#/definitions/virtualDataPointType"},{"$ref": "#/definitions/uuid"}]
                 },
                 "href": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri"
                 }
               }
             }
@@ -482,7 +538,7 @@
           "200": {
             "description": "Returns a virtual datapoint",
             "schema": {
-              "$ref": "#/definitions/virtualDataPointType"
+              "allOf": [{"$ref": "#/definitions/virtualDataPointType"}, {"$ref": "#/definitions/uuid"}]              
             }
           }
         }
@@ -492,7 +548,22 @@
         "operationId": "vdpDelete",
         "responses": {
           "200": {
-            "description": "Delete virtual datapoint with given id."
+            "description": "Delete virtual datapoint with given id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted":  {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/virtualDataPointType"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -516,11 +587,14 @@
               "type": "object",
               "properties": {
                 "changed": {
-                  "$ref": "#/definitions/virtualDataPointType"
+                  "allOf": [
+                    {"$ref": "#/definitions/virtualDataPointType"},{"$ref": "#/definitions/uuid"}
+                  ]                  
                 },
                 "href": {
                   "type": "string",
-                  "description": "URL of the changed resource."
+                  "description": "URL of the changed resource.",
+                  "format": "uri"
                 }
               }
             }
@@ -574,7 +648,7 @@
           "200": {
             "description": "List of all available mappings",
             "schema": {
-              "$ref": "#/definitions/mapping"
+              "$ref": "#/definitions/mapping"         
             }
           }
         }
@@ -597,7 +671,7 @@
           "200": {
             "description": "Successfully created new mapping",
             "schema": {
-              "$ref": "#/definitions/map"
+              "allOf": [{"$ref": "#/definitions/map"},{"$ref": "#/definitions/uuid"}]
             }
           }
         }
@@ -620,7 +694,14 @@
           "200": {
             "description": "The requested mapping object",
             "schema": {
-              "$ref": "#/definitions/map"
+              "allOf": [
+                {              
+                  "$ref": "#/definitions/map"
+                },
+                {              
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
             }
           }
         }
@@ -631,7 +712,18 @@
         "description": "Delete the selected map",
         "responses": {
           "200": {
-            "description": "Successfully delete mapping"
+            "description": "Successfully delete mapping",
+            "schema":{
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "allOf": [
+                    {"$ref": "#/definitions/map"},
+                    {"$ref": "#/definitions/uuid"}
+                  ]                  
+                }
+              }
+            }
           }
         }
       }
@@ -652,11 +744,8 @@
     },
     "virtualDataPointType": {
       "type": "object",
-      "required": ["id", "sources", "operationType"],
+      "required": ["sources", "operationType"],
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "sources": {
           "type": "array",
           "minItems": 1,
@@ -666,17 +755,14 @@
         },
         "operationType": {
           "type": "string",
-          "pattern": "[and|or|not|counter]"
+          "enum": ["and","or","not", "counter]"]
         }
       }
     },
     "sourcedatapoint": {
       "type": "object",
-      "required": ["id", "name", "address", "readFrequency", "type"],
+      "required": ["name", "address", "readFrequency", "type"],
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -699,16 +785,20 @@
     "dataSinkType": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
         "datapoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/dataPointType"
+            "allOf": [
+              {    
+                "$ref": "#/definitions/uuid"
+              }, 
+              {
+                "$ref": "#/definitions/dataPointType"
+              }
+            ]        
           }
         },
         "enabled": {
@@ -760,7 +850,9 @@
         "dataPoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/sourcedatapoint"
+            "allOf": [
+              {"$ref": "#/definitions/sourcedatapoint"},{"$ref": "#/definitions/uuid"}
+            ]            
           }
         },
         "protocol": {
@@ -828,7 +920,9 @@
         "dataPoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/dataPointType"
+            "allOf": [
+              {"$ref": "#/definitions/dataPointType"},{"$ref": "#/definitions/uuid"}
+            ]            
           }
         }
       }
@@ -836,9 +930,6 @@
     "dataPointType": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -919,18 +1010,22 @@
       }
     },
     "mapping": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/map"
+      "type":"object",
+      "properties": {
+        "mapping": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {"$ref": "#/definitions/map"},{"$ref": "#/definitions/uuid"}
+            ]            
+          }
+        }
       }
     },
     "map": {
       "type": "object",
-      "required": ["id", "source", "target"],
+      "required": ["source", "target"],
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "source": {
           "type": "string"
         },
@@ -942,6 +1037,15 @@
         },
         "priority": {
           "type": "integer"
+        }
+      }
+    },
+    "uuid":{
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
         }
       }
     }

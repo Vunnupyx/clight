@@ -15,12 +15,12 @@
     <div class="row">
         <div class="col-12 col-lg-4">
             <div class="d-flex align-items-center">
-                <div class="mt-20 mr-30">Enabled</div>
+                <div class="mt-20 mr-30">{{ 'settings-data-source.Enabled' | translate }}</div>
                 <mat-slide-toggle class="ml-20 mt-20" [ngModel]="dataSource?.enabled" (ngModelChange)="updateEnabled($event)"></mat-slide-toggle>
             </div>
         
             <div *ngIf="dataSource?.protocol === Protocol.S7" class="mt-20 d-flex align-items-center">
-                <div class="mt-0 mr-25 text-nowrap">IP Address</div>
+                <div class="mt-0 mr-25 text-nowrap">{{ 'settings-data-source.IPAddress' | translate }}</div>
                 <form #form="ngForm">
                     <div class="d-flex align-items-center">
                         <ngx-ip [ngModel]="dataSource?.connection?.ipAddr" name="ipAddress" inputValidation="block" separator="." [required]="true"
@@ -38,15 +38,15 @@
             </div>
         </div>
         <div class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6">
-            <div class="mt-25">Connection</div>
+            <div class="mt-25">{{ 'settings-data-source.Connection' | translate }}</div>
             <div class="mt-10 d-flex align-items-center justify-content-between" style="
                     border: 1px solid #ccc;
                     padding: 10px;
                     border-radius: 6px;
                 ">
                 <div>
-                    <div style="font-weight: 600;">Running</div>
-                    <small style="color: #999;">Service state</small>
+                    <div style="font-weight: 600;">{{ 'settings-data-source.Running' | translate }}</div>
+                    <small style="color: #999;">{{ 'settings-data-source.ServiceState' | translate }}</small>
                 </div>
                 <div class="mr-10">
                     <mat-icon class="color-success">check_circle_outline</mat-icon>
@@ -58,11 +58,11 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex align-items-center">
-                <h3>Data points</h3>
+                <h3>{{ 'settings-data-source.DataPoints' | translate }}</h3>
                 <button mat-mini-fab color="primary" class="wh-32 border-round ml-15" (click)="onAdd()" [matTooltip]="'settings-data-source.AddDataPoint' | translate" matTooltipPosition="above"><mat-icon style="margin-top: -10px;">add</mat-icon></button>
             </div>
             <ngx-datatable [headerHeight]="50" [rows]="datapointRows" rowHeight="auto" columnMode="flex">
-                <ngx-datatable-column name="Name" prop="name" [flexGrow]="1" cellClass="input-cell">
+                <ngx-datatable-column [name]="'settings-data-source.Name' | translate" prop="name" [flexGrow]="1" cellClass="input-cell">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <span *ngIf="unsavedRowIndex !== rowIndex">
                             {{ value }}
@@ -75,7 +75,7 @@
                         />
                     </ng-template>
                 </ngx-datatable-column>
-                <ngx-datatable-column name="Type" prop="type" [flexGrow]="1">
+                <ngx-datatable-column [name]="'settings-data-source.Type' | translate" prop="type" [flexGrow]="1">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <span *ngIf="unsavedRowIndex !== rowIndex">
                             <ng-container [ngSwitch]="value">
@@ -91,7 +91,7 @@
                         </mat-select>
                     </ng-template>
                 </ngx-datatable-column>
-                <ngx-datatable-column name="Address" prop="address" [flexGrow]="3" cellClass="input-cell address-cell">
+                <ngx-datatable-column [name]="'settings-data-source.Address' | translate" prop="address" [flexGrow]="3" cellClass="input-cell address-cell">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <ng-container *ngIf="unsavedRowIndex !== rowIndex">
                             <div class="mt-5">{{ value }}</div>
@@ -113,7 +113,7 @@
                         </div>
                     </ng-template>
                 </ngx-datatable-column>
-                <ngx-datatable-column name="Actions" [flexGrow]="1" cellClass="action-cell" [sortable]="false">
+                <ngx-datatable-column [name]="'settings-data-source.Actions' | translate" [flexGrow]="1" cellClass="action-cell" [sortable]="false">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
                             <mat-button-toggle (click)="onEditStart(rowIndex, row)" [matTooltip]="'settings-data-source.Edit' | translate" matTooltipPosition="above"><mat-icon>edit</mat-icon></mat-button-toggle>

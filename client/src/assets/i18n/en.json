@@ -22,6 +22,20 @@
     "Delete": "Delete",
     "Save": "Save",
     "Cancel": "Cancel",
-    "Select": "Select"
+    "Select": "Select",
+    "Enabled": "Enabled",
+    "IPAddress": "IP Address",
+    "Connection": "Connection",
+    "Running": "Running",
+    "ServiceState": "Service state",
+    "DataPoints": "Data points",
+    "SelectAVariable": "Select a variable",
+    "Name": "Name",
+    "Type": "Type",
+    "Address": "Address",
+    "Actions": "Actions",
+    "Area": "Area",
+    "Component": "Component",
+    "VariableName": "Variable name"
   }
 }

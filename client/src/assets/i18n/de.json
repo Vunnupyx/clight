@@ -22,6 +22,20 @@
     "Delete": "Löschen",
     "Save": "Speichern",
     "Cancel": "Abbrechen",
-    "Select": "Auswählen"
+    "Select": "Auswählen",
+    "Enabled": "",
+    "IPAddress": "",
+    "Connection": "",
+    "Running": "",
+    "ServiceState": "",
+    "DataPoints": "",
+    "SelectAVariable": "",
+    "Name": "",
+    "Type": "",
+    "Address": "",
+    "Actions": "",
+    "Area": "",
+    "Component": "",
+    "VariableName": ""
   }
 }

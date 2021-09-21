@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog';
 import { Connection } from 'app/api/models';
 import { SourceDataPoint, SourceDataPointType, DataSource, DataSourceProtocol } from 'app/models';
@@ -13,7 +13,6 @@ import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.
     selector: 'app-data-source',
     templateUrl: './data-source.component.html',
     styleUrls: ['./data-source.component.scss'],
-    encapsulation: ViewEncapsulation.None,
 })
 export class DataSourceComponent implements OnInit {
 
@@ -38,6 +37,10 @@ export class DataSourceComponent implements OnInit {
     get isBusy() {
         return this.dataSourceService.status != Status.Ready
             || this.sourceDataPointService.status != Status.Ready;
+    }
+
+    get isEditing() {
+        return !!this.unsavedRow;
     }
 
     ngOnInit() {

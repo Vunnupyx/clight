@@ -1,14 +1,14 @@
-function generateMtConnectItem(i) {
+function generateMtConnectDataItem(i) {
     return {
-        id: `mt-connect-item-${i}`,
-        name: `mt connect item ${i}`,
+        id: `addr${i}`,
+        name: `addr ${i}`,
     };
 }
 
-export function MT_CONNECT_ITEMS_MOCK() {
+export function MT_CONNECT_DATA_ITEMS_MOCK() {
     const r = [] as any;
     for (let i = 0; i < 100; i++) {
-        r.push(generateMtConnectItem(i));
+        r.push(generateMtConnectDataItem(i));
     }
     return r;
 }

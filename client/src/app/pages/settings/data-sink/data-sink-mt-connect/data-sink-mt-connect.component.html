@@ -14,12 +14,12 @@
     <div class="col-12">
         <div class="d-flex align-items-center">
             <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
-            <button mat-mini-fab color="primary" class="wh-32 border-round ml-15" (click)="onAdd()" [matTooltip]="'settings-data-sink.AddDataPoint' | translate" matTooltipPosition="above"><mat-icon style="margin-top: -10px;">add</mat-icon></button>
+            <button type="button" [disabled]="isEditing" mat-mini-fab color="primary" class="wh-32 border-round ml-15" (click)="onAdd()" [matTooltip]="'settings-data-sink.AddDataPoint' | translate" matTooltipPosition="above"><mat-icon style="margin-top: -10px;">add</mat-icon></button>
         </div>
         <ngx-datatable [headerHeight]="50" [rows]="datapointRows" rowHeight="auto" columnMode="flex">
             <ngx-datatable-column [name]="'settings-data-sink.Name' | translate" prop="name" [flexGrow]="1" cellClass="input-cell">
                 <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-                    <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis">
+                    <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis" [title]="value">
                         {{ value }}
                     </div>
                     <input *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -30,14 +30,14 @@
                     />
                 </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column [name]="'settings-data-sink.DataItem' | translate" prop="dataItem" [flexGrow]="1">
+            <ngx-datatable-column [name]="'settings-data-sink.DataItem' | translate" prop="address" [flexGrow]="1">
                 <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-                    <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis">
+                    <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis" [title]="value">
                         {{ value }}
                     </div>
                     <mat-select *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
                         [ngModel]="value"
-                        (ngModelChange)="unsavedRow && unsavedRow.dataItem = $event">
+                        (ngModelChange)="unsavedRow && unsavedRow.address = $event">
                         <mat-option *ngFor="let item of MTConnectItems" [value]="item.id">{{ item.name }}</mat-option>
                     </mat-select>
                 </ng-template>
@@ -60,30 +60,35 @@
             </ngx-datatable-column>
             <ngx-datatable-column [name]="'settings-data-sink.InitialValue' | translate" prop="initValue" [flexGrow]="1" cellClass="input-cell">
                 <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-                    <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis">
+                    <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis" [title]="value">
                         {{ value }}
                     </div>
                     <input *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
-                        type="number" class="w-100"
+                        type="text" class="w-100"
                         [ngModel]="value"
-                        (ngModelChange)="onInitialValueChange($event)"
+                        (ngModelChange)="unsavedRow && unsavedRow.initValue = $event"
                         autofocus
                     />
                 </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column [name]="'settings-data-sink.Map' | translate" prop="map" [flexGrow]="1.5" cellClass="input-cell">
+            <ngx-datatable-column [name]="'settings-data-sink.Map' | translate" prop="map" [flexGrow]="1.5" cellClass="input-cell button-cell">
                 <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                     <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                        <div class="text-ellipsis">{{ value }}</div>
+                        <div class="text-ellipsis" style="margin-top: 8px">
+                            <span *ngFor="let item of value">{{ item }} </span>
+                        </div>
                     </ng-container>
                     <div *ngIf="unsavedRowIndex === rowIndex" class="d-flex align-items-center">
-                        <input type="text" class="w-100"
-                            [ngModel]="value"
-                            (ngModelChange)="unsavedRow && unsavedRow.map = $event" />
+                        <div class="mt-5 text-ellipsis">
+                            <span *ngFor="let item of unsavedRow?.map">{{ item }} </span>
+                        </div>
+                        <mat-button-toggle-group class="mt-5 ml-10">
+                            <mat-button-toggle class="small-button" (click)="unsavedRow && onMapEdit(unsavedRow)" [matTooltip]="'settings-data-sink.Select' | translate" matTooltipPosition="above"><mat-icon>open_in_new</mat-icon></mat-button-toggle>
+                        </mat-button-toggle-group>
                     </div>
                 </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column [name]="'settings-data-sink.Actions' | translate" [flexGrow]="1" cellClass="action-cell" [sortable]="false">
+            <ngx-datatable-column [name]="'settings-data-sink.Actions' | translate" [flexGrow]="1" cellClass="button-cell" [sortable]="false">
                 <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                     <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
                         <mat-button-toggle (click)="onEditStart(rowIndex, row)" [matTooltip]="'settings-data-sink.Edit' | translate" matTooltipPosition="above"><mat-icon>edit</mat-icon></mat-button-toggle>

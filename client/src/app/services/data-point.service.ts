@@ -117,7 +117,7 @@ export class DataPointService {
     }
 
     private _parseDataPoint(obj: api.DataPointType) {
-        return obj as DataPoint;
+        return obj as any as DataPoint;
     }
 
     private _emptyState() {

@@ -6,9 +6,9 @@ export enum DataPointType {
 export class DataPoint {
     enabled: boolean;
     id?: string;
-    initValue: number;
+    initValue: string;
     map: string[];
     name: string;
     type: DataPointType;
-    dataItem?: string;
+    address: string;
 }

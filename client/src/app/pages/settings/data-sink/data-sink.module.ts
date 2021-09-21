@@ -6,7 +6,8 @@ import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confir
 
 import { DataSinkComponent } from "./data-sink.component";
 import { DataSinkMtConnectComponent } from "./data-sink-mt-connect/data-sink-mt-connect.component";
-import { SelectVarModalComponent } from "./select-var-modal/select-var-modal.component";
+import { CreateDataItemModalComponent } from "./create-data-item-modal/create-data-item-modal.component";
+import { SelectMapModalComponent } from "./select-map-modal/select-map-modal.component";
 
 const routes: Routes = [
     {
@@ -18,7 +19,8 @@ const routes: Routes = [
 const COMPONENTS = [
     DataSinkComponent,
     DataSinkMtConnectComponent,
-    SelectVarModalComponent,
+    CreateDataItemModalComponent,
+    SelectMapModalComponent,
 ];
 
 @NgModule({

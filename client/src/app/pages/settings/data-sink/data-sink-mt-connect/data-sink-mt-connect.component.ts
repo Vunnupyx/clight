@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core'
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
@@ -7,19 +7,20 @@ import { DataPointService, DataSinkService } from 'app/services';
 import { Status } from 'app/shared/state';
 import { clone } from 'app/shared/utils';
 import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { SelectVarModalComponent } from '../select-var-modal/select-var-modal.component';
-import { MT_CONNECT_ITEMS_MOCK } from './data-sink-mt-connect.component.mock';
+import { CreateDataItemModalComponent } from '../create-data-item-modal/create-data-item-modal.component';
+import { MT_CONNECT_DATA_ITEMS_MOCK } from './data-sink-mt-connect.component.mock';
+import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
+import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
 
 @Component({
     selector: 'app-data-sink-mt-connect',
     templateUrl: './data-sink-mt-connect.component.html',
     styleUrls: ['./data-sink-mt-connect.component.scss'],
-    encapsulation: ViewEncapsulation.None,
 })
 export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
     DataPointType = DataPointType;
-    MTConnectItems = MT_CONNECT_ITEMS_MOCK();
+    MTConnectItems = MT_CONNECT_DATA_ITEMS_MOCK();
 
     @Input() dataSink?: DataSink;
     
@@ -39,6 +40,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     get isBusy() {
         return this.dataSinkService.status != Status.Ready
             || this.dataPointService.status != Status.Ready;
+    }
+
+    get isEditing() {
+        return !!this.unsavedRow;
     }
 
     ngOnInit() {
@@ -72,12 +77,31 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
         if (!this.datapointRows) {
             return;
         }
+
+        const dialogRef = this.dialog.open(CreateDataItemModalComponent, {
+            data: { selection: undefined },
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
+            this.onAddConfirm(result);
+        });
+    }
+
+    onAddConfirm(result: PreDefinedDataPoint) {
         const obj = {
-            type: DataPointType.Event,
+            name: result.name,
+            address: result.address,
+            initValue: result.initialValue,
+            type: result.type,
+            enabled: true,
+            map: [],
         } as DataPoint;
-        this.unsavedRowIndex = this.datapointRows.length;
+        this.unsavedRowIndex = this.datapointRows!.length;
         this.unsavedRow = obj;
-        this.datapointRows = this.datapointRows.concat([obj]);
+        this.datapointRows = this.datapointRows!.concat([obj]);
     }
 
     onEditStart(rowIndex: number, row: any) {
@@ -86,8 +110,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
         this.unsavedRow = clone(row);
     }
 
-    onInitialValueChange(val: string) {
-        this.unsavedRow!.initValue = parseFloat(val);
+    onMapEdit(obj: DataPoint) {
+        const dialogRef = this.dialog.open(SelectMapModalComponent, {
+            data: { map: obj.map.map(x => ({ from: x.split('->')[0], to: x.split('->')[1] })) },
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (!result) {
+                return;
+            }
+            this.unsavedRow!.map = result.map(x => `${x.from}->${x.to}`);
+        });
     }
 
     onEditEnd() {
@@ -110,19 +143,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
         delete this.unsavedRow;
         delete this.unsavedRowIndex;
         this.datapointRows = this.datapointRows!.filter(x => x.id);
-    }
-
-    onAddressSelect(obj: DataPoint) {
-        const dialogRef = this.dialog.open(SelectVarModalComponent, {
-            data: { selection: obj.map },
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (!result) {
-                return;
-            }
-            this.unsavedRow!.map = result;
-        });
     }
 
     onDelete(obj: DataPoint) {

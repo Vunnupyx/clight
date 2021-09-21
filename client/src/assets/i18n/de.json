@@ -48,6 +48,7 @@
     "DataItem": "",
     "InitialValue": "",
     "Map": "",
+    "Select": "",
     "Actions": "",
     "Edit": "",
     "Delete": "",
@@ -59,6 +60,10 @@
     "Area": "",
     "Component": "",
     "VariableName": "",
-    "SelectVariable": ""
+    "SelectVariable": "",
+    "Mapping": "",
+    "From": "",
+    "To": "",
+    "AddMapping": ""
   }
 }

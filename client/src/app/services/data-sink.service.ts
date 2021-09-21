@@ -94,7 +94,7 @@ export class DataSinkService {
     }
 
     private _parseDataSink(obj: api.DataSinkType) {
-        return obj as DataSink;
+        return obj as any as DataSink;
     }
 
     private _emptyState() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { Subscription } from 'rxjs';
 
 import { DataSink, DataSinkProtocol } from 'app/models';
@@ -9,7 +9,6 @@ import { Status } from 'app/shared/state';
     selector: 'app-data-sink',
     templateUrl: './data-sink.component.html',
     styleUrls: ['./data-sink.component.scss'],
-    encapsulation: ViewEncapsulation.None,
 })
 export class DataSinkComponent implements OnInit {
 

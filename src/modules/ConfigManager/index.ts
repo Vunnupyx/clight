@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'stream';
 import {
+  DataSinkProtocols,
+  DataSourceProtocols,
   DeviceLifecycleEventTypes,
   EventLevels,
   IErrorEvent,
@@ -11,6 +13,8 @@ import { EventBus } from '../EventBus';
 import {
   IConfig,
   IConfigManagerParams,
+  IDataSinkConfig,
+  IDataSourceConfig,
   IRuntimeConfig,
   isDataPointMapping
 } from './interfaces';
@@ -23,6 +27,37 @@ interface IConfigManagerEvents {
 }
 
 type ChangeOperation = 'insert' | 'update' | 'delete';
+
+const defaultS7DataSource: IDataSourceConfig = {
+  name: '',
+  dataPoints: [],
+  protocol: DataSourceProtocols.S7,
+  connection: {
+    ipAddr: '192.168.214.1',
+    port: 102,
+    rack: 0,
+    slot: 2
+  },
+  enabled: false
+};
+const defaultIoShieldDataSource: IDataSourceConfig = {
+  name: '',
+  dataPoints: [],
+  protocol: DataSourceProtocols.IOSHIELD,
+  enabled: false
+};
+const defaultOpcuaDataSink: IDataSinkConfig = {
+  name: '',
+  dataPoints: [],
+  enabled: false,
+  protocol: DataSinkProtocols.OPCUA
+};
+const defaultMtconnectDataSink: IDataSinkConfig = {
+  name: '',
+  dataPoints: [],
+  enabled: false,
+  protocol: DataSinkProtocols.MTCONNECT
+};
 
 /**
  * Config for managing the app's config
@@ -108,6 +143,45 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       this.runtimeConfig
     );
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
+
+    let changed = false;
+    if (
+      !this._config.dataSources.some(
+        (dataSource) => dataSource.protocol === DataSourceProtocols.S7
+      )
+    ) {
+      this._config.dataSources.push(defaultS7DataSource);
+      changed = true;
+    }
+
+    if (
+      !this._config.dataSources.some(
+        (dataSource) => dataSource.protocol === DataSourceProtocols.IOSHIELD
+      )
+    ) {
+      this._config.dataSources.push(defaultIoShieldDataSource);
+      changed = true;
+    }
+    if (
+      !this._config.dataSources.some(
+        (dataSource) => dataSource.protocol === DataSinkProtocols.OPCUA
+      )
+    ) {
+      this._config.dataSinks.push(defaultOpcuaDataSink);
+      changed = true;
+    }
+    if (
+      !this._config.dataSources.some(
+        (dataSource) => dataSource.protocol === DataSinkProtocols.MTCONNECT
+      )
+    ) {
+      this._config.dataSinks.push(defaultMtconnectDataSink);
+      changed = true;
+    }
+
+    if (changed) {
+      this.saveConfigToFile(this.configName);
+    }
 
     this.checkType(
       this.runtimeConfig.mtconnect.listenerPort,

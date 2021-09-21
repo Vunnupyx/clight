@@ -16,7 +16,6 @@ describe('Test DataPointMapper', () => {
     });
 
     const dataSource: IDataSourceConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
@@ -31,11 +30,12 @@ describe('Test DataPointMapper', () => {
       ]
     };
     const dataSink: IDataSinkConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
-      dataPoints: [{ id: 'target1', name: '', type: 'event', map: {} }]
+      dataPoints: [
+        { id: 'target1', name: '', type: 'event', map: {}, address: '' }
+      ]
     };
     config.config = {
       general: { serialNumber: '', manufacturer: '', model: '', control: '' },

@@ -144,6 +144,24 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
 
+    this.setDefaultValues();
+
+    this.checkType(
+      this.runtimeConfig.mtconnect.listenerPort,
+      'number',
+      'runtime.mtconnect.listenerPort'
+    );
+    this.checkType(
+      this.runtimeConfig.restApi.port,
+      'number',
+      'runtime.restApi.port'
+    );
+  }
+
+  /**
+   * Set default values for each data source and data sink if not existing
+   */
+  private setDefaultValues() {
     let changed = false;
     if (
       !this._config.dataSources.some(
@@ -182,17 +200,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     if (changed) {
       this.saveConfigToFile(this.configName);
     }
-
-    this.checkType(
-      this.runtimeConfig.mtconnect.listenerPort,
-      'number',
-      'runtime.mtconnect.listenerPort'
-    );
-    this.checkType(
-      this.runtimeConfig.restApi.port,
-      'number',
-      'runtime.restApi.port'
-    );
   }
 
   /**

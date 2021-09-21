@@ -10,7 +10,7 @@ import { OPCUADataSink } from './OPCUA';
  * @returns DataSink
  */
 export const createDataSink = (config: IDataSinkConfig): DataSink => {
-  const { protocol, id } = config;
+  const { protocol } = config;
 
   switch (protocol) {
     case DataSinkProtocols.MTCONNECT:
@@ -18,7 +18,7 @@ export const createDataSink = (config: IDataSinkConfig): DataSink => {
     case DataSinkProtocols.OPCUA:
       return createOPCUADataSink(config);
     default:
-      throw Error(`Invalid protocol of data sink ${id}`);
+      throw Error(`Invalid protocol of data sink ${protocol}`);
   }
 };
 

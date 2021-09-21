@@ -20,9 +20,9 @@ export class IoshieldDataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const { name, protocol, id } = this.config;
+    const { name, protocol} = this.config;
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level: this.level,
       type: DataSourceLifecycleEventTypes.Connected,
       status: LifecycleEventStatus.Connected,

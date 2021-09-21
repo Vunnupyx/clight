@@ -42,7 +42,6 @@ export interface IDataPointConfig {
 }
 
 export interface IDataSourceConfig {
-  id: string;
   name: string;
   dataPoints: IDataPointConfig[];
   protocol: string;
@@ -64,6 +63,7 @@ export type ITargetDataMap = object;
 
 export interface IDataSinkDataPointConfig {
   id: string;
+  address: string;
   name: string;
   type: IMTConnectDataPointTypes;
   map?: ITargetDataMap;
@@ -72,7 +72,6 @@ export interface IDataSinkDataPointConfig {
 }
 
 export interface IDataSinkConfig {
-  id: string;
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;

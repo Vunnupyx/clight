@@ -6,10 +6,8 @@
 import { ConfigManager } from "../../../../../ConfigManager";
 import { Request, Response } from 'express';
 import winston from "winston";
-import { Console } from "console";
-import { config } from "process";
-import { DataSource } from "../../../../../DataSource/DataSource";
-import { json } from "stream/consumers";
+import { v4 as uuidv4 } from 'uuid';
+
 
 let configManager: ConfigManager;
 
@@ -31,7 +29,7 @@ function dataSourcesGetHandler (request: Request, response: Response): void {
  * Handle all get requests for a specific datasource.
  */
 function dataSourceGetHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     response.status(dataSource ? 200 : 404).json(dataSource);
 }
 
@@ -42,7 +40,7 @@ function dataSourceGetHandler (request: Request, response: Response): void {
 function dataSourcePatchHandler (request: Request, response: Response): void {
     const allowed = ['connection', 'enabled'];
     
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     if(!dataSource) {
         winston.warn(``); // TODO: Define warning;
         response.status(404).send();
@@ -60,52 +58,68 @@ function dataSourcePatchHandler (request: Request, response: Response): void {
     response.status(200).json(changedDatasource);
 }
 
+/**
+ * Return all datapoints of the selected datasource
+ */
 function dataSourcesGetDatapointsHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     response.status(dataSource ? 200 : 404).json({
         dataPoints: dataSource.dataPoints
     })
 }
 
+/**
+ * Insert a new datapoint
+ */
 function dataSourcesPostDatapointHandler (request: Request, response: Response): void {
     //TODO: Inputvaidlation
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
-    dataSource.dataPoints.push(request.body)
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
+    const newData = {...request.body, ...{id: uuidv4()}};
+    dataSource.dataPoints.push(newData);
     configManager.changeConfig('update', 'dataSources', dataSource)
-    response.status(200).send();
+    response.status(200).json({
+        created: newData,
+        href: `${request.originalUrl}/${newData.id}`,
+    });
  }
-
+/**
+ * Returns datapoint selected by datasourceid and datapointid
+ */
 function dataSourcesGetDatapointHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     const point = dataSource?.dataPoints?.find((point) => point.id === request.params.datapointId)
     response.status(dataSource && point ? 200 : 404).json(point);
  }
 
+ /**
+  * Deletes a datapoint selected by datasourceid and datapointid
+  */
  function dataSourcesDeleteDatapointHandler (request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     const index = dataSource?.dataPoints?.findIndex((point) => point.id === request.params.datapointId)
-    console.log(index);
-    console.log(dataSource);
     const point = dataSource?.dataPoints[index];
-    console.log(point);
     if (index >= 0) {
         dataSource.dataPoints.splice(index, 1);
         configManager.changeConfig('update', 'dataSources', dataSource);
     }
     response.status(dataSource && point ? 200 : 404).json(dataSource && index >=0 ? {deleted: point} : null);
  }
+
+ /**
+  * Overwrite a datapoint selected by datasourceid and datapointid
+  */
  function dataSourcesPatchDatapointHandler (request: Request, response: Response): void { 
      //TODO: Input validation
-     console.log(`Markus`);
-    const dataSource = configManager.config.dataSources.find((source) => source.id === request.params.datasourceId);
+    const dataSource = configManager.config.dataSources.find((source) => source.protocol === request.params.datasourceProtocol);
     const index = dataSource?.dataPoints?.findIndex((point) => point.id === request.params.datapointId)
     if(dataSource && index >= 0) {
         dataSource.dataPoints.splice(index, 1);
-        dataSource.dataPoints.push(request.body);
+        const newData = {...request.body, ...{id: uuidv4()}};
+        dataSource.dataPoints.push(newData);
         configManager.changeConfig('update', 'dataSources', dataSource)
         response.status(200).json({
-            changed: request.body,
-            href: `/api/v1/datasources/${request.params.datasourceId}/dataPoints/${request.body.id}`
+            changed: newData,
+            href: `/api/v1/datasources/${request.params.datasourceId}/dataPoints/${newData.id}`
         })
     }
     response.status(404).send();

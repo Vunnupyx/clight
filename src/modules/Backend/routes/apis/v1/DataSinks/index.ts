@@ -22,7 +22,7 @@ function dataSinksGetHandler(request: Request, response: Response): void {
  * Return single datasink resource selected by id
  */
 function dataSinkGetHandler(request, response): void {
-    const dataSink = configManager.config.dataSinks.find((sink) => sink.id === request.params.datasinkId);
+    const dataSink = configManager.config.dataSinks.find((sink) => sink.protocol === request.params.datasinkProtocol);
     response.status(dataSink ? 200 : 404).json(dataSink);
 }
 

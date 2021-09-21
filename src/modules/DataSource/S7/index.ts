@@ -31,9 +31,9 @@ export class S7DataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const { name, protocol, id, connection } = this.config;
+    const { name, protocol, connection } = this.config;
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level: this.level,
       type: DataSourceLifecycleEventTypes.Connecting,
       status: LifecycleEventStatus.Connecting,
@@ -172,11 +172,11 @@ export class S7DataSource extends DataSource {
    */
   private onConnect(err) {
     const level = this.level;
-    const { name, protocol, id } = this.config;
+    const { name, protocol} = this.config;
     if (err) {
       // We have an error.  Maybe the PLC is not reachable.
       this.submitLifecycleEvent({
-        id,
+        id: protocol,
         level: this.level,
         type: DataSourceLifecycleEventTypes.ConnectionError,
         status: LifecycleEventStatus.ConnectionError,
@@ -188,7 +188,7 @@ export class S7DataSource extends DataSource {
           return;
         }
         this.submitLifecycleEvent({
-          id,
+          id: protocol,
           level,
           type: DataSourceLifecycleEventTypes.Reconnecting,
           status: LifecycleEventStatus.Reconnecting,
@@ -200,7 +200,7 @@ export class S7DataSource extends DataSource {
     }
 
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level,
       type: DataSourceLifecycleEventTypes.Connected,
       status: LifecycleEventStatus.Connected,
@@ -215,10 +215,10 @@ export class S7DataSource extends DataSource {
    * @returns Promise
    */
   public async disconnect(): Promise<void> {
-    const { name, protocol, id } = this.config;
+    const { name, protocol} = this.config;
     this.isDisconnected = true;
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level: this.level,
       type: DataSourceLifecycleEventTypes.Disconnected,
       status: LifecycleEventStatus.Disconnected,

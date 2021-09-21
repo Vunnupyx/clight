@@ -68,7 +68,6 @@ export interface IDataSinkDataPointConfig {
   type: IMTConnectDataPointTypes;
   map?: ITargetDataMap;
   initialValue?: string | number;
-  enabled: boolean;
 }
 
 export interface IDataSinkConfig {

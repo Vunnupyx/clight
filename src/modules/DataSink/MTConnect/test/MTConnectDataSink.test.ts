@@ -34,6 +34,7 @@ describe('Test MTConnectDataSink', () => {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [
         { id: 'target1', name: '', type: 'event' },
         { id: 'target2', name: '', type: 'event' }
@@ -65,12 +66,16 @@ describe('Test MTConnectDataSink', () => {
       id: '',
       name: '',
       protocol: '',
-      dataPoints: [{ id: 'source', name: '', address: '', readFrequency: 1000 }]
+      enabled: true,
+      dataPoints: [
+        { id: 'source', name: '', address: '', readFrequency: 1000, type: 's7' }
+      ]
     };
     const dataSinkConfig: IDataSinkConfig = {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [
         {
           id: 'target',
@@ -85,7 +90,7 @@ describe('Test MTConnectDataSink', () => {
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
       virtualDataPoints: [],
-      mapping: [{ source: 'source', target: 'target' }]
+      mapping: [{ source: 'source', target: 'target', id: '' }]
     };
 
     const adapter = new MTConnectAdapter(config);
@@ -130,15 +135,29 @@ describe('Test MTConnectDataSink', () => {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [
-        { id: 'source1', name: '', address: '', readFrequency: 1000 },
-        { id: 'source2', name: '', address: '', readFrequency: 1000 }
+        {
+          id: 'source1',
+          name: '',
+          address: '',
+          readFrequency: 1000,
+          type: 's7'
+        },
+        {
+          id: 'source2',
+          name: '',
+          address: '',
+          readFrequency: 1000,
+          type: 's7'
+        }
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [
         {
           id: 'target',
@@ -154,8 +173,8 @@ describe('Test MTConnectDataSink', () => {
       dataSources: [dataSourceConfig],
       virtualDataPoints: [],
       mapping: [
-        { source: 'source1', target: 'target', mapValue: '0' },
-        { source: 'source2', target: 'target', mapValue: '1' }
+        { source: 'source1', target: 'target', mapValue: '0', id: '' },
+        { source: 'source2', target: 'target', mapValue: '1', id: '' }
       ]
     };
 
@@ -212,15 +231,29 @@ describe('Test MTConnectDataSink', () => {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [
-        { id: 'source1', name: '', address: '', readFrequency: 1000 },
-        { id: 'source2', name: '', address: '', readFrequency: 1000 }
+        {
+          id: 'source1',
+          name: '',
+          address: '',
+          readFrequency: 1000,
+          type: 's7'
+        },
+        {
+          id: 'source2',
+          name: '',
+          address: '',
+          readFrequency: 1000,
+          type: 's7'
+        }
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: [
         {
           id: 'target1',
@@ -240,8 +273,8 @@ describe('Test MTConnectDataSink', () => {
       dataSources: [dataSourceConfig],
       virtualDataPoints: [],
       mapping: [
-        { source: 'source1', target: 'target2' },
-        { source: 'source2', target: 'target1' }
+        { source: 'source1', target: 'target2', id: '' },
+        { source: 'source2', target: 'target1', id: '' }
       ]
     };
 
@@ -300,6 +333,7 @@ describe('Test MTConnectDataSink', () => {
       id: '',
       name: '',
       protocol: '',
+      enabled: true,
       dataPoints: []
     };
 

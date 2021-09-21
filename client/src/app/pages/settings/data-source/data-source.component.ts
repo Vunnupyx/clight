@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog';
 import { Connection } from 'app/api/models';
-import { DataPoint, DataPointType, DataSource, DataSourceProtocol } from 'app/models';
-import { DataPointService, DataSourceService } from 'app/services';
+import { SourceDataPoint, SourceDataPointType, DataSource, DataSourceProtocol } from 'app/models';
+import { SourceDataPointService, DataSourceService } from 'app/services';
 import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { Status } from 'app/shared/state';
 import { clone } from 'app/shared/utils';
@@ -13,36 +13,39 @@ import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.
     selector: 'app-data-source',
     templateUrl: './data-source.component.html',
     styleUrls: ['./data-source.component.scss'],
-    encapsulation: ViewEncapsulation.None,
 })
 export class DataSourceComponent implements OnInit {
 
-    DataPointType = DataPointType;
+    SourceDataPointType = SourceDataPointType;
     Protocol = DataSourceProtocol;
 
     dataSourceList?: DataSource[];
     dataSource?: DataSource;
-    datapointRows?: DataPoint[];
+    datapointRows?: SourceDataPoint[];
 
-    unsavedRow?: DataPoint;
+    unsavedRow?: SourceDataPoint;
     unsavedRowIndex: number | undefined;
 
     sub = new Subscription();
 
     constructor(
-        private dataPointService: DataPointService,
+        private sourceDataPointService: SourceDataPointService,
         private dataSourceService: DataSourceService,
         private dialog: MatDialog,
     ) { }
 
     get isBusy() {
         return this.dataSourceService.status != Status.Ready
-            || this.dataPointService.status != Status.Ready;
+            || this.sourceDataPointService.status != Status.Ready;
+    }
+
+    get isEditing() {
+        return !!this.unsavedRow;
     }
 
     ngOnInit() {
         this.sub.add(this.dataSourceService.dataSources.subscribe(x => this.onDataSources(x)));
-        this.sub.add(this.dataPointService.dataPoints.subscribe(x => this.onDataPoints(x)));
+        this.sub.add(this.sourceDataPointService.sourceDataPoints.subscribe(x => this.onSourceDataPoints(x)));
 
         this.dataSourceService.getDataSources();
     }
@@ -57,7 +60,7 @@ export class DataSourceComponent implements OnInit {
 
     switchDataSource(obj: DataSource) {
         this.dataSource = obj;
-        this.dataPointService.getDataPoints(obj.id!);
+        this.sourceDataPointService.getSourceDataPoints(obj.id!);
     }
 
     updateEnabled(val: boolean) {
@@ -80,7 +83,7 @@ export class DataSourceComponent implements OnInit {
         this.dataSourceService.updateDataSource(this.dataSource);
     }
 
-    onDataPoints(arr: DataPoint[]) {
+    onSourceDataPoints(arr: SourceDataPoint[]) {
         this.datapointRows = arr;
     }
 
@@ -89,8 +92,8 @@ export class DataSourceComponent implements OnInit {
             return;
         }
         const obj = {
-            type: DataPointType.NCK,
-        } as DataPoint;
+            type: SourceDataPointType.NCK,
+        } as SourceDataPoint;
         this.unsavedRowIndex = this.datapointRows.length;
         this.unsavedRow = obj;
         this.datapointRows = this.datapointRows.concat([obj]);
@@ -107,9 +110,9 @@ export class DataSourceComponent implements OnInit {
             return;
         }
         if (this.unsavedRow!.id) {
-            this.dataPointService.updateDataPoint(this.dataSource!.id!, this.unsavedRow!);
+            this.sourceDataPointService.updateDataPoint(this.dataSource!.id!, this.unsavedRow!);
         } else {
-            this.dataPointService.addDataPoint(this.dataSource!.id!, this.unsavedRow!);
+            this.sourceDataPointService.addDataPoint(this.dataSource!.id!, this.unsavedRow!);
         }
         this.clearUnsavedRow();
     }
@@ -124,9 +127,8 @@ export class DataSourceComponent implements OnInit {
         this.datapointRows = this.datapointRows!.filter(x => x.id);
     }
 
-    onAddressSelect(obj: DataPoint) {
+    onAddressSelect(obj: SourceDataPoint) {
         const dialogRef = this.dialog.open(SelectTypeModalComponent, {
-            // width: '500px',
             data: { selection: obj.address },
         });
 
@@ -138,7 +140,7 @@ export class DataSourceComponent implements OnInit {
         });
     }
 
-    onDelete(obj: DataPoint) {
+    onDelete(obj: SourceDataPoint) {
         const title = `Delete`;
         const message = `Are you sure you want to delete data point ${obj.name}?`;
 
@@ -150,7 +152,7 @@ export class DataSourceComponent implements OnInit {
             if (!dialogResult) {
                 return;
             }
-            this.dataPointService.deleteDataPoint(this.dataSource!.id!, obj);
+            this.sourceDataPointService.deleteDataPoint(this.dataSource!.id!, obj);
         });
     }
 

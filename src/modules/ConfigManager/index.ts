@@ -11,12 +11,11 @@ import { EventBus } from '../EventBus';
 import {
   IConfig,
   IConfigManagerParams,
-  IGeneralConfig,
   IRuntimeConfig,
   isDataPointMapping
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
-import winston from "winston";
+import winston from 'winston';
 
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
@@ -209,47 +208,41 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     operation: ChangeOperation,
     configCategory: Category,
     // @ts-ignore // TODO @markus pls fix
-    data: DataType[number]
+    data: DataType[number] | string
   ) {
-
     const logPrefix = `${this.constructor.name}::changeConfig`;
-    if (operation === 'delete' && typeof data !== 'string') {
+    if (operation === 'delete' && typeof data !== 'string')
       throw new Error(`${logPrefix} error due try to delete without id.`); // Combination actually not defined in type def.
-    }
-    
-    let selectedCategory = this.config[configCategory];
-    
+
+    const categoryArray = this.config[configCategory];
+
+    if (!Array.isArray(categoryArray)) return;
+
     switch (operation) {
       case 'insert': {
         if (typeof data !== 'string') {
           // @ts-ignore TODO: Fix data type
-          selectedCategory.push(data);
+          categoryArray.push(data);
         }
         break;
       }
       case 'update': {
-        if (Array.isArray(selectedCategory)) {
-          if (typeof data === 'string' || isDataPointMapping(data))
-            throw new Error();
-          // @ts-ignore
-          const index = selectedCategory.findIndex((entry) => entry.id === data.id);
-          if (index < 0) throw Error(`NO Entry found`); //TODO:
-          const change = selectedCategory[index];
-          selectedCategory.splice(index, 1);
-          //@ts-ignore
-          selectedCategory.push(data);
-        } else {
-          this._config.general = data as unknown as IGeneralConfig;
-        }
+        if (typeof data === 'string' || isDataPointMapping(data))
+          throw new Error();
+        // @ts-ignore
+        const index = categoryArray.findIndex((entry) => entry.id === data.id);
+        if (index < 0) throw Error(`NO Entry found`); //TODO:
+        const change = categoryArray[index];
+        categoryArray.splice(index, 1);
+        //@ts-ignore
+        categoryArray.push(data);
         break;
       }
       case 'delete': {
-        if (Array.isArray(selectedCategory)) {
-          const index = selectedCategory.findIndex((entry) => entry.id === data);
-          if (index < 0) throw Error(`No Entry found`); //TODO:
-          const change = selectedCategory[index];
-          selectedCategory.splice(index, 1);
-        }
+        const index = categoryArray.findIndex((entry) => entry.id === data);
+        if (index < 0) throw Error(`No Entry found`); //TODO:
+        const change = categoryArray[index];
+        categoryArray.splice(index, 1);
         break;
       }
       default: {
@@ -266,7 +259,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     fs.writeFileSync(
       path.join(this.configFolder, configName),
       JSON.stringify(this._config, null, 1),
-      {encoding: 'utf-8'});
-    winston.info(`${ConfigManager.className}::saveConfigToFile saved new config to file`);
+      { encoding: 'utf-8' }
+    );
+    winston.info(
+      `${ConfigManager.className}::saveConfigToFile saved new config to file`
+    );
   }
 }

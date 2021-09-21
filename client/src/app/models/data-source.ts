@@ -1,7 +1,7 @@
 import { SourceDataPoint } from "./source-data-point";
 
 export enum DataSourceProtocol {
-    S7 = 's7nck',
+    S7 = 's7',
     IOShield = 'ioshield',
 }
 

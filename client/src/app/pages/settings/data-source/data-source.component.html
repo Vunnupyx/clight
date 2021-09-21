@@ -9,7 +9,7 @@
     <nav mat-tab-nav-bar mat-align-tabs="center">
         <a mat-tab-link *ngFor="let item of dataSourceList"
             (click)="switchDataSource(item)"
-            [active]="dataSource?.id === item.id">{{item.name}}</a>
+            [active]="dataSource?.id === item.id">{{item.name || item.protocol}}</a>
     </nav>
 
     <div class="row">
@@ -18,7 +18,7 @@
                 <div class="mt-20 mr-30">{{ 'settings-data-source.Enabled' | translate }}</div>
                 <mat-slide-toggle class="ml-20 mt-20" [ngModel]="dataSource?.enabled" (ngModelChange)="updateEnabled($event)"></mat-slide-toggle>
             </div>
-        
+
             <div *ngIf="dataSource?.protocol === Protocol.S7" class="mt-20 d-flex align-items-center">
                 <div class="mt-0 mr-25 text-nowrap">{{ 'settings-data-source.IPAddress' | translate }}</div>
                 <form #form="ngForm">

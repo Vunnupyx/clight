@@ -11,10 +11,18 @@
   },
   "settings-general": {
     "General": "General",
+    "DeviceInfo": "Device Info",
     "Language": "Language",
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch"
+  },
+  "settings-device-info": {
+    "Manufacturer": "Manufacturer",
+    "Control": "Control",
+    "Model": "Model",
+    "SerialNumber": "SerialNumber",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-data-source": {
     "DataSource": "Data Source",
@@ -65,5 +73,5 @@
     "From": "From",
     "To": "To",
     "AddMapping": "Add mapping"
-  }  
+  }
 }

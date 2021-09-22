@@ -34,7 +34,7 @@ export class HttpService {
     }
 
     patch<T = any>(url: string, body: any, options?: RequestOptionsArgs) {
-        return this.http.post<T>(this._getUrl(url), body, this._getOptions(options)).toPromise();
+        return this.http.patch<T>(this._getUrl(url), body, this._getOptions(options)).toPromise();
     }
 
     put<T = any>(url: string, body: any, options?: RequestOptionsArgs) {

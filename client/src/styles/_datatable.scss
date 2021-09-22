@@ -465,12 +465,18 @@ $datatable-summary-row-background-hover: #ddd !default;
 
 @import '~@swimlane/ngx-datatable/assets/icons.css';
 
+// Overrides
 .ngx-datatable {
-    // Overrides for buttons
+    // buttons
+    .button-cell {
+      padding: 8px !important;
+    }
     .mat-button-toggle-group.mat-button-toggle-group-appearance-standard {
         box-shadow: none;
         border: solid 1px #ccc;
-        mat-button-toggle {
+        min-width: 26px;
+        margin-top: 2px;
+        mat-button-toggle:not(.small-button) {
             width: 30px;
             height: 30px;
             .mat-button-toggle-label-content {
@@ -484,8 +490,23 @@ $datatable-summary-row-background-hover: #ddd !default;
                 }
             }
         }
+        mat-button-toggle.small-button {
+            width: 26px !important;
+            height: 26px !important;
+            .mat-button-toggle-label-content {
+                min-width: 20px !important;
+                width: 20px !important;
+                height: 20px !important;
+                line-height: 20px !important;
+                padding: 5px 1px !important;
+                margin: 0px 0 0 -5px !important;
+                mat-icon {
+                    font-size: 14px !important;
+                }
+            }
+        }
     }
-    // Override for inputs
+    // inputs
     .input-cell {
         padding-bottom: 6px !important;
     }

@@ -1,2 +1,2 @@
-export * from "./DataSourceFactory";
-export * from "./interfaces";
+export * from './DataSourceFactory';
+export * from './interfaces';

@@ -1,19 +1,19 @@
 .mat-tree {
-    // @include shadow-box();
-  
-    .mat-tree-node {
-      color: $dark-focused;
+  // @include shadow-box();
 
-      .mat-icon-button {
-        margin-right: 4px;
+  .mat-tree-node {
+    color: $dark-focused;
 
-        &:disabled {
-          width: 0px;
-        }
+    .mat-icon-button {
+      margin-right: 4px;
+
+      &:disabled {
+        width: 0px;
       }
-
-      // &[aria-expanded="true"] {
-      //   font-weight: 600;
-      // }
     }
+
+    // &[aria-expanded="true"] {
+    //   font-weight: 600;
+    // }
+  }
 }

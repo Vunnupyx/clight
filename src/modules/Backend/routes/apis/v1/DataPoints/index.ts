@@ -17,8 +17,11 @@ export function setConfigManger(config: ConfigManager) {
 function dataPointsGetHandler(request: Request, response: Response) {
   // @ts-ignore // TODO
   const sink = configManager?.config?.dataSinks.find(
-    (sink) => sink.protocol === request.params.datasinkProtocol);
-  response.status(sink ? 200 : 404).json(sink ? { dataPoints: sink.dataPoints} : null);
+    (sink) => sink.protocol === request.params.datasinkProtocol
+  );
+  response
+    .status(sink ? 200 : 404)
+    .json(sink ? { dataPoints: sink.dataPoints } : null);
 }
 
 /**
@@ -42,7 +45,7 @@ function dataPointsPostHandler(request: Request, response: Response) {
   const changedSinkObject = configManager.config.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
-  const newData = {...request.body,...{id: uuidv4()}}
+  const newData = { ...request.body, ...{ id: uuidv4() } };
   changedSinkObject.dataPoints.push(newData);
   configManager?.changeConfig('update', 'dataSinks', changedSinkObject);
   response.status(200).json({
@@ -62,7 +65,7 @@ function dataPointPatchHandler(request: Request, response: Response) {
     (point) => point.id === request.params.dataPointId
   );
   sink.dataPoints.splice(index, 1);
-  const newData = {...request.body,...{id: uuidv4()}};
+  const newData = { ...request.body, ...{ id: uuidv4() } };
   sink.dataPoints.push(newData);
   configManager?.changeConfig('update', 'dataSinks', sink);
   response.status(200).json({

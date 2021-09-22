@@ -5,16 +5,16 @@ import {
   DeviceLifecycleEventTypes,
   EventLevels,
   IErrorEvent,
-  ILifecycleEvent,
-} from "../../common/interfaces";
-import { ConfigManager } from "../ConfigManager";
-import { LogLevel } from "../Logger/interfaces";
-import { MTConnectManager } from "../MTConnectManager";
-import { DataPointMapper } from "../DataPointMapper";
-import { DataSinkManager } from "../DataSinkManager";
-import { DataPointCache } from "../DatapointCache";
-import { VirtualDataPointManager } from "../VirtualDataPointManager";
-import { RestApiManager } from "../Backend/RESTAPIManager";
+  ILifecycleEvent
+} from '../../common/interfaces';
+import { ConfigManager } from '../ConfigManager';
+import { LogLevel } from '../Logger/interfaces';
+import { MTConnectManager } from '../MTConnectManager';
+import { DataPointMapper } from '../DataPointMapper';
+import { DataSinkManager } from '../DataSinkManager';
+import { DataPointCache } from '../DatapointCache';
+import { VirtualDataPointManager } from '../VirtualDataPointManager';
+import { RestApiManager } from '../Backend/RESTAPIManager';
 import { OPCUAManager } from '../OPCUAManager';
 
 /**

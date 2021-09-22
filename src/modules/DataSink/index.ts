@@ -1,2 +1,2 @@
-export * from "./DataSinkFactory";
-export * from "./interfaces";
+export * from './DataSinkFactory';
+export * from './interfaces';

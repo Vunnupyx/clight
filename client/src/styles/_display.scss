@@ -1,7 +1,7 @@
 $ds: (block, inline, inline-block, flex);
 
 @each $d in $ds {
-    .d-#{$d} { 
-        display: #{$d} !important;
-    }
+  .d-#{$d} {
+    display: #{$d} !important;
+  }
 }

@@ -16,12 +16,13 @@
       background-color: mat-color($dmg-app-secondary, 400);
     }
 
-    .mat-step-icon-selected, .mat-step-header .mat-step-icon-state-done,
+    .mat-step-icon-selected,
+    .mat-step-header .mat-step-icon-state-done,
     .mat-step-icon-state-edit {
       background-color: $dark-secondary-text;
       box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.14),
-      0px 1px 10px 0px rgba(0, 0, 0, 0.12),
-      0px 2px 4px -1px rgba(0, 0, 0, 0.2);
+        0px 1px 10px 0px rgba(0, 0, 0, 0.12),
+        0px 2px 4px -1px rgba(0, 0, 0, 0.2);
     }
 
     .mat-step-label {
@@ -37,7 +38,6 @@
   }
 
   &.mat-stepper-label-position-bottom {
-
     // .mat-horizontal-stepper-header:not(:first-child)::before,
     // [dir=rtl] .mat-horizontal-stepper-header:not(:last-child)::before,
     // .mat-horizontal-stepper-header:not(:last-child)::after,
@@ -52,8 +52,8 @@
 
       &::before,
       &::after {
-          top: 48px !important;
-          width: calc(50% - 24px) !important;
+        top: 48px !important;
+        width: calc(50% - 24px) !important;
       }
 
       &::before {
@@ -68,7 +68,7 @@
       &:last-child::after {
         border-top-width: 1px;
         border-top-style: solid;
-        content: "";
+        content: '';
         display: inline-block;
         height: 0;
         position: absolute;

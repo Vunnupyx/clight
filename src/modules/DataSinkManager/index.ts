@@ -48,7 +48,7 @@ export class DataSinkManager {
    * Creates all configures data sinks
    */
   public async spawnDataSinks(): Promise<void> {
-    winston.info("Start data sinks")
+    winston.info('Start data sinks');
     // Starting mtc adapter
     MTConnectManager.startAdapter();
     await OPCUAManager.startAdapter();

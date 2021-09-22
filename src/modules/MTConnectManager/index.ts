@@ -1,6 +1,6 @@
-import { ConfigManager } from "../ConfigManager";
-import { MTConnectAdapter } from "../MTConnectAdapter";
-import { SynchronousIntervalScheduler } from "../SyncScheduler";
+import { ConfigManager } from '../ConfigManager';
+import { MTConnectAdapter } from '../MTConnectAdapter';
+import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 /*
  ** Creates and manages the runtimes mtconnect adapter
@@ -40,7 +40,7 @@ export class MTConnectManager {
    */
   static getAdapter(): MTConnectAdapter {
     if (!this.adapter) {
-      throw new Error("Instance not yet created!");
+      throw new Error('Instance not yet created!');
     }
 
     return this.adapter;

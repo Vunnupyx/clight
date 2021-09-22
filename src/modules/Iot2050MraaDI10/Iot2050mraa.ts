@@ -1,4 +1,4 @@
-var child = require("child_process");
+var child = require('child_process');
 
 interface PinStatus {
   pin: number;
@@ -8,7 +8,7 @@ interface PinStatus {
 export enum PinState {
   OFF = 0,
   ON = 1,
-  BLINKING = 2,
+  BLINKING = 2
 }
 
 /**
@@ -18,16 +18,16 @@ export enum PinState {
  */
 export class Iot2050MraaDI10 {
   private PIN_LABELS = [
-    "DI0",
-    "DI1",
-    "DI2",
-    "DI3",
-    "DI4",
-    "DI5",
-    "DI6",
-    "DI7",
-    "DI8",
-    "DI9",
+    'DI0',
+    'DI1',
+    'DI2',
+    'DI3',
+    'DI4',
+    'DI5',
+    'DI6',
+    'DI7',
+    'DI8',
+    'DI9'
   ];
   private MONITOR_PINS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
   // Maximum time (ms) between the last three edges for detecting the state as blinking
@@ -44,18 +44,18 @@ export class Iot2050MraaDI10 {
     for (const pin of this.MONITOR_PINS) {
       // stdbuf is used because mraa does not flush stdout after reported pin state change
       const initialValues = child.spawn(
-        "stdbuf",
-        ["-oL", "mraa-gpio", "get", pin.toString()],
+        'stdbuf',
+        ['-oL', 'mraa-gpio', 'get', pin.toString()],
         { shell: true, detached: true }
       );
-      initialValues.stdout.on("data", this.monitorCallback.bind(this));
+      initialValues.stdout.on('data', this.monitorCallback.bind(this));
 
       const mraaGpio = child.spawn(
-        "stdbuf",
-        ["-oL", "mraa-gpio", "monitor", pin.toString()],
+        'stdbuf',
+        ['-oL', 'mraa-gpio', 'monitor', pin.toString()],
         { shell: true, detached: true }
       );
-      mraaGpio.stdout.on("data", this.monitorCallback.bind(this));
+      mraaGpio.stdout.on('data', this.monitorCallback.bind(this));
       this.childProcesses[pin] = mraaGpio;
     }
   }
@@ -121,17 +121,17 @@ export class Iot2050MraaDI10 {
    * @returns PinStatus: .pin = pin number, .state = current pin state
    */
   private parseOutput(output: string): PinStatus {
-    const noLineBreaks = output.replace(/\n/g, "");
-    const noSpaces = noLineBreaks.replace(/ /g, "");
-    const noText = noSpaces.replace(/Pin/g, "");
-    const data = noText.split("="); // Example input string: 6=1
+    const noLineBreaks = output.replace(/\n/g, '');
+    const noSpaces = noLineBreaks.replace(/ /g, '');
+    const noText = noSpaces.replace(/Pin/g, '');
+    const data = noText.split('='); // Example input string: 6=1
     const pinNumber = parseInt(data[0], 10);
     if (isNaN(pinNumber)) {
-      throw Error("Could not parse pin value");
+      throw Error('Could not parse pin value');
     }
     return {
       pin: pinNumber,
-      state: data[1] === "1",
+      state: data[1] === '1'
     };
   }
 }

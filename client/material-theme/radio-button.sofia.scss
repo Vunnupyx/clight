@@ -17,27 +17,27 @@
     }
   }
 
+  .mat-radio-outer-circle {
+    width: 30px;
+    height: 30px;
+    border-color: mat-color($dmg-app-secondary, 700) !important;
+  }
+  &:not(.mat-radio-checked).mat-radio-inner-circle {
+    display: none;
+  }
+
+  &.mat-radio-checked {
+    .mat-radio-inner-circle {
+      transform: scale(1);
+      background-color: mat-color($dmg-app-primary, 700);
+    }
     .mat-radio-outer-circle {
-      width: 30px;
-      height: 30px;
-      border-color: mat-color($dmg-app-secondary, 700) !important;
+      border-color: mat-color($dmg-app-primary, 700) !important;
     }
-    &:not(.mat-radio-checked).mat-radio-inner-circle {
-      display: none;
-    }
+  }
 
-    &.mat-radio-checked {
-       .mat-radio-inner-circle {
-         transform: scale(1);
-         background-color: mat-color($dmg-app-primary, 700);
-       }
-       .mat-radio-outer-circle {
-         border-color: mat-color($dmg-app-primary, 700) !important;
-       }
-    }
-
-    &.mat-radio-disabled .mat-radio-outer-circle {
-      opacity: 0.38;
-      border-color: mat-color($dmg-app-secondary, 800) !important;
-    }
+  &.mat-radio-disabled .mat-radio-outer-circle {
+    opacity: 0.38;
+    border-color: mat-color($dmg-app-secondary, 800) !important;
+  }
 }

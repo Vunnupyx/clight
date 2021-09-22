@@ -1,5 +1,4 @@
 .mat-snack-bar-container {
-
   min-width: 191px;
   max-width: 463px;
 
@@ -26,7 +25,7 @@
   &.warning {
     background-color: $status-warning;
     span {
-      color: black!important;
+      color: black !important;
     }
   }
 

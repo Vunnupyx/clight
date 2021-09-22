@@ -1,6 +1,11 @@
 /* tslint:disable */
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpRequest,
+  HttpResponse,
+  HttpHeaders
+} from '@angular/common/http';
 import { BaseService as __BaseService } from '../base-service';
 import { ApiConfiguration as __Configuration } from '../api-configuration';
 import { StrictHttpResponse as __StrictHttpResponse } from '../strict-http-response';
@@ -17,24 +22,32 @@ import { DataPointType } from '../models/data-point-type';
 import { VirtualDataPointType } from '../models/virtual-data-point-type';
 import { ConfigFile } from '../models/config-file';
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 class ApiService extends __BaseService {
   static readonly dataSourcesGetPath = '/datasources';
   static readonly dataSourceGetPath = '/datasources/{datasourceId}';
   static readonly dataSourcePatchPath = '/datasources/{datasourceId}';
-  static readonly getDatasourcesDatasourceIdDataPointsPath = '/datasources/{datasourceId}/dataPoints';
-  static readonly postDatasourcesDatasourceIdDataPointsPath = '/datasources/{datasourceId}/dataPoints';
-  static readonly getDatasourcesDatasourceIdDataPointsDatapointIdPath = '/datasources/{datasourceId}/dataPoints/{datapointId}';
-  static readonly deleteDatasourcesDatasourceIdDataPointsDatapointIdPath = '/datasources/{datasourceId}/dataPoints/{datapointId}';
-  static readonly patchDatasourcesDatasourceIdDataPointsDatapointIdPath = '/datasources/{datasourceId}/dataPoints/{datapointId}';
+  static readonly getDatasourcesDatasourceIdDataPointsPath =
+    '/datasources/{datasourceId}/dataPoints';
+  static readonly postDatasourcesDatasourceIdDataPointsPath =
+    '/datasources/{datasourceId}/dataPoints';
+  static readonly getDatasourcesDatasourceIdDataPointsDatapointIdPath =
+    '/datasources/{datasourceId}/dataPoints/{datapointId}';
+  static readonly deleteDatasourcesDatasourceIdDataPointsDatapointIdPath =
+    '/datasources/{datasourceId}/dataPoints/{datapointId}';
+  static readonly patchDatasourcesDatasourceIdDataPointsDatapointIdPath =
+    '/datasources/{datasourceId}/dataPoints/{datapointId}';
   static readonly dataSinksGetPath = '/datasinks';
   static readonly dataSinkGetPath = '/datasinks/{datasinkId}';
   static readonly dataPointsGetPath = '/datasinks/{datasinkId}/dataPoints';
   static readonly dataPointsPostPath = '/datasinks/{datasinkId}/dataPoints';
-  static readonly dataPointGetPath = '/datasinks/{datasinkId}/dataPoints/{dataPointId}';
-  static readonly dataPointPatchPath = '/datasinks/{datasinkId}/dataPoints/{dataPointId}';
-  static readonly dataPointDeletePath = '/datasinks/{datasinkId}/dataPoints/{dataPointId}';
+  static readonly dataPointGetPath =
+    '/datasinks/{datasinkId}/dataPoints/{dataPointId}';
+  static readonly dataPointPatchPath =
+    '/datasinks/{datasinkId}/dataPoints/{dataPointId}';
+  static readonly dataPointDeletePath =
+    '/datasinks/{datasinkId}/dataPoints/{dataPointId}';
   static readonly vdpsGetPath = '/vdps';
   static readonly vdpsPostPath = '/vdps';
   static readonly vdpGetPath = '/vdps/{id}';
@@ -43,10 +56,7 @@ class ApiService extends __BaseService {
   static readonly backupGetPath = '/backup';
   static readonly backupPostPath = '/backup';
 
-  constructor(
-    config: __Configuration,
-    http: HttpClient
-  ) {
+  constructor(config: __Configuration, http: HttpClient) {
     super(config, http);
   }
 
@@ -66,10 +76,11 @@ class ApiService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSourceList>;
       })
@@ -81,7 +92,7 @@ class ApiService extends __BaseService {
    */
   dataSourcesGet(): __Observable<DataSourceList> {
     return this.dataSourcesGetResponse().pipe(
-      __map(_r => _r.body as DataSourceList)
+      __map((_r) => _r.body as DataSourceList)
     );
   }
 
@@ -89,7 +100,9 @@ class ApiService extends __BaseService {
    * @param datasourceId id of the datasource
    * @return Request dateSource with given ID
    */
-  dataSourceGetResponse(datasourceId: string): __Observable<__StrictHttpResponse<DataSourceType>> {
+  dataSourceGetResponse(
+    datasourceId: string
+  ): __Observable<__StrictHttpResponse<DataSourceType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -102,10 +115,11 @@ class ApiService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSourceType>;
       })
@@ -117,7 +131,7 @@ class ApiService extends __BaseService {
    */
   dataSourceGet(datasourceId: string): __Observable<DataSourceType> {
     return this.dataSourceGetResponse(datasourceId).pipe(
-      __map(_r => _r.body as DataSourceType)
+      __map((_r) => _r.body as DataSourceType)
     );
   }
 
@@ -133,7 +147,9 @@ class ApiService extends __BaseService {
    *
    * @return Successfully changed datasource
    */
-  dataSourcePatchResponse(params: ApiService.DataSourcePatchParams): __Observable<__StrictHttpResponse<DataSourceType>> {
+  dataSourcePatchResponse(
+    params: ApiService.DataSourcePatchParams
+  ): __Observable<__StrictHttpResponse<DataSourceType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -141,16 +157,18 @@ class ApiService extends __BaseService {
     __body = params.changeObject;
     let req = new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceId))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(String(params.datasourceId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSourceType>;
       })
@@ -168,9 +186,11 @@ class ApiService extends __BaseService {
    *
    * @return Successfully changed datasource
    */
-  dataSourcePatch(params: ApiService.DataSourcePatchParams): __Observable<DataSourceType> {
+  dataSourcePatch(
+    params: ApiService.DataSourcePatchParams
+  ): __Observable<DataSourceType> {
     return this.dataSourcePatchResponse(params).pipe(
-      __map(_r => _r.body as DataSourceType)
+      __map((_r) => _r.body as DataSourceType)
     );
   }
 
@@ -178,25 +198,33 @@ class ApiService extends __BaseService {
    * Returns a list of dataPoints of this datasource
    * @param datasourceId id of the datasource
    */
-  getDatasourcesDatasourceIdDataPointsResponse(datasourceId: string): __Observable<__StrictHttpResponse<{dataPoints?: Array<Sourcedatapoint>}>> {
+  getDatasourcesDatasourceIdDataPointsResponse(
+    datasourceId: string
+  ): __Observable<
+    __StrictHttpResponse<{ dataPoints?: Array<Sourcedatapoint> }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(datasourceId))}/dataPoints`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(String(datasourceId))}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{dataPoints?: Array<Sourcedatapoint>}>;
+        return _r as __StrictHttpResponse<{
+          dataPoints?: Array<Sourcedatapoint>;
+        }>;
       })
     );
   }
@@ -204,9 +232,11 @@ class ApiService extends __BaseService {
    * Returns a list of dataPoints of this datasource
    * @param datasourceId id of the datasource
    */
-  getDatasourcesDatasourceIdDataPoints(datasourceId: string): __Observable<{dataPoints?: Array<Sourcedatapoint>}> {
+  getDatasourcesDatasourceIdDataPoints(
+    datasourceId: string
+  ): __Observable<{ dataPoints?: Array<Sourcedatapoint> }> {
     return this.getDatasourcesDatasourceIdDataPointsResponse(datasourceId).pipe(
-      __map(_r => _r.body as {dataPoints?: Array<Sourcedatapoint>})
+      __map((_r) => _r.body as { dataPoints?: Array<Sourcedatapoint> })
     );
   }
 
@@ -220,7 +250,9 @@ class ApiService extends __BaseService {
    *
    * @return The new created datapoint
    */
-  postDatasourcesDatasourceIdDataPointsResponse(params: ApiService.PostDatasourcesDatasourceIdDataPointsParams): __Observable<__StrictHttpResponse<{created?: Sourcedatapoint}>> {
+  postDatasourcesDatasourceIdDataPointsResponse(
+    params: ApiService.PostDatasourcesDatasourceIdDataPointsParams
+  ): __Observable<__StrictHttpResponse<{ created?: Sourcedatapoint }>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -228,18 +260,22 @@ class ApiService extends __BaseService {
 
     let req = new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceId))}/dataPoints`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceId)
+        )}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{created?: Sourcedatapoint}>;
+        return _r as __StrictHttpResponse<{ created?: Sourcedatapoint }>;
       })
     );
   }
@@ -253,9 +289,11 @@ class ApiService extends __BaseService {
    *
    * @return The new created datapoint
    */
-  postDatasourcesDatasourceIdDataPoints(params: ApiService.PostDatasourcesDatasourceIdDataPointsParams): __Observable<{created?: Sourcedatapoint}> {
+  postDatasourcesDatasourceIdDataPoints(
+    params: ApiService.PostDatasourcesDatasourceIdDataPointsParams
+  ): __Observable<{ created?: Sourcedatapoint }> {
     return this.postDatasourcesDatasourceIdDataPointsResponse(params).pipe(
-      __map(_r => _r.body as {created?: Sourcedatapoint})
+      __map((_r) => _r.body as { created?: Sourcedatapoint })
     );
   }
 
@@ -269,24 +307,29 @@ class ApiService extends __BaseService {
    *
    * @return returns a datapoint with given id
    */
-  getDatasourcesDatasourceIdDataPointsDatapointIdResponse(params: ApiService.GetDatasourcesDatasourceIdDataPointsDatapointIdParams): __Observable<__StrictHttpResponse<Sourcedatapoint>> {
+  getDatasourcesDatasourceIdDataPointsDatapointIdResponse(
+    params: ApiService.GetDatasourcesDatasourceIdDataPointsDatapointIdParams
+  ): __Observable<__StrictHttpResponse<Sourcedatapoint>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
-
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceId))}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceId)
+        )}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<Sourcedatapoint>;
       })
@@ -302,10 +345,12 @@ class ApiService extends __BaseService {
    *
    * @return returns a datapoint with given id
    */
-  getDatasourcesDatasourceIdDataPointsDatapointId(params: ApiService.GetDatasourcesDatasourceIdDataPointsDatapointIdParams): __Observable<Sourcedatapoint> {
-    return this.getDatasourcesDatasourceIdDataPointsDatapointIdResponse(params).pipe(
-      __map(_r => _r.body as Sourcedatapoint)
-    );
+  getDatasourcesDatasourceIdDataPointsDatapointId(
+    params: ApiService.GetDatasourcesDatasourceIdDataPointsDatapointIdParams
+  ): __Observable<Sourcedatapoint> {
+    return this.getDatasourcesDatasourceIdDataPointsDatapointIdResponse(
+      params
+    ).pipe(__map((_r) => _r.body as Sourcedatapoint));
   }
 
   /**
@@ -318,26 +363,31 @@ class ApiService extends __BaseService {
    *
    * @return Successfully deleted datapoint
    */
-  deleteDatasourcesDatasourceIdDataPointsDatapointIdResponse(params: ApiService.DeleteDatasourcesDatasourceIdDataPointsDatapointIdParams): __Observable<__StrictHttpResponse<{deleted?: Sourcedatapoint}>> {
+  deleteDatasourcesDatasourceIdDataPointsDatapointIdResponse(
+    params: ApiService.DeleteDatasourcesDatasourceIdDataPointsDatapointIdParams
+  ): __Observable<__StrictHttpResponse<{ deleted?: Sourcedatapoint }>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
-
     let req = new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceId))}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceId)
+        )}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{deleted?: Sourcedatapoint}>;
+        return _r as __StrictHttpResponse<{ deleted?: Sourcedatapoint }>;
       })
     );
   }
@@ -351,10 +401,12 @@ class ApiService extends __BaseService {
    *
    * @return Successfully deleted datapoint
    */
-  deleteDatasourcesDatasourceIdDataPointsDatapointId(params: ApiService.DeleteDatasourcesDatasourceIdDataPointsDatapointIdParams): __Observable<{deleted?: Sourcedatapoint}> {
-    return this.deleteDatasourcesDatasourceIdDataPointsDatapointIdResponse(params).pipe(
-      __map(_r => _r.body as {deleted?: Sourcedatapoint})
-    );
+  deleteDatasourcesDatasourceIdDataPointsDatapointId(
+    params: ApiService.DeleteDatasourcesDatasourceIdDataPointsDatapointIdParams
+  ): __Observable<{ deleted?: Sourcedatapoint }> {
+    return this.deleteDatasourcesDatasourceIdDataPointsDatapointIdResponse(
+      params
+    ).pipe(__map((_r) => _r.body as { deleted?: Sourcedatapoint }));
   }
 
   /**
@@ -369,27 +421,37 @@ class ApiService extends __BaseService {
    *
    * @return Overwritten datapoint
    */
-  patchDatasourcesDatasourceIdDataPointsDatapointIdResponse(params: ApiService.PatchDatasourcesDatasourceIdDataPointsDatapointIdParams): __Observable<__StrictHttpResponse<{changed?: Sourcedatapoint, href?: string}>> {
+  patchDatasourcesDatasourceIdDataPointsDatapointIdResponse(
+    params: ApiService.PatchDatasourcesDatasourceIdDataPointsDatapointIdParams
+  ): __Observable<
+    __StrictHttpResponse<{ changed?: Sourcedatapoint; href?: string }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-
 
     __body = params.changedDatapoint;
     let req = new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceId))}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceId)
+        )}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{changed?: Sourcedatapoint, href?: string}>;
+        return _r as __StrictHttpResponse<{
+          changed?: Sourcedatapoint;
+          href?: string;
+        }>;
       })
     );
   }
@@ -405,9 +467,13 @@ class ApiService extends __BaseService {
    *
    * @return Overwritten datapoint
    */
-  patchDatasourcesDatasourceIdDataPointsDatapointId(params: ApiService.PatchDatasourcesDatasourceIdDataPointsDatapointIdParams): __Observable<{changed?: Sourcedatapoint, href?: string}> {
-    return this.patchDatasourcesDatasourceIdDataPointsDatapointIdResponse(params).pipe(
-      __map(_r => _r.body as {changed?: Sourcedatapoint, href?: string})
+  patchDatasourcesDatasourceIdDataPointsDatapointId(
+    params: ApiService.PatchDatasourcesDatasourceIdDataPointsDatapointIdParams
+  ): __Observable<{ changed?: Sourcedatapoint; href?: string }> {
+    return this.patchDatasourcesDatasourceIdDataPointsDatapointIdResponse(
+      params
+    ).pipe(
+      __map((_r) => _r.body as { changed?: Sourcedatapoint; href?: string })
     );
   }
 
@@ -415,24 +481,22 @@ class ApiService extends __BaseService {
    * Returns all available datesinks of the runtime
    * @return Successful request to datasinks
    */
-  dataSinksGetResponse(): __Observable<__StrictHttpResponse<{dataSinks?: Array<DataSinkType>}>> {
+  dataSinksGetResponse(): __Observable<
+    __StrictHttpResponse<{ dataSinks?: Array<DataSinkType> }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-    let req = new HttpRequest<any>(
-      'GET',
-      this.rootUrl + `/datasinks`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'json'
-      });
+    let req = new HttpRequest<any>('GET', this.rootUrl + `/datasinks`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'json'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{dataSinks?: Array<DataSinkType>}>;
+        return _r as __StrictHttpResponse<{ dataSinks?: Array<DataSinkType> }>;
       })
     );
   }
@@ -440,9 +504,9 @@ class ApiService extends __BaseService {
    * Returns all available datesinks of the runtime
    * @return Successful request to datasinks
    */
-  dataSinksGet(): __Observable<{dataSinks?: Array<DataSinkType>}> {
+  dataSinksGet(): __Observable<{ dataSinks?: Array<DataSinkType> }> {
     return this.dataSinksGetResponse().pipe(
-      __map(_r => _r.body as {dataSinks?: Array<DataSinkType>})
+      __map((_r) => _r.body as { dataSinks?: Array<DataSinkType> })
     );
   }
 
@@ -451,7 +515,9 @@ class ApiService extends __BaseService {
    * @param datasinkId undefined
    * @return Datasink object
    */
-  dataSinkGetResponse(datasinkId: string): __Observable<__StrictHttpResponse<DataSinkType>> {
+  dataSinkGetResponse(
+    datasinkId: string
+  ): __Observable<__StrictHttpResponse<DataSinkType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -464,10 +530,11 @@ class ApiService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSinkType>;
       })
@@ -480,7 +547,7 @@ class ApiService extends __BaseService {
    */
   dataSinkGet(datasinkId: string): __Observable<DataSinkType> {
     return this.dataSinkGetResponse(datasinkId).pipe(
-      __map(_r => _r.body as DataSinkType)
+      __map((_r) => _r.body as DataSinkType)
     );
   }
 
@@ -488,23 +555,27 @@ class ApiService extends __BaseService {
    * @param datasinkId undefined
    * @return Return list of dataPoints
    */
-  dataPointsGetResponse(datasinkId: string): __Observable<__StrictHttpResponse<DataPointList>> {
+  dataPointsGetResponse(
+    datasinkId: string
+  ): __Observable<__StrictHttpResponse<DataPointList>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(datasinkId))}/dataPoints`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(String(datasinkId))}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataPointList>;
       })
@@ -516,7 +587,7 @@ class ApiService extends __BaseService {
    */
   dataPointsGet(datasinkId: string): __Observable<DataPointList> {
     return this.dataPointsGetResponse(datasinkId).pipe(
-      __map(_r => _r.body as DataPointList)
+      __map((_r) => _r.body as DataPointList)
     );
   }
 
@@ -529,7 +600,11 @@ class ApiService extends __BaseService {
    *
    * @return Response of a new created dataPoint
    */
-  dataPointsPostResponse(params: ApiService.DataPointsPostParams): __Observable<__StrictHttpResponse<{created?: DataPointType, href?: string}>> {
+  dataPointsPostResponse(
+    params: ApiService.DataPointsPostParams
+  ): __Observable<
+    __StrictHttpResponse<{ created?: DataPointType; href?: string }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -537,18 +612,25 @@ class ApiService extends __BaseService {
     __body = params.dataPoint;
     let req = new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkId))}/dataPoints`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkId)
+        )}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{created?: DataPointType, href?: string}>;
+        return _r as __StrictHttpResponse<{
+          created?: DataPointType;
+          href?: string;
+        }>;
       })
     );
   }
@@ -561,9 +643,11 @@ class ApiService extends __BaseService {
    *
    * @return Response of a new created dataPoint
    */
-  dataPointsPost(params: ApiService.DataPointsPostParams): __Observable<{created?: DataPointType, href?: string}> {
+  dataPointsPost(
+    params: ApiService.DataPointsPostParams
+  ): __Observable<{ created?: DataPointType; href?: string }> {
     return this.dataPointsPostResponse(params).pipe(
-      __map(_r => _r.body as {created?: DataPointType, href?: string})
+      __map((_r) => _r.body as { created?: DataPointType; href?: string })
     );
   }
 
@@ -574,24 +658,29 @@ class ApiService extends __BaseService {
    *
    * - `dataPointId`: id of the datapoint to get
    */
-  dataPointGetResponse(params: ApiService.DataPointGetParams): __Observable<__StrictHttpResponse<null>> {
+  dataPointGetResponse(
+    params: ApiService.DataPointGetParams
+  ): __Observable<__StrictHttpResponse<null>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
-
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkId))}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkId)
+        )}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<null>;
       })
@@ -606,7 +695,7 @@ class ApiService extends __BaseService {
    */
   dataPointGet(params: ApiService.DataPointGetParams): __Observable<null> {
     return this.dataPointGetResponse(params).pipe(
-      __map(_r => _r.body as null)
+      __map((_r) => _r.body as null)
     );
   }
 
@@ -621,25 +710,30 @@ class ApiService extends __BaseService {
    *
    * @return Response of a change request for a datapoint with given id
    */
-  dataPointPatchResponse(params: ApiService.DataPointPatchParams): __Observable<__StrictHttpResponse<DataPointType>> {
+  dataPointPatchResponse(
+    params: ApiService.DataPointPatchParams
+  ): __Observable<__StrictHttpResponse<DataPointType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
     __body = params.patchData;
 
-
     let req = new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkId))}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkId)
+        )}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataPointType>;
       })
@@ -656,9 +750,11 @@ class ApiService extends __BaseService {
    *
    * @return Response of a change request for a datapoint with given id
    */
-  dataPointPatch(params: ApiService.DataPointPatchParams): __Observable<DataPointType> {
+  dataPointPatch(
+    params: ApiService.DataPointPatchParams
+  ): __Observable<DataPointType> {
     return this.dataPointPatchResponse(params).pipe(
-      __map(_r => _r.body as DataPointType)
+      __map((_r) => _r.body as DataPointType)
     );
   }
 
@@ -671,26 +767,31 @@ class ApiService extends __BaseService {
    *
    * @return Delete a datapoint by id and return the deleted item.
    */
-  dataPointDeleteResponse(params: ApiService.DataPointDeleteParams): __Observable<__StrictHttpResponse<{deleted?: DataPointType}>> {
+  dataPointDeleteResponse(
+    params: ApiService.DataPointDeleteParams
+  ): __Observable<__StrictHttpResponse<{ deleted?: DataPointType }>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-
 
     let req = new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkId))}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkId)
+        )}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{deleted?: DataPointType}>;
+        return _r as __StrictHttpResponse<{ deleted?: DataPointType }>;
       })
     );
   }
@@ -703,9 +804,11 @@ class ApiService extends __BaseService {
    *
    * @return Delete a datapoint by id and return the deleted item.
    */
-  dataPointDelete(params: ApiService.DataPointDeleteParams): __Observable<{deleted?: DataPointType}> {
+  dataPointDelete(
+    params: ApiService.DataPointDeleteParams
+  ): __Observable<{ deleted?: DataPointType }> {
     return this.dataPointDeleteResponse(params).pipe(
-      __map(_r => _r.body as {deleted?: DataPointType})
+      __map((_r) => _r.body as { deleted?: DataPointType })
     );
   }
 
@@ -713,24 +816,24 @@ class ApiService extends __BaseService {
    * Return a list of virtual datapoints
    * @return List of virtual datapoints.
    */
-  vdpsGetResponse(): __Observable<__StrictHttpResponse<{vdps?: Array<VirtualDataPointType>}>> {
+  vdpsGetResponse(): __Observable<
+    __StrictHttpResponse<{ vdps?: Array<VirtualDataPointType> }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-    let req = new HttpRequest<any>(
-      'GET',
-      this.rootUrl + `/vdps`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'json'
-      });
+    let req = new HttpRequest<any>('GET', this.rootUrl + `/vdps`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'json'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{vdps?: Array<VirtualDataPointType>}>;
+        return _r as __StrictHttpResponse<{
+          vdps?: Array<VirtualDataPointType>;
+        }>;
       })
     );
   }
@@ -738,9 +841,9 @@ class ApiService extends __BaseService {
    * Return a list of virtual datapoints
    * @return List of virtual datapoints.
    */
-  vdpsGet(): __Observable<{vdps?: Array<VirtualDataPointType>}> {
+  vdpsGet(): __Observable<{ vdps?: Array<VirtualDataPointType> }> {
     return this.vdpsGetResponse().pipe(
-      __map(_r => _r.body as {vdps?: Array<VirtualDataPointType>})
+      __map((_r) => _r.body as { vdps?: Array<VirtualDataPointType> })
     );
   }
 
@@ -749,25 +852,31 @@ class ApiService extends __BaseService {
    * @param newVDP New virtual datapoint
    * @return Successfully create a virtual datapoint resource
    */
-  vdpsPostResponse(newVDP: VirtualDataPointType): __Observable<__StrictHttpResponse<{virtualDataPoint?: VirtualDataPointType, href: string}>> {
+  vdpsPostResponse(
+    newVDP: VirtualDataPointType
+  ): __Observable<
+    __StrictHttpResponse<{
+      virtualDataPoint?: VirtualDataPointType;
+      href: string;
+    }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
     __body = newVDP;
-    let req = new HttpRequest<any>(
-      'POST',
-      this.rootUrl + `/vdps`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'json'
-      });
+    let req = new HttpRequest<any>('POST', this.rootUrl + `/vdps`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'json'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{virtualDataPoint?: VirtualDataPointType, href: string}>;
+        return _r as __StrictHttpResponse<{
+          virtualDataPoint?: VirtualDataPointType;
+          href: string;
+        }>;
       })
     );
   }
@@ -776,9 +885,14 @@ class ApiService extends __BaseService {
    * @param newVDP New virtual datapoint
    * @return Successfully create a virtual datapoint resource
    */
-  vdpsPost(newVDP: VirtualDataPointType): __Observable<{virtualDataPoint?: VirtualDataPointType, href: string}> {
+  vdpsPost(
+    newVDP: VirtualDataPointType
+  ): __Observable<{ virtualDataPoint?: VirtualDataPointType; href: string }> {
     return this.vdpsPostResponse(newVDP).pipe(
-      __map(_r => _r.body as {virtualDataPoint?: VirtualDataPointType, href: string})
+      __map(
+        (_r) =>
+          _r.body as { virtualDataPoint?: VirtualDataPointType; href: string }
+      )
     );
   }
 
@@ -786,7 +900,9 @@ class ApiService extends __BaseService {
    * @param id Id of the virtual datapoint to operate on
    * @return Returns a virtual datapoint
    */
-  vdpGetResponse(id: string): __Observable<__StrictHttpResponse<VirtualDataPointType>> {
+  vdpGetResponse(
+    id: string
+  ): __Observable<__StrictHttpResponse<VirtualDataPointType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -799,10 +915,11 @@ class ApiService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<VirtualDataPointType>;
       })
@@ -814,7 +931,7 @@ class ApiService extends __BaseService {
    */
   vdpGet(id: string): __Observable<VirtualDataPointType> {
     return this.vdpGetResponse(id).pipe(
-      __map(_r => _r.body as VirtualDataPointType)
+      __map((_r) => _r.body as VirtualDataPointType)
     );
   }
 
@@ -834,10 +951,11 @@ class ApiService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<null>;
       })
@@ -847,9 +965,7 @@ class ApiService extends __BaseService {
    * @param id Id of the virtual datapoint to operate on
    */
   vdpDelete(id: string): __Observable<null> {
-    return this.vdpDeleteResponse(id).pipe(
-      __map(_r => _r.body as null)
-    );
+    return this.vdpDeleteResponse(id).pipe(__map((_r) => _r.body as null));
   }
 
   /**
@@ -861,7 +977,11 @@ class ApiService extends __BaseService {
    *
    * @return Changed virtual dataPoint
    */
-  vdpPatchResponse(params: ApiService.VdpPatchParams): __Observable<__StrictHttpResponse<{changed?: VirtualDataPointType, href?: string}>> {
+  vdpPatchResponse(
+    params: ApiService.VdpPatchParams
+  ): __Observable<
+    __StrictHttpResponse<{ changed?: VirtualDataPointType; href?: string }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -875,12 +995,16 @@ class ApiService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{changed?: VirtualDataPointType, href?: string}>;
+        return _r as __StrictHttpResponse<{
+          changed?: VirtualDataPointType;
+          href?: string;
+        }>;
       })
     );
   }
@@ -893,9 +1017,13 @@ class ApiService extends __BaseService {
    *
    * @return Changed virtual dataPoint
    */
-  vdpPatch(params: ApiService.VdpPatchParams): __Observable<{changed?: VirtualDataPointType, href?: string}> {
+  vdpPatch(
+    params: ApiService.VdpPatchParams
+  ): __Observable<{ changed?: VirtualDataPointType; href?: string }> {
     return this.vdpPatchResponse(params).pipe(
-      __map(_r => _r.body as {changed?: VirtualDataPointType, href?: string})
+      __map(
+        (_r) => _r.body as { changed?: VirtualDataPointType; href?: string }
+      )
     );
   }
 
@@ -906,18 +1034,14 @@ class ApiService extends __BaseService {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-    let req = new HttpRequest<any>(
-      'GET',
-      this.rootUrl + `/backup`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'blob'
-      });
+    let req = new HttpRequest<any>('GET', this.rootUrl + `/backup`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'blob'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<Blob>;
       })
@@ -927,34 +1051,32 @@ class ApiService extends __BaseService {
    * @return Config file as JSON.
    */
   backupGet(): __Observable<Blob> {
-    return this.backupGetResponse().pipe(
-      __map(_r => _r.body as Blob)
-    );
+    return this.backupGetResponse().pipe(__map((_r) => _r.body as Blob));
   }
 
   /**
    * @param config New config file to use.
    * @return Config file uploaded to the system.
    */
-  backupPostResponse(config: Blob): __Observable<__StrictHttpResponse<ConfigFile>> {
+  backupPostResponse(
+    config: Blob
+  ): __Observable<__StrictHttpResponse<ConfigFile>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
     let __formData = new FormData();
     __body = __formData;
-    if (config != null) { __formData.append('config', config as string | Blob);}
-    let req = new HttpRequest<any>(
-      'POST',
-      this.rootUrl + `/backup`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'json'
-      });
+    if (config != null) {
+      __formData.append('config', config as string | Blob);
+    }
+    let req = new HttpRequest<any>('POST', this.rootUrl + `/backup`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'json'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<ConfigFile>;
       })
@@ -966,18 +1088,16 @@ class ApiService extends __BaseService {
    */
   backupPost(config: Blob): __Observable<ConfigFile> {
     return this.backupPostResponse(config).pipe(
-      __map(_r => _r.body as ConfigFile)
+      __map((_r) => _r.body as ConfigFile)
     );
   }
 }
 
 module ApiService {
-
   /**
    * Parameters for dataSourcePatch
    */
   export interface DataSourcePatchParams {
-
     /**
      * id of the datasource
      */
@@ -989,7 +1109,6 @@ module ApiService {
    * Parameters for postDatasourcesDatasourceIdDataPoints
    */
   export interface PostDatasourcesDatasourceIdDataPointsParams {
-
     /**
      * New datapoint to create
      */
@@ -1005,7 +1124,6 @@ module ApiService {
    * Parameters for getDatasourcesDatasourceIdDataPointsDatapointId
    */
   export interface GetDatasourcesDatasourceIdDataPointsDatapointIdParams {
-
     /**
      * id of the datasource
      */
@@ -1021,7 +1139,6 @@ module ApiService {
    * Parameters for deleteDatasourcesDatasourceIdDataPointsDatapointId
    */
   export interface DeleteDatasourcesDatasourceIdDataPointsDatapointIdParams {
-
     /**
      * id of the datasource
      */
@@ -1037,7 +1154,6 @@ module ApiService {
    * Parameters for patchDatasourcesDatasourceIdDataPointsDatapointId
    */
   export interface PatchDatasourcesDatasourceIdDataPointsDatapointIdParams {
-
     /**
      * id of the datasource
      */
@@ -1070,7 +1186,6 @@ module ApiService {
    * Parameters for dataPointGet
    */
   export interface DataPointGetParams {
-
     /**
      * id of the datapoint to get
      */
@@ -1086,7 +1201,6 @@ module ApiService {
    * Parameters for dataPointPatch
    */
   export interface DataPointPatchParams {
-
     /**
      * DataPoint object with changed properties
      */
@@ -1107,7 +1221,6 @@ module ApiService {
    * Parameters for dataPointDelete
    */
   export interface DataPointDeleteParams {
-
     /**
      * id of the datapoint to get
      */
@@ -1132,4 +1245,4 @@ module ApiService {
   }
 }
 
-export { ApiService }
+export { ApiService };

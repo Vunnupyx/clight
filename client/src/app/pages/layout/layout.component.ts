@@ -6,13 +6,13 @@ import { map, shareReplay } from 'rxjs/operators';
 @Component({
   selector: 'app-layer',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss'],
+  styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent {
-
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  isHandset$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Handset)
     .pipe(
-      map(result => result.matches),
+      map((result) => result.matches),
       shareReplay()
     );
 

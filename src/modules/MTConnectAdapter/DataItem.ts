@@ -1,4 +1,4 @@
-const UNAVAILABLE = "UNAVAILABLE";
+const UNAVAILABLE = 'UNAVAILABLE';
 
 /**
  * MTConnect Data Items
@@ -78,8 +78,8 @@ export class DataItem {
    * @returns string
    */
   public toString(): string {
-    if (this._devicePrefix === null) return this._name + "|" + this._value;
-    else return this._devicePrefix + ":" + this._name + "|" + this._value;
+    if (this._devicePrefix === null) return this._name + '|' + this._value;
+    else return this._devicePrefix + ':' + this._name + '|' + this._value;
   }
 
   /**

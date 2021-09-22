@@ -1,6 +1,6 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
-import { IDataSourceConfig } from "../ConfigManager/interfaces";
+import { IDataSourceConfig } from '../ConfigManager/interfaces';
 import {
   DataSourceEventTypes,
   IDataSourceMeasurementEvent,
@@ -8,15 +8,15 @@ import {
   IDataSourceLifecycleEvent,
   IMeasurement,
   IDataSourceDataPointLifecycleEvent,
-  DataPointEventTypes,
-} from "./interfaces";
+  DataPointEventTypes
+} from './interfaces';
 import {
   EventLevels,
   IBaseLifecycleEvent,
-  ILifecycleEvent,
-} from "../../common/interfaces";
+  ILifecycleEvent
+} from '../../common/interfaces';
 import Timeout = NodeJS.Timeout;
-import { SynchronousIntervalScheduler } from "../SyncScheduler";
+import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 /**
  * Implements data source
@@ -101,9 +101,9 @@ export abstract class DataSource extends EventEmitter {
       measurements.map((measurement) => ({
         dataSource: {
           name,
-          protocol,
+          protocol
         },
-        measurement,
+        measurement
       }))
     );
   };
@@ -119,9 +119,9 @@ export abstract class DataSource extends EventEmitter {
     const DPLifecycleEvent: IDataSourceDataPointLifecycleEvent = {
       dataSource: {
         name,
-        protocol,
+        protocol
       },
-      ...lifecycleEvent,
+      ...lifecycleEvent
     };
     this.submitDataPointLifecycle(DPLifecycleEvent);
   };

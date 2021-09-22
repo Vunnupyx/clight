@@ -1,8 +1,8 @@
-import winston from "winston";
-import { IAppEvent } from "../../common/interfaces";
-import { IDataSourceMeasurementEvent } from "../DataSource";
-import { LogLevel } from "../Logger/interfaces";
-import { TSubscriberFn } from "./interfaces";
+import winston from 'winston';
+import { IAppEvent } from '../../common/interfaces';
+import { IDataSourceMeasurementEvent } from '../DataSource';
+import { LogLevel } from '../Logger/interfaces';
+import { TSubscriberFn } from './interfaces';
 
 /**
  * Implementation of runtimes event bus
@@ -31,9 +31,9 @@ export class EventBus<TEventType> {
       const { level, type, id } = event;
       const payload = event?.payload;
       const message = `Level: ${level}, Type: ${type}, ${id}${
-        payload ? `, Payload: ${payload?.toString()}` : ""
+        payload ? `, Payload: ${payload?.toString()}` : ''
       }`;
-      winston.log(this.logLevel, message, { source: "EVENTBUS" });
+      winston.log(this.logLevel, message, { source: 'EVENTBUS' });
     });
   }
 
@@ -74,9 +74,9 @@ export class MeasurementEventBus extends EventBus<
     events.forEach((event) => {
       const { measurement } = event;
       const message = `Level: DataPoint, Type: Measurement${
-        measurement ? `, Payload: ${measurement.id}=${measurement.value}` : ""
+        measurement ? `, Payload: ${measurement.id}=${measurement.value}` : ''
       }`;
-      winston.log(this.logLevel, message, { source: "EVENTBUS" });
+      winston.log(this.logLevel, message, { source: 'EVENTBUS' });
     });
   }
 }

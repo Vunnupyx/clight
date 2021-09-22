@@ -1,7 +1,16 @@
 @import '~@angular/material/theming';
 @import '../../material-theme/colors.sofia.scss';
 
-.color-success { color: $status-success; }
-.color-info { color: $status-information; }
-.color-warning { color: $status-warning; }
-.color-error, .color-danger { color: $status-error; }
+.color-success {
+  color: $status-success;
+}
+.color-info {
+  color: $status-information;
+}
+.color-warning {
+  color: $status-warning;
+}
+.color-error,
+.color-danger {
+  color: $status-error;
+}

@@ -1,7 +1,7 @@
-import { IDataSinkConfig } from "../ConfigManager/interfaces";
-import { EventBus, MeasurementEventBus } from "../EventBus/index";
-import { IErrorEvent, ILifecycleEvent } from "../../common/interfaces";
-import { DataPointCache } from "../DatapointCache";
+import { IDataSinkConfig } from '../ConfigManager/interfaces';
+import { EventBus, MeasurementEventBus } from '../EventBus/index';
+import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
+import { DataPointCache } from '../DatapointCache';
 
 export interface IDataSinkManagerParams {
   dataSinksConfig: ReadonlyArray<IDataSinkConfig>;

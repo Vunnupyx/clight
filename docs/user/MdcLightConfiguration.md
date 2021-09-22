@@ -11,7 +11,7 @@ There are two example configuration inside the folder: `_mdclight/config/`
 
 ## Data sources
 
-There are two types of data sources: The S7-Com PLC data source "s7" and the digital input shield "ioshield". 
+There are two types of data sources: The S7-Com PLC data source "s7" and the digital input shield "ioshield".
 S7: With the S7 data source you can read data from S7 PLCs. Reading DBs, Inputs, Outputs and memory data ("Merkers") is supported.
 IO-Shield: With the IO-Shield you can read data from digital inputs, wired directly to the IoT2050. Each digital input of the IO-Shield is one data point on the data source. Each data point can have tree different states: 0 - off (Low, 0V), 1 - on (High, 24V) or 2 - blinking, the
 output is changing state with a minimum frequency of 2Hz (the maximum frequency is 10Hz).
@@ -217,19 +217,22 @@ A single mapping supports the following configuration items:
 ## Frequently Asked Questions
 
 1. Can I use the same id for a data point of a data source and a data point of a data sink?
-Yes, data point ids only have to be unique within all data sources and separately within all data sinks. 
-Virtual data points also count as data source data points.
+   Yes, data point ids only have to be unique within all data sources and separately within all data sinks.
+   Virtual data points also count as data source data points.
 
 For example, the following would be valid:
+
 ```
     {
       "source": "avail",
       "target": "avail"
     }
 ```
+
 2. Can I set a constant value in a data sink?
-Yes, just configure a data sink data point with an initial value and no real or virtual data point mapped to it.
-For example:
+   Yes, just configure a data sink data point with an initial value and no real or virtual data point mapped to it.
+   For example:
+
 ````
 {
   "id": "estop",
@@ -238,3 +241,4 @@ For example:
   "initialValue": "TRIGGERED"
 }
 ```
+````

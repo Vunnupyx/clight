@@ -37,7 +37,9 @@ export class OPCUADataSink extends DataSink {
 
     this.config.dataPoints.forEach((dp) => {
       winston.debug(`${logPrefix} Setting up node ${dp.address}`);
-      this.opcuaNodes[dp.address] = this.opcuaAdapter.findNode(dp.address) as UAVariable;
+      this.opcuaNodes[dp.address] = this.opcuaAdapter.findNode(
+        dp.address
+      ) as UAVariable;
     });
 
     return this;
@@ -94,7 +96,7 @@ export class OPCUADataSink extends DataSink {
         // );
       }
     }
-    winston.info(logMsg);
+    winston.debug(logMsg);
     return Promise.resolve();
   }
 

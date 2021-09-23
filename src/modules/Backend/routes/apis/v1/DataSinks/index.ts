@@ -2,6 +2,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
+import { hash } from 'bcrypt';
 
 let configManager: ConfigManager;
 
@@ -34,20 +35,28 @@ function dataSinkGetHandler(request, response): void {
  * Handle all patch requests for modifying a specific datasource.
  * Only enabling and disabling is allowed.
  */
-function dataSinkPatchHandler(request: Request, response: Response): void {
-  const allowed = ['enabled', 'auth'];
+async function dataSinkPatchHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  let allowed = ['enabled', 'auth'];
   const protocol = request.params.datasinkProtocol;
 
   const config = configManager.config;
-  let dataSink = config.dataSources.find(
-    (source) => source.protocol === request.params.datasourceProtocol
+  let dataSink = config.dataSinks.find(
+    (sink) => sink.protocol === request.params.datasinkProtocol
   );
+
+  // If protocol is s7 it´s not allowed to change auth prop,
+  if (protocol !== 'opcua') allowed = ['enabled'];
   if (!dataSink) {
-    winston.warn(`dataSinkPatchHandler error due to datasink with protocol ${protocol} not found.`);
+    winston.warn(
+      `dataSinkPatchHandler error due to datasink with protocol ${protocol} not found.`
+    );
     response.status(404).send();
-    return;
+    return Promise.resolve();
   }
-  Object.keys(request.body).forEach((entry) => {
+  for (const entry of Object.keys(request.body)) {
     if (!allowed.includes(entry)) {
       winston.warn(
         `dataSinkPatchHandler tried to change property: ${entry}. Not allowed`
@@ -55,12 +64,24 @@ function dataSinkPatchHandler(request: Request, response: Response): void {
       response.status(403).json({
         error: `Not allowed to change ${entry}`
       });
-      return;
+      return Promise.resolve();
     }
-  });
+  };
+  if (request.body.auth && 
+    'type' in request.body.auth &&
+    'userName' in request.body.auth &&
+    'password' in request.body.auth
+    ) {
+    request.body.auth.password = await hash(
+      request.body.auth.password,
+      10
+    );
+  } else {
+    winston.warn(`dataSinkPatchHandler tried to change property: auth .Infos missing.`)
+  }
 
   dataSink = { ...dataSink, ...request.body };
-  configManager.saveAllConfigs();
+  configManager.changeConfig('update', 'dataSinks', dataSink);
   response.status(200).json(dataSink);
 }
 

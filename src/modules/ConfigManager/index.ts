@@ -346,4 +346,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       `${ConfigManager.className}::saveConfigToFile saved new config to file`
     );
   }
+
+  public saveAllConfigs(): void {
+    this.saveConfigToFile(this.configName);
+    this.saveConfigToFile(this.runtimeConfigName);
+  }
 }

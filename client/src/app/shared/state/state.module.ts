@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { StoreFactory } from './state';
 
 @NgModule({
-    providers: [
-        StoreFactory,
-    ],
+  providers: [StoreFactory]
 })
-export class StateModule { }
+export class StateModule {}

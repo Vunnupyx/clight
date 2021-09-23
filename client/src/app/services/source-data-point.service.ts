@@ -5,126 +5,143 @@ import { SourceDataPoint } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
+import { SOURCE_DATA_POINTS_MOCK } from './source-data-point.service.mock';
 import * as api from 'app/api/models';
-import { CreateEntityResponse } from '../models/responses/create-entity.response';
 
 export class SourceDataPointsState {
-    status!: Status;
-    dataPoints!: SourceDataPoint[];
+  status: Status;
+  sourceDataPoints: SourceDataPoint[];
 }
 
 @Injectable()
 export class SourceDataPointService {
+  private _store: Store<SourceDataPointsState>;
 
-    private _store: Store<SourceDataPointsState>;
+  constructor(
+    storeFactory: StoreFactory<SourceDataPointsState>,
+    private httpService: HttpMockupService
+  ) {
+    this._store = storeFactory.startFrom(this._emptyState());
+  }
 
-    constructor(
-        storeFactory: StoreFactory<SourceDataPointsState>,
-        private httpService: HttpMockupService,
-    ) {
-       this._store = storeFactory.startFrom(this._emptyState());
-    }
+  get status() {
+    return this._store.snapshot.status;
+  }
 
-    get status() {
-        return this._store.snapshot.status;
-    }
+  get sourceDataPoints() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(map((x) => x.sourceDataPoints));
+  }
 
-    get dataPoints() {
-        return this._store.state.pipe(filter(x => x.status != Status.NotInitialized)).pipe(map(x => x.dataPoints));
-    }
+  async getSourceDataPoints(datasourceId: string) {
+    this._store.patchState((state) => ({
+      status: Status.Loading,
+      sourceDataPoints: []
+    }));
 
-    async getDataPoints(datasourceProtocol: string) {
-        this._store.patchState(state => ({
-            status: Status.Loading,
-            dataPoints: [],
-        }));
-
-        try {
-            const { dataPoints } = await this.httpService.get<api.DataPointList>(`/datasources/${datasourceProtocol}/datapoints`);
-
-            this._store.patchState(state => {
-                state.dataPoints = dataPoints.map(x => this._parseDataPoint(x));
-                state.status = Status.Ready;
-            });
-        } catch (err) {
-            errorHandler(err);
-            // TODO: Show error message (toast notification?)
-            this._store.patchState(() => ({
-                status: Status.Ready,
-            }));
-        }
-    }
-
-    async addDataPoint(datasourceProtocol: string, obj: SourceDataPoint) {
-        this._store.patchState(state => {
-            state.status = Status.Creating;
-        });
-
-        try {
-            const response = await this.httpService.post<CreateEntityResponse<SourceDataPoint>>(`/datasources/${datasourceProtocol}/datapoints`, obj);
-            this._store.patchState(state => {
-                state.status = Status.Ready;
-                obj.id = response.created.id;
-                state.dataPoints.push(obj);
-            });
-        } catch (err) {
-            errorHandler(err);
-            // TODO: Show error message (toast notification?)
-            this._store.patchState(state => {
-                state.status = Status.Ready;
-            });
-        }
-    }
-
-    async updateDataPoint(datasourceProtocol: string, obj: SourceDataPoint) {
-        this._store.patchState(state => {
-            state.status = Status.Updating;
-        });
-
-        try {
-            await this.httpService.patch(`/datasources/${datasourceProtocol}/datapoints/${obj.id}`, obj);
-            this._store.patchState(state => {
-                state.status = Status.Ready;
-                state.dataPoints = state.dataPoints.map(x => x.id != obj.id ? x : obj);
-            });
-        } catch (err) {
-            errorHandler(err);
-            // TODO: Show error message (toast notification?)
-            this._store.patchState(state => {
-                state.status = Status.Ready;
-            });
-        }
-    }
-
-    async deleteDataPoint(datasourceProtocol: string, obj: SourceDataPoint) {
-        this._store.patchState(state => {
-            state.status = Status.Deleting;
-        });
-
-        try {
-            await this.httpService.delete(`/datasources/${datasourceProtocol}/datapoints/${obj.id}`);
-            this._store.patchState(state => {
-                state.status = Status.Ready;
-                state.dataPoints = state.dataPoints.filter(x => x != obj);
-            });
-        } catch (err) {
-            errorHandler(err);
-            // TODO: Show error message (toast notification?)
-            this._store.patchState(state => {
-                state.status = Status.Ready;
-            });
-        }
+    try {
+      const sourceDataPoints = await this.httpService.get<
+        api.Sourcedatapoint[]
+      >(
+        `/datasources/${datasourceId}/dataPoints`,
+        undefined,
+        SOURCE_DATA_POINTS_MOCK(datasourceId)
+      );
+      this._store.patchState((state) => {
+        state.sourceDataPoints = sourceDataPoints.map((x) =>
+          this._parseDataPoint(x)
+        );
+        state.status = Status.Ready;
+      });
+    } catch (err) {
+      errorHandler(err);
+      // TODO: Show error message (toast notification?)
+      this._store.patchState(() => ({
+        status: Status.Ready
+      }));
     }
   }
 
-    private _parseDataPoint(obj: api.DataPointType) {
-        return obj as SourceDataPoint;
-    }
+  async addDataPoint(datasourceId: string, obj: SourceDataPoint) {
+    this._store.patchState((state) => {
+      state.status = Status.Creating;
+    });
 
-    private _emptyState() {
-        return <SourceDataPointsState>{
-            status: Status.NotInitialized,
-        };
+    try {
+      await this.httpService.post(
+        `/datasources/${datasourceId}/dataPoints`,
+        obj
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        // TODO: Obtain new ID from JSON response
+        obj.id = 'new id';
+        state.sourceDataPoints.push(obj);
+      });
+    } catch (err) {
+      errorHandler(err);
+      // TODO: Show error message (toast notification?)
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
     }
+  }
 
+  async updateDataPoint(datasourceId: string, obj: SourceDataPoint) {
+    this._store.patchState((state) => {
+      state.status = Status.Updating;
+    });
+
+    try {
+      await this.httpService.patch(
+        `/datasources/${datasourceId}/dataPoints/${obj.id}`,
+        obj
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.sourceDataPoints = state.sourceDataPoints.map((x) =>
+          x.id != obj.id ? x : obj
+        );
+      });
+    } catch (err) {
+      errorHandler(err);
+      // TODO: Show error message (toast notification?)
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
+  async deleteDataPoint(datasourceId: string, obj: SourceDataPoint) {
+    this._store.patchState((state) => {
+      state.status = Status.Deleting;
+    });
+
+    try {
+      await this.httpService.delete(
+        `/datasources/${datasourceId}/dataPoints/${obj.id}`
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.sourceDataPoints = state.sourceDataPoints.filter((x) => x != obj);
+      });
+    } catch (err) {
+      errorHandler(err);
+      // TODO: Show error message (toast notification?)
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
+  private _parseDataPoint(obj: api.Sourcedatapoint) {
+    return obj as SourceDataPoint;
+  }
+
+  private _emptyState() {
+    return <SourceDataPointsState>{
+      status: Status.NotInitialized
+    };
+  }
 }

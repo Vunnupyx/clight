@@ -894,6 +894,9 @@
         "enabled": {
           "type": "boolean",
           "default": false
+        },
+        "auth": {
+          "$ref": "#/definitions/auth"
         }
       }
     },
@@ -1006,7 +1009,8 @@
       "type": "object",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "string",
+          "enum": ["none", "userpassword"]
         },
         "userName": {
           "type": "string"

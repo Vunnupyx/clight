@@ -39,12 +39,13 @@ function dataSinkPatchHandler(request: Request, response: Response): void {
   const protocol = request.params.datasinkProtocol;
 
   const config = configManager.config;
-  const dataSink = config.dataSources.find(
+  let dataSink = config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   if (!dataSink) {
-    winston.warn(``); // TODO: Define warning;
+    winston.warn(`dataSinkPatchHandler error due to datasink with protocol ${protocol} not found.`);
     response.status(404).send();
+    return;
   }
   Object.keys(request.body).forEach((entry) => {
     if (!allowed.includes(entry)) {
@@ -54,18 +55,13 @@ function dataSinkPatchHandler(request: Request, response: Response): void {
       response.status(403).json({
         error: `Not allowed to change ${entry}`
       });
+      return;
     }
   });
 
-  const changedDatasource = { ...dataSink, ...request.body };
-
-  config.dataSinks = [
-    ...config.dataSinks.filter((dataSink) => dataSink.protocol !== protocol),
-    changedDatasource
-  ];
-  configManager.config = config;
-
-  response.status(200).json(changedDatasource);
+  dataSink = { ...dataSink, ...request.body };
+  configManager.saveAllConfigs();
+  response.status(200).json(dataSink);
 }
 
 /**

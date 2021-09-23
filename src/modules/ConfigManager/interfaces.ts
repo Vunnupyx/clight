@@ -71,7 +71,7 @@ export interface IDataSinkDataPointConfig {
 }
 export interface IOpcuaAuth {
   type: "none" | "userpassword",
-  username: string,
+  userName: string,
   password: string
 }
 export interface IDataSinkConfig {

@@ -54,7 +54,7 @@ const defaultOpcuaDataSink: IDataSinkConfig = {
   auth: {
     type: 'none',
     password: '',
-    username: ''
+    userName: ''
   }
 };
 

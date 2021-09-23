@@ -8,3 +8,7 @@ export { Connection } from './models/connection';
 export { DataPointList } from './models/data-point-list';
 export { DataPointType } from './models/data-point-type';
 export { ConfigFile } from './models/config-file';
+export { Mapping } from './models/mapping';
+export { Map } from './models/map';
+export { DeviceInfos } from './models/device-infos';
+export { Uuid } from './models/uuid';

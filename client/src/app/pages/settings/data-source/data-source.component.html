@@ -9,7 +9,7 @@
     <nav mat-tab-nav-bar mat-align-tabs="center">
         <a mat-tab-link *ngFor="let item of dataSourceList"
             (click)="switchDataSource(item)"
-            [active]="dataSource?.id === item.id">{{item.name}}</a>
+            [active]="dataSource?.id === item.id">{{item.name || item.protocol}}</a>
     </nav>
 
     <div class="row">
@@ -18,7 +18,7 @@
                 <div class="mt-20 mr-30">{{ 'settings-data-source.Enabled' | translate }}</div>
                 <mat-slide-toggle class="ml-20 mt-20" [ngModel]="dataSource?.enabled" (ngModelChange)="updateEnabled($event)"></mat-slide-toggle>
             </div>
-        
+
             <div *ngIf="dataSource?.protocol === Protocol.S7" class="mt-20 d-flex align-items-center">
                 <div class="mt-0 mr-25 text-nowrap">{{ 'settings-data-source.IPAddress' | translate }}</div>
                 <form #form="ngForm">
@@ -75,22 +75,6 @@
                         />
                     </ng-template>
                 </ngx-datatable-column>
-                <ngx-datatable-column [name]="'settings-data-source.Type' | translate" prop="type" [flexGrow]="1">
-                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-                        <span *ngIf="unsavedRowIndex !== rowIndex">
-                            <ng-container [ngSwitch]="value">
-                                <ng-container *ngSwitchCase="SourceDataPointType.PLC">PLC</ng-container>
-                                <ng-container *ngSwitchCase="SourceDataPointType.NCK">NCK</ng-container>
-                            </ng-container>
-                        </span>
-                        <mat-select *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
-                            [ngModel]="value"
-                            (ngModelChange)="unsavedRow && unsavedRow.type = $event">
-                            <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
-                            <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
-                        </mat-select>
-                    </ng-template>
-                </ngx-datatable-column>
                 <ngx-datatable-column [name]="'settings-data-source.Address' | translate" prop="address" [flexGrow]="3" cellClass="input-cell button-cell">
                     <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
                         <ng-container *ngIf="unsavedRowIndex !== rowIndex">
@@ -111,6 +95,14 @@
                                 </ng-container>
                             </ng-container>
                         </div>
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column [name]="'settings-data-source.Status' | translate" prop="status" [flexGrow]="1">
+                    <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                            <span class="d-flex align-items-center">
+                                <span class="circle" [class.color-danger]="!value" [class.color-success]="value"></span>
+                                {{ value === true ? 'true' : 'false' }}
+                            </span>
                     </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column [name]="'settings-data-source.Actions' | translate" [flexGrow]="1" cellClass="button-cell" [sortable]="false">

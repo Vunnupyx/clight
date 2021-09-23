@@ -36,7 +36,16 @@
     "Actions": "",
     "Area": "",
     "Component": "",
-    "VariableName": ""
+    "VariableName": "",
+    "Status": "",
+    "LoadError": "",
+    "UpdateError": ""
+  },
+  "settings-data-source-point": {
+    "LoadError": "",
+    "CreateError": "",
+    "UpdateError": "",
+    "DeleteError": ""
   },
   "settings-data-sink": {
     "DataSink": "",

@@ -430,6 +430,7 @@
         "operationId": "dataSinksDataPointGet",
         "responses": {
           "200": {
+            "description": "All available Datapoints of selected sink",
             "schema": {
               "allOf": [
                 {

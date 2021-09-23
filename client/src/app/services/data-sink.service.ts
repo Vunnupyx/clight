@@ -41,10 +41,8 @@ export class DataSinkService {
     }));
 
     try {
-      const dataSinks = await this.httpService.get<api.DataSinkType[]>(
-        `/datasinks`,
-        undefined,
-        DATA_SINKS_MOCK()
+      const { dataSinks } = await this.httpService.get<api.DataSinkType[]>(
+        `/datasinks`
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -64,11 +62,7 @@ export class DataSinkService {
     });
 
     try {
-      const obj = await this.httpService.get(
-        `/datasinks/${datasourceId}`,
-        undefined,
-        DATA_SINKS_MOCK()[0]
-      );
+      const obj = await this.httpService.get(`/datasinks/${datasourceId}`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSinks = state.dataSinks.map((x) =>

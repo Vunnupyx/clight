@@ -181,16 +181,16 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       changed = true;
     }
     if (
-      !this._config.dataSources.some(
-        (dataSource) => dataSource.protocol === DataSinkProtocols.OPCUA
+      !this._config.dataSinks.some(
+        (dataSink) => dataSink.protocol === DataSinkProtocols.OPCUA
       )
     ) {
       this._config.dataSinks.push(defaultOpcuaDataSink);
       changed = true;
     }
     if (
-      !this._config.dataSources.some(
-        (dataSource) => dataSource.protocol === DataSinkProtocols.MTCONNECT
+      !this._config.dataSinks.some(
+        (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
       )
     ) {
       this._config.dataSinks.push(defaultMtconnectDataSink);

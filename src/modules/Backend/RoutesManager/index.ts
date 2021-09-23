@@ -16,16 +16,20 @@ import {
 } from '../routes/apis/v1/DataSinks';
 import {
   virtualDatapointHandlers,
-  setConfigManger as vdpsSetConfigManager
+  setConfigManager as vdpsSetConfigManager
 } from '../routes/apis/v1/VirtualDataPoints';
 import {
   backupHandlers,
-  setConfigManger as backupSetConfigManager
+  setConfigManager as backupSetConfigManager
 } from '../routes/apis/v1/Backup';
 import {
   deviceInfosHandlers,
-  setConfigManger as deviceInfosSetConfigManager
+  setConfigManager as deviceInfosSetConfigManager
 } from '../routes/apis/v1/DeviceInfos';
+import {
+  mappingHandlers,
+  setConfigManager as mappingSetConfigManager
+} from '../routes/apis/v1/Mapping';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 
@@ -38,7 +42,8 @@ export class RoutesManager {
     ...dataSinksHandlers,
     ...backupHandlers,
     ...virtualDatapointHandlers,
-    ...deviceInfosHandlers
+    ...deviceInfosHandlers,
+    ...mappingHandlers
   };
 
   constructor(app: Application, configManager: ConfigManager) {
@@ -60,7 +65,8 @@ export class RoutesManager {
       dataSinksSetConfigManager,
       backupSetConfigManager,
       vdpsSetConfigManager,
-      deviceInfosSetConfigManager
+      deviceInfosSetConfigManager,
+      mappingSetConfigManager
     ].forEach((func) => func(configManager));
 
     this.inputValidator = OpenApiValidator.middleware({

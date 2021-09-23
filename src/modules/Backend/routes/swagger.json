@@ -732,6 +732,7 @@
       ],
       "get": {
         "tags": ["mappings"],
+        "operationId": "mapGet",
         "description": "Return a single mapping object",
         "responses": {
           "200": {

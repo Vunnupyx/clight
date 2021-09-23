@@ -7,7 +7,7 @@ let configManager: ConfigManager;
 /**
  * Set ConfigManager to make accessible for local function
  */
-export function setConfigManger(config: ConfigManager) {
+export function setConfigManager(config: ConfigManager) {
   configManager = config;
 }
 

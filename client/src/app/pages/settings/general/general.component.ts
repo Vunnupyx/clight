@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalStorageService } from 'app/shared';
 
@@ -8,23 +8,21 @@ import { LocalStorageService } from 'app/shared';
   styleUrls: ['./general.component.scss']
 })
 export class GeneralComponent {
+  constructor(
+    private translate: TranslateService,
+    private localStorageService: LocalStorageService
+  ) {}
 
-    constructor(
-        private translate: TranslateService,
-        private localStorageService: LocalStorageService,
-    ) {}
+  get availableLangs() {
+    return this.translate.langs;
+  }
 
-    get availableLangs() {
-        return this.translate.langs;
-    }
+  get currentLang() {
+    return this.translate.currentLang;
+  }
 
-    get currentLang() {
-        return this.translate.currentLang;
-    }
-
-    onLanguageChange(value: string) {
-        this.translate.use(value);
-        this.localStorageService.set('ui-lang', value);
-    }
-
+  onLanguageChange(value: string) {
+    this.translate.use(value);
+    this.localStorageService.set('ui-lang', value);
+  }
 }

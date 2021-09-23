@@ -7,27 +7,17 @@ import { GeneralComponent } from './general.component';
 import { DeviceInfoComponent } from './device-info/device-info.component';
 
 const routes: Routes = [
-    {
-        path: 'settings/general',
-        component: GeneralComponent,
-    },
+  {
+    path: 'settings/general',
+    component: GeneralComponent
+  }
 ];
 
-const COMPONENTS = [
-    GeneralComponent,
-    DeviceInfoComponent,
-];
+const COMPONENTS = [GeneralComponent, DeviceInfoComponent];
 
 @NgModule({
-    imports: [
-        SharedModule,
-        RouterModule.forRoot(routes),
-    ],
-    declarations: COMPONENTS,
-    exports: [
-        RouterModule,
-        ...COMPONENTS,
-    ],
+  imports: [SharedModule, RouterModule.forRoot(routes)],
+  declarations: COMPONENTS,
+  exports: [RouterModule, ...COMPONENTS]
 })
-
-export class GeneralSettingsModule { }
+export class GeneralSettingsModule {}

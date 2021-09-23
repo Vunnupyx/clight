@@ -2,8 +2,8 @@
 
 // common datatable colors
 $ngx-datatable-background: #fff !default;
-$ngx-datatable-box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
-  0 3px 14px 2px rgba(0, 0, 0, 0.12) !default;
+$ngx-datatable-box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12) !default;
 $ngx-datatable-row-odd-background: #eee !default;
 
 // default row and cell background colors
@@ -297,7 +297,8 @@ $datatable-summary-row-background-hover: #ddd !default;
 
         .bar {
           transition: all 0.2s linear;
-          -webkit-animation: query 0.8s infinite cubic-bezier(0.39, 0.575, 0.565, 1);
+          -webkit-animation: query 0.8s infinite
+            cubic-bezier(0.39, 0.575, 0.565, 1);
           animation: query 0.8s infinite cubic-bezier(0.39, 0.575, 0.565, 1);
 
           transition: -webkit-transform 0.2s linear;
@@ -467,54 +468,54 @@ $datatable-summary-row-background-hover: #ddd !default;
 
 // Overrides
 .ngx-datatable {
-    // buttons
-    .button-cell {
-      padding: 8px !important;
-    }
-    .mat-button-toggle-group.mat-button-toggle-group-appearance-standard {
-        box-shadow: none;
-        border: solid 1px #ccc;
-        min-width: 26px;
-        margin-top: 2px;
-        mat-button-toggle:not(.small-button) {
-            width: 30px;
-            height: 30px;
-            .mat-button-toggle-label-content {
-                min-width: 25px !important;
-                width: 25px;
-                height: 25px;
-                line-height: 25px !important;
-                padding: 5px 1px;
-                mat-icon {
-                    font-size: 18px;
-                }
-            }
+  // buttons
+  .button-cell {
+    padding: 8px !important;
+  }
+  .mat-button-toggle-group.mat-button-toggle-group-appearance-standard {
+    box-shadow: none;
+    border: solid 1px #ccc;
+    min-width: 26px;
+    margin-top: 2px;
+    mat-button-toggle:not(.small-button) {
+      width: 30px;
+      height: 30px;
+      .mat-button-toggle-label-content {
+        min-width: 25px !important;
+        width: 25px;
+        height: 25px;
+        line-height: 25px !important;
+        padding: 5px 1px;
+        mat-icon {
+          font-size: 18px;
         }
-        mat-button-toggle.small-button {
-            width: 26px !important;
-            height: 26px !important;
-            .mat-button-toggle-label-content {
-                min-width: 20px !important;
-                width: 20px !important;
-                height: 20px !important;
-                line-height: 20px !important;
-                padding: 5px 1px !important;
-                margin: 0px 0 0 -5px !important;
-                mat-icon {
-                    font-size: 14px !important;
-                }
-            }
+      }
+    }
+    mat-button-toggle.small-button {
+      width: 26px !important;
+      height: 26px !important;
+      .mat-button-toggle-label-content {
+        min-width: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+        line-height: 20px !important;
+        padding: 5px 1px !important;
+        margin: 0px 0 0 -5px !important;
+        mat-icon {
+          font-size: 14px !important;
         }
+      }
     }
-    // inputs
-    .input-cell {
-        padding-bottom: 6px !important;
+  }
+  // inputs
+  .input-cell {
+    padding-bottom: 6px !important;
+  }
+  .datatable-body-cell-label {
+    input {
+      position: relative;
+      top: -4px;
+      height: 30px;
     }
-    .datatable-body-cell-label {
-        input {
-            position: relative;
-            top: -4px;
-            height: 30px;
-        }
-    }
+  }
 }

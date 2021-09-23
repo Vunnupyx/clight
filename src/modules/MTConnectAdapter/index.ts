@@ -1,10 +1,10 @@
-import net from "net";
-import winston from "winston";
-import { v1 as uuidv1 } from "uuid";
-import { DataItem } from "./DataItem";
-import { format } from "date-fns";
-import { ConfigManager } from "../ConfigManager";
-import { IConfig, IMTConnectConfig } from "../ConfigManager/interfaces";
+import net from 'net';
+import winston from 'winston';
+import { v1 as uuidv1 } from 'uuid';
+import { DataItem } from './DataItem';
+import { format } from 'date-fns';
+import { ConfigManager } from '../ConfigManager';
+import { IConfig, IMTConnectConfig } from '../ConfigManager/interfaces';
 
 export interface Socket extends net.Socket {
   id?: string;
@@ -24,7 +24,7 @@ export class MTConnectAdapter {
   constructor(config: ConfigManager) {
     this.config = config.runtimeConfig.mtconnect;
     // register for config changes
-    config.on('newConfig', this.configChangedHandler.bind(this))
+    config.on('newConfig', this.configChangedHandler.bind(this));
   }
 
   /**
@@ -47,8 +47,8 @@ export class MTConnectAdapter {
    * @param  {Socket} client
    */
   private heartbeatClient(client: Socket) {
-    client.setEncoding("utf8");
-    client.on("end", () => {
+    client.setEncoding('utf8');
+    client.on('end', () => {
       winston.debug(`Client disconnected`);
       this.clients = this.clients.filter((c) => c.id !== client.id);
       winston.debug(`Connected clients: ${this.clients.length}`);
@@ -59,7 +59,7 @@ export class MTConnectAdapter {
       this.clients = this.clients.filter((c) => c.id !== client.id);
       winston.debug(`Connected clients: ${this.clients.length}`);
     });
-    client.on("data", (data: string) => {
+    client.on('data', (data: string) => {
       this.receive(client, data);
     });
   }
@@ -71,7 +71,7 @@ export class MTConnectAdapter {
   private receive(client: net.Socket, data: string) {
     winston.debug(`Received data: ${data}`);
 
-    if (data.startsWith("* PING\n")) {
+    if (data.startsWith('* PING\n')) {
       client.write(`* PONG ${this.TIMEOUT}\n`);
       winston.debug(`Received ping, sending pong, timeout: ${this.TIMEOUT}`);
     }
@@ -113,7 +113,7 @@ export class MTConnectAdapter {
 
     return {
       together,
-      separate,
+      separate
     };
   }
 
@@ -127,8 +127,8 @@ export class MTConnectAdapter {
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
 
-      for (const item of together) line += "|" + item.toString();
-      line += "\n";
+      for (const item of together) line += '|' + item.toString();
+      line += '\n';
 
       winston.debug(`Sending message: ${line}`);
       client.write(line);
@@ -170,10 +170,10 @@ export class MTConnectAdapter {
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
 
-      for (const item of together) line += "|" + item.toString();
-      line += "\n";
+      for (const item of together) line += '|' + item.toString();
+      line += '\n';
 
-      winston.debug(`Sending message: ${line.replace(/\n+$/, "")}`);
+      winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
       for (const client of this.clients) {
         client.write(line);
@@ -192,7 +192,7 @@ export class MTConnectAdapter {
       this.server = net.createServer();
       this.server.listen(this.config.listenerPort);
 
-      this.server.on("connection", this.listenForClients.bind(this));
+      this.server.on('connection', this.listenForClients.bind(this));
 
       winston.debug(
         `MTConnect Adapter listing on port ${this.config.listenerPort}`

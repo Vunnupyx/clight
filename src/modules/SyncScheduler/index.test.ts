@@ -1,9 +1,9 @@
-import { SynchronousIntervalScheduler } from "./index";
+import { SynchronousIntervalScheduler } from './index';
 
-describe("Test SyncScheduler", () => {
+describe('Test SyncScheduler', () => {
   // Improvements: Longer run time with test for average accuracy,
   // Removing and adding subscribers
-  test("Scheduler should call subscribers", async (done) => {
+  test('Scheduler should call subscribers', async (done) => {
     const sis = SynchronousIntervalScheduler.getInstance();
     let counter100 = 0;
     let counter10 = 0;

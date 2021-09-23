@@ -1,4 +1,4 @@
-version: "3.3"
+version: '3.3'
 services:
   mdclight:
     privileged: true
@@ -10,7 +10,7 @@ services:
         target: /mdclight/config
       - type: bind
         source: $HOST/etc/MDCLight/logs
-        target: /mdclight/logs    
+        target: /mdclight/logs
       - type: bind
         source: $HOST/proc
         target: /proc
@@ -25,4 +25,4 @@ services:
         source: $HOST/etc/MDCLight/mtc_config
         target: /agentConfiguration
     ports:
-      - "5000:5000"
+      - '5000:5000'

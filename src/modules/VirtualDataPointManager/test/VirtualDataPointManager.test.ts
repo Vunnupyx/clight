@@ -1,49 +1,49 @@
-import { VirtualDataPointManager } from "..";
-import { ConfigManager } from "../../ConfigManager";
-import { DataPointCache } from "../../DatapointCache";
-import { IDataSourceMeasurementEvent } from "../../DataSource";
-import { EventBus } from "../../EventBus";
+import { VirtualDataPointManager } from '..';
+import { ConfigManager } from '../../ConfigManager';
+import { DataPointCache } from '../../DatapointCache';
+import { IDataSourceMeasurementEvent } from '../../DataSource';
+import { EventBus } from '../../EventBus';
 
-jest.mock("winston");
-jest.mock("fs");
+jest.mock('winston');
+jest.mock('fs');
 
-describe("Test VirtualDataPointManager", () => {
+describe('Test VirtualDataPointManager', () => {
   const config = new ConfigManager({
     errorEventsBus: new EventBus<null>(),
-    lifecycleEventsBus: new EventBus<null>(),
+    lifecycleEventsBus: new EventBus<null>()
   });
 
   config.config.virtualDataPoints = [
     {
-      id: "andResult",
-      sources: ["inputAnd1", "inputAnd2"],
-      type: "and",
+      id: 'andResult',
+      sources: ['inputAnd1', 'inputAnd2'],
+      type: 'and'
     },
     {
-      id: "orResult",
-      sources: ["inputOr1", "inputOr2"],
-      type: "or",
+      id: 'orResult',
+      sources: ['inputOr1', 'inputOr2'],
+      type: 'or'
     },
     {
-      id: "notResult",
-      sources: ["inputNot1"],
-      type: "not",
+      id: 'notResult',
+      sources: ['inputNot1'],
+      type: 'not'
     },
     {
-      id: "counterResult",
-      sources: ["inputCounter1"],
-      type: "counter",
+      id: 'counterResult',
+      sources: ['inputCounter1'],
+      type: 'counter'
     },
     {
-      id: "nested1AndResult",
-      sources: ["andResult", "orResult"],
-      type: "and",
+      id: 'nested1AndResult',
+      sources: ['andResult', 'orResult'],
+      type: 'and'
     },
     {
-      id: "nested2AndResult",
-      sources: ["nested1AndResult", "notResult"],
-      type: "or",
-    },
+      id: 'nested2AndResult',
+      sources: ['nested1AndResult', 'notResult'],
+      type: 'or'
+    }
   ];
 
   const cache = new DataPointCache();
@@ -56,30 +56,30 @@ describe("Test VirtualDataPointManager", () => {
     cache.clearAll();
   });
 
-  test("should calculate and", () => {
+  test('should calculate and', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputAnd1",
-          name: "",
-          value: true,
-        },
+          id: 'inputAnd1',
+          name: '',
+          value: true
+        }
       },
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputAnd2",
-          name: "",
-          value: false,
-        },
-      },
+          id: 'inputAnd2',
+          name: '',
+          value: false
+        }
+      }
     ];
 
     // true && false => false
@@ -98,30 +98,30 @@ describe("Test VirtualDataPointManager", () => {
     expect(virtualEvents2[0].measurement.value).toBeTruthy();
   });
 
-  test("should calculate or", () => {
+  test('should calculate or', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputOr1",
-          name: "",
-          value: false,
-        },
+          id: 'inputOr1',
+          name: '',
+          value: false
+        }
       },
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputOr2",
-          name: "",
-          value: false,
-        },
-      },
+          id: 'inputOr2',
+          name: '',
+          value: false
+        }
+      }
     ];
 
     // false || false => false
@@ -140,19 +140,19 @@ describe("Test VirtualDataPointManager", () => {
     expect(virtualEvents2[0].measurement.value).toBeTruthy();
   });
 
-  test("should calculate not", () => {
+  test('should calculate not', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputNot1",
-          name: "",
-          value: false,
-        },
-      },
+          id: 'inputNot1',
+          name: '',
+          value: false
+        }
+      }
     ];
 
     // false => true
@@ -163,19 +163,19 @@ describe("Test VirtualDataPointManager", () => {
     expect(virtualEvents1[0].measurement.value).toBeTruthy();
   });
 
-  test("should count", () => {
+  test('should count', () => {
     const events1: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputCounter1",
-          name: "",
-          value: false,
-        },
-      },
+          id: 'inputCounter1',
+          name: '',
+          value: false
+        }
+      }
     ];
 
     // false => no event
@@ -187,15 +187,15 @@ describe("Test VirtualDataPointManager", () => {
     const events2: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputCounter1",
-          name: "",
-          value: true,
-        },
-      },
+          id: 'inputCounter1',
+          name: '',
+          value: true
+        }
+      }
     ];
     cache.update(events2);
     const virtualEvents2 = virtualDpManager.getVirtualEvents(events2);
@@ -206,15 +206,15 @@ describe("Test VirtualDataPointManager", () => {
     const events3: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputCounter1",
-          name: "",
-          value: false,
-        },
-      },
+          id: 'inputCounter1',
+          name: '',
+          value: false
+        }
+      }
     ];
     cache.update(events3);
     const virtualEvents3 = virtualDpManager.getVirtualEvents(events3);
@@ -224,15 +224,15 @@ describe("Test VirtualDataPointManager", () => {
     const events4: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputCounter1",
-          name: "",
-          value: true,
-        },
-      },
+          id: 'inputCounter1',
+          name: '',
+          value: true
+        }
+      }
     ];
     cache.update(events4);
     const virtualEvents4 = virtualDpManager.getVirtualEvents(events4);
@@ -240,63 +240,63 @@ describe("Test VirtualDataPointManager", () => {
     expect(virtualEvents4[0].measurement.value).toBe(2);
   });
 
-  test("should calculate nested events", () => {
+  test('should calculate nested events', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputAnd1",
-          name: "",
-          value: true,
-        },
+          id: 'inputAnd1',
+          name: '',
+          value: true
+        }
       },
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputAnd2",
-          name: "",
-          value: true,
-        },
+          id: 'inputAnd2',
+          name: '',
+          value: true
+        }
       },
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputOr1",
-          name: "",
-          value: false,
-        },
+          id: 'inputOr1',
+          name: '',
+          value: false
+        }
       },
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputOr2",
-          name: "",
-          value: true,
-        },
+          id: 'inputOr2',
+          name: '',
+          value: true
+        }
       },
       {
         dataSource: {
-          name: "",
-          protocol: "",
+          name: '',
+          protocol: ''
         },
         measurement: {
-          id: "inputNot1",
-          name: "",
-          value: true,
-        },
-      },
+          id: 'inputNot1',
+          name: '',
+          value: true
+        }
+      }
     ];
 
     // false => true

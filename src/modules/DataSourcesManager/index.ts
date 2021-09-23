@@ -1,13 +1,13 @@
-import { IDataSourceConfig } from "../ConfigManager/interfaces";
-import { DataSourceEventTypes } from "../DataSource";
-import { DataSource } from "../DataSource/DataSource";
-import { EventBus, MeasurementEventBus } from "../EventBus/index";
-import { IDataSourcesManagerParams } from "./interfaces";
-import { createDataSource } from "../DataSource/DataSourceFactory";
-import { ILifecycleEvent } from "../../common/interfaces";
-import { DataPointCache } from "../DatapointCache";
-import { IDataSourceMeasurementEvent } from "../DataSource/interfaces";
-import { VirtualDataPointManager } from "../VirtualDataPointManager";
+import { IDataSourceConfig } from '../ConfigManager/interfaces';
+import { DataSourceEventTypes } from '../DataSource';
+import { DataSource } from '../DataSource/DataSource';
+import { EventBus, MeasurementEventBus } from '../EventBus/index';
+import { IDataSourcesManagerParams } from './interfaces';
+import { createDataSource } from '../DataSource/DataSourceFactory';
+import { ILifecycleEvent } from '../../common/interfaces';
+import { DataPointCache } from '../DatapointCache';
+import { IDataSourceMeasurementEvent } from '../DataSource/interfaces';
+import { VirtualDataPointManager } from '../VirtualDataPointManager';
 
 /**
  * Creates and manages all data sources
@@ -81,7 +81,7 @@ export class DataSourcesManager {
 
     this.measurementsBus.push([
       ...measurementEvents,
-      ...this.virtualDataPointManager.getVirtualEvents(measurementEvents),
+      ...this.virtualDataPointManager.getVirtualEvents(measurementEvents)
     ]);
   };
 

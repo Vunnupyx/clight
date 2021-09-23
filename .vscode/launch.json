@@ -12,6 +12,6 @@
       "restart": true,
       "outputCapture": "std",
       "env": {}
-    },
+    }
   ]
 }

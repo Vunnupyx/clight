@@ -1,13 +1,13 @@
-import { EventBus } from "..";
+import { EventBus } from '..';
 
-describe("Test EventBus", () => {
-  test("emit should call all callbacks once with event", async () => {
+describe('Test EventBus', () => {
+  test('emit should call all callbacks once with event', async () => {
     type TestEvent = {
       payload: number;
     };
 
     const event: TestEvent = {
-      payload: 123,
+      payload: 123
     };
 
     const testCb1 = jest.fn();

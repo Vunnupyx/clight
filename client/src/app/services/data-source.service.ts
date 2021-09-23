@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
-import { DataSource } from 'app/models';
-import { HttpMockupService } from 'app/shared';
+import { DataSource, DataSourceProtocol } from 'app/models';
+import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler } from 'app/shared/utils';
-import { DATA_SOURCES_MOCK } from './data-source.service.mock';
+import { errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 
 export class DataSourcesState {
@@ -21,7 +22,9 @@ export class DataSourceService {
 
   constructor(
     storeFactory: StoreFactory<DataSourcesState>,
-    private httpService: HttpMockupService
+    private httpService: HttpService,
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -46,13 +49,17 @@ export class DataSourceService {
       const { dataSources } = await this.httpService.get<api.DataSourceList>(
         `/datasources`
       );
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSources = this._orderByProtocol(
-          dataSources.map((x) => this._parseDataSource(x))
+          dataSources!.map((x) => this._parseDataSource(x))
         );
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed
@@ -76,8 +83,10 @@ export class DataSourceService {
         );
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source.LoadError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -98,8 +107,10 @@ export class DataSourceService {
         state.status = Status.Ready;
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source.UpdateError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });

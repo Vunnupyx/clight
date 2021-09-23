@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import { SourceDataPoint } from 'app/models';
-import { HttpMockupService } from 'app/shared';
+import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
-import { SOURCE_DATA_POINTS_MOCK } from './source-data-point.service.mock';
 import * as api from 'app/api/models';
+import { CreateEntityResponse } from '../models/responses/create-entity.response';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -19,7 +21,9 @@ export class SourceDataPointService {
 
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
-    private httpService: HttpMockupService
+    private httpService: HttpService,
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -46,12 +50,14 @@ export class SourceDataPointService {
       );
 
       this._store.patchState((state) => {
-        state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+        state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.LoadError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState(() => ({
         status: Status.Ready
       }));
@@ -73,8 +79,10 @@ export class SourceDataPointService {
         state.dataPoints.push(obj);
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.CreateError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -98,8 +106,10 @@ export class SourceDataPointService {
         );
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.UpdateError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -120,8 +130,10 @@ export class SourceDataPointService {
         state.dataPoints = state.dataPoints.filter((x) => x != obj);
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.DeleteError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });

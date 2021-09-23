@@ -2,13 +2,12 @@
   .mat-slider-thumb {
     background: rgb(161, 165, 171) !important;
     border: 4px solid rgb(255, 255, 255) !important;
-/*    height: 24px !important;
+    /*    height: 24px !important;
     width: 24px !important;*/
     transform: none !important;
   }
 
   .mat-slider-wrapper {
-
     &:after {
       height: 0 !important;
       border-radius: 1px;
@@ -18,12 +17,17 @@
 
   .mat-slider-ticks {
     border-radius: 2px;
-    background-image: repeating-radial-gradient(circle at 2px center, rgb(0, 113, 219), rgb(0, 113, 219) 1px, transparent 1px, transparent);
+    background-image: repeating-radial-gradient(
+      circle at 2px center,
+      rgb(0, 113, 219),
+      rgb(0, 113, 219) 1px,
+      transparent 1px,
+      transparent
+    );
     background-repeat: repeat-x;
   }
 
   .mat-slider-track-wrapper {
-
     .mat-slider-track-background {
       transform: none !important;
       background: rgba(0, 0, 0, 0.38);
@@ -57,7 +61,6 @@
   }
 
   .mat-slider-wrapper {
-
     &:after {
       height: 0 !important;
       border-radius: 1px;
@@ -69,12 +72,17 @@
   .mat-slider-ticks {
     border-radius: 2px;
     //background-image: repeating-linear-gradient(to right, rgb(0, 113, 219), rgb(0, 113, 219) 4px, transparent 0, transparent);
-    background-image: repeating-radial-gradient(circle at 2px center, rgb(0, 113, 219), rgb(0, 113, 219) 1px, transparent 1px, transparent);
+    background-image: repeating-radial-gradient(
+      circle at 2px center,
+      rgb(0, 113, 219),
+      rgb(0, 113, 219) 1px,
+      transparent 1px,
+      transparent
+    );
     background-repeat: repeat-x;
   }
 
   .mat-slider-track-wrapper {
-
     .mat-slider-track-background {
       transform: none !important;
       background: rgba(0, 113, 219, 0.38);

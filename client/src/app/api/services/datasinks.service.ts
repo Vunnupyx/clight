@@ -1,6 +1,11 @@
 /* tslint:disable */
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpRequest,
+  HttpResponse,
+  HttpHeaders
+} from '@angular/common/http';
 import { BaseService as __BaseService } from '../base-service';
 import { ApiConfiguration as __Configuration } from '../api-configuration';
 import { StrictHttpResponse as __StrictHttpResponse } from '../strict-http-response';
@@ -16,21 +21,23 @@ import { Uuid } from '../models/uuid';
  * Everything about the data sinks
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 class DatasinksService extends __BaseService {
   static readonly dataSinksGetPath = '/datasinks';
   static readonly dataSinkGetPath = '/datasinks/{datasinkProtocol}';
-  static readonly dataPointsGetPath = '/datasinks/{datasinkProtocol}/dataPoints';
-  static readonly dataPointsPostPath = '/datasinks/{datasinkProtocol}/dataPoints';
-  static readonly dataPointGetPath = '/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}';
-  static readonly dataPointPatchPath = '/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}';
-  static readonly dataPointDeletePath = '/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}';
+  static readonly dataPointsGetPath =
+    '/datasinks/{datasinkProtocol}/dataPoints';
+  static readonly dataPointsPostPath =
+    '/datasinks/{datasinkProtocol}/dataPoints';
+  static readonly dataPointGetPath =
+    '/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}';
+  static readonly dataPointPatchPath =
+    '/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}';
+  static readonly dataPointDeletePath =
+    '/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}';
 
-  constructor(
-    config: __Configuration,
-    http: HttpClient
-  ) {
+  constructor(config: __Configuration, http: HttpClient) {
     super(config, http);
   }
 
@@ -38,24 +45,22 @@ class DatasinksService extends __BaseService {
    * Returns all available datesinks of the runtime
    * @return Successful request to datasinks
    */
-  dataSinksGetResponse(): __Observable<__StrictHttpResponse<{dataSinks?: Array<DataSinkType>}>> {
+  dataSinksGetResponse(): __Observable<
+    __StrictHttpResponse<{ dataSinks?: Array<DataSinkType> }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-    let req = new HttpRequest<any>(
-      'GET',
-      this.rootUrl + `/datasinks`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'json'
-      });
+    let req = new HttpRequest<any>('GET', this.rootUrl + `/datasinks`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'json'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{dataSinks?: Array<DataSinkType>}>;
+        return _r as __StrictHttpResponse<{ dataSinks?: Array<DataSinkType> }>;
       })
     );
   }
@@ -63,9 +68,9 @@ class DatasinksService extends __BaseService {
    * Returns all available datesinks of the runtime
    * @return Successful request to datasinks
    */
-  dataSinksGet(): __Observable<{dataSinks?: Array<DataSinkType>}> {
+  dataSinksGet(): __Observable<{ dataSinks?: Array<DataSinkType> }> {
     return this.dataSinksGetResponse().pipe(
-      __map(_r => _r.body as {dataSinks?: Array<DataSinkType>})
+      __map((_r) => _r.body as { dataSinks?: Array<DataSinkType> })
     );
   }
 
@@ -74,23 +79,27 @@ class DatasinksService extends __BaseService {
    * @param datasinkProtocol undefined
    * @return Datasink object
    */
-  dataSinkGetResponse(datasinkProtocol: string): __Observable<__StrictHttpResponse<DataSinkType>> {
+  dataSinkGetResponse(
+    datasinkProtocol: string
+  ): __Observable<__StrictHttpResponse<DataSinkType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(datasinkProtocol))}`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(String(datasinkProtocol))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSinkType>;
       })
@@ -103,7 +112,7 @@ class DatasinksService extends __BaseService {
    */
   dataSinkGet(datasinkProtocol: string): __Observable<DataSinkType> {
     return this.dataSinkGetResponse(datasinkProtocol).pipe(
-      __map(_r => _r.body as DataSinkType)
+      __map((_r) => _r.body as DataSinkType)
     );
   }
 
@@ -111,23 +120,27 @@ class DatasinksService extends __BaseService {
    * @param datasinkProtocol undefined
    * @return Return list of dataPoints
    */
-  dataPointsGetResponse(datasinkProtocol: string): __Observable<__StrictHttpResponse<DataPointList>> {
+  dataPointsGetResponse(
+    datasinkProtocol: string
+  ): __Observable<__StrictHttpResponse<DataPointList>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(datasinkProtocol))}/dataPoints`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(String(datasinkProtocol))}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataPointList>;
       })
@@ -139,7 +152,7 @@ class DatasinksService extends __BaseService {
    */
   dataPointsGet(datasinkProtocol: string): __Observable<DataPointList> {
     return this.dataPointsGetResponse(datasinkProtocol).pipe(
-      __map(_r => _r.body as DataPointList)
+      __map((_r) => _r.body as DataPointList)
     );
   }
 
@@ -152,7 +165,11 @@ class DatasinksService extends __BaseService {
    *
    * @return Response of a new created dataPoint
    */
-  dataPointsPostResponse(params: DatasinksService.DataPointsPostParams): __Observable<__StrictHttpResponse<{created?: DataPointType & Uuid, href?: string}>> {
+  dataPointsPostResponse(
+    params: DatasinksService.DataPointsPostParams
+  ): __Observable<
+    __StrictHttpResponse<{ created?: DataPointType & Uuid; href?: string }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -160,18 +177,25 @@ class DatasinksService extends __BaseService {
     __body = params.dataPoint;
     let req = new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkProtocol))}/dataPoints`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkProtocol)
+        )}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{created?: DataPointType & Uuid, href?: string}>;
+        return _r as __StrictHttpResponse<{
+          created?: DataPointType & Uuid;
+          href?: string;
+        }>;
       })
     );
   }
@@ -184,9 +208,13 @@ class DatasinksService extends __BaseService {
    *
    * @return Response of a new created dataPoint
    */
-  dataPointsPost(params: DatasinksService.DataPointsPostParams): __Observable<{created?: DataPointType & Uuid, href?: string}> {
+  dataPointsPost(
+    params: DatasinksService.DataPointsPostParams
+  ): __Observable<{ created?: DataPointType & Uuid; href?: string }> {
     return this.dataPointsPostResponse(params).pipe(
-      __map(_r => _r.body as {created?: DataPointType & Uuid, href?: string})
+      __map(
+        (_r) => _r.body as { created?: DataPointType & Uuid; href?: string }
+      )
     );
   }
 
@@ -197,24 +225,29 @@ class DatasinksService extends __BaseService {
    *
    * - `dataPointId`: id of the datapoint to get
    */
-  dataPointGetResponse(params: DatasinksService.DataPointGetParams): __Observable<__StrictHttpResponse<DataPointType & Uuid>> {
+  dataPointGetResponse(
+    params: DatasinksService.DataPointGetParams
+  ): __Observable<__StrictHttpResponse<DataPointType & Uuid>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
-
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkProtocol))}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkProtocol)
+        )}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataPointType & Uuid>;
       })
@@ -227,9 +260,11 @@ class DatasinksService extends __BaseService {
    *
    * - `dataPointId`: id of the datapoint to get
    */
-  dataPointGet(params: DatasinksService.DataPointGetParams): __Observable<DataPointType & Uuid> {
+  dataPointGet(
+    params: DatasinksService.DataPointGetParams
+  ): __Observable<DataPointType & Uuid> {
     return this.dataPointGetResponse(params).pipe(
-      __map(_r => _r.body as DataPointType & Uuid)
+      __map((_r) => _r.body as DataPointType & Uuid)
     );
   }
 
@@ -244,25 +279,30 @@ class DatasinksService extends __BaseService {
    *
    * @return Response of a change request for a datapoint with given id
    */
-  dataPointPatchResponse(params: DatasinksService.DataPointPatchParams): __Observable<__StrictHttpResponse<DataPointType & Uuid>> {
+  dataPointPatchResponse(
+    params: DatasinksService.DataPointPatchParams
+  ): __Observable<__StrictHttpResponse<DataPointType & Uuid>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
     __body = params.patchData;
 
-
     let req = new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkProtocol))}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkProtocol)
+        )}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataPointType & Uuid>;
       })
@@ -279,9 +319,11 @@ class DatasinksService extends __BaseService {
    *
    * @return Response of a change request for a datapoint with given id
    */
-  dataPointPatch(params: DatasinksService.DataPointPatchParams): __Observable<DataPointType & Uuid> {
+  dataPointPatch(
+    params: DatasinksService.DataPointPatchParams
+  ): __Observable<DataPointType & Uuid> {
     return this.dataPointPatchResponse(params).pipe(
-      __map(_r => _r.body as DataPointType & Uuid)
+      __map((_r) => _r.body as DataPointType & Uuid)
     );
   }
 
@@ -294,26 +336,31 @@ class DatasinksService extends __BaseService {
    *
    * @return Delete a datapoint by id and return the deleted item.
    */
-  dataPointDeleteResponse(params: DatasinksService.DataPointDeleteParams): __Observable<__StrictHttpResponse<{deleted?: DataPointType & Uuid}>> {
+  dataPointDeleteResponse(
+    params: DatasinksService.DataPointDeleteParams
+  ): __Observable<__StrictHttpResponse<{ deleted?: DataPointType & Uuid }>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
-
     let req = new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/datasinks/${encodeURIComponent(String(params.datasinkProtocol))}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
+      this.rootUrl +
+        `/datasinks/${encodeURIComponent(
+          String(params.datasinkProtocol)
+        )}/dataPoints/${encodeURIComponent(String(params.dataPointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{deleted?: DataPointType & Uuid}>;
+        return _r as __StrictHttpResponse<{ deleted?: DataPointType & Uuid }>;
       })
     );
   }
@@ -326,15 +373,16 @@ class DatasinksService extends __BaseService {
    *
    * @return Delete a datapoint by id and return the deleted item.
    */
-  dataPointDelete(params: DatasinksService.DataPointDeleteParams): __Observable<{deleted?: DataPointType & Uuid}> {
+  dataPointDelete(
+    params: DatasinksService.DataPointDeleteParams
+  ): __Observable<{ deleted?: DataPointType & Uuid }> {
     return this.dataPointDeleteResponse(params).pipe(
-      __map(_r => _r.body as {deleted?: DataPointType & Uuid})
+      __map((_r) => _r.body as { deleted?: DataPointType & Uuid })
     );
   }
 }
 
 module DatasinksService {
-
   /**
    * Parameters for dataPointsPost
    */
@@ -351,7 +399,6 @@ module DatasinksService {
    * Parameters for dataPointGet
    */
   export interface DataPointGetParams {
-
     /**
      * id of the datapoint to get
      */
@@ -367,7 +414,6 @@ module DatasinksService {
    * Parameters for dataPointPatch
    */
   export interface DataPointPatchParams {
-
     /**
      * DataPoint object with changed properties
      */
@@ -388,7 +434,6 @@ module DatasinksService {
    * Parameters for dataPointDelete
    */
   export interface DataPointDeleteParams {
-
     /**
      * id of the datapoint to get
      */
@@ -401,4 +446,4 @@ module DatasinksService {
   }
 }
 
-export { DatasinksService }
+export { DatasinksService };

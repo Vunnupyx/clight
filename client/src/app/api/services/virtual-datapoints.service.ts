@@ -1,6 +1,11 @@
 /* tslint:disable */
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpRequest,
+  HttpResponse,
+  HttpHeaders
+} from '@angular/common/http';
 import { BaseService as __BaseService } from '../base-service';
 import { ApiConfiguration as __Configuration } from '../api-configuration';
 import { StrictHttpResponse as __StrictHttpResponse } from '../strict-http-response';
@@ -14,7 +19,7 @@ import { Uuid } from '../models/uuid';
  * Everything about the data points
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 class VirtualDatapointsService extends __BaseService {
   static readonly vdpsGetPath = '/vdps';
@@ -23,10 +28,7 @@ class VirtualDatapointsService extends __BaseService {
   static readonly vdpDeletePath = '/vdps/{id}';
   static readonly vdpPatchPath = '/vdps/{id}';
 
-  constructor(
-    config: __Configuration,
-    http: HttpClient
-  ) {
+  constructor(config: __Configuration, http: HttpClient) {
     super(config, http);
   }
 
@@ -34,24 +36,24 @@ class VirtualDatapointsService extends __BaseService {
    * Return a list of virtual datapoints
    * @return List of virtual datapoints.
    */
-  vdpsGetResponse(): __Observable<__StrictHttpResponse<{vdps?: Array<VirtualDataPointType & Uuid>}>> {
+  vdpsGetResponse(): __Observable<
+    __StrictHttpResponse<{ vdps?: Array<VirtualDataPointType & Uuid> }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-    let req = new HttpRequest<any>(
-      'GET',
-      this.rootUrl + `/vdps`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'json'
-      });
+    let req = new HttpRequest<any>('GET', this.rootUrl + `/vdps`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'json'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{vdps?: Array<VirtualDataPointType & Uuid>}>;
+        return _r as __StrictHttpResponse<{
+          vdps?: Array<VirtualDataPointType & Uuid>;
+        }>;
       })
     );
   }
@@ -59,9 +61,9 @@ class VirtualDatapointsService extends __BaseService {
    * Return a list of virtual datapoints
    * @return List of virtual datapoints.
    */
-  vdpsGet(): __Observable<{vdps?: Array<VirtualDataPointType & Uuid>}> {
+  vdpsGet(): __Observable<{ vdps?: Array<VirtualDataPointType & Uuid> }> {
     return this.vdpsGetResponse().pipe(
-      __map(_r => _r.body as {vdps?: Array<VirtualDataPointType & Uuid>})
+      __map((_r) => _r.body as { vdps?: Array<VirtualDataPointType & Uuid> })
     );
   }
 
@@ -70,25 +72,28 @@ class VirtualDatapointsService extends __BaseService {
    * @param newVDP New virtual datapoint
    * @return Successfully create a virtual datapoint resource
    */
-  vdpsPostResponse(newVDP: VirtualDataPointType): __Observable<__StrictHttpResponse<{created: VirtualDataPointType & Uuid, href: string}>> {
+  vdpsPostResponse(
+    newVDP: VirtualDataPointType
+  ): __Observable<
+    __StrictHttpResponse<{ created: VirtualDataPointType & Uuid; href: string }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
     __body = newVDP;
-    let req = new HttpRequest<any>(
-      'POST',
-      this.rootUrl + `/vdps`,
-      __body,
-      {
-        headers: __headers,
-        params: __params,
-        responseType: 'json'
-      });
+    let req = new HttpRequest<any>('POST', this.rootUrl + `/vdps`, __body, {
+      headers: __headers,
+      params: __params,
+      responseType: 'json'
+    });
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{created: VirtualDataPointType & Uuid, href: string}>;
+        return _r as __StrictHttpResponse<{
+          created: VirtualDataPointType & Uuid;
+          href: string;
+        }>;
       })
     );
   }
@@ -97,9 +102,14 @@ class VirtualDatapointsService extends __BaseService {
    * @param newVDP New virtual datapoint
    * @return Successfully create a virtual datapoint resource
    */
-  vdpsPost(newVDP: VirtualDataPointType): __Observable<{created: VirtualDataPointType & Uuid, href: string}> {
+  vdpsPost(
+    newVDP: VirtualDataPointType
+  ): __Observable<{ created: VirtualDataPointType & Uuid; href: string }> {
     return this.vdpsPostResponse(newVDP).pipe(
-      __map(_r => _r.body as {created: VirtualDataPointType & Uuid, href: string})
+      __map(
+        (_r) =>
+          _r.body as { created: VirtualDataPointType & Uuid; href: string }
+      )
     );
   }
 
@@ -107,7 +117,9 @@ class VirtualDatapointsService extends __BaseService {
    * @param id Id of the virtual datapoint to operate on
    * @return Returns a virtual datapoint
    */
-  vdpGetResponse(id: string): __Observable<__StrictHttpResponse<VirtualDataPointType & Uuid>> {
+  vdpGetResponse(
+    id: string
+  ): __Observable<__StrictHttpResponse<VirtualDataPointType & Uuid>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -120,10 +132,11 @@ class VirtualDatapointsService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<VirtualDataPointType & Uuid>;
       })
@@ -135,7 +148,7 @@ class VirtualDatapointsService extends __BaseService {
    */
   vdpGet(id: string): __Observable<VirtualDataPointType & Uuid> {
     return this.vdpGetResponse(id).pipe(
-      __map(_r => _r.body as VirtualDataPointType & Uuid)
+      __map((_r) => _r.body as VirtualDataPointType & Uuid)
     );
   }
 
@@ -143,7 +156,11 @@ class VirtualDatapointsService extends __BaseService {
    * @param id Id of the virtual datapoint to operate on
    * @return Delete virtual datapoint with given id.
    */
-  vdpDeleteResponse(id: string): __Observable<__StrictHttpResponse<{deleted?: VirtualDataPointType & Uuid}>> {
+  vdpDeleteResponse(
+    id: string
+  ): __Observable<
+    __StrictHttpResponse<{ deleted?: VirtualDataPointType & Uuid }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -156,12 +173,15 @@ class VirtualDatapointsService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{deleted?: VirtualDataPointType & Uuid}>;
+        return _r as __StrictHttpResponse<{
+          deleted?: VirtualDataPointType & Uuid;
+        }>;
       })
     );
   }
@@ -169,9 +189,11 @@ class VirtualDatapointsService extends __BaseService {
    * @param id Id of the virtual datapoint to operate on
    * @return Delete virtual datapoint with given id.
    */
-  vdpDelete(id: string): __Observable<{deleted?: VirtualDataPointType & Uuid}> {
+  vdpDelete(
+    id: string
+  ): __Observable<{ deleted?: VirtualDataPointType & Uuid }> {
     return this.vdpDeleteResponse(id).pipe(
-      __map(_r => _r.body as {deleted?: VirtualDataPointType & Uuid})
+      __map((_r) => _r.body as { deleted?: VirtualDataPointType & Uuid })
     );
   }
 
@@ -184,7 +206,14 @@ class VirtualDatapointsService extends __BaseService {
    *
    * @return Changed virtual dataPoint
    */
-  vdpPatchResponse(params: VirtualDatapointsService.VdpPatchParams): __Observable<__StrictHttpResponse<{changed?: VirtualDataPointType & Uuid, href?: string}>> {
+  vdpPatchResponse(
+    params: VirtualDatapointsService.VdpPatchParams
+  ): __Observable<
+    __StrictHttpResponse<{
+      changed?: VirtualDataPointType & Uuid;
+      href?: string;
+    }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -198,12 +227,16 @@ class VirtualDatapointsService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{changed?: VirtualDataPointType & Uuid, href?: string}>;
+        return _r as __StrictHttpResponse<{
+          changed?: VirtualDataPointType & Uuid;
+          href?: string;
+        }>;
       })
     );
   }
@@ -216,15 +249,19 @@ class VirtualDatapointsService extends __BaseService {
    *
    * @return Changed virtual dataPoint
    */
-  vdpPatch(params: VirtualDatapointsService.VdpPatchParams): __Observable<{changed?: VirtualDataPointType & Uuid, href?: string}> {
+  vdpPatch(
+    params: VirtualDatapointsService.VdpPatchParams
+  ): __Observable<{ changed?: VirtualDataPointType & Uuid; href?: string }> {
     return this.vdpPatchResponse(params).pipe(
-      __map(_r => _r.body as {changed?: VirtualDataPointType & Uuid, href?: string})
+      __map(
+        (_r) =>
+          _r.body as { changed?: VirtualDataPointType & Uuid; href?: string }
+      )
     );
   }
 }
 
 module VirtualDatapointsService {
-
   /**
    * Parameters for vdpPatch
    */
@@ -238,4 +275,4 @@ module VirtualDatapointsService {
   }
 }
 
-export { VirtualDatapointsService }
+export { VirtualDatapointsService };

@@ -1,35 +1,36 @@
 .mat-checkbox {
-    .mat-checkbox-layout {
-      .mat-checkbox-inner-container {
-        width: 32px;
-        height: 32px;
+  .mat-checkbox-layout {
+    .mat-checkbox-inner-container {
+      width: 32px;
+      height: 32px;
 
-        .mat-checkbox-frame {
-          border-radius: 4px;
-          border: 1px solid rgba(102, 102, 102, 0.38);
-          box-shadow: inset 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
-        }
-
-        .mat-checkbox-background {
-          width: 24px;
-          height: 24px;
-          margin: 4px;
-        }
-
-        .mat-checkbox-ripple {
-          width: 68px;
-          height: 68px;
-          left: calc(50% - 34px);
-          top: calc(50% - 34px);
-        }
+      .mat-checkbox-frame {
+        border-radius: 4px;
+        border: 1px solid rgba(102, 102, 102, 0.38);
+        box-shadow: inset 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
       }
 
-      .mat-checkbox-label {
-        line-height: 32px;
+      .mat-checkbox-background {
+        width: 24px;
+        height: 24px;
+        margin: 4px;
+      }
+
+      .mat-checkbox-ripple {
+        width: 68px;
+        height: 68px;
+        left: calc(50% - 34px);
+        top: calc(50% - 34px);
       }
     }
 
-  &.mat-checkbox-checked,&.mat-checkbox-indeterminate {
+    .mat-checkbox-label {
+      line-height: 32px;
+    }
+  }
+
+  &.mat-checkbox-checked,
+  &.mat-checkbox-indeterminate {
     .mat-checkbox-background {
       background-color: mat-color($dmg-app-primary, 700) !important;
     }

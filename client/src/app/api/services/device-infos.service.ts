@@ -1,6 +1,11 @@
 /* tslint:disable */
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpRequest,
+  HttpResponse,
+  HttpHeaders
+} from '@angular/common/http';
 import { BaseService as __BaseService } from '../base-service';
 import { ApiConfiguration as __Configuration } from '../api-configuration';
 import { StrictHttpResponse as __StrictHttpResponse } from '../strict-http-response';
@@ -13,16 +18,13 @@ import { DeviceInfos } from '../models/device-infos';
  * Everything about the deviceInfos.
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 class DeviceInfosService extends __BaseService {
   static readonly deviceInfosGetPath = '/deviceInfos';
   static readonly deviceInfosPatchPath = '/deviceInfos';
 
-  constructor(
-    config: __Configuration,
-    http: HttpClient
-  ) {
+  constructor(config: __Configuration, http: HttpClient) {
     super(config, http);
   }
 
@@ -42,10 +44,11 @@ class DeviceInfosService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DeviceInfos>;
       })
@@ -57,14 +60,16 @@ class DeviceInfosService extends __BaseService {
    */
   deviceInfosGet(): __Observable<DeviceInfos> {
     return this.deviceInfosGetResponse().pipe(
-      __map(_r => _r.body as DeviceInfos)
+      __map((_r) => _r.body as DeviceInfos)
     );
   }
 
   /**
    * @param patchObject The changed properties
    */
-  deviceInfosPatchResponse(patchObject?: DeviceInfos): __Observable<__StrictHttpResponse<null>> {
+  deviceInfosPatchResponse(
+    patchObject?: DeviceInfos
+  ): __Observable<__StrictHttpResponse<null>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -77,10 +82,11 @@ class DeviceInfosService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<null>;
       })
@@ -91,12 +97,11 @@ class DeviceInfosService extends __BaseService {
    */
   deviceInfosPatch(patchObject?: DeviceInfos): __Observable<null> {
     return this.deviceInfosPatchResponse(patchObject).pipe(
-      __map(_r => _r.body as null)
+      __map((_r) => _r.body as null)
     );
   }
 }
 
-module DeviceInfosService {
-}
+module DeviceInfosService {}
 
-export { DeviceInfosService }
+export { DeviceInfosService };

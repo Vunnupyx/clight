@@ -15,10 +15,6 @@ import {
   setConfigManager as dataSinksSetConfigManager
 } from '../routes/apis/v1/DataSinks';
 import {
-  dataPointsHandlers,
-  setConfigManger as dataPointsSetConfigManager
-} from '../routes/apis/v1/DataPoints';
-import {
   virtualDatapointHandlers,
   setConfigManger as vdpsSetConfigManager
 } from '../routes/apis/v1/VirtualDataPoints';
@@ -40,7 +36,6 @@ export class RoutesManager {
   private routeHandlers = {
     ...dataSourceHandlers,
     ...dataSinksHandlers,
-    ...dataPointsHandlers,
     ...backupHandlers,
     ...virtualDatapointHandlers,
     ...deviceInfosHandlers
@@ -52,18 +47,17 @@ export class RoutesManager {
       fs.readFileSync(this.swaggerFilePath, { encoding: 'utf8' })
     );
 
-    // TODO: REMOVE SWAGGER DOKU ROUTE
+    // TODO: Remove swagger ui route
     app.use(
       '/apidocs',
       swaggerUi.serveFiles(swaggerFile, {}),
       swaggerUi.setup(swaggerFile)
     );
 
-    //TODO: OMG please refactor this!!!
+    //TODO: Refactor
     [
       dataSourcesSetConfigManager,
       dataSinksSetConfigManager,
-      dataPointsSetConfigManager,
       backupSetConfigManager,
       vdpsSetConfigManager,
       deviceInfosSetConfigManager

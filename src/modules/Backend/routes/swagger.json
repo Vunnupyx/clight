@@ -338,7 +338,7 @@
       ],
       "get": {
         "tags": ["datasinks"],
-        "operationId": "dataPointsGet",
+        "operationId": "dataSinksDataPointsGet",
         "responses": {
           "200": {
             "description": "Return list of dataPoints",
@@ -350,7 +350,7 @@
       },
       "post": {
         "tags": ["datasinks"],
-        "operationId": "dataPointsPost",
+        "operationId": "dataSinksDataPointsPost",
         "parameters": [
           {
             "name": "dataPoint",
@@ -403,7 +403,7 @@
       ],
       "get": {
         "tags": ["datasinks"],
-        "operationId": "dataPointGet",
+        "operationId": "dataSinksDataPointGet",
         "responses": {
           "200": {
             "schema": {
@@ -421,7 +421,7 @@
       },
       "patch": {
         "tags": ["datasinks"],
-        "operationId": "dataPointPatch",
+        "operationId": "dataSinksDataPointPatch",
         "parameters": [
           {
             "name": "patchData",
@@ -447,7 +447,7 @@
       },
       "delete": {
         "tags": ["datasinks"],
-        "operationId": "dataPointDelete",
+        "operationId": "dataSinksDataPointDelete",
         "responses": {
           "200": {
             "description": "Delete a datapoint by id and return the deleted item.",

@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from 'app/shared/shared.module';
 
 import { GeneralComponent } from './general.component';
+import { DeviceInfoComponent } from './device-info/device-info.component';
 
 const routes: Routes = [
   {
@@ -12,7 +13,7 @@ const routes: Routes = [
   }
 ];
 
-const COMPONENTS = [GeneralComponent];
+const COMPONENTS = [GeneralComponent, DeviceInfoComponent];
 
 @NgModule({
   imports: [SharedModule, RouterModule.forRoot(routes)],

@@ -4,12 +4,14 @@ import { DataSourceService } from './data-source.service';
 import { DataSinkService } from './data-sink.service';
 import { DataPointService } from './data-point.service';
 import { SourceDataPointService } from './source-data-point.service';
+import { DeviceInfoService } from './device-info.service';
 
 @NgModule({
   providers: [
     DataPointService,
     DataSinkService,
     DataSourceService,
+    DeviceInfoService,
     SourceDataPointService
   ]
 })

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
-import { DataSource, DataSourceProtocol } from 'app/models';
+import { DataSource } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler, mapOrder } from 'app/shared/utils';
+import { errorHandler } from 'app/shared/utils';
+import { DATA_SOURCES_MOCK } from './data-source.service.mock';
 import * as api from 'app/api/models';
 
 export class DataSourcesState {

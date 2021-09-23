@@ -31,13 +31,12 @@ describe('Test MTConnectDataSink', () => {
     mtcManagerMock.mockReturnValue(adapter);
 
     const dataSinkConfig: IDataSinkConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
       dataPoints: [
-        { id: 'target1', name: '', type: 'event' },
-        { id: 'target2', name: '', type: 'event' }
+        { address: 'target1', id: '2', name: '', type: 'event' },
+        { address: 'target2', id: '1', name: '', type: 'event' }
       ]
     };
 
@@ -63,7 +62,6 @@ describe('Test MTConnectDataSink', () => {
     });
 
     const dataSourceConfig: IDataSourceConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
@@ -72,12 +70,12 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
       dataPoints: [
         {
+          address: '1',
           id: 'target',
           name: '',
           type: 'event',
@@ -132,7 +130,6 @@ describe('Test MTConnectDataSink', () => {
     });
 
     const dataSourceConfig: IDataSourceConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
@@ -154,12 +151,12 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
       dataPoints: [
         {
+          address: '1',
           id: 'target',
           name: '',
           type: 'event',
@@ -228,7 +225,6 @@ describe('Test MTConnectDataSink', () => {
     });
 
     const dataSourceConfig: IDataSourceConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
@@ -250,17 +246,18 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
       dataPoints: [
         {
+          address: '1',
           id: 'target1',
           name: '',
           type: 'event'
         },
         {
+          address: '1',
           id: 'target2',
           name: '',
           type: 'event'
@@ -330,7 +327,6 @@ describe('Test MTConnectDataSink', () => {
     });
 
     const dataSinkConfig: IDataSinkConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,

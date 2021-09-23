@@ -5,8 +5,8 @@ import { SourceDataPoint } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
+import { SOURCE_DATA_POINTS_MOCK } from './source-data-point.service.mock';
 import * as api from 'app/api/models';
-import { CreateEntityResponse } from '../models/responses/create-entity.response';
 
 export class SourceDataPointsState {
   status!: Status;

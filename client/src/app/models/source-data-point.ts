@@ -4,10 +4,10 @@ export enum SourceDataPointType {
 }
 
 export class SourceDataPoint {
-  address: string;
+  address!: string;
   description?: string;
-  id: string;
-  name: string;
-  readFrequency: number;
+  id!: string;
+  name!: string;
+  readFrequency!: number;
   type?: SourceDataPointType;
 }

@@ -96,7 +96,7 @@ export class OPCUADataSink extends DataSink {
         // );
       }
     }
-    winston.info(logMsg);
+    winston.debug(logMsg);
     return Promise.resolve();
   }
 

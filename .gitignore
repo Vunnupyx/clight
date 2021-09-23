@@ -9,3 +9,6 @@ coverage
 yarn-error.log
 .idea
 *.tar.gz
+
+yarn.lock
+package-lock.json

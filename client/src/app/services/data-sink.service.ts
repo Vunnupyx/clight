@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
-import { DataSink } from 'app/models';
+import { DataSink, DataSinkProtocol } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
@@ -9,8 +9,8 @@ import { DATA_SINKS_MOCK } from './data-sink.service.mock';
 import * as api from 'app/api/models';
 
 export class DataSinksState {
-  status: Status;
-  dataSinks: DataSink[];
+  status!: Status;
+  dataSinks!: DataSink[];
 }
 
 @Injectable()
@@ -56,13 +56,13 @@ export class DataSinkService {
     }
   }
 
-  async getDataSink(datasourceId: string) {
+  async getDataSink(dataSinkProtocol: DataSinkProtocol) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
     try {
-      const obj = await this.httpService.get(`/datasinks/${datasourceId}`);
+      const obj = await this.httpService.get(`/datasinks/${dataSinkProtocol}`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSinks = state.dataSinks.map((x) =>
@@ -81,11 +81,13 @@ export class DataSinkService {
   async updateDataSink(obj: DataSink) {
     this._store.patchState((state) => {
       state.status = Status.Updating;
-      state.dataSinks = state.dataSinks.map((x) => (x.id != obj.id ? x : obj));
+      state.dataSinks = state.dataSinks.map((x) =>
+        x.protocol != obj.protocol ? x : obj
+      );
     });
 
     try {
-      await this.httpService.patch(`/datasinks/${obj.id}`, obj);
+      await this.httpService.patch(`/datasinks/${obj.protocol}`, obj);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });

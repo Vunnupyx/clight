@@ -1,15 +1,15 @@
 import { DataPoint } from './data-point';
 
 export enum DataSinkProtocol {
-  MTConnect = 'MTConnect',
-  OPC = 'OPC UA',
-  DH = 'Data Hub'
+  MTConnect = 'mtconnect',
+  OPC = 'opcua',
+  DH = 'datahub'
 }
 
 export class DataSink {
   id?: string;
-  name: string;
-  datapoints: Array<DataPoint>;
-  enabled: boolean;
-  protocol: DataSinkProtocol;
+  name!: string;
+  dataPoints!: Array<DataPoint>;
+  enabled!: boolean;
+  protocol!: DataSinkProtocol;
 }

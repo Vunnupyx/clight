@@ -5,6 +5,7 @@
     "UpdateManager": "Update Manager",
     "DataSource": "Data Source",
     "VirtualDataPoints": "Virtual Data Points",
+    "DataMapping": "Data Mapping",
     "DataSinks": "Application Interfaces",
     "Network": "Network",
     "SystemInformation": "System Information"
@@ -74,5 +75,22 @@
     "From": "From",
     "To": "To",
     "AddMapping": "Add mapping"
+  },
+  "settings-data-mapping": {
+    "DataMapping": "Data Mapping",
+    "Mappings": "Mappings",
+    "Source": "Source",
+    "Target": "Target",
+    "Value": "Value",
+    "Actions": "Actions",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "AddMapping": "Add Mapping",
+    "LoadError": "Failed to load mappings. Try again later",
+    "CreateError": "Failed to create a mapping. Try again later",
+    "UpdateError": "Failed to update a mapping. Try again later",
+    "DeleteError": "Failed to delete a mapping. Try again later"
   }
 }

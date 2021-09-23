@@ -1,3 +1,4 @@
+export * from './data-mapping.service';
 export * from './data-point.service';
 export * from './data-sink.service';
 export * from './data-source.service';

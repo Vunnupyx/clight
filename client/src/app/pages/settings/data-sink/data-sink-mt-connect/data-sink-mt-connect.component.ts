@@ -70,7 +70,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   onDataSink(dataSink: DataSink) {
-    this.dataPointService.getDataPoints(dataSink.id!);
+    this.dataPointService.getDataPoints(dataSink.protocol);
   }
 
   updateEnabled(val: boolean) {
@@ -146,11 +146,14 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     }
     if (this.unsavedRow!.id) {
       this.dataPointService.updateDataPoint(
-        this.dataSink!.id!,
+        this.dataSink!.protocol,
         this.unsavedRow!
       );
     } else {
-      this.dataPointService.addDataPoint(this.dataSink!.id!, this.unsavedRow!);
+      this.dataPointService.addDataPoint(
+        this.dataSink!.protocol!,
+        this.unsavedRow!
+      );
     }
     this.clearUnsavedRow();
   }
@@ -177,7 +180,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       if (!dialogResult) {
         return;
       }
-      this.dataPointService.deleteDataPoint(this.dataSink!.id!, obj);
+      this.dataPointService.deleteDataPoint(this.dataSink!.protocol, obj);
     });
   }
 

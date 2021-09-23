@@ -5,6 +5,7 @@
     "UpdateManager": "Update Manager",
     "DataSource": "Datenquelle",
     "VirtualDataPoints": "Virtuelle Datenpunkte",
+    "DataMapping": "",
     "DataSinks": "Anwendungs Schnittstellen",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen"
@@ -74,5 +75,22 @@
     "From": "",
     "To": "",
     "AddMapping": ""
+  },
+  "settings-data-mapping": {
+    "DataMapping": "",
+    "Mappings": "",
+    "Source": "",
+    "Target": "",
+    "Value": "",
+    "Actions": "",
+    "Edit": "",
+    "Delete": "",
+    "Save": "",
+    "Cancel": "",
+    "AddMapping": "",
+    "LoadError": "",
+    "CreateError": "",
+    "UpdateError": "",
+    "DeleteError": ""
   }
 }

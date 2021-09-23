@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
-import { DataPoint } from 'app/models';
-import { HttpMockupService } from 'app/shared';
+import { DataPoint, DataSink, DataSinkProtocol } from 'app/models';
+import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler } from 'app/shared/utils';
-import { DATA_POINTS_MOCK } from './data-point.service.mock';
+import { errorHandler, flatArray } from 'app/shared/utils';
 import * as api from 'app/api/models';
+import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
 
 export class DataPointsState {
-  status: Status;
-  dataPoints: DataPoint[];
+  status!: Status;
+  dataPoints!: DataPoint[];
 }
 
 @Injectable()
@@ -19,7 +19,7 @@ export class DataPointService {
 
   constructor(
     storeFactory: StoreFactory<DataPointsState>,
-    private httpService: HttpMockupService
+    private httpService: HttpService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -34,18 +34,44 @@ export class DataPointService {
       .pipe(map((x) => x.dataPoints));
   }
 
-  async getDataPoints(datasinkId: string) {
+  async getDataPoints(datasinkProtocol: DataSinkProtocol) {
     this._store.patchState((state) => ({
       status: Status.Loading,
       dataPoints: []
     }));
 
     try {
-      const dataPoints = await this.httpService.get<api.DataPointType[]>(
-        `/datasinks/${datasinkId}/dataPoints`,
-        undefined,
-        DATA_POINTS_MOCK(datasinkId)
+      const { dataPoints } = await this.httpService.get<api.DataPointList>(
+        `/datasinks/${datasinkProtocol}/dataPoints`
       );
+      this._store.patchState((state) => {
+        state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
+        state.status = Status.Ready;
+      });
+    } catch (err) {
+      errorHandler(err);
+      // TODO: Show error message (toast notification?)
+      this._store.patchState(() => ({
+        status: Status.Ready
+      }));
+    }
+  }
+
+  async getDataPointsAll() {
+    this._store.patchState((state) => ({
+      status: Status.Loading,
+      dataPoints: []
+    }));
+
+    try {
+      const { dataSinks } = await this.httpService.get<{
+        dataSinks: api.DataSinkType[];
+      }>(`/datasinks`);
+
+      const dataPoints = flatArray(
+        dataSinks?.map((x) => x.dataPoints) as api.DataPointType[][]
+      );
+
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
@@ -59,17 +85,19 @@ export class DataPointService {
     }
   }
 
-  async addDataPoint(datasinkId: string, obj: DataPoint) {
+  async addDataPoint(datasinkProtocol: DataSinkProtocol, obj: DataPoint) {
     this._store.patchState((state) => {
       state.status = Status.Creating;
     });
 
     try {
-      await this.httpService.post(`/datasinks/${datasinkId}/dataPoints`, obj);
+      const response = await this.httpService.post<
+        CreateEntityResponse<DataPoint>
+      >(`/datasinks/${datasinkProtocol}/dataPoints`, obj);
       this._store.patchState((state) => {
         state.status = Status.Ready;
         // TODO: Obtain new ID from JSON response
-        obj.id = 'new id';
+        obj.id = response.created.id;
         state.dataPoints.push(obj);
       });
     } catch (err) {
@@ -81,14 +109,14 @@ export class DataPointService {
     }
   }
 
-  async updateDataPoint(datasinkId: string, obj: DataPoint) {
+  async updateDataPoint(datasinkProtocol: DataSinkProtocol, obj: DataPoint) {
     this._store.patchState((state) => {
       state.status = Status.Updating;
     });
 
     try {
       await this.httpService.patch(
-        `/datasinks/${datasinkId}/dataPoints/${obj.id}`,
+        `/datasinks/${datasinkProtocol}/dataPoints/${obj.id}`,
         obj
       );
       this._store.patchState((state) => {
@@ -106,14 +134,14 @@ export class DataPointService {
     }
   }
 
-  async deleteDataPoint(datasinkId: string, obj: DataPoint) {
+  async deleteDataPoint(datasinkProtocol: DataSinkProtocol, obj: DataPoint) {
     this._store.patchState((state) => {
       state.status = Status.Deleting;
     });
 
     try {
       await this.httpService.delete(
-        `/datasinks/${datasinkId}/dataPoints/${obj.id}`
+        `/datasinks/${datasinkProtocol}/dataPoints/${obj.id}`
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;

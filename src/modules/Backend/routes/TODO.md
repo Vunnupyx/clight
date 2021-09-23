@@ -18,6 +18,23 @@ Response:
 }
 ```
 
+## Mapping Endpoint
+
+GET, POST /api/v1/mappings
+GET, PATCH, DELETE /api/v1/mapping/<id>
+
+Response/Body:
+
+```json
+{
+  "source": "string",
+  "target": "string",
+  "mapValue": "string",
+  "priority": 0,
+  "id": "string
+}
+```
+
 ## Data Source & Data Sink Status Endpoint
 
 GET /api/v1/status/datasink/<protocol>

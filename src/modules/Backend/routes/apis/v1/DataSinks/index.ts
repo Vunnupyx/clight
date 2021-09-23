@@ -1,6 +1,7 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import winston from 'winston';
 
 let configManager: ConfigManager;
 
@@ -27,6 +28,44 @@ function dataSinkGetHandler(request, response): void {
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
   response.status(dataSink ? 200 : 404).json(dataSink);
+}
+
+/**
+ * Handle all patch requests for modifying a specific datasource.
+ * Only enabling and disabling is allowed.
+ */
+function dataSinkPatchHandler(request: Request, response: Response): void {
+  const allowed = ['enabled', 'auth'];
+  const protocol = request.params.datasinkProtocol;
+
+  const config = configManager.config;
+  const dataSink = config.dataSources.find(
+    (source) => source.protocol === request.params.datasourceProtocol
+  );
+  if (!dataSink) {
+    winston.warn(``); // TODO: Define warning;
+    response.status(404).send();
+  }
+  Object.keys(request.body).forEach((entry) => {
+    if (!allowed.includes(entry)) {
+      winston.warn(
+        `dataSinkPatchHandler tried to change property: ${entry}. Not allowed`
+      );
+      response.status(403).json({
+        error: `Not allowed to change ${entry}`
+      });
+    }
+  });
+
+  const changedDatasource = { ...dataSink, ...request.body };
+
+  config.dataSinks = [
+    ...config.dataSinks.filter((dataSink) => dataSink.protocol !== protocol),
+    changedDatasource
+  ];
+  configManager.config = config;
+
+  response.status(200).json(changedDatasource);
 }
 
 /**
@@ -60,12 +99,14 @@ function dataPointGetHandler(request: Request, response: Response) {
  */
 function dataPointsPostHandler(request: Request, response: Response) {
   // TODO: Input validation, maybe id is already taken
-  const changedSinkObject = configManager.config.dataSinks.find(
+  const config = configManager.config;
+  const changedSinkObject = config.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
   const newData = { ...request.body, ...{ id: uuidv4() } };
   changedSinkObject.dataPoints.push(newData);
-  configManager?.changeConfig('update', 'dataSinks', changedSinkObject);
+  configManager.config = config;
+
   response.status(200).json({
     created: newData,
     href: `${request.originalUrl}/datapoints/${newData.id}`
@@ -76,16 +117,18 @@ function dataPointsPostHandler(request: Request, response: Response) {
  */
 function dataPointPatchHandler(request: Request, response: Response) {
   //TODO: INPUT VALIDATION
-  const sink = configManager?.config?.dataSinks.find(
+  const config = configManager.config;
+  const sink = config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
-  const index = sink?.dataPoints?.findIndex(
+  const dataPoint = sink?.dataPoints?.find(
     (point) => point.id === request.params.dataPointId
   );
-  sink.dataPoints.splice(index, 1);
-  const newData = { ...request.body, ...{ id: uuidv4() } };
+  sink?.dataPoints.filter((point) => point.id !== request.params.dataPointId);
+  const newData = { ...dataPoint, ...request.body };
   sink.dataPoints.push(newData);
-  configManager?.changeConfig('update', 'dataSinks', sink);
+  configManager.config = config;
+
   response.status(200).json({
     changed: newData,
     href: `${request.originalUrl}/${newData.id}`
@@ -97,7 +140,8 @@ function dataPointPatchHandler(request: Request, response: Response) {
  */
 function dataPointDeleteHandler(request: Request, response: Response) {
   // TODO: INPUT VALIDATION
-  const sink = configManager?.config?.dataSinks.find(
+  const config = configManager?.config;
+  const sink = config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
   const index = sink.dataPoints.findIndex(
@@ -105,7 +149,7 @@ function dataPointDeleteHandler(request: Request, response: Response) {
   );
   const point = sink.dataPoints[index];
   sink.dataPoints.splice(index, 1);
-  configManager?.changeConfig('update', 'dataSinks', sink);
+  configManager.config = config;
   response.status(200).json({
     deleted: point
   });
@@ -114,7 +158,7 @@ function dataPointDeleteHandler(request: Request, response: Response) {
 export const dataSinksHandlers = {
   dataSinksGet: dataSinksGetHandler,
   dataSinkGet: dataSinkGetHandler,
-
+  dataSinkPatch: dataSinkPatchHandler,
   dataSinksDataPointsGet: dataPointsGetHandler,
   dataSinksDataPointsPost: dataPointsPostHandler,
   dataSinksDataPointPatch: dataPointPatchHandler,

@@ -1,6 +1,11 @@
 /* tslint:disable */
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpRequest,
+  HttpResponse,
+  HttpHeaders
+} from '@angular/common/http';
 import { BaseService as __BaseService } from '../base-service';
 import { ApiConfiguration as __Configuration } from '../api-configuration';
 import { StrictHttpResponse as __StrictHttpResponse } from '../strict-http-response';
@@ -17,22 +22,24 @@ import { Uuid } from '../models/uuid';
  * Everything about the data source
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 class DatasourceService extends __BaseService {
   static readonly dataSourcesGetPath = '/datasources';
   static readonly dataSourceGetPath = '/datasources/{datasourceProtocol}';
   static readonly dataSourcePatchPath = '/datasources/{datasourceProtocol}';
-  static readonly dataSourcesGetDatapointsPath = '/datasources/{datasourceProtocol}/dataPoints';
-  static readonly dataSourcesPostDatapointPath = '/datasources/{datasourceProtocol}/dataPoints';
-  static readonly dataSourcesGetDatapointPath = '/datasources/{datasourceProtocol}/dataPoints/{datapointId}';
-  static readonly dataSourcesDeleteDatapointPath = '/datasources/{datasourceProtocol}/dataPoints/{datapointId}';
-  static readonly dataSourcesPatchDatapointPath = '/datasources/{datasourceProtocol}/dataPoints/{datapointId}';
+  static readonly dataSourcesGetDatapointsPath =
+    '/datasources/{datasourceProtocol}/dataPoints';
+  static readonly dataSourcesPostDatapointPath =
+    '/datasources/{datasourceProtocol}/dataPoints';
+  static readonly dataSourcesGetDatapointPath =
+    '/datasources/{datasourceProtocol}/dataPoints/{datapointId}';
+  static readonly dataSourcesDeleteDatapointPath =
+    '/datasources/{datasourceProtocol}/dataPoints/{datapointId}';
+  static readonly dataSourcesPatchDatapointPath =
+    '/datasources/{datasourceProtocol}/dataPoints/{datapointId}';
 
-  constructor(
-    config: __Configuration,
-    http: HttpClient
-  ) {
+  constructor(config: __Configuration, http: HttpClient) {
     super(config, http);
   }
 
@@ -52,10 +59,11 @@ class DatasourceService extends __BaseService {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSourceList>;
       })
@@ -67,7 +75,7 @@ class DatasourceService extends __BaseService {
    */
   dataSourcesGet(): __Observable<DataSourceList> {
     return this.dataSourcesGetResponse().pipe(
-      __map(_r => _r.body as DataSourceList)
+      __map((_r) => _r.body as DataSourceList)
     );
   }
 
@@ -75,23 +83,27 @@ class DatasourceService extends __BaseService {
    * @param datasourceProtocol id of the datasource
    * @return Request dateSource with given ID
    */
-  dataSourceGetResponse(datasourceProtocol: string): __Observable<__StrictHttpResponse<DataSourceType>> {
+  dataSourceGetResponse(
+    datasourceProtocol: string
+  ): __Observable<__StrictHttpResponse<DataSourceType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(datasourceProtocol))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(String(datasourceProtocol))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSourceType>;
       })
@@ -103,7 +115,7 @@ class DatasourceService extends __BaseService {
    */
   dataSourceGet(datasourceProtocol: string): __Observable<DataSourceType> {
     return this.dataSourceGetResponse(datasourceProtocol).pipe(
-      __map(_r => _r.body as DataSourceType)
+      __map((_r) => _r.body as DataSourceType)
     );
   }
 
@@ -119,7 +131,9 @@ class DatasourceService extends __BaseService {
    *
    * @return Successfully changed datasource
    */
-  dataSourcePatchResponse(params: DatasourceService.DataSourcePatchParams): __Observable<__StrictHttpResponse<DataSourceType>> {
+  dataSourcePatchResponse(
+    params: DatasourceService.DataSourcePatchParams
+  ): __Observable<__StrictHttpResponse<DataSourceType>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -127,16 +141,18 @@ class DatasourceService extends __BaseService {
     __body = params.changeObject;
     let req = new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceProtocol))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(String(params.datasourceProtocol))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<DataSourceType>;
       })
@@ -154,9 +170,11 @@ class DatasourceService extends __BaseService {
    *
    * @return Successfully changed datasource
    */
-  dataSourcePatch(params: DatasourceService.DataSourcePatchParams): __Observable<DataSourceType> {
+  dataSourcePatch(
+    params: DatasourceService.DataSourcePatchParams
+  ): __Observable<DataSourceType> {
     return this.dataSourcePatchResponse(params).pipe(
-      __map(_r => _r.body as DataSourceType)
+      __map((_r) => _r.body as DataSourceType)
     );
   }
 
@@ -164,25 +182,35 @@ class DatasourceService extends __BaseService {
    * Returns a list of dataPoints of this datasource
    * @param datasourceProtocol id of the datasource
    */
-  dataSourcesGetDatapointsResponse(datasourceProtocol: string): __Observable<__StrictHttpResponse<{dataPoints:?: Array<Sourcedatapoint & Uuid>}>> {
+  dataSourcesGetDatapointsResponse(
+    datasourceProtocol: string
+  ): __Observable<
+    __StrictHttpResponse<{ dataPoints?: Array<Sourcedatapoint & Uuid> }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(datasourceProtocol))}/dataPoints`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(datasourceProtocol)
+        )}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{dataPoints:?: Array<Sourcedatapoint & Uuid>}>;
+        return _r as __StrictHttpResponse<{
+          dataPoints?: Array<Sourcedatapoint & Uuid>;
+        }>;
       })
     );
   }
@@ -190,9 +218,11 @@ class DatasourceService extends __BaseService {
    * Returns a list of dataPoints of this datasource
    * @param datasourceProtocol id of the datasource
    */
-  dataSourcesGetDatapoints(datasourceProtocol: string): __Observable<{dataPoints:?: Array<Sourcedatapoint & Uuid>}> {
+  dataSourcesGetDatapoints(
+    datasourceProtocol: string
+  ): __Observable<{ dataPoints?: Array<Sourcedatapoint & Uuid> }> {
     return this.dataSourcesGetDatapointsResponse(datasourceProtocol).pipe(
-      __map(_r => _r.body as {dataPoints:?: Array<Sourcedatapoint & Uuid>})
+      __map((_r) => _r.body as { dataPoints?: Array<Sourcedatapoint & Uuid> })
     );
   }
 
@@ -206,7 +236,11 @@ class DatasourceService extends __BaseService {
    *
    * @return The new created datapoint
    */
-  dataSourcesPostDatapointResponse(params: DatasourceService.DataSourcesPostDatapointParams): __Observable<__StrictHttpResponse<{created?: Sourcedatapoint & Uuid, href?: string}>> {
+  dataSourcesPostDatapointResponse(
+    params: DatasourceService.DataSourcesPostDatapointParams
+  ): __Observable<
+    __StrictHttpResponse<{ created?: Sourcedatapoint & Uuid; href?: string }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -214,18 +248,25 @@ class DatasourceService extends __BaseService {
 
     let req = new HttpRequest<any>(
       'POST',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceProtocol))}/dataPoints`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceProtocol)
+        )}/dataPoints`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{created?: Sourcedatapoint & Uuid, href?: string}>;
+        return _r as __StrictHttpResponse<{
+          created?: Sourcedatapoint & Uuid;
+          href?: string;
+        }>;
       })
     );
   }
@@ -239,9 +280,13 @@ class DatasourceService extends __BaseService {
    *
    * @return The new created datapoint
    */
-  dataSourcesPostDatapoint(params: DatasourceService.DataSourcesPostDatapointParams): __Observable<{created?: Sourcedatapoint & Uuid, href?: string}> {
+  dataSourcesPostDatapoint(
+    params: DatasourceService.DataSourcesPostDatapointParams
+  ): __Observable<{ created?: Sourcedatapoint & Uuid; href?: string }> {
     return this.dataSourcesPostDatapointResponse(params).pipe(
-      __map(_r => _r.body as {created?: Sourcedatapoint & Uuid, href?: string})
+      __map(
+        (_r) => _r.body as { created?: Sourcedatapoint & Uuid; href?: string }
+      )
     );
   }
 
@@ -255,24 +300,29 @@ class DatasourceService extends __BaseService {
    *
    * @return returns a datapoint with given id
    */
-  dataSourcesGetDatapointResponse(params: DatasourceService.DataSourcesGetDatapointParams): __Observable<__StrictHttpResponse<Sourcedatapoint & Uuid>> {
+  dataSourcesGetDatapointResponse(
+    params: DatasourceService.DataSourcesGetDatapointParams
+  ): __Observable<__StrictHttpResponse<Sourcedatapoint & Uuid>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
-
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceProtocol))}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceProtocol)
+        )}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
         return _r as __StrictHttpResponse<Sourcedatapoint & Uuid>;
       })
@@ -288,9 +338,11 @@ class DatasourceService extends __BaseService {
    *
    * @return returns a datapoint with given id
    */
-  dataSourcesGetDatapoint(params: DatasourceService.DataSourcesGetDatapointParams): __Observable<Sourcedatapoint & Uuid> {
+  dataSourcesGetDatapoint(
+    params: DatasourceService.DataSourcesGetDatapointParams
+  ): __Observable<Sourcedatapoint & Uuid> {
     return this.dataSourcesGetDatapointResponse(params).pipe(
-      __map(_r => _r.body as Sourcedatapoint & Uuid)
+      __map((_r) => _r.body as Sourcedatapoint & Uuid)
     );
   }
 
@@ -304,26 +356,31 @@ class DatasourceService extends __BaseService {
    *
    * @return Successfully deleted datapoint
    */
-  dataSourcesDeleteDatapointResponse(params: DatasourceService.DataSourcesDeleteDatapointParams): __Observable<__StrictHttpResponse<{deleted?: Sourcedatapoint & Uuid}>> {
+  dataSourcesDeleteDatapointResponse(
+    params: DatasourceService.DataSourcesDeleteDatapointParams
+  ): __Observable<__StrictHttpResponse<{ deleted?: Sourcedatapoint & Uuid }>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
 
-
     let req = new HttpRequest<any>(
       'DELETE',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceProtocol))}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceProtocol)
+        )}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{deleted?: Sourcedatapoint & Uuid}>;
+        return _r as __StrictHttpResponse<{ deleted?: Sourcedatapoint & Uuid }>;
       })
     );
   }
@@ -337,9 +394,11 @@ class DatasourceService extends __BaseService {
    *
    * @return Successfully deleted datapoint
    */
-  dataSourcesDeleteDatapoint(params: DatasourceService.DataSourcesDeleteDatapointParams): __Observable<{deleted?: Sourcedatapoint & Uuid}> {
+  dataSourcesDeleteDatapoint(
+    params: DatasourceService.DataSourcesDeleteDatapointParams
+  ): __Observable<{ deleted?: Sourcedatapoint & Uuid }> {
     return this.dataSourcesDeleteDatapointResponse(params).pipe(
-      __map(_r => _r.body as {deleted?: Sourcedatapoint & Uuid})
+      __map((_r) => _r.body as { deleted?: Sourcedatapoint & Uuid })
     );
   }
 
@@ -355,27 +414,37 @@ class DatasourceService extends __BaseService {
    *
    * @return Overwritten datapoint
    */
-  dataSourcesPatchDatapointResponse(params: DatasourceService.DataSourcesPatchDatapointParams): __Observable<__StrictHttpResponse<{changed?: Sourcedatapoint & Uuid, href?: string}>> {
+  dataSourcesPatchDatapointResponse(
+    params: DatasourceService.DataSourcesPatchDatapointParams
+  ): __Observable<
+    __StrictHttpResponse<{ changed?: Sourcedatapoint & Uuid; href?: string }>
+  > {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
-
 
     __body = params.changedDatapoint;
     let req = new HttpRequest<any>(
       'PATCH',
-      this.rootUrl + `/datasources/${encodeURIComponent(String(params.datasourceProtocol))}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
+      this.rootUrl +
+        `/datasources/${encodeURIComponent(
+          String(params.datasourceProtocol)
+        )}/dataPoints/${encodeURIComponent(String(params.datapointId))}`,
       __body,
       {
         headers: __headers,
         params: __params,
         responseType: 'json'
-      });
+      }
+    );
 
     return this.http.request<any>(req).pipe(
-      __filter(_r => _r instanceof HttpResponse),
+      __filter((_r) => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<{changed?: Sourcedatapoint & Uuid, href?: string}>;
+        return _r as __StrictHttpResponse<{
+          changed?: Sourcedatapoint & Uuid;
+          href?: string;
+        }>;
       })
     );
   }
@@ -391,20 +460,22 @@ class DatasourceService extends __BaseService {
    *
    * @return Overwritten datapoint
    */
-  dataSourcesPatchDatapoint(params: DatasourceService.DataSourcesPatchDatapointParams): __Observable<{changed?: Sourcedatapoint & Uuid, href?: string}> {
+  dataSourcesPatchDatapoint(
+    params: DatasourceService.DataSourcesPatchDatapointParams
+  ): __Observable<{ changed?: Sourcedatapoint & Uuid; href?: string }> {
     return this.dataSourcesPatchDatapointResponse(params).pipe(
-      __map(_r => _r.body as {changed?: Sourcedatapoint & Uuid, href?: string})
+      __map(
+        (_r) => _r.body as { changed?: Sourcedatapoint & Uuid; href?: string }
+      )
     );
   }
 }
 
 module DatasourceService {
-
   /**
    * Parameters for dataSourcePatch
    */
   export interface DataSourcePatchParams {
-
     /**
      * id of the datasource
      */
@@ -416,7 +487,6 @@ module DatasourceService {
    * Parameters for dataSourcesPostDatapoint
    */
   export interface DataSourcesPostDatapointParams {
-
     /**
      * New datapoint to create
      */
@@ -432,7 +502,6 @@ module DatasourceService {
    * Parameters for dataSourcesGetDatapoint
    */
   export interface DataSourcesGetDatapointParams {
-
     /**
      * id of the datasource
      */
@@ -448,7 +517,6 @@ module DatasourceService {
    * Parameters for dataSourcesDeleteDatapoint
    */
   export interface DataSourcesDeleteDatapointParams {
-
     /**
      * id of the datasource
      */
@@ -464,7 +532,6 @@ module DatasourceService {
    * Parameters for dataSourcesPatchDatapoint
    */
   export interface DataSourcesPatchDatapointParams {
-
     /**
      * id of the datasource
      */
@@ -482,4 +549,4 @@ module DatasourceService {
   }
 }
 
-export { DatasourceService }
+export { DatasourceService };

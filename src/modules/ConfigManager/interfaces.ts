@@ -69,12 +69,17 @@ export interface IDataSinkDataPointConfig {
   map?: ITargetDataMap;
   initialValue?: string | number;
 }
-
+export interface IOpcuaAuth {
+  type: "none" | "userpassword",
+  username: string,
+  password: string
+}
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
+  auth?: IOpcuaAuth
 }
 
 export interface IDataPointMapping {

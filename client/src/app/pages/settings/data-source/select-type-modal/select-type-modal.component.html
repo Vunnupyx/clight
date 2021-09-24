@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>
   {{ 'settings-data-source.SelectAVariable' | translate }}
 </h1>
+
 <div mat-dialog-content>
   <ngx-datatable
     [headerHeight]="50"
@@ -8,18 +9,33 @@
     [rows]="rows"
     class="overflow-auto"
   >
-    <ngx-datatable-column
-      [name]="'settings-data-source.Area' | translate"
-      prop="area"
-    ></ngx-datatable-column>
-    <ngx-datatable-column
-      [name]="'settings-data-source.Component' | translate"
-      prop="component"
-    ></ngx-datatable-column>
-    <ngx-datatable-column
-      [name]="'settings-data-source.VariableName' | translate"
-      prop="variable"
-    ></ngx-datatable-column>
+    <ng-container [ngSwitch]="data.protocol">
+      <ng-container *ngSwitchCase="DataSourceProtocol.S7">
+        <ngx-datatable-column
+          [name]="'settings-data-source.Name' | translate"
+          prop="name"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-data-source.BTTSString' | translate"
+          prop="address"
+        ></ngx-datatable-column>
+      </ng-container>
+      <ng-container *ngSwitchCase="DataSourceProtocol.IOShield">
+        <ngx-datatable-column
+          [name]="'settings-data-source.Area' | translate"
+          prop="area"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-data-source.Component' | translate"
+          prop="component"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-data-source.VariableName' | translate"
+          prop="variable"
+        ></ngx-datatable-column>
+      </ng-container>
+    </ng-container>
+
     <ngx-datatable-column
       [name]="'settings-data-source.Actions' | translate"
       cellClass="button-cell"

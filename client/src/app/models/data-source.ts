@@ -5,6 +5,11 @@ export enum DataSourceProtocol {
   IOShield = 'ioshield'
 }
 
+export enum DataSourceSoftwareVersion {
+  v4_5 = '4.5',
+  v4_7 = '4.7',
+}
+
 export class Connection {
   ipAddr?: string;
   port?: number;

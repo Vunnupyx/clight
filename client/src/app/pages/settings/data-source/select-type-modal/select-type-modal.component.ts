@@ -1,8 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+import { DataSourceProtocol } from '../../../../models';
+
 export interface SelectTypeModalData {
   selection: string;
+  protocol: DataSourceProtocol;
 }
 
 @Component({
@@ -10,11 +13,15 @@ export interface SelectTypeModalData {
   templateUrl: 'select-type-modal.component.html'
 })
 export class SelectTypeModalComponent {
-  rows = [
+  DataSourceProtocol = DataSourceProtocol;
+
+  rows = this.data.protocol === DataSourceProtocol.IOShield ? [
     { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' },
     { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' },
     { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' },
     { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' }
+  ] : [
+    { name: 'Name 1', address: 'Address 1' },
   ];
 
   constructor(

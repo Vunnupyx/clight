@@ -49,8 +49,14 @@
     "Component": "Component",
     "VariableName": "Variable name",
     "Status": "Status",
+    "SoftwareVersion": "Software Version",
+    "BTTSString": "BTTS String",
     "LoadError": "Failed to load data sources. Try again later",
-    "UpdateError": "Failed to update a data source. Try again later"
+    "UpdateError": "Failed to update a data source. Try again later",
+    "Tabs": {
+      "s7": "SINUMERIK 840D sl",
+      "ioshield": "Digital Inputs"
+    }
   },
   "settings-data-source-point": {
     "LoadError": "Failed to load data points. Try again later",

@@ -10,7 +10,12 @@ import { ConfigManager } from '../../ConfigManager';
 import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
 import { RoutesManager } from '../RoutesManager';
 import { json as jsonParser } from 'body-parser';
-import path from 'path';
+import { DataSourcesManager } from '../../DataSourcesManager';
+
+interface RestApiManagerOptions {
+  configManager: ConfigManager,
+  dataSourcesManager: DataSourcesManager
+}
 
 /**
  * Manage express server implementation.
@@ -19,18 +24,17 @@ export class RestApiManager {
   private port: number;
   private config: IRestApiConfig;
   private readonly expressApp: Express = express();
-  //TODO: Remove?
-  // private readonly router: Router = Router();
   private routeManager: RoutesManager;
 
   private static className: string;
 
-  constructor(config: ConfigManager) {
+  constructor(options: RestApiManagerOptions) {
     RestApiManager.className = this.constructor.name;
     const logPrefix = `${RestApiManager.className}::constructor`;
 
-    this.config = config.runtimeConfig.restApi;
-    config.on('newRuntimeConfig', this.newRuntimeConfigHandle.bind(this));
+    const {configManager , dataSourcesManager} = options;
+    this.config = configManager.runtimeConfig.restApi;
+    configManager.on('newRuntimeConfig', this.newRuntimeConfigHandle.bind(this));
     this.port = this.config.port || Number.parseInt(process.env.PORT) || 5000;
 
     // TODO: Maybe move to init method
@@ -41,7 +45,7 @@ export class RestApiManager {
       })
     );
     this.expressApp.disable('x-powered-by');
-    this.routeManager = new RoutesManager(this.expressApp, config);
+    this.routeManager = new RoutesManager({app: this.expressApp,configManager :configManager, dataSourcesManager: dataSourcesManager});
   }
 
   /**
@@ -54,7 +58,10 @@ export class RestApiManager {
     );
     return this;
   }
+
   private newRuntimeConfigHandle(config: IRuntimeConfig) {
+    const logPrefix = `${RestApiManager.className}::newRuntimeConfigHandle`;
     //TODO: implement restart of the express server
+    winston.warn(`${logPrefix} receive a config change. Reactions to this event not implemented, yet.`)
   }
 }

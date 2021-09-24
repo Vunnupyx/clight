@@ -37,7 +37,10 @@ export class DataSinkComponent implements OnInit {
       return;
     }
     this.dataSinkList = arr;
-    this.switchDataSink(arr[0]);
+
+    if (!this.dataSink) {
+      this.switchDataSink(arr[0]);
+    }
   }
 
   switchDataSink(obj: DataSink) {

@@ -1,6 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PRE_DEFINED_DATA_POINTS } from './create-data-item-modal.component.mock';
+
+import { DataSinkService } from '../../../../services';
+import { DataPoint } from '../../../../models';
 
 export interface CreateDataItemModalData {
   selection: string;
@@ -10,13 +12,18 @@ export interface CreateDataItemModalData {
   selector: 'app-create-data-item-modal',
   templateUrl: 'create-data-item-modal.component.html'
 })
-export class CreateDataItemModalComponent {
-  rows = PRE_DEFINED_DATA_POINTS();
+export class CreateDataItemModalComponent implements OnInit {
+  rows: DataPoint[] = [];
 
   constructor(
+    private dataSinkService: DataSinkService,
     private dialogRef: MatDialogRef<CreateDataItemModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CreateDataItemModalData
   ) {}
+
+  ngOnInit() {
+    this.rows = this.dataSinkService.getPredefinedDataPoints();
+  }
 
   onSelect({ selected }) {
     this.dialogRef.close(selected[0]);

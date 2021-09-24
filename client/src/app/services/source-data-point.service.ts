@@ -3,7 +3,7 @@ import { filter, map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { SourceDataPoint } from 'app/models';
+import { DataSourceProtocol, SourceDataPoint } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
@@ -38,7 +38,7 @@ export class SourceDataPointService {
       .pipe(map((x) => x.dataPoints));
   }
 
-  async getDataPoints(datasourceProtocol: string) {
+  async getDataPoints(datasourceProtocol: DataSourceProtocol) {
     this._store.patchState((state) => ({
       status: Status.Loading,
       dataPoints: []
@@ -64,7 +64,10 @@ export class SourceDataPointService {
     }
   }
 
-  async addDataPoint(datasourceProtocol: string, obj: SourceDataPoint) {
+  async addDataPoint(
+    datasourceProtocol: DataSourceProtocol,
+    obj: SourceDataPoint
+  ) {
     this._store.patchState((state) => {
       state.status = Status.Creating;
     });
@@ -89,7 +92,10 @@ export class SourceDataPointService {
     }
   }
 
-  async updateDataPoint(datasourceProtocol: string, obj: SourceDataPoint) {
+  async updateDataPoint(
+    datasourceProtocol: DataSourceProtocol,
+    obj: SourceDataPoint
+  ) {
     this._store.patchState((state) => {
       state.status = Status.Updating;
     });
@@ -116,7 +122,10 @@ export class SourceDataPointService {
     }
   }
 
-  async deleteDataPoint(datasourceProtocol: string, obj: SourceDataPoint) {
+  async deleteDataPoint(
+    datasourceProtocol: DataSourceProtocol,
+    obj: SourceDataPoint
+  ) {
     this._store.patchState((state) => {
       state.status = Status.Deleting;
     });

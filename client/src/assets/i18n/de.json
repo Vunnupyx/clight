@@ -66,6 +66,7 @@
     "Event": "",
     "Condition": "",
     "SelectAVariable": "",
+    "CreateDataPoint": "",
     "Area": "",
     "Component": "",
     "VariableName": "",
@@ -73,6 +74,11 @@
     "Mapping": "",
     "From": "",
     "To": "",
-    "AddMapping": ""
+    "AddMapping": "",
+    "Tabs": {
+      "mtconnect": "MTConnect",
+      "opcua": "OPC UA",
+      "datahub": "Data Hub"
+    }
   }
 }

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
-import { DataSink } from 'app/models';
-import { HttpMockupService } from 'app/shared';
+import { DataPoint, DataSink, DataSinkProtocol } from 'app/models';
+import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
-import { DATA_SINKS_MOCK } from './data-sink.service.mock';
 import * as api from 'app/api/models';
+import PREDEFINED_DATA_POINTS from './constants/mtconnectDataItems';
 
 export class DataSinksState {
-  status: Status;
-  dataSinks: DataSink[];
+  status!: Status;
+  dataSinks!: DataSink[];
 }
 
 @Injectable()
@@ -19,7 +19,7 @@ export class DataSinkService {
 
   constructor(
     storeFactory: StoreFactory<DataSinksState>,
-    private httpService: HttpMockupService
+    private httpService: HttpService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -41,12 +41,17 @@ export class DataSinkService {
     }));
 
     try {
-      const { dataSinks } = await this.httpService.get<api.DataSinkType[]>(
-        `/datasinks`
-      );
+      const { dataSinks } = await this.httpService.get<{
+        dataSinks: api.DataSinkType[];
+      }>(`/datasinks`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSinks = dataSinks.map((x) => this._parseDataSink(x));
+        state.dataSinks = dataSinks.concat({
+          dataPoints: [],
+          enabled: false,
+          name: 'das',
+          protocol: 'datahub'
+        }).map((x) => this._parseDataSink(x));
       });
     } catch (err) {
       errorHandler(err);
@@ -56,17 +61,17 @@ export class DataSinkService {
     }
   }
 
-  async getDataSink(datasourceId: string) {
+  async getDataSink(protocol: DataSinkProtocol) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
     try {
-      const obj = await this.httpService.get(`/datasinks/${datasourceId}`);
+      const obj = await this.httpService.get(`/datasinks/${protocol}`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSinks = state.dataSinks.map((x) =>
-          x.id != obj.id ? x : obj
+          x.protocol != protocol ? x : obj
         );
       });
     } catch (err) {
@@ -78,14 +83,16 @@ export class DataSinkService {
     }
   }
 
-  async updateDataSink(obj: DataSink) {
+  async updateDataSink(protocol: DataSinkProtocol, obj: Partial<DataSink>) {
     this._store.patchState((state) => {
       state.status = Status.Updating;
-      state.dataSinks = state.dataSinks.map((x) => (x.id != obj.id ? x : obj));
+      state.dataSinks = state.dataSinks.map((x) =>
+        x.protocol != protocol ? x : { ...x, ...obj }
+      );
     });
 
     try {
-      await this.httpService.patch(`/datasinks/${obj.id}`, obj);
+      await this.httpService.patch(`/datasinks/${protocol}`, obj);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -96,6 +103,10 @@ export class DataSinkService {
         state.status = Status.Ready;
       });
     }
+  }
+
+  getPredefinedDataPoints(): DataPoint[] {
+    return PREDEFINED_DATA_POINTS as any as DataPoint[];
   }
 
   private _parseDataSink(obj: api.DataSinkType) {

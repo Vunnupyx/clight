@@ -1,25 +1,18 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges
-} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Subscription} from 'rxjs';
 
-import { DataPoint, DataPointType, DataSink } from 'app/models';
-import { DataPointService, DataSinkService } from 'app/services';
-import { Status } from 'app/shared/state';
-import { clone } from 'app/shared/utils';
+import {DataPoint, DataPointType, DataSink, DataSinkAuth, DataSinkAuthType, DataSinkProtocol} from 'app/models';
+import {DataPointService, DataSinkService} from 'app/services';
+import {Status} from 'app/shared/state';
+import {arrayToMap, clone} from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { CreateDataItemModalComponent } from '../create-data-item-modal/create-data-item-modal.component';
-import { MT_CONNECT_DATA_ITEMS_MOCK } from './data-sink-mt-connect.component.mock';
-import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
-import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
+import {CreateDataItemModalComponent} from '../create-data-item-modal/create-data-item-modal.component';
+import {SelectMapModalComponent} from '../select-map-modal/select-map-modal.component';
+import {PreDefinedDataPoint} from '../create-data-item-modal/create-data-item-modal.component.mock';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -28,9 +21,20 @@ import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-
 })
 export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   DataPointType = DataPointType;
-  MTConnectItems = MT_CONNECT_DATA_ITEMS_MOCK();
+  DataSinkAuthTypes = [
+    DataSinkAuthType.Anonymous,
+    DataSinkAuthType.UserAndPass,
+  ];
+  Protocol = DataSinkProtocol;
+  MTConnectItems: DataPoint[] = [];
 
   @Input() dataSink?: DataSink;
+
+  auth: DataSinkAuth = {
+    type: DataSinkAuthType.Anonymous,
+    userName: '',
+    password: '',
+  }
 
   datapointRows?: DataPoint[];
 
@@ -57,6 +61,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.MTConnectItems = this.dataSinkService.getPredefinedDataPoints();
     this.sub.add(
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
     );
@@ -70,7 +75,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   onDataSink(dataSink: DataSink) {
-    this.dataPointService.getDataPoints(dataSink.id!);
+    if (dataSink.auth) {
+      this.auth = dataSink.auth;
+    }
+    this.dataPointService.getDataPoints(dataSink.protocol);
   }
 
   updateEnabled(val: boolean) {
@@ -78,7 +86,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       return;
     }
     this.dataSink.enabled = val;
-    this.dataSinkService.updateDataSink(this.dataSink);
+    this.dataSinkService.updateDataSink(this.dataSink.protocol, {
+      enabled: this.dataSink.enabled
+    });
   }
 
   onDataPoints(arr: DataPoint[]) {
@@ -109,7 +119,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       initValue: result.initialValue,
       type: result.type,
       enabled: true,
-      map: []
+      map: result.map
     } as DataPoint;
     this.unsavedRowIndex = this.datapointRows!.length;
     this.unsavedRow = obj;
@@ -125,9 +135,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   onMapEdit(obj: DataPoint) {
     const dialogRef = this.dialog.open(SelectMapModalComponent, {
       data: {
-        map: obj.map.map((x) => ({
-          from: x.split('->')[0],
-          to: x.split('->')[1]
+        map: Object.entries(obj.map! || {}).map(([key, value]) => ({
+          from: key,
+          to: value
         }))
       }
     });
@@ -136,7 +146,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       if (!result) {
         return;
       }
-      this.unsavedRow!.map = result.map((x) => `${x.from}->${x.to}`);
+
+      this.unsavedRow!.map = arrayToMap(result, 'from', 'to');
     });
   }
 
@@ -146,11 +157,14 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     }
     if (this.unsavedRow!.id) {
       this.dataPointService.updateDataPoint(
-        this.dataSink!.id!,
+        this.dataSink!.protocol,
         this.unsavedRow!
       );
     } else {
-      this.dataPointService.addDataPoint(this.dataSink!.id!, this.unsavedRow!);
+      this.dataPointService.addDataPoint(
+        this.dataSink!.protocol,
+        this.unsavedRow!
+      );
     }
     this.clearUnsavedRow();
   }
@@ -177,11 +191,20 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       if (!dialogResult) {
         return;
       }
-      this.dataPointService.deleteDataPoint(this.dataSink!.id!, obj);
+      this.dataPointService.deleteDataPoint(this.dataSink!.protocol, obj);
     });
+  }
+
+  parseMap(value: any) {
+    return value ? Object.entries(value) : [];
   }
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+  }
+
+  onSaveAuth() {
+    // TODO: make api call to save auth
+    console.log('auth', this.auth);
   }
 }

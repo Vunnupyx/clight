@@ -21,8 +21,8 @@
       mat-tab-link
       *ngFor="let item of dataSinkList"
       (click)="switchDataSink(item)"
-      [active]="dataSink?.id === item.id"
-      >{{ item.name }}</a
+      [active]="dataSink?.protocol === item.protocol"
+      >{{ 'settings-data-sink.Tabs.' + item.protocol | translate }}</a
     >
   </nav>
 

@@ -29,6 +29,7 @@ export abstract class DataSource extends EventEmitter {
   protected RECONNECT_TIMEOUT =
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
   public timestamp: number;
+  public protocol: string;
   protected scheduler: SynchronousIntervalScheduler;
   protected schedulerListenerId: number;
   protected currentStatus: LifecycleEventStatus;
@@ -41,6 +42,7 @@ export abstract class DataSource extends EventEmitter {
     super();
     this.config = params.config;
     this.scheduler = SynchronousIntervalScheduler.getInstance();
+    this.protocol = params.config.protocol;
   }
 
   /**

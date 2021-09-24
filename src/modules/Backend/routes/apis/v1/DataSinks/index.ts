@@ -3,14 +3,21 @@ import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
 import { hash } from 'bcrypt';
+import { DataSinkManager } from '../../../../../DataSinkManager';
+import { LifecycleEventStatus } from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
+let dataSinksManager: DataSinkManager;
 
 /**
  * Set ConfigManager to make accessible for local function
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
+}
+
+export function setDataSinksManager(manager: DataSinkManager) {
+  dataSinksManager = manager;
 }
 
 /**
@@ -172,6 +179,31 @@ function dataPointDeleteHandler(request: Request, response: Response) {
   });
 }
 
+/** 
+ * Return the current status of the selected datasink. Status is collected from the EventBus 
+*/
+function dataSinkGetStatusHandler(request: Request, response: Response) {
+  const proto = request.params?.datasinkProtocol
+  if(!proto || !['mtconnect', 'opcua'].includes(proto)) {
+    response.status(404).json({error: "Protocol not valid."});
+    winston.warn('dataSinkGetStatusHandler error due to no valid protocol!')
+    return;
+  }
+  if(!dataSinksManager) {
+    response.status(500).send();
+    winston.error('dataSinkGetStatusHandler error no dataSinksManager set.');
+    return;
+  }
+
+
+  const boolStatus = dataSinksManager.getDataSinkByProto(request.params.datasinkProtocol).currentStatus();
+  let status: LifecycleEventStatus = LifecycleEventStatus.Connected;
+  if(!boolStatus) { 
+    status = LifecycleEventStatus.Disconnected;
+  }
+  response.status(200).json({status})
+}
+
 export const dataSinksHandlers = {
   dataSinksGet: dataSinksGetHandler,
   dataSinkGet: dataSinkGetHandler,
@@ -180,5 +212,6 @@ export const dataSinksHandlers = {
   dataSinksDataPointsPost: dataPointsPostHandler,
   dataSinksDataPointPatch: dataPointPatchHandler,
   dataSinksDataPointDelete: dataPointDeleteHandler,
-  dataSinksDataPointGet: dataPointGetHandler
+  dataSinksDataPointGet: dataPointGetHandler,
+  dataSinkGetStatus: dataSinkGetStatusHandler
 };

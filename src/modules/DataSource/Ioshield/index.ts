@@ -31,10 +31,10 @@ export class IoshieldDataSource extends DataSource {
 
     this.mraaClient = new Iot2050MraaDI10();
     this.mraaClient.init();
-
+    
     this.validateDataPointConfiguration();
-
     this.setupDataPoints();
+    this.currentStatus = LifecycleEventStatus.Connected;
   }
 
   /**
@@ -71,6 +71,7 @@ export class IoshieldDataSource extends DataSource {
 
       if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
+      // TODO: Markus welcher status ist hier? Die Messungen sind fehlgeschlagen? Disconnected? Reconnection?
       winston.error(e);
     }
   }
@@ -79,7 +80,9 @@ export class IoshieldDataSource extends DataSource {
    * Disconnects data source
    * @returns Promise<void>
    */
-  public async disconnect(): Promise<void> {}
+  public async disconnect(): Promise<void> {
+    this.currentStatus = LifecycleEventStatus.Disconnected;
+  }
 
   /**
    * Validates data source configuration and throws errors for wrong configured data points

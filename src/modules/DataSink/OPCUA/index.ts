@@ -30,6 +30,7 @@ export class OPCUADataSink extends DataSink {
     super(config);
     this.opcuaAdapter = OPCUAManager.getAdapter();
     OPCUADataSink.className = this.constructor.name;
+    this.protocol = 'opcua';
   }
 
   public init(): this {
@@ -108,5 +109,13 @@ export class OPCUADataSink extends DataSink {
   public async disconnect() {
     const logPrefix = `${OPCUADataSink.className}::disconnect`;
     this.opcuaAdapter.stop();
+  }
+  /**
+   * Current status of opcua sink
+   * true -> running
+   * false -> not running
+   */
+  public currentStatus(): boolean {
+    return !!this.opcuaAdapter?.isRunning
   }
 }

@@ -11,10 +11,12 @@ import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
 import { RoutesManager } from '../RoutesManager';
 import { json as jsonParser } from 'body-parser';
 import { DataSourcesManager } from '../../DataSourcesManager';
+import { DataSinkManager } from '../../DataSinkManager';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager,
-  dataSourcesManager: DataSourcesManager
+  dataSourcesManager: DataSourcesManager,
+  dataSinksManager: DataSinkManager
 }
 
 /**

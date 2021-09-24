@@ -14,10 +14,12 @@ import { ConfigManager } from '../ConfigManager';
 import {
   IGeneralConfig,
   IOPCUAConfig,
-  IUser
+  IUser,
+  IConfig
 } from '../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../common/errors';
 import path from 'path';
+import { compare } from 'bcrypt';
 
 /**
  * Implementation of OPCUA adapter.
@@ -25,7 +27,8 @@ import path from 'path';
  */
 export class OPCUAAdapter {
   private server: OPCUAServer;
-  private config: IOPCUAConfig;
+  private opcuaRuntimeConfig: IOPCUAConfig;
+  private auth: boolean;
   private users: IUser[];
   private generalConfig: IGeneralConfig;
   private running = false;
@@ -40,8 +43,13 @@ export class OPCUAAdapter {
   constructor(config: ConfigManager) {
     OPCUAAdapter.className = this.constructor.name;
     OPCUAAdapter.configValidation(config);
-    this.config = config.runtimeConfig.opcua;
-    this.users = config.runtimeConfig.users;
+    this.opcuaRuntimeConfig = config.runtimeConfig.opcua;
+    const opcuaSink = config.config.dataSinks.find((sink) => sink.protocol === 'opcua');
+    this.auth = opcuaSink?.auth?.type === 'none' ? true : false;
+    this.users = [{
+      userName: opcuaSink?.auth?.userName,
+      password: opcuaSink?.auth?.password
+    }]
     this.generalConfig = config.config.general;
   }
 
@@ -84,7 +92,7 @@ export class OPCUAAdapter {
    */
   private async setupNodesets() {
     this.nodesetDir = path.join(process.cwd(), 'mdclight/config/tmpnodesets');
-    await fs.copy(this.config.nodesetDir, this.nodesetDir);
+    await fs.copy(this.opcuaRuntimeConfig.nodesetDir, this.nodesetDir);
     const files = (await fs.readdir(this.nodesetDir)) as string[];
     const fullFiles = files.map((file) => path.join(this.nodesetDir, file));
 
@@ -151,7 +159,7 @@ export class OPCUAAdapter {
       return this;
     }
 
-    const applicationUri = this.config.serverInfo.applicationUri;
+    const applicationUri = this.opcuaRuntimeConfig.serverInfo.applicationUri;
     const certificateFolder = path.join(process.cwd(), 'mdclight/config/certs');
     const certificateFile = path.join(
       certificateFolder,
@@ -194,10 +202,11 @@ export class OPCUAAdapter {
     });
 
     this.userManager = {
-      isValidUser: (userName: string, password: string): boolean => {
-        return this.users.some(
-          (user) => userName === user.userName && password === user.password
-        );
+      isValidUserAsync: async (userName: string, password: string, cb: (any, bool) => void): Promise<void> => {
+        const user = this.users.find((user) => userName === user.userName);
+        const valid = await compare(password, user.password);
+        if (!valid) winston.warn(`${user} try to login with wrong password.`);
+        cb(null, valid);
       }
     };
 
@@ -205,7 +214,7 @@ export class OPCUAAdapter {
 
     // TODO: Inject project logger to OPCUAServer
     this.server = new OPCUAServer({
-      ...this.config,
+      ...{...this.opcuaRuntimeConfig, ...{allowAnonymous: this.auth }},
       userManager: this.userManager,
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,

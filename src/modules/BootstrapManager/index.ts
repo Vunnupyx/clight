@@ -73,7 +73,10 @@ export class BootstrapManager {
       process.exit(1);
     }
 
-    this.backend = new RestApiManager(this.configManager).start();
+    this.backend = new RestApiManager({
+      configManager: this.configManager,
+      dataSourcesManager: this.dataSourcesManager
+    }).start();
   }
 
   /**

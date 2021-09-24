@@ -93,4 +93,11 @@ export class DataSourcesManager {
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
     this.lifecycleBus.push(lifeCycleEvent);
   };
+
+  /**
+   * Returns the datasource object by its protocol
+   */
+  public getDataSourceByProto(protocol: string) {
+    return this.dataSources.find((src) => src.protocol === protocol);
+  }
 }

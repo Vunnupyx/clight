@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { SourceDataPoint, DataPoint, DataMapping } from 'app/models';
@@ -115,15 +115,13 @@ export class DataMappingComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.unsavedRow!.id) {
-      this.dataMappingService.updateDataMapping(this.unsavedRow!)
-        .then(() => {
-          this.clearUnsavedRow();
-        });
+      this.dataMappingService.updateDataMapping(this.unsavedRow!).then(() => {
+        this.clearUnsavedRow();
+      });
     } else {
-      this.dataMappingService.addDataMapping(this.unsavedRow!)
-        .then(() => {
-          this.clearUnsavedRow();
-        });
+      this.dataMappingService.addDataMapping(this.unsavedRow!).then(() => {
+        this.clearUnsavedRow();
+      });
     }
   }
 

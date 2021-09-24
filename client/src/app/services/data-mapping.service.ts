@@ -21,7 +21,7 @@ export class DataMappingService {
     storeFactory: StoreFactory<DataMappingsState>,
     private httpService: HttpService,
     private translate: TranslateService,
-    private toastr: ToastrService,
+    private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -50,7 +50,9 @@ export class DataMappingService {
         state.status = Status.Ready;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-mapping.LoadError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-mapping.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Ready
@@ -71,7 +73,9 @@ export class DataMappingService {
         state.dataMappings.push(obj);
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-mapping.CreateError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-mapping.CreateError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -93,7 +97,9 @@ export class DataMappingService {
         );
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-mapping.UpdateError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-mapping.UpdateError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -113,7 +119,9 @@ export class DataMappingService {
         state.dataMappings = state.dataMappings.filter((x) => x != obj);
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-mapping.DeleteError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-mapping.DeleteError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;

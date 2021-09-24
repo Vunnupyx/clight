@@ -23,7 +23,7 @@ export class SourceDataPointService {
     storeFactory: StoreFactory<SourceDataPointsState>,
     private httpService: HttpService,
     private translate: TranslateService,
-    private toastr: ToastrService,
+    private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -54,7 +54,9 @@ export class SourceDataPointService {
         state.status = Status.Ready;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source-point.LoadError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Ready
@@ -78,13 +80,13 @@ export class SourceDataPointService {
       );
 
       this._store.patchState((state) => {
-        state.dataPoints = dataPoints.map((x) =>
-          this._parseDataPoint(x)
-        );
+        state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source-point.LoadError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Ready
@@ -107,7 +109,9 @@ export class SourceDataPointService {
         state.dataPoints.push(obj);
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source-point.CreateError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.CreateError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -132,7 +136,9 @@ export class SourceDataPointService {
         );
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source-point.UpdateError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.UpdateError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -154,7 +160,9 @@ export class SourceDataPointService {
         state.dataPoints = state.dataPoints.filter((x) => x != obj);
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source-point.DeleteError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.DeleteError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;

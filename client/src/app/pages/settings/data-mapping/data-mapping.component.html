@@ -56,9 +56,7 @@
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
-              (ngModelChange)="
-                unsavedRow && (unsavedRow.source = $event)
-              "
+              (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
             >
               <mat-option
                 [value]="item.id"

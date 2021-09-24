@@ -24,7 +24,7 @@ export class DataSourceService {
     storeFactory: StoreFactory<DataSourcesState>,
     private httpService: HttpMockupService,
     private translate: TranslateService,
-    private toastr: ToastrService,
+    private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -56,7 +56,9 @@ export class DataSourceService {
         );
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source.LoadError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed
@@ -80,7 +82,9 @@ export class DataSourceService {
         );
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source.LoadError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source.LoadError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -102,7 +106,9 @@ export class DataSourceService {
         state.status = Status.Ready;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-data-source.UpdateError'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source.UpdateError')
+      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;

@@ -57,8 +57,8 @@ export class DataSourceComponent implements OnInit {
       this.dataSourceService.dataSources.subscribe((x) => this.onDataSources(x))
     );
     this.sub.add(
-      this.sourceDataPointService.sourceDataPoints.subscribe((x) =>
-        this.onSourceDataPoints(x)
+      this.sourceDataPointService.dataPoints.subscribe((x) =>
+        this.onDataPoints(x)
       )
     );
 
@@ -70,12 +70,15 @@ export class DataSourceComponent implements OnInit {
       return;
     }
     this.dataSourceList = arr;
-    this.switchDataSource(arr[0]);
+
+    if (!this.dataSource) {
+      this.switchDataSource(arr[0]);
+    }
   }
 
   switchDataSource(obj: DataSource) {
     this.dataSource = obj;
-    this.sourceDataPointService.getSourceDataPoints(obj.id!);
+    this.sourceDataPointService.getDataPoints(obj.protocol!);
   }
 
   updateEnabled(val: boolean) {
@@ -83,7 +86,9 @@ export class DataSourceComponent implements OnInit {
       return;
     }
     this.dataSource.enabled = val;
-    this.dataSourceService.updateDataSource(this.dataSource);
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      enabled: this.dataSource.enabled
+    });
   }
 
   updateIpAddress(valid: boolean | null, val: string) {
@@ -95,10 +100,12 @@ export class DataSourceComponent implements OnInit {
     }
     this.dataSource.connection = this.dataSource.connection || <Connection>{};
     this.dataSource.connection.ipAddr = val;
-    this.dataSourceService.updateDataSource(this.dataSource);
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      connection: this.dataSource.connection
+    });
   }
 
-  onSourceDataPoints(arr: SourceDataPoint[]) {
+  onDataPoints(arr: SourceDataPoint[]) {
     this.datapointRows = arr;
   }
 
@@ -126,12 +133,12 @@ export class DataSourceComponent implements OnInit {
     }
     if (this.unsavedRow!.id) {
       this.sourceDataPointService.updateDataPoint(
-        this.dataSource!.id!,
+        this.dataSource!.protocol!,
         this.unsavedRow!
       );
     } else {
       this.sourceDataPointService.addDataPoint(
-        this.dataSource!.id!,
+        this.dataSource!.protocol!,
         this.unsavedRow!
       );
     }
@@ -173,7 +180,10 @@ export class DataSourceComponent implements OnInit {
       if (!dialogResult) {
         return;
       }
-      this.sourceDataPointService.deleteDataPoint(this.dataSource!.id!, obj);
+      this.sourceDataPointService.deleteDataPoint(
+        this.dataSource!.protocol!,
+        obj
+      );
     });
   }
 

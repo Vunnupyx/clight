@@ -15,21 +15,21 @@ import {
   setConfigManager as dataSinksSetConfigManager
 } from '../routes/apis/v1/DataSinks';
 import {
-  dataPointsHandlers,
-  setConfigManger as dataPointsSetConfigManager
-} from '../routes/apis/v1/DataPoints';
-import {
   virtualDatapointHandlers,
-  setConfigManger as vdpsSetConfigManager
+  setConfigManager as vdpsSetConfigManager
 } from '../routes/apis/v1/VirtualDataPoints';
 import {
   backupHandlers,
-  setConfigManger as backupSetConfigManager
+  setConfigManager as backupSetConfigManager
 } from '../routes/apis/v1/Backup';
 import {
   deviceInfosHandlers,
-  setConfigManger as deviceInfosSetConfigManager
+  setConfigManager as deviceInfosSetConfigManager
 } from '../routes/apis/v1/DeviceInfos';
+import {
+  mappingHandlers,
+  setConfigManager as mappingSetConfigManager
+} from '../routes/apis/v1/Mapping';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 
@@ -40,10 +40,10 @@ export class RoutesManager {
   private routeHandlers = {
     ...dataSourceHandlers,
     ...dataSinksHandlers,
-    ...dataPointsHandlers,
     ...backupHandlers,
     ...virtualDatapointHandlers,
-    ...deviceInfosHandlers
+    ...deviceInfosHandlers,
+    ...mappingHandlers
   };
 
   constructor(app: Application, configManager: ConfigManager) {
@@ -52,21 +52,21 @@ export class RoutesManager {
       fs.readFileSync(this.swaggerFilePath, { encoding: 'utf8' })
     );
 
-    // TODO: REMOVE SWAGGER DOKU ROUTE
+    // TODO: Remove swagger ui route
     app.use(
       '/apidocs',
       swaggerUi.serveFiles(swaggerFile, {}),
       swaggerUi.setup(swaggerFile)
     );
 
-    //TODO: OMG please refactor this!!!
+    //TODO: Refactor
     [
       dataSourcesSetConfigManager,
       dataSinksSetConfigManager,
-      dataPointsSetConfigManager,
       backupSetConfigManager,
       vdpsSetConfigManager,
-      deviceInfosSetConfigManager
+      deviceInfosSetConfigManager,
+      mappingSetConfigManager
     ].forEach((func) => func(configManager));
 
     this.inputValidator = OpenApiValidator.middleware({

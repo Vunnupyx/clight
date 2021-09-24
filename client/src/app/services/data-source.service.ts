@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
-import { DataSource } from 'app/models';
-import { HttpMockupService } from 'app/shared';
+import { DataSource, DataSourceProtocol } from 'app/models';
+import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler } from 'app/shared/utils';
-import { DATA_SOURCES_MOCK } from './data-source.service.mock';
+import { errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 
 export class DataSourcesState {
-  status: Status;
-  dataSources: DataSource[];
+  status!: Status;
+  dataSources!: DataSource[];
 }
+
+const DATA_SOURCES_ORDER = [DataSourceProtocol.S7, DataSourceProtocol.IOShield];
 
 @Injectable()
 export class DataSourceService {
@@ -19,7 +22,9 @@ export class DataSourceService {
 
   constructor(
     storeFactory: StoreFactory<DataSourcesState>,
-    private httpService: HttpMockupService
+    private httpService: HttpService,
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -42,15 +47,19 @@ export class DataSourceService {
 
     try {
       const { dataSources } = await this.httpService.get<api.DataSourceList>(
-        `/datasources`,
-        undefined,
-        DATA_SOURCES_MOCK()
+        `/datasources`
       );
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSources = dataSources.map((x) => this._parseDataSource(x));
+        state.dataSources = this._orderByProtocol(
+          dataSources!.map((x) => this._parseDataSource(x))
+        );
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed
@@ -58,16 +67,14 @@ export class DataSourceService {
     }
   }
 
-  async getDataSource(datasourceId: string) {
+  async getDataSource(datasourceProtocol: string) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
     try {
       const obj = await this.httpService.get(
-        `/datasources/${datasourceId}`,
-        undefined,
-        DATA_SOURCES_MOCK()[0]
+        `/datasources/${datasourceProtocol}`
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -76,34 +83,42 @@ export class DataSourceService {
         );
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source.LoadError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
     }
   }
 
-  async updateDataSource(obj: DataSource) {
+  async updateDataSource(protocol: string, obj: Partial<DataSource>) {
     this._store.patchState((state) => {
       state.status = Status.Updating;
       state.dataSources = state.dataSources.map((x) =>
-        x.id != obj.id ? x : obj
+        x.protocol != obj.protocol ? x : obj
       );
     });
 
     try {
-      await this.httpService.patch(`/datasources/${obj.id}`, obj);
+      await this.httpService.patch(`/datasources/${protocol}`, obj);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source.UpdateError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
     }
+  }
+
+  private _orderByProtocol(objs: DataSource[]): DataSource[] {
+    return mapOrder<DataSource>(objs, DATA_SOURCES_ORDER, 'protocol');
   }
 
   private _parseDataSource(obj: api.DataSourceType) {

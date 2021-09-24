@@ -22,7 +22,9 @@
     "Control": "Control",
     "Model": "Model",
     "SerialNumber": "SerialNumber",
-    "ApplyChanges": "Apply Changes"
+    "ApplyChanges": "Apply Changes",
+    "LoadError": "Failed to load device info. Try again later",
+    "UpdateError": "Failed to update device info. Try again later"
   },
   "settings-data-source": {
     "DataSource": "Data Source",
@@ -44,7 +46,16 @@
     "Actions": "Actions",
     "Area": "Area",
     "Component": "Component",
-    "VariableName": "Variable name"
+    "VariableName": "Variable name",
+    "Status": "Status",
+    "LoadError": "Failed to load data sources. Try again later",
+    "UpdateError": "Failed to update a data source. Try again later"
+  },
+  "settings-data-source-point": {
+    "LoadError": "Failed to load data points. Try again later",
+    "CreateError": "Failed to create a data point. Try again later",
+    "UpdateError": "Failed to update a data point. Try again later",
+    "DeleteError": "Failed to delete a data point. Try again later"
   },
   "settings-data-sink": {
     "DataSink": "Data Sink",

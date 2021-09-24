@@ -41,6 +41,7 @@ function dataSourceGetHandler(request: Request, response: Response): void {
  */
 function dataSourcePatchHandler(request: Request, response: Response): void {
   const allowed = ['connection', 'enabled'];
+  const protocol = request.params.datasourceProtocol;
 
   const dataSource = configManager.config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
@@ -59,8 +60,17 @@ function dataSourcePatchHandler(request: Request, response: Response): void {
       });
     }
   });
+
   const changedDatasource = { ...dataSource, ...request.body };
-  configManager.changeConfig('update', 'dataSources', changedDatasource);
+  const config = configManager.config;
+  config.dataSources = [
+    ...config.dataSources.filter(
+      (dataSource) => dataSource.protocol !== protocol
+    ),
+    changedDatasource
+  ];
+  configManager.config = config;
+
   response.status(200).json(changedDatasource);
 }
 
@@ -87,12 +97,15 @@ function dataSourcesPostDatapointHandler(
   response: Response
 ): void {
   //TODO: Inputvaidlation
-  const dataSource = configManager.config.dataSources.find(
+
+  const config = configManager.config;
+  const dataSource = config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const newData = { ...request.body, ...{ id: uuidv4() } };
   dataSource.dataPoints.push(newData);
-  configManager.changeConfig('update', 'dataSources', dataSource);
+  configManager.config = config;
+
   response.status(200).json({
     created: newData,
     href: `${request.originalUrl}/${newData.id}`
@@ -121,7 +134,8 @@ function dataSourcesDeleteDatapointHandler(
   request: Request,
   response: Response
 ): void {
-  const dataSource = configManager.config.dataSources.find(
+  const config = configManager.config;
+  const dataSource = config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const index = dataSource?.dataPoints?.findIndex(
@@ -130,8 +144,9 @@ function dataSourcesDeleteDatapointHandler(
   const point = dataSource?.dataPoints[index];
   if (index >= 0) {
     dataSource.dataPoints.splice(index, 1);
-    configManager.changeConfig('update', 'dataSources', dataSource);
   }
+  configManager.config = config;
+
   response
     .status(dataSource && point ? 200 : 404)
     .json(dataSource && index >= 0 ? { deleted: point } : null);
@@ -145,7 +160,8 @@ function dataSourcesPatchDatapointHandler(
   response: Response
 ): void {
   //TODO: Input validation
-  const dataSource = configManager.config.dataSources.find(
+  const config = configManager.config;
+  const dataSource = config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const index = dataSource?.dataPoints?.findIndex(
@@ -153,9 +169,14 @@ function dataSourcesPatchDatapointHandler(
   );
   if (dataSource && index >= 0) {
     dataSource.dataPoints.splice(index, 1);
-    const newData = { ...request.body, ...{ id: uuidv4() } };
+
+    const dataPoint = dataSource?.dataPoints?.find(
+      (point) => point.id === request.params.datapointId
+    );
+
+    const newData = { ...request.body, dataPoint };
     dataSource.dataPoints.push(newData);
-    configManager.changeConfig('update', 'dataSources', dataSource);
+    configManager.config = config;
     response.status(200).json({
       changed: newData,
       href: `/api/v1/datasources/${request.params.datasourceId}/dataPoints/${newData.id}`

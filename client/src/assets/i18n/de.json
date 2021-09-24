@@ -22,7 +22,9 @@
     "Control": "",
     "Model": "",
     "SerialNumber": "",
-    "ApplyChanges": ""
+    "ApplyChanges": "",
+    "LoadError": "",
+    "UpdateError": ""
   },
   "settings-data-source": {
     "DataSource": "Datenquelle",
@@ -44,7 +46,16 @@
     "Actions": "",
     "Area": "",
     "Component": "",
-    "VariableName": ""
+    "VariableName": "",
+    "Status": "",
+    "LoadError": "",
+    "UpdateError": ""
+  },
+  "settings-data-source-point": {
+    "LoadError": "",
+    "CreateError": "",
+    "UpdateError": "",
+    "DeleteError": ""
   },
   "settings-data-sink": {
     "DataSink": "",

@@ -1,8 +1,8 @@
 /* tslint:disable */
+import { Uuid } from './uuid';
 import { DataPointType } from './data-point-type';
 export interface DataSinkType {
-  datapoints?: Array<DataPointType>;
+  datapoints?: Array<Uuid & DataPointType>;
   enabled?: boolean;
-  id?: string;
   name?: string;
 }

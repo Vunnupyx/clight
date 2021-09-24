@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -17,7 +19,9 @@ export class DeviceInfoService {
 
   constructor(
     storeFactory: StoreFactory<DeviceInfoState>,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private translate: TranslateService,
+    private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -45,7 +49,9 @@ export class DeviceInfoService {
         state.deviceInfo = deviceInfo;
       });
     } catch (err) {
-      // TODO: add toaster message
+      this.toastr.error(
+        this.translate.instant('settings-device-info.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed
@@ -66,7 +72,9 @@ export class DeviceInfoService {
         state.deviceInfo = obj;
       });
     } catch (err) {
-      // TODO: add toaster message
+      this.toastr.error(
+        this.translate.instant('settings-device-info.UpdateError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed

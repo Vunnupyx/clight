@@ -1,0 +1,7 @@
+[
+  {
+    "address": "/<Area>/<Component>/<variable>[u<arrayIndex>, <arrayIndex2D>]",
+    "type": "nck",
+    "name": "Blabla"
+  }
+]

@@ -13,7 +13,8 @@ import {
 } from '../routes/apis/v1/DataSources';
 import {
   dataSinksHandlers,
-  setConfigManager as dataSinksSetConfigManager
+  setConfigManager as dataSinksSetConfigManager,
+  setDataSinksManager
 } from '../routes/apis/v1/DataSinks';
 import {
   virtualDatapointHandlers,
@@ -34,11 +35,13 @@ import {
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../DataSourcesManager';
+import { DataSinkManager } from '../../DataSinkManager';
 
 interface RoutesManagerOptions {
   app: Application
   configManager: ConfigManager,
-  dataSourcesManager: DataSourcesManager
+  dataSourcesManager: DataSourcesManager,
+  dataSinksManager: DataSinkManager
 }
 export class RoutesManager {
   private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');
@@ -75,6 +78,7 @@ export class RoutesManager {
       deviceInfosSetConfigManager,
       mappingSetConfigManager
     ].forEach((func) => func(options.configManager));
+    setDataSinksManager(options.dataSinksManager)
     setDataSourcesManager(options.dataSourcesManager);
 
     this.inputValidator = OpenApiValidator.middleware({

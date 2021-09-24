@@ -47,7 +47,12 @@ export class RestApiManager {
       })
     );
     this.expressApp.disable('x-powered-by');
-    this.routeManager = new RoutesManager({app: this.expressApp,configManager :configManager, dataSourcesManager: dataSourcesManager});
+    this.routeManager = new RoutesManager({
+      app: this.expressApp,
+      configManager :configManager,
+      dataSourcesManager: dataSourcesManager,
+      dataSinksManager: options.dataSinksManager
+    });
   }
 
   /**

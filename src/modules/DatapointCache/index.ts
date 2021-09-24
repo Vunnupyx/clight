@@ -1,4 +1,4 @@
-import { IDataSourceMeasurementEvent } from "../DataSource";
+import { IDataSourceMeasurementEvent } from '../DataSource';
 
 type EventsById = {
   [id: string]: {
@@ -34,7 +34,7 @@ export class DataPointCache {
         changed: lastEvent
           ? lastEvent.measurement.value !== event.measurement.value
           : false,
-        event,
+        event
       };
     });
   }

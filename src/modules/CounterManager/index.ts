@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
-import winston from "winston";
+import fs from 'fs';
+import path from 'path';
+import winston from 'winston';
 
 type CounterDict = {
   [id: string]: number;
@@ -12,8 +12,8 @@ type CounterDict = {
 export class CounterManager {
   private persist = true;
   private counters: CounterDict = {};
-  private configFolder = "../../../mdclight/config";
-  private counterStoragePath = "";
+  private configFolder = '../../../mdclight/config';
+  private counterStoragePath = '';
 
   /**
    * Initializes counter manages and tries to restore old counter states
@@ -21,7 +21,7 @@ export class CounterManager {
   constructor() {
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       winston.warn(
-        "Configuration folder for storing counter values not found! The counts are not persisted!"
+        'Configuration folder for storing counter values not found! The counts are not persisted!'
       );
       this.persist = false;
       return;
@@ -34,7 +34,7 @@ export class CounterManager {
 
     if (fs.existsSync(this.counterStoragePath)) {
       this.counters = JSON.parse(
-        fs.readFileSync(this.counterStoragePath, "utf8")
+        fs.readFileSync(this.counterStoragePath, 'utf8')
       );
     }
   }
@@ -45,7 +45,7 @@ export class CounterManager {
    * @returns number
    */
   public increment(id: string): number {
-    if (typeof this.counters[id] !== "undefined") {
+    if (typeof this.counters[id] !== 'undefined') {
       this.counters[id] = this.counters[id] + 1;
     } else {
       this.counters[id] = 1;

@@ -1,8 +1,8 @@
-import { IDataSourceConfig } from "../ConfigManager/interfaces";
+import { IDataSourceConfig } from '../ConfigManager/interfaces';
 import {
   IBaseLifecycleEvent,
-  LifecycleEventStatus,
-} from "../../common/interfaces";
+  LifecycleEventStatus
+} from '../../common/interfaces';
 export interface IDataSourceLifecycleEvent extends IBaseLifecycleEvent {
   dataSource: IDataSourceEvent;
   status: LifecycleEventStatus;
@@ -42,13 +42,13 @@ export interface IDataSourceDataPointLifecycleEvent
 }
 
 export enum DataSourceEventTypes {
-  Measurement = "datasource-measurement",
-  Error = "datasource-error",
-  Lifecycle = "datasource-lifecycle",
+  Measurement = 'datasource-measurement',
+  Error = 'datasource-error',
+  Lifecycle = 'datasource-lifecycle'
 }
 
 export enum DataPointEventTypes {
-  Measurement = "datapoint-measurement",
-  Error = "datapoint-error",
-  Lifecycle = "datapoint-lifecycle",
+  Measurement = 'datapoint-measurement',
+  Error = 'datapoint-error',
+  Lifecycle = 'datapoint-lifecycle'
 }

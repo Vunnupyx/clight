@@ -1,8 +1,8 @@
-import winston from "winston";
-import { IVirtualDataPointConfig } from "../ConfigManager/interfaces";
-import { CounterManager } from "../CounterManager";
-import { DataPointCache } from "../DatapointCache";
-import { IDataSourceMeasurementEvent } from "../DataSource";
+import winston from 'winston';
+import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
+import { CounterManager } from '../CounterManager';
+import { DataPointCache } from '../DatapointCache';
+import { IDataSourceMeasurementEvent } from '../DataSource';
 
 /**
  * Calculates virtual datapoints
@@ -24,10 +24,10 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private toBoolean(value: boolean | number | string): boolean {
-    if (typeof value === "number") {
+    if (typeof value === 'number') {
       return value > 0;
     }
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       return value.length > 0;
     }
     return value;
@@ -146,13 +146,13 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): boolean | number | null {
     switch (config.type) {
-      case "and":
+      case 'and':
         return this.and(sourceEvents, config);
-      case "or":
+      case 'or':
         return this.or(sourceEvents, config);
-      case "not":
+      case 'not':
         return this.not(sourceEvents, config);
-      case "counter":
+      case 'counter':
         return this.count(sourceEvents, config);
       default:
         winston.warn(
@@ -201,7 +201,7 @@ export class VirtualDataPointManager {
       });
 
       // Skip virtual data point if one or more source events are missing
-      if (sourceEvents.some((event) => typeof event === "undefined")) continue;
+      if (sourceEvents.some((event) => typeof event === 'undefined')) continue;
 
       const value = this.calulateValue(sourceEvents, vdpConfig);
 
@@ -211,14 +211,14 @@ export class VirtualDataPointManager {
 
       const newEvent: IDataSourceMeasurementEvent = {
         dataSource: {
-          name: "virtual",
-          protocol: "virtual",
+          name: 'virtual',
+          protocol: 'virtual'
         },
         measurement: {
           id: vdpConfig.id,
-          name: "",
-          value,
-        },
+          name: '',
+          value
+        }
       };
 
       _events.push(newEvent);

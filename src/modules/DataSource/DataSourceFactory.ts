@@ -1,8 +1,8 @@
-import { DataSource } from "./DataSource";
-import { IDataSourceConfig } from "../ConfigManager/interfaces";
-import { DataSourceProtocols } from "../../common/interfaces";
-import { S7DataSource } from "./S7";
-import { IoshieldDataSource } from "./Ioshield";
+import { DataSource } from './DataSource';
+import { IDataSourceConfig } from '../ConfigManager/interfaces';
+import { DataSourceProtocols } from '../../common/interfaces';
+import { S7DataSource } from './S7';
+import { IoshieldDataSource } from './Ioshield';
 
 /**
  * Create data source for different types

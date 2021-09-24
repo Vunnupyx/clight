@@ -8,6 +8,6 @@ No custom rules are applied to the slide toggle component.
 
 ## Code Examples
 
-``` html
+```html
 <mat-slide-toggle [checked]="true"></mat-slide-toggle>
 ```

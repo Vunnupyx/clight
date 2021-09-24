@@ -1,9 +1,4 @@
-﻿$spacings: xxs 4px,
-xs 8px,
-s 16px,
-m 24px,
-l 48px,
-xl 96px;
+﻿$spacings: xxs 4px, xs 8px, s 16px, m 24px, l 48px, xl 96px;
 
 @for $i from 1 through length($spacings) {
   $space: nth($spacings, $i);
@@ -14,12 +9,14 @@ xl 96px;
     margin: #{$value};
   }
 
-  .spacing-x-#{$key} { // x-axis
+  .spacing-x-#{$key} {
+    // x-axis
     margin-left: #{$value};
     margin-right: #{$value};
   }
 
-  .spacing-y-#{$key} { // y-axis
+  .spacing-y-#{$key} {
+    // y-axis
     margin-top: #{$value};
     margin-bottom: #{$value};
   }

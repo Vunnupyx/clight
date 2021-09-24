@@ -1,23 +1,23 @@
 .mat-table {
   width: 100%;
-  
-    .mat-header-row {
-        height: 80px;
 
-        .mat-header-cell {
-            color: $dark-primary-text;
-        }
+  .mat-header-row {
+    height: 80px;
+
+    .mat-header-cell {
+      color: $dark-primary-text;
     }
+  }
 
-    .mat-row,
-    .mat-footer-row {
-        height: 56px;
+  .mat-row,
+  .mat-footer-row {
+    height: 56px;
 
-        .mat-cell {
-            color: $dark-focused;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.56px;
-        }
+    .mat-cell {
+      color: $dark-focused;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.56px;
     }
+  }
 }

@@ -86,7 +86,7 @@ export class DataSourcesManager {
   };
 
   /**
-   * Published livecycle events
+   * Published lifecycle events
    * @param  {ILifecycleEvent} lifeCycleEvent
    * @returns void
    */

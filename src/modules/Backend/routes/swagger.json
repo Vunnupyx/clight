@@ -102,6 +102,29 @@
         }
       }
     },
+    "/datasources/{datasourceProtocol}/status": {
+      "parameters": [
+        {
+          "name": "datasourceProtocol",
+          "in": "path",
+          "description": "id of the datasource",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["datasource"],
+        "operationId": "dataSourceGetStatus",
+        "responses": {
+          "200": {
+            "description": "Request status of selected dateSource.",
+            "schema": {
+              "$ref": "#/definitions/currentStatus"
+            }
+          }
+        }
+      }
+    },
     "/datasources/{datasourceProtocol}/dataPoints": {
       "parameters": [
         {
@@ -316,7 +339,6 @@
         "tags": ["datasinks"],
         "operationId": "dataSinkGet",
         "summary": "Get datasink object by id",
-
         "responses": {
           "200": {
             "description": "Datasink object",
@@ -346,6 +368,28 @@
             "description": "Successfully changed datasink",
             "schema": {
               "$ref": "#/definitions/dataSinkType"
+            }
+          }
+        }
+      }
+    },
+    "/datasinks/{datasinkProtocol}/status": {
+      "parameters": [
+        {
+          "name": "datasinkProtocol",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["datasinks"],
+        "operationId": "dataSinkGetStatus",
+        "responses": {
+          "200": {
+            "description": "Current status of the selected datasink.",
+            "schema": {
+              "$ref": "#/definitions/currentStatus"
             }
           }
         }
@@ -1172,6 +1216,15 @@
         "id": {
           "type": "string",
           "format": "uuid"
+        }
+      }
+    },
+    "currentStatus": {
+      "type": "object",
+      "properties": {
+        "status":{
+          "type": "string",
+          "enum": ["connected", "disconnected"]
         }
       }
     }

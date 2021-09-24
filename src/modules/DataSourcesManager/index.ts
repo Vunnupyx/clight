@@ -16,7 +16,7 @@ export class DataSourcesManager {
   private dataSourcesConfig: ReadonlyArray<IDataSourceConfig>;
   private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
-  private dataSources: ReadonlyArray<DataSource | void>;
+  private dataSources: ReadonlyArray<DataSource>;
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
 

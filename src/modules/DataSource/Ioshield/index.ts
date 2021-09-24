@@ -85,22 +85,8 @@ export class IoshieldDataSource extends DataSource {
    * Validates data source configuration and throws errors for wrong configured data points
    */
   private validateDataPointConfiguration() {
-    const allowedDataPointAddresses = [
-      'DI0',
-      'DI1',
-      'DI2',
-      'DI3',
-      'DI4',
-      'DI5',
-      'DI6',
-      'DI7',
-      'DI8',
-      'DI9'
-    ];
     this.config.dataPoints.forEach((dp) => {
-      if (!allowedDataPointAddresses.some((addr) => addr === dp.address)) {
-        throw new Error(`Invalid data point address: ${dp.address}`);
-      }
+      if(!/\bDI[0-9]\b/.test(dp.address)) throw new Error(`Invalid data point address: ${dp.address}`);
     });
   }
 }

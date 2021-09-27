@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DataSource, DataSourceProtocol } from 'app/models';
-import { HttpService } from 'app/shared';
+import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
@@ -22,9 +22,9 @@ export class DataSourceService {
 
   constructor(
     storeFactory: StoreFactory<DataSourcesState>,
-    private httpService: HttpService,
-    private toastr: ToastrService,
-    private translate: TranslateService
+    private httpService: HttpMockupService,
+    private translate: TranslateService,
+    private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -49,11 +49,10 @@ export class DataSourceService {
       const { dataSources } = await this.httpService.get<api.DataSourceList>(
         `/datasources`
       );
-
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSources = this._orderByProtocol(
-          dataSources!.map((x) => this._parseDataSource(x))
+          dataSources.map((x) => this._parseDataSource(x))
         );
       });
     } catch (err) {

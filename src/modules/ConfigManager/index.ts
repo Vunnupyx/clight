@@ -50,9 +50,15 @@ const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.OPCUA
+  protocol: DataSinkProtocols.OPCUA,
+  auth: {
+    type: 'none',
+    password: '',
+    userName: ''
+  }
 };
-const defaultMtconnectDataSink: IDataSinkConfig = {
+
+const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   name: '',
   dataPoints: [],
   enabled: false,
@@ -80,7 +86,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   public set config(config: IConfig) {
     this._config = config;
-    this.saveConfigToFile(this.configName);
+    this.saveConfigToFile();
     this.emit('newConfig', this.config);
   }
 
@@ -198,7 +204,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     }
 
     if (changed) {
-      this.saveConfigToFile(this.configName);
+      this.saveConfigToFile();
     }
   }
 
@@ -330,20 +336,24 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         throw new Error();
       }
     }
-    this.saveConfigToFile(this.configName);
+    this.saveConfigToFile();
   }
 
   /**
    * Save the current data from config property into a JSON config file on hard drive
    */
-  private saveConfigToFile(configName: string): void {
+  private saveConfigToFile(): void {
     fs.writeFileSync(
-      path.join(this.configFolder, configName),
+      path.join(this.configFolder, this.configName),
       JSON.stringify(this._config, null, 2),
       { encoding: 'utf-8' }
     );
     winston.info(
       `${ConfigManager.className}::saveConfigToFile saved new config to file`
     );
+  }
+
+  public saveConfig(): void {
+    this.saveConfigToFile();
   }
 }

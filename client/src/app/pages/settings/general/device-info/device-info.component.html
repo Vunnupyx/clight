@@ -1,0 +1,47 @@
+<form #form="ngForm" (ngSubmit)="form.valid && onSave()">
+  <mat-form-field>
+    <mat-label>{{ 'settings-device-info.Manufacturer' | translate }}</mat-label>
+    <input
+      matInput
+      name="manufacturer"
+      [(ngModel)]="deviceInfo.manufacturer"
+      [placeholder]="'settings-device-info.Manufacturer' | translate"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'settings-device-info.Control' | translate }}</mat-label>
+    <input
+      matInput
+      name="control"
+      [(ngModel)]="deviceInfo.control"
+      [placeholder]="'settings-device-info.Control' | translate"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'settings-device-info.Model' | translate }}</mat-label>
+    <input
+      matInput
+      name="model"
+      [(ngModel)]="deviceInfo.model"
+      [placeholder]="'settings-device-info.Model' | translate"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'settings-device-info.SerialNumber' | translate }}</mat-label>
+    <input
+      matInput
+      name="serialNumber"
+      [(ngModel)]="deviceInfo.serialNumber"
+      [placeholder]="'settings-device-info.SerialNumber' | translate"
+    />
+  </mat-form-field>
+  <div class="d-flex justify-content-end">
+    <button
+      type="submit"
+      mat-raised-button
+      [disabled]="isBusy || !form.dirty || form.invalid"
+    >
+      {{ 'settings-device-info.ApplyChanges' | translate }}
+    </button>
+  </div>
+</form>

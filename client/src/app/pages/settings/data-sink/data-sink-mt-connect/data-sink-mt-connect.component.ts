@@ -1,18 +1,31 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Subscription} from 'rxjs';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
-import {DataPoint, DataPointType, DataSink, DataSinkAuth, DataSinkAuthType, DataSinkProtocol} from 'app/models';
-import {DataPointService, DataSinkService} from 'app/services';
-import {Status} from 'app/shared/state';
-import {arrayToMap, clone} from 'app/shared/utils';
+import {
+  DataPoint,
+  DataPointType,
+  DataSink,
+  DataSinkAuth,
+  DataSinkAuthType,
+  DataSinkProtocol
+} from 'app/models';
+import { DataPointService, DataSinkService } from 'app/services';
+import { Status } from 'app/shared/state';
+import { arrayToMap, clone } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import {CreateDataItemModalComponent} from '../create-data-item-modal/create-data-item-modal.component';
-import {SelectMapModalComponent} from '../select-map-modal/select-map-modal.component';
-import {PreDefinedDataPoint} from '../create-data-item-modal/create-data-item-modal.component.mock';
+import { CreateDataItemModalComponent } from '../create-data-item-modal/create-data-item-modal.component';
+import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
+import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -23,7 +36,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   DataPointType = DataPointType;
   DataSinkAuthTypes = [
     DataSinkAuthType.Anonymous,
-    DataSinkAuthType.UserAndPass,
+    DataSinkAuthType.UserAndPass
   ];
   Protocol = DataSinkProtocol;
   MTConnectItems: DataPoint[] = [];
@@ -33,8 +46,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   auth: DataSinkAuth = {
     type: DataSinkAuthType.Anonymous,
     userName: '',
-    password: '',
-  }
+    password: ''
+  };
 
   datapointRows?: DataPoint[];
 

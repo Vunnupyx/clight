@@ -1,0 +1,16 @@
+.source-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.source-radio-button {
+  margin: 5px;
+
+  ::ng-deep {
+    .mat-radio-label {
+      align-items: flex-start;
+      white-space: normal;
+    }
+  }
+}

@@ -10,6 +10,9 @@
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen"
   },
+  "quick-start": {
+    "Language": "Language"
+  },
   "settings-general": {
     "General": "Erfolgreich",
     "Language": "Sprache",

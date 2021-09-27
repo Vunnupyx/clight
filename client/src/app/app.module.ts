@@ -12,6 +12,7 @@ import { SettingsModule } from './pages/settings/settings.module';
 
 import { AppRoutingModule } from './app.routing';
 import { AppTranslationModule } from './app.translation';
+import {QuickStartModule} from "./pages/quick-start/quick-start.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,6 +29,7 @@ import { AppTranslationModule } from './app.translation';
 
     LayoutModule,
     SettingsModule,
+    QuickStartModule,
 
     AppRoutingModule,
     ToastrModule.forRoot()

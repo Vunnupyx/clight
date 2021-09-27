@@ -10,6 +10,13 @@
     "Network": "Network",
     "SystemInformation": "System Information"
   },
+  "quick-start": {
+    "Language": "Language",
+    "DataSourceDescriptions": {
+      "s7": "Description lorem",
+      "ioshield": "Description lorem"
+    }
+  },
   "settings-general": {
     "General": "General",
     "DeviceInfo": "Device Info",

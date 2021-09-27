@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
 import { DataPoint, DataSinkProtocol } from 'app/models';
-import { HttpMockupService } from 'app/shared';
+import { HttpMockupService, HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler, flatArray } from 'app/shared/utils';
 import * as api from 'app/api/models';

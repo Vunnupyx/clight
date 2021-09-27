@@ -1,9 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
-import { DataSource } from '../../models';
-import { DataSourceService } from '../../services';
+import { DataSourceService, TemplateService } from '../../services';
+import { AvailableDataSink, AvailableDataSource } from '../../models/template';
 
 @Component({
   selector: 'app-quick-start',
@@ -15,21 +16,29 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   sourceForm!: FormGroup;
   applicationInterfacesForm!: FormGroup;
 
-  sources: DataSource[] = [];
+  sources: AvailableDataSource[] = [];
+  sinks: AvailableDataSink[] = [];
+  checkedSinks: { [key: string]: boolean } = {};
 
   sub = new Subscription();
 
   constructor(
+    private templateService: TemplateService,
     private dataSourceService: DataSourceService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.sub.add(
-      this.dataSourceService.dataSources.subscribe((x) => this.onDataSources(x))
+      this.templateService.dataSources.subscribe((x) => this.onDataSources(x)),
     );
 
-    this.dataSourceService.getDataSources();
+    this.sub.add(
+      this.templateService.dataSinks.subscribe((x) => this.onDataSinks(x)),
+    );
+
+    this.templateService.getAvailableTemplates();
 
     this.languageForm = this.formBuilder.group({
       lang: ['', Validators.required],
@@ -40,7 +49,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     });
 
     this.applicationInterfacesForm = this.formBuilder.group({
-      // interfaces: [[], Validators.required],
+      interfaces: [[], Validators.required],
     });
   }
 
@@ -48,7 +57,27 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  private onDataSources(x: DataSource[]) {
+  onSubmit() {
+    const dataSource = this.sourceForm.value.source;
+    const dataSinks = this.applicationInterfacesForm.value.interfaces;
+
+    this.templateService.apply({ dataSource, dataSinks })
+      .then(() => this.router.navigate(['/']));
+  }
+
+  onInterfacesChange() {
+    const interfaces = Object.entries(this.checkedSinks)
+      .filter(([, checked]) => checked)
+      .map(([key]) => key);
+
+    this.applicationInterfacesForm.patchValue({ interfaces });
+  }
+
+  private onDataSources(x: AvailableDataSource[]) {
     this.sources = x;
+  }
+
+  private onDataSinks(x: AvailableDataSink[]) {
+    this.sinks = x;
   }
 }

@@ -1,45 +1,60 @@
-<mat-stepper class="mt-20" [linear]="true" #stepper>
-  <mat-step [stepControl]="languageForm">
-    <ng-template matStepLabel>Select Language</ng-template>
-    <form [formGroup]="languageForm" class="pt-20">
-      <mat-form-field appearance="legacy">
-        <mat-label>{{
-          'quick-start.Language' | translate
-          }}</mat-label>
-        <mat-select
-          formControlName="lang"
-        >
-          <mat-option value="en">{{
-            'settings-general.English' | translate
-            }}</mat-option>
-          <mat-option value="de">{{
-            'settings-general.Deutsch' | translate
-            }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div>
-        <button mat-raised-button matStepperNext>Next</button>
-      </div>
-    </form>
-  </mat-step>
-  <mat-step [stepControl]="sourceForm">
-    <ng-template matStepLabel>Select Source</ng-template>
-    <form [formGroup]="sourceForm" class="pt-20">
-      <div>
-        <mat-radio-group formControlName="source" class="source-radio-group">
-          <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source.protocol">
-            <h2 class="mt-0 mb-0">{{ source.protocol }}</h2>
-            <p class="mt-0">{{ 'quick-start.DataSourceDescriptions.' + source.protocol | translate }}</p>
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
-      <button mat-raised-button matStepperNext>Next</button>
-    </form>
-  </mat-step>
-  <mat-step [stepControl]="applicationInterfacesForm">
-    <ng-template matStepLabel>Select Application Interfaces</ng-template>
-    <form [formGroup]="applicationInterfacesForm" class="pt-20">
-      <button mat-raised-button matStepperNext>Save</button>
-    </form>
-  </mat-step>
-</mat-stepper>
+<div class="container">
+  <mat-stepper class="mt-20" [linear]="true" #stepper>
+    <mat-step [stepControl]="languageForm">
+      <ng-template matStepLabel>{{ 'quick-start.SelectLanguage' | translate }}</ng-template>
+      <form [formGroup]="languageForm" class="pt-20">
+        <mat-form-field appearance="legacy">
+          <mat-label>{{
+            'quick-start.Language' | translate
+            }}</mat-label>
+          <mat-select
+            formControlName="lang"
+          >
+            <mat-option value="en">{{
+              'settings-general.English' | translate
+              }}</mat-option>
+            <mat-option value="de">{{
+              'settings-general.Deutsch' | translate
+              }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div>
+          <button mat-raised-button matStepperNext>{{ 'quick-start.Next' | translate }}</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="sourceForm">
+      <ng-template matStepLabel>{{ 'quick-start.SelectSource' | translate }}</ng-template>
+      <form [formGroup]="sourceForm" class="pt-20">
+        <div>
+          <mat-radio-group formControlName="source" class="source-radio-group">
+            <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source.id">
+              <h2 class="mt-0 mb-0">{{ source.name }}</h2>
+              <p class="mt-0">{{ source.description }}</p>
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <button mat-raised-button matStepperNext>{{ 'quick-start.Next' | translate }}</button>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="applicationInterfacesForm">
+      <ng-template matStepLabel>{{ 'quick-start.SelectApplicationInterfaces' | translate }}</ng-template>
+      <form [formGroup]="applicationInterfacesForm" class="pt-20" (submit)="onSubmit()">
+        <div class="source-radio-group">
+          <mat-checkbox
+            class="source-radio-button source-checkbox"
+            *ngFor="let sink of sinks"
+            [(ngModel)]="checkedSinks[sink.id]"
+            (ngModelChange)="onInterfacesChange()"
+            [ngModelOptions]="{standalone: true}"
+          >
+            <h2 class="mt-0 mb-0">{{ sink.name }}</h2>
+            <p class="mt-0">{{ sink.description }}</p>
+          </mat-checkbox>
+        </div>
+
+        <button mat-raised-button matStepperNext>{{ 'quick-start.Save' | translate }}</button>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</div>

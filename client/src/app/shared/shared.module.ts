@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -49,6 +50,7 @@ import { AppTranslationModule } from 'app/app.translation';
     MatLayoutModule,
     MatSelectModule,
     MatRadioModule,
+    MatCheckboxModule,
     MatSidenavModule,
     MatToolbarModule,
     MatButtonToggleModule,

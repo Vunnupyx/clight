@@ -12,10 +12,12 @@
   },
   "quick-start": {
     "Language": "Language",
-    "DataSourceDescriptions": {
-      "s7": "Description lorem",
-      "ioshield": "Description lorem"
-    }
+    "SelectLanguage": "Select Language",
+    "SelectSource": "Select Source",
+    "SelectApplicationInterfaces": "Select Application Interfaces",
+    "LoadError": "Failed to load info. Try again later",
+    "Next": "Next",
+    "Save": "Save"
   },
   "settings-general": {
     "General": "General",

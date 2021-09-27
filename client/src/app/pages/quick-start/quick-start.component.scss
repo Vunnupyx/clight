@@ -14,3 +14,14 @@
     }
   }
 }
+
+.source-checkbox {
+  ::ng-deep {
+    .mat-checkbox-layout {
+      align-items: flex-start;
+    }
+    .mat-checkbox-inner-container {
+      margin: 0 10px 0 0;
+    }
+  }
+}

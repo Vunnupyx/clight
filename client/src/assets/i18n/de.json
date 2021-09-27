@@ -11,7 +11,13 @@
     "SystemInformation": "System Informationen"
   },
   "quick-start": {
-    "Language": "Language"
+    "Language": "Language",
+    "SelectLanguage": "Select Language",
+    "SelectSource": "Select Source",
+    "SelectApplicationInterfaces": "Select Application Interfaces",
+    "LoadError": "Error",
+    "Next": "Next",
+    "Save": "Save"
   },
   "settings-general": {
     "General": "Erfolgreich",

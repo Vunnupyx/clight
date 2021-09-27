@@ -5,6 +5,7 @@
     "UpdateManager": "Update Manager",
     "DataSource": "Datenquelle",
     "VirtualDataPoints": "Virtuelle Datenpunkte",
+    "DataMapping": "",
     "DataSinks": "Anwendungs Schnittstellen",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen"
@@ -12,9 +13,19 @@
   "settings-general": {
     "General": "Erfolgreich",
     "Language": "Sprache",
+    "DeviceInfo": "Device Info",
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch"
+  },
+  "settings-device-info": {
+    "Manufacturer": "",
+    "Control": "",
+    "Model": "",
+    "SerialNumber": "",
+    "ApplyChanges": "",
+    "LoadError": "",
+    "UpdateError": ""
   },
   "settings-data-source": {
     "DataSource": "Datenquelle",
@@ -80,5 +91,22 @@
       "opcua": "OPC UA",
       "datahub": "Data Hub"
     }
+  },
+  "settings-data-mapping": {
+    "DataMapping": "",
+    "Mappings": "",
+    "Source": "",
+    "Target": "",
+    "Value": "",
+    "Actions": "",
+    "Edit": "",
+    "Delete": "",
+    "Save": "",
+    "Cancel": "",
+    "AddMapping": "",
+    "LoadError": "",
+    "CreateError": "",
+    "UpdateError": "",
+    "DeleteError": ""
   }
 }

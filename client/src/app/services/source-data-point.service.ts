@@ -6,9 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { DataSourceProtocol, SourceDataPoint } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler } from 'app/shared/utils';
+import { errorHandler, flatArray } from 'app/shared/utils';
 import * as api from 'app/api/models';
-import { CreateEntityResponse } from '../models/responses/create-entity.response';
+import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -22,8 +22,8 @@ export class SourceDataPointService {
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
     private httpService: HttpService,
-    private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -45,12 +45,42 @@ export class SourceDataPointService {
     }));
 
     try {
-      const { dataPoints } = await this.httpService.get<api.DataPointList>(
-        `/datasources/${datasourceProtocol}/datapoints`
+      const { dataPoints } = await this.httpService.get<{
+        dataPoints: api.Sourcedatapoint[];
+      }>(`/datasources/${datasourceProtocol}/datapoints`);
+
+      this._store.patchState((state) => {
+        state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+        state.status = Status.Ready;
+      });
+    } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.LoadError')
+      );
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Ready
+      }));
+    }
+  }
+
+  async getSourceDataPointsAll() {
+    this._store.patchState((state) => ({
+      status: Status.Loading,
+      sourceDataPoints: []
+    }));
+
+    try {
+      const { dataSources } = await this.httpService.get<api.DataSourceList>(
+        `/datasources`
+      );
+
+      const dataPoints = flatArray(
+        dataSources?.map((x) => x.dataPoints) as api.Sourcedatapoint[][]
       );
 
       this._store.patchState((state) => {
-        state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
+        state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -149,7 +179,7 @@ export class SourceDataPointService {
     }
   }
 
-  private _parseDataPoint(obj: api.DataPointType) {
+  private _parseDataPoint(obj: api.Sourcedatapoint) {
     return obj as SourceDataPoint;
   }
 

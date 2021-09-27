@@ -1,3 +1,7 @@
+export function flatArray<T = any>(array: T[][]): T[] {
+  return array.reduce((acc, curr) => acc.concat(...curr), []);
+}
+
 export function mapOrder<T>(array: T[], order, key): T[] {
   array.sort((a, b) => {
     let A = a[key];

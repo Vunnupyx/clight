@@ -30,7 +30,6 @@ import { AppTranslationModule } from './app.translation';
     SettingsModule,
 
     AppRoutingModule,
-
     ToastrModule.forRoot()
   ],
 

@@ -4,9 +4,9 @@ import { filter, map } from 'rxjs/operators';
 import { DataPoint, DataSinkProtocol } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler } from 'app/shared/utils';
-import { DATA_POINTS_MOCK } from './data-point.service.mock';
+import { errorHandler, flatArray } from 'app/shared/utils';
 import * as api from 'app/api/models';
+import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
 
 export class DataPointsState {
   status!: Status;
@@ -19,7 +19,7 @@ export class DataPointService {
 
   constructor(
     storeFactory: StoreFactory<DataPointsState>,
-    private httpService: HttpMockupService
+    private httpService: HttpService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -44,6 +44,34 @@ export class DataPointService {
       const { dataPoints } = await this.httpService.get<api.DataPointList>(
         `/datasinks/${protocol}/dataPoints`
       );
+      this._store.patchState((state) => {
+        state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
+        state.status = Status.Ready;
+      });
+    } catch (err) {
+      errorHandler(err);
+      // TODO: Show error message (toast notification?)
+      this._store.patchState(() => ({
+        status: Status.Ready
+      }));
+    }
+  }
+
+  async getDataPointsAll() {
+    this._store.patchState((state) => ({
+      status: Status.Loading,
+      dataPoints: []
+    }));
+
+    try {
+      const { dataSinks } = await this.httpService.get<{
+        dataSinks: api.DataSinkType[];
+      }>(`/datasinks`);
+
+      const dataPoints = flatArray(
+        dataSinks?.map((x) => x.dataPoints) as api.DataPointType[][]
+      );
+
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;

@@ -46,12 +46,14 @@ export class DataSinkService {
       }>(`/datasinks`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSinks = dataSinks.concat({
-          dataPoints: [],
-          enabled: false,
-          name: 'das',
-          protocol: 'datahub'
-        }).map((x) => this._parseDataSink(x));
+        state.dataSinks = dataSinks
+          .concat({
+            dataPoints: [],
+            enabled: false,
+            name: 'das',
+            protocol: 'datahub'
+          })
+          .map((x) => this._parseDataSink(x));
       });
     } catch (err) {
       errorHandler(err);

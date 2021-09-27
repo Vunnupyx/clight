@@ -1,0 +1,167 @@
+<p
+  *ngIf="isBusy"
+  style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(127, 127, 127, 0.4);
+    z-index: 10;
+  "
+></p>
+
+<h2 class="m-25">{{ 'settings-data-mapping.DataMapping' | translate }}</h2>
+
+<mat-divider></mat-divider>
+
+<div class="d-block m-20">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex align-items-center mb-15">
+        <h3>{{ 'settings-data-mapping.Mappings' | translate }}</h3>
+        <button
+          type="button"
+          [disabled]="isEditing"
+          mat-mini-fab
+          color="primary"
+          class="wh-32 border-round ml-15"
+          (click)="onAdd()"
+          matTooltipPosition="above"
+          [matTooltip]="'settings-data-mapping.AddMapping' | translate"
+        >
+          <mat-icon style="margin-top: -10px">add</mat-icon>
+        </button>
+      </div>
+      <ngx-datatable
+        [headerHeight]="50"
+        [rows]="mappingRows"
+        rowHeight="auto"
+        columnMode="flex"
+      >
+        <ngx-datatable-column
+          [name]="'settings-data-mapping.Source' | translate"
+          prop="source"
+          [flexGrow]="1"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <span *ngIf="unsavedRowIndex !== rowIndex">
+              {{ getSourceDataPoint(value)?.name }}
+            </span>
+            <mat-select
+              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              [ngModel]="value"
+              (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
+            >
+              <mat-option
+                [value]="item.id"
+                *ngFor="let item of sourceDataPoints"
+                >{{ item.name }}</mat-option
+              >
+            </mat-select>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-data-mapping.Target' | translate"
+          prop="target"
+          [flexGrow]="1"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <span *ngIf="unsavedRowIndex !== rowIndex">
+              {{ getDataPoint(value)?.name }}
+            </span>
+            <mat-select
+              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              [ngModel]="value"
+              (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
+            >
+              <mat-option [value]="item.id" *ngFor="let item of dataPoints">{{
+                item.name
+              }}</mat-option>
+            </mat-select>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-data-mapping.Value' | translate"
+          prop="mapValue"
+          [flexGrow]="1"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <span *ngIf="unsavedRowIndex !== rowIndex">
+              {{ value }}
+            </span>
+            <input
+              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              type="text"
+              class="w-100"
+              [ngModel]="value"
+              (ngModelChange)="unsavedRow.mapValue = $event"
+            />
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-data-mapping.Actions' | translate"
+          [flexGrow]="1"
+          cellClass="button-cell"
+          [sortable]="false"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+              <mat-button-toggle
+                *ngIf="false"
+                (click)="onEditStart(rowIndex, row)"
+                [matTooltip]="'settings-data-mapping.Edit' | translate"
+                matTooltipPosition="above"
+                ><mat-icon>edit</mat-icon></mat-button-toggle
+              >
+              <mat-button-toggle
+                (click)="onDelete(row)"
+                [matTooltip]="'settings-data-mapping.Delete' | translate"
+                matTooltipPosition="above"
+                ><mat-icon>delete_outline</mat-icon></mat-button-toggle
+              >
+            </mat-button-toggle-group>
+            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+              <mat-button-toggle
+                (click)="onEditEnd()"
+                [matTooltip]="'settings-data-mapping.Save' | translate"
+                matTooltipPosition="above"
+                ><mat-icon class="color-success"
+                  >check</mat-icon
+                ></mat-button-toggle
+              >
+              <mat-button-toggle
+                (click)="onEditCancel()"
+                [matTooltip]="'settings-data-mapping.Cancel' | translate"
+                matTooltipPosition="above"
+                ><mat-icon class="color-error"
+                  >close</mat-icon
+                ></mat-button-toggle
+              >
+            </mat-button-toggle-group>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</div>

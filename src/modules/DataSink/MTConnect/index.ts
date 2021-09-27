@@ -7,6 +7,7 @@ import { MTConnectManager } from '../../MTConnectManager';
 import {
   DataSourceLifecycleEventTypes,
   ILifecycleEvent,
+  LifecycleEventStatus,
   MTConnectDataItemTypes
 } from '../../../common/interfaces';
 import { DataItem, Event } from '../../MTConnectAdapter/DataItem';
@@ -31,8 +32,8 @@ export class MTConnectDataSink extends DataSink {
    */
   constructor(params: IDataSinkParams) {
     super(params);
-
     this.mtcAdapter = MTConnectManager.getAdapter();
+    this.protocol = 'mtconnect';
   }
 
   /**
@@ -102,5 +103,14 @@ export class MTConnectDataSink extends DataSink {
     Object.keys(this.dataItems).forEach((key) => {
       this.dataItems[key].unavailable();
     });
+  }
+
+  /**
+   * Return current adapter status.
+   * true -> active
+   * false -> inactive
+   */
+  public currentStatus(): boolean {
+    return !!this.mtcAdapter?.isRunning;
   }
 }

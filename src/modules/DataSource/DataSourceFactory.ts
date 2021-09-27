@@ -3,6 +3,7 @@ import { IDataSourceConfig } from '../ConfigManager/interfaces';
 import { DataSourceProtocols } from '../../common/interfaces';
 import { S7DataSource } from './S7';
 import { IoshieldDataSource } from './Ioshield';
+import winston from 'winston';
 
 /**
  * Create data source for different types
@@ -11,7 +12,7 @@ import { IoshieldDataSource } from './Ioshield';
  */
 export const createDataSource = (
   config: IDataSourceConfig
-): DataSource | void => {
+): DataSource => {
   const { protocol } = config;
 
   if (protocol === DataSourceProtocols.S7) {
@@ -21,6 +22,9 @@ export const createDataSource = (
   if (protocol === DataSourceProtocols.IOSHIELD) {
     return createIoshieldDataSource(config);
   }
+  const errMsg = 'DataSourceFactory::createDataSource error due to unknown protocol.';
+  winston.error(errMsg)
+  throw new Error(errMsg);
 };
 
 /**

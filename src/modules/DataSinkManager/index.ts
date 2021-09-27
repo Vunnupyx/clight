@@ -66,4 +66,11 @@ export class DataSinkManager {
       this.lifecycleBus.onEvent(ds.onLifecycleEvent.bind(ds));
     });
   }
+
+  /**
+   * Returns datasink by protocol
+   */
+  public getDataSinkByProto(protocol: string) {
+    return this.dataSinks.find((sink) => sink.protocol === protocol);
+  }
 }

@@ -6,14 +6,25 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
+import { DataSourcesManager } from '../../../../../DataSourcesManager';
+import { LifecycleEventStatus } from '../../../../../../common/interfaces';
+import { json } from 'stream/consumers';
 
 let configManager: ConfigManager;
+let dataSourcesManager: DataSourcesManager;
 
 /**
  * Set ConfigManager to make accessible for local function
  */
 export function setConfigManager(manager: ConfigManager) {
   configManager = manager;
+}
+
+/**
+ * Set dataSourcesManager to make accessible for local function
+ */
+export function setDataSourcesManager(manager: DataSourcesManager) {
+  dataSourcesManager = manager;
 }
 
 /**
@@ -185,10 +196,41 @@ function dataSourcesPatchDatapointHandler(
   response.status(404).send();
 }
 
+/**
+ * Returns the current status of the selected datasource
+ */
+function dataSourceGetStatusHandler(request: Request, response: Response) {
+  //TODO: Make more generic @markus
+  if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
+    response.status(404).json({ error: 'Protocol not valid' });
+    winston.error(`dataSourceGetStatusHandler error due to no valid protocol!`);
+    return;
+  }
+  if (!dataSourcesManager) {
+    response.status(500).send();
+    winston.error(
+      `dataSourceGetStatusHandler error due to no dataSourcesManager found!`
+    );
+    return;
+  }
+
+  let status = dataSourcesManager
+    .getDataSourceByProto(request.params.datasourceProtocol)
+    .getCurrentStatus();
+  status =
+    status !== LifecycleEventStatus.Connected
+      ? LifecycleEventStatus.Disconnected
+      : status;
+  response.status(200).json({ status });
+}
+
 export const dataSourceHandlers = {
-  dataSourcesGet: dataSourcesGetHandler,
+  // Single DataSource
   dataSourceGet: dataSourceGetHandler,
+  dataSourceGetStatus: dataSourceGetStatusHandler,
   dataSourcePatch: dataSourcePatchHandler,
+  dataSourcesGet: dataSourcesGetHandler,
+  // Multiple DataSources
   dataSourcesGetDatapoints: dataSourcesGetDatapointsHandler,
   dataSourcesPostDatapoint: dataSourcesPostDatapointHandler,
   dataSourcesGetDatapoint: dataSourcesGetDatapointHandler,

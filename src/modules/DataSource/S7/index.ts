@@ -39,7 +39,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connecting,
       dataSource: { protocol, name }
     });
-
+    this.currentStatus = LifecycleEventStatus.Connecting;
     this.client.initiateConnection(
       {
         host: connection.ipAddr,
@@ -183,6 +183,7 @@ export class S7DataSource extends DataSource {
         dataSource: { name, protocol },
         payload: err
       });
+      this.currentStatus = LifecycleEventStatus.ConnectionError
       this.reconnectTimeoutId = setTimeout(() => {
         if (this.isDisconnected) {
           return;
@@ -194,6 +195,7 @@ export class S7DataSource extends DataSource {
           status: LifecycleEventStatus.Reconnecting,
           dataSource: { name, protocol }
         });
+        this.currentStatus = LifecycleEventStatus.Reconnecting;
         this.init();
       }, this.RECONNECT_TIMEOUT);
       return;
@@ -206,6 +208,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connected,
       dataSource: { name, protocol }
     });
+    this.currentStatus = LifecycleEventStatus.Connected;
     this.isDisconnected = false;
     this.setupDataPoints();
   }
@@ -224,6 +227,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Disconnected,
       dataSource: { name, protocol }
     });
+    this.currentStatus = LifecycleEventStatus.Disconnected
     clearTimeout(this.reconnectTimeoutId);
     this.client.dropConnection();
   }

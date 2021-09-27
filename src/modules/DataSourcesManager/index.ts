@@ -16,7 +16,7 @@ export class DataSourcesManager {
   private dataSourcesConfig: ReadonlyArray<IDataSourceConfig>;
   private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
-  private dataSources: ReadonlyArray<DataSource | void>;
+  private dataSources: ReadonlyArray<DataSource>;
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
 
@@ -86,11 +86,18 @@ export class DataSourcesManager {
   };
 
   /**
-   * Published livecycle events
+   * Published lifecycle events
    * @param  {ILifecycleEvent} lifeCycleEvent
    * @returns void
    */
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
     this.lifecycleBus.push(lifeCycleEvent);
   };
+
+  /**
+   * Returns the datasource object by its protocol
+   */
+  public getDataSourceByProto(protocol: string) {
+    return this.dataSources.find((src) => src.protocol === protocol);
+  }
 }

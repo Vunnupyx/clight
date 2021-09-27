@@ -31,7 +31,7 @@ export class OPCUAAdapter {
   private auth: boolean;
   private users: IUser[];
   private generalConfig: IGeneralConfig;
-  private running = false;
+  private _running = false;
   private nodesetDir: string;
 
   private userManager: UserManagerOptions;
@@ -51,6 +51,10 @@ export class OPCUAAdapter {
       password: opcuaSink?.auth?.password
     }]
     this.generalConfig = config.config.general;
+  }
+
+  public get isRunning() {
+    return this._running;
   }
 
   /**
@@ -122,7 +126,7 @@ export class OPCUAAdapter {
     const logPrefix = `${OPCUAAdapter.className}::start`;
     const checked = this.initCheck(logPrefix);
     if (checked) return Promise.reject(checked);
-    if (this.running) {
+    if (this._running) {
       const errorMsg = `${logPrefix} try to start adapter but already running.`;
       winston.debug(errorMsg);
       return Promise.resolve();
@@ -130,7 +134,7 @@ export class OPCUAAdapter {
     this.server
       .start()
       .then(() => {
-        this.running = true;
+        this._running = true;
         const endpointUrl =
           this.server.endpoints[0].endpointDescriptions()[0].endpointUrl;
         winston.info(
@@ -148,7 +152,7 @@ export class OPCUAAdapter {
    */
   public async init(): Promise<OPCUAAdapter> {
     const logPrefix = `${OPCUAAdapter.className}::init`;
-    if (this.running) {
+    if (this._running) {
       winston.info(`${logPrefix} adapter already running.`);
       return this;
     }
@@ -249,7 +253,7 @@ export class OPCUAAdapter {
    */
   public async stop(timeoutMs?: number): Promise<void> {
     const logPrefix = `${OPCUAAdapter.className}::stop`;
-    if (!this.running) {
+    if (!this._running) {
       winston.debug(`${logPrefix} try to stop a already stopped adapter`);
       return Promise.resolve();
     }
@@ -257,7 +261,7 @@ export class OPCUAAdapter {
     return this.server
       .shutdown(timeoutMs || OPCUAAdapter.shutdownTimeoutMs)
       .then(() => {
-        this.running = false;
+        this._running = false;
         winston.info(`${logPrefix} adapter stopped.`);
       })
       .catch((err) => {

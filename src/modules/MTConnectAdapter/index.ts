@@ -17,7 +17,7 @@ export class MTConnectAdapter {
   private TIMEOUT = 10000;
   private server: net.Server;
   private clients: Socket[] = [];
-  private running;
+  private _running: boolean;
   private dataItems: DataItem[] = [];
   private config: IMTConnectConfig;
 
@@ -25,6 +25,10 @@ export class MTConnectAdapter {
     this.config = config.runtimeConfig.mtconnect;
     // register for config changes
     config.on('newConfig', this.configChangedHandler.bind(this));
+  }
+
+  public get isRunning() {
+    return this._running;
   }
 
   /**
@@ -188,7 +192,7 @@ export class MTConnectAdapter {
    * @returns void
    */
   public start(): void {
-    if (!this.running) {
+    if (!this._running) {
       this.server = net.createServer();
       this.server.listen(this.config.listenerPort);
 
@@ -199,7 +203,7 @@ export class MTConnectAdapter {
       );
     }
 
-    this.running = true;
+    this._running = true;
   }
 
   /**
@@ -207,7 +211,7 @@ export class MTConnectAdapter {
    * @returns Promise
    */
   public async stop(): Promise<void> {
-    if (this.running) {
+    if (this._running) {
       return new Promise((resolve) => {
         this.server.close(() => {
           resolve();
@@ -215,7 +219,7 @@ export class MTConnectAdapter {
       });
     }
 
-    this.running = false;
+    this._running = false;
     return;
   }
   private configChangedHandler(config: IConfig) {

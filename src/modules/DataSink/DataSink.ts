@@ -1,7 +1,7 @@
 import winston from 'winston';
 import { IDataSinkConfig, ITargetDataMap } from '../ConfigManager/interfaces';
 import { IDataSinkParams } from './interfaces';
-import { ILifecycleEvent } from '../../common/interfaces';
+import { ILifecycleEvent, LifecycleEventStatus } from '../../common/interfaces';
 import { DataPointMapper } from '../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../DataSource';
 
@@ -11,6 +11,7 @@ import { IDataSourceMeasurementEvent } from '../DataSource';
 export abstract class DataSink {
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;
+  public protocol: string;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -136,4 +137,6 @@ export abstract class DataSink {
    * Should disconnect the data source and clean up all connection resources
    */
   public abstract disconnect();
+
+  public abstract currentStatus(): boolean;
 }

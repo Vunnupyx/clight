@@ -61,7 +61,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.MTConnectItems = this.dataSinkService.getPredefinedDataPoints();
+    this.MTConnectItems = this.dataSinkService.getPredefinedMtConnectDataPoints();
     this.sub.add(
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
     );
@@ -101,7 +101,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     }
 
     const dialogRef = this.dialog.open(CreateDataItemModalComponent, {
-      data: { selection: undefined }
+      data: { selection: undefined, dataSinkProtocol: this.dataSink?.protocol }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -204,7 +204,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   onSaveAuth() {
-    // TODO: make api call to save auth
-    console.log('auth', this.auth);
+    this.dataSinkService.updateDataSink(this.dataSink?.protocol!, {
+      auth: this.auth,
+    });
   }
 }

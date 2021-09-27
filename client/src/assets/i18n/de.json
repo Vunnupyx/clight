@@ -55,6 +55,7 @@
     "Name": "",
     "Type": "",
     "DataItem": "",
+    "Address": "",
     "InitialValue": "",
     "Map": "",
     "Select": "",
@@ -75,6 +76,10 @@
     "From": "",
     "To": "",
     "AddMapping": "",
+    "AuthenticationLevels": {
+      "anonymous": "",
+      "user/pass": ""
+    },
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",

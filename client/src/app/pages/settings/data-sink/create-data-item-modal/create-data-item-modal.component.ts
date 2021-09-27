@@ -1,11 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
-import { DataSinkService } from '../../../../services';
-import { DataPoint } from '../../../../models';
+import {DataSinkService} from '../../../../services';
+import {DataPoint, DataSinkProtocol} from '../../../../models';
 
 export interface CreateDataItemModalData {
   selection: string;
+  dataSinkProtocol: DataSinkProtocol;
 }
 
 @Component({
@@ -14,6 +15,7 @@ export interface CreateDataItemModalData {
 })
 export class CreateDataItemModalComponent implements OnInit {
   rows: DataPoint[] = [];
+  DataSinkProtocol = DataSinkProtocol;
 
   constructor(
     private dataSinkService: DataSinkService,
@@ -22,7 +24,18 @@ export class CreateDataItemModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.rows = this.dataSinkService.getPredefinedDataPoints();
+    switch (this.data.dataSinkProtocol) {
+      case DataSinkProtocol.MTConnect:
+        this.rows = this.dataSinkService.getPredefinedMtConnectDataPoints();
+        break;
+      case DataSinkProtocol.OPC:
+        this.rows = this.dataSinkService.getPredefinedOPCDataPoints();
+        break;
+      case DataSinkProtocol.DH:
+        break;
+      default:
+        break;
+    }
   }
 
   onSelect({ selected }) {

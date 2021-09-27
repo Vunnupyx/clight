@@ -55,6 +55,7 @@
     "Name": "Name",
     "Type": "Type",
     "DataItem": "Data Item",
+    "Address": "Address",
     "InitialValue": "Initial Value",
     "Map": "Map",
     "Select": "Select",
@@ -81,6 +82,10 @@
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
       "datahub": "Data Hub"
+    },
+    "AuthenticationLevels": {
+      "anonymous": "Anonymous",
+      "user/pass": "User/Password"
     },
     "OPCUAAuthenticationLevel": "OPC UA Authentication Level",
     "OPCUAServerUsername": "OPC UA Server Username",

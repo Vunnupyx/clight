@@ -6,7 +6,7 @@ import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
 import * as api from 'app/api/models';
-import PREDEFINED_DATA_POINTS from './constants/mtconnectDataItems';
+import PREDEFINED_MTCONNECT_DATA_POINTS from './constants/mtconnectDataItems';
 
 export class DataSinksState {
   status!: Status;
@@ -105,8 +105,12 @@ export class DataSinkService {
     }
   }
 
-  getPredefinedDataPoints(): DataPoint[] {
-    return PREDEFINED_DATA_POINTS as any as DataPoint[];
+  getPredefinedMtConnectDataPoints(): DataPoint[] {
+    return PREDEFINED_MTCONNECT_DATA_POINTS as any as DataPoint[];
+  }
+
+  getPredefinedOPCDataPoints(): DataPoint[] {
+    return [] as any as DataPoint[];
   }
 
   private _parseDataSink(obj: api.DataSinkType) {

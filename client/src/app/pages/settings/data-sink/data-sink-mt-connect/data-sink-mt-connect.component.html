@@ -11,14 +11,14 @@
   "
 ></p>
 
-<div class="row">
+<div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
   <div class="col-12 col-md-6 col-lg-4">
-    <div class="row">
-      <div class="col-6 col-lg-5 mt-20">
+    <div class="row mt-20 mb-25">
+      <div class="col-6 col-lg-5">
         {{ 'settings-data-sink.Enabled' | translate }}
       </div>
       <mat-slide-toggle
-        class="col-6 col-lg-4 mt-20"
+        class="col-6 col-lg-4"
         [ngModel]="dataSink?.enabled"
         (ngModelChange)="updateEnabled($event)"
       ></mat-slide-toggle>
@@ -36,7 +36,7 @@
         <div class="col-12 col-md-7">
           <mat-form-field>
             <mat-select [(ngModel)]="auth.type" (blur)="onSaveAuth()">
-              <mat-option *ngFor="let type of DataSinkAuthTypes" [value]="type">{{ type }}</mat-option>
+              <mat-option *ngFor="let type of DataSinkAuthTypes" [value]="type">{{ 'settings-data-sink.AuthenticationLevels.' + type | translate }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -53,7 +53,7 @@
               name="OPCUAServerUsername"
               [(ngModel)]="auth.userName"
               autocomplete="off"
-              (blur)="onSaveAuth()"
+              (focusout)="onSaveAuth()"
             />
           </mat-form-field>
         </div>
@@ -71,7 +71,7 @@
               type="password"
               [(ngModel)]="auth.password"
               autocomplete="off"
-              (blur)="onSaveAuth()"
+              (focusout)="onSaveAuth()"
             />
           </mat-form-field>
         </div>
@@ -82,12 +82,12 @@
   <div *ngSwitchCase="Protocol.DH">
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4">
-        <div class="row">
-          <div class="col-6 col-lg-5 mt-20">
+        <div class="row mt-20 mb-25">
+          <div class="col-6 col-lg-5">
             {{ 'settings-data-sink.UserDataState' | translate }}
           </div>
           <mat-slide-toggle
-            class="col-6 col-lg-4 mt-20"
+            class="col-6 col-lg-4"
             [checked]="dataSink?.enabled"
             [disabled]="true"
           ></mat-slide-toggle>
@@ -112,7 +112,7 @@
   </div>
 </ng-container>
 
-<div class="row">
+<div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
   <div class="col-12">
     <div class="d-flex align-items-center">
       <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
@@ -166,7 +166,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
-        [name]="'settings-data-sink.DataItem' | translate"
+        [name]="(dataSink?.protocol !== Protocol.OPC ? 'settings-data-sink.DataItem' : 'settings-data-sink.Address') | translate"
         prop="address"
         [flexGrow]="1"
       >
@@ -197,6 +197,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.OPC"
         [name]="'settings-data-sink.Type' | translate"
         prop="type"
         [flexGrow]="1"

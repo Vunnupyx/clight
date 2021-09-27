@@ -1,14 +1,15 @@
 <div class="container">
-  <mat-stepper class="mt-20" [linear]="true" #stepper>
-    <mat-step [stepControl]="languageForm">
+  <mat-stepper class="pt-20" [linear]="true" #stepper>
+    <mat-step>
       <ng-template matStepLabel>{{ 'quick-start.SelectLanguage' | translate }}</ng-template>
-      <form [formGroup]="languageForm" class="pt-20">
+      <div class="pt-20">
         <mat-form-field appearance="legacy">
           <mat-label>{{
             'quick-start.Language' | translate
             }}</mat-label>
           <mat-select
-            formControlName="lang"
+            [value]="currentLang"
+            (valueChange)="onLanguageChange($event)"
           >
             <mat-option value="en">{{
               'settings-general.English' | translate
@@ -21,7 +22,7 @@
         <div>
           <button mat-raised-button matStepperNext>{{ 'quick-start.Next' | translate }}</button>
         </div>
-      </form>
+      </div>
     </mat-step>
     <mat-step [stepControl]="sourceForm">
       <ng-template matStepLabel>{{ 'quick-start.SelectSource' | translate }}</ng-template>

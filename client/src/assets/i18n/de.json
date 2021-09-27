@@ -16,8 +16,8 @@
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
     "LoadError": "Error",
-    "Next": "Next",
-    "Save": "Save"
+    "Next": "",
+    "Save": ""
   },
   "settings-general": {
     "General": "Erfolgreich",

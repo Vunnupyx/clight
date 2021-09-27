@@ -2,9 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 import { DataSourceService, TemplateService } from '../../services';
 import { AvailableDataSink, AvailableDataSource } from '../../models/template';
+import { LocalStorageService } from '../../shared';
 
 @Component({
   selector: 'app-quick-start',
@@ -12,7 +14,6 @@ import { AvailableDataSink, AvailableDataSource } from '../../models/template';
   styleUrls: ['./quick-start.component.scss']
 })
 export class QuickStartComponent implements OnInit, OnDestroy {
-  languageForm!: FormGroup;
   sourceForm!: FormGroup;
   applicationInterfacesForm!: FormGroup;
 
@@ -22,12 +23,19 @@ export class QuickStartComponent implements OnInit, OnDestroy {
 
   sub = new Subscription();
 
+  get currentLang() {
+    return this.translate.currentLang;
+  }
+
   constructor(
     private templateService: TemplateService,
     private dataSourceService: DataSourceService,
+    private localStorageService: LocalStorageService,
+    private translate: TranslateService,
     private formBuilder: FormBuilder,
     private router: Router,
   ) {}
+
 
   ngOnInit(): void {
     this.sub.add(
@@ -40,10 +48,6 @@ export class QuickStartComponent implements OnInit, OnDestroy {
 
     this.templateService.getAvailableTemplates();
 
-    this.languageForm = this.formBuilder.group({
-      lang: ['', Validators.required],
-    });
-
     this.sourceForm = this.formBuilder.group({
       source: ['', Validators.required],
     });
@@ -55,6 +59,11 @@ export class QuickStartComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  onLanguageChange(value: string) {
+    this.translate.use(value);
+    this.localStorageService.set('ui-lang', value);
   }
 
   onSubmit() {

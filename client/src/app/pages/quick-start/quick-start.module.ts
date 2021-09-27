@@ -9,6 +9,7 @@ const routes: Routes = [
   {
     path: 'quick-start',
     component: QuickStartComponent,
+    data: { noLayout: true },
   }
 ];
 

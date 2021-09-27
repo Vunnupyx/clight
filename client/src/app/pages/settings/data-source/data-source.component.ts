@@ -33,6 +33,10 @@ export class DataSourceComponent implements OnInit {
 
   SoftwareVersions = [DataSourceSoftwareVersion.v4_5, DataSourceSoftwareVersion.v4_7];
 
+  DigitalInputAddresses = new Array(10)
+    .fill(0)
+    .map((_, i) => `DI${i}`);
+
   unsavedRow?: SourceDataPoint;
   unsavedRowIndex: number | undefined;
 
@@ -82,6 +86,7 @@ export class DataSourceComponent implements OnInit {
   switchDataSource(obj: DataSource) {
     this.dataSource = obj;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
+    this.clearUnsavedRow();
   }
 
   updateEnabled(val: boolean) {
@@ -117,7 +122,7 @@ export class DataSourceComponent implements OnInit {
       return;
     }
     const obj = {
-      type: SourceDataPointType.NCK
+      type: this.dataSource?.protocol === DataSourceProtocol.S7 ? SourceDataPointType.NCK : null,
     } as SourceDataPoint;
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;

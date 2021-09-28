@@ -470,13 +470,15 @@ $datatable-summary-row-background-hover: #ddd !default;
 .ngx-datatable {
   // buttons
   .button-cell {
-    padding: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 2px 8px !important;
   }
   .mat-button-toggle-group.mat-button-toggle-group-appearance-standard {
     box-shadow: none;
     border: solid 1px #ccc;
     min-width: 26px;
-    margin-top: 2px;
+
     mat-button-toggle:not(.small-button) {
       width: 30px;
       height: 30px;
@@ -509,13 +511,11 @@ $datatable-summary-row-background-hover: #ddd !default;
   }
   // inputs
   .input-cell {
-    padding-bottom: 6px !important;
   }
   .datatable-body-cell-label {
     input {
-      position: relative;
-      top: -4px;
-      height: 30px;
+      height: 32px;
+      border: 1px solid rgba(102, 102, 102, 0.38);
     }
   }
 }

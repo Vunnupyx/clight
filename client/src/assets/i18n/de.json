@@ -49,8 +49,14 @@
     "Component": "",
     "VariableName": "",
     "Status": "",
+    "SoftwareVersion": "",
+    "BTTSString": "",
     "LoadError": "",
-    "UpdateError": ""
+    "UpdateError": "",
+    "Tabs": {
+      "s7": "SINUMERIK 840D sl",
+      "ioshield": "Digital Inputs"
+    }
   },
   "settings-data-source-point": {
     "LoadError": "",

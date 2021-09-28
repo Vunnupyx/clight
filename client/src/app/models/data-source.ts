@@ -10,6 +10,15 @@ export enum DataSourceSoftwareVersion {
   v4_7 = '4.7',
 }
 
+export enum DataSourceConnectionStatus {
+  Connected = 'connected',
+  Disconnected = 'disconnected',
+}
+
+export class DataSourceConnection {
+  status!: DataSourceConnectionStatus;
+}
+
 export class Connection {
   ipAddr?: string;
   port?: number;

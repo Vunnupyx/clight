@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Connection} from 'app/api/models';
 import {
-  DataSource,
+  DataSource, DataSourceConnection,
+  DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
   SourceDataPoint,
@@ -26,10 +27,12 @@ import {SelectTypeModalComponent} from './select-type-modal/select-type-modal.co
 export class DataSourceComponent implements OnInit {
   SourceDataPointType = SourceDataPointType;
   Protocol = DataSourceProtocol;
+  DataSourceConnectionStatus = DataSourceConnectionStatus;
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;
   datapointRows?: SourceDataPoint[];
+  connection?: DataSourceConnection;
 
   SoftwareVersions = [DataSourceSoftwareVersion.v4_5, DataSourceSoftwareVersion.v4_7];
 
@@ -64,6 +67,9 @@ export class DataSourceComponent implements OnInit {
       this.dataSourceService.dataSources.subscribe((x) => this.onDataSources(x))
     );
     this.sub.add(
+      this.dataSourceService.connection.subscribe((x) => this.onConnection(x))
+    );
+    this.sub.add(
       this.sourceDataPointService.dataPoints.subscribe((x) =>
         this.onDataPoints(x)
       )
@@ -86,6 +92,7 @@ export class DataSourceComponent implements OnInit {
   switchDataSource(obj: DataSource) {
     this.dataSource = obj;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
+    this.dataSourceService.getStatus(obj.protocol!);
     this.clearUnsavedRow();
   }
 
@@ -209,5 +216,9 @@ export class DataSourceComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+  }
+
+  private onConnection(x: DataSourceConnection | undefined) {
+    this.connection = x;
   }
 }

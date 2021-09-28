@@ -14,6 +14,8 @@ import {
   DataSink,
   DataSinkAuth,
   DataSinkAuthType,
+  DataSinkConnection,
+  DataSinkConnectionStatus,
   DataSinkProtocol
 } from 'app/models';
 import { DataPointService, DataSinkService } from 'app/services';
@@ -40,6 +42,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ];
   Protocol = DataSinkProtocol;
   MTConnectItems: DataPoint[] = [];
+  DataSinkConnectionStatus = DataSinkConnectionStatus;
 
   @Input() dataSink?: DataSink;
 
@@ -48,6 +51,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     userName: '',
     password: ''
   };
+  connection?: DataSinkConnection;
 
   datapointRows?: DataPoint[];
 
@@ -78,6 +82,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.sub.add(
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
     );
+    this.sub.add(
+      this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
+    );
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -92,6 +99,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       this.auth = dataSink.auth;
     }
     this.dataPointService.getDataPoints(dataSink.protocol);
+    this.dataSinkService.getStatus(dataSink.protocol);
   }
 
   updateEnabled(val: boolean) {
@@ -220,5 +228,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.dataSinkService.updateDataSink(this.dataSink?.protocol!, {
       auth: this.auth,
     });
+  }
+
+  private onConnection(x: DataSinkConnection | undefined) {
+    this.connection = x;
   }
 }

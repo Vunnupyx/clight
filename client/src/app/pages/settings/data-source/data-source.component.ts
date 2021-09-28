@@ -124,6 +124,13 @@ export class DataSourceComponent implements OnInit {
     const obj = {
       type: this.dataSource?.protocol === DataSourceProtocol.S7 ? SourceDataPointType.NCK : null,
     } as SourceDataPoint;
+
+    if (this.dataSource?.protocol === DataSourceProtocol.IOShield) {
+      const freeAddresses = this.DigitalInputAddresses.filter(x => this.datapointRows?.every(y => y.address !== x));
+
+      obj.address = freeAddresses[0];
+    }
+
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
     this.datapointRows = this.datapointRows.concat([obj]);

@@ -21,7 +21,7 @@
       mat-tab-link
       *ngFor="let item of dataSourceList"
       (click)="switchDataSource(item)"
-      [active]="dataSource?.id === item.id"
+      [active]="dataSource?.protocol === item.protocol"
       >{{ 'settings-data-source.Tabs.' + item.protocol | translate }}</a
     >
   </nav>

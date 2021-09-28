@@ -11,14 +11,14 @@
   "
 ></p>
 
-<div class="row">
-  <div class="col-12 col-lg-4">
-    <div class="d-flex align-items-center">
-      <div class="mt-20 mr-30">
+<div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
+  <div class="col-12 col-md-6 col-lg-4">
+    <div class="row mt-20 mb-25">
+      <div class="col-6 col-lg-5">
         {{ 'settings-data-sink.Enabled' | translate }}
       </div>
       <mat-slide-toggle
-        class="ml-20 mt-20"
+        class="col-6 col-lg-4"
         [ngModel]="dataSink?.enabled"
         (ngModelChange)="updateEnabled($event)"
       ></mat-slide-toggle>
@@ -26,7 +26,93 @@
   </div>
 </div>
 
-<div class="row">
+<ng-container [ngSwitch]="dataSink?.protocol">
+  <div class="row" *ngSwitchCase="Protocol.OPC">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="row d-flex align-items-center">
+        <div class="col-12 col-md-5">
+          <label>{{ 'settings-data-sink.OPCUAAuthenticationLevel' | translate }}</label>
+        </div>
+        <div class="col-12 col-md-7">
+          <mat-form-field>
+            <mat-select [(ngModel)]="auth.type" (blur)="onSaveAuth()">
+              <mat-option *ngFor="let type of DataSinkAuthTypes" [value]="type">{{ 'settings-data-sink.AuthenticationLevels.' + type | translate }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row d-flex align-items-center">
+        <div class="col-12 col-md-5">
+          <label>{{ 'settings-data-sink.OPCUAServerUsername' | translate }}</label>
+        </div>
+        <div class="col-12 col-md-7">
+          <mat-form-field>
+            <input
+              matInput
+              name="OPCUAServerUsername"
+              [(ngModel)]="auth.userName"
+              autocomplete="off"
+              (focusout)="onSaveAuth()"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row d-flex align-items-center">
+        <div class="col-12 col-md-5">
+          <label>{{ 'settings-data-sink.OPCUAServerPassword' | translate }}</label>
+        </div>
+        <div class="col-12 col-md-7">
+          <mat-form-field>
+            <input
+              matInput
+              name="OPCUAServerPassword"
+              type="password"
+              [(ngModel)]="auth.password"
+              autocomplete="off"
+              (focusout)="onSaveAuth()"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="Protocol.DH">
+    <div class="row">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="row mt-20 mb-25">
+          <div class="col-6 col-lg-5">
+            {{ 'settings-data-sink.UserDataState' | translate }}
+          </div>
+          <mat-slide-toggle
+            class="col-6 col-lg-4"
+            [checked]="dataSink?.enabled"
+            [disabled]="true"
+          ></mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="row">
+          <div class="col-6 col-lg-5 mt-20">
+            {{ 'settings-data-sink.AlarmState' | translate }}
+          </div>
+          <mat-slide-toggle
+            class="col-6 col-lg-4 mt-20"
+            [checked]="dataSink?.enabled"
+            [disabled]="true"
+          ></mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
   <div class="col-12">
     <div class="d-flex align-items-center">
       <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
@@ -43,6 +129,7 @@
         <mat-icon style="margin-top: -10px">add</mat-icon>
       </button>
     </div>
+
     <ngx-datatable
       [headerHeight]="50"
       [rows]="datapointRows"
@@ -79,7 +166,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
-        [name]="'settings-data-sink.DataItem' | translate"
+        [name]="(dataSink?.protocol !== Protocol.OPC ? 'settings-data-sink.DataItem' : 'settings-data-sink.Address') | translate"
         prop="address"
         [flexGrow]="1"
       >
@@ -101,13 +188,16 @@
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.address = $event)"
           >
-            <mat-option *ngFor="let item of MTConnectItems" [value]="item.id">{{
-              item.name
-            }}</mat-option>
+            <mat-option
+              *ngFor="let item of MTConnectItems"
+              [value]="item.address"
+              >{{ item.name }}</mat-option
+            >
           </mat-select>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.OPC"
         [name]="'settings-data-sink.Type' | translate"
         prop="type"
         [flexGrow]="1"
@@ -144,7 +234,7 @@
       </ngx-datatable-column>
       <ngx-datatable-column
         [name]="'settings-data-sink.InitialValue' | translate"
-        prop="initValue"
+        prop="initialValue"
         [flexGrow]="1"
         cellClass="input-cell"
       >
@@ -166,7 +256,7 @@
             type="text"
             class="w-100"
             [ngModel]="value"
-            (ngModelChange)="unsavedRow && (unsavedRow.initValue = $event)"
+            (ngModelChange)="unsavedRow && (unsavedRow.initialValue = $event)"
             autofocus
           />
         </ng-template>
@@ -185,7 +275,9 @@
         >
           <ng-container *ngIf="unsavedRowIndex !== rowIndex">
             <div class="text-ellipsis" style="margin-top: 8px">
-              <span *ngFor="let item of value">{{ item }} </span>
+              <span *ngFor="let item of parseMap(value)"
+                >{{ item[0] }} -> {{ item[1] }}
+              </span>
             </div>
           </ng-container>
           <div
@@ -193,7 +285,9 @@
             class="d-flex align-items-center"
           >
             <div class="mt-5 text-ellipsis">
-              <span *ngFor="let item of unsavedRow?.map">{{ item }} </span>
+              <span *ngFor="let item of parseMap(unsavedRow?.map)"
+                >{{ item[0] }} -> {{ item[1] }}
+              </span>
             </div>
             <mat-button-toggle-group class="mt-5 ml-10">
               <mat-button-toggle

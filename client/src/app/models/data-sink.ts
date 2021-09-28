@@ -6,10 +6,22 @@ export enum DataSinkProtocol {
   DH = 'datahub'
 }
 
+export enum DataSinkAuthType {
+  Anonymous = 'anonymous',
+  UserAndPass = 'user/pass'
+}
+
+export class DataSinkAuth {
+  type!: DataSinkAuthType;
+  userName?: string;
+  password?: string;
+}
+
 export class DataSink {
   id?: string;
   name!: string;
-  dataPoints!: Array<DataPoint>;
+  datapoints!: Array<DataPoint>;
   enabled!: boolean;
   protocol!: DataSinkProtocol;
+  auth?: DataSinkAuth;
 }

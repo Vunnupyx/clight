@@ -1,14 +1,16 @@
+import { ObjectMap } from '../shared/utils';
+
 export enum DataPointType {
   Event = 'event',
   Condition = 'condition'
 }
 
 export class DataPoint {
-  enabled: boolean;
+  enabled?: boolean;
   id?: string;
-  initValue: string;
-  map: string[];
-  name: string;
-  type: DataPointType;
-  address: string;
+  initialValue?: string;
+  map?: ObjectMap<string>;
+  name?: string;
+  type?: DataPointType;
+  address?: string;
 }

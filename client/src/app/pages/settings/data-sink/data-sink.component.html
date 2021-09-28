@@ -22,7 +22,7 @@
       *ngFor="let item of dataSinkList"
       (click)="switchDataSink(item)"
       [active]="dataSink?.protocol === item.protocol"
-      >{{ item.name || item.protocol }}</a
+      >{{ 'settings-data-sink.Tabs.' + item.protocol | translate }}</a
     >
   </nav>
 

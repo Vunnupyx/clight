@@ -53,7 +53,10 @@ export class DataSinkManager {
     MTConnectManager.startAdapter();
     await OPCUAManager.startAdapter();
 
-    this.dataSinks = this.dataSinkConfig.map(createDataSink);
+    // TODO Remove null data sinks
+    this.dataSinks = this.dataSinkConfig
+      .map(createDataSink)
+      .filter((dataSink) => dataSink !== null);
     this.subscribeDataSinks();
   }
 

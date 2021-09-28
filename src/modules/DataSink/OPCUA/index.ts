@@ -34,16 +34,24 @@ export class OPCUADataSink extends DataSink {
   }
 
   public init(): this {
-    const logPrefix = `${OPCUADataSink.className}::init`;
+    this.setupDataPoints();
+    return this;
+  }
 
+  private setupDataPoints() {
+    const logPrefix = `${OPCUADataSink.className}::setupDataPoints`;
     this.config.dataPoints.forEach((dp) => {
       winston.debug(`${logPrefix} Setting up node ${dp.address}`);
-      this.opcuaNodes[dp.address] = this.opcuaAdapter.findNode(
-        dp.address
-      ) as UAVariable;
+      try {
+        this.opcuaNodes[dp.address] = this.opcuaAdapter.findNode(
+          dp.address
+        ) as UAVariable;
+      } catch (e) {
+        winston.warn(
+          `${logPrefix} Unabled to find opcua data point ${dp.address}`
+        );
+      }
     });
-
-    return this;
   }
 
   protected processDataPointValue(dataPointId, value) {

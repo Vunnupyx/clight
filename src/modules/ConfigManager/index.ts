@@ -57,6 +57,12 @@ const defaultOpcuaDataSink: IDataSinkConfig = {
     userName: ''
   }
 };
+const defaultDataHubDataSink: IDataSinkConfig = {
+  name: '',
+  dataPoints: [],
+  enabled: false,
+  protocol: DataSinkProtocols.DATAHUB
+};
 
 const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   name: '',
@@ -200,6 +206,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       )
     ) {
       this._config.dataSinks.push(defaultMtconnectDataSink);
+      changed = true;
+    }
+    if (
+      !this._config.dataSinks.some(
+        (dataSink) => dataSink.protocol === DataSinkProtocols.DATAHUB
+      )
+    ) {
+      this._config.dataSinks.push(defaultDataHubDataSink);
       changed = true;
     }
 

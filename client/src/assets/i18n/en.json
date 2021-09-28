@@ -66,6 +66,7 @@
     "Name": "Name",
     "Type": "Type",
     "DataItem": "Data Item",
+    "Address": "Address",
     "InitialValue": "Initial Value",
     "Map": "Map",
     "Select": "Select",
@@ -77,6 +78,7 @@
     "Event": "Event",
     "Condition": "Condition",
     "SelectAVariable": "Select a variable",
+    "CreateDataPoint": "Create data item",
     "Area": "Area",
     "Component": "Component",
     "VariableName": "VariableName",
@@ -84,7 +86,21 @@
     "Mapping": "Mapping",
     "From": "From",
     "To": "To",
-    "AddMapping": "Add mapping"
+    "AddMapping": "Add mapping",
+    "UserDataState": "User Data State",
+    "AlarmState": "Alarm State",
+    "Tabs": {
+      "mtconnect": "MTConnect",
+      "opcua": "OPC UA",
+      "datahub": "Data Hub"
+    },
+    "AuthenticationLevels": {
+      "anonymous": "Anonymous",
+      "user/pass": "User/Password"
+    },
+    "OPCUAAuthenticationLevel": "OPC UA Authentication Level",
+    "OPCUAServerUsername": "OPC UA Server Username",
+    "OPCUAServerPassword": "OPC UA Server Password"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

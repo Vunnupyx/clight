@@ -5,4 +5,5 @@ export interface DataSinkType {
   dataPoints?: Array<Uuid & DataPointType>;
   enabled?: boolean;
   name?: string;
+  protocol?: string;
 }

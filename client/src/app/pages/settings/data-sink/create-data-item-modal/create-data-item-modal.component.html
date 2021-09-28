@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>{{ 'settings-data-sink.SelectAVariable' | translate }}</h1>
+<h1 mat-dialog-title>{{ 'settings-data-sink.CreateDataPoint' | translate }}</h1>
 <div mat-dialog-content>
   <ngx-datatable
     [headerHeight]="50"
@@ -20,7 +20,7 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-      [name]="'settings-data-sink.DataItem' | translate"
+      [name]="(data.dataSinkProtocol !== DataSinkProtocol.OPC ? 'settings-data-sink.DataItem' : 'settings-data-sink.Address') | translate"
       prop="address"
     >
       <ng-template
@@ -33,6 +33,7 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
+      *ngIf="data.dataSinkProtocol !== DataSinkProtocol.OPC"
       [name]="'settings-data-sink.Type' | translate"
       prop="type"
     >

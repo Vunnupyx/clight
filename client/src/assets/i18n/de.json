@@ -66,6 +66,7 @@
     "Name": "",
     "Type": "",
     "DataItem": "",
+    "Address": "",
     "InitialValue": "",
     "Map": "",
     "Select": "",
@@ -77,6 +78,7 @@
     "Event": "",
     "Condition": "",
     "SelectAVariable": "",
+    "CreateDataPoint": "",
     "Area": "",
     "Component": "",
     "VariableName": "",
@@ -84,7 +86,16 @@
     "Mapping": "",
     "From": "",
     "To": "",
-    "AddMapping": ""
+    "AddMapping": "",
+    "AuthenticationLevels": {
+      "anonymous": "",
+      "user/pass": ""
+    },
+    "Tabs": {
+      "mtconnect": "MTConnect",
+      "opcua": "OPC UA",
+      "datahub": "Data Hub"
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "",

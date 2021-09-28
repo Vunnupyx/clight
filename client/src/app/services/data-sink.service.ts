@@ -47,12 +47,6 @@ export class DataSinkService {
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSinks = dataSinks
-          .concat({
-            dataPoints: [],
-            enabled: false,
-            name: 'das',
-            protocol: 'datahub'
-          })
           .map((x) => this._parseDataSink(x));
       });
     } catch (err) {
@@ -87,7 +81,6 @@ export class DataSinkService {
 
   async updateDataSink(protocol: DataSinkProtocol, obj: Partial<DataSink>) {
     this._store.patchState((state) => {
-      state.status = Status.Updating;
       state.dataSinks = state.dataSinks.map((x) =>
         x.protocol != protocol ? x : { ...x, ...obj }
       );

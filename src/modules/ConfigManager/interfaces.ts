@@ -82,6 +82,16 @@ export interface IDataSinkConfig {
   auth?: IOpcuaAuth;
 }
 
+export interface IProxyConfig {
+  ip: string;
+}
+
+export interface IHttpsProxyConfig extends IProxyConfig {}
+
+export interface ISocksProxyConfig extends IProxyConfig {
+  username: string;
+  password: string;
+}
 export interface IDataPointMapping {
   id: string;
   source: string;

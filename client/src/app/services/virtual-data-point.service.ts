@@ -7,7 +7,9 @@ import { Status, Store, StoreFactory } from '../shared/state';
 import { VirtualDataPoint } from '../models';
 import { HttpService } from '../shared';
 import * as api from "../api/models";
-import {errorHandler} from "../shared/utils";
+import { errorHandler } from "../shared/utils";
+import {CreateEntityResponse} from "../models/responses/create-entity.response";
+import {UpdateEntityResponse} from "../models/responses/update-entity.response";
 
 
 export class VirtualDataPointsState {
@@ -69,13 +71,13 @@ export class VirtualDataPointService {
     });
 
     try {
-      const vdp = await this.httpService.post<api.VirtualDataPointType>(
+      const vdp = await this.httpService.post<CreateEntityResponse<VirtualDataPoint>>(
         `/vdps`,
         obj
       );
 
       this._store.patchState((state) => {
-        const dataPoint = this._parseDataPoint(vdp);
+        const dataPoint = vdp.created;
 
         obj.id = dataPoint.id;
         state.dataPoints.push(obj);
@@ -98,14 +100,14 @@ export class VirtualDataPointService {
     });
 
     try {
-      await this.httpService.patch(
+      const vdp = await this.httpService.patch<UpdateEntityResponse<VirtualDataPoint>>(
         `/vdps/${id}`,
         obj
       );
 
       this._store.patchState((state) => {
         state.dataPoints = state.dataPoints.map((x) =>
-          x.id != id ? x : ({ ...x, ...obj })
+          x.id != id ? x : ({ ...x, ...vdp.changed })
         );
         state.status = Status.Ready;
       });

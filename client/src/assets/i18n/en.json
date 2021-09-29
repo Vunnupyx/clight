@@ -59,6 +59,16 @@
     }
   },
   "settings-virtual-data-point": {
+    "DataPoints": "Virtual Data Points",
+    "AddDataPoint": "Add Virtual Data Point",
+    "Name": "Name",
+    "Operation": "Operation",
+    "Sources": "Sources",
+    "Actions": "Actions",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Save": "Save",
+    "Cancel": "Cancel",
     "LoadError": "Failed to load data points. Try again later",
     "CreateError": "Failed to create a data point. Try again later",
     "UpdateError": "Failed to update a data point. Try again later",

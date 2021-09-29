@@ -6,7 +6,8 @@ export enum VirtualDataPointOperationType {
 }
 
 export class VirtualDataPoint {
-  id!: string;
-  operationType!: VirtualDataPointOperationType;
-  sources!: string[];
+  id?: string;
+  operationType?: VirtualDataPointOperationType;
+  sources?: string[];
+  name?: string;
 }

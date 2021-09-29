@@ -7,7 +7,7 @@ import { DataHubAdapter } from '../DataHubAdapter';
  */
 export class DataHubManager {
   static #dataHubAdapter: DataHubAdapter;
-  private static readonly className = DataHubManager.constructor.name;
+  static readonly className = DataHubManager.name;
 
   private constructor() {}
 

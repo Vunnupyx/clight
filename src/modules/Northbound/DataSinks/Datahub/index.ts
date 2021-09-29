@@ -69,4 +69,11 @@ export class DatahubDataSink extends DataSink {
     this.#datahubAdapter.stop;
     winston.info(`${DatahubDataSink.#className}::shutdown successful.`);
   }
+
+  /**
+   * Return current connection status of the data sink
+   */
+  public currentStatus(): boolean {
+    return !!this.#datahubAdapter?.running
+  }
 }

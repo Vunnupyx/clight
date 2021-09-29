@@ -7,6 +7,7 @@ export interface IRuntimeConfig {
   mtconnect: IMTConnectConfig;
   opcua: IOPCUAConfig;
   restApi: IRestApiConfig;
+  datahub: IDataHubConfig;
 }
 
 export interface IGeneralConfig {
@@ -79,7 +80,27 @@ export interface IDataSinkConfig {
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
-  auth?: IOpcuaAuth;
+}
+
+export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+
+export interface IOpcuaAuth {
+  type: "none" | "userpassword",
+  userName: string,
+  password: string
+}
+
+export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
+  auth?: IOpcuaAuth
+}
+
+export interface IDataHubConfig {
+    provisioningHost: string,
+    scopeId: string,
+    regId: string,
+    symKey: string
+    groupDevice: boolean,
+    proxy?: IHttpsProxyConfig | ISocksProxyConfig
 }
 
 export interface IProxyConfig {
@@ -92,6 +113,7 @@ export interface ISocksProxyConfig extends IProxyConfig {
   username: string;
   password: string;
 }
+
 export interface IDataPointMapping {
   id: string;
   source: string;
@@ -165,7 +187,7 @@ export interface ISystemInfo {
 
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: IDataSinkConfig[];
+  dataSinks: Array<IDataSinkConfig | IDataHubDataSinkConfig | IOpcuaDataSinkConfig>;
   virtualDataPoints: IVirtualDataPointConfig[];
   // dataPoints: IDataSinkDataPointConfig[]; // TODO ??
   mapping: IDataPointMapping[];

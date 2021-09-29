@@ -77,7 +77,7 @@ export abstract class DataSink {
           );
         }
         if (events.some((event) => typeof event.mapValue === 'undefined')) {
-          winston.warn(`Map value for enum taget: ${target} not provided!`);
+          winston.warn(`Map value for enum target: ${target} not provided!`);
           return;
         }
 

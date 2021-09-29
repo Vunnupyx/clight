@@ -1,13 +1,7 @@
 import { Client, Twin, Message } from 'azure-iot-device';
-import {
-  MqttWs as iotHubTransport,
-  Mqtt as TwinTransport
-} from 'azure-iot-device-mqtt';
+import { MqttWs as iotHubTransport } from 'azure-iot-device-mqtt';
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import {
-  ProvisioningDeviceClient,
-  SymmetricKeyProvisioningTransport
-} from 'azure-iot-provisioning-device';
+import { ProvisioningDeviceClient } from 'azure-iot-provisioning-device';
 import { Mqtt as MqttTransport } from 'azure-iot-provisioning-device-mqtt';
 import {
   RegistrationClient,
@@ -17,7 +11,10 @@ import { SymmetricKeySecurityClient } from 'azure-iot-security-symmetric-key';
 import { createHmac } from 'crypto';
 import winston from 'winston';
 import { NorthBoundError } from '../../common/errors';
-import {IHttpsProxyConfig, ISocksProxyConfig} from '../ConfigManager/interfaces';
+import {
+  IHttpsProxyConfig,
+  ISocksProxyConfig
+} from '../ConfigManager/interfaces';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
@@ -31,13 +28,11 @@ interface DataHubAdapterOptions {
   proxy?: IHttpsProxyConfig | ISocksProxyConfig;
 }
 
-
-
 export class DataHubAdapter {
   static readonly #className: string = DataHubAdapter.name;
   private isRunning: boolean = false;
   #initialized: boolean = false;
-  #proxyConfig: DataHubAdapterOptions["proxy"];
+  #proxyConfig: DataHubAdapterOptions['proxy'];
   #proxy: HttpsProxyAgent; // TODO: Add Socks proxy module
 
   // Provisioning
@@ -57,7 +52,7 @@ export class DataHubAdapter {
   #deviceTwin: Twin;
   #dataBuffer: Array<Array<any>> = []; // TODO:
   #dataBufferThresholdBytes: 150; //TODO:
-  #desiredProps: {[key: string]: any};
+  #desiredProps: { [key: string]: any };
 
   public constructor(options: DataHubAdapterOptions) {
     this.#dpsServiceAddress = options.dpsHost;
@@ -217,7 +212,13 @@ export class DataHubAdapter {
       throw new NorthBoundError(
         `${logPrefix} error due to ${JSON.stringify(error)}`
       );
-    winston.debug(`${logPrefix} successfully got provisioning information: \n ${JSON.stringify(res, null, 2)}`);
+    winston.debug(
+      `${logPrefix} successfully got provisioning information: \n ${JSON.stringify(
+        res,
+        null,
+        2
+      )}`
+    );
     this.#connectionSting = this.generateConnectionString(
       res.assignedHub,
       res.deviceId,
@@ -238,25 +239,27 @@ export class DataHubAdapter {
 
   private registerTwinHandlers(): void {
     const logPrefix = `${DataHubAdapter.#className}::registerTwinHandlers`;
-    if(!this.#deviceTwin) {
+    if (!this.#deviceTwin) {
       throw new NorthBoundError(`${logPrefix} error due to no twin found.`);
     }
     //TODO:
     // this.desired
-    [].forEach(des => {
-      this.#deviceTwin.on(`properties.desire.${des}`, () => {})
+    [].forEach((des) => {
+      this.#deviceTwin.on(`properties.desire.${des}`, () => {});
     });
   }
   private generateMsgFromBuffer(): Message {
-    return new Message(JSON.stringify({deviceId: this.#registrationId, data: this.#dataBuffer}));
+    return new Message(
+      JSON.stringify({ deviceId: this.#registrationId, data: this.#dataBuffer })
+    );
   }
 
-  public sendData(data: {[key: string]: any}[]): void {
+  public sendData(data: { [key: string]: any }[]): void {
     this.#dataBuffer.push(data);
-    if(!(this.calcBufferSize() >= this.#dataBufferThresholdBytes)) return;
+    if (!(this.calcBufferSize() >= this.#dataBufferThresholdBytes)) return;
     const msg = this.generateMsgFromBuffer();
     this.#dataHubClient.sendEvent(msg);
-  };
+  }
 
   /**
    * Return buffer size in bytes
@@ -272,8 +275,10 @@ export class DataHubAdapter {
             },
             */
   private sendDesiredProps(): void {
-    Object.entries(this.#deviceTwin.properties.desired).forEach(([key,value]) => {
-      this.#deviceTwin.properties.reported[key] = value;
-    });
+    Object.entries(this.#deviceTwin.properties.desired).forEach(
+      ([key, value]) => {
+        this.#deviceTwin.properties.reported[key] = value;
+      }
+    );
   }
 }

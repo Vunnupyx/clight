@@ -65,12 +65,6 @@ const defaultDataHubDataSink: IDataSinkConfig = {
   protocol: DataSinkProtocols.DATAHUB
 };
 
-const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
-  name: '',
-  dataPoints: [],
-  enabled: false,
-  protocol: DataSinkProtocols.MTCONNECT
-};
 
 export const emptyDefaultConfig = {
   general: {

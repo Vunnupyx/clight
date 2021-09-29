@@ -4,6 +4,7 @@ import { ILifecycleEvent } from '../../../common/interfaces';
 import { DataHubAdapter } from '../../DataHubAdapter';
 import { DataHubManager } from '../../DataHubManager';
 import winston from 'winston';
+import { NorthBoundError } from '../../../common/errors';
 
 interface DatahubDataSinkOptions extends IDataSinkParams {}
 
@@ -47,6 +48,9 @@ export class DatahubDataSink extends DataSink {
   public init(): void {
     const logPrefix = `${DatahubDataSink.#className}::init`;
     winston.debug(`${logPrefix} initializing.`);
+    if(!this.#datahubAdapter.running) {
+      throw new NorthBoundError(`${logPrefix} error due to adapter is not running.`);
+    }
     this.#connected = true;
     winston.debug(`${logPrefix} initialized`);
     // TODO: create dataStructure via this.config.dataPoints ?

@@ -38,6 +38,7 @@
     "IPAddress": "IP Address",
     "Connection": "Connection",
     "Running": "Running",
+    "Disconnected": "Disconnected",
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
@@ -52,6 +53,7 @@
     "SoftwareVersion": "Software Version",
     "BTTSString": "BTTS String",
     "LoadError": "Failed to load data sources. Try again later",
+    "LoadStatusError": "Failed to load status. Try again later",
     "UpdateError": "Failed to update a data source. Try again later",
     "Tabs": {
       "s7": "SINUMERIK 840D sl",
@@ -67,6 +69,10 @@
   "settings-data-sink": {
     "DataSink": "Data Sink",
     "Enabled": "Enabled",
+    "Connection": "Connection",
+    "Running": "Running",
+    "Disconnected": "Disconnected",
+    "ServiceState": "Service state",
     "DataPoints": "Data points",
     "AddDataPoint": "Add data point",
     "Name": "Name",
@@ -106,7 +112,10 @@
     },
     "OPCUAAuthenticationLevel": "OPC UA Authentication Level",
     "OPCUAServerUsername": "OPC UA Server Username",
-    "OPCUAServerPassword": "OPC UA Server Password"
+    "OPCUAServerPassword": "OPC UA Server Password",
+    "LoadError": "Failed to load data sinks. Try again later",
+    "LoadStatusError": "Failed to load status. Try again later",
+    "UpdateError": "Failed to update a data sink. Try again later"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

@@ -11,106 +11,147 @@
   "
 ></p>
 
-<div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
+<div class="row">
   <div class="col-12 col-md-6 col-lg-4">
-    <div class="row mt-20 mb-25">
-      <div class="col-6 col-lg-5">
-        {{ 'settings-data-sink.Enabled' | translate }}
+    <div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
+      <div class="col-12">
+        <div class="row mt-20 mb-25">
+          <div class="col-6 col-lg-5">
+            {{ 'settings-data-sink.Enabled' | translate }}
+          </div>
+          <mat-slide-toggle
+            class="col-6 col-lg-4"
+            [ngModel]="dataSink?.enabled"
+            (ngModelChange)="updateEnabled($event)"
+          ></mat-slide-toggle>
+        </div>
       </div>
-      <mat-slide-toggle
-        class="col-6 col-lg-4"
-        [ngModel]="dataSink?.enabled"
-        (ngModelChange)="updateEnabled($event)"
-      ></mat-slide-toggle>
+    </div>
+
+    <ng-container [ngSwitch]="dataSink?.protocol">
+      <div class="row" *ngSwitchCase="Protocol.OPC">
+        <div class="col-12">
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{ 'settings-data-sink.OPCUAAuthenticationLevel' | translate }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <mat-select [(ngModel)]="auth.type" (blur)="onSaveAuth()">
+                  <mat-option *ngFor="let type of DataSinkAuthTypes" [value]="type">{{ 'settings-data-sink.AuthenticationLevels.' + type | translate }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{ 'settings-data-sink.OPCUAServerUsername' | translate }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <input
+                  matInput
+                  name="OPCUAServerUsername"
+                  [(ngModel)]="auth.userName"
+                  autocomplete="off"
+                  (focusout)="onSaveAuth()"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{ 'settings-data-sink.OPCUAServerPassword' | translate }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <input
+                  matInput
+                  name="OPCUAServerPassword"
+                  type="password"
+                  [(ngModel)]="auth.password"
+                  autocomplete="off"
+                  (focusout)="onSaveAuth()"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="Protocol.DH">
+        <div class="row">
+          <div class="col-12">
+            <div class="row mt-20 mb-25">
+              <div class="col-6 col-lg-5">
+                {{ 'settings-data-sink.UserDataState' | translate }}
+              </div>
+              <mat-slide-toggle
+                class="col-6 col-lg-4"
+                [checked]="dataSink?.enabled"
+                [disabled]="true"
+              ></mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="row">
+              <div class="col-6 col-lg-5 mt-20">
+                {{ 'settings-data-sink.AlarmState' | translate }}
+              </div>
+              <mat-slide-toggle
+                class="col-6 col-lg-4 mt-20"
+                [checked]="dataSink?.enabled"
+                [disabled]="true"
+              ></mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6" *ngIf="connection">
+    <div class="mt-25">
+      {{ 'settings-data-sink.Connection' | translate }}
+    </div>
+    <div
+      class="mt-10 d-flex align-items-center justify-content-between"
+      style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+    >
+      <div>
+        <div style="font-weight: 600">
+          <ng-container [ngSwitch]="connection.status">
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
+              {{ 'settings-data-sink.Running' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
+              {{ 'settings-data-sink.Disconnected' | translate }}
+            </ng-container>
+          </ng-container>
+        </div>
+        <small style="color: #999">{{
+          'settings-data-sink.ServiceState' | translate
+          }}</small>
+      </div>
+      <div class="mr-10">
+        <ng-container [ngSwitch]="connection.status">
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
+            <mat-icon class="color-success">check_circle_outline</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>
 
-<ng-container [ngSwitch]="dataSink?.protocol">
-  <div class="row" *ngSwitchCase="Protocol.OPC">
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="row d-flex align-items-center">
-        <div class="col-12 col-md-5">
-          <label>{{ 'settings-data-sink.OPCUAAuthenticationLevel' | translate }}</label>
-        </div>
-        <div class="col-12 col-md-7">
-          <mat-form-field>
-            <mat-select [(ngModel)]="auth.type" (blur)="onSaveAuth()">
-              <mat-option *ngFor="let type of DataSinkAuthTypes" [value]="type">{{ 'settings-data-sink.AuthenticationLevels.' + type | translate }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row d-flex align-items-center">
-        <div class="col-12 col-md-5">
-          <label>{{ 'settings-data-sink.OPCUAServerUsername' | translate }}</label>
-        </div>
-        <div class="col-12 col-md-7">
-          <mat-form-field>
-            <input
-              matInput
-              name="OPCUAServerUsername"
-              [(ngModel)]="auth.userName"
-              autocomplete="off"
-              (focusout)="onSaveAuth()"
-            />
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row d-flex align-items-center">
-        <div class="col-12 col-md-5">
-          <label>{{ 'settings-data-sink.OPCUAServerPassword' | translate }}</label>
-        </div>
-        <div class="col-12 col-md-7">
-          <mat-form-field>
-            <input
-              matInput
-              name="OPCUAServerPassword"
-              type="password"
-              [(ngModel)]="auth.password"
-              autocomplete="off"
-              (focusout)="onSaveAuth()"
-            />
-          </mat-form-field>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div *ngSwitchCase="Protocol.DH">
-    <div class="row">
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="row mt-20 mb-25">
-          <div class="col-6 col-lg-5">
-            {{ 'settings-data-sink.UserDataState' | translate }}
-          </div>
-          <mat-slide-toggle
-            class="col-6 col-lg-4"
-            [checked]="dataSink?.enabled"
-            [disabled]="true"
-          ></mat-slide-toggle>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="row">
-          <div class="col-6 col-lg-5 mt-20">
-            {{ 'settings-data-sink.AlarmState' | translate }}
-          </div>
-          <mat-slide-toggle
-            class="col-6 col-lg-4 mt-20"
-            [checked]="dataSink?.enabled"
-            [disabled]="true"
-          ></mat-slide-toggle>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-container>
 
 <div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
   <div class="col-12">

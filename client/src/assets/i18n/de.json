@@ -58,6 +58,12 @@
       "ioshield": "Digital Inputs"
     }
   },
+  "settings-virtual-data-point": {
+    "LoadError": "",
+    "CreateError": "",
+    "UpdateError": "",
+    "DeleteError": ""
+  },
   "settings-data-source-point": {
     "LoadError": "",
     "CreateError": "",

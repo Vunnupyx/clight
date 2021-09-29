@@ -72,7 +72,9 @@
     "LoadError": "Failed to load data points. Try again later",
     "CreateError": "Failed to create a data point. Try again later",
     "UpdateError": "Failed to update a data point. Try again later",
-    "DeleteError": "Failed to delete a data point. Try again later"
+    "DeleteError": "Failed to delete a data point. Try again later",
+    "DeleteTitle": "Delete",
+    "DeleteMessage": "Are you sure you want to delete data point?"
   },
   "settings-data-source-point": {
     "LoadError": "Failed to load data points. Try again later",

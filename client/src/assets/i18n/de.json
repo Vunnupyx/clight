@@ -72,7 +72,9 @@
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
-    "DeleteError": ""
+    "DeleteError": "",
+    "DeleteTitle": "Delete",
+    "DeleteMessage": "Are you sure you want to delete data point?"
   },
   "settings-data-source-point": {
     "LoadError": "",

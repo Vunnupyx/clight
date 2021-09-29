@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { Subscription } from "rxjs";
+import { TranslateService } from "@ngx-translate/core";
 
-import {SourceDataPoint, VirtualDataPoint, VirtualDataPointOperationType} from '../../../models';
+import { SourceDataPoint, VirtualDataPoint, VirtualDataPointOperationType } from '../../../models';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { clone } from "../../../shared/utils";
 import { Status } from '../../../shared/state';
-import {SourceDataPointService, VirtualDataPointService} from '../../../services';
+import { SourceDataPointService, VirtualDataPointService } from '../../../services';
 
 
 @Component({
@@ -52,7 +53,8 @@ export class VirtualDataPointComponent implements OnInit {
   constructor(
     private virtualDataPointService: VirtualDataPointService,
     private sourceDataPointService: SourceDataPointService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit() {
@@ -124,8 +126,8 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDelete(obj: VirtualDataPoint) {
-    const title = `Delete`;
-    const message = `Are you sure you want to delete data point?`;
+    const title = this.translate.instant('settings-virtual-data-point.DeleteTitle');
+    const message = this.translate.instant('settings-virtual-data-point.DeleteMessage');
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

@@ -53,7 +53,7 @@ export class DataSinkManager {
     // Starting mtc adapter
     MTConnectManager.startAdapter();
     await OPCUAManager.startAdapter();
-    await DataHubManager.startAdapter();
+    await DataHubManager.startAdapter().catch((err) => winston.error(`Error starting DataHub Adapter.`));
 
     // TODO Remove null data sinks
     this.dataSinks = this.dataSinkConfig

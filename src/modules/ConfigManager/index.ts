@@ -16,6 +16,7 @@ import {
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
+  IOpcuaDataSinkConfig,
   IRuntimeConfig,
   isDataPointMapping
 } from './interfaces';
@@ -154,6 +155,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       restApi: {
         port: 5000,
         maxFileSizeByte: 20000000
+      },
+      datahub: {
+        provisioningHost: "",
+        scopeId: "",
+        regId: "unknownDevice",
+        symKey: "",
+        groupDevice: false,
+        proxy: null
       }
     };
 

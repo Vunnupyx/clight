@@ -73,7 +73,6 @@ export class BootstrapManager {
         payload: error.toString()
       });
 
-      winston.error(error);
       winston.error('Error while launching. Exiting program.');
       process.exit(1);
     }

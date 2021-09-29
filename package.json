@@ -50,7 +50,8 @@
     "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight",
     "copy_mtc_conf": "scp -r _mdclight/mtc_config/MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
     "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "loglevel:debug": "export LOG_LEVEL=debug"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

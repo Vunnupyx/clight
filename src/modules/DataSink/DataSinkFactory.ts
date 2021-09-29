@@ -1,5 +1,6 @@
+import winston from 'winston';
 import { DataSinkProtocols } from '../../common/interfaces';
-import { IDataSinkConfig } from '../ConfigManager/interfaces';
+import { IDataHubDataSinkConfig, IDataSinkConfig } from '../ConfigManager/interfaces';
 import { DatahubDataSink } from './Datahub';
 import { DataSink } from './DataSink';
 import { MTConnectDataSink } from './MTConnect';
@@ -19,7 +20,7 @@ export const createDataSink = (config: IDataSinkConfig): DataSink | null => {
     case DataSinkProtocols.OPCUA:
       return createOPCUADataSink(config);
     case DataSinkProtocols.DATAHUB:
-      return createDataHubDataSink();
+      return createDataHubDataSink(config);
     default:
       throw Error(`Invalid protocol of data sink ${protocol}`);
   }
@@ -42,9 +43,14 @@ function createOPCUADataSink(config: IDataSinkConfig): OPCUADataSink {
   return new OPCUADataSink({ config }).init();
 }
 
-function createDataHubDataSink(): DatahubDataSink {
+function createDataHubDataSink(config: IDataHubDataSinkConfig): DatahubDataSink {
   // TODO: Implement
-  const sink  = new DatahubDataSink({} as any);
-  sink.init();
+  const sink  = new DatahubDataSink({config});
+  try {
+    sink.init();
+  } catch (err) {
+    winston.error(`createDataHubDataSink error due init failed.`);
+    return null;
+  }
   return sink;
 }

@@ -114,8 +114,8 @@ POST /api/v1/templates/apply
 
 ## Network Endpoint
 
-GET /api/v1/network
-PATCH /api/v1/network
+GET /api/v1/networkconfig
+PATCH /api/v1/networkconfig
 
 Response/Body:
 

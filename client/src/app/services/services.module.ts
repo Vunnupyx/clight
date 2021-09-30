@@ -6,6 +6,7 @@ import { DataSinkService } from './data-sink.service';
 import { DataPointService } from './data-point.service';
 import { SourceDataPointService } from './source-data-point.service';
 import { DeviceInfoService } from './device-info.service';
+import { NetworkService } from './network.service';
 
 @NgModule({
   providers: [
@@ -14,7 +15,8 @@ import { DeviceInfoService } from './device-info.service';
     DataSinkService,
     DataSourceService,
     DeviceInfoService,
-    SourceDataPointService
+    SourceDataPointService,
+    NetworkService,
   ]
 })
 export class ServicesModule {}

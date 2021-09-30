@@ -34,6 +34,10 @@
     {
       "name": "deviceInfos",
       "description": "Everything about the deviceInfos."
+    },
+    {
+      "name": "networkConfig",
+      "description": "Everything about the network config."
     }
   ],
   "produces": ["application/json"],
@@ -850,6 +854,40 @@
           }
         }
       }
+    },
+    "/networkconfig": {
+      "get": {
+        "tags": ["networkConfig"],
+        "description": "Get network config information",
+        "operationId": "networkconfigGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the network config",
+            "schema": {
+              "$ref": "#/definitions/networkconfig"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["networkConfig"],
+        "operationId": "networkconfigPatch",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "patchObject",
+            "description": "The changed properties",
+            "schema": {
+              "$ref": "#/definitions/changeNetworkconfig"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1225,6 +1263,154 @@
         "status":{
           "type": "string",
           "enum": ["connected", "disconnected"]
+        }
+      }
+    },
+    "networkconfig": {
+      "type": "object",
+      "properties": {
+        "x1": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            },
+            "configurationState": {
+              "type": "boolean"
+            },
+            "serviceState": {
+              "type": "boolean"
+            }
+          }
+        },
+        "x2": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            },
+            "configurationState": {
+              "type": "boolean"
+            },
+            "serviceState": {
+              "type": "boolean"
+            }
+          }
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "useProxy": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "port": {
+              "type": "number"
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "configurationState": {
+              "type": "boolean"
+            },
+            "serviceState": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "changeNetworkconfig": {
+      "type": "object",
+      "properties": {
+        "x1": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            }
+          }
+        },
+        "x2": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            }
+          }
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "useProxy": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "port": {
+              "type": "number"
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
         }
       }
     }

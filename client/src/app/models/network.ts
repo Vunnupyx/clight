@@ -9,7 +9,7 @@ export class NetworkConfig {
   ipAddr?: string;
   netmask?: string;
   defaultGateway?: string;
-  dnsServer?: string;// TODO: is missed in server response
+  dnsServer?: string;
   useProxy?: boolean;
   port?: number;
   username?: string;

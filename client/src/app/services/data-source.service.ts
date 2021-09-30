@@ -3,7 +3,7 @@ import { filter, map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { DataSource, DataSourceProtocol } from 'app/models';
+import { DataSource, DataSourceConnection, DataSourceProtocol } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler, mapOrder } from 'app/shared/utils';
@@ -12,6 +12,7 @@ import * as api from 'app/api/models';
 export class DataSourcesState {
   status!: Status;
   dataSources!: DataSource[];
+  connection?: DataSourceConnection;
 }
 
 const DATA_SOURCES_ORDER = [DataSourceProtocol.S7, DataSourceProtocol.IOShield];
@@ -37,6 +38,12 @@ export class DataSourceService {
     return this._store.state
       .pipe(filter((x) => x.status != Status.NotInitialized))
       .pipe(map((x) => x.dataSources));
+  }
+
+  get connection() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(map((x) => x.connection));
   }
 
   async getDataSources() {
@@ -66,28 +73,28 @@ export class DataSourceService {
     }
   }
 
-  async getDataSource(datasourceProtocol: string) {
+  async getStatus(datasourceProtocol: string) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
     try {
-      const obj = await this.httpService.get(
-        `/datasources/${datasourceProtocol}`
+      const obj = await this.httpService.get<DataSourceConnection>(
+        `/datasources/${datasourceProtocol}/status`
       );
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSources = state.dataSources.map((x) =>
-          x.id != obj.id ? x : obj
-        );
+        state.connection = obj;
       });
     } catch (err) {
       this.toastr.error(
-        this.translate.instant('settings-data-source.LoadError')
+        this.translate.instant('settings-data-source.LoadStatusError')
       );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.connection = undefined;
       });
     }
   }

@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
-import { DataPoint, DataSink, DataSinkProtocol } from 'app/models';
+import { DataPoint, DataSink, DataSinkConnection, DataSinkProtocol } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import PREDEFINED_MTCONNECT_DATA_POINTS from './constants/mtconnectDataItems';
 
+
 export class DataSinksState {
   status!: Status;
   dataSinks!: DataSink[];
+  connection?: DataSinkConnection;
 }
 
 @Injectable()
@@ -19,7 +23,9 @@ export class DataSinkService {
 
   constructor(
     storeFactory: StoreFactory<DataSinksState>,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private toastr: ToastrService,
+    private translate: TranslateService,
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -32,6 +38,12 @@ export class DataSinkService {
     return this._store.state
       .pipe(filter((x) => x.status != Status.NotInitialized))
       .pipe(map((x) => x.dataSinks));
+  }
+
+  get connection() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(map((x) => x.connection));
   }
 
   async getDataSinks() {
@@ -50,31 +62,35 @@ export class DataSinkService {
           .map((x) => this._parseDataSink(x));
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-sink.LoadError')
+      );
       errorHandler(err);
       this._store.patchState(() => ({
-        status: Status.Failed
+        status: Status.Failed,
       }));
     }
   }
 
-  async getDataSink(protocol: DataSinkProtocol) {
+  async getStatus(protocol: DataSinkProtocol) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
     try {
-      const obj = await this.httpService.get(`/datasinks/${protocol}`);
+      const obj = await this.httpService.get<DataSinkConnection>(`/datasinks/${protocol}/status`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSinks = state.dataSinks.map((x) =>
-          x.protocol != protocol ? x : obj
-        );
+        state.connection = obj;
       });
     } catch (err) {
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
+      this.toastr.error(
+        this.translate.instant('settings-data-sink.LoadStatusError')
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.connection = undefined;
       });
     }
   }
@@ -92,8 +108,10 @@ export class DataSinkService {
         state.status = Status.Ready;
       });
     } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-data-sink.UpdateError')
+      );
       errorHandler(err);
-      // TODO: Show error message (toast notification?)
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });

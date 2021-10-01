@@ -25,13 +25,16 @@ export class DatahubDataSink extends DataSink {
     const logPrefix = `${DatahubDataSink.name}::processDataPointValue`;
     //TODO: send data to adapter. Adapter is buffering.
     winston.debug(
-      `Get Measurement for dataPoint: ${dataPointId} value: ${value}`
+      `${logPrefix} receive measurement for dataPoint: ${dataPointId} with value: ${value}`
     );
-    if (!this.#connected)
+    if (!this.#connected) {
       winston.info(
         `${logPrefix} receive measurement data but datasink is not connected.`
       );
-    return;
+      return;
+    }
+    this.#datahubAdapter.sendData(dataPointId, value);
+    //datapoint und wert an adapter weiterleiten
   }
   /**
    * Not implemented for DataHub!
@@ -48,8 +51,10 @@ export class DatahubDataSink extends DataSink {
   public init(): void {
     const logPrefix = `${DatahubDataSink.#className}::init`;
     winston.debug(`${logPrefix} initializing.`);
-    if(!this.#datahubAdapter.running) {
-      throw new NorthBoundError(`${logPrefix} error due to adapter is not running.`);
+    if (!this.#datahubAdapter.running) {
+      throw new NorthBoundError(
+        `${logPrefix} error due to adapter is not running.`
+      );
     }
     this.#connected = true;
     winston.debug(`${logPrefix} initialized`);
@@ -61,7 +66,7 @@ export class DatahubDataSink extends DataSink {
    */
   public shutdown() {
     this.#datahubAdapter.stop();
-    // GC doesn´t cleanup because instance is managed by DataHubManager singleton
+    // GC doesn't cleanup because instance is managed by DataHubManager singleton
     this.#datahubAdapter = null;
     winston.info(`${DatahubDataSink.#className}::shutdown successful.`);
   }
@@ -78,6 +83,6 @@ export class DatahubDataSink extends DataSink {
    * Return current connection status of the data sink
    */
   public currentStatus(): boolean {
-    return !!this.#datahubAdapter?.running
+    return !!this.#datahubAdapter?.running;
   }
 }

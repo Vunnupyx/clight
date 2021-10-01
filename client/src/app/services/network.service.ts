@@ -66,10 +66,10 @@ export class NetworkService {
     });
 
     try {
-      await this.httpService.patch<any>(`/networkconfig`, obj);
+      const response = await this.httpService.patch<any>(`/networkconfig`, obj);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.config = obj;
+        state.config = response;
       });
     } catch (err) {
       this.toastr.error(

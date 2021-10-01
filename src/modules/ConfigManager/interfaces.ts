@@ -90,6 +90,24 @@ export interface IDataPointMapping {
   priority?: number;
 }
 
+export interface NetworkConfigItem {
+  useDhcp?: boolean;
+  ipAddr?: string;
+  netmask?: string;
+  defaultGateway?: string;
+  dnsServer?: string;
+  useProxy?: boolean;
+  port?: number;
+  username?: string;
+  password?: string;
+  configurationState?: boolean;
+  serviceState?: boolean;
+}
+
+export type NetworkConfig = {
+  [key in 'x1' | 'x2' | 'proxy']: NetworkConfigItem;
+};
+
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
   return 'source' in obj && 'target' in obj;
 }
@@ -107,6 +125,7 @@ export interface IConfig {
   // dataPoints: IDataSinkDataPointConfig[]; // TODO ??
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
+  networkConfig: NetworkConfig;
 }
 
 export interface IConfigManagerParams {

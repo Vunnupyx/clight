@@ -6,6 +6,7 @@ import { DataSinkService } from './data-sink.service';
 import { DataPointService } from './data-point.service';
 import { SourceDataPointService } from './source-data-point.service';
 import { DeviceInfoService } from './device-info.service';
+import { TemplateService } from './template.service';
 import { VirtualDataPointService } from './virtual-data-point.service';
 
 @NgModule({
@@ -16,6 +17,7 @@ import { VirtualDataPointService } from './virtual-data-point.service';
     DataSourceService,
     DeviceInfoService,
     SourceDataPointService,
+    TemplateService,
     VirtualDataPointService,
   ]
 })

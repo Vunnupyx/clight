@@ -10,6 +10,15 @@
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen"
   },
+  "quick-start": {
+    "Language": "Language",
+    "SelectLanguage": "Select Language",
+    "SelectSource": "Select Source",
+    "SelectApplicationInterfaces": "Select Application Interfaces",
+    "LoadError": "Error",
+    "Next": "",
+    "Save": ""
+  },
   "settings-general": {
     "General": "Erfolgreich",
     "Language": "Sprache",

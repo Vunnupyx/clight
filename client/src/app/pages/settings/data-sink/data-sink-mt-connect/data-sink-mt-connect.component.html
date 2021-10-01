@@ -315,7 +315,7 @@
           let-row="row"
         >
           <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-            <div class="text-ellipsis" style="margin-top: 8px">
+            <div class="text-ellipsis">
               <span *ngFor="let item of parseMap(value)"
                 >{{ item[0] }} -> {{ item[1] }}
               </span>
@@ -325,12 +325,12 @@
             *ngIf="unsavedRowIndex === rowIndex"
             class="d-flex align-items-center"
           >
-            <div class="mt-5 text-ellipsis">
+            <div class="text-ellipsis">
               <span *ngFor="let item of parseMap(unsavedRow?.map)"
                 >{{ item[0] }} -> {{ item[1] }}
               </span>
             </div>
-            <mat-button-toggle-group class="mt-5 ml-10">
+            <mat-button-toggle-group class="ml-10">
               <mat-button-toggle
                 class="small-button"
                 (click)="unsavedRow && onMapEdit(unsavedRow)"

@@ -8,6 +8,6 @@ Logger.init();
 winston.info('MDC light starting...');
 
 const bootstrapManager = new BootstrapManager();
-bootstrapManager.launch();
+bootstrapManager.start();
 
 winston.info('MDC light started');

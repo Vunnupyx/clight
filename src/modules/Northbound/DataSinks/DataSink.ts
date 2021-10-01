@@ -1,9 +1,8 @@
 import winston from 'winston';
-import { IDataSinkConfig, ITargetDataMap } from '../ConfigManager/interfaces';
-import { IDataSinkParams } from './interfaces';
-import { ILifecycleEvent, LifecycleEventStatus } from '../../common/interfaces';
-import { DataPointMapper } from '../DataPointMapper';
-import { IDataSourceMeasurementEvent } from '../DataSource';
+import { ILifecycleEvent } from '../../../common/interfaces';
+import { IDataSinkConfig, ITargetDataMap } from '../../ConfigManager/interfaces';
+import { DataPointMapper } from '../../DataPointMapper';
+import { IDataSourceMeasurementEvent } from '../../DataSource';
 
 /**
  * Base class of northbound data sinks
@@ -11,15 +10,19 @@ import { IDataSourceMeasurementEvent } from '../DataSource';
 export abstract class DataSink {
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;
-  public protocol: string;
+  protected readonly _protocol: string;
 
   /**
    * Create a new instance & initialize the sync scheduler
    * @param params The user configuration object for this data source
    */
-  constructor(params: IDataSinkParams) {
-    this.config = params.config;
+  constructor(params: IDataSinkConfig) {
+    this.config = params;
     this.dataPointMapper = DataPointMapper.getInstance();
+  }
+
+  public get protocol() {
+    return this._protocol;
   }
 
   /**
@@ -27,6 +30,8 @@ export abstract class DataSink {
    * @param params The user configuration object for this data source
    */
   public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
+    // No datapoints no event handling :)
+    if(this.config.dataPoints.length < 1) return;
     interface IEvent {
       mapValue?: string;
       map?: ITargetDataMap;
@@ -50,6 +55,8 @@ export abstract class DataSink {
         const dp = this.config.dataPoints.find(
           (dp) => dp.id === targetMapping.target
         );
+
+        if(!dp) return;
 
         eventsByTarget[targetMapping.target].push({
           mapValue: targetMapping.mapValue,
@@ -126,7 +133,7 @@ export abstract class DataSink {
   /**
    * Each data sink should do all setup in the init function
    */
-  public abstract init(): void;
+  public abstract init(): Promise<DataSink>;
 
   /**
    * Shuts down the data source

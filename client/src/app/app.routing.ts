@@ -1,11 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import {QuickStartGuard} from './shared/guards/quick-start.guard';
+import {AppComponent} from "./app.component";
+
+
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'settings/general',
-    pathMatch: 'full'
+    pathMatch: 'full',
+    component: AppComponent,
+    canActivate: [QuickStartGuard],
   }
 ];
 

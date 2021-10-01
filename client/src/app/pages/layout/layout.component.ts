@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {filter, map, mergeMap, shareReplay} from 'rxjs/operators';
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: 'app-layer',
@@ -16,5 +17,22 @@ export class LayoutComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  routeData$ = this.router.events
+    .pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => this.route),
+      mergeMap((route) => {
+        if (route.firstChild) {
+          return route.firstChild!.data;
+        }
+
+        return of({});
+      })
+    )
+
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 }

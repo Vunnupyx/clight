@@ -38,6 +38,7 @@
     "IPAddress": "",
     "Connection": "",
     "Running": "",
+    "Disconnected": "",
     "ServiceState": "",
     "DataPoints": "",
     "SelectAVariable": "",
@@ -52,6 +53,7 @@
     "SoftwareVersion": "",
     "BTTSString": "",
     "LoadError": "",
+    "LoadStatusError": "",
     "UpdateError": "",
     "Tabs": {
       "s7": "SINUMERIK 840D sl",
@@ -85,6 +87,10 @@
   "settings-data-sink": {
     "DataSink": "",
     "Enabled": "",
+    "Connection": "",
+    "Running": "",
+    "Disconnected": "",
+    "ServiceState": "",
     "DataPoints": "",
     "AddDataPoint": "",
     "Name": "",
@@ -119,7 +125,10 @@
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
       "datahub": "Data Hub"
-    }
+    },
+    "LoadError": "",
+    "LoadStatusError": "",
+    "UpdateError": ""
   },
   "settings-data-mapping": {
     "DataMapping": "",

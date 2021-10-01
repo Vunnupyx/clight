@@ -17,6 +17,15 @@ export class DataSinkAuth {
   password?: string;
 }
 
+export enum DataSinkConnectionStatus {
+  Connected = 'connected',
+  Disconnected = 'disconnected',
+}
+
+export class DataSinkConnection {
+  status!: DataSinkConnectionStatus;
+}
+
 export class DataSink {
   id?: string;
   name!: string;

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'events';
 import {
   DataSinkProtocols,
   DataSourceProtocols,

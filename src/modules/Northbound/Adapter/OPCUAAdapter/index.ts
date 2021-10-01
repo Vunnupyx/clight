@@ -10,67 +10,64 @@ import {
 import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
 
-import { ConfigManager } from '../ConfigManager';
+import { ConfigManager } from '../../../ConfigManager';
 import {
   IGeneralConfig,
   IOPCUAConfig,
   IUser,
-  IConfig
-} from '../ConfigManager/interfaces';
-import { AdapterError, NorthBoundError } from '../../common/errors';
+  IConfig,
+  IDataSinkConfig
+} from '../../../ConfigManager/interfaces';
+import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import path from 'path';
 import { compare } from 'bcrypt';
 
+interface IOPCUAAdapterOptions {
+  config: IDataSinkConfig,
+  runtimeConfig: IOPCUAConfig,
+  generalConfig: IGeneralConfig,
+}
 /**
  * Implementation of OPCUA adapter.
- * TODO: extend description
  */
 export class OPCUAAdapter {
-  private server: OPCUAServer;
-  private opcuaRuntimeConfig: IOPCUAConfig;
+  
+  private opcuaRuntimeConfig: IOPCUAAdapterOptions['runtimeConfig'];
+  private dataSinkConfig: IOPCUAAdapterOptions['config'];
+  private generalConfig: IOPCUAAdapterOptions['generalConfig'];
+
   private auth: boolean;
   private users: IUser[];
-  private generalConfig: IGeneralConfig;
+  
+  private server: OPCUAServer;
   private _running = false;
   private nodesetDir: string;
 
   private userManager: UserManagerOptions;
   private serverCertificateManager: OPCUACertificateManager;
 
-  private static className: string;
+  static readonly className = OPCUAAdapter.name;
   private static shutdownTimeoutMs = 1000;
 
-  constructor(config: ConfigManager) {
-    OPCUAAdapter.className = this.constructor.name;
-    OPCUAAdapter.configValidation(config);
-    this.opcuaRuntimeConfig = config.runtimeConfig.opcua;
-    const opcuaSink = config.config.dataSinks.find((sink) => sink.protocol === 'opcua');
-    this.auth = opcuaSink?.auth?.type === 'none' ? true : false;
+  constructor(options: IOPCUAAdapterOptions) {
+    this.opcuaRuntimeConfig = options.runtimeConfig
+    this.dataSinkConfig = options.config;
+    this.generalConfig = options.generalConfig;
+
+    if(!this.dataSinkConfig.auth) {
+      // Enable anonymous if no auth infos are found
+      this.auth = true;
+    } else {
+      this.auth = this.dataSinkConfig.auth.type !== 'userpassword' ? true : false;
+    }
     this.users = [{
-      userName: opcuaSink?.auth?.userName,
-      password: opcuaSink?.auth?.password
+      userName: this.dataSinkConfig?.auth?.userName,
+      password: this.dataSinkConfig?.auth?.password
     }]
-    this.generalConfig = config.config.general;
   }
 
   public get isRunning() {
     return this._running;
-  }
-
-  /**
-   * Validation check for config data at runtime.
-   *
-   * @param config
-   * @throws NorthboundError if any required configuration is missing.
-   */
-  private static configValidation(config: ConfigManager) {
-    const logPrefix = `${this.className} error due to`;
-    if (!config)
-      throw new NorthBoundError(`${logPrefix} no ConfigManager found.`);
-    if (!config.runtimeConfig)
-      throw new NorthBoundError(`${logPrefix} no runtime config found.`);
-    if (!config.runtimeConfig.opcua)
-      throw new NorthBoundError(`${logPrefix} no opcua config found.`);
   }
 
   /**
@@ -152,6 +149,7 @@ export class OPCUAAdapter {
    */
   public async init(): Promise<OPCUAAdapter> {
     const logPrefix = `${OPCUAAdapter.className}::init`;
+    winston.info(`${logPrefix} initialing.`);
     if (this._running) {
       winston.info(`${logPrefix} adapter already running.`);
       return this;
@@ -208,6 +206,11 @@ export class OPCUAAdapter {
     this.userManager = {
       isValidUserAsync: async (userName: string, password: string, cb: (any, bool) => void): Promise<void> => {
         const user = this.users.find((user) => userName === user.userName);
+        if (!user) {
+          const errMsg = `No user information found. Log in was rejected.`;
+          cb(new NorthBoundError(errMsg, null, 'OPCUAAdapter', 'isValidUserAsync'), false);
+          return;
+        }
         const valid = await compare(password, user.password);
         if (!valid) winston.warn(`${user} try to login with wrong password.`);
         cb(null, valid);

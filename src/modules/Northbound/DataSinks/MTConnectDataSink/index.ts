@@ -1,45 +1,53 @@
-import { IDataSinkConfig } from '../../ConfigManager/interfaces';
-import { IDataSinkParams } from './../interfaces';
+import { IDataSinkConfig, IMTConnectConfig } from '../../../ConfigManager/interfaces';
 
-import { MTConnectAdapter } from '../../MTConnectAdapter';
+import { MTConnectAdapter } from '../../Adapter/MTConnectAdapter';
 import { DataSink } from '../DataSink';
-import { MTConnectManager } from '../../MTConnectManager';
 import {
   DataSourceLifecycleEventTypes,
   ILifecycleEvent,
   LifecycleEventStatus,
   MTConnectDataItemTypes
-} from '../../../common/interfaces';
-import { DataItem, Event } from '../../MTConnectAdapter/DataItem';
+} from '../../../../common/interfaces';
+import { DataItem, Event } from '../../Adapter/MTConnectAdapter/DataItem';
 import winston from 'winston';
+import { SynchronousIntervalScheduler } from '../../../SyncScheduler';
 
 type DataItemDict = {
   [key: string]: DataItem;
 };
 
+export interface IMTConnectDataSinkOptions {
+  dataSinkConfig: IDataSinkConfig;
+  mtConnectConfig: IMTConnectConfig;
+}
+
 /**
  * Adds an mtc data sink
  */
 export class MTConnectDataSink extends DataSink {
-  protected config: IDataSinkConfig;
   private mtcAdapter: MTConnectAdapter;
+  private static scheduler: SynchronousIntervalScheduler;
+  private static schedulerListenerId: number;
   private dataItems: DataItemDict = {};
   private avail: DataItem;
+  protected _protocol = 'mtconnect';
+  private static className = MTConnectDataSink.name;
 
   /**
    * Create a new instance
-   * @param params The user configuration object for this data source
    */
-  constructor(params: IDataSinkParams) {
-    super(params);
-    this.mtcAdapter = MTConnectManager.getAdapter();
-    this.protocol = 'mtconnect';
+  constructor(options: IMTConnectDataSinkOptions) {
+    super(options.dataSinkConfig);
+    this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig)
+    MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
 
   /**
    * Sets up data items and adds them to the mtc adapter
    */
-  public init() {
+  public init(): Promise<MTConnectDataSink> {
+    const logPrefix = `${MTConnectDataSink.className}::init`;
+    winston.info(`${logPrefix} initializing.`);
     this.avail = new DataItem('avail');
     this.mtcAdapter.addDataItem(this.avail);
 
@@ -61,6 +69,15 @@ export class MTConnectDataSink extends DataSink {
         dataItem.value = dp.initialValue;
       }
     });
+    this.mtcAdapter.start();
+    if(!MTConnectDataSink.schedulerListenerId) {
+      MTConnectDataSink.schedulerListenerId = MTConnectDataSink.scheduler.addListener(
+        [1000],
+        this.mtcAdapter.sendChanged.bind(this.mtcAdapter)
+      );
+    }
+    winston.info(`${logPrefix} initialized.`);
+    return Promise.resolve(this);
   }
 
   protected processDataPointValue(dataPointId, value) {

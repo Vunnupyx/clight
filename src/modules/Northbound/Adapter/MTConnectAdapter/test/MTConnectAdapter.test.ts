@@ -1,7 +1,7 @@
 import net from 'net';
 import { MTConnectAdapter } from '..';
-import { ConfigManager } from '../../ConfigManager';
-import { EventBus } from '../../EventBus';
+import { ConfigManager } from '../../../../ConfigManager';
+import { EventBus } from '../../../../EventBus';
 import { DataItem } from '../DataItem';
 
 jest.mock('winston');

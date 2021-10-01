@@ -1,10 +1,9 @@
-import net from 'net';
-import winston from 'winston';
-import { v1 as uuidv1 } from 'uuid';
-import { DataItem } from './DataItem';
 import { format } from 'date-fns';
-import { ConfigManager } from '../ConfigManager';
-import { IConfig, IMTConnectConfig } from '../ConfigManager/interfaces';
+import net from 'net';
+import { v1 as uuidv1 } from 'uuid';
+import winston from 'winston';
+import { IMTConnectConfig } from '../../../ConfigManager/interfaces';
+import { DataItem } from './DataItem';
 
 export interface Socket extends net.Socket {
   id?: string;
@@ -19,13 +18,8 @@ export class MTConnectAdapter {
   private clients: Socket[] = [];
   private _running: boolean;
   private dataItems: DataItem[] = [];
-  private config: IMTConnectConfig;
 
-  constructor(config: ConfigManager) {
-    this.config = config.runtimeConfig.mtconnect;
-    // register for config changes
-    config.on('newConfig', this.configChangedHandler.bind(this));
-  }
+  constructor(private mtConfig: IMTConnectConfig) {}
 
   public get isRunning() {
     return this._running;
@@ -194,12 +188,12 @@ export class MTConnectAdapter {
   public start(): void {
     if (!this._running) {
       this.server = net.createServer();
-      this.server.listen(this.config.listenerPort);
+      this.server.listen(this.mtConfig.listenerPort);
 
       this.server.on('connection', this.listenForClients.bind(this));
 
       winston.debug(
-        `MTConnect Adapter listing on port ${this.config.listenerPort}`
+        `MTConnect Adapter listing on port ${this.mtConfig.listenerPort}`
       );
     }
 
@@ -218,11 +212,7 @@ export class MTConnectAdapter {
         });
       });
     }
-
     this._running = false;
     return;
-  }
-  private configChangedHandler(config: IConfig) {
-    //TODO implement this
   }
 }

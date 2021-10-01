@@ -11,27 +11,38 @@
   "
 ></p>
 
-<h2 class="m-25">{{ 'settings-network.Network' | translate }}</h2>
-
-<mat-divider></mat-divider>
-
-<div class="d-block m-20">
-  <nav mat-tab-nav-bar mat-align-tabs="center">
-    <a
-      *ngFor="let tab of tabs"
-      mat-tab-link
-      [active]="tab === selectedTab"
-      (click)="onSelectTab(tab)"
-    >{{ 'settings-network.Tabs.' + tab | translate }}</a>
-  </nav>
+<div class="d-flex align-items-center mt-10">
+  <h2 class="mt-0 mb-0 mr-25 ml-25">{{ 'settings-network.Network' | translate }}</h2>
+  <div class="flex-grow-1">
+    <nav mat-tab-nav-bar mat-align-tabs="center" class="network-nav">
+      <a
+        *ngFor="let tab of tabs"
+        mat-tab-link
+        [active]="tab === selectedTab"
+        (click)="onSelectTab(tab)"
+      >{{ 'settings-network.Tabs.' + tab | translate }}</a>
+    </nav>
+  </div>
 </div>
+<mat-divider></mat-divider>
+<div class="pl-25 pr-25">
+  <div class="pb-25" [ngSwitch]="selectedTab">
+    <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
+      <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
+    </ng-container>
+    <ng-container *ngSwitchCase="NetworkType.ETHERNET_X2">
+      <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
+    </ng-container>
+    <ng-container *ngSwitchCase="NetworkType.PROXY">
+      <h3>{{ 'settings-network.ProxySettings' | translate }}</h3>
+    </ng-container>
+    <mat-divider></mat-divider>
+  </div>
 
-<div class="container">
   <div class="row" [ngSwitch]="selectedTab">
     <div class="col-12 col-md-7 col-lg-5">
       <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
         <form #mainForm="ngForm">
-          <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
           <div class="d-flex align-items-center justify-content-between">
             <div class="mr-30">
               {{ 'settings-network.AssignIPManually' | translate }}
@@ -188,7 +199,6 @@
 
       <ng-container *ngSwitchCase="NetworkType.ETHERNET_X2">
         <form #mainForm="ngForm">
-          <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
           <div class="d-flex align-items-center justify-content-between">
             <div class="mr-30">
               {{ 'settings-network.AssignIPManually' | translate }}
@@ -344,7 +354,6 @@
       </ng-container>
       <ng-container *ngSwitchCase="NetworkType.PROXY">
         <form #proxyForm="ngForm">
-          <h3>{{ 'settings-network.ProxySettings' | translate }}</h3>
           <div class="d-flex align-items-center justify-content-between mb-10">
             <div class="mr-30">
               {{ 'settings-network.UseProxy' | translate }}

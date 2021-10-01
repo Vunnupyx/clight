@@ -1,6 +1,5 @@
-import { Client, Twin, Message } from 'azure-iot-device';
+import { Client, Message, Twin } from 'azure-iot-device';
 import { MqttWs as iotHubTransport } from 'azure-iot-device-mqtt';
-import { HttpsProxyAgent } from 'https-proxy-agent';
 import { ProvisioningDeviceClient } from 'azure-iot-provisioning-device';
 import { Mqtt as MqttTransport } from 'azure-iot-provisioning-device-mqtt';
 import {
@@ -9,12 +8,16 @@ import {
 } from 'azure-iot-provisioning-device/dist/interfaces';
 import { SymmetricKeySecurityClient } from 'azure-iot-security-symmetric-key';
 import { createHmac } from 'crypto';
+import EventEmitter from 'events';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { NorthBoundError } from '../../common/errors';
 import {
   IHttpsProxyConfig,
   ISocksProxyConfig
 } from '../ConfigManager/interfaces';
+('events');
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
@@ -50,8 +53,12 @@ export class DataHubAdapter {
   #connectionSting: TConnectionString = null;
   #dataHubClient: Client;
   #deviceTwin: Twin;
-  #dataBuffer: Array<Array<any>> = []; // TODO:
-  #dataBufferThresholdBytes: 150; //TODO:
+  #dataBufferThresholdBytes = 150; //TODO:
+  //TODO: add serial number and buffer size from config
+  #dataBuffer = new MessageBuffer(
+    'DUMMYNUMBER',
+    this.#dataBufferThresholdBytes
+  );
   #desiredProps: { [key: string]: any };
 
   public constructor(options: DataHubAdapterOptions) {
@@ -61,6 +68,7 @@ export class DataHubAdapter {
     this.#scopeId = options.scopeId;
     this.#isGroupRegistration = options.group || false;
     this.#proxyConfig = options.proxy || null;
+    this.#dataBuffer.on('full', this.bufferFullHandler.bind(this));
   }
 
   public get running(): boolean {
@@ -90,9 +98,11 @@ export class DataHubAdapter {
       })
       .then(() => {
         this.#symKeyProvTransport = new MqttTransport();
-        this.#symKeyProvTransport.setTransportOptions({
-          webSocketAgent: this.#proxy
-        });
+        if (this.#proxyConfig) {
+          this.#symKeyProvTransport.setTransportOptions({
+            webSocketAgent: this.#proxy
+          });
+        }
       })
       .then(() => {
         this.#provClient = ProvisioningDeviceClient.create(
@@ -145,7 +155,6 @@ export class DataHubAdapter {
       .getTwin()
       .then((twin) => {
         this.#deviceTwin = twin;
-        // this.registerTwinHandlers();
         this.isRunning = true;
         winston.info(`${logPrefix} successful. Adapter ready to send data.`);
       })
@@ -237,35 +246,20 @@ export class DataHubAdapter {
     return `HostName=${assignedHub};DeviceId=${deviceId};SharedAccessKey=${sharedKey}`;
   }
 
-  private registerTwinHandlers(): void {
-    const logPrefix = `${DataHubAdapter.#className}::registerTwinHandlers`;
-    if (!this.#deviceTwin) {
-      throw new NorthBoundError(`${logPrefix} error due to no twin found.`);
-    }
-    //TODO:
-    // this.desired
-    [].forEach((des) => {
-      this.#deviceTwin.on(`properties.desire.${des}`, () => {});
-    });
-  }
-  private generateMsgFromBuffer(): Message {
-    return new Message(
-      JSON.stringify({ deviceId: this.#registrationId, data: this.#dataBuffer })
-    );
-  }
+  // private registerTwinHandlers(): void {
+  //   const logPrefix = `${DataHubAdapter.#className}::registerTwinHandlers`;
+  //   if (!this.#deviceTwin) {
+  //     throw new NorthBoundError(`${logPrefix} error due to no twin found.`);
+  //   }
+  //   //TODO:
+  //   // this.desired
+  //   [].forEach((des) => {
+  //     this.#deviceTwin.on(`properties.desire.${des}`, () => {});
+  //   });
+  // }
 
-  public sendData(data: { [key: string]: any }[]): void {
-    this.#dataBuffer.push(data);
-    if (!(this.calcBufferSize() >= this.#dataBufferThresholdBytes)) return;
-    const msg = this.generateMsgFromBuffer();
-    this.#dataHubClient.sendEvent(msg);
-  }
-
-  /**
-   * Return buffer size in bytes
-   */
-  private calcBufferSize(): number {
-    return Buffer.from(JSON.stringify(this.#dataBuffer), 'utf-8').byteLength;
+  public sendData(key: string, value: any): void {
+    this.#dataBuffer.addAsset(key, value);
   }
 
   /*
@@ -279,6 +273,129 @@ export class DataHubAdapter {
       ([key, value]) => {
         this.#deviceTwin.properties.reported[key] = value;
       }
+    );
+  }
+
+  private bufferFullHandler(
+    sendable: Message,
+    newMessageBuffer: MessageBuffer,
+    remainingData?: Array<{ key: string; value: any }>
+  ) {
+    if (!this.#dataHubClient) {
+      winston.warn(
+        `No datahub connection available. No send retry is implemented. Data is lost!!!!`
+      );
+      return;
+    }
+    this.#dataBuffer = newMessageBuffer;
+    this.#dataBuffer.on('full', this.bufferFullHandler.bind(this));
+    if (remainingData) this.#dataBuffer.addAssetList(remainingData);
+    //TODO: add send callback
+    if (sendable)
+      this.#dataHubClient.sendEvent(sendable, this.sendEventHandler.bind(this));
+  }
+
+  private sendEventHandler(error: any, result: any) {
+    winston.debug(`NOT IMPLEMENTED`);
+    winston.debug(error);
+    winston.debug(result);
+  }
+}
+
+interface IAssetData {
+  ts: string;
+  k: string;
+  v: boolean | number | string;
+}
+
+interface IMessageBufferEvents {
+  full: (
+    sendableMsg: Message,
+    newMsgBuffer: MessageBuffer,
+    remainingAssets: Array<{ key: string; value: IAssetData['v'] }>
+  ) => void;
+}
+
+interface IMessageFormat {
+  serialNumber: string;
+  startDate: string;
+  endDate: string;
+  assetData: Array<IAssetData>;
+}
+
+class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBufferEvents>) {
+  #startDate = new Date().toISOString();
+  #assetBuffer: IAssetData[] = [];
+
+  constructor(private serialNumber: string, private bufferSizeBytes: number) {
+    super();
+  }
+
+  public addAsset<valueType extends IAssetData['v']>(
+    key: string,
+    value: valueType
+  ): void {
+    this.#assetBuffer.push(this.generateAssetData(key, value));
+    const currentMsg = this.getCurrentMsg();
+    if (this.calcSize(currentMsg) >= this.bufferSizeBytes) {
+      this.emitFullEvent();
+    }
+  }
+
+  public addAssetList(
+    assets: Array<{ key: string; value: IAssetData['v'] }>
+  ): void {
+    for (const [index, asset] of assets.entries()) {
+      this.#assetBuffer.push(this.generateAssetData(asset.key, asset.value));
+      const currentMsg = this.getCurrentMsg();
+      if (this.calcSize(currentMsg) >= this.bufferSizeBytes) {
+        const newMessageBuffer = new MessageBuffer(
+          this.serialNumber,
+          this.bufferSizeBytes
+        );
+        this.emitFullEvent(newMessageBuffer, assets.slice(index + 1));
+        return;
+      }
+    }
+  }
+
+  private generateAssetData<valueType extends IAssetData['v']>(
+    key: string,
+    value: valueType
+  ): { ts: string; k: string; v: valueType } {
+    return {
+      ts: new Date().toISOString(),
+      k: key,
+      v: value
+    };
+  }
+
+  private getCurrentMsg(): IMessageFormat {
+    return {
+      serialNumber: this.serialNumber,
+      startDate: this.#startDate,
+      endDate: new Date().toISOString(),
+      assetData: this.#assetBuffer
+    };
+  }
+
+  /**
+   * Return buffer size in bytes
+   */
+  private calcSize(obj: any): number {
+    return Buffer.from(JSON.stringify(obj), 'utf-8').byteLength;
+  }
+
+  private emitFullEvent(
+    newMessageBuffer?: MessageBuffer,
+    remainingAssets?: Array<{ key: string; value: IAssetData['v'] }>
+  ): void {
+    this.emit(
+      'full',
+      new Message(JSON.stringify(this.getCurrentMsg())),
+      newMessageBuffer ||
+        new MessageBuffer(this.serialNumber, this.bufferSizeBytes),
+      remainingAssets
     );
   }
 }

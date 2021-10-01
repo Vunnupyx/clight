@@ -12,11 +12,11 @@ import EventEmitter from 'events';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
-import { NorthBoundError } from '../../common/errors';
+import { NorthBoundError } from '../../../../common/errors';
 import {
   IHttpsProxyConfig,
   ISocksProxyConfig
-} from '../ConfigManager/interfaces';
+} from '../../../ConfigManager/interfaces';
 ('events');
 
 type TConnectionString =

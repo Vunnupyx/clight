@@ -1,28 +1,49 @@
 import { DataSink } from '../DataSink';
-import { IDataSinkParams } from '../interfaces';
-import { ILifecycleEvent } from '../../../common/interfaces';
-import { DataHubAdapter } from '../../DataHubAdapter';
-import { DataHubManager } from '../../DataHubManager';
+import { ILifecycleEvent } from '../../../../common/interfaces';
+import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
 import winston from 'winston';
-import { NorthBoundError } from '../../../common/errors';
+import { NorthBoundError } from '../../../../common/errors';
+import {
+  IDataHubConfig,
+  IDataSinkConfig
+} from '../../../ConfigManager/interfaces';
 
-interface DatahubDataSinkOptions extends IDataSinkParams {}
+export interface DataHubDataSinkOptions {
+  config: IDataSinkConfig;
+  runTimeConfig: IDataHubConfig;
+}
 
-export class DatahubDataSink extends DataSink {
-  static readonly #className = DatahubDataSink.name;
+export class DataHubDataSink extends DataSink {
+  static readonly #className = DataHubDataSink.name;
   #datahubAdapter: DataHubAdapter;
   #connected = false;
 
-  public constructor(options: DatahubDataSinkOptions) {
-    super(options);
-    this.#datahubAdapter = DataHubManager.getAdapter();
+  public constructor(options: DataHubDataSinkOptions) {
+    super(options.config);
+    const {
+      scopeId,
+      symKey,
+      regId,
+      proxy,
+      groupDevice: group,
+      provisioningHost: dpsHost
+    } = options.runTimeConfig;
+
+    this.#datahubAdapter = new DataHubAdapter({
+      dpsHost,
+      scopeId,
+      regId,
+      group,
+      symKey,
+      proxy
+    });
   }
   /**
    * Write data to adapter with dataPointId
    * TODO: Implement
    */
   protected processDataPointValue(dataPointId: string, value: any): void {
-    const logPrefix = `${DatahubDataSink.name}::processDataPointValue`;
+    const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
     //TODO: send data to adapter. Adapter is buffering.
     winston.debug(
       `${logPrefix} receive measurement for dataPoint: ${dataPointId} with value: ${value}`
@@ -40,7 +61,7 @@ export class DatahubDataSink extends DataSink {
    * Not implemented for DataHub!
    */
   public onLifecycleEvent(event: ILifecycleEvent): Promise<void> {
-    const logPrefix = `${DatahubDataSink.name}::onLifecycleEvent`;
+    const logPrefix = `${DataHubDataSink.name}::onLifecycleEvent`;
     //TODO: @Patrick please check with DMG if source lifecycle events are required
     winston.debug(`${logPrefix} not implemented.`);
     return Promise.resolve();
@@ -48,17 +69,17 @@ export class DatahubDataSink extends DataSink {
   /**
    * TODO: Implement
    */
-  public init(): void {
-    const logPrefix = `${DatahubDataSink.#className}::init`;
+  public init(): Promise<DataHubDataSink> {
+    const logPrefix = `${DataHubDataSink.#className}::init`;
     winston.debug(`${logPrefix} initializing.`);
-    if (!this.#datahubAdapter.running) {
-      throw new NorthBoundError(
-        `${logPrefix} error due to adapter is not running.`
-      );
-    }
-    this.#connected = true;
-    winston.debug(`${logPrefix} initialized`);
-    // TODO: create dataStructure via this.config.dataPoints ?
+    return this.#datahubAdapter
+      .init()
+      .then((adapter) => adapter.start())
+      .then(() => {
+        this.#connected = true;
+        winston.debug(`${logPrefix} initialized`);
+        return this;
+      });
   }
 
   /**
@@ -68,7 +89,7 @@ export class DatahubDataSink extends DataSink {
     this.#datahubAdapter.stop();
     // GC doesn't cleanup because instance is managed by DataHubManager singleton
     this.#datahubAdapter = null;
-    winston.info(`${DatahubDataSink.#className}::shutdown successful.`);
+    winston.info(`${DataHubDataSink.#className}::shutdown successful.`);
   }
 
   /**
@@ -76,7 +97,7 @@ export class DatahubDataSink extends DataSink {
    */
   public disconnect() {
     this.#datahubAdapter.stop;
-    winston.info(`${DatahubDataSink.#className}::shutdown successful.`);
+    winston.info(`${DataHubDataSink.#className}::shutdown successful.`);
   }
 
   /**

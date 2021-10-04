@@ -2,7 +2,6 @@ import { DataSink } from '../DataSink';
 import { ILifecycleEvent } from '../../../../common/interfaces';
 import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
 import winston from 'winston';
-import { NorthBoundError } from '../../../../common/errors';
 import {
   IDataHubConfig,
   IDataSinkConfig
@@ -13,6 +12,9 @@ export interface DataHubDataSinkOptions {
   runTimeConfig: IDataHubConfig;
 }
 
+/**
+ * Representation of the data sink for Azure iot hub.
+ */
 export class DataHubDataSink extends DataSink {
   static readonly #className = DataHubDataSink.name;
   #datahubAdapter: DataHubAdapter;
@@ -20,31 +22,13 @@ export class DataHubDataSink extends DataSink {
 
   public constructor(options: DataHubDataSinkOptions) {
     super(options.config);
-    const {
-      scopeId,
-      symKey,
-      regId,
-      proxy,
-      groupDevice: group,
-      provisioningHost: dpsHost
-    } = options.runTimeConfig;
-
-    this.#datahubAdapter = new DataHubAdapter({
-      dpsHost,
-      scopeId,
-      regId,
-      group,
-      symKey,
-      proxy
-    });
+    this.#datahubAdapter = new DataHubAdapter(options.runTimeConfig);
   }
   /**
-   * Write data to adapter with dataPointId
-   * TODO: Implement
+   * Send data to data hub via data hub adapter object.
    */
   protected processDataPointValue(dataPointId: string, value: any): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
-    //TODO: send data to adapter. Adapter is buffering.
     winston.debug(
       `${logPrefix} receive measurement for dataPoint: ${dataPointId} with value: ${value}`
     );
@@ -54,9 +38,10 @@ export class DataHubDataSink extends DataSink {
       );
       return;
     }
+    //TODO: What the naming convention for datahub asset data?
     this.#datahubAdapter.sendData(dataPointId, value);
-    //datapoint und wert an adapter weiterleiten
   }
+
   /**
    * Not implemented for DataHub!
    */
@@ -66,8 +51,9 @@ export class DataHubDataSink extends DataSink {
     winston.debug(`${logPrefix} not implemented.`);
     return Promise.resolve();
   }
+
   /**
-   * TODO: Implement
+   * Initialize datahub data sink and all it´s dependencies.
    */
   public init(): Promise<DataHubDataSink> {
     const logPrefix = `${DataHubDataSink.#className}::init`;
@@ -85,9 +71,8 @@ export class DataHubDataSink extends DataSink {
   /**
    * Shutdown datasink
    */
-  public shutdown() {
-    this.#datahubAdapter.stop();
-    // GC doesn't cleanup because instance is managed by DataHubManager singleton
+  public async shutdown() {
+    await this.#datahubAdapter.stop();
     this.#datahubAdapter = null;
     winston.info(`${DataHubDataSink.#className}::shutdown successful.`);
   }

@@ -122,6 +122,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         maxFileSizeByte: 20000000
       },
       datahub: {
+        serialNumber: "No serial number found",
+        minMsgSize: 500,
         provisioningHost: "",
         scopeId: "",
         regId: "unknownDevice",

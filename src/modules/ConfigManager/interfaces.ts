@@ -96,10 +96,12 @@ export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
 
 export interface IDataHubConfig {
     provisioningHost: string,
+    serialNumber: string,
     scopeId: string,
     regId: string,
     symKey: string
     groupDevice: boolean,
+    minMsgSize: number;
     proxy?: IHttpsProxyConfig | ISocksProxyConfig
 }
 

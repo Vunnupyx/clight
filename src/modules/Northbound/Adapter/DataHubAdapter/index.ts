@@ -68,6 +68,18 @@ export class DataHubAdapter {
   }
 
   /**
+   * Get desired properties object by device twin.
+   */
+  public getDesiredProps(): {[key: string]: any} {
+    const logPrefix = `${DataHubAdapter.#className}::getDesiredProps`;
+    if(!this.#deviceTwin) {
+      winston.warn(`${logPrefix} no desired properties set by backend.`)
+      return
+    }
+    return this.#deviceTwin.properties.desired;
+  }
+
+  /**
    * Initialize the DataHubAdapter and get provisioning for the device.
    */
   public init(): Promise<DataHubAdapter> {

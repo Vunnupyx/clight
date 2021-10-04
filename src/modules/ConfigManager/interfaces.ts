@@ -103,6 +103,11 @@ export interface IDataHubConfig {
     groupDevice: boolean,
     minMsgSize: number;
     proxy?: IHttpsProxyConfig | ISocksProxyConfig
+    signalGroups: ISignalGroups
+}
+
+export interface ISignalGroups {
+  [key: string]: Array<string>
 }
 
 export interface IProxyConfig {

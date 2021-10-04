@@ -4,7 +4,8 @@ import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
 import winston from 'winston';
 import {
   IDataHubConfig,
-  IDataSinkConfig
+  IDataSinkConfig,
+  ISignalGroups
 } from '../../../ConfigManager/interfaces';
 
 export interface DataHubDataSinkOptions {
@@ -18,10 +19,12 @@ export interface DataHubDataSinkOptions {
 export class DataHubDataSink extends DataSink {
   static readonly #className = DataHubDataSink.name;
   #datahubAdapter: DataHubAdapter;
+  #signalGroups: ISignalGroups;
   #connected = false;
 
   public constructor(options: DataHubDataSinkOptions) {
     super(options.config);
+    this.#signalGroups = options.runTimeConfig.signalGroups;
     this.#datahubAdapter = new DataHubAdapter(options.runTimeConfig);
   }
   /**
@@ -38,8 +41,17 @@ export class DataHubDataSink extends DataSink {
       );
       return;
     }
-    //TODO: What the naming convention for datahub asset data?
-    this.#datahubAdapter.sendData(dataPointId, value);
+    const desiredProps = Object.keys(this.#datahubAdapter.getDesiredProps());
+  
+    // Find datapoint in signal Groups
+    for(const [groupName, members] of Object.entries(this.#signalGroups)) {
+      if(!desiredProps.includes(groupName)) {
+        continue;
+      }
+      if(members.includes(dataPointId)) {
+        this.#datahubAdapter.sendData(dataPointId, value);
+      }
+    }
   }
 
   /**

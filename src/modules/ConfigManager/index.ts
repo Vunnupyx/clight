@@ -129,7 +129,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         regId: "unknownDevice",
         symKey: "",
         groupDevice: false,
-        proxy: null
+        proxy: null,
+        signalGroups: undefined
       }
     };
 

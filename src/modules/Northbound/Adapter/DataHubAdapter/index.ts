@@ -13,23 +13,12 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
-import {
-  IHttpsProxyConfig,
-  ISocksProxyConfig
-} from '../../../ConfigManager/interfaces';
-('events');
+import { IDataHubConfig } from '../../../ConfigManager/interfaces';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
 
-interface DataHubAdapterOptions {
-  dpsHost: string;
-  scopeId: string;
-  regId: string;
-  symKey: string;
-  group?: boolean;
-  proxy?: IHttpsProxyConfig | ISocksProxyConfig;
-}
+interface DataHubAdapterOptions extends IDataHubConfig {}
 
 export class DataHubAdapter {
   static readonly #className: string = DataHubAdapter.name;
@@ -53,22 +42,25 @@ export class DataHubAdapter {
   #connectionSting: TConnectionString = null;
   #dataHubClient: Client;
   #deviceTwin: Twin;
-  #dataBufferThresholdBytes = 150; //TODO:
+  #dataBufferThresholdBytes = 500; //TODO: what is a good buffer size?
   //TODO: add serial number and buffer size from config
-  #dataBuffer = new MessageBuffer(
-    'DUMMYNUMBER',
-    this.#dataBufferThresholdBytes
-  );
+  #dataBuffer: MessageBuffer;
   #desiredProps: { [key: string]: any };
 
   public constructor(options: DataHubAdapterOptions) {
-    this.#dpsServiceAddress = options.dpsHost;
+    this.#dpsServiceAddress = options.provisioningHost;
     this.#registrationId = options.regId;
     this.#symKey = options.symKey;
     this.#scopeId = options.scopeId;
-    this.#isGroupRegistration = options.group || false;
+    this.#isGroupRegistration = options.groupDevice || false;
     this.#proxyConfig = options.proxy || null;
-    this.#dataBuffer.on('full', this.bufferFullHandler.bind(this));
+    this.#dataBufferThresholdBytes =
+      options.minMsgSize || this.#dataBufferThresholdBytes;
+    this.#dataBuffer = new MessageBuffer(
+      options.serialNumber,
+      this.#dataBufferThresholdBytes
+    );
+    this.#dataBuffer.once('full', this.bufferFullHandler.bind(this));
   }
 
   public get running(): boolean {
@@ -170,15 +162,23 @@ export class DataHubAdapter {
   /**
    * Stop adapter and set running status.
    */
-  public stop(): void {
+  public stop(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::stop`;
     if (!this.isRunning) {
       winston.debug(`${logPrefix} try to stop a not running adapter.`);
       return;
     }
     this.isRunning = false;
-    this.#dataHubClient = null;
-    winston.info(`${logPrefix} successfully stopped adapter.`);
+    this.#dataHubClient.close()
+      .then( () => {
+        Object.keys(this).forEach((key) => {
+          delete(this[key]);
+        });
+        winston.info(`${logPrefix} successfully stopped adapter.`);
+    })
+    .catch((err) => {
+      return Promise.reject(new NorthBoundError(`${logPrefix} error due to ${JSON.stringify(err)}`));
+    })
   }
 
   /**
@@ -246,36 +246,16 @@ export class DataHubAdapter {
     return `HostName=${assignedHub};DeviceId=${deviceId};SharedAccessKey=${sharedKey}`;
   }
 
-  // private registerTwinHandlers(): void {
-  //   const logPrefix = `${DataHubAdapter.#className}::registerTwinHandlers`;
-  //   if (!this.#deviceTwin) {
-  //     throw new NorthBoundError(`${logPrefix} error due to no twin found.`);
-  //   }
-  //   //TODO:
-  //   // this.desired
-  //   [].forEach((des) => {
-  //     this.#deviceTwin.on(`properties.desire.${des}`, () => {});
-  //   });
-  // }
-
+  /**
+   * Send a key value pair.
+   */
   public sendData(key: string, value: any): void {
     this.#dataBuffer.addAsset(key, value);
   }
 
-  /*
-  "desired": {
-            "telemetryConfig": {
-                "sendFrequency": "5m"
-            },
-            */
-  private sendDesiredProps(): void {
-    Object.entries(this.#deviceTwin.properties.desired).forEach(
-      ([key, value]) => {
-        this.#deviceTwin.properties.reported[key] = value;
-      }
-    );
-  }
-
+  /**
+   * Handles to full event of the current Message Buffer
+   */
   private bufferFullHandler(
     sendable: Message,
     newMessageBuffer: MessageBuffer,
@@ -283,25 +263,37 @@ export class DataHubAdapter {
   ) {
     if (!this.#dataHubClient) {
       winston.warn(
-        `No datahub connection available. No send retry is implemented. Data is lost!!!!`
+        `No datahub connection available. No send retry is implemented. Data lost!!!!`
       );
       return;
     }
     this.#dataBuffer = newMessageBuffer;
-    this.#dataBuffer.on('full', this.bufferFullHandler.bind(this));
-    if (remainingData) this.#dataBuffer.addAssetList(remainingData);
+    this.#dataBuffer.once('full', this.bufferFullHandler.bind(this));
     //TODO: add send callback
-    if (sendable)
-      this.#dataHubClient.sendEvent(sendable, this.sendEventHandler.bind(this));
+    if (sendable) {
+      sendable.contentType = 'application/json';
+      sendable.contentEncoding = 'utf-8';
+      this.#dataHubClient.sendEvent(
+        sendable,
+        this.sendEventCallback.bind(this)
+      );
+    }
+    if (remainingData) this.#dataBuffer.addAssetList(remainingData);
   }
 
-  private sendEventHandler(error: any, result: any) {
+  /**
+   * TODO: Handle result of sending data to datahub
+   */
+  private sendEventCallback(error: any, result: any) {
     winston.debug(`NOT IMPLEMENTED`);
     winston.debug(error);
     winston.debug(result);
   }
 }
 
+/**
+ * Structure of asset data by DMG.
+ */
 interface IAssetData {
   ts: string;
   k: string;
@@ -323,6 +315,13 @@ interface IMessageFormat {
   assetData: Array<IAssetData>;
 }
 
+/**
+ * Representation of a object buffer with a creation timestamp and a full timestamp.
+ * Emit full event if buffer is full and also emits the sendable buffer data and a new empty buffer object.
+ * ATTENTION:
+ *  Implementation is threshold buffer implementation -> emitted sendable object >= bufferSizeBytes !
+ *  Maybe a buffer size limit is needed here. please adapt implementation
+ */
 class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBufferEvents>) {
   #startDate = new Date().toISOString();
   #assetBuffer: IAssetData[] = [];
@@ -331,6 +330,9 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     super();
   }
 
+  /**
+   * Add a single asset dataset to the buffer.
+   */
   public addAsset<valueType extends IAssetData['v']>(
     key: string,
     value: valueType
@@ -342,6 +344,9 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     }
   }
 
+  /**
+   * Add a iterable array of asset datasets to the buffer.
+   */
   public addAssetList(
     assets: Array<{ key: string; value: IAssetData['v'] }>
   ): void {
@@ -349,20 +354,19 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
       this.#assetBuffer.push(this.generateAssetData(asset.key, asset.value));
       const currentMsg = this.getCurrentMsg();
       if (this.calcSize(currentMsg) >= this.bufferSizeBytes) {
-        const newMessageBuffer = new MessageBuffer(
-          this.serialNumber,
-          this.bufferSizeBytes
-        );
-        this.emitFullEvent(newMessageBuffer, assets.slice(index + 1));
+        this.emitFullEvent(assets.slice(index + 1));
         return;
       }
     }
   }
 
+  /**
+   * Generate a object of type IAssetData and automatically add timestamp.
+   */
   private generateAssetData<valueType extends IAssetData['v']>(
     key: string,
     value: valueType
-  ): { ts: string; k: string; v: valueType } {
+  ): IAssetData {
     return {
       ts: new Date().toISOString(),
       k: key,
@@ -370,6 +374,9 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     };
   }
 
+  /**
+   * Return the current object representation.
+   */
   private getCurrentMsg(): IMessageFormat {
     return {
       serialNumber: this.serialNumber,
@@ -386,15 +393,16 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     return Buffer.from(JSON.stringify(obj), 'utf-8').byteLength;
   }
 
+  /**
+   * Help function for emitting of full event. Generates all necessary data.
+   */
   private emitFullEvent(
-    newMessageBuffer?: MessageBuffer,
     remainingAssets?: Array<{ key: string; value: IAssetData['v'] }>
   ): void {
     this.emit(
       'full',
       new Message(JSON.stringify(this.getCurrentMsg())),
-      newMessageBuffer ||
-        new MessageBuffer(this.serialNumber, this.bufferSizeBytes),
+      new MessageBuffer(this.serialNumber, this.bufferSizeBytes),
       remainingAssets
     );
   }

@@ -859,7 +859,7 @@
       "get": {
         "tags": ["networkConfig"],
         "description": "Get network config information",
-        "operationId": "networkconfigGet",
+        "operationId": "networkConfigGet",
         "responses": {
           "200": {
             "description": "Returns all information about the network config",
@@ -871,7 +871,7 @@
       },
       "patch": {
         "tags": ["networkConfig"],
-        "operationId": "networkconfigPatch",
+        "operationId": "networkConfigPatch",
         "parameters": [
           {
             "in": "body",

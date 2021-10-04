@@ -22,7 +22,9 @@ function deviceInfosGetHandler(request: Request, response: Response): void {
  */
 function deviceInfosPatchHandler(request: Request, response: Response): void {
   const newData = { ...configManager.config.general, ...request.body };
-  configManager.changeConfig('update', 'general', newData);
+
+  configManager.saveConfig({ general: request.body });
+
   response.status(200).json(newData);
 }
 

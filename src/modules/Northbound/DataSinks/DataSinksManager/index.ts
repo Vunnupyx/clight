@@ -37,6 +37,9 @@ export class DataSinksManager {
 
   constructor(params: IDataSinkManagerParams) {
     this.configManager = params.configManager;
+    this.configManager.once('configsLoaded', () => {
+      this.init();
+    })
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
   }

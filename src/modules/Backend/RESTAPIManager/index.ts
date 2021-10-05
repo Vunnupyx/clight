@@ -1,22 +1,17 @@
 import express, {
-  Application,
-  Request,
-  Response,
-  Express,
-  Router
-} from 'express';
+  Express} from 'express';
 import winston from 'winston';
 import { ConfigManager } from '../../ConfigManager';
 import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
 import { RoutesManager } from '../RoutesManager';
 import { json as jsonParser } from 'body-parser';
 import { DataSourcesManager } from '../../DataSourcesManager';
-import { DataSinkManager } from '../../DataSinkManager';
+import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager,
   dataSourcesManager: DataSourcesManager,
-  dataSinksManager: DataSinkManager
+  dataSinksManager: DataSinksManager
 }
 
 /**

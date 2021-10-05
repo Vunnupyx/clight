@@ -509,11 +509,23 @@ $datatable-summary-row-background-hover: #ddd !default;
       }
     }
   }
-  // inputs
-  .input-cell {
+  .datatable-body-cell {
+    .mat-select {
+      margin: -6px 0;
+      border: 1px solid rgba(102, 102, 102, 0.38);
+
+      .mat-select-trigger {
+        padding: 4px 8px;
+      }
+    }
+
+    .mat-button-toggle-group {
+    }
   }
+
   .datatable-body-cell-label {
     input {
+      margin: -6px 0;
       height: 32px;
       border: 1px solid rgba(102, 102, 102, 0.38);
     }

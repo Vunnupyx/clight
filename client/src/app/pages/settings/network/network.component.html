@@ -1,0 +1,454 @@
+<p
+  *ngIf="isBusy"
+  style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(127, 127, 127, 0.4);
+    z-index: 10;
+  "
+></p>
+
+<div class="d-flex align-items-center mt-10">
+  <h2 class="mt-0 mb-0 mr-25 ml-25">{{ 'settings-network.Network' | translate }}</h2>
+  <div class="flex-grow-1">
+    <nav mat-tab-nav-bar mat-align-tabs="center" class="network-nav">
+      <a
+        *ngFor="let tab of tabs"
+        mat-tab-link
+        [active]="tab === selectedTab"
+        (click)="onSelectTab(tab)"
+      >{{ 'settings-network.Tabs.' + tab | translate }}</a>
+    </nav>
+  </div>
+</div>
+<mat-divider></mat-divider>
+<div class="pl-25 pr-25">
+  <div class="pb-25" [ngSwitch]="selectedTab">
+    <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
+      <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
+    </ng-container>
+    <ng-container *ngSwitchCase="NetworkType.ETHERNET_X2">
+      <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
+    </ng-container>
+    <ng-container *ngSwitchCase="NetworkType.PROXY">
+      <h3>{{ 'settings-network.ProxySettings' | translate }}</h3>
+    </ng-container>
+    <mat-divider></mat-divider>
+  </div>
+
+  <div class="row" [ngSwitch]="selectedTab">
+    <div class="col-12 col-md-7 col-lg-5">
+      <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
+        <form #mainForm="ngForm">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="mr-30">
+              {{ 'settings-network.AssignIPManually' | translate }}
+            </div>
+            <mat-slide-toggle
+              class="ml-20"
+              name="useDhcp"
+              [ngModel]="!config[NetworkType.ETHERNET_X1].useDhcp"
+              (ngModelChange)="config[NetworkType.ETHERNET_X1].useDhcp = !$event; saveDhcpChanges(NetworkType.ETHERNET_X1)"
+            ></mat-slide-toggle>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.IPAddress' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].ipAddr"
+                  name="ipAddress"
+                  #ipAddr="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!ipAddr.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="ipAddr.dirty">
+                  <mat-icon *ngIf="ipAddr.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!ipAddr.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.Netmask' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].netmask"
+                  name="netmask"
+                  #netmask="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!netmask.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="netmask.dirty">
+                  <mat-icon *ngIf="netmask.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!netmask.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.DefaultGateway' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].defaultGateway"
+                  name="defaultGateway"
+                  #defaultGateway="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!defaultGateway.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="defaultGateway.dirty">
+                  <mat-icon *ngIf="defaultGateway.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!defaultGateway.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.DNSServer' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].dnsServer"
+                  name="dnsServer"
+                  #dnsServer="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!dnsServer.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="dnsServer.dirty">
+                  <mat-icon *ngIf="dnsServer.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!dnsServer.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="NetworkType.ETHERNET_X2">
+        <form #mainForm="ngForm">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="mr-30">
+              {{ 'settings-network.AssignIPManually' | translate }}
+            </div>
+            <mat-slide-toggle
+              class="ml-20"
+              name="useDhcp"
+              [ngModel]="!config[NetworkType.ETHERNET_X2].useDhcp"
+              (ngModelChange)="config[NetworkType.ETHERNET_X2].useDhcp = !$event; saveDhcpChanges(NetworkType.ETHERNET_X2)"
+            ></mat-slide-toggle>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.IPAddress' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].ipAddr"
+                  name="ipAddress"
+                  #ipAddr="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!ipAddr.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="ipAddr.dirty">
+                  <mat-icon *ngIf="ipAddr.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!ipAddr.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.Netmask' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].netmask"
+                  name="netmask"
+                  #netmask="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!netmask.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="netmask.dirty">
+                  <mat-icon *ngIf="netmask.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!netmask.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.DefaultGateway' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].defaultGateway"
+                  name="defaultGateway"
+                  #defaultGateway="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!defaultGateway.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="defaultGateway.dirty">
+                  <mat-icon *ngIf="defaultGateway.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!defaultGateway.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-20 d-flex align-items-center justify-content-between"
+          >
+            <div class="mt-0 mr-25 text-nowrap">
+              {{ 'settings-network.DNSServer' | translate }}
+            </div>
+            <div>
+              <div class="d-flex align-items-center">
+                <ngx-ip
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].dnsServer"
+                  name="dnsServer"
+                  #dnsServer="ngModel"
+                  inputValidation="block"
+                  separator="."
+                  [required]="true"
+                  [highlightInvalidBlocks]="true"
+                  theme="ngx-ip-theme-material"
+                  (ngModelChange)="mainForm.valid && saveChanges()"
+                  [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
+                ></ngx-ip>
+                <ng-container *ngIf="!dnsServer.dirty">
+                  <div class="p-10"></div>
+                </ng-container>
+                <ng-container *ngIf="dnsServer.dirty">
+                  <mat-icon *ngIf="dnsServer.valid" class="color-success"
+                  >check</mat-icon
+                  >
+                  <mat-icon *ngIf="!dnsServer.valid" class="color-error"
+                  >error_outline</mat-icon
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+      <ng-container *ngSwitchCase="NetworkType.PROXY">
+        <form #proxyForm="ngForm">
+          <div class="d-flex align-items-center justify-content-between mb-10">
+            <div class="mr-30">
+              {{ 'settings-network.UseProxy' | translate }}
+            </div>
+            <mat-slide-toggle
+              class="ml-20"
+              name="useProxy"
+              [(ngModel)]="config[NetworkType.PROXY].useProxy"
+              (ngModelChange)="saveUseProxyChanges()"
+            ></mat-slide-toggle>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="mr-30">
+              {{ 'settings-network.Host' | translate }}
+            </div>
+
+            <div>
+              <mat-form-field>
+                <input
+                  matInput
+                  name="ipAddr"
+                  #ipAddr="ngModel"
+                  [(ngModel)]="config[NetworkType.PROXY].ipAddr"
+                  [pattern]="hostRegex"
+                  required
+                  [disabled]="!config[NetworkType.PROXY].useProxy"
+                  (focusout)="proxyForm.valid && saveChanges()"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="mr-30">
+              {{ 'settings-network.Port' | translate }}
+            </div>
+
+            <div>
+              <mat-form-field>
+                <input
+                  matInput
+                  name="port"
+                  type="text"
+                  min="1"
+                  max="65535"
+                  [(ngModel)]="config[NetworkType.PROXY].port"
+                  #port="ngModel"
+                  [pattern]="portRegex"
+                  required
+                  (focusout)="proxyForm.valid && saveChanges()"
+                  [disabled]="!config[NetworkType.PROXY].useProxy"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="mr-30">
+              {{ 'settings-network.Username' | translate }}
+            </div>
+
+            <div>
+              <mat-form-field>
+                <input
+                  matInput
+                  name="username"
+                  [(ngModel)]="config[NetworkType.PROXY].username"
+                  (focusout)="proxyForm.valid && saveChanges()"
+                  [disabled]="!config[NetworkType.PROXY].useProxy"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="mr-30">
+              {{ 'settings-network.Password' | translate }}
+            </div>
+
+            <div>
+              <mat-form-field>
+                <input
+                  matInput
+                  name="password"
+                  type="password"
+                  [(ngModel)]="config[NetworkType.PROXY].password"
+                  (focusout)="proxyForm.valid && saveChanges()"
+                  [disabled]="!config[NetworkType.PROXY].useProxy"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>

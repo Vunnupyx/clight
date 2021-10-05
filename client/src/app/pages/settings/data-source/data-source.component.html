@@ -215,7 +215,7 @@
           [name]="'settings-data-source.Address' | translate"
           prop="address"
           [flexGrow]="3"
-          cellClass="input-cell"
+          cellClass="input-cell address-cell"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -234,6 +234,7 @@
             <div
               *ngIf="unsavedRowIndex === rowIndex"
               class="d-flex align-items-center"
+              [class.address-nck]="unsavedRow!.type === SourceDataPointType.NCK"
             >
               <ng-container [ngSwitch]="unsavedRow!.type">
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK">

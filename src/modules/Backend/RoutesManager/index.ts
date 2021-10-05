@@ -32,16 +32,20 @@ import {
   mappingHandlers,
   setConfigManager as mappingSetConfigManager
 } from '../routes/apis/v1/Mapping';
+import {
+  networkConfigHandlers,
+  setConfigManager as networkConfigSetConfigManager
+} from '../routes/apis/v1/NetworkConfig';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../DataSourcesManager';
-import { DataSinkManager } from '../../DataSinkManager';
+import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 
 interface RoutesManagerOptions {
   app: Application
   configManager: ConfigManager,
   dataSourcesManager: DataSourcesManager,
-  dataSinksManager: DataSinkManager
+  dataSinksManager: DataSinksManager
 }
 export class RoutesManager {
   private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');
@@ -53,7 +57,8 @@ export class RoutesManager {
     ...backupHandlers,
     ...virtualDatapointHandlers,
     ...deviceInfosHandlers,
-    ...mappingHandlers
+    ...mappingHandlers,
+    ...networkConfigHandlers,
   };
 
   constructor(options: RoutesManagerOptions) {
@@ -76,7 +81,8 @@ export class RoutesManager {
       backupSetConfigManager,
       vdpsSetConfigManager,
       deviceInfosSetConfigManager,
-      mappingSetConfigManager
+      mappingSetConfigManager,
+      networkConfigSetConfigManager,
     ].forEach((func) => func(options.configManager));
     setDataSinksManager(options.dataSinksManager)
     setDataSourcesManager(options.dataSourcesManager);

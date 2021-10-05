@@ -3,11 +3,11 @@ import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
 import { hash } from 'bcrypt';
-import { DataSinkManager } from '../../../../../DataSinkManager';
+import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 import { LifecycleEventStatus } from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
-let dataSinksManager: DataSinkManager;
+let dataSinksManager: DataSinksManager;
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -16,7 +16,7 @@ export function setConfigManager(config: ConfigManager) {
   configManager = config;
 }
 
-export function setDataSinksManager(manager: DataSinkManager) {
+export function setDataSinksManager(manager: DataSinksManager) {
   dataSinksManager = manager;
 }
 

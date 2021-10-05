@@ -2,16 +2,16 @@ import { MTConnectDataSink } from '..';
 import {
   DataSourceLifecycleEventTypes,
   EventLevels
-} from '../../../../common/interfaces';
-import { ConfigManager } from '../../../ConfigManager';
+} from '../../../../../common/interfaces';
+import { ConfigManager } from '../../../../ConfigManager';
 import {
   IDataSinkConfig,
   IDataSourceConfig
-} from '../../../ConfigManager/interfaces';
-import { DataPointMapper } from '../../../DataPointMapper';
-import { IDataSourceMeasurementEvent } from '../../../DataSource';
-import { EventBus } from '../../../EventBus';
-import { MTConnectAdapter } from '../../../MTConnectAdapter';
+} from '../../../../ConfigManager/interfaces';
+import { DataPointMapper } from '../../../../DataPointMapper';
+import { IDataSourceMeasurementEvent } from '../../../../DataSource';
+import { EventBus } from '../../../../EventBus';
+import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 import { MTConnectManager } from '../../../MTConnectManager';
 
 jest.mock('fs');

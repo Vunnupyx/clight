@@ -10,6 +10,15 @@
     "Network": "Network",
     "SystemInformation": "System Information"
   },
+  "quick-start": {
+    "Language": "Language",
+    "SelectLanguage": "Select Language",
+    "SelectSource": "Select Source",
+    "SelectApplicationInterfaces": "Select Application Interfaces",
+    "LoadError": "Failed to load info. Try again later",
+    "Next": "Next",
+    "Save": "Save"
+  },
   "settings-general": {
     "General": "General",
     "DeviceInfo": "Device Info",

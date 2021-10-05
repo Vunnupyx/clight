@@ -2,20 +2,27 @@ import winston from 'winston';
 import {
   DataSourceLifecycleEventTypes,
   ILifecycleEvent
-} from '../../../common/interfaces';
-import { IDataSourceMeasurementEvent } from '../../DataSource';
+} from '../../../../common/interfaces';
+import { IDataSourceMeasurementEvent } from '../../../DataSource';
 import { DataSink } from '../DataSink';
-import { IDataSinkParams } from '../interfaces';
-import { OPCUAAdapter } from '../../OPCUAAdapter';
-import { IDataSinkConfig } from '../../ConfigManager/interfaces';
-import { OPCUAManager } from '../../OPCUAManager';
-import { NorthBoundError } from '../../../common/errors';
-import { Variant, BaseNode, DataType, DataValue, UAVariable } from 'node-opcua';
+import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
+import { Variant, UAVariable } from 'node-opcua';
+import {
+  IDataSinkConfig,
+  IGeneralConfig,
+  IOPCUAConfig,
+  IRuntimeConfig
+} from '../../../ConfigManager/interfaces';
 
 type OPCUANodeDict = {
   [key: string]: UAVariable;
 };
 
+export interface IOPCUADataSinkOptions {
+  runtimeConfig: IOPCUAConfig;
+  generalConfig: IGeneralConfig;
+  dataSinkConfig: IDataSinkConfig;
+}
 /**
  * Implementation of the OPCDataSink.
  * Provides datapoints via node-opcua module.
@@ -23,19 +30,28 @@ type OPCUANodeDict = {
 export class OPCUADataSink extends DataSink {
   private opcuaAdapter: OPCUAAdapter;
   private opcuaNodes: OPCUANodeDict = {};
+  protected _protocol = 'opcua';
+  private static className = OPCUADataSink.name;
 
-  private static className: string;
-
-  constructor(config: IDataSinkParams) {
-    super(config);
-    this.opcuaAdapter = OPCUAManager.getAdapter();
-    OPCUADataSink.className = this.constructor.name;
-    this.protocol = 'opcua';
+  constructor(options: IOPCUADataSinkOptions) {
+    super(options.dataSinkConfig);
+    this.opcuaAdapter = new OPCUAAdapter({
+      config: options.dataSinkConfig,
+      generalConfig: options.generalConfig,
+      runtimeConfig: options.runtimeConfig
+    });
   }
 
-  public init(): this {
-    this.setupDataPoints();
-    return this;
+  public init(): Promise<OPCUADataSink> {
+    const logPrefix = `${OPCUADataSink.className}::init`;
+    winston.info(`${logPrefix} initializing.`);
+    
+    return this.opcuaAdapter
+      .init()
+      .then((adapter) => adapter.start())
+      .then(() => this.setupDataPoints())
+      .then(() => winston.info(`${logPrefix} initialized.`))
+      .then(() => this);
   }
 
   private setupDataPoints() {
@@ -57,7 +73,7 @@ export class OPCUADataSink extends DataSink {
   protected processDataPointValue(dataPointId, value) {
     const logPrefix = `${OPCUADataSink.className}::onProcessDataPointValue`;
 
-    const node = this.opcuaNodes[dataPointId];
+    const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
 
     if (node) {
       //@ts-ignore
@@ -124,6 +140,13 @@ export class OPCUADataSink extends DataSink {
    * false -> not running
    */
   public currentStatus(): boolean {
-    return !!this.opcuaAdapter?.isRunning
+    return !!this.opcuaAdapter?.isRunning;
+  }
+
+  /**
+   * Find address of a node by datapoint id. For changing the opcua value.
+   */
+  private findNodeAddress(dataPointId: string): string {
+    return this.config.dataPoints.find((dp) => dp.id === dataPointId).address;
   }
 }

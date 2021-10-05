@@ -53,7 +53,7 @@ jest.mock('fs-extra', () => {
 
 import winston from 'winston';
 import { OPCUAAdapter } from '..';
-import { AdapterError } from '../../../common/errors';
+import { AdapterError } from '../../../../common/errors';
 
 describe(`OPCUAAdapter Test`, () => {
   let testAdapter: OPCUAAdapter;

@@ -39,13 +39,13 @@ import {
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../DataSourcesManager';
-import { DataSinkManager } from '../../DataSinkManager';
+import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 
 interface RoutesManagerOptions {
   app: Application
   configManager: ConfigManager,
   dataSourcesManager: DataSourcesManager,
-  dataSinksManager: DataSinkManager
+  dataSinksManager: DataSinksManager
 }
 export class RoutesManager {
   private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');

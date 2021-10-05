@@ -160,5 +160,27 @@
     "CreateError": "Failed to create a mapping. Try again later",
     "UpdateError": "Failed to update a mapping. Try again later",
     "DeleteError": "Failed to delete a mapping. Try again later"
+  },
+  "settings-network": {
+    "Network": "Network",
+    "AdapterSettings": "Adapter Settings",
+    "ProxySettings": "Proxy Settings",
+    "AssignIPManually": "Assign IP address manually (do not use DHCP)",
+    "IPAddress": "IP address",
+    "Netmask": "Netmask",
+    "DefaultGateway": "Default Gateway",
+    "DNSServer": "DNS Server",
+    "UseProxy": "Use Proxy",
+    "Host": "Host",
+    "Port": "Port",
+    "Username": "Username",
+    "Password": "Password",
+    "LoadError": "Failed to load network settings. Try again later",
+    "UpdateError": "Failed to update network settings. Try again later",
+    "Tabs": {
+      "x1": "Ethernet X1",
+      "x2": "Ethernet X2",
+      "proxy": "Proxy"
+    }
   }
 }

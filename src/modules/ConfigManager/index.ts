@@ -139,6 +139,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         model: '',
         control: ''
       },
+      networkConfig: {
+        x1: {},
+        x2: {},
+        proxy: {},
+      },
       dataSources: [],
       dataSinks: [],
       virtualDataPoints: [],
@@ -155,6 +160,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       this.runtimeConfig
     );
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
+
 
     this.setDefaultValues();
 
@@ -367,7 +373,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
   }
 
-  public saveConfig(): void {
+  public saveConfig(obj: Partial<IConfig> = null): void {
+    if (obj) {
+      this._config = this.mergeDeep(this._config, obj);
+    }
+
     this.saveConfigToFile();
   }
 }

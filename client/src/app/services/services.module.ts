@@ -7,6 +7,7 @@ import { DataPointService } from './data-point.service';
 import { SourceDataPointService } from './source-data-point.service';
 import { DeviceInfoService } from './device-info.service';
 import { TemplateService } from './template.service';
+import { NetworkService } from './network.service';
 import { VirtualDataPointService } from './virtual-data-point.service';
 
 @NgModule({
@@ -18,6 +19,7 @@ import { VirtualDataPointService } from './virtual-data-point.service';
     DeviceInfoService,
     SourceDataPointService,
     TemplateService,
+    NetworkService,
     VirtualDataPointService,
   ]
 })

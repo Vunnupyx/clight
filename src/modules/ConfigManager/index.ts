@@ -130,7 +130,17 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         symKey: "",
         groupDevice: false,
         proxy: null,
-        signalGroups: undefined
+        signalGroups: undefined,
+        dataPointTypesData: {
+          probe: {
+            bufferSizeBytes: 500,
+            intervalHours: undefined
+          },
+          telemetry: {
+            bufferSizeBytes: 500,
+            intervalHours: undefined
+          }
+        }
       }
     };
 

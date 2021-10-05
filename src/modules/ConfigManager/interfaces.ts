@@ -66,7 +66,7 @@ export interface IDataSinkDataPointConfig {
   id: string;
   address: string;
   name: string;
-  type: IMTConnectDataPointTypes;
+  type: IMTConnectDataPointTypes | TDataHubDataPointType;
   map?: ITargetDataMap;
   initialValue?: string | number;
 }
@@ -104,11 +104,22 @@ export interface IDataHubConfig {
     minMsgSize: number;
     proxy?: IHttpsProxyConfig | ISocksProxyConfig
     signalGroups: ISignalGroups
+    dataPointTypesData: {
+      probe: IDataHubDataPointTypesData,
+      telemetry: IDataHubDataPointTypesData
+    }
+}
+
+interface IDataHubDataPointTypesData {
+  intervalHours: number | null,
+  bufferSizeBytes: number | null
 }
 
 export interface ISignalGroups {
   [key: string]: Array<string>
 }
+
+export type TDataHubDataPointType = 'event' | 'probe' | 'telemetry';
 
 export interface IProxyConfig {
   ip: string;

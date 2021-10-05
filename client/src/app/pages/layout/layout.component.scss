@@ -26,9 +26,11 @@
 .menu-text {
   padding-left: 1rem;
   font-size: 12px;
+
   &.active {
     color: #209beb;
     font-weight: bold;
+    white-space: nowrap;
   }
 }
 

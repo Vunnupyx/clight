@@ -1,3 +1,4 @@
+import { throws } from 'assert';
 import { Client, Message, Twin } from 'azure-iot-device';
 import { MqttWs as iotHubTransport } from 'azure-iot-device-mqtt';
 import { ProvisioningDeviceClient } from 'azure-iot-provisioning-device';
@@ -13,13 +14,28 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
-import { IDataHubConfig } from '../../../ConfigManager/interfaces';
+import {
+  IDataHubConfig,
+  TDataHubDataPointType
+} from '../../../ConfigManager/interfaces';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
 
 interface DataHubAdapterOptions extends IDataHubConfig {}
 
+interface IDesiredProps {
+  services: {
+    [sericeName: string]: {
+      enabled: boolean;
+      [parameter: string]: any;
+    };
+  };
+}
+
+function isDesiredProps(obj: any): obj is IDesiredProps {
+  return 'services' in obj && Object.keys(obj.services).length > 0;
+}
 export class DataHubAdapter {
   static readonly #className: string = DataHubAdapter.name;
   private isRunning: boolean = false;
@@ -42,10 +58,10 @@ export class DataHubAdapter {
   #connectionSting: TConnectionString = null;
   #dataHubClient: Client;
   #deviceTwin: Twin;
-  #dataBufferThresholdBytes = 500; //TODO: what is a good buffer size?
   //TODO: add serial number and buffer size from config
-  #dataBuffer: MessageBuffer;
-  #desiredProps: { [key: string]: any };
+  #probeBuffer: MessageBuffer;
+  #telemetryBuffer: MessageBuffer;
+  #serialNumber: string;
 
   public constructor(options: DataHubAdapterOptions) {
     this.#dpsServiceAddress = options.provisioningHost;
@@ -54,13 +70,22 @@ export class DataHubAdapter {
     this.#scopeId = options.scopeId;
     this.#isGroupRegistration = options.groupDevice || false;
     this.#proxyConfig = options.proxy || null;
-    this.#dataBufferThresholdBytes =
-      options.minMsgSize || this.#dataBufferThresholdBytes;
-    this.#dataBuffer = new MessageBuffer(
+    this.#serialNumber = options.serialNumber;
+    this.#probeBuffer = new MessageBuffer(
       options.serialNumber,
-      this.#dataBufferThresholdBytes
+      options.dataPointTypesData.probe.bufferSizeBytes,
+      options.dataPointTypesData.probe.intervalHours
     );
-    this.#dataBuffer.once('full', this.bufferFullHandler.bind(this));
+    this.#telemetryBuffer = new MessageBuffer(
+      options.serialNumber,
+      options.dataPointTypesData.telemetry.bufferSizeBytes,
+      options.dataPointTypesData.telemetry.intervalHours
+    );
+    this.#probeBuffer.once('full', this.probeBufferFullHandler.bind(this));
+    this.#telemetryBuffer.once(
+      'full',
+      this.telemetryBufferFullHandler.bind(this)
+    );
   }
 
   public get running(): boolean {
@@ -70,11 +95,14 @@ export class DataHubAdapter {
   /**
    * Get desired properties object by device twin.
    */
-  public getDesiredProps(): {[key: string]: any} {
+  public getDesiredProps(): IDesiredProps {
     const logPrefix = `${DataHubAdapter.#className}::getDesiredProps`;
-    if(!this.#deviceTwin) {
-      winston.warn(`${logPrefix} no desired properties set by backend.`)
-      return
+    if (!this.#deviceTwin) {
+      winston.warn(`${logPrefix} no device twin available.`);
+      return;
+    }
+    if (!isDesiredProps(this.#deviceTwin.properties.desired)) {
+      throw new NorthBoundError(`${logPrefix} no desired properties found.`);
     }
     return this.#deviceTwin.properties.desired;
   }
@@ -181,16 +209,21 @@ export class DataHubAdapter {
       return;
     }
     this.isRunning = false;
-    this.#dataHubClient.close()
-      .then( () => {
+    this.#dataHubClient
+      .close()
+      .then(() => {
         Object.keys(this).forEach((key) => {
-          delete(this[key]);
+          delete this[key];
         });
         winston.info(`${logPrefix} successfully stopped adapter.`);
-    })
-    .catch((err) => {
-      return Promise.reject(new NorthBoundError(`${logPrefix} error due to ${JSON.stringify(err)}`));
-    })
+      })
+      .catch((err) => {
+        return Promise.reject(
+          new NorthBoundError(
+            `${logPrefix} error due to ${JSON.stringify(err)}`
+          )
+        );
+      });
   }
 
   /**
@@ -261,14 +294,48 @@ export class DataHubAdapter {
   /**
    * Send a key value pair.
    */
-  public sendData(key: string, value: any): void {
-    this.#dataBuffer.addAsset(key, value);
+  public sendData(type: TDataHubDataPointType, key: string, value: any): void {
+    const logPrefix = `${DataHubAdapter.#className}::sendData`;
+    switch (type) {
+      case 'event': {
+        new MessageBuffer(this.#serialNumber, 0).once('full', (sendable,) => {
+          this.addMsgType('event', sendable);
+          this.#dataHubClient.sendEvent(sendable)
+        });
+        winston.debug(`${logPrefix} send event data: Key: ${key} Value: ${value}`);
+        break;
+      }
+      case 'probe': {
+        this.#probeBuffer.addAsset(key, value);
+        winston.debug(`${logPrefix} store probe data for: Key: ${key} Value: ${value}`);
+        break;
+      }
+      case 'telemetry': {
+        this.#telemetryBuffer.addAsset(key, value);
+        winston.debug(`${logPrefix} store telemetry data for: Key: ${key} Value: ${value}`);
+        break;
+      }
+      default: {
+        winston.warn(
+          `Try to send data from datapoint ${key} with value: ${value} but no datapoint type was found. Discard data.`
+        );
+        break;
+      }
+    }
   }
 
   /**
-   * Handles to full event of the current Message Buffer
+   * Add messageType property to message object to distinguish between types
    */
-  private bufferFullHandler(
+  private addMsgType(type: TDataHubDataPointType, msg: Message): Message {
+    msg.properties.add('messageType', type);
+    return msg;
+  }
+
+  /**
+   * Handles to full event of the current probe buffer
+   */
+  private probeBufferFullHandler(
     sendable: Message,
     newMessageBuffer: MessageBuffer,
     remainingData?: Array<{ key: string; value: any }>
@@ -279,18 +346,45 @@ export class DataHubAdapter {
       );
       return;
     }
-    this.#dataBuffer = newMessageBuffer;
-    this.#dataBuffer.once('full', this.bufferFullHandler.bind(this));
-    //TODO: add send callback
+    this.#probeBuffer = newMessageBuffer;
+    this.#probeBuffer.once('full', this.probeBufferFullHandler.bind(this));
     if (sendable) {
-      sendable.contentType = 'application/json';
-      sendable.contentEncoding = 'utf-8';
+      this.addMsgType('probe', sendable);
       this.#dataHubClient.sendEvent(
         sendable,
         this.sendEventCallback.bind(this)
       );
     }
-    if (remainingData) this.#dataBuffer.addAssetList(remainingData);
+    if (remainingData) this.#probeBuffer.addAssetList(remainingData);
+  }
+
+  /**
+   * Handles to full event of the current telemetry buffer
+   */
+  private telemetryBufferFullHandler(
+    sendable: Message,
+    newMessageBuffer: MessageBuffer,
+    remainingData?: Array<{ key: string; value: any }>
+  ) {
+    if (!this.#dataHubClient) {
+      winston.warn(
+        `No datahub connection available. No send retry is implemented. Data lost!!!!`
+      );
+      return;
+    }
+    this.#telemetryBuffer = newMessageBuffer;
+    this.#telemetryBuffer.once(
+      'full',
+      this.telemetryBufferFullHandler.bind(this)
+    );
+    if (sendable) {
+      this.addMsgType('telemetry', sendable);
+      this.#dataHubClient.sendEvent(
+        sendable,
+        this.sendEventCallback.bind(this)
+      );
+    }
+    if (remainingData) this.#telemetryBuffer.addAssetList(remainingData);
   }
 
   /**
@@ -337,9 +431,28 @@ interface IMessageFormat {
 class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBufferEvents>) {
   #startDate = new Date().toISOString();
   #assetBuffer: IAssetData[] = [];
+  #timer: NodeJS.Timer;
 
-  constructor(private serialNumber: string, private bufferSizeBytes: number) {
+  constructor(
+    private serialNumber: string,
+    private bufferSizeBytes: number,
+    intervalTimeHours?: number
+  ) {
     super();
+    if (intervalTimeHours) {
+      this.#timer = setTimeout(
+        this.timeoutHandler.bind(this),
+        intervalTimeHours * 60 * 60 * 1000
+      );
+    }
+  }
+
+  private timeoutHandler(): void {
+    if (this.#assetBuffer.length > 0) {
+      this.emitFullEvent();
+    } else {
+      this.#timer.refresh();
+    }
   }
 
   /**
@@ -352,7 +465,12 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     this.#assetBuffer.push(this.generateAssetData(key, value));
     const currentMsg = this.getCurrentMsg();
     if (this.calcSize(currentMsg) >= this.bufferSizeBytes) {
-      this.emitFullEvent();
+      if (!this.#timer) {
+        this.emitFullEvent();
+      } else {
+        // Cut of oldest entry in the buffer
+        this.#assetBuffer = this.#assetBuffer.splice(0, 1);
+      }
     }
   }
 
@@ -366,8 +484,13 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
       this.#assetBuffer.push(this.generateAssetData(asset.key, asset.value));
       const currentMsg = this.getCurrentMsg();
       if (this.calcSize(currentMsg) >= this.bufferSizeBytes) {
-        this.emitFullEvent(assets.slice(index + 1));
-        return;
+        if(!this.#timer) {
+          this.emitFullEvent(assets.slice(index + 1));
+          return;
+        } else {
+          // Cut of oldest entry if it is time based transfer
+          this.#assetBuffer = this.#assetBuffer.splice(0, 1);
+        }
       }
     }
   }

@@ -41,17 +41,21 @@ export class DataHubDataSink extends DataSink {
       );
       return;
     }
-    const desiredProps = Object.keys(this.#datahubAdapter.getDesiredProps());
-  
-    // Find datapoint in signal Groups
-    for(const [groupName, members] of Object.entries(this.#signalGroups)) {
-      if(!desiredProps.includes(groupName)) {
-        continue;
+
+    const desiredProps = this.#datahubAdapter.getDesiredProps();
+    const activeServiceNames = Object.keys(desiredProps.services);
+    const availableServiceName = Object.keys(this.#signalGroups);
+    availableServiceName.forEach((serviceName) => {
+      if(activeServiceNames.includes(serviceName) && desiredProps.services[serviceName].enabled) {
+        if(this.#signalGroups[serviceName].includes(dataPointId)) {
+          const type = this.config.dataPoints.find((dp) => dp.id === dataPointId).type
+          this.#datahubAdapter.sendData(type, dataPointId, value);
+          // INFO: Remove if a datapoint can be part of different groups
+          return;
+        }
       }
-      if(members.includes(dataPointId)) {
-        this.#datahubAdapter.sendData(dataPointId, value);
-      }
-    }
+    });
+    winston.warn(`${logPrefix} not signal group found for datapoint`);
   }
 
   /**

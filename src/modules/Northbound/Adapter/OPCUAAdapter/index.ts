@@ -230,15 +230,7 @@ export class OPCUAAdapter {
         const user = this.users.find((user) => userName === user.userName);
         if (!user) {
           const errMsg = `No user information found. Log in was rejected.`;
-          cb(
-            new NorthBoundError(
-              errMsg,
-              null,
-              'OPCUAAdapter',
-              'isValidUserAsync'
-            ),
-            false
-          );
+          cb(new NorthBoundError(errMsg), false);
           return;
         }
         const valid = await compare(password, user.password);

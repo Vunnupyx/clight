@@ -4,26 +4,19 @@ import winston from 'winston';
  * Automatic log to winston.error()
  */
 export class NorthBoundError extends Error {
-  //TODO: Implement
   protected code: string;
-  protected className: string;
-  protected methodName: string;
 
   constructor(
     msg: string,
     code?: string,
-    className?: string,
-    methodName?: string
   ) {
     super(msg);
     this.code = code;
-    this.className = className;
-    this.methodName = methodName;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
     // TODO: Maybe get from stacktrace
     winston.error(
-      `${className ? className + '::' : ''}${
-        methodName ?? ''
-      } error due to ${msg}. ${code ? 'ErrorCode: ' + code : ''}`
+      `${this.name}: ${msg}. ${code ? 'ErrorCode: ' + code : ''}`
     );
   }
 }

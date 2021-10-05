@@ -37,14 +37,17 @@
             </div>
             <div class="col-12 col-md-7">
               <mat-form-field>
-                <mat-select [(ngModel)]="auth.type" (blur)="onSaveAuth()">
+                <mat-select
+                  [(ngModel)]="auth.type"
+                  (ngModelChange)="$event === DataSinkAuthType.Anonymous && onSaveAuth()"
+                >
                   <mat-option *ngFor="let type of DataSinkAuthTypes" [value]="type">{{ 'settings-data-sink.AuthenticationLevels.' + type | translate }}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
           </div>
 
-          <div class="row d-flex align-items-center">
+          <div *ngIf="auth.type === DataSinkAuthType.UserAndPass" class="row d-flex align-items-center">
             <div class="col-12 col-md-5">
               <label>{{ 'settings-data-sink.OPCUAServerUsername' | translate }}</label>
             </div>
@@ -61,7 +64,7 @@
             </div>
           </div>
 
-          <div class="row d-flex align-items-center">
+          <div *ngIf="auth.type === DataSinkAuthType.UserAndPass" class="row d-flex align-items-center">
             <div class="col-12 col-md-5">
               <label>{{ 'settings-data-sink.OPCUAServerPassword' | translate }}</label>
             </div>
@@ -232,6 +235,7 @@
             <mat-option
               *ngFor="let item of MTConnectItems"
               [value]="item.address"
+              [disabled]="isExistingDataPointAddress(item.address!)"
               >{{ item.name }}</mat-option
             >
           </mat-select>

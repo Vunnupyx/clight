@@ -1,15 +1,20 @@
-import { Injectable } from '@angular/core';
-import { filter, map } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import {Injectable} from '@angular/core';
+import {filter, map} from 'rxjs/operators';
+import {ToastrService} from 'ngx-toastr';
+import {TranslateService} from '@ngx-translate/core';
 
-import { DataPoint, DataSink, DataSinkConnection, DataSinkProtocol } from 'app/models';
-import { HttpService } from 'app/shared';
-import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler } from 'app/shared/utils';
+import {DataPoint, DataSink, DataSinkConnection, DataSinkProtocol} from 'app/models';
+import {HttpService} from 'app/shared';
+import {Status, Store, StoreFactory} from 'app/shared/state';
+import {errorHandler, mapOrder} from 'app/shared/utils';
 import * as api from 'app/api/models';
 import PREDEFINED_MTCONNECT_DATA_POINTS from './constants/mtconnectDataItems';
 
+const DATA_SINKS_ORDER = [
+  DataSinkProtocol.MTConnect,
+  DataSinkProtocol.OPC,
+  DataSinkProtocol.DH,
+];
 
 export class DataSinksState {
   status!: Status;
@@ -58,8 +63,8 @@ export class DataSinkService {
       }>(`/datasinks`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSinks = dataSinks
-          .map((x) => this._parseDataSink(x));
+        state.dataSinks = this._orderByProtocol(dataSinks
+          .map((x) => this._parseDataSink(x)));
       });
     } catch (err) {
       this.toastr.error(
@@ -124,6 +129,10 @@ export class DataSinkService {
 
   getPredefinedOPCDataPoints(): DataPoint[] {
     return [] as any as DataPoint[];
+  }
+
+  private _orderByProtocol(objs: DataSink[]) {
+    return mapOrder<DataSink>(objs, DATA_SINKS_ORDER, 'protocol');
   }
 
   private _parseDataSink(obj: api.DataSinkType) {

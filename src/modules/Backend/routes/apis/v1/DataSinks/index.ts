@@ -73,8 +73,14 @@ async function dataSinkPatchHandler(
       });
       return Promise.resolve();
     }
-  };
-  if (request.body.auth && 
+  }
+
+  if (protocol === 'opcua' && request.body.auth && request.body.auth.type === 'anonymous') {
+    delete request.body.auth.userName;
+    delete request.body.auth.password;
+  }
+
+  if (request.body.auth &&
     'type' in request.body.auth &&
     'userName' in request.body.auth &&
     'password' in request.body.auth
@@ -88,7 +94,7 @@ async function dataSinkPatchHandler(
   }
 
   dataSink = { ...dataSink, ...request.body };
-  configManager.changeConfig('update', 'dataSinks', dataSink);
+  configManager.changeConfig('update', 'dataSinks', dataSink, (item) => item.protocol);
   response.status(200).json(dataSink);
 }
 
@@ -127,6 +133,16 @@ function dataPointsPostHandler(request: Request, response: Response) {
   const changedSinkObject = config.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
+
+  if (changedSinkObject.dataPoints.some(dp => dp.address === request.body.address)) {
+    winston.warn(
+        `dataPointsPostHandler error due to existance of dataPoint`
+    );
+
+    response.status(400).send();
+    return Promise.resolve();
+  }
+
   const newData = { ...request.body, ...{ id: uuidv4() } };
   changedSinkObject.dataPoints.push(newData);
   configManager.config = config;
@@ -148,7 +164,23 @@ function dataPointPatchHandler(request: Request, response: Response) {
   const dataPoint = sink?.dataPoints?.find(
     (point) => point.id === request.params.dataPointId
   );
-  sink?.dataPoints.filter((point) => point.id !== request.params.dataPointId);
+
+  const hasOtherDataPointChangedAddress = sink.dataPoints.some(
+      (point) => request.body.address &&
+          point.id !== request.params.dataPointId &&
+          point.address === request.body.address
+  );
+
+  if (hasOtherDataPointChangedAddress) {
+    winston.warn(
+        `dataPointsPostHandler error due to existance of dataPoint`
+    );
+
+    response.status(400).send();
+    return Promise.resolve();
+  }
+
+  sink.dataPoints = sink?.dataPoints.filter((point) => point.id !== request.params.dataPointId);
   const newData = { ...dataPoint, ...request.body };
   sink.dataPoints.push(newData);
   configManager.config = config;
@@ -179,8 +211,8 @@ function dataPointDeleteHandler(request: Request, response: Response) {
   });
 }
 
-/** 
- * Return the current status of the selected datasink. Status is collected from the EventBus 
+/**
+ * Return the current status of the selected datasink. Status is collected from the EventBus
 */
 function dataSinkGetStatusHandler(request: Request, response: Response) {
   const proto = request.params?.datasinkProtocol
@@ -198,7 +230,7 @@ function dataSinkGetStatusHandler(request: Request, response: Response) {
 
   const boolStatus = dataSinksManager.getDataSinkByProto(request.params.datasinkProtocol).currentStatus();
   let status: LifecycleEventStatus = LifecycleEventStatus.Connected;
-  if(!boolStatus) { 
+  if(!boolStatus) {
     status = LifecycleEventStatus.Disconnected;
   }
   response.status(200).json({status})

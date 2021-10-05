@@ -16,7 +16,7 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -29,7 +29,7 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -43,7 +43,7 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -56,7 +56,7 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -70,13 +70,21 @@
         let-value="value"
         let-row="row"
       >
-        <mat-button-toggle-group>
+        <mat-button-toggle-group [disabled]="">
           <mat-button-toggle
+            *ngIf="isExisting(row.address)"
+            [matTooltip]="'settings-data-sink.AlreadyExistDataPoint' | translate"
+            matTooltipPosition="above"
+            [disabled]="true"
+            ><mat-icon>arrow_forward</mat-icon>
+          </mat-button-toggle>
+          <mat-button-toggle
+            *ngIf="!isExisting(row.address)"
             [mat-dialog-close]="row"
             [matTooltip]="'settings-data-sink.SelectVariable' | translate"
             matTooltipPosition="above"
-            ><mat-icon>arrow_forward</mat-icon></mat-button-toggle
-          >
+          ><mat-icon>arrow_forward</mat-icon>
+          </mat-button-toggle>
         </mat-button-toggle-group>
       </ng-template>
     </ngx-datatable-column>

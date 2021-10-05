@@ -7,6 +7,7 @@ import {DataPoint, DataSinkProtocol} from '../../../../models';
 export interface CreateDataItemModalData {
   selection: string;
   dataSinkProtocol: DataSinkProtocol;
+  existedAddresses: string[];
 }
 
 @Component({
@@ -44,5 +45,9 @@ export class CreateDataItemModalComponent implements OnInit {
 
   onClose() {
     this.dialogRef.close();
+  }
+
+  isExisting(address: string) {
+    return this.data.existedAddresses.includes(address);
   }
 }

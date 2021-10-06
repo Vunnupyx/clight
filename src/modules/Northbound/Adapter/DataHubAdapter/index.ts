@@ -28,7 +28,7 @@ interface IDesiredProps {
   services: {
     [sericeName: string]: {
       enabled: boolean;
-      [parameter: string]: any;
+      [dataPointName: string]: boolean;
     };
   };
 }

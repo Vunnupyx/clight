@@ -1,12 +1,6 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges
-} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Subscription} from 'rxjs';
 
 import {
   DataPoint,
@@ -18,16 +12,16 @@ import {
   DataSinkConnectionStatus,
   DataSinkProtocol
 } from 'app/models';
-import { DataPointService, DataSinkService } from 'app/services';
-import { Status } from 'app/shared/state';
-import { arrayToMap, clone } from 'app/shared/utils';
+import {DataPointService, DataSinkService} from 'app/services';
+import {Status} from 'app/shared/state';
+import {arrayToMap, clone} from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { CreateDataItemModalComponent } from '../create-data-item-modal/create-data-item-modal.component';
-import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
-import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
+import {CreateDataItemModalComponent} from '../create-data-item-modal/create-data-item-modal.component';
+import {SelectMapModalComponent} from '../select-map-modal/select-map-modal.component';
+import {PreDefinedDataPoint} from '../create-data-item-modal/create-data-item-modal.component.mock';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -40,6 +34,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     DataSinkAuthType.Anonymous,
     DataSinkAuthType.UserAndPass
   ];
+  DataSinkAuthType = DataSinkAuthType;
   Protocol = DataSinkProtocol;
   MTConnectItems: DataPoint[] = [];
   DataSinkConnectionStatus = DataSinkConnectionStatus;
@@ -96,10 +91,13 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   onDataSink(dataSink: DataSink) {
     if (dataSink.auth) {
-      this.auth = dataSink.auth;
+      this.auth = clone(dataSink.auth);
     }
-    this.dataPointService.getDataPoints(dataSink.protocol);
-    this.dataSinkService.getStatus(dataSink.protocol);
+
+    if (dataSink.protocol !== DataSinkProtocol.DH) {
+      this.dataPointService.getDataPoints(dataSink.protocol);
+      this.dataSinkService.getStatus(dataSink.protocol);
+    }
   }
 
   updateEnabled(val: boolean) {
@@ -122,7 +120,13 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     }
 
     const dialogRef = this.dialog.open(CreateDataItemModalComponent, {
-      data: { selection: undefined, dataSinkProtocol: this.dataSink?.protocol }
+      data: {
+        selection: undefined,
+        dataSinkProtocol: this.dataSink?.protocol,
+        existedAddresses: this.datapointRows
+          .map(x => x.address)
+          .filter(Boolean),
+      }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -187,6 +191,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
         this.unsavedRow!
       );
     }
+
     this.clearUnsavedRow();
   }
 
@@ -225,9 +230,21 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   onSaveAuth() {
+    if (
+      this.dataSink?.auth?.type === this.auth.type &&
+      (this.auth.userName && this.dataSink?.auth?.userName === this.auth.userName) &&
+      (this.auth.password && this.dataSink?.auth?.password === this.auth.password)
+    ) {
+      return;
+    }
+
     this.dataSinkService.updateDataSink(this.dataSink?.protocol!, {
       auth: this.auth,
     });
+  }
+
+  isExistingDataPointAddress(address: string) {
+    return this.datapointRows?.some(x => x.address === address);
   }
 
   private onConnection(x: DataSinkConnection | undefined) {

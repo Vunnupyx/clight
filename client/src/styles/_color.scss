@@ -14,3 +14,7 @@
 .color-danger {
   color: $status-error;
 }
+
+.color-disabled {
+  color: lighten($status-information-background, 30%);
+}

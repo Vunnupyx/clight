@@ -1,0 +1,24 @@
+{
+  "dataSources": [
+    {
+      "id": "s7",
+      "name": "S7",
+      "description": "S7 to OPCUA and MTConnect",
+      "templateId": "s7toopcuaandmtconnect"
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "opcua",
+      "name": "OPCUA",
+      "description": "OPCUA",
+      "templateId": "s7toopcuaandmtconnect"
+    },
+    {
+      "id": "mtconnect",
+      "name": "MTConnect",
+      "description": "MTConnect",
+      "templateId": "s7toopcuaandmtconnect"
+    }
+  ]
+}

@@ -38,6 +38,10 @@
     {
       "name": "networkConfig",
       "description": "Everything about the network config."
+    },
+    {
+      "name": "templates",
+      "description": "Everything about the templates."
     }
   ],
   "produces": ["application/json"],
@@ -888,6 +892,45 @@
           }
         }
       }
+    },
+    "/templates": {
+      "get": {
+        "tags": ["templates"],
+        "description": "Get templates information",
+        "operationId": "templatesGetHandler",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the templates"
+          }
+        }
+      }
+    },
+    "/templates/status": {
+      "get": {
+        "tags": ["templates"],
+        "description": "Get templates status information",
+        "operationId": "templatesGetStatusHandler",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the templates status",
+            "schema": {
+              "$ref": "#/definitions/templatesStatus"
+            }
+          }
+        }
+      }
+    },
+    "/templates/apply": {
+      "post": {
+        "tags": ["templates"],
+        "description": "Applies templates settings",
+        "operationId": "templatesApplyPostHandler",
+        "responses": {
+          "200": {
+            "description": "Template settings were successfully saved!"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1411,6 +1454,14 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "templatesStatus": {
+      "type": "object",
+      "properties": {
+        "completed": {
+          "type": "boolean"
         }
       }
     }

@@ -27,6 +27,10 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     return this.translate.currentLang;
   }
 
+  get filteredSinks() {
+    return this.sinks?.filter((sink) => sink.templateId === this.sourceForm?.value?.source) || [];
+  }
+
   constructor(
     private templateService: TemplateService,
     private dataSourceService: DataSourceService,
@@ -50,6 +54,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
 
     this.sourceForm = this.formBuilder.group({
       source: ['', Validators.required],
+      templateId: [''],
     });
 
     this.applicationInterfacesForm = this.formBuilder.group({
@@ -67,10 +72,12 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    const dataSource = this.sourceForm.value.source;
+    const dataSourceTemplateId = this.sourceForm.value.source;
     const dataSinks = this.applicationInterfacesForm.value.interfaces;
 
-    this.templateService.apply({ dataSource, dataSinks })
+    const dataSource = this.sources.find((source) => source.templateId === dataSourceTemplateId);
+
+    this.templateService.apply({ dataSource: dataSource?.id, dataSinks })
       .then(() => this.router.navigate(['/']));
   }
 

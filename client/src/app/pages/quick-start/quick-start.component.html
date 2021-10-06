@@ -29,7 +29,7 @@
       <form [formGroup]="sourceForm" class="pt-20">
         <div>
           <mat-radio-group formControlName="source" class="source-radio-group">
-            <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source.id">
+            <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source.templateId">
               <h3 class="mt-0 mb-0">{{ source.name }}</h3>
               <p class="mt-0">{{ source.description }}</p>
             </mat-radio-button>
@@ -44,7 +44,7 @@
         <div class="source-radio-group">
           <mat-checkbox
             class="source-radio-button source-checkbox"
-            *ngFor="let sink of sinks"
+            *ngFor="let sink of filteredSinks"
             [(ngModel)]="checkedSinks[sink.id]"
             (ngModelChange)="onInterfacesChange()"
             [ngModelOptions]="{standalone: true}"

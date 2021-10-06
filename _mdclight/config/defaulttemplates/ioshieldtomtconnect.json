@@ -1,0 +1,18 @@
+{
+  "dataSources": [
+    {
+      "id": "ioshield",
+      "name": "Ioshield",
+      "description": "Ioshield to MTConnect",
+      "templateId": "ioshieldtomtconnect"
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "mtconnect",
+      "name": "MTConnect",
+      "description": "MTConnect",
+      "templateId": "ioshieldtomtconnect"
+    }
+  ]
+}

@@ -37,6 +37,9 @@ export class DataSinksManager {
   public init(): Promise<DataSinksManager> {
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
+
+    if (!this.dataSinks.length) return;
+
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
     return Promise.all(initMethods)
@@ -81,8 +84,14 @@ export class DataSinksManager {
       generalConfig: this.configManager.config.general,
       runtimeConfig: this.configManager.runtimeConfig.opcua
     };
-    this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
-    this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
+
+    if (mtConnectDataSinkOptions.dataSinkConfig) {
+      this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
+    }
+
+    if (opcuaDataSinkOptions.dataSinkConfig) {
+      this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
+    }
 
     this.connectDataSinksToBus();
   }

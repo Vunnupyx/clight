@@ -1,0 +1,18 @@
+{
+  "dataSources": [
+    {
+      "id": "ioshield",
+      "name": "Ioshield",
+      "description": "Ioshield to OPCUA",
+      "templateId": "ioshieldtoopcua"
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "opcua",
+      "name": "OPCUA",
+      "description": "OPCUA",
+      "templateId": "ioshieldtoopcua"
+    }
+  ]
+}

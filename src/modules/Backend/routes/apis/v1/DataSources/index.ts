@@ -8,7 +8,6 @@ import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import { DataSourcesManager } from '../../../../../DataSourcesManager';
 import { LifecycleEventStatus } from '../../../../../../common/interfaces';
-import { json } from 'stream/consumers';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;

@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
-import { AvailableDataSink, AvailableDataSource } from '../models/template';
-import {HttpMockupService, HttpService} from '../shared';
+import { AvailableDataSink, AvailableDataSource, TemplatesStatus } from '../models/template';
+import { HttpService } from '../shared';
 import { errorHandler } from '../shared/utils';
 
 
@@ -33,7 +33,7 @@ export class TemplateService {
 
   constructor(
     storeFactory: StoreFactory<TemplatesState>,
-    private httpService: HttpMockupService,
+    private httpService: HttpService,
     private toastr: ToastrService,
     private translate: TranslateService,
   ) {
@@ -46,41 +46,7 @@ export class TemplateService {
     }));
 
     try {
-      const response = await this.httpService.get<any>(
-        `/templates`,
-        undefined,
-        {
-          availableDataSources: [
-            {
-              "id": "1",
-              "name": "Data Source 1",
-              "description": "Data Source 1 Description"
-            },
-            {
-              "id": "2",
-              "name": "Data Source 2",
-              "description": "Data Source 2 Description"
-            },
-          ],
-          availableDataSinks: [
-            {
-              "id": "1",
-              "name": "Data Sink 1",
-              "description": "Data Sink 1 Description"
-            },
-            {
-              "id": "2",
-              "name": "Data Sink 2",
-              "description": "Data Sink 2 Description"
-            },
-            {
-              "id": "3",
-              "name": "Data Sink 3",
-              "description": "Data Sink 3 Description"
-            },
-          ],
-        }
-      );
+      const response = await this.httpService.get<any>(`/templates`);
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -92,9 +58,9 @@ export class TemplateService {
         this.translate.instant('quick-start.LoadError')
       );
       errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Ready
-      }));
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
     }
   }
 
@@ -114,9 +80,19 @@ export class TemplateService {
         this.translate.instant('quick-start.LoadError')
       );
       errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Ready
-      }));
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
+  async isCompleted() {
+    try {
+      const response = await this.httpService.get<TemplatesStatus>(`/templates/status`);
+
+      return response.completed;
+    } catch (err) {
+      return false;
     }
   }
 

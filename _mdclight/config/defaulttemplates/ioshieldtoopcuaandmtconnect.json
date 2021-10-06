@@ -1,0 +1,24 @@
+{
+  "dataSources": [
+    {
+      "id": "ioshield",
+      "name": "Ioshield",
+      "description": "Ioshield to OPCUA and MTConnect",
+      "templateId": "ioshieldtoopcuaandmtconnect"
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "opcua",
+      "name": "OPCUA",
+      "description": "OPCUA",
+      "templateId": "ioshieldtoopcuaandmtconnect"
+    },
+    {
+      "id": "mtconnect",
+      "name": "MTConnect",
+      "description": "MTConnect",
+      "templateId": "ioshieldtoopcuaandmtconnect"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import {
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import {
+  IDefaultTemplates,
   IConfig,
   IConfigManagerParams,
   IDataSinkConfig,
@@ -71,6 +72,7 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   protocol: DataSinkProtocols.MTCONNECT
 };
 
+
 /**
  * Config for managing the app's config
  */
@@ -81,6 +83,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private runtimeConfigName = 'runtime.json';
   private _runtimeConfig: IRuntimeConfig;
   private _config: IConfig;
+  private _defaultTemplates: IDefaultTemplates;
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
@@ -103,6 +106,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private set runtimeConfig(config: IRuntimeConfig) {
     this._runtimeConfig = config;
     this.emit('newRuntimeConfig', this._runtimeConfig);
+  }
+
+  public get defaultTemplates(): IDefaultTemplates {
+    return this._defaultTemplates;
   }
 
   /**
@@ -147,7 +154,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       dataSources: [],
       dataSinks: [],
       virtualDataPoints: [],
-      mapping: []
+      mapping: [],
+      templates: {
+        completed: false
+      },
     };
   }
 
@@ -162,7 +172,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
 
 
-    this.setDefaultValues();
+    // this.setDefaultValues();
+
+    this.loadTemplates();
 
     this.checkType(
       this.runtimeConfig.mtconnect.listenerPort,
@@ -176,56 +188,28 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
   }
 
-  /**
-   * Set default values for each data source and data sink if not existing
-   */
-  private setDefaultValues() {
-    let changed = false;
-    if (
-      !this._config.dataSources.some(
-        (dataSource) => dataSource.protocol === DataSourceProtocols.S7
-      )
-    ) {
-      this._config.dataSources.push(defaultS7DataSource);
-      changed = true;
-    }
+  public addDataSources(sourceIds: string[]) {
+    const sources = [defaultS7DataSource, defaultIoShieldDataSource]
+        .filter(x => sourceIds.includes(x.protocol));
 
-    if (
-      !this._config.dataSources.some(
-        (dataSource) => dataSource.protocol === DataSourceProtocols.IOSHIELD
-      )
-    ) {
-      this._config.dataSources.push(defaultIoShieldDataSource);
-      changed = true;
-    }
-    if (
-      !this._config.dataSinks.some(
-        (dataSink) => dataSink.protocol === DataSinkProtocols.OPCUA
-      )
-    ) {
-      this._config.dataSinks.push(defaultOpcuaDataSink);
-      changed = true;
-    }
-    if (
-      !this._config.dataSinks.some(
-        (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
-      )
-    ) {
-      this._config.dataSinks.push(defaultMtconnectDataSink);
-      changed = true;
-    }
-    if (
-      !this._config.dataSinks.some(
-        (dataSink) => dataSink.protocol === DataSinkProtocols.DATAHUB
-      )
-    ) {
-      this._config.dataSinks.push(defaultDataHubDataSink);
-      changed = true;
-    }
+    this.saveConfig({
+      dataSources: [
+        ...this._config.dataSources,
+        ...sources,
+      ],
+    });
+  }
 
-    if (changed) {
-      this.saveConfigToFile();
-    }
+  public addDataSinks(sinkIds: string[]) {
+    const sinks = [defaultOpcuaDataSink, defaultMtconnectDataSink, defaultDataHubDataSink]
+        .filter(x => sinkIds.includes(x.protocol));
+
+    this.saveConfig({
+      dataSinks: [
+        ...this._config.dataSinks,
+        ...sinks,
+      ],
+    });
   }
 
   /**
@@ -273,6 +257,33 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     return this.mergeDeep(defaultConfig, config);
+  }
+
+  private loadTemplate(templateName) {
+    try {
+      const configPath = path.join(this.configFolder, 'defaulttemplates', `${templateName}.json`);
+      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  private loadTemplates() {
+    const templates = [
+      's7toopcua',
+      's7tomtconnect',
+      's7toopcuaandmtconnect',
+      'ioshieldtoopcua',
+      'ioshieldtomtconnect',
+      'ioshieldtoopcuaandmtconnect',
+    ]
+      .map(template => this.loadTemplate(template))
+      .reduce((acc, curr) => ({
+        availableDataSources: [...acc.availableDataSources, ...curr.dataSources],
+        availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks],
+      }), { availableDataSources: [], availableDataSinks: [] });
+
+    this._defaultTemplates = templates;
   }
 
   /**
@@ -331,7 +342,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       case 'insert': {
         if (typeof data !== 'string') {
           // @ts-ignore TODO: Fix data type
-          categoryArray.push(data);
+          const index = categoryArray.findIndex((entry) => selector(entry) === selector(data));
+          if (index < 0) {
+            //@ts-ignore
+            categoryArray.push(data);
+          }
         }
         break;
       }

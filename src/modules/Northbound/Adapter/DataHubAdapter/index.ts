@@ -432,6 +432,7 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
   #startDate = new Date().toISOString();
   #assetBuffer: IAssetData[] = [];
   #timer: NodeJS.Timer;
+  #intervalTimeMs: number;
 
   constructor(
     private serialNumber: string,
@@ -439,10 +440,11 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     intervalTimeHours?: number
   ) {
     super();
+    this.#intervalTimeMs = this.hoursToMs(intervalTimeHours) || undefined;
     if (intervalTimeHours) {
       this.#timer = setTimeout(
         this.timeoutHandler.bind(this),
-        intervalTimeHours * 60 * 60 * 1000
+        this.#intervalTimeMs
       );
     }
   }
@@ -469,7 +471,7 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
         this.emitFullEvent();
       } else {
         // Cut of oldest entry in the buffer
-        this.#assetBuffer = this.#assetBuffer.splice(0, 1);
+        this.#assetBuffer.splice(0, 1);
       }
     }
   }
@@ -489,7 +491,7 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
           return;
         } else {
           // Cut of oldest entry if it is time based transfer
-          this.#assetBuffer = this.#assetBuffer.splice(0, 1);
+          this.#assetBuffer.splice(0, 1);
         }
       }
     }
@@ -537,8 +539,16 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     this.emit(
       'full',
       new Message(JSON.stringify(this.getCurrentMsg())),
-      new MessageBuffer(this.serialNumber, this.bufferSizeBytes),
+      new MessageBuffer(this.serialNumber, this.bufferSizeBytes, this.#intervalTimeMs),
       remainingAssets
     );
+  }
+
+  /**
+   * Helper function for converting hours into milliseconds
+   */
+  private hoursToMs(hours: number): number {
+    // hours * minutes * seconds * ms
+    return hours * 60 * 60 * 1000;
   }
 }

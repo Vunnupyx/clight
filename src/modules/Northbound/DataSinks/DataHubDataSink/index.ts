@@ -45,7 +45,8 @@ export class DataHubDataSink extends DataSink {
     const desiredProps = this.#datahubAdapter.getDesiredProps();
     const activeServiceNames = Object.keys(desiredProps.services);
     const availableServiceName = Object.keys(this.#signalGroups);
-    availableServiceName.forEach((serviceName) => {
+    //TODO: Performance optimization. Validate with UT
+    for(const serviceName of availableServiceName) {
       if(activeServiceNames.includes(serviceName) && desiredProps.services[serviceName].enabled) {
         if(this.#signalGroups[serviceName].includes(dataPointId)) {
           const type = this.config.dataPoints.find((dp) => dp.id === dataPointId).type
@@ -54,8 +55,8 @@ export class DataHubDataSink extends DataSink {
           return;
         }
       }
-    });
-    winston.warn(`${logPrefix} not signal group found for datapoint`);
+    }
+    winston.debug(`${logPrefix} not signal group found for ${dataPointId} datapoint. Maybe disabled from backend.`);
   }
 
   /**

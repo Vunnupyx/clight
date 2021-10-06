@@ -42,21 +42,26 @@ export class DataHubDataSink extends DataSink {
       return;
     }
 
-    const desiredProps = this.#datahubAdapter.getDesiredProps();
-    const activeServiceNames = Object.keys(desiredProps.services);
-    const availableServiceName = Object.keys(this.#signalGroups);
-    //TODO: Performance optimization. Validate with UT
-    for(const serviceName of availableServiceName) {
-      if(activeServiceNames.includes(serviceName) && desiredProps.services[serviceName].enabled) {
-        if(this.#signalGroups[serviceName].includes(dataPointId)) {
-          const type = this.config.dataPoints.find((dp) => dp.id === dataPointId).type
-          this.#datahubAdapter.sendData(type, dataPointId, value);
-          // INFO: Remove if a datapoint can be part of different groups
-          return;
-        }
+    const desiredProps = this.#datahubAdapter.getDesiredProps().services;
+
+    // INFO:
+    // Ignores the services defined in the runtimeConfig. -> twin is single source of truth.
+    for (const serviceObject of Object.values(desiredProps)) {
+      if (
+        serviceObject.enabled &&
+        Object.keys(serviceObject).includes(dataPointId) &&
+        serviceObject[dataPointId]
+      ) {
+        const type = this.config.dataPoints.find(
+          (dp) => dp.id === dataPointId
+        ).type;
+        this.#datahubAdapter.sendData(type, dataPointId, value);
+        return;
       }
     }
-    winston.debug(`${logPrefix} not signal group found for ${dataPointId} datapoint. Maybe disabled from backend.`);
+    winston.debug(
+      `${logPrefix} not signal group found for ${dataPointId} datapoint. Maybe disabled from backend.`
+    );
   }
 
   /**

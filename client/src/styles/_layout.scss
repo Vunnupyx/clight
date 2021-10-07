@@ -1,0 +1,33 @@
+.layout-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 10px;
+
+  &__title {
+    @media all and (min-width: 1100px) {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      z-index: 2;
+      transform: translateY(-50%);
+    }
+  }
+
+  &__tabs {
+    flex: 1;
+
+    .mat-tab-nav-bar {
+      border-bottom: none;
+    }
+
+    @media all and (min-width: 1100px) {
+      margin-left: -180px;
+    }
+  }
+
+  &__spacer {
+    flex: 1 1 auto;
+  }
+}

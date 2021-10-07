@@ -8,13 +8,14 @@
     bottom: 0;
     background: rgba(127, 127, 127, 0.4);
     z-index: 10;
+    margin: 0;
   "
 ></p>
 
-<div class="d-flex align-items-center mt-10">
-  <h2 class="mt-0 mb-0 mr-25 ml-25">{{ 'settings-network.Network' | translate }}</h2>
-  <div class="flex-grow-1">
-    <nav mat-tab-nav-bar mat-align-tabs="center" class="network-nav">
+<div class="layout-header">
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-network.Network' | translate }}</h2>
+  <div class="layout-header__tabs">
+    <nav mat-tab-nav-bar mat-align-tabs="center">
       <a
         *ngFor="let tab of tabs"
         mat-tab-link

@@ -114,7 +114,7 @@ function dataSourcesPostDatapointHandler(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const newData = { ...request.body, ...{ id: uuidv4() } };
-  dataSource.dataPoints.push(newData);
+  dataSource.dataPoints.push({ ...newData, readFrequency: 1000 });
   configManager.config = config;
 
   response.status(200).json({

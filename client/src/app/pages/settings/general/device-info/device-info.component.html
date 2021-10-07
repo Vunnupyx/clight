@@ -1,4 +1,4 @@
-<form #form="ngForm" (ngSubmit)="form.valid && onSave()">
+<form #form="ngForm" (ngSubmit)="form.valid && onSave(form)">
   <mat-form-field>
     <mat-label>{{ 'settings-device-info.Manufacturer' | translate }}</mat-label>
     <input

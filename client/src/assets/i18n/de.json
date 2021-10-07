@@ -34,7 +34,8 @@
     "SerialNumber": "",
     "ApplyChanges": "",
     "LoadError": "",
-    "UpdateError": ""
+    "UpdateError": "",
+    "SaveSuccess": ""
   },
   "settings-data-source": {
     "DataSource": "Datenquelle",

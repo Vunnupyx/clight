@@ -51,13 +51,6 @@ export class DataSourceComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  get isBusy() {
-    return (
-      this.dataSourceService.status != Status.Ready ||
-      this.sourceDataPointService.status != Status.Ready
-    );
-  }
-
   get isEditing() {
     return !!this.unsavedRow;
   }
@@ -174,7 +167,7 @@ export class DataSourceComponent implements OnInit {
   private clearUnsavedRow() {
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.datapointRows = this.datapointRows!.filter((x) => x.id);
+    this.datapointRows = this.datapointRows?.filter((x) => x.id) || [];
   }
 
   onAddressSelect(obj: SourceDataPoint) {
@@ -190,7 +183,8 @@ export class DataSourceComponent implements OnInit {
       if (this.dataSource?.protocol === DataSourceProtocol.IOShield) {
         this.unsavedRow!.address = `${result.area}.${result.component}.${result.variable}`;
       } else {
-        this.unsavedRow!.address = `${result.name}.${result.address}`;
+        this.unsavedRow!.name = result.name;
+        this.unsavedRow!.address = result.address;
       }
     });
   }

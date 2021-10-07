@@ -24,7 +24,8 @@ export enum DataSinkProtocols {
 }
 
 export enum MTConnectDataItemTypes {
-  EVENT = 'event'
+  EVENT = 'event',
+  CONDITION = 'condition'
 }
 
 export enum DeviceLifecycleEventTypes {

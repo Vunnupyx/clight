@@ -64,19 +64,15 @@ export class MTConnectDataSink extends DataSink {
     this.avail = new Event('avail');
     this.mtcAdapter.addDataItem(this.avail);
 
-    // this.system = new Condition('system');
-    // this.mtcAdapter.addDataItem(this.system);
-    // this.logic1 = new Condition('logic1');
-    // this.mtcAdapter.addDataItem(this.logic1);
-    // this.motion1 = new Condition('motion1');
-    // this.mtcAdapter.addDataItem(this.motion1);
-
     this.config.dataPoints.forEach((dp) => {
       let dataItem: DataItem;
 
       switch (dp.type) {
         case MTConnectDataItemTypes.EVENT:
           dataItem = new Event(dp.address);
+          break;
+        case MTConnectDataItemTypes.CONDITION:
+          dataItem = new Condition(dp.address);
           break;
         default:
           throw new Error(`Type ${dp.type} is not supported`);
@@ -104,9 +100,15 @@ export class MTConnectDataSink extends DataSink {
   protected processDataPointValue(dataPointId, value) {
     const dataItem = this.dataItems[dataPointId];
 
-    if (dataItem) {
+    if (!dataItem) return;
+
+    if (dataItem instanceof Event) {
       dataItem.value = value;
       winston.debug(`Setting MTConnect DataItem ${dataItem} to ${value}`);
+    }
+
+    if (dataItem instanceof Condition) {
+      // TODO
     }
   }
 

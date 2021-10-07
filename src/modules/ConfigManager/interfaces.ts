@@ -54,7 +54,7 @@ export interface IDataSourceConfig {
   enabled: boolean;
 }
 
-type IMTConnectDataPointTypes = 'event';
+type IMTConnectDataPointTypes = 'event' | 'condition';
 
 // type MapItem = {
 //   [key: string]: "string";
@@ -70,16 +70,16 @@ export interface IDataSinkDataPointConfig {
   initialValue?: string | number;
 }
 export interface IOpcuaAuth {
-  type: "none" | "userpassword",
-  userName: string,
-  password: string
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
 }
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
-  auth?: IOpcuaAuth
+  auth?: IOpcuaAuth;
 }
 
 export interface IDataPointMapping {

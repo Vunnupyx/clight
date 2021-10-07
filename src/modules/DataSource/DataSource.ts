@@ -102,7 +102,7 @@ export abstract class DataSource extends EventEmitter {
     const { name, protocol } = this.config;
 
     this.submitMeasurement(
-      measurements.map((measurement) => ({ 
+      measurements.map((measurement) => ({
         dataSource: {
           name,
           protocol

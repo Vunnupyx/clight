@@ -9,10 +9,15 @@ import {
 } from '../../../common/interfaces';
 import { IDataPointConfig } from '../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
-
+import SinumerikNCK from './SinumerikNCK/NCDriver';
 interface S7DataPointsWithError {
   datapoints: Array<any>;
   error: boolean;
+}
+
+interface NCDataPointWithStatus {
+  value?: any;
+  error?: string;
 }
 
 /**
@@ -22,15 +27,16 @@ interface S7DataPointsWithError {
 export class S7DataSource extends DataSource {
   private isDisconnected = false;
   private cycleActive = false;
+
   private client = new NodeS7({
     silent: true
   });
-
+  private nckClient = new SinumerikNCK();
   /**
    * Initializes s7 data source and connects to device
    * @returns void
    */
-  public init(): void {
+  public async init(): Promise<void> {
     const { name, protocol, connection } = this.config;
     this.submitLifecycleEvent({
       id: protocol,
@@ -40,19 +46,56 @@ export class S7DataSource extends DataSource {
       dataSource: { protocol, name }
     });
     this.currentStatus = LifecycleEventStatus.Connecting;
-    this.client.initiateConnection(
-      {
-        host: connection.ipAddr,
-        port: connection.port,
-        // connection_name: name,
-        slot: connection.slot,
-        rack: connection.rack,
-        timeout: 2000
-      },
-      (err) => {
-        this.onConnect(err);
+
+    const nckDataPointsConfigured = this.config.dataPoints.find(
+      (dp: IDataPointConfig) => {
+        return dp.type === 'nck';
       }
     );
+
+    try {
+      if (nckDataPointsConfigured)
+        await Promise.all([
+          this.connectPLC(connection),
+          await this.nckClient.connect(connection.ipAddr)
+        ]);
+      else await this.connectPLC(connection);
+    } catch (error) {
+      this.submitLifecycleEvent({
+        id: protocol,
+        level: this.level,
+        type: DataSourceLifecycleEventTypes.ConnectionError,
+        status: LifecycleEventStatus.ConnectionError,
+        dataSource: { name, protocol },
+        payload: error
+      });
+      this.currentStatus = LifecycleEventStatus.ConnectionError;
+      this.reconnectTimeoutId = setTimeout(() => {
+        if (this.isDisconnected) {
+          return;
+        }
+        this.submitLifecycleEvent({
+          id: protocol,
+          level: this.level,
+          type: DataSourceLifecycleEventTypes.Reconnecting,
+          status: LifecycleEventStatus.Reconnecting,
+          dataSource: { name, protocol }
+        });
+        this.currentStatus = LifecycleEventStatus.Reconnecting;
+        this.init();
+      }, this.RECONNECT_TIMEOUT);
+    }
+
+    this.submitLifecycleEvent({
+      id: protocol,
+      level: this.level,
+      type: DataSourceLifecycleEventTypes.Connected,
+      status: LifecycleEventStatus.Connected,
+      dataSource: { name, protocol }
+    });
+    this.currentStatus = LifecycleEventStatus.Connected;
+    this.isDisconnected = false;
+    this.setupDataPoints();
   }
 
   /**
@@ -60,11 +103,16 @@ export class S7DataSource extends DataSource {
    * @param addresses
    * @returns Promise
    */
-  private readData(addresses): Promise<S7DataPointsWithError> {
+  private readPlcData(addresses: string[]): Promise<S7DataPointsWithError> {
     return new Promise((resolve, reject) => {
       try {
+        const timeoutId = setTimeout(
+          () => reject(new Error(`PLC data timeout for ${addresses}`)),
+          10000
+        );
         this.client.addItems(addresses);
         this.client.readAllItems((error, values) => {
+          clearTimeout(timeoutId);
           resolve({
             datapoints: values,
             error: error
@@ -76,6 +124,21 @@ export class S7DataSource extends DataSource {
     });
   }
 
+  private async readNckData(
+    addresses: string[]
+  ): Promise<NCDataPointWithStatus[]> {
+    let results: NCDataPointWithStatus[] = [];
+    for (const address of addresses) {
+      let dp: NCDataPointWithStatus = {};
+      try {
+        dp.value = await this.nckClient.readVariableBTSS(address);
+      } catch (error) {
+        dp.error = error.toString();
+      }
+      results.push(dp);
+    }
+    return results;
+  }
   /**
    * Checks for error in result of read request
    * @param  {boolean} s7error
@@ -112,19 +175,37 @@ export class S7DataSource extends DataSource {
       });
 
     try {
-      const addressesToRead = [];
+      const plcAddressesToRead = [];
       for (const dp of currentCycleDataPoints) {
-        addressesToRead.push(dp.address);
+        if (dp.type === 's7') plcAddressesToRead.push(dp.address);
       }
 
-      winston.debug(`Reading ${addressesToRead}`);
-      const results = await this.readData(addressesToRead);
+      const nckDataPointsToRead = [];
+      for (const dp of currentCycleDataPoints) {
+        if (dp.type === 'nck') nckDataPointsToRead.push(dp.address);
+      }
+
+      winston.debug(`Reading PLC data points: ${plcAddressesToRead}`);
+      const [plcResults, nckResults] = await Promise.all([
+        this.readPlcData(plcAddressesToRead),
+        this.readNckData(nckDataPointsToRead)
+      ]);
 
       let allDpError = currentCycleDataPoints.length > 0;
 
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
-        const value = results.datapoints[dp.address];
+        let value,
+          error = null;
+        if (dp.type === 's7') {
+          value = plcResults.datapoints[dp.address];
+          error = this.checkError(plcResults.error, value);
+        } else if (dp.type === 'nck') {
+          const index = nckDataPointsToRead.indexOf(dp.address);
+          const result = nckResults[index];
+          value = result.value;
+          error = result.error;
+        }
 
         const measurement: IMeasurement = {
           id: dp.id,
@@ -132,9 +213,7 @@ export class S7DataSource extends DataSource {
           value
         };
 
-        const dpError = this.checkError(results.error, value);
-
-        if (!dpError) {
+        if (!error) {
           allDpError = false;
           measurements.push(measurement);
           this.onDataPointLifecycle({
@@ -170,47 +249,22 @@ export class S7DataSource extends DataSource {
    * Handles connection result from connecting to device
    * @param  {} err
    */
-  private onConnect(err) {
-    const level = this.level;
-    const { name, protocol } = this.config;
-    if (err) {
-      // We have an error.  Maybe the PLC is not reachable.
-      this.submitLifecycleEvent({
-        id: protocol,
-        level: this.level,
-        type: DataSourceLifecycleEventTypes.ConnectionError,
-        status: LifecycleEventStatus.ConnectionError,
-        dataSource: { name, protocol },
-        payload: err
-      });
-      this.currentStatus = LifecycleEventStatus.ConnectionError
-      this.reconnectTimeoutId = setTimeout(() => {
-        if (this.isDisconnected) {
-          return;
+  private connectPLC(connection): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.client.initiateConnection(
+        {
+          host: connection.ipAddr,
+          port: connection.port,
+          slot: connection.slot,
+          rack: connection.rack,
+          timeout: 2000
+        },
+        (error) => {
+          if (error) reject(error);
+          else resolve();
         }
-        this.submitLifecycleEvent({
-          id: protocol,
-          level,
-          type: DataSourceLifecycleEventTypes.Reconnecting,
-          status: LifecycleEventStatus.Reconnecting,
-          dataSource: { name, protocol }
-        });
-        this.currentStatus = LifecycleEventStatus.Reconnecting;
-        this.init();
-      }, this.RECONNECT_TIMEOUT);
-      return;
-    }
-
-    this.submitLifecycleEvent({
-      id: protocol,
-      level,
-      type: DataSourceLifecycleEventTypes.Connected,
-      status: LifecycleEventStatus.Connected,
-      dataSource: { name, protocol }
+      );
     });
-    this.currentStatus = LifecycleEventStatus.Connected;
-    this.isDisconnected = false;
-    this.setupDataPoints();
   }
 
   /**
@@ -227,7 +281,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Disconnected,
       dataSource: { name, protocol }
     });
-    this.currentStatus = LifecycleEventStatus.Disconnected
+    this.currentStatus = LifecycleEventStatus.Disconnected;
     clearTimeout(this.reconnectTimeoutId);
     this.client.dropConnection();
   }

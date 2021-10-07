@@ -421,7 +421,6 @@ export default class SinumerikNCKProtocolDriver {
       this.ncVariableBuffer.byteBuffer = this.processS7ResponsePacket(data);
       this.processS7ReadItem(this.ncVariableBuffer);
       this.dataReadResolveCallback(this.ncVariableBuffer.value);
-      winston.info(`NC Variable read, value: ${this.ncVariableBuffer.value}`);
     } catch (error) {
       this.dataReadRejectCallback(error);
     }

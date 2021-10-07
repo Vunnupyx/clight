@@ -1,4 +1,7 @@
-import { IDataSinkConfig, IMTConnectConfig } from '../../../ConfigManager/interfaces';
+import {
+  IDataSinkConfig,
+  IMTConnectConfig
+} from '../../../ConfigManager/interfaces';
 
 import { MTConnectAdapter } from '../../Adapter/MTConnectAdapter';
 import { DataSink } from '../DataSink';
@@ -8,7 +11,11 @@ import {
   LifecycleEventStatus,
   MTConnectDataItemTypes
 } from '../../../../common/interfaces';
-import { DataItem, Event } from '../../Adapter/MTConnectAdapter/DataItem';
+import {
+  DataItem,
+  Event,
+  Condition
+} from '../../Adapter/MTConnectAdapter/DataItem';
 import winston from 'winston';
 import { SynchronousIntervalScheduler } from '../../../SyncScheduler';
 
@@ -29,16 +36,21 @@ export class MTConnectDataSink extends DataSink {
   private static scheduler: SynchronousIntervalScheduler;
   private static schedulerListenerId: number;
   private dataItems: DataItemDict = {};
-  private avail: DataItem;
   protected _protocol = 'mtconnect';
   private static className = MTConnectDataSink.name;
+
+  private avail: DataItem;
+
+  // private system: Condition;
+  // private logic1: Condition;
+  // private motion1: Condition;
 
   /**
    * Create a new instance
    */
   constructor(options: IMTConnectDataSinkOptions) {
     super(options.dataSinkConfig);
-    this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig)
+    this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig);
     MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
 
@@ -48,8 +60,16 @@ export class MTConnectDataSink extends DataSink {
   public init(): Promise<MTConnectDataSink> {
     const logPrefix = `${MTConnectDataSink.className}::init`;
     winston.info(`${logPrefix} initializing.`);
-    this.avail = new DataItem('avail');
+
+    this.avail = new Event('avail');
     this.mtcAdapter.addDataItem(this.avail);
+
+    // this.system = new Condition('system');
+    // this.mtcAdapter.addDataItem(this.system);
+    // this.logic1 = new Condition('logic1');
+    // this.mtcAdapter.addDataItem(this.logic1);
+    // this.motion1 = new Condition('motion1');
+    // this.mtcAdapter.addDataItem(this.motion1);
 
     this.config.dataPoints.forEach((dp) => {
       let dataItem: DataItem;
@@ -70,11 +90,12 @@ export class MTConnectDataSink extends DataSink {
       }
     });
     this.mtcAdapter.start();
-    if(!MTConnectDataSink.schedulerListenerId) {
-      MTConnectDataSink.schedulerListenerId = MTConnectDataSink.scheduler.addListener(
-        [1000],
-        this.mtcAdapter.sendChanged.bind(this.mtcAdapter)
-      );
+    if (!MTConnectDataSink.schedulerListenerId) {
+      MTConnectDataSink.schedulerListenerId =
+        MTConnectDataSink.scheduler.addListener(
+          [1000],
+          this.mtcAdapter.sendChanged.bind(this.mtcAdapter)
+        );
     }
     winston.info(`${logPrefix} initialized.`);
     return Promise.resolve(this);

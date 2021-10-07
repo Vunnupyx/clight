@@ -1176,7 +1176,7 @@
             "type": "string"
           }
         },
-        "initValue": {
+        "initialValue": {
           "description": "index af map for the init value",
           "type": "integer",
           "minimum": 0

@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { DataSourceProtocol } from '../../../../models';
+import { DataSourceService } from '../../../../services';
 
 export interface SelectTypeModalData {
   selection: string;
@@ -12,22 +13,20 @@ export interface SelectTypeModalData {
   selector: 'app-select-type-modal',
   templateUrl: 'select-type-modal.component.html'
 })
-export class SelectTypeModalComponent {
+export class SelectTypeModalComponent implements OnInit {
   DataSourceProtocol = DataSourceProtocol;
 
-  rows = this.data.protocol === DataSourceProtocol.IOShield ? [
-    { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' },
-    { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' },
-    { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' },
-    { area: 'B[.]', component: 'S', variable: 'ncAutoCounter[.]' }
-  ] : [
-    { name: 'Name 1', address: 'Address 1' },
-  ];
+  rows: any[] = [];
 
   constructor(
     private dialogRef: MatDialogRef<SelectTypeModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: SelectTypeModalData
+    @Inject(MAT_DIALOG_DATA) public data: SelectTypeModalData,
+    private dataSourceService: DataSourceService,
   ) {}
+
+  ngOnInit() {
+    this.rows = this.dataSourceService.getNckAddresses();
+  }
 
   onSelect({ selected }) {
     this.dialogRef.close(selected[0]);

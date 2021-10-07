@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Connection} from 'app/api/models';
 import {
@@ -24,7 +24,7 @@ import {SelectTypeModalComponent} from './select-type-modal/select-type-modal.co
   templateUrl: './data-source.component.html',
   styleUrls: ['./data-source.component.scss']
 })
-export class DataSourceComponent implements OnInit {
+export class DataSourceComponent implements OnInit, OnDestroy {
   SourceDataPointType = SourceDataPointType;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
@@ -210,6 +210,12 @@ export class DataSourceComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+  }
+
+  updateSoftwareVersion(version: string) {
+    this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
+      softwareVersion: version,
+    });
   }
 
   private onConnection(x: DataSourceConnection | undefined) {

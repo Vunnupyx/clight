@@ -5,7 +5,7 @@ export interface DataPointType {
   /**
    * index af map for the init value
    */
-  initValue?: number;
+  initialValue?: number;
   map?: Array<string>;
   name?: string;
   type?: 'event';

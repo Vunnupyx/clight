@@ -9,6 +9,7 @@ import {Status, Store, StoreFactory} from 'app/shared/state';
 import {errorHandler, mapOrder} from 'app/shared/utils';
 import * as api from 'app/api/models';
 import PREDEFINED_MTCONNECT_DATA_POINTS from './constants/mtconnectDataItems';
+import PREDEFINED_OPCUA_DATA_POINTS from './constants/opcuaDataItems';
 
 const DATA_SINKS_ORDER = [
   DataSinkProtocol.MTConnect,
@@ -128,7 +129,7 @@ export class DataSinkService {
   }
 
   getPredefinedOPCDataPoints(): DataPoint[] {
-    return [] as any as DataPoint[];
+    return PREDEFINED_OPCUA_DATA_POINTS as any as DataPoint[];
   }
 
   private _orderByProtocol(objs: DataSink[]) {

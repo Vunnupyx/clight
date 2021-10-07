@@ -10,9 +10,7 @@ import winston from 'winston';
  * @param  {IDataSourceConfig} config
  * @returns DataSource
  */
-export const createDataSource = (
-  config: IDataSourceConfig
-): DataSource => {
+export const createDataSource = (config: IDataSourceConfig): DataSource => {
   const { protocol } = config;
 
   if (protocol === DataSourceProtocols.S7) {
@@ -22,8 +20,9 @@ export const createDataSource = (
   if (protocol === DataSourceProtocols.IOSHIELD) {
     return createIoshieldDataSource(config);
   }
-  const errMsg = 'DataSourceFactory::createDataSource error due to unknown protocol.';
-  winston.error(errMsg)
+  const errMsg =
+    'DataSourceFactory::createDataSource error due to unknown protocol.';
+  winston.error(errMsg);
   throw new Error(errMsg);
 };
 

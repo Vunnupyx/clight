@@ -3,8 +3,7 @@
     {
       "id": "s7",
       "name": "S7",
-      "description": "S7 to OPCUA",
-      "templateId": "s7toopcua"
+      "description": "S7 Description"
     }
   ],
   "dataSinks": [
@@ -12,7 +11,7 @@
       "id": "opcua",
       "name": "OPCUA",
       "description": "OPCUA",
-      "templateId": "s7toopcua"
+      "dataSources": ["s7"]
     }
   ]
 }

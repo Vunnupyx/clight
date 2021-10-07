@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DataSourceService, TemplateService } from '../../services';
 import { AvailableDataSink, AvailableDataSource } from '../../models/template';
 import { LocalStorageService } from '../../shared';
+import { unique } from '../../shared/utils';
 
 @Component({
   selector: 'app-quick-start',
@@ -28,7 +29,11 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   }
 
   get filteredSinks() {
-    return this.sinks?.filter((sink) => sink.templateId === this.sourceForm?.value?.source) || [];
+    if (!this.sinks || !this.sourceForm?.value?.source) {
+      return [];
+    }
+
+    return unique(this.sinks.filter((sink) => sink.dataSources?.includes(this.sourceForm.value.source)), item => item.id);
   }
 
   constructor(
@@ -54,7 +59,6 @@ export class QuickStartComponent implements OnInit, OnDestroy {
 
     this.sourceForm = this.formBuilder.group({
       source: ['', Validators.required],
-      templateId: [''],
     });
 
     this.applicationInterfacesForm = this.formBuilder.group({
@@ -72,12 +76,10 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    const dataSourceTemplateId = this.sourceForm.value.source;
+    const dataSource = this.sourceForm.value.source;
     const dataSinks = this.applicationInterfacesForm.value.interfaces;
 
-    const dataSource = this.sources.find((source) => source.templateId === dataSourceTemplateId);
-
-    this.templateService.apply({ dataSource: dataSource?.id, dataSinks })
+    this.templateService.apply({ dataSource: dataSource, dataSinks })
       .then(() => this.router.navigate(['/']));
   }
 

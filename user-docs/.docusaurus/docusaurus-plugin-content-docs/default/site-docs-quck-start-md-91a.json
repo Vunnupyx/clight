@@ -1,0 +1,18 @@
+{
+  "unversionedId": "QuckStart",
+  "id": "QuckStart",
+  "isDocsHomePage": false,
+  "title": "Install Operation System to IoT2050 Advanced",
+  "description": "Prepare SD Card",
+  "source": "@site/docs/QuckStart.md",
+  "slug": "/",
+  "permalink": "/help/docs/",
+  "version": "current",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "10/14/2018",
+  "sidebar": "docs",
+  "next": {
+    "title": "MdcLightConfiguration",
+    "permalink": "/help/docs/MdcLightConfiguration"
+  }
+}

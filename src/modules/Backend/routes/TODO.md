@@ -1,6 +1,6 @@
 # Backend TODO's
 
-## OPC UA Datasink
+## DONE OPC UA Datasink
 
 GET /api/v1/datasink/opcua
 PATCH
@@ -18,7 +18,7 @@ Response:
 }
 ```
 
-## Mapping Endpoint
+## DONE Mapping Endpoint
 
 GET, POST /api/v1/mappings
 GET, PATCH, DELETE /api/v1/mapping/<id>
@@ -35,7 +35,7 @@ Response/Body:
 }
 ```
 
-## Data Source & Data Sink Status Endpoint
+## DONE Data Source & Data Sink Status Endpoint
 
 GET /api/v1/status/datasink/<protocol>
 GET /api/v1/status/datasource/<protocol>
@@ -78,7 +78,7 @@ Response:
 ]
 ```
 
-## Templates Endpoint
+## DONE Templates Endpoint
 
 GET /api/v1/templates
 
@@ -112,7 +112,7 @@ POST /api/v1/templates/apply
 }
 ```
 
-## Network Endpoint
+## DONE Network Endpoint
 
 GET /api/v1/networkconfig
 PATCH /api/v1/networkconfig

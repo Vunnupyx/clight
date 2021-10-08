@@ -803,6 +803,32 @@
           }
         }
       },
+      "patch": {
+        "tags": ["mappings"],
+        "operationId": "mapPatch",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "updatedMapping",
+            "description": "updated mapping object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/map"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated mapping",
+            "schema": {
+              "allOf": [
+                { "$ref": "#/definitions/map" },
+                { "$ref": "#/definitions/uuid" }
+              ]
+            }
+          }
+        }
+      },
       "delete": {
         "tags": ["mappings"],
         "operationId": "mapDelete",

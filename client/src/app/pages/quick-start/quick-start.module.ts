@@ -4,14 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { QuickStartComponent } from './quick-start.component';
 import { SharedModule } from '../../shared/shared.module';
-import { QuickStartGuard } from '../../shared/guards/quick-start.guard';
 
 const routes: Routes = [
   {
     path: 'quick-start',
     component: QuickStartComponent,
     data: { noLayout: true },
-    canActivate: [QuickStartGuard],
   }
 ];
 

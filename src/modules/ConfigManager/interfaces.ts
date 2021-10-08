@@ -131,7 +131,7 @@ export interface TemplatesConfig {
 }
 
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
-  return 'source' in obj && 'target' in obj;
+  return 'source' in obj && 'target' in obj && !('id' in obj);
 }
 
 export interface IVirtualDataPointConfig {

@@ -188,25 +188,25 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
   }
 
-  public addDataSources(sourceIds: string[]) {
+  public setDataSources(sourceIds: string[]) {
     const sources = [defaultS7DataSource, defaultIoShieldDataSource]
         .filter(x => sourceIds.includes(x.protocol));
 
     this.saveConfig({
       dataSources: [
-        ...this._config.dataSources,
+        ...this._config.dataSources.filter(ds => !sourceIds.includes(ds.protocol)),
         ...sources,
       ],
     });
   }
 
-  public addDataSinks(sinkIds: string[]) {
+  public setDataSinks(sinkIds: string[]) {
     const sinks = [defaultOpcuaDataSink, defaultMtconnectDataSink, defaultDataHubDataSink]
         .filter(x => sinkIds.includes(x.protocol));
 
     this.saveConfig({
       dataSinks: [
-        ...this._config.dataSinks,
+          ...this._config.dataSinks.filter(ds => !sinkIds.includes(ds.protocol)),
         ...sinks,
       ],
     });

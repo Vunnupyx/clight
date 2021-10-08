@@ -54,8 +54,8 @@ function templatesGetStatusHandler(request: Request, response: Response) {
  * Handle POST apply templates request
  */
 function templatesApplyPostHandler(request: Request, response: Response): void {
-    configManager.addDataSources([request.body.dataSource]);
-    configManager.addDataSinks(request.body.dataSinks);
+    configManager.setDataSources([request.body.dataSource]);
+    configManager.setDataSinks(request.body.dataSinks);
 
     dataSourcesManager.spawnDataSources(configManager.config.dataSources);
     dataSinksManager.createDataSinks();

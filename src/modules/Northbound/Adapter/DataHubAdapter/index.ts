@@ -118,7 +118,7 @@ export class DataHubAdapter {
         winston.debug(`${logPrefix} initializing.`);
         if (this.#proxyConfig) {
           winston.debug(
-            `${logPrefix} proxy config detected. Building proxy object.`
+            `${logPrefix} proxy config detected. Building ${this.#proxyConfig.type} proxy object.`
           );
           this.#proxy = this.getProxyAgent();
         }
@@ -191,7 +191,6 @@ export class DataHubAdapter {
       .then((result) => {
         this.isRunning = result ? true : false;
       })
-      .then(() => this.#dataHubClient.sendEvent(new Message(JSON.stringify(`DUMMY DATA`))))
       .then(() => {
         return this.#dataHubClient.getTwin();
       })

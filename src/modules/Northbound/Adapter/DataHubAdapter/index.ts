@@ -1,7 +1,7 @@
 import { Client, Message, Twin } from 'azure-iot-device';
 import { MqttWs as iotHubTransport } from 'azure-iot-device-mqtt';
 import { ProvisioningDeviceClient } from 'azure-iot-provisioning-device';
-import { Mqtt as MqttTransport } from 'azure-iot-provisioning-device-mqtt';
+import { AmqpWs as ProvTransport } from 'azure-iot-provisioning-device-amqp';
 import { parse } from 'url';
 import {
   RegistrationClient,
@@ -44,6 +44,7 @@ export class DataHubAdapter {
   #proxyConfig: DataHubAdapterOptions['proxy'];
   #proxy: HttpsProxyAgent | SocksProxyAgent;
 
+  
   // Provisioning
   #registrationId: string;
   #symKey: string;
@@ -53,7 +54,7 @@ export class DataHubAdapter {
   #provClient: RegistrationClient;
   #provGroupClient: RegistrationClient;
   #provSecClient: SymmetricKeySecurityClient;
-  #symKeyProvTransport: MqttTransport;
+  #symKeyProvTransport: HttpTransport;
 
   // Datahub and Twin
   #connectionSting: TConnectionString = null;
@@ -130,9 +131,8 @@ export class DataHubAdapter {
         );
       })
       .then(() => {
-        this.#symKeyProvTransport = new MqttTransport();
+        this.#symKeyProvTransport = new ProvTransport();
         if (this.#proxyConfig) {
-          console.log(this.#proxy);
           this.#symKeyProvTransport.setTransportOptions({
             webSocketAgent: this.#proxy
           });
@@ -176,7 +176,6 @@ export class DataHubAdapter {
       );
       return Promise.resolve();
     }
-    console.log(this.#connectionSting);
     this.#dataHubClient = Client.fromConnectionString(
       this.#connectionSting,
       iotHubTransport

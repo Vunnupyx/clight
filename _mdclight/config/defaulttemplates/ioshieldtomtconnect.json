@@ -3,8 +3,7 @@
     {
       "id": "ioshield",
       "name": "Ioshield",
-      "description": "Ioshield to MTConnect",
-      "templateId": "ioshieldtomtconnect"
+      "description": "Ioshield Description"
     }
   ],
   "dataSinks": [
@@ -12,7 +11,7 @@
       "id": "mtconnect",
       "name": "MTConnect",
       "description": "MTConnect",
-      "templateId": "ioshieldtomtconnect"
+      "dataSources": ["ioshield"]
     }
   ]
 }

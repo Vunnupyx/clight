@@ -112,14 +112,13 @@ export interface ITemplateDataSource {
   id: string;
   name: string;
   description?: string;
-  templateId: string;
 }
 
 export interface ITemplateDataSink {
   id: string;
   name: string;
   description?: string;
-  templateId: string;
+  dataSources: string[];
 }
 
 export interface IDefaultTemplates {

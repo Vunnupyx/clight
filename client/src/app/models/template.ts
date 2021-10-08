@@ -2,7 +2,6 @@ export class AvailableDataSource {
   id!: string;
   name!: string;
   description!: string;
-  templateId!: string;
 }
 
 export class AvailableDataSink {
@@ -10,7 +9,7 @@ export class AvailableDataSink {
   name!: string;
   type!: string;
   description!: string;
-  templateId!: string;
+  dataSources!: string[];
 }
 
 export class TemplatesStatus {

@@ -70,7 +70,7 @@
             </div>
             <div class="col-12 col-md-7">
               <mat-form-field>
-                <mat-select>
+                <mat-select [ngModel]="dataSource?.softwareVersion" (ngModelChange)="updateSoftwareVersion($event)">
                   <mat-option *ngFor="let version of SoftwareVersions" [value]="version">{{ version }}</mat-option>
                 </mat-select>
               </mat-form-field>

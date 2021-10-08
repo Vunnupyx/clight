@@ -6,7 +6,7 @@ import { filter, map } from 'rxjs/operators';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { AvailableDataSink, AvailableDataSource, TemplatesStatus } from '../models/template';
 import { HttpService } from '../shared';
-import { errorHandler } from '../shared/utils';
+import {errorHandler, unique} from '../shared/utils';
 
 
 export class TemplatesState {
@@ -50,7 +50,7 @@ export class TemplateService {
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.availableDataSources = response.availableDataSources;
+        state.availableDataSources = unique(response.availableDataSources, item => item.id);
         state.availableDataSinks = response.availableDataSinks;
       });
     } catch (err) {

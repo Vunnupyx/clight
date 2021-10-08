@@ -50,7 +50,7 @@ function dataSourceGetHandler(request: Request, response: Response): void {
  * Only enabling and disabling is allowed.
  */
 function dataSourcePatchHandler(request: Request, response: Response): void {
-  const allowed = ['connection', 'enabled'];
+  const allowed = ['connection', 'enabled', 'softwareVersion'];
   const protocol = request.params.datasourceProtocol;
 
   const dataSource = configManager.config.dataSources.find(

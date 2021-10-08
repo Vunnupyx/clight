@@ -1,8 +1,8 @@
-import { throws } from 'assert';
 import { Client, Message, Twin } from 'azure-iot-device';
 import { MqttWs as iotHubTransport } from 'azure-iot-device-mqtt';
 import { ProvisioningDeviceClient } from 'azure-iot-provisioning-device';
 import { Mqtt as MqttTransport } from 'azure-iot-provisioning-device-mqtt';
+import { parse } from 'url';
 import {
   RegistrationClient,
   RegistrationResult
@@ -11,6 +11,7 @@ import { SymmetricKeySecurityClient } from 'azure-iot-security-symmetric-key';
 import { createHmac } from 'crypto';
 import EventEmitter from 'events';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { SocksProxyAgent, SocksProxyAgentOptions } from 'socks-proxy-agent';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
@@ -28,7 +29,7 @@ interface IDesiredProps {
   services: {
     [sericeName: string]: {
       enabled: boolean;
-      [dataPointName: string]: boolean;
+      [additonalParamter: string]: any;
     };
   };
 }
@@ -41,7 +42,7 @@ export class DataHubAdapter {
   private isRunning: boolean = false;
   #initialized: boolean = false;
   #proxyConfig: DataHubAdapterOptions['proxy'];
-  #proxy: HttpsProxyAgent; // TODO: Add Socks proxy module
+  #proxy: HttpsProxyAgent | SocksProxyAgent;
 
   // Provisioning
   #registrationId: string;
@@ -119,7 +120,7 @@ export class DataHubAdapter {
           winston.debug(
             `${logPrefix} proxy config detected. Building proxy object.`
           );
-          this.#proxy = new HttpsProxyAgent(this.#proxyConfig.ip);
+          this.#proxy = this.getProxyAgent();
         }
         this.#provSecClient = new SymmetricKeySecurityClient(
           this.#registrationId,
@@ -131,6 +132,7 @@ export class DataHubAdapter {
       .then(() => {
         this.#symKeyProvTransport = new MqttTransport();
         if (this.#proxyConfig) {
+          console.log(this.#proxy);
           this.#symKeyProvTransport.setTransportOptions({
             webSocketAgent: this.#proxy
           });
@@ -174,6 +176,7 @@ export class DataHubAdapter {
       );
       return Promise.resolve();
     }
+    console.log(this.#connectionSting);
     this.#dataHubClient = Client.fromConnectionString(
       this.#connectionSting,
       iotHubTransport
@@ -184,10 +187,16 @@ export class DataHubAdapter {
       });
     }
     return this.#dataHubClient
-      .getTwin()
+      .open()
+      .then((result) => {
+        this.isRunning = result ? true : false;
+      })
+      .then(() => this.#dataHubClient.sendEvent(new Message(JSON.stringify(`DUMMY DATA`))))
+      .then(() => {
+        return this.#dataHubClient.getTwin();
+      })
       .then((twin) => {
         this.#deviceTwin = twin;
-        this.isRunning = true;
         winston.info(`${logPrefix} successful. Adapter ready to send data.`);
       })
       .catch((err) => {
@@ -247,6 +256,24 @@ export class DataHubAdapter {
     });
   }
 
+  private getProxyAgent(): HttpsProxyAgent | SocksProxyAgent {
+    switch (this.#proxyConfig.type) {
+      case 'http': {
+        return new HttpsProxyAgent(parse(`http://${this.#proxyConfig.ip}:${this.#proxyConfig.port}`));
+      }
+      case 'socks5': {
+        const { username, password, ip, port } = this.#proxyConfig;
+        return new SocksProxyAgent({
+          host: ip,
+          port,
+          username,
+          password,
+          type: 5
+        });
+      }
+    }
+  }
+
   /**
    * Generate a symmetric key for a specific registrationId.
    * ATTENTION: Only called in group mode set by constructor options.
@@ -298,21 +325,27 @@ export class DataHubAdapter {
     const logPrefix = `${DataHubAdapter.#className}::sendData`;
     switch (type) {
       case 'event': {
-        new MessageBuffer(this.#serialNumber, 0).once('full', (sendable,) => {
+        new MessageBuffer(this.#serialNumber, 0).once('full', (sendable) => {
           this.addMsgType('event', sendable);
-          this.#dataHubClient.sendEvent(sendable)
+          this.#dataHubClient.sendEvent(sendable);
         });
-        winston.debug(`${logPrefix} send event data: Key: ${key} Value: ${value}`);
+        winston.debug(
+          `${logPrefix} send event data: Key: ${key} Value: ${value}`
+        );
         break;
       }
       case 'probe': {
         this.#probeBuffer.addAsset(key, value);
-        winston.debug(`${logPrefix} store probe data for: Key: ${key} Value: ${value}`);
+        winston.debug(
+          `${logPrefix} store probe data for: Key: ${key} Value: ${value}`
+        );
         break;
       }
       case 'telemetry': {
         this.#telemetryBuffer.addAsset(key, value);
-        winston.debug(`${logPrefix} store telemetry data for: Key: ${key} Value: ${value}`);
+        winston.debug(
+          `${logPrefix} store telemetry data for: Key: ${key} Value: ${value}`
+        );
         break;
       }
       default: {
@@ -486,7 +519,7 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
       this.#assetBuffer.push(this.generateAssetData(asset.key, asset.value));
       const currentMsg = this.getCurrentMsg();
       if (this.calcSize(currentMsg) >= this.bufferSizeBytes) {
-        if(!this.#timer) {
+        if (!this.#timer) {
           this.emitFullEvent(assets.slice(index + 1));
           return;
         } else {
@@ -539,7 +572,11 @@ class MessageBuffer extends (EventEmitter as new () => TypedEmitter<IMessageBuff
     this.emit(
       'full',
       new Message(JSON.stringify(this.getCurrentMsg())),
-      new MessageBuffer(this.serialNumber, this.bufferSizeBytes, this.#intervalTimeMs),
+      new MessageBuffer(
+        this.serialNumber,
+        this.bufferSizeBytes,
+        this.#intervalTimeMs
+      ),
       remainingAssets
     );
   }

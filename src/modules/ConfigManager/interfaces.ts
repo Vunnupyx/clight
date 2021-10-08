@@ -102,7 +102,7 @@ export interface IDataHubConfig {
     symKey: string
     groupDevice: boolean,
     minMsgSize: number;
-    proxy?: IHttpsProxyConfig | ISocksProxyConfig
+    proxy?: IProxyConfig,
     signalGroups: ISignalGroups
     dataPointTypesData: {
       probe: IDataHubDataPointTypesData,
@@ -123,13 +123,10 @@ export type TDataHubDataPointType = 'event' | 'probe' | 'telemetry';
 
 export interface IProxyConfig {
   ip: string;
-}
-
-export interface IHttpsProxyConfig extends IProxyConfig {}
-
-export interface ISocksProxyConfig extends IProxyConfig {
-  username: string;
-  password: string;
+  port: number;
+  type: 'socks5' | 'http',
+  username?: string;
+  password?: string;
 }
 
 export interface IDataPointMapping {

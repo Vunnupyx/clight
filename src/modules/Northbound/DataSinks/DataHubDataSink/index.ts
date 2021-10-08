@@ -46,16 +46,15 @@ export class DataHubDataSink extends DataSink {
 
     // INFO:
     // Ignores the services defined in the runtimeConfig. -> twin is single source of truth.
-    for (const serviceObject of Object.values(desiredProps)) {
+    for (const serviceName of Object.keys(desiredProps)) {
       if (
-        serviceObject.enabled &&
-        Object.keys(serviceObject).includes(dataPointId) &&
-        serviceObject[dataPointId]
+        desiredProps[serviceName].enabled &&
+        this.#signalGroups[serviceName]?.includes(dataPointId)
       ) {
-        const type = this.config.dataPoints.find(
+        const {type, address } = this.config.dataPoints.find(
           (dp) => dp.id === dataPointId
-        ).type;
-        this.#datahubAdapter.sendData(type, dataPointId, value);
+        );
+        this.#datahubAdapter.sendData(type, address, value);
         return;
       }
     }

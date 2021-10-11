@@ -27,9 +27,9 @@ interface DataHubAdapterOptions extends IDataHubConfig {}
 
 interface IDesiredProps {
   services: {
-    [sericeName: string]: {
+    [serviceName: string]: {
       enabled: boolean;
-      [additonalParamter: string]: any;
+      [additionalParameter: string]: any;
     };
   };
 }
@@ -127,28 +127,8 @@ export class DataHubAdapter {
         if(this.#isGroupRegistration) {
           this.#groupDeviceKey = this.generateSymKeyForGroupDevice()
         }
-        this.#provSecClient = new SymmetricKeySecurityClient(
-          this.#registrationId,
-          this.#groupDeviceKey || this.#symKey
-        );
       })
-      .then(() => {
-        this.#symKeyProvTransport = new ProvTransport();
-        if (this.#proxyConfig) {
-          this.#symKeyProvTransport.setTransportOptions({
-            webSocketAgent: this.#proxy
-          });
-        }
-      })
-      .then(() => {
-        this.#provClient = ProvisioningDeviceClient.create(
-          this.#dpsServiceAddress,
-          this.#scopeId,
-          this.#symKeyProvTransport,
-          this.#provSecClient
-        );
-      })
-      .then(() => this.getProvisioning())
+      .then(() => this.startProvisioning)
       .then(() => {
         this.#initialized = true;
         winston.debug(`${logPrefix} initialized. Registered to DPS`);
@@ -161,6 +141,30 @@ export class DataHubAdapter {
           )
         );
       });
+  }
+
+  /**
+   * Start the provisioning process for this device
+   */
+  private startProvisioning(): Promise<void> {
+    this.#provSecClient = new SymmetricKeySecurityClient(
+      this.#registrationId,
+      this.#groupDeviceKey || this.#symKey
+    );
+    this.#symKeyProvTransport = new ProvTransport();
+    if (this.#proxy) {
+      this.#symKeyProvTransport.setTransportOptions({
+        webSocketAgent: this.#proxy
+      });
+    }
+    this.#provClient = ProvisioningDeviceClient.create(
+      this.#dpsServiceAddress,
+      this.#scopeId,
+      this.#symKeyProvTransport,
+      this.#provSecClient
+    );
+
+    return this.getProvisioning();
   }
 
   /**

@@ -8,6 +8,7 @@ import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
+import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
 
 export class DataSourcesState {
   status!: Status;
@@ -121,6 +122,10 @@ export class DataSourceService {
         state.status = Status.Ready;
       });
     }
+  }
+
+  getNckAddresses() {
+    return NCK_ADDRESSES;
   }
 
   private _orderByProtocol(objs: DataSource[]): DataSource[] {

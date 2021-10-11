@@ -35,12 +35,16 @@ export class VirtualDataPointComponent implements OnInit {
 
   private sourceDataPoints: SourceDataPoint[] = [];
 
-  get isBusy() {
-    return this.virtualDataPointService.status != Status.Ready;
-  }
-
   get isEditing() {
     return !!this.unsavedRow;
+  }
+
+  get dataSources() {
+    return (this.sourceDataPoints || []) as { id: string, name: string }[];
+  }
+
+  get previousVirtualPoints() {
+    return (this.datapointRows || []).filter(x => x.id !== this.unsavedRow?.id) as { id: string, name: string }[];
   }
 
   get sources() {
@@ -122,7 +126,7 @@ export class VirtualDataPointComponent implements OnInit {
   private clearUnsavedRow() {
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.datapointRows = this.datapointRows!.filter((x) => x.id);
+    this.datapointRows = this.datapointRows?.filter((x) => x.id) || [];
   }
 
   onDelete(obj: VirtualDataPoint) {
@@ -147,6 +151,10 @@ export class VirtualDataPointComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+  }
+
+  getRowIndex(id: string) {
+    return this.datapointRows?.findIndex(x => x.id === id)!;
   }
 
   private onSourceDataPoints(x: SourceDataPoint[]) {

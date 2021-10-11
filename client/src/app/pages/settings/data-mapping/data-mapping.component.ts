@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { SourceDataPoint, DataPoint, DataMapping } from 'app/models';
+import {SourceDataPoint, DataPoint, DataMapping, VirtualDataPoint} from 'app/models';
 import {
   SourceDataPointService,
   DataPointService,
-  DataMappingService
+  DataMappingService, VirtualDataPointService
 } from 'app/services';
 import { Status } from 'app/shared/state';
 import { array2map, clone, ObjectMap } from 'app/shared/utils';
@@ -25,6 +25,8 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   dataPoints?: DataPoint[];
   dataPointsById?: ObjectMap<DataPoint>;
   mappingRows?: DataMapping[];
+  virtualDataPoints?: VirtualDataPoint[];
+  virtualDataPointsById?: ObjectMap<VirtualDataPoint>;
 
   unsavedRow?: DataMapping;
   unsavedRowIndex: number | undefined;
@@ -34,20 +36,20 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   constructor(
     private sourceDataPointService: SourceDataPointService,
     private dataPointService: DataPointService,
+    private virtualDataPointService: VirtualDataPointService,
     private dataMappingService: DataMappingService,
     private dialog: MatDialog
   ) {}
 
-  get isBusy() {
-    return (
-      this.sourceDataPointService.status != Status.Ready ||
-      this.dataPointService.status != Status.Ready ||
-      this.dataMappingService.status != Status.Ready
-    );
-  }
-
   get isEditing() {
     return !!this.unsavedRow;
+  }
+
+  get sources() {
+    return [
+      ...this.sourceDataPoints || [],
+      ...this.virtualDataPoints || [],
+    ];
   }
 
   ngOnInit() {
@@ -60,12 +62,16 @@ export class DataMappingComponent implements OnInit, OnDestroy {
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
     );
     this.sub.add(
+      this.virtualDataPointService.dataPoints.subscribe((x) => this.onVirtualDataPoints(x))
+    );
+    this.sub.add(
       this.dataMappingService.dataMappings.subscribe((x) =>
         this.onDataMappings(x)
       )
     );
 
     this.sourceDataPointService.getSourceDataPointsAll();
+    this.virtualDataPointService.getDataPoints();
     this.dataPointService.getDataPointsAll();
     this.dataMappingService.getDataMappingsAll();
   }
@@ -82,12 +88,21 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     this.dataPointsById = array2map(arr, (x) => x.id!);
   }
 
+  onVirtualDataPoints(arr: VirtualDataPoint[]) {
+    this.virtualDataPoints = arr;
+    this.virtualDataPointsById = array2map(arr, (x) => x.id!);
+  }
+
   onDataMappings(arr: DataMapping[]) {
     this.mappingRows = arr;
   }
 
   getSourceDataPoint(id: string) {
-    return this.sourceDataPointsById![id];
+    if (!this.sourceDataPointsById || !this.virtualDataPointsById) {
+      return null;
+    }
+
+    return this.sourceDataPointsById[id] || this.virtualDataPointsById[id];
   }
 
   getDataPoint(id: string) {

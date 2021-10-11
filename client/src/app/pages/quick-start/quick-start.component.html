@@ -44,7 +44,7 @@
         <div class="source-radio-group">
           <mat-checkbox
             class="source-radio-button source-checkbox"
-            *ngFor="let sink of sinks"
+            *ngFor="let sink of filteredSinks"
             [(ngModel)]="checkedSinks[sink.id]"
             (ngModelChange)="onInterfacesChange()"
             [ngModelOptions]="{standalone: true}"

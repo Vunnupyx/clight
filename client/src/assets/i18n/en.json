@@ -34,7 +34,8 @@
     "SerialNumber": "SerialNumber",
     "ApplyChanges": "Apply Changes",
     "LoadError": "Failed to load device info. Try again later",
-    "UpdateError": "Failed to update device info. Try again later"
+    "UpdateError": "Failed to update device info. Try again later",
+    "SaveSuccess": "Device Info has been saved successfully!"
   },
   "settings-data-source": {
     "DataSource": "Data Source",
@@ -183,5 +184,9 @@
       "x2": "Ethernet X2",
       "proxy": "Proxy"
     }
+  },
+  "system-information": {
+    "SystemInformation": "System Information",
+    "LoadError": "Failed to load system information. Try again later"
   }
 }

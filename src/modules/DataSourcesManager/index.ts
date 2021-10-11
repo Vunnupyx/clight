@@ -26,7 +26,7 @@ export class DataSourcesManager {
     this.measurementsBus = params.measurementsBus;
     this.dataPointCache = params.dataPointCache;
     this.virtualDataPointManager = params.virtualDataPointManager;
-    this.spawnDataSources();
+    this.spawnDataSources(this.dataSourcesConfig);
   }
 
   /**
@@ -54,8 +54,9 @@ export class DataSourcesManager {
    * Spawns and initializes all configured data sources
    * @returns void
    */
-  public spawnDataSources(): void {
-    this.dataSources = this.dataSourcesConfig.map(createDataSource);
+  public spawnDataSources(dataSourcesConfig): void {
+    this.dataSourcesConfig = dataSourcesConfig;
+    this.dataSources = dataSourcesConfig.map(createDataSource);
     this.dataSources.forEach((dataSource) => {
       if (!dataSource) {
         return;

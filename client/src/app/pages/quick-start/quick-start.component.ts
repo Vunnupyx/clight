@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DataSourceService, TemplateService } from '../../services';
 import { AvailableDataSink, AvailableDataSource } from '../../models/template';
 import { LocalStorageService } from '../../shared';
+import { unique } from '../../shared/utils';
 
 @Component({
   selector: 'app-quick-start',
@@ -25,6 +26,14 @@ export class QuickStartComponent implements OnInit, OnDestroy {
 
   get currentLang() {
     return this.translate.currentLang;
+  }
+
+  get filteredSinks() {
+    if (!this.sinks || !this.sourceForm?.value?.source) {
+      return [];
+    }
+
+    return unique(this.sinks.filter((sink) => sink.dataSources?.includes(this.sourceForm.value.source)), item => item.id);
   }
 
   constructor(
@@ -70,7 +79,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     const dataSource = this.sourceForm.value.source;
     const dataSinks = this.applicationInterfacesForm.value.interfaces;
 
-    this.templateService.apply({ dataSource, dataSinks })
+    this.templateService.apply({ dataSource: dataSource, dataSinks })
       .then(() => this.router.navigate(['/']));
   }
 

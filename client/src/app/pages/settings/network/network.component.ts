@@ -21,10 +21,6 @@ export class NetworkComponent implements OnInit {
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
 
-  get isBusy() {
-    return this.networkService.status !== Status.Ready;
-  }
-
   get tabs() {
     if (!this.config) {
       return [];

@@ -1,0 +1,40 @@
+{
+  "/help/-b8c": {
+    "component": "component---site-src-pages-index-jsc-4-f-f99",
+    "config": "config---help-5-e-9-f5c"
+  },
+  "/help/__docusaurus/debug-c4f": {
+    "component": "component---theme-debug-config-23-a-2ff"
+  },
+  "/help/__docusaurus/debug/config-129": {
+    "component": "component---theme-debug-config-23-a-2ff"
+  },
+  "/help/__docusaurus/debug/content-a36": {
+    "component": "component---theme-debug-contentba-8-ce7",
+    "allContent": "allContent---help-docusaurus-debug-content-246-e36"
+  },
+  "/help/__docusaurus/debug/globalData-44c": {
+    "component": "component---theme-debug-global-dataede-0fa"
+  },
+  "/help/__docusaurus/debug/metadata-396": {
+    "component": "component---theme-debug-site-metadata-68-e-3d4"
+  },
+  "/help/__docusaurus/debug/registry-74b": {
+    "component": "component---theme-debug-registry-679-501"
+  },
+  "/help/__docusaurus/debug/routes-3ca": {
+    "component": "component---theme-debug-routes-946-699"
+  },
+  "/help/docs-da3": {
+    "component": "component---theme-doc-page-1-be-9be",
+    "versionMetadata": "versionMetadata---help-docs-935-7f9"
+  },
+  "/help/docs/-b7b": {
+    "component": "component---theme-doc-item-178-a40",
+    "content": "content---help-docs-91-a-7b5"
+  },
+  "/help/docs/MdcLightConfiguration-4ab": {
+    "component": "component---theme-doc-item-178-a40",
+    "content": "content---help-docs-mdc-light-configuration-2-dc-f74"
+  }
+}

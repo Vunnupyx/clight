@@ -1,0 +1,29 @@
+<div class="layout-header">
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'system-information.SystemInformation' | translate }}</h2>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="mb-20" *ngFor="let section of data">
+  <div class="pr-25 pl-25 pt-15 pb-15">
+    <h3 class="m-0 section__title">{{ section.title }}</h3>
+    <p class="section__description">{{ section.description }}</p>
+  </div>
+  <mat-divider></mat-divider>
+
+  <div class="system-info-container pr-25 pl-25">
+    <ng-container *ngFor="let item of section.items">
+      <div class="row pt-15 pb-15">
+        <div class="col-12 col-md-6">
+          <h4 class="m-0 system-info-item__title">{{ item.key }}</h4>
+          <p class="m-0 system-info-item__description">{{ item.keyDescription }}</p>
+        </div>
+        <div class="col-12 col-md-6">
+          <h4 class="m-0 system-info-item__value">{{ item.value }}</h4>
+          <p class="m-0 system-info-item__description">{{ item.valueDescription }}</p>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </div>
+</div>

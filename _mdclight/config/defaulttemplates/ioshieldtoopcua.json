@@ -1,0 +1,17 @@
+{
+  "dataSources": [
+    {
+      "id": "ioshield",
+      "name": "Ioshield",
+      "description": "Ioshield Description"
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "opcua",
+      "name": "OPCUA",
+      "description": "OPCUA",
+      "dataSources": ["ioshield"]
+    }
+  ]
+}

@@ -30,6 +30,10 @@ export class LayoutComponent {
       })
     )
 
+  get supportHref() {
+    return `${window.location.protocol}//${window.location.hostname}:3000`;
+  }
+
   constructor(
     private breakpointObserver: BreakpointObserver,
     private router: Router,

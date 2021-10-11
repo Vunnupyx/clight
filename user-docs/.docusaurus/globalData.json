@@ -1,0 +1,28 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/help/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/help/docs",
+          "mainDocId": "QuckStart",
+          "docs": [
+            {
+              "id": "MdcLightConfiguration",
+              "path": "/help/docs/MdcLightConfiguration",
+              "sidebar": "docs"
+            },
+            {
+              "id": "QuckStart",
+              "path": "/help/docs/",
+              "sidebar": "docs"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

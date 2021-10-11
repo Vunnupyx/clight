@@ -61,13 +61,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     private dialog: MatDialog
   ) {}
 
-  get isBusy() {
-    return (
-      this.dataSinkService.status != Status.Ready ||
-      this.dataPointService.status != Status.Ready
-    );
-  }
-
   get isEditing() {
     return !!this.unsavedRow;
   }
@@ -141,11 +134,12 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     const obj = {
       name: result.name,
       address: result.address,
-      initValue: result.initialValue,
+      initialValue: result.initialValue,
       type: result.type,
       enabled: true,
       map: result.map
     } as DataPoint;
+    console.log(result, obj);
     this.unsavedRowIndex = this.datapointRows!.length;
     this.unsavedRow = obj;
     this.datapointRows = this.datapointRows!.concat([obj]);
@@ -202,7 +196,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   private clearUnsavedRow() {
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.datapointRows = this.datapointRows!.filter((x) => x.id);
+    this.datapointRows = this.datapointRows?.filter((x) => x.id) || [];
   }
 
   onDelete(obj: DataPoint) {

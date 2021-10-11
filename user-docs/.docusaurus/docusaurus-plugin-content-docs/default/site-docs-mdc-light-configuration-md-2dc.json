@@ -1,0 +1,18 @@
+{
+  "unversionedId": "MdcLightConfiguration",
+  "id": "MdcLightConfiguration",
+  "isDocsHomePage": false,
+  "title": "MdcLightConfiguration",
+  "description": "Configure data sources",
+  "source": "@site/docs/MdcLightConfiguration.md",
+  "slug": "/MdcLightConfiguration",
+  "permalink": "/help/docs/MdcLightConfiguration",
+  "version": "current",
+  "lastUpdatedAt": 1539502055,
+  "formattedLastUpdatedAt": "10/14/2018",
+  "sidebar": "docs",
+  "previous": {
+    "title": "Install Operation System to IoT2050 Advanced",
+    "permalink": "/help/docs/"
+  }
+}

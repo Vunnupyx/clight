@@ -1,11 +1,18 @@
 import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
 import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
-import { DataSinkProtocols, IErrorEvent, ILifecycleEvent } from '../../../../common/interfaces';
+import {
+  DataSinkProtocols,
+  IErrorEvent,
+  ILifecycleEvent
+} from '../../../../common/interfaces';
 import { DataSink } from '../DataSink';
 import winston from 'winston';
 import { DataPointCache } from '../../../DatapointCache';
 import { ConfigManager } from '../../../ConfigManager';
-import { IMTConnectDataSinkOptions, MTConnectDataSink } from '../MTConnectDataSink';
+import {
+  IMTConnectDataSinkOptions,
+  MTConnectDataSink
+} from '../MTConnectDataSink';
 import { IOPCUADataSinkOptions, OPCUADataSink } from '../OPCUADataSink';
 import { NorthBoundError } from '../../../../common/errors';
 
@@ -37,6 +44,7 @@ export class DataSinksManager {
   public init(): Promise<DataSinksManager> {
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
+
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
     return Promise.all(initMethods)
@@ -71,7 +79,7 @@ export class DataSinksManager {
     const logPrefix = `${DataSinksManager.#className}::createDataSinks`;
     winston.info(`${logPrefix} creating.`);
 
-    const mtConnectDataSinkOptions: IMTConnectDataSinkOptions  = {
+    const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT),
       mtConnectConfig: this.configManager.runtimeConfig.mtconnect
     };
@@ -81,6 +89,7 @@ export class DataSinksManager {
       generalConfig: this.configManager.config.general,
       runtimeConfig: this.configManager.runtimeConfig.opcua
     };
+
     this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
     this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
 
@@ -88,7 +97,9 @@ export class DataSinksManager {
   }
 
   private findDataSinkConfig(protocol: DataSinkProtocols): IDataSinkConfig {
-    return this.configManager.config.dataSinks.find((sink) => sink.protocol === protocol)
+    return this.configManager.config.dataSinks.find(
+      (sink) => sink.protocol === protocol
+    );
   }
 
   /**

@@ -90,7 +90,7 @@ export const emptyDefaultConfig = {
   mapping: [],
   templates: {
     completed: false
-  },
+  }
 };
 
 /**
@@ -187,26 +187,34 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public setDataSources(sourceIds: string[]) {
-    const sources = [defaultS7DataSource, defaultIoShieldDataSource]
-        .filter(x => sourceIds.includes(x.protocol));
+    const sources = [defaultS7DataSource, defaultIoShieldDataSource].filter(
+      (x) => sourceIds.includes(x.protocol)
+    );
 
     this.saveConfig({
       dataSources: [
-        ...this._config.dataSources.filter(ds => !sourceIds.includes(ds.protocol)),
-        ...sources,
-      ],
+        ...this._config.dataSources.filter(
+          (ds) => !sourceIds.includes(ds.protocol)
+        ),
+        ...sources
+      ]
     });
   }
 
   public setDataSinks(sinkIds: string[]) {
-    const sinks = [defaultOpcuaDataSink, defaultMtconnectDataSink, defaultDataHubDataSink]
-        .filter(x => sinkIds.includes(x.protocol));
+    const sinks = [
+      defaultOpcuaDataSink,
+      defaultMtconnectDataSink,
+      defaultDataHubDataSink
+    ].filter((x) => sinkIds.includes(x.protocol));
 
     this.saveConfig({
       dataSinks: [
-          ...this._config.dataSinks.filter(ds => !sinkIds.includes(ds.protocol)),
-        ...sinks,
-      ],
+        ...this._config.dataSinks.filter(
+          (ds) => !sinkIds.includes(ds.protocol)
+        ),
+        ...sinks
+      ]
     });
   }
 
@@ -259,7 +267,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   private loadTemplate(templateName) {
     try {
-      const configPath = path.join(this.configFolder, 'defaulttemplates', `${templateName}.json`);
+      const configPath = path.join(
+        this.configFolder,
+        'defaulttemplates',
+        `${templateName}.json`
+      );
       return JSON.parse(fs.readFileSync(configPath, 'utf8'));
     } catch (err) {
       return null;
@@ -267,21 +279,34 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   private loadTemplates() {
-    const templates = [
-      's7toopcua',
-      's7tomtconnect',
-      's7toopcuaandmtconnect',
-      'ioshieldtoopcua',
-      'ioshieldtomtconnect',
-      'ioshieldtoopcuaandmtconnect',
-    ]
-      .map(template => this.loadTemplate(template))
-      .reduce((acc, curr) => ({
-        availableDataSources: [...acc.availableDataSources, ...curr.dataSources],
-        availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks],
-      }), { availableDataSources: [], availableDataSinks: [] });
+    try {
+      const templates = [
+        's7toopcua',
+        's7tomtconnect',
+        's7toopcuaandmtconnect',
+        'ioshieldtoopcua',
+        'ioshieldtomtconnect',
+        'ioshieldtoopcuaandmtconnect'
+      ]
+        .map((template) => this.loadTemplate(template))
+        .reduce(
+          (acc, curr) => ({
+            availableDataSources: [
+              ...acc.availableDataSources,
+              ...curr.dataSources
+            ],
+            availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
+          }),
+          { availableDataSources: [], availableDataSinks: [] }
+        );
 
-    this._defaultTemplates = templates;
+      this._defaultTemplates = templates;
+    } catch {
+      this._defaultTemplates = {
+        availableDataSources: [],
+        availableDataSinks: []
+      };
+    }
   }
 
   /**
@@ -340,7 +365,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       case 'insert': {
         if (typeof data !== 'string') {
           // @ts-ignore TODO: Fix data type
-          const index = categoryArray.findIndex((entry) => selector(entry) === selector(data));
+          const index = categoryArray.findIndex(
+            (entry) => selector(entry) === selector(data)
+          );
           if (index < 0) {
             //@ts-ignore
             categoryArray.push(data);

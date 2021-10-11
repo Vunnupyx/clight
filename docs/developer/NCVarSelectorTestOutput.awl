@@ -1,0 +1,173 @@
+// ------------------------------------------------------------------
+// File           : C:\Users\codestryke\Documents\cs\nc-wip\mdc_nc_driver_base_testlistv2.awl
+//
+// Source File    : C:\Users\codestryke\Documents\cs\nc-wip\mdc_nc_driver_base_testlist.var
+// Generation Date: 9/17/2021  Time: 11:08:30 AM
+// ------------------------------------------------------------------
+
+DATA_BLOCK DB  120
+VERSION : 0.0
+
+
+STRUCT
+
+ C1_SEMA_feedRateOvr1_1:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#1;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#71;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#F;
+   Length : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_SSP_speedOvr1_4:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#4;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#72;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#F;
+   Length : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_rapFeedRateOvr_4:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#4;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#F;
+   Length : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_actParts_121:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#79;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#F;
+   Length : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_reqParts_119:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#77;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#F;
+   Length : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_Y_numMachAxes1_3:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#3;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#10;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#4;
+   Length : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_SPARPP_progName1_5:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#5;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7A;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#13;
+   Length : BYTE := B#16#20;
+   END_STRUCT ;
+
+ N_Y_toolChangeMFunc_1:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#1;
+   Column : WORD := W#16#1;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#10;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#7;
+   Length : BYTE := B#16#4;
+   END_STRUCT ;
+
+ N_S_sysTimeUdword_289:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#1;
+   Column : WORD := W#16#121;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#6;
+   Length : BYTE := B#16#4;
+   END_STRUCT ;
+
+ B1_S_opMode_3:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#21;
+   Column : WORD := W#16#3;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#4;
+   Length : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_S_actToolIdent1_33:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#21;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#13;
+   Length : BYTE := B#16#20;
+   END_STRUCT ;
+
+ C1_S_actToolRadius_27:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#1B;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#F;
+   Length : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_actToolLength1_28:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   Area_Unit : BYTE := B#16#41;
+   Column : WORD := W#16#1C;
+   Line : WORD := W#16#1;
+   BlockType : BYTE := B#16#7F;
+   NumOfLine : BYTE := B#16#1;
+   DataType : BYTE := B#16#F;
+   Length : BYTE := B#16#8;
+   END_STRUCT ;
+
+ END_STRUCT ;
+
+BEGIN
+END_DATA_BLOCK

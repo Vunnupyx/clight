@@ -1,6 +1,7 @@
 import { DataPointMapper } from '..';
-import { ConfigManager } from '../../ConfigManager';
+import { ConfigManager, emptyDefaultConfig } from '../../ConfigManager';
 import {
+  IConfig,
   IDataSinkConfig,
   IDataSourceConfig
 } from '../../ConfigManager/interfaces';
@@ -38,10 +39,9 @@ describe('Test DataPointMapper', () => {
       ]
     };
     config.config = {
-      general: { serialNumber: '', manufacturer: '', model: '', control: '' },
+      ...emptyDefaultConfig,
       dataSources: [dataSource],
       dataSinks: [dataSink],
-      virtualDataPoints: [],
       mapping: [
         {
           id: '',

@@ -1,5 +1,4 @@
 import winston from 'winston';
-import fs from 'fs';
 import { Logger } from './modules/Logger';
 import { BootstrapManager } from './modules/BootstrapManager';
 

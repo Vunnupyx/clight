@@ -90,7 +90,7 @@ export const emptyDefaultConfig = {
   mapping: [],
   templates: {
     completed: false
-  },
+  }
 };
 
 /**
@@ -172,6 +172,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
 
+    this.setupDefaultDataSources();
+    this.setupDefaultDataSinks();
+
     this.loadTemplates();
 
     this.checkType(
@@ -186,27 +189,45 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
   }
 
-  public setDataSources(sourceIds: string[]) {
-    const sources = [defaultS7DataSource, defaultIoShieldDataSource]
-        .filter(x => sourceIds.includes(x.protocol));
+  /**
+   * Adds missing data sources on startup
+   */
+  public setupDefaultDataSources() {
+    const sources = [defaultS7DataSource, defaultIoShieldDataSource];
 
     this.saveConfig({
       dataSources: [
-        ...this._config.dataSources.filter(ds => !sourceIds.includes(ds.protocol)),
-        ...sources,
-      ],
+        ...this._config.dataSources,
+        // Add missing sources
+        ...sources.filter(
+          (source) =>
+            !this._config.dataSources.some(
+              (x) => x.protocol === source.protocol
+            )
+        )
+      ]
     });
   }
 
-  public setDataSinks(sinkIds: string[]) {
-    const sinks = [defaultOpcuaDataSink, defaultMtconnectDataSink, defaultDataHubDataSink]
-        .filter(x => sinkIds.includes(x.protocol));
+  /**
+   * Adds missing data sink on startup
+   */
+  public setupDefaultDataSinks() {
+    const sinks = [
+      defaultOpcuaDataSink,
+      defaultMtconnectDataSink,
+      defaultDataHubDataSink
+    ];
 
     this.saveConfig({
       dataSinks: [
-          ...this._config.dataSinks.filter(ds => !sinkIds.includes(ds.protocol)),
-        ...sinks,
-      ],
+        ...this._config.dataSinks,
+        // Add missing sinks
+        ...sinks.filter(
+          (sink) =>
+            !this._config.dataSinks.some((x) => x.protocol === sink.protocol)
+        )
+      ]
     });
   }
 
@@ -259,7 +280,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   private loadTemplate(templateName) {
     try {
-      const configPath = path.join(this.configFolder, 'defaulttemplates', `${templateName}.json`);
+      const configPath = path.join(
+        this.configFolder,
+        'defaulttemplates',
+        `${templateName}.json`
+      );
       return JSON.parse(fs.readFileSync(configPath, 'utf8'));
     } catch (err) {
       return null;
@@ -273,13 +298,19 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       's7toopcuaandmtconnect',
       'ioshieldtoopcua',
       'ioshieldtomtconnect',
-      'ioshieldtoopcuaandmtconnect',
+      'ioshieldtoopcuaandmtconnect'
     ]
-      .map(template => this.loadTemplate(template))
-      .reduce((acc, curr) => ({
-        availableDataSources: [...acc.availableDataSources, ...curr.dataSources],
-        availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks],
-      }), { availableDataSources: [], availableDataSinks: [] });
+      .map((template) => this.loadTemplate(template))
+      .reduce(
+        (acc, curr) => ({
+          availableDataSources: [
+            ...acc.availableDataSources,
+            ...curr.dataSources
+          ],
+          availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
+        }),
+        { availableDataSources: [], availableDataSinks: [] }
+      );
 
     this._defaultTemplates = templates;
   }
@@ -340,7 +371,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       case 'insert': {
         if (typeof data !== 'string') {
           // @ts-ignore TODO: Fix data type
-          const index = categoryArray.findIndex((entry) => selector(entry) === selector(data));
+          const index = categoryArray.findIndex(
+            (entry) => selector(entry) === selector(data)
+          );
           if (index < 0) {
             //@ts-ignore
             categoryArray.push(data);

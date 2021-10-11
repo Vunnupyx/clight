@@ -39,6 +39,14 @@ export class VirtualDataPointComponent implements OnInit {
     return !!this.unsavedRow;
   }
 
+  get dataSources() {
+    return (this.sourceDataPoints || []) as { id: string, name: string }[];
+  }
+
+  get previousVirtualPoints() {
+    return (this.datapointRows || []).filter(x => x.id !== this.unsavedRow?.id) as { id: string, name: string }[];
+  }
+
   get sources() {
     return [
       ...(this.sourceDataPoints || []) as { id: string, name: string }[],
@@ -143,6 +151,10 @@ export class VirtualDataPointComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+  }
+
+  getRowIndex(id: string) {
+    return this.datapointRows?.findIndex(x => x.id === id)!;
   }
 
   private onSourceDataPoints(x: SourceDataPoint[]) {

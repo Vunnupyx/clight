@@ -99,7 +99,10 @@ export const emptyDefaultConfig = {
  */
 export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
   public id: string | null = null;
-  private configFolder = path.join(process.cwd(), 'mdclight/config');
+  private configFolder = path.join(
+    process.env.MDC_LIGHT_FOLDER || process.cwd(),
+    'mdclight/config'
+  );
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
   private _runtimeConfig: IRuntimeConfig;
@@ -257,6 +260,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
     const configPath = path.join(this.configFolder, configName);
+    winston.info(`Loading config file from path "${configPath}"`);
     const pathExists = fs.existsSync(this.configFolder);
     const fileExists = fs.existsSync(configPath);
     if (!pathExists || !fileExists) {
@@ -274,7 +278,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         )
       );
     }
-
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     return this.mergeDeep(defaultConfig, config);
   }

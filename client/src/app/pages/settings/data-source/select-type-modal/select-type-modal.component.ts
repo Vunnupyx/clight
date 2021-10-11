@@ -14,7 +14,6 @@ export interface SelectTypeModalData {
   templateUrl: 'select-type-modal.component.html'
 })
 export class SelectTypeModalComponent implements OnInit {
-  DataSourceProtocol = DataSourceProtocol;
 
   rows: any[] = [];
 

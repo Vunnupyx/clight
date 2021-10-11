@@ -52,8 +52,9 @@ function templatesGetStatusHandler(request: Request, response: Response) {
  * Handle POST apply templates request
  */
 function templatesApplyPostHandler(request: Request, response: Response): void {
-  configManager.setDataSources([request.body.dataSource]);
-  configManager.setDataSinks(request.body.dataSinks);
+  // TODO Dont set default data sinks and sources here
+  // configManager.setDataSources([request.body.dataSource]);
+  // configManager.setDataSinks(request.body.dataSinks);
   configManager.saveConfig({ templates: { completed: true } });
 
   response.status(200).json(null);

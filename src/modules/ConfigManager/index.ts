@@ -88,6 +88,7 @@ export const emptyDefaultConfig = {
   dataSinks: [],
   virtualDataPoints: [],
   mapping: [],
+  systemInfo: [],
   templates: {
     completed: true // TODO Set false when template implementation is finished
   }
@@ -172,6 +173,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
 
+    this.setupDefaultDataSources();
+    this.setupDefaultDataSinks();
+
     this.loadTemplates();
 
     this.checkType(
@@ -186,34 +190,44 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
   }
 
-  public setDataSources(sourceIds: string[]) {
-    const sources = [defaultS7DataSource, defaultIoShieldDataSource].filter(
-      (x) => sourceIds.includes(x.protocol)
-    );
+  /**
+   * Adds missing data sources on startup
+   */
+  public setupDefaultDataSources() {
+    const sources = [defaultS7DataSource, defaultIoShieldDataSource];
 
     this.saveConfig({
       dataSources: [
-        ...this._config.dataSources.filter(
-          (ds) => !sourceIds.includes(ds.protocol)
-        ),
-        ...sources
+        ...this._config.dataSources,
+        // Add missing sources
+        ...sources.filter(
+          (source) =>
+            !this._config.dataSources.some(
+              (x) => x.protocol === source.protocol
+            )
+        )
       ]
     });
   }
 
-  public setDataSinks(sinkIds: string[]) {
+  /**
+   * Adds missing data sink on startup
+   */
+  public setupDefaultDataSinks() {
     const sinks = [
       defaultOpcuaDataSink,
       defaultMtconnectDataSink,
       defaultDataHubDataSink
-    ].filter((x) => sinkIds.includes(x.protocol));
+    ];
 
     this.saveConfig({
       dataSinks: [
-        ...this._config.dataSinks.filter(
-          (ds) => !sinkIds.includes(ds.protocol)
-        ),
-        ...sinks
+        ...this._config.dataSinks,
+        // Add missing sinks
+        ...sinks.filter(
+          (sink) =>
+            !this._config.dataSinks.some((x) => x.protocol === sink.protocol)
+        )
       ]
     });
   }
@@ -279,34 +293,27 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   private loadTemplates() {
-    try {
-      const templates = [
-        's7toopcua',
-        's7tomtconnect',
-        's7toopcuaandmtconnect',
-        'ioshieldtoopcua',
-        'ioshieldtomtconnect',
-        'ioshieldtoopcuaandmtconnect'
-      ]
-        .map((template) => this.loadTemplate(template))
-        .reduce(
-          (acc, curr) => ({
-            availableDataSources: [
-              ...acc.availableDataSources,
-              ...curr.dataSources
-            ],
-            availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
-          }),
-          { availableDataSources: [], availableDataSinks: [] }
-        );
+    const templates = [
+      's7toopcua',
+      's7tomtconnect',
+      's7toopcuaandmtconnect',
+      'ioshieldtoopcua',
+      'ioshieldtomtconnect',
+      'ioshieldtoopcuaandmtconnect'
+    ]
+      .map((template) => this.loadTemplate(template))
+      .reduce(
+        (acc, curr) => ({
+          availableDataSources: [
+            ...acc.availableDataSources,
+            ...curr.dataSources
+          ],
+          availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
+        }),
+        { availableDataSources: [], availableDataSinks: [] }
+      );
 
-      this._defaultTemplates = templates;
-    } catch {
-      this._defaultTemplates = {
-        availableDataSources: [],
-        availableDataSinks: []
-      };
-    }
+    this._defaultTemplates = templates;
   }
 
   /**

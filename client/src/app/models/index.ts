@@ -5,3 +5,4 @@ export * from './data-source';
 export * from './source-data-point';
 export * from './network';
 export * from './virtual-data-point';
+export * from './system-information';

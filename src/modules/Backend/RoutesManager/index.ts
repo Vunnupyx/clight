@@ -37,6 +37,10 @@ import {
   setConfigManager as networkConfigSetConfigManager
 } from '../routes/apis/v1/NetworkConfig';
 import {
+  systemInfoHandlers,
+  setConfigManager as systemInfoSetConfigManager
+} from '../routes/apis/v1/SystemInfo';
+import {
   templatesHandlers,
   setConfigManager as templatesConfigSetConfigManager,
   setDataSourcesManager as setTemplateDataSourcesManager,
@@ -65,6 +69,7 @@ export class RoutesManager {
     ...deviceInfosHandlers,
     ...mappingHandlers,
     ...networkConfigHandlers,
+    ...systemInfoHandlers,
     ...templatesHandlers,
   };
 
@@ -90,6 +95,7 @@ export class RoutesManager {
       deviceInfosSetConfigManager,
       mappingSetConfigManager,
       networkConfigSetConfigManager,
+      systemInfoSetConfigManager,
       templatesConfigSetConfigManager,
     ].forEach((func) => func(options.configManager));
     setDataSinksManager(options.dataSinksManager)

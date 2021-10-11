@@ -6,8 +6,8 @@
 
 <div class="mb-20" *ngFor="let section of data">
   <div class="pr-25 pl-25 pt-15 pb-15">
-    <h3 class="m-0 section__title">{{ section.id }}</h3>
-    <p class="section__description">{{ section.value }}</p>
+    <h3 class="m-0 section__title">{{ section.title }}</h3>
+    <p class="section__description">{{ section.description }}</p>
   </div>
   <mat-divider></mat-divider>
 
@@ -15,12 +15,12 @@
     <ng-container *ngFor="let item of section.items">
       <div class="row pt-15 pb-15">
         <div class="col-12 col-md-6">
-          <h4 class="m-0 system-info-item__title">{{ item.id }}</h4>
-          <p class="m-0 system-info-item__description">Software component</p>
+          <h4 class="m-0 system-info-item__title">{{ item.key }}</h4>
+          <p class="m-0 system-info-item__description">{{ item.keyDescription }}</p>
         </div>
         <div class="col-12 col-md-6">
           <h4 class="m-0 system-info-item__value">{{ item.value }}</h4>
-          <p class="m-0 system-info-item__description">Version number</p>
+          <p class="m-0 system-info-item__description">{{ item.valueDescription }}</p>
         </div>
       </div>
       <mat-divider></mat-divider>

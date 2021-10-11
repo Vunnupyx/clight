@@ -1,10 +1,12 @@
 export class SystemInformationItem {
-  id!: string;
+  key!: string;
+  keyDescription!: string;
   value!: string;
+  valueDescription!: string;
 }
 
 export class SystemInformationSection {
-  id!: string;
-  value!: string;
+  title!: string;
+  description!: string;
   items!: SystemInformationItem[];
 }

@@ -1,92 +1,89 @@
-import net from 'net';
-import { MTConnectAdapter } from '..';
 import { ConfigManager } from '../../../../ConfigManager';
 import { EventBus } from '../../../../EventBus';
 import { DataItem } from '../DataItem';
 
+const mockSocket = {
+  write: jest.fn(),
+  setEncoding: jest.fn(),
+  on: jest.fn(),
+  setTimeout: jest.fn()
+};
+
+const mockServer = {
+  listen: jest.fn(),
+  on: jest.fn(),
+  stop: jest.fn()
+};
+
+const mockNet = {
+  createServer: () => {
+    return mockServer;
+  }
+};
+
 jest.mock('winston');
+jest.mock('net', () => {
+  return mockNet;
+});
+
+import { MTConnectAdapter } from '..';
 
 describe('Test MTCAdapter', () => {
-  let adapter = null;
-
-  afterEach(async () => {
-    await adapter.stop();
-    adapter = null;
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
-  test('Server should send data items to new clients', (done) => {
-    const PORT = 7879;
-    const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>(),
-      lifecycleEventsBus: new EventBus<null>()
-    });
-    config.runtimeConfig.mtconnect.listenerPort = PORT;
-    adapter = new MTConnectAdapter(config);
+  test('Server should send data items to new clients', () => {
+    const adapter = new MTConnectAdapter({ listenerPort: 0 });
     adapter.addDataItem(new DataItem('test'));
     adapter.start();
 
-    const socket = new net.Socket();
-    socket.on('data', async (data: String) => {
-      const dataParts = data.split('|');
+    const listenForClients = mockServer.on.mock.calls[0][1];
 
-      const currentDate = new Date();
-      const dataDate = new Date(dataParts[0]);
+    listenForClients(mockSocket);
 
-      expect(dataParts.length).toBe(3);
-      expect(currentDate.getTime() - dataDate.getTime()).toBeLessThan(1000);
-      expect(dataParts[1]).toBe('test');
-      expect(dataParts[2]).toBe('UNAVAILABLE\n');
+    const data = mockSocket.write.mock.calls[0][0];
 
-      socket.destroy();
-      await adapter.stop();
-      setTimeout(() => done());
-    });
-    socket.setEncoding('utf8');
-    socket.connect(PORT);
+    const dataParts = data.split('|');
+
+    const currentDate = new Date();
+    const dataDate = new Date(dataParts[0]);
+
+    expect(dataParts.length).toBe(3);
+    expect(currentDate.getTime() - dataDate.getTime()).toBeLessThan(1000);
+    expect(dataParts[1]).toBe('test');
+    expect(dataParts[2]).toBe('UNAVAILABLE\n');
   });
 
-  test('Server should send changes', (done) => {
-    const PORT = 7880;
-    const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>(),
-      lifecycleEventsBus: new EventBus<null>()
-    });
-    config.runtimeConfig.mtconnect.listenerPort = PORT;
-    adapter = new MTConnectAdapter(config);
+  test('Server should send changes', () => {
+    const adapter = new MTConnectAdapter({ listenerPort: 0 });
     const item = new DataItem('test1');
     adapter.addDataItem(item);
     adapter.start();
 
-    let dataReceived = 0;
+    const listenForClients = mockServer.on.mock.calls[0][1];
 
-    const socket = new net.Socket();
-    socket.on('data', async (data: String) => {
-      dataReceived += 1;
+    listenForClients(mockSocket);
 
-      const dataParts = data.split('|');
+    adapter.sendChanged();
 
-      const currentDate = new Date();
-      const dataDate = new Date(dataParts[0]);
+    let data = mockSocket.write.mock.calls[1][0];
+    let dataParts = data.split('|');
 
-      expect(dataParts.length).toBe(3);
-      expect(currentDate.getTime() - dataDate.getTime()).toBeLessThan(1000);
-      expect(dataParts[1]).toBe('test1');
+    expect(dataParts.length).toBe(3);
 
-      if (dataReceived === 1) {
-        expect(dataParts[2]).toBe('UNAVAILABLE\n');
-        item.value = 1;
-        adapter.sendChanged();
-      }
+    const currentDate = new Date();
+    const dataDate = new Date(dataParts[0]);
+    expect(currentDate.getTime() - dataDate.getTime()).toBeLessThan(1000);
 
-      if (dataReceived > 1) {
-        expect(dataParts[2]).toBe('1\n');
+    expect(dataParts[1]).toBe('test1');
+    expect(dataParts[2]).toBe('UNAVAILABLE\n');
+    item.value = 1;
 
-        socket.destroy();
-        await adapter.stop();
-        setTimeout(() => done());
-      }
-    });
-    socket.setEncoding('utf8');
-    socket.connect(PORT);
+    adapter.sendChanged();
+
+    data = mockSocket.write.mock.calls[2][0];
+    dataParts = data.split('|');
+    expect(dataParts[2]).toBe('1\n');
   });
 });

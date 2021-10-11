@@ -59,8 +59,6 @@ export class BootstrapManager {
       DataPointMapper.createInstance(this.configManager);
       await this.dataSinkManager.init();
 
-      
-
       await this.loadModules();
       this.lifecycleEventsBus.push({
         id: 'device',
@@ -75,7 +73,7 @@ export class BootstrapManager {
         payload: error.toString()
       });
 
-      winston.error('Error while launching. Exiting programm.');
+      winston.error('Error while launching. Exiting program.');
       process.exit(1);
     }
 

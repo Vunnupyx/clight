@@ -48,13 +48,14 @@ export class DataHubAdapter {
   // Provisioning
   #registrationId: string;
   #symKey: string;
+  #groupDeviceKey: string = null;
   #dpsServiceAddress: string;
   #scopeId: string;
   #isGroupRegistration: boolean;
   #provClient: RegistrationClient;
   #provGroupClient: RegistrationClient;
   #provSecClient: SymmetricKeySecurityClient;
-  #symKeyProvTransport: HttpTransport;
+  #symKeyProvTransport;
 
   // Datahub and Twin
   #connectionSting: TConnectionString = null;
@@ -123,11 +124,12 @@ export class DataHubAdapter {
           );
           this.#proxy = this.getProxyAgent();
         }
+        if(this.#isGroupRegistration) {
+          this.#groupDeviceKey = this.generateSymKeyForGroupDevice()
+        }
         this.#provSecClient = new SymmetricKeySecurityClient(
           this.#registrationId,
-          this.#isGroupRegistration
-            ? this.generateSymKeyForGroupDevice()
-            : this.#symKey
+          this.#groupDeviceKey || this.#symKey
         );
       })
       .then(() => {
@@ -301,7 +303,7 @@ export class DataHubAdapter {
     this.#connectionSting = this.generateConnectionString(
       res.assignedHub,
       res.deviceId,
-      this.#symKey
+      this.#groupDeviceKey || this.#symKey
     );
   }
 
@@ -311,9 +313,9 @@ export class DataHubAdapter {
   private generateConnectionString(
     assignedHub: string,
     deviceId: string,
-    sharedKey: string
+    key: string
   ): TConnectionString {
-    return `HostName=${assignedHub};DeviceId=${deviceId};SharedAccessKey=${sharedKey}`;
+    return `HostName=${assignedHub};DeviceId=${deviceId};SharedAccessKey=${key}`;
   }
 
   /**

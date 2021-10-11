@@ -4,7 +4,7 @@ services:
     image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server:latest
     restart: always
     ports:
-      - '8080:8080'
+      - '80:80'
     depends_on:
       - mdclight
   mdclight:
@@ -24,10 +24,10 @@ services:
       - type: bind
         source: $HOST/sys
         target: /sys
-    ports:
-      - '3333:3333'
     environment:
-      - PORT=3333
+      - PORT=80
+    ports:
+      - '4840:4840'
   mtconnect-agent:
     image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
     restart: always

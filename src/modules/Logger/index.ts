@@ -5,10 +5,14 @@ import path from 'path';
  * Initializes settings for winston logger
  */
 export class Logger {
+  private static initialized = false;
+
   /**
    * Initializes the settings for winston
    */
   public static init() {
+    if (this.initialized) return;
+
     winston.addColors({
       info: 'bold blue',
       warn: 'italic yellow',
@@ -21,7 +25,6 @@ export class Logger {
       handleExceptions: true,
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
-        winston.format.errors({ stack: true }),
         winston.format.colorize({
           all: true
         }),
@@ -43,12 +46,14 @@ export class Logger {
       maxsize: 10 * 1000 * 1000, // 10 Mb
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
-        winston.format.errors({ stack: true }),
         winston.format.timestamp(),
         winston.format.json()
       )
     });
+
     winston.add(console);
     winston.add(file);
+
+    this.initialized = true;
   }
 }

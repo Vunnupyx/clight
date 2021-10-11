@@ -296,27 +296,33 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   private loadTemplates() {
-    const templates = [
-      's7toopcua',
-      's7tomtconnect',
-      's7toopcuaandmtconnect',
-      'ioshieldtoopcua',
-      'ioshieldtomtconnect',
-      'ioshieldtoopcuaandmtconnect'
-    ]
-      .map((template) => this.loadTemplate(template))
-      .reduce(
-        (acc, curr) => ({
-          availableDataSources: [
-            ...acc.availableDataSources,
-            ...curr.dataSources
-          ],
-          availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
-        }),
-        { availableDataSources: [], availableDataSinks: [] }
-      );
-
-    this._defaultTemplates = templates;
+    try {
+      const templates = [
+        's7toopcua',
+        's7tomtconnect',
+        's7toopcuaandmtconnect',
+        'ioshieldtoopcua',
+        'ioshieldtomtconnect',
+        'ioshieldtoopcuaandmtconnect'
+      ]
+        .map((template) => this.loadTemplate(template))
+        .reduce(
+          (acc, curr) => ({
+            availableDataSources: [
+              ...acc.availableDataSources,
+              ...curr.dataSources
+            ],
+            availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
+          }),
+          { availableDataSources: [], availableDataSinks: [] }
+        );
+      this._defaultTemplates = templates;
+    } catch {
+      this._defaultTemplates = {
+        availableDataSources: [],
+        availableDataSinks: []
+      };
+    }
   }
 
   /**

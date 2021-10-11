@@ -116,7 +116,6 @@ export class DataSinksManager {
    * Returns datasink by protocol
    */
   public getDataSinkByProto(protocol: string) {
-    console.log(this.dataSinks, protocol);
     return this.dataSinks.find((sink) => sink.protocol === protocol);
   }
 }

@@ -8,6 +8,8 @@
   "license": "",
   "private": true,
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "date-fns": "^2.22.1",
     "express": "^4.17.1",
@@ -34,7 +36,7 @@
     "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
     "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect_amd64.Dockerfile .",
     "docker:push:mtc": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect",
-    "docker:run:mtc": "docker run -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/schemas:/schemas -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/agent.cfg:/agent.cfg -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/MDCLight.xml:/MDCLight.xml registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest agent debug",
+    "docker:run:mtc": "docker run -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/schemas:/schemas -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/agent.cfg:/agent.cfg -v $(PWD)/_mdclight/mtc_config/MtcAgentConfig_dev/MDCLight.xml:/MDCLight.xml -p 5000:5000 registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest agent debug",
     "docker:build:mdclight": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light -f docker/mdc-light.Dockerfile .",
     "docker:push:mdclight": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
     "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
@@ -43,7 +45,8 @@
     "test": "jest",
     "copy_mdc_conf": "scp _mdclight/config/config.json root@$IP:/etc/MDCLight/config",
     "copy_mtc_conf": "scp -r MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
-    "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml"
+    "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
@@ -51,6 +54,7 @@
     "@types/node": "^16.9.1",
     "@vercel/ncc": "^0.28.6",
     "jest": "^27.0.6",
+    "prettier": "^2.4.1",
     "ts-jest": "^27.0.3",
     "ts-node-dev": "^1.1.8",
     "typed-emitter": "^1.3.1",

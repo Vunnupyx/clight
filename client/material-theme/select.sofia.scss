@@ -1,9 +1,9 @@
 .mat-select {
-    .mat-select-trigger {
-      .mat-select-value-text {
-        color: rgba(0, 0, 0, 0.38) !important;
-      }
+  .mat-select-trigger {
+    .mat-select-value-text {
+      color: rgba(0, 0, 0, 0.38) !important;
     }
+  }
 }
 
 .mat-select-panel-wrap {
@@ -18,11 +18,10 @@
   .mat-select-panel {
     border-radius: 8px;
     box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.14),
-                0px 1px 18px 0px rgba(0, 0, 0, 0.12),
-                0px 3px 5px -1px rgba(0, 0, 0, 0.2);
+    0px 1px 18px 0px rgba(0, 0, 0, 0.12), 0px 3px 5px -1px rgba(0, 0, 0, 0.2);
 
     .mat-option {
-      height: 48px;
+      height: 36px;
       padding-left: 16px;
       padding-right: 0;
       text-overflow: ellipsis;
@@ -32,6 +31,8 @@
       align-items: center;
       -webkit-tap-highlight-color: transparent;
       font-weight: 500;
+      font-size: 14px;
+      line-height: 36px;
 
       .mat-option-text {
         height: 100%;

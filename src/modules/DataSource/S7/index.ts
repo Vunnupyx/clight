@@ -1,14 +1,14 @@
-import NodeS7 from "nodes7";
-import winston from "winston";
-import { DataSource } from "../DataSource";
+import NodeS7 from 'nodes7';
+import winston from 'winston';
+import { DataSource } from '../DataSource';
 import {
   DataSourceLifecycleEventTypes,
   LifecycleEventStatus,
   DataPointLifecycleEventTypes,
-  EventLevels,
-} from "../../../common/interfaces";
-import { IDataPointConfig } from "../../ConfigManager/interfaces";
-import { IMeasurement } from "../interfaces";
+  EventLevels
+} from '../../../common/interfaces';
+import { IDataPointConfig } from '../../ConfigManager/interfaces';
+import { IMeasurement } from '../interfaces';
 
 interface S7DataPointsWithError {
   datapoints: Array<any>;
@@ -23,7 +23,7 @@ export class S7DataSource extends DataSource {
   private isDisconnected = false;
   private cycleActive = false;
   private client = new NodeS7({
-    silent: true,
+    silent: true
   });
 
   /**
@@ -31,15 +31,15 @@ export class S7DataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const { name, protocol, id, connection } = this.config;
+    const { name, protocol, connection } = this.config;
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level: this.level,
       type: DataSourceLifecycleEventTypes.Connecting,
       status: LifecycleEventStatus.Connecting,
-      dataSource: { protocol, name },
+      dataSource: { protocol, name }
     });
-
+    this.currentStatus = LifecycleEventStatus.Connecting;
     this.client.initiateConnection(
       {
         host: connection.ipAddr,
@@ -47,7 +47,7 @@ export class S7DataSource extends DataSource {
         // connection_name: name,
         slot: connection.slot,
         rack: connection.rack,
-        timeout: 2000,
+        timeout: 2000
       },
       (err) => {
         this.onConnect(err);
@@ -67,7 +67,7 @@ export class S7DataSource extends DataSource {
         this.client.readAllItems((error, values) => {
           resolve({
             datapoints: values,
-            error: error,
+            error: error
           });
         });
       } catch (e) {
@@ -83,10 +83,10 @@ export class S7DataSource extends DataSource {
    * @returns boolean
    */
   private checkError(s7error: boolean, value: any): boolean {
-    if (typeof value === "undefined") return true;
+    if (typeof value === 'undefined') return true;
     if (!s7error) return false;
     const valueToCheck = value.toString();
-    const STATIC_ERRORS = ["BAD 255"];
+    const STATIC_ERRORS = ['BAD 255'];
     const isError = STATIC_ERRORS.includes(valueToCheck);
     return isError;
   }
@@ -101,7 +101,7 @@ export class S7DataSource extends DataSource {
   ): Promise<void> {
     if (this.isDisconnected) return;
     if (this.cycleActive) {
-      winston.warn("S7: Skipping read cycle");
+      winston.warn('S7: Skipping read cycle');
       return;
     }
     this.cycleActive = true;
@@ -129,7 +129,7 @@ export class S7DataSource extends DataSource {
         const measurement: IMeasurement = {
           id: dp.id,
           name: dp.name,
-          value,
+          value
         };
 
         const dpError = this.checkError(results.error, value);
@@ -140,14 +140,14 @@ export class S7DataSource extends DataSource {
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,
-            type: DataPointLifecycleEventTypes.ReadSuccess,
+            type: DataPointLifecycleEventTypes.ReadSuccess
           });
         } else {
           winston.warn(`Failed to read datapoint ${dp.id}`);
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,
-            type: DataPointLifecycleEventTypes.ReadError,
+            type: DataPointLifecycleEventTypes.ReadError
           });
         }
       }
@@ -172,40 +172,43 @@ export class S7DataSource extends DataSource {
    */
   private onConnect(err) {
     const level = this.level;
-    const { name, protocol, id } = this.config;
+    const { name, protocol } = this.config;
     if (err) {
       // We have an error.  Maybe the PLC is not reachable.
       this.submitLifecycleEvent({
-        id,
+        id: protocol,
         level: this.level,
         type: DataSourceLifecycleEventTypes.ConnectionError,
         status: LifecycleEventStatus.ConnectionError,
         dataSource: { name, protocol },
-        payload: err,
+        payload: err
       });
+      this.currentStatus = LifecycleEventStatus.ConnectionError
       this.reconnectTimeoutId = setTimeout(() => {
         if (this.isDisconnected) {
           return;
         }
         this.submitLifecycleEvent({
-          id,
+          id: protocol,
           level,
           type: DataSourceLifecycleEventTypes.Reconnecting,
           status: LifecycleEventStatus.Reconnecting,
-          dataSource: { name, protocol },
+          dataSource: { name, protocol }
         });
+        this.currentStatus = LifecycleEventStatus.Reconnecting;
         this.init();
       }, this.RECONNECT_TIMEOUT);
       return;
     }
 
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level,
       type: DataSourceLifecycleEventTypes.Connected,
       status: LifecycleEventStatus.Connected,
-      dataSource: { name, protocol },
+      dataSource: { name, protocol }
     });
+    this.currentStatus = LifecycleEventStatus.Connected;
     this.isDisconnected = false;
     this.setupDataPoints();
   }
@@ -215,15 +218,16 @@ export class S7DataSource extends DataSource {
    * @returns Promise
    */
   public async disconnect(): Promise<void> {
-    const { name, protocol, id } = this.config;
+    const { name, protocol } = this.config;
     this.isDisconnected = true;
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level: this.level,
       type: DataSourceLifecycleEventTypes.Disconnected,
       status: LifecycleEventStatus.Disconnected,
-      dataSource: { name, protocol },
+      dataSource: { name, protocol }
     });
+    this.currentStatus = LifecycleEventStatus.Disconnected
     clearTimeout(this.reconnectTimeoutId);
     this.client.dropConnection();
   }

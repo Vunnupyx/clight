@@ -1,2 +1,1 @@
-export declare class DmgLayoutModule {
-}
+export declare class DmgLayoutModule {}

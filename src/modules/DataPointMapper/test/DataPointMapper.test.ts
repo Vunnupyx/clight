@@ -1,6 +1,7 @@
 import { DataPointMapper } from '..';
-import { ConfigManager } from '../../ConfigManager';
+import { ConfigManager, emptyDefaultConfig } from '../../ConfigManager';
 import {
+  IConfig,
   IDataSinkConfig,
   IDataSourceConfig
 } from '../../ConfigManager/interfaces';
@@ -16,7 +17,6 @@ describe('Test DataPointMapper', () => {
     });
 
     const dataSource: IDataSourceConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
@@ -31,17 +31,17 @@ describe('Test DataPointMapper', () => {
       ]
     };
     const dataSink: IDataSinkConfig = {
-      id: '',
       name: '',
       protocol: '',
       enabled: true,
-      dataPoints: [{ id: 'target1', name: '', type: 'event', map: {} }]
+      dataPoints: [
+        { id: 'target1', name: '', type: 'event', map: {}, address: '' }
+      ]
     };
     config.config = {
-      general: { serialNumber: '', manufacturer: '', model: '', control: '' },
+      ...emptyDefaultConfig,
       dataSources: [dataSource],
       dataSinks: [dataSink],
-      virtualDataPoints: [],
       mapping: [
         {
           id: '',

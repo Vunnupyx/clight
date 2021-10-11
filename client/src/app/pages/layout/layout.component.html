@@ -1,45 +1,92 @@
-<mat-toolbar color="primary">
-    <div class="mt-10 d-flex align-items-center" style="height: 56px;">
-        <button
-            type="button"
-            aria-label="Toggle sidenav"
-            mat-icon-button
-            (click)="drawer.toggle()"
-            *ngIf="isHandset$ | async">
-            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-        </button>
-        <span><img src="/assets/logo.svg" width="100"></span>
+<ng-container *ngIf="(routeData$ | async)?.noLayout; else layout">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<ng-template #layout>
+  <mat-toolbar color="primary">
+    <div class="mt-10 d-flex align-items-center" style="height: 56px">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async"
+      >
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span routerLink="settings" class="cursor-pointer"><img src="/assets/logo.svg" width="100" /></span>
     </div>
     <span class="spacer"></span>
     <div class="white-section">
-        <div class="white-section-tab"></div>
-        <span class="spacer"></span>
-        <button mat-raised-button mat-icon-button class="mat-secondary layout-button" routerLink="settings/general" routerLinkActive="active"><mat-icon>apps</mat-icon></button>
-        <span class="spacer"></span>
+      <div class="white-section-tab"></div>
+      <span class="spacer"></span>
+      <button
+        mat-raised-button
+        mat-icon-button
+        class="mat-secondary layout-button"
+        routerLink="settings/general"
+        routerLinkActive="active"
+      >
+        <mat-icon>apps</mat-icon>
+      </button>
+      <span class="spacer"></span>
     </div>
     <span class="spacer"></span>
     <span class="clock-wrapper">
-        <app-clock></app-clock>
-    </span>
-</mat-toolbar>
+    <app-clock></app-clock>
+  </span>
+  </mat-toolbar>
 
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport="false"
-               [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-               [mode]="(isHandset$ | async) ? 'over' : 'side'"
-               [opened]="(isHandset$ | async) === false">
-    <mat-toolbar><mat-icon>account_balance_wallet</mat-icon><span class="menu-heading">{{ 'layout.Settings' | translate }}</span></mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item routerLink="settings/general"><mat-icon>tune</mat-icon><span routerLinkActive="active" class="menu-text">{{ 'layout.General' | translate }}</span></a>
-      <a mat-list-item href="#"><mat-icon>update</mat-icon><span class="menu-text">{{ 'layout.UpdateManager' | translate }}</span></a>
-      <a mat-list-item routerLink="settings/data-source"><mat-icon>source</mat-icon><span routerLinkActive="active" class="menu-text">{{ 'layout.DataSource' | translate }}</span></a>
-      <a mat-list-item href="#"><mat-icon>folder_open</mat-icon><span class="menu-text">{{ 'layout.VirtualDataPoints' | translate }}</span></a>
-      <a mat-list-item href="#"><mat-icon>topic</mat-icon><span class="menu-text">{{ 'layout.DataSinks' | translate }}</span></a>
-      <a mat-list-item href="#"><mat-icon>settings_ethernet</mat-icon><span class="menu-text">{{ 'layout.Network' | translate }}</span></a>
-      <a mat-list-item href="#"><mat-icon>info</mat-icon><span class="menu-text">{{ 'layout.SystemInformation' | translate }}</span></a>
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav
+      #drawer
+      class="sidenav"
+      fixedInViewport="false"
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false"
+    >
+      <mat-toolbar>
+        <mat-icon>account_balance_wallet</mat-icon>
+        <span class="menu-heading">{{ 'layout.Settings' | translate }}</span>
+      </mat-toolbar>
+      <mat-nav-list>
+        <a mat-list-item routerLink="settings/general">
+          <mat-icon>tune</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.General' | translate }}</span>
+        </a>
+        <a mat-list-item routerLink="update-manager">
+          <mat-icon>update</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.UpdateManager' | translate }}</span>
+        </a>
+        <a mat-list-item routerLink="settings/data-source">
+          <mat-icon>source</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.DataSource' | translate }}</span>
+        </a>
+        <a mat-list-item routerLink="settings/virtual-data-point">
+          <mat-icon>folder_open</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.VirtualDataPoints' | translate}}</span>
+        </a>
+        <a mat-list-item routerLink="settings/data-mapping">
+          <mat-icon>link</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.DataMapping' | translate }}</span>
+        </a>
+        <a mat-list-item routerLink="settings/data-sink">
+          <mat-icon>topic</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.DataSinks' | translate }}</span>
+        </a>
+        <a mat-list-item routerLink="settings/network">
+          <mat-icon>settings_ethernet</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.Network' | translate }}</span>
+        </a>
+        <a mat-list-item routerLink="system-information">
+          <mat-icon>info</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.SystemInformation' | translate }}</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</ng-template>

@@ -1,12 +1,26 @@
-import { NgModule } from "@angular/core";
+import { NgModule } from '@angular/core';
 
-import { DataPointService } from "./data-point.service";
-import { DataSourceService } from "./data-source.service";
+import { DataMappingService } from './data-mapping.service';
+import { DataSourceService } from './data-source.service';
+import { DataSinkService } from './data-sink.service';
+import { DataPointService } from './data-point.service';
+import { SourceDataPointService } from './source-data-point.service';
+import { DeviceInfoService } from './device-info.service';
+import { TemplateService } from './template.service';
+import { NetworkService } from './network.service';
+import { VirtualDataPointService } from './virtual-data-point.service';
 
 @NgModule({
-    providers: [
-        DataPointService,
-        DataSourceService,
-    ]
+  providers: [
+    DataMappingService,
+    DataPointService,
+    DataSinkService,
+    DataSourceService,
+    DeviceInfoService,
+    SourceDataPointService,
+    TemplateService,
+    NetworkService,
+    VirtualDataPointService,
+  ]
 })
-export class ServicesModule { }
+export class ServicesModule {}

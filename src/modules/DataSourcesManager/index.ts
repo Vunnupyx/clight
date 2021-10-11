@@ -1,13 +1,13 @@
-import { IDataSourceConfig } from "../ConfigManager/interfaces";
-import { DataSourceEventTypes } from "../DataSource";
-import { DataSource } from "../DataSource/DataSource";
-import { EventBus, MeasurementEventBus } from "../EventBus/index";
-import { IDataSourcesManagerParams } from "./interfaces";
-import { createDataSource } from "../DataSource/DataSourceFactory";
-import { ILifecycleEvent } from "../../common/interfaces";
-import { DataPointCache } from "../DatapointCache";
-import { IDataSourceMeasurementEvent } from "../DataSource/interfaces";
-import { VirtualDataPointManager } from "../VirtualDataPointManager";
+import { IDataSourceConfig } from '../ConfigManager/interfaces';
+import { DataSourceEventTypes } from '../DataSource';
+import { DataSource } from '../DataSource/DataSource';
+import { EventBus, MeasurementEventBus } from '../EventBus/index';
+import { IDataSourcesManagerParams } from './interfaces';
+import { createDataSource } from '../DataSource/DataSourceFactory';
+import { ILifecycleEvent } from '../../common/interfaces';
+import { DataPointCache } from '../DatapointCache';
+import { IDataSourceMeasurementEvent } from '../DataSource/interfaces';
+import { VirtualDataPointManager } from '../VirtualDataPointManager';
 
 /**
  * Creates and manages all data sources
@@ -16,7 +16,7 @@ export class DataSourcesManager {
   private dataSourcesConfig: ReadonlyArray<IDataSourceConfig>;
   private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
-  private dataSources: ReadonlyArray<DataSource | void>;
+  private dataSources: ReadonlyArray<DataSource>;
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
 
@@ -81,16 +81,23 @@ export class DataSourcesManager {
 
     this.measurementsBus.push([
       ...measurementEvents,
-      ...this.virtualDataPointManager.getVirtualEvents(measurementEvents),
+      ...this.virtualDataPointManager.getVirtualEvents(measurementEvents)
     ]);
   };
 
   /**
-   * Published livecycle events
+   * Published lifecycle events
    * @param  {ILifecycleEvent} lifeCycleEvent
    * @returns void
    */
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
     this.lifecycleBus.push(lifeCycleEvent);
   };
+
+  /**
+   * Returns the datasource object by its protocol
+   */
+  public getDataSourceByProto(protocol: string) {
+    return this.dataSources.find((src) => src.protocol === protocol);
+  }
 }

@@ -1,38 +1,41 @@
 .mat-slide-toggle {
-    .mat-slide-toggle-bar {
-      width: 54px;
-      height: 22px;
-      border-radius: 11px !important;
+  .mat-slide-toggle-bar {
+    width: 54px;
+    height: 22px;
+    border-radius: 11px !important;
 
-      .mat-slide-toggle-thumb-container {
+    .mat-slide-toggle-thumb-container {
+      width: 32px;
+      height: 32px;
+      top: -5px;
+
+      .mat-slide-toggle-thumb {
         width: 32px;
         height: 32px;
-        top: -5px;
+        background-color: mat-color($dmg-app-secondary, A100);
+      }
 
-        .mat-slide-toggle-thumb {
-          width: 32px;
-          height: 32px;
-          background-color: mat-color($dmg-app-secondary, A100);
-        }
-
-        .mat-slide-toggle-ripple {
-          width: 64px;
-          height: 64px;
-          top: calc(50% - 32px);
-          left: calc(50% - 32px);
-        }
+      .mat-slide-toggle-ripple {
+        width: 64px;
+        height: 64px;
+        top: calc(50% - 32px);
+        left: calc(50% - 32px);
       }
     }
+  }
 
-    &.mat-checked {
-      .mat-slide-toggle-thumb {
-        background-color: mat-color($dmg-app-primary, 700) !important;
-      }
-      .mat-slide-toggle-bar {
-        background-color: lighten(mat-color($dmg-app-primary, 700), 38%) !important;
-      }
-      .mat-slide-toggle-thumb-container {
-        transform: translate3d(22px, 0, 0) !important;
-      }
+  &.mat-checked {
+    .mat-slide-toggle-thumb {
+      background-color: mat-color($dmg-app-primary, 700) !important;
     }
+    .mat-slide-toggle-bar {
+      background-color: lighten(
+        mat-color($dmg-app-primary, 700),
+        38%
+      ) !important;
+    }
+    .mat-slide-toggle-thumb-container {
+      transform: translate3d(22px, 0, 0) !important;
+    }
+  }
 }

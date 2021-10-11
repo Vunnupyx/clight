@@ -1,0 +1,61 @@
+<div class="container">
+  <mat-stepper class="pt-20" [linear]="true" #stepper>
+    <mat-step>
+      <ng-template matStepLabel>{{ 'quick-start.SelectLanguage' | translate }}</ng-template>
+      <div class="pt-20">
+        <mat-form-field appearance="legacy">
+          <mat-label>{{
+            'quick-start.Language' | translate
+            }}</mat-label>
+          <mat-select
+            [value]="currentLang"
+            (valueChange)="onLanguageChange($event)"
+          >
+            <mat-option value="en">{{
+              'settings-general.English' | translate
+              }}</mat-option>
+            <mat-option value="de">{{
+              'settings-general.Deutsch' | translate
+              }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div>
+          <button mat-raised-button matStepperNext>{{ 'quick-start.Next' | translate }}</button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="sourceForm">
+      <ng-template matStepLabel>{{ 'quick-start.SelectSource' | translate }}</ng-template>
+      <form [formGroup]="sourceForm" class="pt-20">
+        <div>
+          <mat-radio-group formControlName="source" class="source-radio-group">
+            <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source.id">
+              <h3 class="mt-0 mb-0">{{ source.name }}</h3>
+              <p class="mt-0">{{ source.description }}</p>
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <button mat-raised-button matStepperNext>{{ 'quick-start.Next' | translate }}</button>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="applicationInterfacesForm">
+      <ng-template matStepLabel>{{ 'quick-start.SelectApplicationInterfaces' | translate }}</ng-template>
+      <form [formGroup]="applicationInterfacesForm" class="pt-20" (submit)="onSubmit()">
+        <div class="source-radio-group">
+          <mat-checkbox
+            class="source-radio-button source-checkbox"
+            *ngFor="let sink of sinks"
+            [(ngModel)]="checkedSinks[sink.id]"
+            (ngModelChange)="onInterfacesChange()"
+            [ngModelOptions]="{standalone: true}"
+          >
+            <h3 class="mt-0 mb-0">{{ sink.name }}</h3>
+            <p class="mt-0">{{ sink.description }}</p>
+          </mat-checkbox>
+        </div>
+
+        <button mat-raised-button matStepperNext>{{ 'quick-start.Save' | translate }}</button>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</div>

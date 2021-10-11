@@ -30,10 +30,18 @@
     {
       "name": "mappings",
       "description": "Everything about the mappings."
+    },
+    {
+      "name": "deviceInfos",
+      "description": "Everything about the deviceInfos."
+    },
+    {
+      "name": "networkConfig",
+      "description": "Everything about the network config."
     }
   ],
   "produces": ["application/json"],
-  "schemes": ["https", "http"],
+  "schemes": ["http", "https"],
   "paths": {
     "/datasources": {
       "get": {
@@ -51,10 +59,10 @@
         }
       }
     },
-    "/datasources/{datasourceId}": {
+    "/datasources/{datasourceProtocol}": {
       "parameters": [
         {
-          "name": "datasourceId",
+          "name": "datasourceProtocol",
           "in": "path",
           "description": "id of the datasource",
           "required": true,
@@ -76,7 +84,7 @@
       "patch": {
         "tags": ["datasource"],
         "summary": "change datasource",
-        "description": "Only for toggling enabled property",
+        "description": "Only for toggling enabled property and change of connection",
         "operationId": "dataSourcePatch",
         "parameters": [
           {
@@ -98,10 +106,10 @@
         }
       }
     },
-    "/datasources/{datasourceId}/dataPoints": {
+    "/datasources/{datasourceProtocol}/status": {
       "parameters": [
         {
-          "name": "datasourceId",
+          "name": "datasourceProtocol",
           "in": "path",
           "description": "id of the datasource",
           "required": true,
@@ -110,6 +118,30 @@
       ],
       "get": {
         "tags": ["datasource"],
+        "operationId": "dataSourceGetStatus",
+        "responses": {
+          "200": {
+            "description": "Request status of selected dateSource.",
+            "schema": {
+              "$ref": "#/definitions/currentStatus"
+            }
+          }
+        }
+      }
+    },
+    "/datasources/{datasourceProtocol}/dataPoints": {
+      "parameters": [
+        {
+          "name": "datasourceProtocol",
+          "in": "path",
+          "description": "id of the datasource",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["datasource"],
+        "operationId": "dataSourcesGetDatapoints",
         "description": "Returns a list of dataPoints of this datasource",
         "responses": {
           "200": {
@@ -120,7 +152,14 @@
                 "dataPoints:": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/sourcedatapoint"
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/sourcedatapoint"
+                      },
+                      {
+                        "$ref": "#/definitions/uuid"
+                      }
+                    ]
                   }
                 }
               }
@@ -130,6 +169,7 @@
       },
       "post": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesPostDatapoint",
         "description": "Create a new datapoint for the selected datasource.",
         "parameters": [
           {
@@ -149,7 +189,14 @@
               "type": "object",
               "properties": {
                 "created": {
-                  "$ref": "#/definitions/sourcedatapoint"
+                  "allOf": [
+                    { "$ref": "#/definitions/sourcedatapoint" },
+                    { "$ref": "#/definitions/uuid" }
+                  ]
+                },
+                "href": {
+                  "type": "string",
+                  "format": "uri"
                 }
               }
             }
@@ -157,10 +204,10 @@
         }
       }
     },
-    "/datasources/{datasourceId}/dataPoints/{datapointId}": {
+    "/datasources/{datasourceProtocol}/dataPoints/{datapointId}": {
       "parameters": [
         {
-          "name": "datasourceId",
+          "name": "datasourceProtocol",
           "in": "path",
           "description": "id of the datasource",
           "required": true,
@@ -176,18 +223,27 @@
       ],
       "get": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesGetDatapoint",
         "description": "returns a datapoint with given id",
         "responses": {
           "200": {
             "description": "returns a datapoint with given id",
             "schema": {
-              "$ref": "#/definitions/sourcedatapoint"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/sourcedatapoint"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
             }
           }
         }
       },
       "delete": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesDeleteDatapoint",
         "description": "Delete the datapoint selected by id",
         "responses": {
           "200": {
@@ -196,7 +252,14 @@
               "type": "object",
               "properties": {
                 "deleted": {
-                  "$ref": "#/definitions/sourcedatapoint"
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/sourcedatapoint"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
+                  ]
                 }
               }
             }
@@ -205,6 +268,7 @@
       },
       "patch": {
         "tags": ["datasource"],
+        "operationId": "dataSourcesPatchDatapoint",
         "description": "overwrite datapoint with selected id",
         "parameters": [
           {
@@ -224,7 +288,10 @@
               "type": "object",
               "properties": {
                 "changed": {
-                  "$ref": "#/definitions/sourcedatapoint"
+                  "allOf": [
+                    { "$ref": "#/definitions/sourcedatapoint" },
+                    { "$ref": "#/definitions/uuid" }
+                  ]
                 },
                 "href": {
                   "type": "string"
@@ -250,7 +317,11 @@
                 "dataSinks": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/dataSinkType"
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/dataSinkType"
+                      }
+                    ]
                   }
                 }
               }
@@ -259,10 +330,10 @@
         }
       }
     },
-    "/datasinks/{datasinkId}": {
+    "/datasinks/{datasinkProtocol}": {
       "parameters": [
         {
-          "name": "datasinkId",
+          "name": "datasinkProtocol",
           "in": "path",
           "required": true,
           "type": "string"
@@ -272,7 +343,6 @@
         "tags": ["datasinks"],
         "operationId": "dataSinkGet",
         "summary": "Get datasink object by id",
-
         "responses": {
           "200": {
             "description": "Datasink object",
@@ -281,12 +351,36 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": ["datasinks"],
+        "summary": "change datasink",
+        "description": "Only for toggling enabled property and change of auth",
+        "operationId": "dataSinkPatch",
+        "parameters": [
+          {
+            "name": "changeObject",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changeDatasink"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully changed datasink",
+            "schema": {
+              "$ref": "#/definitions/dataSinkType"
+            }
+          }
+        }
       }
     },
-    "/datasinks/{datasinkId}/dataPoints": {
+    "/datasinks/{datasinkProtocol}/status": {
       "parameters": [
         {
-          "name": "datasinkId",
+          "name": "datasinkProtocol",
           "in": "path",
           "required": true,
           "type": "string"
@@ -294,7 +388,29 @@
       ],
       "get": {
         "tags": ["datasinks"],
-        "operationId": "dataPointsGet",
+        "operationId": "dataSinkGetStatus",
+        "responses": {
+          "200": {
+            "description": "Current status of the selected datasink.",
+            "schema": {
+              "$ref": "#/definitions/currentStatus"
+            }
+          }
+        }
+      }
+    },
+    "/datasinks/{datasinkProtocol}/dataPoints": {
+      "parameters": [
+        {
+          "name": "datasinkProtocol",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["datasinks"],
+        "operationId": "dataSinksDataPointsGet",
         "responses": {
           "200": {
             "description": "Return list of dataPoints",
@@ -306,7 +422,7 @@
       },
       "post": {
         "tags": ["datasinks"],
-        "operationId": "dataPointsPost",
+        "operationId": "dataSinksDataPointsPost",
         "parameters": [
           {
             "name": "dataPoint",
@@ -324,11 +440,15 @@
               "type": "object",
               "properties": {
                 "created": {
-                  "$ref": "#/definitions/dataPointType"
+                  "allOf": [
+                    { "$ref": "#/definitions/dataPointType" },
+                    { "$ref": "#/definitions/uuid" }
+                  ]
                 },
                 "href": {
                   "type": "string",
-                  "description": "url for direct resource access"
+                  "description": "url for direct resource access",
+                  "format": "uri"
                 }
               }
             }
@@ -336,10 +456,10 @@
         }
       }
     },
-    "/datasinks/{datasinkId}/dataPoints/{dataPointId}": {
+    "/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}": {
       "parameters": [
         {
-          "name": "datasinkId",
+          "name": "datasinkProtocol",
           "in": "path",
           "description": "id of the datapoint to get",
           "required": true,
@@ -355,16 +475,26 @@
       ],
       "get": {
         "tags": ["datasinks"],
-        "operationId": "dataPointGet",
+        "operationId": "dataSinksDataPointGet",
         "responses": {
           "200": {
-            "$ref": "#/definitions/dataPointType"
+            "description": "All available Datapoints of selected sink",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
+            }
           }
         }
       },
       "patch": {
         "tags": ["datasinks"],
-        "operationId": "dataPointPatch",
+        "operationId": "dataSinksDataPointPatch",
         "parameters": [
           {
             "name": "patchData",
@@ -380,14 +510,17 @@
           "200": {
             "description": "Response of a change request for a datapoint with given id",
             "schema": {
-              "$ref": "#/definitions/dataPointType"
+              "allOf": [
+                { "$ref": "#/definitions/dataPointType" },
+                { "$ref": "#/definitions/uuid" }
+              ]
             }
           }
         }
       },
       "delete": {
         "tags": ["datasinks"],
-        "operationId": "dataPointDelete",
+        "operationId": "dataSinksDataPointDelete",
         "responses": {
           "200": {
             "description": "Delete a datapoint by id and return the deleted item.",
@@ -395,8 +528,14 @@
               "type": "object",
               "properties": {
                 "deleted": {
-                  "type": "object",
-                  "$ref": "#/definitions/dataPointType"
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/dataPointType"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
+                  ]
                 }
               }
             }
@@ -418,7 +557,10 @@
                 "vdps": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/virtualDataPointType"
+                    "allOf": [
+                      { "$ref": "#/definitions/virtualDataPointType" },
+                      { "$ref": "#/definitions/uuid" }
+                    ]
                   }
                 }
               }
@@ -445,14 +587,18 @@
           "200": {
             "description": "Successfully create a virtual datapoint resource",
             "schema": {
-              "required": ["properties", "href"],
+              "required": ["created", "href"],
               "type": "object",
               "properties": {
-                "virtualDataPoint": {
-                  "$ref": "#/definitions/virtualDataPointType"
+                "created": {
+                  "allOf": [
+                    { "$ref": "#/definitions/virtualDataPointType" },
+                    { "$ref": "#/definitions/uuid" }
+                  ]
                 },
                 "href": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri"
                 }
               }
             }
@@ -477,7 +623,10 @@
           "200": {
             "description": "Returns a virtual datapoint",
             "schema": {
-              "$ref": "#/definitions/virtualDataPointType"
+              "allOf": [
+                { "$ref": "#/definitions/virtualDataPointType" },
+                { "$ref": "#/definitions/uuid" }
+              ]
             }
           }
         }
@@ -487,7 +636,22 @@
         "operationId": "vdpDelete",
         "responses": {
           "200": {
-            "description": "Delete virtual datapoint with given id."
+            "description": "Delete virtual datapoint with given id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/virtualDataPointType"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -511,11 +675,15 @@
               "type": "object",
               "properties": {
                 "changed": {
-                  "$ref": "#/definitions/virtualDataPointType"
+                  "allOf": [
+                    { "$ref": "#/definitions/virtualDataPointType" },
+                    { "$ref": "#/definitions/uuid" }
+                  ]
                 },
                 "href": {
                   "type": "string",
-                  "description": "URL of the changed resource."
+                  "description": "URL of the changed resource.",
+                  "format": "uri"
                 }
               }
             }
@@ -592,7 +760,10 @@
           "200": {
             "description": "Successfully created new mapping",
             "schema": {
-              "$ref": "#/definitions/map"
+              "allOf": [
+                { "$ref": "#/definitions/map" },
+                { "$ref": "#/definitions/uuid" }
+              ]
             }
           }
         }
@@ -610,12 +781,20 @@
       ],
       "get": {
         "tags": ["mappings"],
+        "operationId": "mapGet",
         "description": "Return a single mapping object",
         "responses": {
           "200": {
             "description": "The requested mapping object",
             "schema": {
-              "$ref": "#/definitions/map"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/map"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
             }
           }
         }
@@ -626,7 +805,86 @@
         "description": "Delete the selected map",
         "responses": {
           "200": {
-            "description": "Successfully delete mapping"
+            "description": "Successfully delete mapping",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "allOf": [
+                    { "$ref": "#/definitions/map" },
+                    { "$ref": "#/definitions/uuid" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deviceInfos": {
+      "get": {
+        "tags": ["deviceInfos"],
+        "description": "Get device information",
+        "operationId": "deviceInfosGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the connected device",
+            "schema": {
+              "$ref": "#/definitions/deviceInfos"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["deviceInfos"],
+        "operationId": "deviceInfosPatch",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "patchObject",
+            "description": "The changed properties",
+            "schema": {
+              "$ref": "#/definitions/deviceInfos"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/networkconfig": {
+      "get": {
+        "tags": ["networkConfig"],
+        "description": "Get network config information",
+        "operationId": "networkConfigGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the network config",
+            "schema": {
+              "$ref": "#/definitions/networkconfig"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["networkConfig"],
+        "operationId": "networkConfigPatch",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "patchObject",
+            "description": "The changed properties",
+            "schema": {
+              "$ref": "#/definitions/changeNetworkconfig"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           }
         }
       }
@@ -645,13 +903,22 @@
         }
       }
     },
+    "changeDatasink": {
+      "description": "JSON type for change enable state or auth",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "auth": {
+          "$ref": "#/definitions/auth"
+        }
+      }
+    },
     "virtualDataPointType": {
       "type": "object",
-      "required": ["id", "sources", "operationType"],
+      "required": ["sources", "operationType"],
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "sources": {
           "type": "array",
           "minItems": 1,
@@ -661,23 +928,19 @@
         },
         "operationType": {
           "type": "string",
-          "pattern": "[and|or|not|counter]"
+          "enum": ["and", "or", "not", "counter]"]
         }
       }
     },
     "sourcedatapoint": {
       "type": "object",
-      "required": ["id", "name", "address", "readFrequency", "type"],
+      "required": ["name", "address", "readFrequency", "type"],
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
         "address": {
-          "type": "string",
-          "pattern": "TODO:"
+          "type": "string"
         },
         "readFrequency": {
           "type": "integer",
@@ -695,21 +958,28 @@
     "dataSinkType": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
         "datapoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/dataPointType"
+            "allOf": [
+              {
+                "$ref": "#/definitions/uuid"
+              },
+              {
+                "$ref": "#/definitions/dataPointType"
+              }
+            ]
           }
         },
         "enabled": {
           "type": "boolean",
           "default": false
+        },
+        "auth": {
+          "$ref": "#/definitions/auth"
         }
       }
     },
@@ -747,16 +1017,16 @@
     "dataSourceType": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
         "dataPoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/sourcedatapoint"
+            "allOf": [
+              { "$ref": "#/definitions/sourcedatapoint" },
+              { "$ref": "#/definitions/uuid" }
+            ]
           }
         },
         "protocol": {
@@ -818,13 +1088,31 @@
         }
       }
     },
+    "auth": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["none", "userpassword"]
+        },
+        "userName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "dataPointList": {
       "type": "object",
       "properties": {
         "dataPoints": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/dataPointType"
+            "allOf": [
+              { "$ref": "#/definitions/dataPointType" },
+              { "$ref": "#/definitions/uuid" }
+            ]
           }
         }
       }
@@ -832,9 +1120,6 @@
     "dataPointType": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -915,18 +1200,23 @@
       }
     },
     "mapping": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/map"
+      "type": "object",
+      "properties": {
+        "mapping": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              { "$ref": "#/definitions/map" },
+              { "$ref": "#/definitions/uuid" }
+            ]
+          }
+        }
       }
     },
     "map": {
       "type": "object",
-      "required": ["id", "source", "target"],
+      "required": ["source", "target"],
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "source": {
           "type": "string"
         },
@@ -938,6 +1228,189 @@
         },
         "priority": {
           "type": "integer"
+        }
+      }
+    },
+    "deviceInfos": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "control": {
+          "type": "string"
+        },
+        "serialNumber": {
+          "type": "string"
+        },
+        "manufacturer": {
+          "type": "string"
+        }
+      }
+    },
+    "uuid": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "currentStatus": {
+      "type": "object",
+      "properties": {
+        "status":{
+          "type": "string",
+          "enum": ["connected", "disconnected"]
+        }
+      }
+    },
+    "networkconfig": {
+      "type": "object",
+      "properties": {
+        "x1": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            },
+            "configurationState": {
+              "type": "boolean"
+            },
+            "serviceState": {
+              "type": "boolean"
+            }
+          }
+        },
+        "x2": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            },
+            "configurationState": {
+              "type": "boolean"
+            },
+            "serviceState": {
+              "type": "boolean"
+            }
+          }
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "useProxy": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "port": {
+              "type": "number"
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "configurationState": {
+              "type": "boolean"
+            },
+            "serviceState": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "changeNetworkconfig": {
+      "type": "object",
+      "properties": {
+        "x1": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            }
+          }
+        },
+        "x2": {
+          "type": "object",
+          "properties": {
+            "useDhcp": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "netmask": {
+              "type": "string"
+            },
+            "defaultGateway": {
+              "type": "string"
+            },
+            "dnsServer": {
+              "type": "string"
+            }
+          }
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "useProxy": {
+              "type": "boolean"
+            },
+            "ipAddr": {
+              "type": "string"
+            },
+            "port": {
+              "type": "number"
+            },
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
         }
       }
     }

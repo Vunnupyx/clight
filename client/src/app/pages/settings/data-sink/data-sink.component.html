@@ -1,0 +1,47 @@
+<p
+  *ngIf="isBusy"
+  style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(127, 127, 127, 0.4);
+    z-index: 10;
+    margin: 0;
+  "
+></p>
+
+<div class="layout-header">
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-data-sink.DataSink' | translate }}</h2>
+  <div class="layout-header__tabs">
+    <nav mat-tab-nav-bar mat-align-tabs="center">
+      <a
+        mat-tab-link
+        *ngFor="let item of dataSinkList"
+        (click)="switchDataSink(item)"
+        [active]="dataSink?.protocol === item.protocol"
+      >{{ 'settings-data-sink.Tabs.' + item.protocol | translate }}</a
+      >
+    </nav>
+  </div>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="d-block m-20">
+  <ng-container [ngSwitch]="dataSink?.protocol">
+    <app-data-sink-mt-connect
+      *ngSwitchCase="Protocol.MTConnect"
+      [dataSink]="dataSink"
+    ></app-data-sink-mt-connect>
+    <app-data-sink-mt-connect
+      *ngSwitchCase="Protocol.OPC"
+      [dataSink]="dataSink"
+    ></app-data-sink-mt-connect>
+    <app-data-sink-mt-connect
+      *ngSwitchCase="Protocol.DH"
+      [dataSink]="dataSink"
+    ></app-data-sink-mt-connect>
+  </ng-container>
+</div>

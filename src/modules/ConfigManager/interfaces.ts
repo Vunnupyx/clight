@@ -42,7 +42,6 @@ export interface IDataPointConfig {
 }
 
 export interface IDataSourceConfig {
-  id: string;
   name: string;
   dataPoints: IDataPointConfig[];
   protocol: string;
@@ -55,7 +54,7 @@ export interface IDataSourceConfig {
   enabled: boolean;
 }
 
-type IMTConnectDataPointTypes = 'event';
+type IMTConnectDataPointTypes = 'event' | 'condition';
 
 // type MapItem = {
 //   [key: string]: "string";
@@ -64,18 +63,23 @@ export type ITargetDataMap = object;
 
 export interface IDataSinkDataPointConfig {
   id: string;
+  address: string;
   name: string;
   type: IMTConnectDataPointTypes;
   map?: ITargetDataMap;
   initialValue?: string | number;
 }
-
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
 export interface IDataSinkConfig {
-  id: string;
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
+  auth?: IOpcuaAuth;
 }
 
 export interface IDataPointMapping {
@@ -85,6 +89,24 @@ export interface IDataPointMapping {
   mapValue?: string;
   priority?: number;
 }
+
+export interface NetworkConfigItem {
+  useDhcp?: boolean;
+  ipAddr?: string;
+  netmask?: string;
+  defaultGateway?: string;
+  dnsServer?: string;
+  useProxy?: boolean;
+  port?: number;
+  username?: string;
+  password?: string;
+  configurationState?: boolean;
+  serviceState?: boolean;
+}
+
+export type NetworkConfig = {
+  [key in 'x1' | 'x2' | 'proxy']: NetworkConfigItem;
+};
 
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
   return 'source' in obj && 'target' in obj;
@@ -103,6 +125,7 @@ export interface IConfig {
   // dataPoints: IDataSinkDataPointConfig[]; // TODO ??
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
+  networkConfig: NetworkConfig;
 }
 
 export interface IConfigManagerParams {

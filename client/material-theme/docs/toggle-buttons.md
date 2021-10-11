@@ -8,16 +8,15 @@ The DMG Mori Theme will be applied on top of the default Angular Material Compon
 
 Along with the Angular Material API, the following custom classes are enabled by the theme:
 
-| Class name      | Variants                     | Description                                                       |
-|-----------------|------------------------------|-------------------------------------------------------------------|
-| raised          | mat-button-toggle (no group) | Applies a box-shadow to the element                               |
-
+| Class name | Variants                     | Description                         |
+| ---------- | ---------------------------- | ----------------------------------- |
+| raised     | mat-button-toggle (no group) | Applies a box-shadow to the element |
 
 ## Code Examples
 
 #### Toggle Button Group
 
-``` html
+```html
 <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
   <mat-button-toggle value="bold">Bold</mat-button-toggle>
   <mat-button-toggle value="italic">Italic</mat-button-toggle>
@@ -29,7 +28,7 @@ Along with the Angular Material API, the following custom classes are enabled by
 
 Default:
 
-``` html
+```html
 <mat-button-toggle>
   <mat-icon>visibility</mat-icon>
 </mat-button-toggle>
@@ -37,7 +36,7 @@ Default:
 
 Raised:
 
-``` html
+```html
 <mat-button-toggle class="raised">
   <mat-icon>visibility</mat-icon>
 </mat-button-toggle>

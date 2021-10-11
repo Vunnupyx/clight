@@ -1,15 +1,15 @@
 ﻿// Define a custom typography config that overrides the font-family as well as the
 // `headlines` and `body-1` levels.
 $sofia-typography: mat-typography-config(
-  $font-family:   '"Inter", sans-serif',
-  $button:        mat-typography-level(18px, 32px, 500, 'Inter', 0.4px),
-  $input:         mat-typography-level(18px, 1.125, 500),
-  $subheading-1:  mat-typography-level(18px, 24px, 500),
-  $subheading-2:  mat-typography-level(18px, 28px, 400),
-  $title:         mat-typography-level(28px, 32px, 600),
-  $body-2:        mat-typography-level(18px, 24px, 600),
-  $body-1:        mat-typography-level(18px, 20px, 500, $letter-spacing: -0.06px),
-  $caption:       mat-typography-level(18px, 24px, 500),
+  $font-family: '"Inter", sans-serif',
+  $button: mat-typography-level(18px, 32px, 500, 'Inter', 0.4px),
+  $input: mat-typography-level(18px, 1.125, 500),
+  $subheading-1: mat-typography-level(18px, 24px, 500),
+  $subheading-2: mat-typography-level(18px, 28px, 400),
+  $title: mat-typography-level(28px, 32px, 600),
+  $body-2: mat-typography-level(18px, 24px, 600),
+  $body-1: mat-typography-level(18px, 20px, 500, $letter-spacing: -0.06px),
+  $caption: mat-typography-level(18px, 24px, 500)
 );
 // $display-4:     mat-typography-level(112px, 112px, 300, $letter-spacing: -0.05em),
 // $display-3:     mat-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
@@ -59,25 +59,25 @@ $sofia-primary: (
     A100: $dark-primary-text,
     A200: $dark-primary-text,
     A400: $dark-primary-text,
-    A700: $dark-primary-text,
+    A700: $dark-primary-text
   )
 );
 
 $sofia-secondary: (
-  50 : #f7fbff,
-  100 : #f3f6fd,
-  200 : #eef1f8,
-  300 : #e2e5ec,
-  400 : #bfc3ca,
-  500 : #a1a5ab,
-  600 : #787b81,
-  700 : #64676d,
-  800 : #44474d,
-  900 : #23262b,
-  A100 : #ffffff,
-  A200 : #ffffff,
-  A400 : #ffffff,
-  A700 : #fffafa,
+  50: #f7fbff,
+  100: #f3f6fd,
+  200: #eef1f8,
+  300: #e2e5ec,
+  400: #bfc3ca,
+  500: #a1a5ab,
+  600: #787b81,
+  700: #64676d,
+  800: #44474d,
+  900: #23262b,
+  A100: #ffffff,
+  A200: #ffffff,
+  A400: #ffffff,
+  A700: #fffafa,
   contrast: (
     50: $dark-primary-text,
     100: $dark-primary-text,
@@ -92,25 +92,25 @@ $sofia-secondary: (
     A100: $dark-primary-text,
     A200: $dark-primary-text,
     A400: $dark-primary-text,
-    A700: $dark-primary-text,
+    A700: $dark-primary-text
   )
 );
 
 $sofia-warning: (
-  50 : #fde3e2,
-  100 : #fbb8b7,
-  200 : #f98987,
-  300 : #fe5036,
-  400 : #f43632,
-  500 : #f2130e,
-  600 : #f0110c,
-  700 : #ee0e0a,
-  800 : #ec0b08,
-  900 : #e80604,
-  A100 : #ffffff,
-  A200 : #ffdcdc,
-  A400 : #ffaaa9,
-  A700 : #ff9090,
+  50: #fde3e2,
+  100: #fbb8b7,
+  200: #f98987,
+  300: #fe5036,
+  400: #f43632,
+  500: #f2130e,
+  600: #f0110c,
+  700: #ee0e0a,
+  800: #ec0b08,
+  900: #e80604,
+  A100: #ffffff,
+  A200: #ffdcdc,
+  A400: #ffaaa9,
+  A700: #ff9090,
   contrast: (
     50: $dark-primary-text,
     100: $dark-primary-text,
@@ -125,7 +125,7 @@ $sofia-warning: (
     A100: $dark-primary-text,
     A200: $dark-primary-text,
     A400: $dark-primary-text,
-    A700: $dark-primary-text,
+    A700: $dark-primary-text
   )
 );
 
@@ -157,15 +157,15 @@ $visualization-tertiary: (
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $dmg-app-primary: mat-palette($sofia-primary, 700, 200, 800);
-$dmg-app-secondary:  mat-palette($sofia-secondary, 800, 300, 900);
-$dmg-app-warning:    mat-palette($sofia-warning);
+$dmg-app-secondary: mat-palette($sofia-secondary, 800, 300, 900);
+$dmg-app-warning: mat-palette($sofia-warning);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as `color` or `typography`.
 $dmg-app-theme: mat-light-theme(
-    $dmg-app-primary,
-    $dmg-app-secondary,
-    $dmg-app-warning
+  $dmg-app-primary,
+  $dmg-app-secondary,
+  $dmg-app-warning
 );
 
 // Status variables

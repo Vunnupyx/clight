@@ -1,13 +1,13 @@
-import NodeS7 from "nodes7";
-import winston from "winston";
-import { DataSource } from "../DataSource";
+import NodeS7 from 'nodes7';
+import winston from 'winston';
+import { DataSource } from '../DataSource';
 import {
   DataSourceLifecycleEventTypes,
-  LifecycleEventStatus,
-} from "../../../common/interfaces";
-import { IDataPointConfig } from "../../ConfigManager/interfaces";
-import { IMeasurement } from "../interfaces";
-import { Iot2050MraaDI10 } from "../../Iot2050MraaDI10/Iot2050mraa";
+  LifecycleEventStatus
+} from '../../../common/interfaces';
+import { IDataPointConfig } from '../../ConfigManager/interfaces';
+import { IMeasurement } from '../interfaces';
+import { Iot2050MraaDI10 } from '../../Iot2050MraaDI10/Iot2050mraa';
 
 /**
  * Implementation of io shield data source
@@ -20,21 +20,21 @@ export class IoshieldDataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const { name, protocol, id } = this.config;
+    const { name, protocol } = this.config;
     this.submitLifecycleEvent({
-      id,
+      id: protocol,
       level: this.level,
       type: DataSourceLifecycleEventTypes.Connected,
       status: LifecycleEventStatus.Connected,
-      dataSource: { protocol, name },
+      dataSource: { protocol, name }
     });
 
     this.mraaClient = new Iot2050MraaDI10();
     this.mraaClient.init();
-
+    
     this.validateDataPointConfiguration();
-
     this.setupDataPoints();
+    this.currentStatus = LifecycleEventStatus.Connected;
   }
 
   /**
@@ -58,12 +58,12 @@ export class IoshieldDataSource extends DataSource {
       for (const dp of currentCycleDataPoints) {
         const value = results[dp.address];
 
-        if (typeof value === "undefined") continue;
+        if (typeof value === 'undefined') continue;
 
         const measurement: IMeasurement = {
           id: dp.id,
           name: dp.name,
-          value,
+          value
         };
 
         measurements.push(measurement);
@@ -71,6 +71,7 @@ export class IoshieldDataSource extends DataSource {
 
       if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
+      // TODO: Markus welcher status ist hier? Die Messungen sind fehlgeschlagen? Disconnected? Reconnection?
       winston.error(e);
     }
   }
@@ -79,28 +80,16 @@ export class IoshieldDataSource extends DataSource {
    * Disconnects data source
    * @returns Promise<void>
    */
-  public async disconnect(): Promise<void> {}
+  public async disconnect(): Promise<void> {
+    this.currentStatus = LifecycleEventStatus.Disconnected;
+  }
 
   /**
    * Validates data source configuration and throws errors for wrong configured data points
    */
   private validateDataPointConfiguration() {
-    const allowedDataPointAddresses = [
-      "DI0",
-      "DI1",
-      "DI2",
-      "DI3",
-      "DI4",
-      "DI5",
-      "DI6",
-      "DI7",
-      "DI8",
-      "DI9",
-    ];
     this.config.dataPoints.forEach((dp) => {
-      if (!allowedDataPointAddresses.some((addr) => addr === dp.address)) {
-        throw new Error(`Invalid data point address: ${dp.address}`);
-      }
+      if(!/\bDI[0-9]\b/.test(dp.address)) throw new Error(`Invalid data point address: ${dp.address}`);
     });
   }
 }

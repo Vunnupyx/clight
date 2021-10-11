@@ -1,13 +1,16 @@
+import { ObjectMap } from '../shared/utils';
+
 export enum DataPointType {
-    PLC = 's7',
-    NCK = 'nck',
+  Event = 'event',
+  Condition = 'condition'
 }
 
 export class DataPoint {
-    address: string;
-    description?: string;
-    id: string;
-    name: string;
-    readFrequency: number;
-    type?: DataPointType;
+  enabled?: boolean;
+  id?: string;
+  initialValue?: string;
+  map?: ObjectMap<string>;
+  name?: string;
+  type?: DataPointType;
+  address?: string;
 }

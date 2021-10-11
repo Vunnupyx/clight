@@ -22,13 +22,13 @@ to the internal memory above the SD card slot. This means that you have to boot 
 you can use the "MDC light Pilot OS".
 
 1. First you need to complete the Industrial OS setup wizard. For this you need to connect a keyboard and monitor to your IoT2050 device. Keep in mind that an if you
-want to use an "Display Port" to HDMI adapter, you need to use an active one.
+   want to use an "Display Port" to HDMI adapter, you need to use an active one.
 2. After you connected monitor and keyboard connect the IoT2050 to a power source.
 3. After boot the setup wizard should be displayed. You can mostly use default configurations, but be sure to configure a known IP address for at least one network interface, this will be used later for SSH access. If the wizard does not start and you are stuck on the "localhost" login, you can try to reboot. If that does not
-work you need to use an USB->UART adapter to access the console: [Siemens Documentation](https://support.industry.siemens.com/tf/ww/en/posts/how-to-setup-pre-installed-industrial-os-on-iot2050-advanced/266090/?page=0&pageSize=10)
+   work you need to use an USB->UART adapter to access the console: [Siemens Documentation](https://support.industry.siemens.com/tf/ww/en/posts/how-to-setup-pre-installed-industrial-os-on-iot2050-advanced/266090/?page=0&pageSize=10)
 4. SSH into the device using the configured IP address, username and password.
 
-Create `/etc/fw_env.config`, for example using the command line: 
+Create `/etc/fw_env.config`, for example using the command line:
 
 ```
 cat <<EOT >> /etc/fw_env.config
@@ -68,10 +68,10 @@ For X1 P2 - eth1 (company network):
 - See the "MdcLightConfiguration" document for an explanation of the configuration format
 - The MTConnect agent configuration is stored in `/etc/MDCLight/mtc_config` - The documentation for these config files can be found on the [MTConnect Agent Github](https://github.com/mtconnect/cppagent#configuration)
 - After you changed the configuration you need to restart the docker containers `docker-compose down && docker-compose up -d`. HINT: To avoid problems with the
-messenger you can also only restart the "mdclight-prod_arm64" container by using `docker ps` to find the container id and `docker restart <container id>` to restart the container.
+  messenger you can also only restart the "mdclight-prod_arm64" container by using `docker ps` to find the container id and `docker restart <container id>` to restart the container.
 - Check the logs with `docker-compose logs -f` to verify the configuration is correct and the data source is accessible
 
-## Connecting MTConnect Applications 
+## Connecting MTConnect Applications
 
 - The MTConnect endpoint is exposed on port `5000` on both network interfaces
 - You can use the `nmcli` command to see the IP addresses for both interfaces (For DHCP you can see the IP address which was assigned to the device)

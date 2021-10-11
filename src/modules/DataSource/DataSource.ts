@@ -1,6 +1,6 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
-import { IDataSourceConfig } from "../ConfigManager/interfaces";
+import { IDataSourceConfig } from '../ConfigManager/interfaces';
 import {
   DataSourceEventTypes,
   IDataSourceMeasurementEvent,
@@ -8,15 +8,16 @@ import {
   IDataSourceLifecycleEvent,
   IMeasurement,
   IDataSourceDataPointLifecycleEvent,
-  DataPointEventTypes,
-} from "./interfaces";
+  DataPointEventTypes
+} from './interfaces';
 import {
   EventLevels,
   IBaseLifecycleEvent,
   ILifecycleEvent,
-} from "../../common/interfaces";
+  LifecycleEventStatus
+} from '../../common/interfaces';
 import Timeout = NodeJS.Timeout;
-import { SynchronousIntervalScheduler } from "../SyncScheduler";
+import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 /**
  * Implements data source
@@ -28,8 +29,10 @@ export abstract class DataSource extends EventEmitter {
   protected RECONNECT_TIMEOUT =
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
   public timestamp: number;
+  public protocol: string;
   protected scheduler: SynchronousIntervalScheduler;
   protected schedulerListenerId: number;
+  protected currentStatus: LifecycleEventStatus;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -39,6 +42,7 @@ export abstract class DataSource extends EventEmitter {
     super();
     this.config = params.config;
     this.scheduler = SynchronousIntervalScheduler.getInstance();
+    this.protocol = params.config.protocol;
   }
 
   /**
@@ -98,12 +102,12 @@ export abstract class DataSource extends EventEmitter {
     const { name, protocol } = this.config;
 
     this.submitMeasurement(
-      measurements.map((measurement) => ({
+      measurements.map((measurement) => ({ 
         dataSource: {
           name,
-          protocol,
+          protocol
         },
-        measurement,
+        measurement
       }))
     );
   };
@@ -119,9 +123,9 @@ export abstract class DataSource extends EventEmitter {
     const DPLifecycleEvent: IDataSourceDataPointLifecycleEvent = {
       dataSource: {
         name,
-        protocol,
+        protocol
       },
-      ...lifecycleEvent,
+      ...lifecycleEvent
     };
     this.submitDataPointLifecycle(DPLifecycleEvent);
   };
@@ -154,5 +158,9 @@ export abstract class DataSource extends EventEmitter {
     dataPointLifecycle: ILifecycleEvent
   ): void {
     this.emit(DataPointEventTypes.Lifecycle, dataPointLifecycle);
+  }
+
+  public getCurrentStatus() {
+    return this.currentStatus;
   }
 }

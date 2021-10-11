@@ -1,6 +1,5 @@
 /* tslint:disable */
 export interface VirtualDataPointType {
-  id: string;
-  operationType: string;
+  operationType: 'and' | 'or' | 'not' | 'counter]';
   sources: Array<string>;
 }

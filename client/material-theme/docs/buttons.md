@@ -7,13 +7,15 @@ The DMG Mori Theme will be applied on top of the default Angular Material Compon
 ### Angular Material Rules
 
 In the Sofia Design the following button variants are used, which should be used in application development primarily:
+
 - mat-raised-button
 - mat-fab
 - mat-fab-mini
 - mat-button
 
-Also, the *color* property within the component should only get the following values:
-- primary (blue color) - *default*
+Also, the _color_ property within the component should only get the following values:
+
+- primary (blue color) - _default_
 - secondary (white color)
 
 If no color property is specified, the primary colors will be applied.
@@ -22,12 +24,11 @@ If no color property is specified, the primary colors will be applied.
 
 Along with the Angular Material API, the following custom classes are enabled by the theme:
 
-| Class name      | Variants           | Description                                                       |
-|-----------------|--------------------|-------------------------------------------------------------------|
-| large           | mat-raised-button, | Applies a height of 56px to the button instead of the default     |
-|                 | (mat-flat-button)  | height of 48px.                                                   |
-| fab-extended    | mat-fab            | Applies a width of 125px to the Fab Button.                       |
-
+| Class name   | Variants           | Description                                                   |
+| ------------ | ------------------ | ------------------------------------------------------------- |
+| large        | mat-raised-button, | Applies a height of 56px to the button instead of the default |
+|              | (mat-flat-button)  | height of 48px.                                               |
+| fab-extended | mat-fab            | Applies a width of 125px to the Fab Button.                   |
 
 ## Code Examples
 

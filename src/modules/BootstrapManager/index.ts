@@ -5,17 +5,15 @@ import {
   DeviceLifecycleEventTypes,
   EventLevels,
   IErrorEvent,
-  ILifecycleEvent,
-} from "../../common/interfaces";
-import { ConfigManager } from "../ConfigManager";
-import { LogLevel } from "../Logger/interfaces";
-import { MTConnectManager } from "../MTConnectManager";
-import { DataPointMapper } from "../DataPointMapper";
-import { DataSinkManager } from "../DataSinkManager";
-import { DataPointCache } from "../DatapointCache";
-import { VirtualDataPointManager } from "../VirtualDataPointManager";
-import { RestApiManager } from "../Backend/RESTAPIManager";
-import { OPCUAManager } from '../OPCUAManager';
+  ILifecycleEvent
+} from '../../common/interfaces';
+import { ConfigManager } from '../ConfigManager';
+import { LogLevel } from '../Logger/interfaces';
+import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
+import { DataPointCache } from '../DatapointCache';
+import { VirtualDataPointManager } from '../VirtualDataPointManager';
+import { RestApiManager } from '../Backend/RESTAPIManager';
+import { DataPointMapper } from '../DataPointMapper';
 
 /**
  * Launches agent and handles module life cycles
@@ -23,7 +21,7 @@ import { OPCUAManager } from '../OPCUAManager';
 export class BootstrapManager {
   private configManager: ConfigManager;
   private dataSourcesManager: DataSourcesManager;
-  private dataSinkManager: DataSinkManager;
+  private dataSinkManager: DataSinksManager;
   private errorEventsBus: EventBus<IErrorEvent>;
   private lifecycleEventsBus: EventBus<ILifecycleEvent>;
   private measurementsEventsBus: MeasurementEventBus;
@@ -41,19 +39,25 @@ export class BootstrapManager {
       lifecycleEventsBus: this.lifecycleEventsBus
     });
 
+    this.dataSinkManager = new DataSinksManager({
+      configManager: this.configManager,
+      dataPointCache: this.dataPointCache,
+      errorBus: this.errorEventsBus,
+      lifecycleBus: this.lifecycleEventsBus,
+      measurementsBus: this.measurementsEventsBus
+    });
+
     this.dataPointCache = new DataPointCache();
   }
 
   /**
    * Launches agent
    */
-  public async launch() {
+  public async start() {
     try {
       await this.configManager.init();
-
-      MTConnectManager.createAdapter(this.configManager);
-      OPCUAManager.createAdapter(this.configManager);
       DataPointMapper.createInstance(this.configManager);
+      await this.dataSinkManager.init();
 
       await this.loadModules();
       this.lifecycleEventsBus.push({
@@ -69,11 +73,15 @@ export class BootstrapManager {
         payload: error.toString()
       });
 
-      winston.error('Error while launching. Exiting programm.');
+      winston.error('Error while launching. Exiting program.');
       process.exit(1);
     }
 
-    this.backend = new RestApiManager(this.configManager).start();
+    this.backend = new RestApiManager({
+      configManager: this.configManager,
+      dataSourcesManager: this.dataSourcesManager,
+      dataSinksManager: this.dataSinkManager
+    }).start();
   }
 
   /**
@@ -103,17 +111,6 @@ export class BootstrapManager {
         lifecycleBus: this.lifecycleEventsBus,
         measurementsBus: this.measurementsEventsBus
       });
-    }
-
-    if (!this.dataSinkManager) {
-      this.dataSinkManager = new DataSinkManager({
-        dataSinksConfig,
-        dataPointCache: this.dataPointCache,
-        errorBus: this.errorEventsBus,
-        lifecycleBus: this.lifecycleEventsBus,
-        measurementsBus: this.measurementsEventsBus
-      });
-      await this.dataSinkManager.spawnDataSinks();
     }
   }
 }

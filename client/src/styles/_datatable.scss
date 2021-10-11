@@ -190,6 +190,10 @@ $datatable-summary-row-background-hover: #ddd !default;
       font-size: 12px;
       font-weight: 500;
 
+      &.text-center {
+        text-align: center;
+      }
+
       .datatable-header-cell-wrapper {
         position: relative;
       }

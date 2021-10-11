@@ -172,7 +172,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onAddressSelect(obj: SourceDataPoint) {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
-      data: { selection: obj.address, protocol: this.dataSource?.protocol }
+      data: { selection: obj.address, protocol: this.dataSource?.protocol },
+      width: '650px'
     });
 
     dialogRef.afterClosed().subscribe((result) => {

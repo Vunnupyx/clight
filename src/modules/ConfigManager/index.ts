@@ -89,7 +89,7 @@ export const emptyDefaultConfig = {
   virtualDataPoints: [],
   mapping: [],
   templates: {
-    completed: false
+    completed: true // TODO Set false when template implementation is finished
   }
 };
 

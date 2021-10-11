@@ -9,6 +9,7 @@ import { DeviceInfoService } from './device-info.service';
 import { TemplateService } from './template.service';
 import { NetworkService } from './network.service';
 import { VirtualDataPointService } from './virtual-data-point.service';
+import { SystemInformationService } from './system-information.service';
 
 @NgModule({
   providers: [
@@ -21,6 +22,7 @@ import { VirtualDataPointService } from './virtual-data-point.service';
     TemplateService,
     NetworkService,
     VirtualDataPointService,
+    SystemInformationService,
   ]
 })
 export class ServicesModule {}

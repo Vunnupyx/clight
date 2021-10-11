@@ -1,8 +1,15 @@
 version: '3.3'
 services:
+  webserver:
+    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server:latest
+    restart: always
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mdclight
   mdclight:
     privileged: true
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-prod_arm64:latest
+    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest
     restart: always
     volumes:
       - type: bind
@@ -17,6 +24,10 @@ services:
       - type: bind
         source: $HOST/sys
         target: /sys
+    ports:
+      - '3333:3333'
+    environment:
+      - PORT=3333
   mtconnect-agent:
     image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
     restart: always
@@ -24,5 +35,7 @@ services:
       - type: bind
         source: $HOST/etc/MDCLight/mtc_config
         target: /agentConfiguration
+    depends_on:
+      - mdclight
     ports:
       - '5000:5000'

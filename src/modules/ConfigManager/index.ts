@@ -76,7 +76,10 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
  */
 export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
   public id: string | null = null;
-  private configFolder = path.join(process.cwd(), 'mdclight/config');
+  private configFolder = path.join(
+    process.env.MDC_LIGHT_FOLDER || process.cwd(),
+    'mdclight/config'
+  );
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
   private _runtimeConfig: IRuntimeConfig;
@@ -142,7 +145,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       networkConfig: {
         x1: {},
         x2: {},
-        proxy: {},
+        proxy: {}
       },
       dataSources: [],
       dataSinks: [],
@@ -160,7 +163,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       this.runtimeConfig
     );
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
-
 
     this.setDefaultValues();
 
@@ -317,7 +319,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     // @ts-ignore // TODO @markus pls fix
     data: DataType[number] | string,
     // @ts-ignore // TODO @markus pls fix
-    selector: (item: DataType[number]) => string = (item) => item.id,
+    selector: (item: DataType[number]) => string = (item) => item.id
   ) {
     const logPrefix = `${this.constructor.name}::changeConfig`;
     if (operation === 'delete' && typeof data !== 'string')
@@ -339,7 +341,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         if (typeof data === 'string' || isDataPointMapping(data))
           throw new Error();
         // @ts-ignore
-        const index = categoryArray.findIndex((entry) => selector(entry) === selector(data));
+        const index = categoryArray.findIndex(
+          (entry) => selector(entry) === selector(data)
+        );
         if (index < 0) throw Error(`NO Entry found`); //TODO:
         const change = categoryArray[index];
         categoryArray.splice(index, 1);
@@ -348,7 +352,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         break;
       }
       case 'delete': {
-        const index = categoryArray.findIndex((entry) => selector(entry) === data);
+        const index = categoryArray.findIndex(
+          (entry) => selector(entry) === data
+        );
         if (index < 0) throw Error(`No Entry found`); //TODO:
         const change = categoryArray[index];
         categoryArray.splice(index, 1);

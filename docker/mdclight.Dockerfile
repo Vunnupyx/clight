@@ -8,6 +8,7 @@ RUN npm install
 COPY src src
 COPY tsconfig.json tsconfig.json
 RUN npm run build
+RUN npm run copy-swagger
 RUN npm run build:dist
 
 RUN mv runtime app

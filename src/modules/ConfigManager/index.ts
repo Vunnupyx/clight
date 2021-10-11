@@ -11,6 +11,7 @@ import {
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import {
+  IDefaultTemplates,
   IConfig,
   IConfigManagerParams,
   IDataSinkConfig,
@@ -71,6 +72,27 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   protocol: DataSinkProtocols.MTCONNECT
 };
 
+export const emptyDefaultConfig = {
+  general: {
+    manufacturer: '',
+    serialNumber: '',
+    model: '',
+    control: ''
+  },
+  networkConfig: {
+    x1: {},
+    x2: {},
+    proxy: {}
+  },
+  dataSources: [],
+  dataSinks: [],
+  virtualDataPoints: [],
+  mapping: [],
+  templates: {
+    completed: false
+  },
+};
+
 /**
  * Config for managing the app's config
  */
@@ -81,6 +103,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private runtimeConfigName = 'runtime.json';
   private _runtimeConfig: IRuntimeConfig;
   private _config: IConfig;
+  private _defaultTemplates: IDefaultTemplates;
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
@@ -103,6 +126,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private set runtimeConfig(config: IRuntimeConfig) {
     this._runtimeConfig = config;
     this.emit('newRuntimeConfig', this._runtimeConfig);
+  }
+
+  public get defaultTemplates(): IDefaultTemplates {
+    return this._defaultTemplates;
   }
 
   /**
@@ -132,23 +159,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       }
     };
 
-    this._config = {
-      general: {
-        manufacturer: '',
-        serialNumber: '',
-        model: '',
-        control: ''
-      },
-      networkConfig: {
-        x1: {},
-        x2: {},
-        proxy: {},
-      },
-      dataSources: [],
-      dataSinks: [],
-      virtualDataPoints: [],
-      mapping: []
-    };
+    this._config = emptyDefaultConfig;
   }
 
   /**
@@ -161,8 +172,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
     this._config = await this.loadConfig<IConfig>(this.configName, this.config);
 
-
-    this.setDefaultValues();
+    this.loadTemplates();
 
     this.checkType(
       this.runtimeConfig.mtconnect.listenerPort,
@@ -176,56 +186,28 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     );
   }
 
-  /**
-   * Set default values for each data source and data sink if not existing
-   */
-  private setDefaultValues() {
-    let changed = false;
-    if (
-      !this._config.dataSources.some(
-        (dataSource) => dataSource.protocol === DataSourceProtocols.S7
-      )
-    ) {
-      this._config.dataSources.push(defaultS7DataSource);
-      changed = true;
-    }
+  public setDataSources(sourceIds: string[]) {
+    const sources = [defaultS7DataSource, defaultIoShieldDataSource]
+        .filter(x => sourceIds.includes(x.protocol));
 
-    if (
-      !this._config.dataSources.some(
-        (dataSource) => dataSource.protocol === DataSourceProtocols.IOSHIELD
-      )
-    ) {
-      this._config.dataSources.push(defaultIoShieldDataSource);
-      changed = true;
-    }
-    if (
-      !this._config.dataSinks.some(
-        (dataSink) => dataSink.protocol === DataSinkProtocols.OPCUA
-      )
-    ) {
-      this._config.dataSinks.push(defaultOpcuaDataSink);
-      changed = true;
-    }
-    if (
-      !this._config.dataSinks.some(
-        (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
-      )
-    ) {
-      this._config.dataSinks.push(defaultMtconnectDataSink);
-      changed = true;
-    }
-    if (
-      !this._config.dataSinks.some(
-        (dataSink) => dataSink.protocol === DataSinkProtocols.DATAHUB
-      )
-    ) {
-      this._config.dataSinks.push(defaultDataHubDataSink);
-      changed = true;
-    }
+    this.saveConfig({
+      dataSources: [
+        ...this._config.dataSources.filter(ds => !sourceIds.includes(ds.protocol)),
+        ...sources,
+      ],
+    });
+  }
 
-    if (changed) {
-      this.saveConfigToFile();
-    }
+  public setDataSinks(sinkIds: string[]) {
+    const sinks = [defaultOpcuaDataSink, defaultMtconnectDataSink, defaultDataHubDataSink]
+        .filter(x => sinkIds.includes(x.protocol));
+
+    this.saveConfig({
+      dataSinks: [
+          ...this._config.dataSinks.filter(ds => !sinkIds.includes(ds.protocol)),
+        ...sinks,
+      ],
+    });
   }
 
   /**
@@ -275,6 +257,33 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     return this.mergeDeep(defaultConfig, config);
   }
 
+  private loadTemplate(templateName) {
+    try {
+      const configPath = path.join(this.configFolder, 'defaulttemplates', `${templateName}.json`);
+      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  private loadTemplates() {
+    const templates = [
+      's7toopcua',
+      's7tomtconnect',
+      's7toopcuaandmtconnect',
+      'ioshieldtoopcua',
+      'ioshieldtomtconnect',
+      'ioshieldtoopcuaandmtconnect',
+    ]
+      .map(template => this.loadTemplate(template))
+      .reduce((acc, curr) => ({
+        availableDataSources: [...acc.availableDataSources, ...curr.dataSources],
+        availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks],
+      }), { availableDataSources: [], availableDataSinks: [] });
+
+    this._defaultTemplates = templates;
+  }
+
   /**
    * Simple object check.
    * @param item
@@ -317,7 +326,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     // @ts-ignore // TODO @markus pls fix
     data: DataType[number] | string,
     // @ts-ignore // TODO @markus pls fix
-    selector: (item: DataType[number]) => string = (item) => item.id,
+    selector: (item: DataType[number]) => string = (item) => item.id
   ) {
     const logPrefix = `${this.constructor.name}::changeConfig`;
     if (operation === 'delete' && typeof data !== 'string')
@@ -331,7 +340,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       case 'insert': {
         if (typeof data !== 'string') {
           // @ts-ignore TODO: Fix data type
-          categoryArray.push(data);
+          const index = categoryArray.findIndex((entry) => selector(entry) === selector(data));
+          if (index < 0) {
+            //@ts-ignore
+            categoryArray.push(data);
+          }
         }
         break;
       }
@@ -339,7 +352,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         if (typeof data === 'string' || isDataPointMapping(data))
           throw new Error();
         // @ts-ignore
-        const index = categoryArray.findIndex((entry) => selector(entry) === selector(data));
+        const index = categoryArray.findIndex(
+          (entry) => selector(entry) === selector(data)
+        );
         if (index < 0) throw Error(`NO Entry found`); //TODO:
         const change = categoryArray[index];
         categoryArray.splice(index, 1);
@@ -348,7 +363,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         break;
       }
       case 'delete': {
-        const index = categoryArray.findIndex((entry) => selector(entry) === data);
+        const index = categoryArray.findIndex(
+          (entry) => selector(entry) === data
+        );
         if (index < 0) throw Error(`No Entry found`); //TODO:
         const change = categoryArray[index];
         categoryArray.splice(index, 1);

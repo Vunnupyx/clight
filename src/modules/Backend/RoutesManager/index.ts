@@ -36,6 +36,12 @@ import {
   networkConfigHandlers,
   setConfigManager as networkConfigSetConfigManager
 } from '../routes/apis/v1/NetworkConfig';
+import {
+  templatesHandlers,
+  setConfigManager as templatesConfigSetConfigManager,
+  setDataSourcesManager as setTemplateDataSourcesManager,
+  setDataSinksManager as setTemplateDataSinksManager,
+} from '../routes/apis/v1/Templates';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../DataSourcesManager';
@@ -59,6 +65,7 @@ export class RoutesManager {
     ...deviceInfosHandlers,
     ...mappingHandlers,
     ...networkConfigHandlers,
+    ...templatesHandlers,
   };
 
   constructor(options: RoutesManagerOptions) {
@@ -83,9 +90,12 @@ export class RoutesManager {
       deviceInfosSetConfigManager,
       mappingSetConfigManager,
       networkConfigSetConfigManager,
+      templatesConfigSetConfigManager,
     ].forEach((func) => func(options.configManager));
     setDataSinksManager(options.dataSinksManager)
+    setTemplateDataSinksManager(options.dataSinksManager)
     setDataSourcesManager(options.dataSourcesManager);
+    setTemplateDataSourcesManager(options.dataSourcesManager);
 
     this.inputValidator = OpenApiValidator.middleware({
       apiSpec: swaggerFile,

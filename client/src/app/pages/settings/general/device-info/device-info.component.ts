@@ -4,6 +4,9 @@ import { DeviceInfoService } from 'app/services';
 import { Subscription } from 'rxjs';
 import { Status } from '../../../../shared/state';
 import { DeviceInfo } from '../../../../models/device-info';
+import {NgForm} from "@angular/forms";
+import {TranslateService} from "@ngx-translate/core";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-device-info',
@@ -24,7 +27,11 @@ export class DeviceInfoComponent implements OnInit {
     return this.deviceInfoService.status != Status.Ready;
   }
 
-  constructor(private deviceInfoService: DeviceInfoService) {}
+  constructor(
+    private translate: TranslateService,
+    private toastr: ToastrService,
+    private deviceInfoService: DeviceInfoService,
+  ) {}
 
   ngOnInit(): void {
     this.sub.add(
@@ -34,9 +41,12 @@ export class DeviceInfoComponent implements OnInit {
     this.deviceInfoService.getDeviceInfo();
   }
 
-  onSave() {
+  onSave(form: NgForm) {
     this.deviceInfoService.updateDeviceInfo(this.deviceInfo).then(() => {
-      // TODO: add toaster about successful operation
+      form.resetForm(this.deviceInfo);
+      this.toastr.success(
+        this.translate.instant('settings-device-info.SaveSuccess'),
+      );
     });
   }
 

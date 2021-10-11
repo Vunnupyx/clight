@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Connection } from 'app/api/models';
 import {
@@ -25,7 +25,7 @@ import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.
   templateUrl: './data-source.component.html',
   styleUrls: ['./data-source.component.scss']
 })
-export class DataSourceComponent implements OnInit {
+export class DataSourceComponent implements OnInit, OnDestroy {
   SourceDataPointType = SourceDataPointType;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
@@ -52,13 +52,6 @@ export class DataSourceComponent implements OnInit {
     private dataSourceService: DataSourceService,
     private dialog: MatDialog
   ) {}
-
-  get isBusy() {
-    return (
-      this.dataSourceService.status != Status.Ready ||
-      this.sourceDataPointService.status != Status.Ready
-    );
-  }
 
   get isEditing() {
     return !!this.unsavedRow;
@@ -181,7 +174,7 @@ export class DataSourceComponent implements OnInit {
   private clearUnsavedRow() {
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.datapointRows = this.datapointRows!.filter((x) => x.id);
+    this.datapointRows = this.datapointRows?.filter((x) => x.id) || [];
   }
 
   onAddressSelect(obj: SourceDataPoint) {
@@ -197,7 +190,8 @@ export class DataSourceComponent implements OnInit {
       if (this.dataSource?.protocol === DataSourceProtocol.IOShield) {
         this.unsavedRow!.address = `${result.area}.${result.component}.${result.variable}`;
       } else {
-        this.unsavedRow!.address = `${result.address}`;
+        this.unsavedRow!.name = result.name;
+        this.unsavedRow!.address = result.address;
       }
     });
   }
@@ -223,6 +217,12 @@ export class DataSourceComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+  }
+
+  updateSoftwareVersion(version: string) {
+    this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
+      softwareVersion: version
+    });
   }
 
   private onConnection(x: DataSourceConnection | undefined) {

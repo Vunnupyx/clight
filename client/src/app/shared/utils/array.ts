@@ -16,3 +16,7 @@ export function mapOrder<T>(array: T[], order, key): T[] {
 
   return array;
 }
+
+export function unique<T>(array: T[], selector: (item: T) => any): T[] {
+  return [...new Map(array.map(item => [selector(item), item])).values()];
+}

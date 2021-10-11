@@ -35,10 +35,6 @@ export class VirtualDataPointComponent implements OnInit {
 
   private sourceDataPoints: SourceDataPoint[] = [];
 
-  get isBusy() {
-    return this.virtualDataPointService.status != Status.Ready;
-  }
-
   get isEditing() {
     return !!this.unsavedRow;
   }
@@ -122,7 +118,7 @@ export class VirtualDataPointComponent implements OnInit {
   private clearUnsavedRow() {
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.datapointRows = this.datapointRows!.filter((x) => x.id);
+    this.datapointRows = this.datapointRows?.filter((x) => x.id) || [];
   }
 
   onDelete(obj: VirtualDataPoint) {

@@ -34,7 +34,8 @@
     "SerialNumber": "SerialNumber",
     "ApplyChanges": "Apply Changes",
     "LoadError": "Failed to load device info. Try again later",
-    "UpdateError": "Failed to update device info. Try again later"
+    "UpdateError": "Failed to update device info. Try again later",
+    "SaveSuccess": "Device Info has been saved successfully!"
   },
   "settings-data-source": {
     "DataSource": "Data Source",

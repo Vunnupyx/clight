@@ -1,0 +1,17 @@
+{
+  "dataSources": [
+    {
+      "id": "s7",
+      "name": "S7",
+      "description": "S7 Description"
+    }
+  ],
+  "dataSinks": [
+    {
+      "id": "opcua",
+      "name": "OPCUA",
+      "description": "OPCUA",
+      "dataSources": ["s7"]
+    }
+  ]
+}

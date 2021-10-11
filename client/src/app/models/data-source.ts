@@ -33,4 +33,5 @@ export class DataSource {
   id?: string;
   name?: string;
   protocol?: DataSourceProtocol;
+  softwareVersion?: string;
 }

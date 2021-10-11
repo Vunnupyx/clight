@@ -20,10 +20,6 @@ export class DataSinkComponent implements OnInit {
 
   constructor(private dataSinkService: DataSinkService) {}
 
-  get isBusy() {
-    return this.dataSinkService.status != Status.Ready;
-  }
-
   ngOnInit() {
     this.sub.add(
       this.dataSinkService.dataSinks.subscribe((x) => this.onDataSinks(x))

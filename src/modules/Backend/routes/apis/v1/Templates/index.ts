@@ -15,60 +15,52 @@ let dataSinksManager: DataSinksManager;
  * Set ConfigManager to make accessible for local function
  */
 export function setConfigManager(manager: ConfigManager) {
-    configManager = manager;
+  configManager = manager;
 }
 
 /**
  * Set dataSourcesManager to make accessible for local function
  */
 export function setDataSourcesManager(manager: DataSourcesManager) {
-    dataSourcesManager = manager;
+  dataSourcesManager = manager;
 }
 
 /**
  * Set dataSinksManager to make accessible for local function
  */
 export function setDataSinksManager(manager: DataSinksManager) {
-    dataSinksManager = manager;
+  dataSinksManager = manager;
 }
 
 /**
  * Handle all requests for the list of templates.
  */
 function templatesGetHandler(request: Request, response: Response): void {
-    response
-        .status(200)
-        .json(configManager.defaultTemplates);
+  response.status(200).json(configManager.defaultTemplates);
 }
 
 /**
  * Returns the current status of the templates completion
  */
 function templatesGetStatusHandler(request: Request, response: Response) {
-    const completed = configManager.config.templates.completed;
+  const completed = configManager.config.templates.completed;
 
-    response.status(200).json({ completed });
+  response.status(200).json({ completed });
 }
 
 /**
  * Handle POST apply templates request
  */
 function templatesApplyPostHandler(request: Request, response: Response): void {
-    configManager.setDataSources([request.body.dataSource]);
-    configManager.setDataSinks(request.body.dataSinks);
+  configManager.setDataSources([request.body.dataSource]);
+  configManager.setDataSinks(request.body.dataSinks);
+  configManager.saveConfig({ templates: { completed: true } });
 
-    dataSourcesManager.spawnDataSources(configManager.config.dataSources);
-    dataSinksManager.createDataSinks();
-
-    configManager.saveConfig({ templates: { completed: true } });
-
-    response
-        .status(200)
-        .json(null);
+  response.status(200).json(null);
 }
 
 export const templatesHandlers = {
-    templatesGetHandler,
-    templatesGetStatusHandler,
-    templatesApplyPostHandler,
+  templatesGetHandler,
+  templatesGetStatusHandler,
+  templatesApplyPostHandler
 };

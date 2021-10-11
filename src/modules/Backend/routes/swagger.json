@@ -919,6 +919,18 @@
         }
       }
     },
+    "/systemInfo": {
+      "get": {
+        "tags": ["systemInfo"],
+        "description": "Get system information",
+        "operationId": "systemInfoGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the system"
+          }
+        }
+      }
+    },
     "/templates": {
       "get": {
         "tags": ["templates"],

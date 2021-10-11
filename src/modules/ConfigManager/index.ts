@@ -88,6 +88,7 @@ export const emptyDefaultConfig = {
   dataSinks: [],
   virtualDataPoints: [],
   mapping: [],
+  systemInfo: [],
   templates: {
     completed: false
   }

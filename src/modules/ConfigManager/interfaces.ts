@@ -140,6 +140,19 @@ export interface IVirtualDataPointConfig {
   type: 'and' | 'or' | 'not' | 'counter';
 }
 
+export interface ISystemInfoItem {
+  key: string;
+  keyDescription: string;
+  value: string;
+  valueDescription: string;
+}
+
+export interface ISystemInfo {
+  title: string;
+  description: string;
+  items: ISystemInfoItem[];
+}
+
 export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];
@@ -149,6 +162,7 @@ export interface IConfig {
   general: IGeneralConfig;
   networkConfig: NetworkConfig;
   templates: TemplatesConfig;
+  systemInfo: ISystemInfo[];
 }
 
 export interface IConfigManagerParams {

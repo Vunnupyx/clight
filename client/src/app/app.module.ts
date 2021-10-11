@@ -12,7 +12,8 @@ import { SettingsModule } from './pages/settings/settings.module';
 
 import { AppRoutingModule } from './app.routing';
 import { AppTranslationModule } from './app.translation';
-import {QuickStartModule} from "./pages/quick-start/quick-start.module";
+import { QuickStartModule } from './pages/quick-start/quick-start.module';
+import { SystemInformationModule } from './pages/system-information/system-information.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,6 +31,7 @@ import {QuickStartModule} from "./pages/quick-start/quick-start.module";
     LayoutModule,
     SettingsModule,
     QuickStartModule,
+    SystemInformationModule,
 
     AppRoutingModule,
     ToastrModule.forRoot()

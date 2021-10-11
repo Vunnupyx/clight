@@ -157,5 +157,9 @@
     "CreateError": "",
     "UpdateError": "",
     "DeleteError": ""
+  },
+  "system-information": {
+    "SystemInformation": "System Information",
+    "LoadError": ""
   }
 }

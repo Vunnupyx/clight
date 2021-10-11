@@ -184,5 +184,9 @@
       "x2": "Ethernet X2",
       "proxy": "Proxy"
     }
+  },
+  "system-information": {
+    "SystemInformation": "System Information",
+    "LoadError": "Failed to load system information. Try again later"
   }
 }

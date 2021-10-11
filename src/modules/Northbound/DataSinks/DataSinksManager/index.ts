@@ -54,6 +54,8 @@ export class DataSinksManager {
       })
       .then(() => this)
       .catch((err) => {
+        winston.error(JSON.stringify(err));
+        winston.error(err);
         //TODO: Fix
         return Promise.reject(new NorthBoundError(``));
       });

@@ -6,7 +6,8 @@ const configManagerMock = {
     port: 7882,
     serverInfo: {
       applicationUri: ''
-    }
+    },
+    nodesetDir: 'mdclight/config/opcua_nodeSet'
   },
   config: {
     general: {
@@ -52,7 +53,6 @@ jest.mock('fs-extra', () => {
 });
 
 import { OPCUAAdapter } from '..';
-import { AdapterError } from '../../../../../common/errors';
 
 describe(`OPCUAAdapter Test`, () => {
   let testAdapter: OPCUAAdapter;

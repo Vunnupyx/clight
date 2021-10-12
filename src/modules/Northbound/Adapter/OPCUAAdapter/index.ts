@@ -23,22 +23,21 @@ import path from 'path';
 import { compare } from 'bcrypt';
 
 interface IOPCUAAdapterOptions {
-  config: IDataSinkConfig,
-  runtimeConfig: IOPCUAConfig,
-  generalConfig: IGeneralConfig,
+  config: IDataSinkConfig;
+  runtimeConfig: IOPCUAConfig;
+  generalConfig: IGeneralConfig;
 }
 /**
  * Implementation of OPCUA adapter.
  */
 export class OPCUAAdapter {
-  
   private opcuaRuntimeConfig: IOPCUAAdapterOptions['runtimeConfig'];
   private dataSinkConfig: IOPCUAAdapterOptions['config'];
   private generalConfig: IOPCUAAdapterOptions['generalConfig'];
 
   private auth: boolean;
   private users: IUser[];
-  
+
   private server: OPCUAServer;
   private _running = false;
   private nodesetDir: string;
@@ -50,20 +49,23 @@ export class OPCUAAdapter {
   private static shutdownTimeoutMs = 1000;
 
   constructor(options: IOPCUAAdapterOptions) {
-    this.opcuaRuntimeConfig = options.runtimeConfig
+    this.opcuaRuntimeConfig = options.runtimeConfig;
     this.dataSinkConfig = options.config;
     this.generalConfig = options.generalConfig;
 
-    if(!this.dataSinkConfig.auth) {
+    if (!this.dataSinkConfig.auth) {
       // Enable anonymous if no auth infos are found
       this.auth = true;
     } else {
-      this.auth = this.dataSinkConfig.auth.type !== 'userpassword' ? true : false;
+      this.auth =
+        this.dataSinkConfig.auth.type !== 'userpassword' ? true : false;
     }
-    this.users = [{
-      userName: this.dataSinkConfig?.auth?.userName,
-      password: this.dataSinkConfig?.auth?.password
-    }]
+    this.users = [
+      {
+        userName: this.dataSinkConfig?.auth?.userName,
+        password: this.dataSinkConfig?.auth?.password
+      }
+    ];
   }
 
   public get isRunning() {
@@ -92,8 +94,17 @@ export class OPCUAAdapter {
    * Rewrites all xml nodesets into tmp folder and replaces static texts like the machineName
    */
   private async setupNodesets() {
-    this.nodesetDir = path.join(process.cwd(), 'mdclight/config/tmpnodesets');
-    await fs.copy(this.opcuaRuntimeConfig.nodesetDir, this.nodesetDir);
+    this.nodesetDir = path.join(
+      process.env.MDC_LIGHT_FOLDER || process.cwd(),
+      'mdclight/config/tmpnodesets'
+    );
+    await fs.copy(
+      path.join(
+        process.env.MDC_LIGHT_FOLDER || process.cwd(),
+        this.opcuaRuntimeConfig.nodesetDir
+      ),
+      this.nodesetDir
+    );
     const files = (await fs.readdir(this.nodesetDir)) as string[];
     const fullFiles = files.map((file) => path.join(this.nodesetDir, file));
 
@@ -139,6 +150,8 @@ export class OPCUAAdapter {
         );
       })
       .catch((err) => {
+        winston.error(JSON.stringify(err));
+        winston.error(err);
         const errorMsg = `${logPrefix} error due to ${JSON.stringify(err)}`;
         return Promise.reject(new NorthBoundError(errorMsg));
       });
@@ -162,7 +175,10 @@ export class OPCUAAdapter {
     }
 
     const applicationUri = this.opcuaRuntimeConfig.serverInfo.applicationUri;
-    const certificateFolder = path.join(process.cwd(), 'mdclight/config/certs');
+    const certificateFolder = path.join(
+      process.env.MDC_LIGHT_FOLDER || process.cwd(),
+      'mdclight/config/certs'
+    );
     const certificateFile = path.join(
       certificateFolder,
       'server_certificate.pem'
@@ -204,11 +220,23 @@ export class OPCUAAdapter {
     });
 
     this.userManager = {
-      isValidUserAsync: async (userName: string, password: string, cb: (any, bool) => void): Promise<void> => {
+      isValidUserAsync: async (
+        userName: string,
+        password: string,
+        cb: (any, bool) => void
+      ): Promise<void> => {
         const user = this.users.find((user) => userName === user.userName);
         if (!user) {
           const errMsg = `No user information found. Log in was rejected.`;
-          cb(new NorthBoundError(errMsg, null, 'OPCUAAdapter', 'isValidUserAsync'), false);
+          cb(
+            new NorthBoundError(
+              errMsg,
+              null,
+              'OPCUAAdapter',
+              'isValidUserAsync'
+            ),
+            false
+          );
           return;
         }
         const valid = await compare(password, user.password);
@@ -221,7 +249,7 @@ export class OPCUAAdapter {
 
     // TODO: Inject project logger to OPCUAServer
     this.server = new OPCUAServer({
-      ...{...this.opcuaRuntimeConfig, ...{allowAnonymous: this.auth }},
+      ...{ ...this.opcuaRuntimeConfig, ...{ allowAnonymous: this.auth } },
       userManager: this.userManager,
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,

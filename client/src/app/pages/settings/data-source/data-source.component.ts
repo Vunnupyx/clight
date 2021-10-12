@@ -221,7 +221,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   updateSoftwareVersion(version: string) {
     this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
-      softwareVersion: version,
+      softwareVersion: version
     });
   }
 

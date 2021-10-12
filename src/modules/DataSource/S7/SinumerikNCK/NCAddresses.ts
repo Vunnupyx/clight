@@ -66,7 +66,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x13,
     byteLength: 0xa0
   },
-  'Channel/State/feedRateIpoOvr': {
+  '/Channel/State/feedRateIpoOvr': {
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x3,

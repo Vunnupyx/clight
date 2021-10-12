@@ -44,18 +44,19 @@ import {
   templatesHandlers,
   setConfigManager as templatesConfigSetConfigManager,
   setDataSourcesManager as setTemplateDataSourcesManager,
-  setDataSinksManager as setTemplateDataSinksManager,
+  setDataSinksManager as setTemplateDataSinksManager
 } from '../routes/apis/v1/Templates';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
+import swaggerFile from '../routes/swagger';
 
 interface RoutesManagerOptions {
-  app: Application
-  configManager: ConfigManager,
-  dataSourcesManager: DataSourcesManager,
-  dataSinksManager: DataSinksManager
+  app: Application;
+  configManager: ConfigManager;
+  dataSourcesManager: DataSourcesManager;
+  dataSinksManager: DataSinksManager;
 }
 export class RoutesManager {
   private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');
@@ -70,14 +71,11 @@ export class RoutesManager {
     ...mappingHandlers,
     ...networkConfigHandlers,
     ...systemInfoHandlers,
-    ...templatesHandlers,
+    ...templatesHandlers
   };
 
   constructor(options: RoutesManagerOptions) {
     this.app = options.app;
-    const swaggerFile = JSON.parse(
-      fs.readFileSync(this.swaggerFilePath, { encoding: 'utf8' })
-    );
 
     // TODO: Remove swagger ui route
     this.app.use(
@@ -96,24 +94,22 @@ export class RoutesManager {
       mappingSetConfigManager,
       networkConfigSetConfigManager,
       systemInfoSetConfigManager,
-      templatesConfigSetConfigManager,
+      templatesConfigSetConfigManager
     ].forEach((func) => func(options.configManager));
-    setDataSinksManager(options.dataSinksManager)
-    setTemplateDataSinksManager(options.dataSinksManager)
+    setDataSinksManager(options.dataSinksManager);
+    setTemplateDataSinksManager(options.dataSinksManager);
     setDataSourcesManager(options.dataSourcesManager);
     setTemplateDataSourcesManager(options.dataSourcesManager);
 
     this.inputValidator = OpenApiValidator.middleware({
+      // @ts-ignore
       apiSpec: swaggerFile,
       validateRequests: false,
       validateResponses: false
     });
 
     //TODO: Make code async ?
-    connectorFactory(
-      this.routeHandlers,
-      require('../routes/swagger.json')
-    )(this.app);
+    connectorFactory(this.routeHandlers, swaggerFile)(this.app);
     // this.app.use(this.inputValidator);
     this.app.use(this.requestErrorHandler);
   }

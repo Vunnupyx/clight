@@ -55,7 +55,7 @@ export class DataHubAdapter {
   #provClient: RegistrationClient;
   #provGroupClient: RegistrationClient;
   #provSecClient: SymmetricKeySecurityClient;
-  #symKeyProvTransport;
+  #symKeyProvTransport: ProvTransport;
 
   // Datahub and Twin
   #connectionSting: TConnectionString = null;
@@ -128,7 +128,7 @@ export class DataHubAdapter {
           this.#groupDeviceKey = this.generateSymKeyForGroupDevice()
         }
       })
-      .then(() => this.startProvisioning)
+      .then(() => this.startProvisioning())
       .then(() => {
         this.#initialized = true;
         winston.debug(`${logPrefix} initialized. Registered to DPS`);
@@ -182,21 +182,13 @@ export class DataHubAdapter {
       );
       return Promise.resolve();
     }
-    this.#dataHubClient = Client.fromConnectionString(
-      this.#connectionSting,
-      iotHubTransport
-    );
-    if (this.#proxy) {
-      this.#dataHubClient.setTransportOptions({
-        mqtt: { webSocketAgent: this.#proxy }
-      });
-    }
+    this.createDatahubClient();
+
+    this.#dataHubClient.on('error', (...args) => winston.error(`DatahubClient error due to ${JSON.stringify(args)}`))
     return this.#dataHubClient
       .open()
       .then((result) => {
         this.isRunning = result ? true : false;
-      })
-      .then(() => {
         return this.#dataHubClient.getTwin();
       })
       .then((twin) => {
@@ -210,6 +202,22 @@ export class DataHubAdapter {
           )
         );
       });
+  }
+
+  /**
+   * Create DataHubClient instance and add proxy if required.
+   * Instance is available via this.#dataHubClient
+   */
+  private createDatahubClient(): void {
+    this.#dataHubClient = Client.fromConnectionString(
+      this.#connectionSting,
+      iotHubTransport
+    );
+    if (this.#proxy) {
+      this.#dataHubClient.setOptions({
+        mqtt: { webSocketAgent: this.#proxy }
+      });
+    }
   }
 
   /**

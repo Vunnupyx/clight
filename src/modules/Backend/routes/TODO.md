@@ -50,9 +50,9 @@ Response:
 
 ## Live Data Endpoint
 
-GET /api/v1/livedata/datasource/<dataPointId>
-GET /api/v1/livedata/datassink/<dataPointId>
-GET /api/v1/livedata/vdps/<dataPointId>
+GET /api/v1/livedata/datasource/<protocol>/<dataPointId>
+GET /api/v1/livedata/datassink/<protocol>/<dataPointId>
+GET /api/v1/livedata/vdps/<protocol>/<dataPointId>
 
 Response:
 
@@ -63,9 +63,9 @@ Response:
 }
 ```
 
-GET /api/v1/livedata/datasource
-GET /api/v1/livedata/datassink
-GET /api/v1/livedata/vdps
+GET /api/v1/livedata/datasource/<protocol>
+GET /api/v1/livedata/datassink/<protocol>
+GET /api/v1/livedata/vdps/<protocol>
 
 Response:
 

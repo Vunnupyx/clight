@@ -137,7 +137,7 @@ export function isDataPointMapping(obj: any): obj is IDataPointMapping {
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  type: 'and' | 'or' | 'not' | 'counter';
+  operationType: 'and' | 'or' | 'not' | 'counter';
 }
 
 export interface ISystemInfoItem {

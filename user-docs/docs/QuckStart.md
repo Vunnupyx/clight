@@ -1,4 +1,7 @@
-# Install Operation System to IoT2050 Advanced
+---
+title: Install Operation System to IoT2050 Advanced
+slug: /
+---
 
 ## Prepare SD Card
 

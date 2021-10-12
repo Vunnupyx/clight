@@ -5,10 +5,14 @@ import path from 'path';
  * Initializes settings for winston logger
  */
 export class Logger {
+  private static initialized = false;
+
   /**
    * Initializes the settings for winston
    */
   public static init() {
+    if (this.initialized) return;
+
     winston.addColors({
       info: 'bold blue',
       warn: 'italic yellow',
@@ -46,7 +50,10 @@ export class Logger {
         winston.format.json()
       )
     });
+
     winston.add(console);
     winston.add(file);
+
+    this.initialized = true;
   }
 }

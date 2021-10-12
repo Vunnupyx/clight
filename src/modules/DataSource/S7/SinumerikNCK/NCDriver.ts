@@ -1,11 +1,7 @@
-const net = require('net');
+import net from 'net';
 import winston from 'winston';
 import { NC_ADDRESSES } from './NCAddresses';
-import { isFunction, isEqual } from 'lodash';
 import { NCVarSelectorAddress, NCItem } from './interfaces';
-import { Logger } from '../../../Logger';
-import { rejects } from 'assert';
-Logger.init();
 
 enum ConnectionState {
   INVALID = 0,

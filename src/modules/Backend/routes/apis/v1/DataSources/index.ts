@@ -8,7 +8,6 @@ import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import { DataSourcesManager } from '../../../../../DataSourcesManager';
 import { LifecycleEventStatus } from '../../../../../../common/interfaces';
-import { json } from 'stream/consumers';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -51,7 +50,7 @@ function dataSourceGetHandler(request: Request, response: Response): void {
  * Only enabling and disabling is allowed.
  */
 function dataSourcePatchHandler(request: Request, response: Response): void {
-  const allowed = ['connection', 'enabled'];
+  const allowed = ['connection', 'enabled', 'softwareVersion'];
   const protocol = request.params.datasourceProtocol;
 
   const dataSource = configManager.config.dataSources.find(

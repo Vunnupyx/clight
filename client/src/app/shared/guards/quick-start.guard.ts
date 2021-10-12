@@ -1,17 +1,27 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+
+import { TemplateService } from '../../services';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuickStartGuard implements CanActivate {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private templateService: TemplateService,
+  ) {}
 
-  canActivate(
+  async canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (!true) {
+    state: RouterStateSnapshot): Promise<boolean | UrlTree> {
+    const isCompleted = await this.templateService.isCompleted();
+
+    if (!isCompleted) {
+      if (route.routeConfig?.path === 'quick-start') {
+        return true;
+      }
+
       return this.router.navigate(['/quick-start']);
     }
 

@@ -32,9 +32,18 @@
       <span class="spacer"></span>
     </div>
     <span class="spacer"></span>
+    <span class="help-wrapper">
+      <a
+        mat-icon-button
+        [href]="supportHref"
+        target="_blank"
+      >
+        <mat-icon>help_outline</mat-icon>
+      </a>
+    </span>
     <span class="clock-wrapper">
-    <app-clock></app-clock>
-  </span>
+      <app-clock></app-clock>
+    </span>
   </mat-toolbar>
 
   <mat-sidenav-container class="sidenav-container">
@@ -79,7 +88,7 @@
           <mat-icon>settings_ethernet</mat-icon>
           <span routerLinkActive="active" class="menu-text">{{ 'layout.Network' | translate }}</span>
         </a>
-        <a mat-list-item routerLink="system-information">
+        <a mat-list-item routerLink="system-information" *ngIf="false">
           <mat-icon>info</mat-icon>
           <span routerLinkActive="active" class="menu-text">{{ 'layout.SystemInformation' | translate }}</span>
         </a>

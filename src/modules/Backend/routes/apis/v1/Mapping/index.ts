@@ -1,7 +1,6 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import winston from 'winston';
 
 let configManager: ConfigManager;
 
@@ -34,6 +33,30 @@ function mapPostHandler(request: Request, response: Response): void {
   configManager.config = config;
 
   response.status(200).json(map);
+}
+
+/**
+ * Updates mapping
+ */
+function mapPatchHandler(request: Request, response: Response): void {
+  const mapping = configManager.config.mapping.find(x => x.id === request.params.mapId);
+
+  if (!mapping) {
+    response.status(404).json(null);
+    return;
+  }
+
+  const newMapping = {
+    ...mapping,
+    ...request.body,
+    id: request.params.mapId,
+  };
+
+  configManager.changeConfig('update', 'mapping', newMapping, item => item.id);
+
+  response.status(200).json({
+    changed: mapping
+  });
 }
 
 /**
@@ -83,6 +106,7 @@ function mapGetHandler(request: Request, response: Response): void {
 export const mappingHandlers = {
   mappingsGet: mappingGetHandler,
   mapPost: mapPostHandler,
+  mapPatch: mapPatchHandler,
   mapDelete: mapDeleteHandler,
   mapGet: mapGetHandler
 };

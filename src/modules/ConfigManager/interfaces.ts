@@ -108,14 +108,49 @@ export type NetworkConfig = {
   [key in 'x1' | 'x2' | 'proxy']: NetworkConfigItem;
 };
 
+export interface ITemplateDataSource {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface ITemplateDataSink {
+  id: string;
+  name: string;
+  description?: string;
+  dataSources: string[];
+}
+
+export interface IDefaultTemplates {
+  availableDataSources: ITemplateDataSource[];
+  availableDataSinks: ITemplateDataSink[];
+}
+
+export interface TemplatesConfig {
+  completed: boolean;
+}
+
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
-  return 'source' in obj && 'target' in obj;
+  return 'source' in obj && 'target' in obj && !('id' in obj);
 }
 
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
   type: 'and' | 'or' | 'not' | 'counter';
+}
+
+export interface ISystemInfoItem {
+  key: string;
+  keyDescription: string;
+  value: string;
+  valueDescription: string;
+}
+
+export interface ISystemInfo {
+  title: string;
+  description: string;
+  items: ISystemInfoItem[];
 }
 
 export interface IConfig {
@@ -126,6 +161,8 @@ export interface IConfig {
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
   networkConfig: NetworkConfig;
+  templates: TemplatesConfig;
+  systemInfo: ISystemInfo[];
 }
 
 export interface IConfigManagerParams {

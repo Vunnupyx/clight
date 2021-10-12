@@ -1,8 +1,8 @@
 FROM debian:buster
 
 # RUN echo 'deb http://deb.debian.org/debian testing main' >> /etc/apt/sources.list
-RUN apt -y update
-RUN apt install -y git build-essential cmake
+RUN apt-get update
+RUN apt-get install -y git build-essential cmake curl
 RUN git clone https://github.com/eclipse/mraa.git
 RUN git clone https://github.com/siemens/meta-iot2050
 
@@ -30,15 +30,9 @@ WORKDIR /
 # Cleanup
 RUN rm -rf mraa
 RUN rm -rf meta-iot2050
-RUN apt purge -y git build-essential cmake
-
-# Install compiled MDC light runtime
-COPY runtime app
-WORKDIR /app
 
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get update
 RUN apt-get install -y nodejs
+RUN apt purge -y git build-essential cmake curl
 
-ENV LOG_LEVEL=debug
-
-CMD ["node", "index.js"]

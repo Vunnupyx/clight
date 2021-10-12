@@ -7,7 +7,7 @@
   ],
   "mtconnect": { "listenerPort": 7878 },
   "restApi": {
-    "port": 4000,
+    "port": 80,
     "maxFileSizeByte": 20000000
   },
   "opcua": {
@@ -21,6 +21,6 @@
     "serverInfo": {
       "applicationUri": "urn:MDClightOPCUAServer"
     },
-    "nodesetDir": "_mdclight/opcu_nodeSet"
+    "nodesetDir": "mdclight/config/opcua_nodeSet"
   }
 }

@@ -57,7 +57,7 @@ export class S7DataSource extends DataSource {
       if (nckDataPointsConfigured)
         await Promise.all([
           this.connectPLC(connection),
-          await this.nckClient.connect(connection.ipAddr)
+          this.nckClient.connect(connection.ipAddr)
         ]);
       else await this.connectPLC(connection);
     } catch (error) {

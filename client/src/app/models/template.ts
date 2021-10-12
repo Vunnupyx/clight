@@ -9,4 +9,9 @@ export class AvailableDataSink {
   name!: string;
   type!: string;
   description!: string;
+  dataSources!: string[];
+}
+
+export class TemplatesStatus {
+  completed!: boolean;
 }

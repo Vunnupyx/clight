@@ -45,7 +45,7 @@ export class OPCUADataSink extends DataSink {
   public init(): Promise<OPCUADataSink> {
     const logPrefix = `${OPCUADataSink.className}::init`;
     winston.info(`${logPrefix} initializing.`);
-    
+
     return this.opcuaAdapter
       .init()
       .then((adapter) => adapter.start())
@@ -89,8 +89,9 @@ export class OPCUADataSink extends DataSink {
   }
 
   public onLifecycleEvent(event: ILifecycleEvent): Promise<void> {
-    const logPrefix = `${OPCUADataSink.className}::onLifecycleEvent`;
-    let logMsg = `${logPrefix} `;
+    // const logPrefix = `${OPCUADataSink.className}::onLifecycleEvent`;
+    // let logMsg = `${logPrefix} `;
+
     // Check for OPCUA Error Messages
     switch (event.type) {
       case DataSourceLifecycleEventTypes.Connecting: {
@@ -121,7 +122,7 @@ export class OPCUADataSink extends DataSink {
         // );
       }
     }
-    winston.debug(logMsg);
+    // winston.debug(logMsg);
     return Promise.resolve();
   }
 

@@ -1,30 +1,31 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Connection} from 'app/api/models';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Connection } from 'app/api/models';
 import {
-  DataSource, DataSourceConnection,
+  DataSource,
+  DataSourceConnection,
   DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
-import {DataSourceService, SourceDataPointService} from 'app/services';
+import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import {Status} from 'app/shared/state';
-import {clone} from 'app/shared/utils';
-import {Subscription} from 'rxjs';
-import {SelectTypeModalComponent} from './select-type-modal/select-type-modal.component';
+import { Status } from 'app/shared/state';
+import { clone } from 'app/shared/utils';
+import { Subscription } from 'rxjs';
+import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 
 @Component({
   selector: 'app-data-source',
   templateUrl: './data-source.component.html',
   styleUrls: ['./data-source.component.scss']
 })
-export class DataSourceComponent implements OnInit, OnDestroy {
+export class DataSourceComponent implements OnInit {
   SourceDataPointType = SourceDataPointType;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
@@ -34,11 +35,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   datapointRows?: SourceDataPoint[];
   connection?: DataSourceConnection;
 
-  SoftwareVersions = [DataSourceSoftwareVersion.v4_5, DataSourceSoftwareVersion.v4_7];
+  SoftwareVersions = [
+    DataSourceSoftwareVersion.v4_5,
+    DataSourceSoftwareVersion.v4_7
+  ];
 
-  DigitalInputAddresses = new Array(10)
-    .fill(0)
-    .map((_, i) => `DI${i}`);
+  DigitalInputAddresses = new Array(10).fill(0).map((_, i) => `DI${i}`);
 
   unsavedRow?: SourceDataPoint;
   unsavedRowIndex: number | undefined;
@@ -50,6 +52,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     private dataSourceService: DataSourceService,
     private dialog: MatDialog
   ) {}
+
+  get isBusy() {
+    return (
+      this.dataSourceService.status != Status.Ready ||
+      this.sourceDataPointService.status != Status.Ready
+    );
+  }
 
   get isEditing() {
     return !!this.unsavedRow;
@@ -122,11 +131,16 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       return;
     }
     const obj = {
-      type: this.dataSource?.protocol === DataSourceProtocol.S7 ? SourceDataPointType.NCK : null,
+      type:
+        this.dataSource?.protocol === DataSourceProtocol.S7
+          ? SourceDataPointType.NCK
+          : null
     } as SourceDataPoint;
 
     if (this.dataSource?.protocol === DataSourceProtocol.IOShield) {
-      const freeAddresses = this.DigitalInputAddresses.filter(x => this.datapointRows?.every(y => y.address !== x));
+      const freeAddresses = this.DigitalInputAddresses.filter((x) =>
+        this.datapointRows?.every((y) => y.address !== x)
+      );
 
       obj.address = freeAddresses[0];
     }
@@ -167,13 +181,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   private clearUnsavedRow() {
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.datapointRows = this.datapointRows?.filter((x) => x.id) || [];
+    this.datapointRows = this.datapointRows!.filter((x) => x.id);
   }
 
   onAddressSelect(obj: SourceDataPoint) {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
-      data: { selection: obj.address, protocol: this.dataSource?.protocol },
-      width: '650px'
+      data: { selection: obj.address, protocol: this.dataSource?.protocol }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -184,8 +197,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       if (this.dataSource?.protocol === DataSourceProtocol.IOShield) {
         this.unsavedRow!.address = `${result.area}.${result.component}.${result.variable}`;
       } else {
-        this.unsavedRow!.name = result.name;
-        this.unsavedRow!.address = result.address;
+        this.unsavedRow!.address = `${result.address}`;
       }
     });
   }
@@ -211,12 +223,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
-  }
-
-  updateSoftwareVersion(version: string) {
-    this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
-      softwareVersion: version,
-    });
   }
 
   private onConnection(x: DataSourceConnection | undefined) {

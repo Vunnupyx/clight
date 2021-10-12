@@ -55,6 +55,7 @@
     "Name": "Name",
     "Type": "Type",
     "Address": "Address",
+    "LiveData": "Live Data",
     "Actions": "Actions",
     "Area": "Area",
     "Component": "Component",

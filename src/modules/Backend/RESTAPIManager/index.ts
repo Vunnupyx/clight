@@ -7,11 +7,13 @@ import { RoutesManager } from '../RoutesManager';
 import { json as jsonParser } from 'body-parser';
 import { DataSourcesManager } from '../../DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
+import { DataPointCache } from '../../DatapointCache';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager,
   dataSourcesManager: DataSourcesManager,
-  dataSinksManager: DataSinksManager
+  dataSinksManager: DataSinksManager,
+  dataPointCache: DataPointCache,
 }
 
 /**
@@ -46,7 +48,8 @@ export class RestApiManager {
       app: this.expressApp,
       configManager :configManager,
       dataSourcesManager: dataSourcesManager,
-      dataSinksManager: options.dataSinksManager
+      dataSinksManager: options.dataSinksManager,
+      dataPointCache: options.dataPointCache
     });
   }
 

@@ -3,6 +3,7 @@ export * from './data-point';
 export * from './data-sink';
 export * from './data-source';
 export * from './source-data-point';
+export * from './livedata';
 export * from './network';
 export * from './virtual-data-point';
 export * from './system-information';

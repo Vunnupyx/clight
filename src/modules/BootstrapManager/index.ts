@@ -81,7 +81,8 @@ export class BootstrapManager {
     this.backend = new RestApiManager({
       configManager: this.configManager,
       dataSourcesManager: this.dataSourcesManager,
-      dataSinksManager: this.dataSinkManager
+      dataSinksManager: this.dataSinkManager,
+      dataPointCache: this.dataPointCache,
     }).start();
   }
 

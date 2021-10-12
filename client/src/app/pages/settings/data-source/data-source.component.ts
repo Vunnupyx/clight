@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Connection } from 'app/api/models';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Connection} from 'app/api/models';
 import {
+  DataPointLiveData,
   DataSource,
   DataSourceConnection,
   DataSourceConnectionStatus,
@@ -10,14 +11,14 @@ import {
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
-import { DataSourceService, SourceDataPointService } from 'app/services';
+import {DataSourceService, SourceDataPointService} from 'app/services';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { clone } from 'app/shared/utils';
-import { Subscription } from 'rxjs';
-import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
+import {clone, ObjectMap} from 'app/shared/utils';
+import {Subscription} from 'rxjs';
+import {SelectTypeModalComponent} from './select-type-modal/select-type-modal.component';
 
 @Component({
   selector: 'app-data-source',
@@ -44,6 +45,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   unsavedRow?: SourceDataPoint;
   unsavedRowIndex: number | undefined;
 
+  liveData: ObjectMap<DataPointLiveData> = {};
+
   sub = new Subscription();
 
   constructor(
@@ -68,6 +71,11 @@ export class DataSourceComponent implements OnInit, OnDestroy {
         this.onDataPoints(x)
       )
     );
+    this.sub.add(
+      this.sourceDataPointService.dataPointsLivedata.subscribe((x) =>
+        this.onDataPointsLiveData(x)
+      )
+    );
 
     this.dataSourceService.getDataSources();
   }
@@ -87,6 +95,11 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.dataSource = obj;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
     this.dataSourceService.getStatus(obj.protocol!);
+
+    if (obj.protocol! === DataSourceProtocol.IOShield) {
+      this.sourceDataPointService.getLiveDataForIoshieldDataPoints();
+    }
+
     this.clearUnsavedRow();
   }
 
@@ -156,12 +169,20 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       this.sourceDataPointService.updateDataPoint(
         this.dataSource!.protocol!,
         this.unsavedRow!
-      );
+      ).then(() => {
+        if (this.dataSource?.protocol! === DataSourceProtocol.IOShield) {
+          this.sourceDataPointService.getLiveDataForIoshieldDataPoints();
+        }
+      });
     } else {
       this.sourceDataPointService.addDataPoint(
         this.dataSource!.protocol!,
         this.unsavedRow!
-      );
+      ).then(() => {
+        if (this.dataSource?.protocol! === DataSourceProtocol.IOShield) {
+          this.sourceDataPointService.getLiveDataForIoshieldDataPoints();
+        }
+      });
     }
     this.clearUnsavedRow();
   }
@@ -227,5 +248,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   private onConnection(x: DataSourceConnection | undefined) {
     this.connection = x;
+  }
+
+  private onDataPointsLiveData(x: ObjectMap<DataPointLiveData>) {
+    this.liveData = x;
   }
 }

@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
 import { DataPoint, DataSinkProtocol } from 'app/models';
-import { HttpMockupService, HttpService } from 'app/shared';
+import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler, flatArray } from 'app/shared/utils';
 import * as api from 'app/api/models';
-import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
 
 export class DataPointsState {
   status!: Status;

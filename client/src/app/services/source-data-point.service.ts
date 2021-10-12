@@ -3,21 +3,28 @@ import { filter, map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { DataSourceProtocol, SourceDataPoint } from 'app/models';
+import {DataPointLiveData, DataSourceProtocol, SourceDataPoint} from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler, flatArray } from 'app/shared/utils';
+import {array2map, errorHandler, flatArray, ObjectMap} from 'app/shared/utils';
 import * as api from 'app/api/models';
 import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
 
 export class SourceDataPointsState {
   status!: Status;
   dataPoints!: SourceDataPoint[];
+  dataPointsLivedata!: ObjectMap<DataPointLiveData>;
 }
 
 @Injectable()
 export class SourceDataPointService {
   private _store: Store<SourceDataPointsState>;
+
+  get dataPointsLivedata() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(map((x) => x.dataPointsLivedata));
+  }
 
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
@@ -91,6 +98,29 @@ export class SourceDataPointService {
       this._store.patchState(() => ({
         status: Status.Ready
       }));
+    }
+  }
+
+  async getLiveDataForIoshieldDataPoints() {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+      state.dataPointsLivedata = {};
+    });
+
+    try {
+      const liveData = await this.httpService.get<DataPointLiveData[]>(
+        `/livedata/datasource/ioshield`
+      );
+      this._store.patchState((state) => {
+        state.dataPointsLivedata = array2map(liveData, item => item.dataPointId);
+        console.log(state.dataPointsLivedata);
+        state.status = Status.Ready;
+      });
+    } catch (err) {
+      errorHandler(err);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
     }
   }
 

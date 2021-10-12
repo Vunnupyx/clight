@@ -219,12 +219,20 @@
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.address = $event)"
           >
-            <mat-option
-              *ngFor="let item of MTConnectItems"
-              [value]="item.address"
-              [disabled]="isExistingDataPointAddress(item.address!)"
-              >{{ item.name }}</mat-option
-            >
+            <ng-container *ngIf="dataSink?.protocol === Protocol.MTConnect">
+              <mat-option
+                *ngFor="let item of MTConnectItems"
+                [value]="item.address"
+                [disabled]="isExistingDataPointAddress(item.address!)"
+              >{{ item.name }}</mat-option>
+            </ng-container>
+            <ng-container *ngIf="dataSink?.protocol === Protocol.OPC">
+              <mat-option
+                *ngFor="let item of OPCUAAddresses"
+                [value]="item.address"
+                [disabled]="isExistingDataPointAddress(item.address!)"
+              >{{ item.name }}</mat-option>
+            </ng-container>
           </mat-select>
         </ng-template>
       </ngx-datatable-column>

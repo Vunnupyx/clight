@@ -73,6 +73,7 @@ build-runtime:
       - runtime
   script:
     - yarn
+    - yarn build
     - yarn build:dist
   only:
     refs:

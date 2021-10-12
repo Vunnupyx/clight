@@ -37,6 +37,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   DataSinkAuthType = DataSinkAuthType;
   Protocol = DataSinkProtocol;
   MTConnectItems: DataPoint[] = [];
+  OPCUAAddresses: DataPoint[] = [];
   DataSinkConnectionStatus = DataSinkConnectionStatus;
 
   @Input() dataSink?: DataSink;
@@ -67,6 +68,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.MTConnectItems = this.dataSinkService.getPredefinedMtConnectDataPoints();
+    this.OPCUAAddresses = this.dataSinkService.getPredefinedOPCDataPoints();
     this.sub.add(
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
     );

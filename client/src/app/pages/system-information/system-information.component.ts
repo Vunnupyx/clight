@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { SystemInformationService } from '../../services';
@@ -9,7 +9,7 @@ import { SystemInformationSection } from "../../models";
   templateUrl: './system-information.component.html',
   styleUrls: ['./system-information.component.scss']
 })
-export class SystemInformationComponent implements OnInit {
+export class SystemInformationComponent implements OnInit, OnDestroy {
 
   data: SystemInformationSection[] = [];
 
@@ -23,6 +23,10 @@ export class SystemInformationComponent implements OnInit {
     )
 
     this.systemInformationService.getInfo();
+  }
+
+  ngOnDestroy() {
+    this.sub && this.sub.unsubscribe();
   }
 
   private onData(x: SystemInformationSection[]) {

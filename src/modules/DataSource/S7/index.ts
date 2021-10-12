@@ -105,9 +105,11 @@ export class S7DataSource extends DataSource {
    */
   private readPlcData(addresses: string[]): Promise<S7DataPointsWithError> {
     return new Promise((resolve, reject) => {
+      if (addresses.length === 0) resolve({ datapoints: [], error: null });
       try {
         const timeoutId = setTimeout(
-          () => reject(new Error(`PLC data timeout for ${addresses}`)),
+          () =>
+            reject(new Error(`PLC data timeout for addresses: [${addresses}]`)),
           10000
         );
         this.client.addItems(addresses);
@@ -222,7 +224,7 @@ export class S7DataSource extends DataSource {
             type: DataPointLifecycleEventTypes.ReadSuccess
           });
         } else {
-          winston.warn(`Failed to read datapoint ${dp.id}`);
+          winston.error(`Failed to read datapoint ${dp.id} - Error: ${error}`);
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,
@@ -240,7 +242,7 @@ export class S7DataSource extends DataSource {
 
       this.onDataPointMeasurement(measurements);
     } catch (e) {
-      winston.error(e);
+      winston.error(`S7DataSource Error: ${e.message} / ${JSON.stringify(e)}`);
     }
     this.cycleActive = false;
   }

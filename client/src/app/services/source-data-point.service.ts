@@ -1,19 +1,20 @@
-import { Injectable } from '@angular/core';
-import { filter, map } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import {Injectable} from '@angular/core';
+import {filter, map} from 'rxjs/operators';
+import {ToastrService} from 'ngx-toastr';
+import {TranslateService} from '@ngx-translate/core';
 
-import {DataPointLiveData, DataSourceProtocol, SourceDataPoint} from 'app/models';
-import { HttpService } from 'app/shared';
-import { Status, Store, StoreFactory } from 'app/shared/state';
-import {array2map, errorHandler, flatArray, ObjectMap} from 'app/shared/utils';
+import {DataPointLiveData, DataSourceProtocol, SourceDataPoint, SourceDataPointType} from 'app/models';
+import {HttpService} from 'app/shared';
+import {Status, Store, StoreFactory} from 'app/shared/state';
+import {array2map, errorHandler, ObjectMap} from 'app/shared/utils';
 import * as api from 'app/api/models';
-import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
+import {CreateEntityResponse} from 'app/models/responses/create-entity.response';
 
 export class SourceDataPointsState {
   status!: Status;
   dataPoints!: SourceDataPoint[];
   dataPointsLivedata!: ObjectMap<DataPointLiveData>;
+  dataPointsSourceMap!: ObjectMap<DataSourceProtocol>;
 }
 
 @Injectable()
@@ -48,7 +49,7 @@ export class SourceDataPointService {
   async getDataPoints(datasourceProtocol: DataSourceProtocol) {
     this._store.patchState((state) => ({
       status: Status.Loading,
-      dataPoints: []
+      dataPoints: [],
     }));
 
     try {
@@ -58,6 +59,7 @@ export class SourceDataPointService {
 
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+        state.dataPointsSourceMap = array2map(state.dataPoints, item => item.id, () => datasourceProtocol);
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -82,12 +84,23 @@ export class SourceDataPointService {
         `/datasources`
       );
 
-      const dataPoints = flatArray(
-        dataSources?.map((x) => x.dataPoints) as api.Sourcedatapoint[][]
-      );
+      let dataPoints: api.Sourcedatapoint[] = [];
+      let wholeMap = {};
+
+      for (const dataSource of dataSources!) {
+        const map = array2map(dataSource.dataPoints!, item => item.id!, () => dataSource.protocol);
+
+        wholeMap = {
+          ...wholeMap,
+          ...map,
+        };
+
+        dataPoints = dataPoints.concat(...(dataSource.dataPoints as api.Sourcedatapoint[]));
+      }
 
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+        state.dataPointsSourceMap = wholeMap;
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -113,7 +126,6 @@ export class SourceDataPointService {
       );
       this._store.patchState((state) => {
         state.dataPointsLivedata = array2map(liveData, item => item.dataPointId);
-        console.log(state.dataPointsLivedata);
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -140,6 +152,7 @@ export class SourceDataPointService {
         state.status = Status.Ready;
         obj.id = response.created.id;
         state.dataPoints.push(obj);
+        state.dataPointsSourceMap[obj.id] = datasourceProtocol;
       });
     } catch (err) {
       this.toastr.error(
@@ -209,13 +222,31 @@ export class SourceDataPointService {
     }
   }
 
+  getPrefix(id: string) {
+    const protocol = this._store?.snapshot?.dataPointsSourceMap[id];
+
+    switch (protocol) {
+      case DataSourceProtocol.S7:
+        const dp = this._store.snapshot.dataPoints.find(x => x.id === id);
+        if (dp!.type === SourceDataPointType.NCK) {
+          return '[NC]';
+        }
+        return '[PLC]';
+      case DataSourceProtocol.IOShield:
+        return `[DI]`;
+      default:
+        return '';
+    }
+  }
+
   private _parseDataPoint(obj: api.Sourcedatapoint) {
     return obj as SourceDataPoint;
   }
 
   private _emptyState() {
     return <SourceDataPointsState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      dataPointsSourceMap: {},
     };
   }
 }

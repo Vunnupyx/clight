@@ -156,7 +156,7 @@
               class="text-ellipsis"
               [title]="value"
             >
-              {{ value }}
+              {{ getDataSourceDataPointPrefix(row.id) }} {{ value }}
             </div>
             <input
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"

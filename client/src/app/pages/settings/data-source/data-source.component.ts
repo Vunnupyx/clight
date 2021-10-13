@@ -236,6 +236,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
+  getDataSourceDataPointPrefix(id: string): string {
+    return this.sourceDataPointService.getPrefix(id);
+  }
+
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
   }

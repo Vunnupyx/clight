@@ -141,7 +141,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       enabled: true,
       map: result.map
     } as DataPoint;
-    console.log(result, obj);
+
     this.unsavedRowIndex = this.datapointRows!.length;
     this.unsavedRow = obj;
     this.datapointRows = this.datapointRows!.concat([obj]);
@@ -241,6 +241,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   isExistingDataPointAddress(address: string) {
     return this.datapointRows?.some(x => x.address === address);
+  }
+
+  getDataSinkDataPointPrefix(id: string) {
+    return this.dataPointService.getPrefix(id);
   }
 
   private onConnection(x: DataSinkConnection | undefined) {

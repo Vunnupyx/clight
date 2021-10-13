@@ -4,12 +4,13 @@ import { filter, map } from 'rxjs/operators';
 import { DataPoint, DataSinkProtocol } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler, flatArray } from 'app/shared/utils';
+import {array2map, errorHandler, flatArray, ObjectMap} from 'app/shared/utils';
 import * as api from 'app/api/models';
 
 export class DataPointsState {
   status!: Status;
   dataPoints!: DataPoint[];
+  dataPointsSinkMap!: ObjectMap<DataSinkProtocol>;
 }
 
 @Injectable()
@@ -46,6 +47,7 @@ export class DataPointService {
       this._store.patchState((state) => {
         state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
+        state.dataPointsSinkMap = array2map(state.dataPoints, (item) => item.id!, () => protocol);
       });
     } catch (err) {
       errorHandler(err);
@@ -67,13 +69,24 @@ export class DataPointService {
         dataSinks: api.DataSinkType[];
       }>(`/datasinks`);
 
-      const dataPoints = flatArray(
-        dataSinks?.map((x) => x.dataPoints) as api.DataPointType[][]
-      );
+      let dataPoints: api.DataPointType[] = [];
+      let wholeMap = {};
+
+      for (const dataSink of dataSinks) {
+        const map = array2map(dataSink.dataPoints!, item => item.id!, () => dataSink.protocol)
+
+        wholeMap = {
+          ...wholeMap,
+          ...map,
+        };
+
+        dataPoints = dataPoints.concat(...(dataSink.dataPoints as api.DataPointType[]));
+      }
 
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
+        state.dataPointsSinkMap = wholeMap;
       });
     } catch (err) {
       errorHandler(err);
@@ -98,6 +111,7 @@ export class DataPointService {
         state.status = Status.Ready;
         obj.id = response.created.id;
         state.dataPoints.push(obj);
+        state.dataPointsSinkMap[obj.id!] = protocol;
       });
     } catch (err) {
       errorHandler(err);
@@ -155,13 +169,29 @@ export class DataPointService {
     }
   }
 
+  getPrefix(id: string) {
+    const protocol = this._store?.snapshot?.dataPointsSinkMap[id];
+
+    switch (protocol) {
+      case DataSinkProtocol.DH:
+        return '';
+      case DataSinkProtocol.MTConnect:
+        return '[MTC]';
+      case DataSinkProtocol.OPC:
+        return '[OPCUA]';
+      default:
+        return '';
+    }
+  }
+
   private _parseDataPoint(obj: api.DataPointType) {
     return obj as any as DataPoint;
   }
 
   private _emptyState() {
     return <DataPointsState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      dataPointsSinkMap: {}
     };
   }
 }

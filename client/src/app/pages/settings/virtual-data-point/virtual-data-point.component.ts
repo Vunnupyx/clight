@@ -82,6 +82,14 @@ export class VirtualDataPointComponent implements OnInit {
     this.datapointRows = arr;
   }
 
+  getVirtualDataPointPrefix() {
+    return this.virtualDataPointService.getPrefix();
+  }
+
+  getDataSourceDataPointPrefix(id: string) {
+    return this.sourceDataPointService.getPrefix(id);
+  }
+
   onAdd() {
     if (!this.datapointRows) { return; }
 

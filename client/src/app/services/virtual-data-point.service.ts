@@ -71,13 +71,13 @@ export class VirtualDataPointService {
     });
 
     try {
-      const vdp = await this.httpService.post<CreateEntityResponse<VirtualDataPoint>>(
+      const vdp = await this.httpService.post<CreateEntityResponse<api.VirtualDataPointType>>(
         `/vdps`,
         obj
       );
 
       this._store.patchState((state) => {
-        const dataPoint = vdp.created;
+        const dataPoint = this._parseDataPoint(vdp.created);
 
         obj.id = dataPoint.id;
         state.dataPoints.push(obj);
@@ -100,14 +100,14 @@ export class VirtualDataPointService {
     });
 
     try {
-      const vdp = await this.httpService.patch<UpdateEntityResponse<VirtualDataPoint>>(
+      const vdp = await this.httpService.patch<UpdateEntityResponse<api.VirtualDataPointType>>(
         `/vdps/${id}`,
         obj
       );
 
       this._store.patchState((state) => {
         state.dataPoints = state.dataPoints.map((x) =>
-          x.id != id ? x : ({ ...x, ...vdp.changed })
+          x.id != id ? x : ({ ...x, ...this._parseDataPoint(vdp.changed) })
         );
         state.status = Status.Ready;
       });
@@ -143,6 +143,10 @@ export class VirtualDataPointService {
         status: Status.Ready
       }));
     }
+  }
+
+  public getPrefix() {
+    return '[VDP]';
   }
 
   private _parseDataPoint(obj: api.VirtualDataPointType) {

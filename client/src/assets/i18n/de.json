@@ -25,7 +25,8 @@
     "DeviceInfo": "Device Info",
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
-    "Deutsch": "Deutsch"
+    "Deutsch": "Deutsch",
+    "OpenConfigurationWizard": "Open Configuration Wizard"
   },
   "settings-device-info": {
     "Manufacturer": "",

@@ -13,6 +13,7 @@ export class TemplatesState {
   status!: Status;
   availableDataSources!: AvailableDataSource[];
   availableDataSinks!: AvailableDataSink[];
+  completed!: boolean;
 }
 
 @Injectable()
@@ -74,6 +75,7 @@ export class TemplateService {
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.completed = true;
       });
     } catch (err) {
       this.toastr.error(
@@ -88,9 +90,17 @@ export class TemplateService {
 
   async isCompleted() {
     try {
-      const response = await this.httpService.get<TemplatesStatus>(`/templates/status`);
+      if (this._store.snapshot.completed === undefined) {
+        const response = await this.httpService.get<TemplatesStatus>(`/templates/status`);
 
-      return response.completed;
+        this._store.patchState((state) => {
+          state.completed = response.completed;
+        });
+
+        return response.completed;
+      }
+
+      return this._store.snapshot.completed;
     } catch (err) {
       return false;
     }

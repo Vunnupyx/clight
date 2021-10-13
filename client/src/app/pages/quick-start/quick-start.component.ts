@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,6 +9,10 @@ import { DataSourceService, TemplateService } from '../../services';
 import { AvailableDataSink, AvailableDataSource } from '../../models/template';
 import { LocalStorageService } from '../../shared';
 import { unique } from '../../shared/utils';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel
+} from "../../shared/components/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'app-quick-start',
@@ -43,6 +48,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private router: Router,
+    private dialog: MatDialog,
   ) {}
 
 
@@ -75,12 +81,34 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     this.localStorageService.set('ui-lang', value);
   }
 
-  onSubmit() {
+  async onSubmit() {
     const dataSource = this.sourceForm.value.source;
     const dataSinks = this.applicationInterfacesForm.value.interfaces;
 
-    this.templateService.apply({ dataSource: dataSource, dataSinks })
-      .then(() => this.router.navigate(['/']));
+    const isCompleted = await this.templateService.isCompleted();
+
+    if (!isCompleted) {
+      this.templateService.apply({ dataSource: dataSource, dataSinks })
+        .then(() => this.router.navigate(['/']));
+
+      return;
+    }
+
+    const title = this.translate.instant('quick-start.Attention');
+    const message = this.translate.instant('quick-start.AttentionMessage');
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: new ConfirmDialogModel(title, message)
+    });
+
+    dialogRef.afterClosed().subscribe((dialogResult) => {
+      if (!dialogResult) {
+        return;
+      }
+
+      this.templateService.apply({ dataSource: dataSource, dataSinks })
+        .then(() => this.router.navigate(['/']));
+    });
   }
 
   onInterfacesChange() {

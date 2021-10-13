@@ -30,6 +30,43 @@ interface IConfigManagerEvents {
 
 type ChangeOperation = 'insert' | 'update' | 'delete';
 
+const defaultS7DataSource: IDataSourceConfig = {
+  name: '',
+  dataPoints: [],
+  protocol: DataSourceProtocols.S7,
+  connection: {
+    ipAddr: '192.168.214.1',
+    port: 102,
+    rack: 0,
+    slot: 2
+  },
+  enabled: false
+};
+const defaultIoShieldDataSource: IDataSourceConfig = {
+  name: '',
+  dataPoints: [],
+  protocol: DataSourceProtocols.IOSHIELD,
+  enabled: false
+};
+const defaultOpcuaDataSink: IDataSinkConfig = {
+  name: '',
+  dataPoints: [],
+  enabled: false,
+  protocol: DataSinkProtocols.OPCUA
+};
+const defaultDataHubDataSink: IDataSinkConfig = {
+  name: '',
+  dataPoints: [],
+  enabled: false,
+  protocol: DataSinkProtocols.DATAHUB
+};
+
+const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
+  name: '',
+  dataPoints: [],
+  enabled: false,
+  protocol: DataSinkProtocols.MTCONNECT
+};
 
 
 export const emptyDefaultConfig = {

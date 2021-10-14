@@ -98,8 +98,6 @@ export class OPCUAAdapter {
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
       'mdclight/config/tmpnodesets'
     );
-    console.log(process.env.MDC_LIGHT_FOLDER || process.cwd());
-    console.log(this.opcuaRuntimeConfig.nodesetDir);
     await fs.copy(
       path.join(
         process.env.MDC_LIGHT_FOLDER || process.cwd(),

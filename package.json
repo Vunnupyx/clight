@@ -28,7 +28,7 @@
     "dev:webserver": "cd client && yarn start",
     "build": "tsc -p tsconfig.json",
     "build:dist": "ncc build build/main/index.js -o runtime --minify",
-    "build:mdclight": "yarn docker:build:mdclight-prod",
+    "build:mdclight": "yarn docker:build:mdclight",
     "build:webserver": "cd client && yarn && yarn build",
     "docker:build:webserver": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile --push client",
     "docker:build:ci": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci -f ci.Dockerfile .",

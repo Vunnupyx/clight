@@ -98,8 +98,6 @@ export class OPCUAAdapter {
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
       'mdclight/config/tmpnodesets'
     );
-    console.log(process.env.MDC_LIGHT_FOLDER || process.cwd());
-    console.log(this.opcuaRuntimeConfig.nodesetDir);
     await fs.copy(
       path.join(
         process.env.MDC_LIGHT_FOLDER || process.cwd(),
@@ -230,15 +228,7 @@ export class OPCUAAdapter {
         const user = this.users.find((user) => userName === user.userName);
         if (!user) {
           const errMsg = `No user information found. Log in was rejected.`;
-          cb(
-            new NorthBoundError(
-              errMsg,
-              null,
-              'OPCUAAdapter',
-              'isValidUserAsync'
-            ),
-            false
-          );
+          cb(new NorthBoundError(errMsg), false);
           return;
         }
         const valid = await compare(password, user.password);

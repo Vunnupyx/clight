@@ -37,11 +37,14 @@ export class DataSinksManager {
 
   constructor(params: IDataSinkManagerParams) {
     this.configManager = params.configManager;
+    this.configManager.once('configsLoaded', () => {
+      return this.init();
+    });
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
   }
 
-  public init(): Promise<DataSinksManager> {
+  private init(): Promise<DataSinksManager> {
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
 
@@ -54,10 +57,9 @@ export class DataSinksManager {
       })
       .then(() => this)
       .catch((err) => {
-        winston.error(JSON.stringify(err));
-        winston.error(err);
-        //TODO: Fix
-        return Promise.reject(new NorthBoundError(``));
+        return Promise.reject(
+          new NorthBoundError(`${logPrefix} error due to ${err.message}`)
+        );
       });
   }
 
@@ -96,6 +98,7 @@ export class DataSinksManager {
     this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
 
     this.connectDataSinksToBus();
+    winston.info(`${logPrefix} created.`);
   }
 
   private findDataSinkConfig(protocol: DataSinkProtocols): IDataSinkConfig {

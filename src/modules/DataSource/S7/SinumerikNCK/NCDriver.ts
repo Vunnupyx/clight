@@ -156,8 +156,18 @@ export default class SinumerikNCKProtocolDriver {
    */
   private async connectTCP(host: string, port: number): Promise<void> {
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        this.tcpClient.removeAllListeners('connect');
+        reject(
+          new Error(
+            'Sinumerik NCK TCP connection timeout error - check IP address'
+          )
+        );
+      }, 5000);
+
       this.tcpClient.on('error', reject);
       this.tcpClient.on('connect', () => {
+        clearTimeout(timeout);
         winston.debug('TCP connected successfully!');
         resolve();
       });
@@ -172,6 +182,15 @@ export default class SinumerikNCKProtocolDriver {
    */
   private async connectISO(rack: number = 0, slot: number = 4): Promise<void> {
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        this.tcpClient.removeAllListeners('data');
+        reject(
+          new Error(
+            'Sinumerik NCK ISO connection timeout error - check rack and slot number'
+          )
+        );
+      }, 5000);
+
       let connectRequest = this.ISO_CONNECT_REQUEST.slice();
       connectRequest[21] = rack * 32 + slot;
       this.tcpClient.on('error', reject);
@@ -179,6 +198,7 @@ export default class SinumerikNCKProtocolDriver {
       this.tcpClient.on(
         'data',
         ((data) => {
+          clearTimeout(timeout);
           this.tcpClient.removeAllListeners('data');
           if (this.checkConnectISOResponseOk(data)) {
             winston.debug('ISO connected successfully!');
@@ -198,6 +218,12 @@ export default class SinumerikNCKProtocolDriver {
    */
   private async negotiatePDU(): Promise<void> {
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        this.tcpClient.removeAllListeners('data');
+        reject(
+          new Error('Sinumerik NCK connection parameter negotiation failed')
+        );
+      }, 5000);
       let negotiatePDUPacket = this.ISO_NEGOTIATE_PDU.slice();
       negotiatePDUPacket.writeInt16BE(this.REQUEST_MAX_PARALLEL, 19);
       negotiatePDUPacket.writeInt16BE(this.REQUEST_MAX_PARALLEL, 21);
@@ -210,6 +236,7 @@ export default class SinumerikNCKProtocolDriver {
       this.tcpClient.on(
         'data',
         ((data) => {
+          clearTimeout(timeout);
           this.tcpClient.removeAllListeners('data');
 
           const parsedData = this.parsePDUResponse(data);
@@ -324,8 +351,24 @@ export default class SinumerikNCKProtocolDriver {
     this.tcpClient.write(requestPacket);
     return await new Promise(
       ((resolve, reject) => {
-        this.dataReadResolveCallback = resolve;
-        this.dataReadRejectCallback = reject;
+        const timeout = setTimeout(() => {
+          reject(
+            new Error(
+              `Sinumerik NCK readVariable timeout. Variable: ${JSON.stringify(
+                ncVar
+              )}, Request TCP packet: ${requestPacket.toString('hex')}`
+            )
+          );
+        }, 20000);
+
+        this.dataReadResolveCallback = (result) => {
+          clearTimeout(timeout);
+          resolve(result);
+        };
+        this.dataReadRejectCallback = (error) => {
+          clearTimeout(timeout);
+          reject(error);
+        };
       }).bind(this)
     );
   }
@@ -439,17 +482,23 @@ export default class SinumerikNCKProtocolDriver {
     const responseParameterFunctionCode = data[19];
     const responseParameterItemCount = data[20];
     const itemResponseCode = data[21];
-    const payloadDataLength = data.readInt16BE(23);
+    const payloadDataLength = data.length >= 24 ? data.readInt16BE(23) : -1;
 
     const PROTOCOL_ID_S7_COM = 0x32;
     if (protocolId !== PROTOCOL_ID_S7_COM)
       throw new Error(`Response packet error, bad protocol id: ${protocolId}`);
 
     const MESSAGE_TYPE_ACK_DATA = 0x3;
-    if (messageType !== MESSAGE_TYPE_ACK_DATA)
+    if (messageType !== MESSAGE_TYPE_ACK_DATA) {
+      const PLC_RESPONSE_MESSAGE_TYPE = 0x2;
       throw new Error(
-        `Response packet error, bad message type: ${messageType}`
+        `Response packet error, bad message type: ${messageType} ${
+          messageType === PLC_RESPONSE_MESSAGE_TYPE
+            ? '- Verify that you are connected to the NCK and not to the PLC'
+            : ''
+        }`
       );
+    }
 
     if (errorClass !== 0x0 || errorCode !== 0x0)
       throw new Error(

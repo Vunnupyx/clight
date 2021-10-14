@@ -32,7 +32,6 @@ const OPCUACertManagerMock = {
 };
 
 jest.mock('node-opcua', () => {
-  console.log('MOCK NODE_OPCUA');
   return {
     OPCUAServer: jest.fn(() => {
       return OPCUAServerMock;

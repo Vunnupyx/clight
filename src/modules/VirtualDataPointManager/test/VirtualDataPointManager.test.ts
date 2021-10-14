@@ -17,32 +17,32 @@ describe('Test VirtualDataPointManager', () => {
     {
       id: 'andResult',
       sources: ['inputAnd1', 'inputAnd2'],
-      type: 'and'
+      operationType: 'and'
     },
     {
       id: 'orResult',
       sources: ['inputOr1', 'inputOr2'],
-      type: 'or'
+      operationType: 'or'
     },
     {
       id: 'notResult',
       sources: ['inputNot1'],
-      type: 'not'
+      operationType: 'not'
     },
     {
       id: 'counterResult',
       sources: ['inputCounter1'],
-      type: 'counter'
+      operationType: 'counter'
     },
     {
       id: 'nested1AndResult',
       sources: ['andResult', 'orResult'],
-      type: 'and'
+      operationType: 'and'
     },
     {
       id: 'nested2AndResult',
       sources: ['nested1AndResult', 'notResult'],
-      type: 'or'
+      operationType: 'or'
     }
   ];
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { NetworkService } from '../../../services/network.service';
@@ -6,13 +6,14 @@ import { Status } from '../../../shared/state';
 import { clone, ObjectMap } from '../../../shared/utils';
 import { NetworkConfig, NetworkType } from '../../../models';
 import { HOST_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
+import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-network',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss']
 })
-export class NetworkComponent implements OnInit {
+export class NetworkComponent implements OnInit, OnDestroy {
   NetworkType = NetworkType;
 
   config!: ObjectMap<NetworkConfig>;
@@ -36,7 +37,7 @@ export class NetworkComponent implements OnInit {
 
   ngOnInit(): void {
     this.sub.add(
-      this.networkService.config.subscribe(x => this.onConfig(x))
+      this.networkService.config.pipe(filter(el => !!el)).subscribe(x => this.onConfig(x))
     );
 
     this.networkService.getNetworkConfig();
@@ -96,5 +97,9 @@ export class NetworkComponent implements OnInit {
     }
 
     return this.saveChanges();
+  }
+
+  ngOnDestroy() {
+    this.sub && this.sub.unsubscribe();
   }
 }

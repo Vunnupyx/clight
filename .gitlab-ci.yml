@@ -73,6 +73,7 @@ build-runtime:
       - runtime
   script:
     - yarn
+    - yarn build
     - yarn build:dist
   only:
     refs:
@@ -87,7 +88,7 @@ build-docker-runtime:
   stage: build-docker
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - yarn docker:build:mdclight-prod
+    - yarn docker:build:mdclight
   only:
     refs:
       - main

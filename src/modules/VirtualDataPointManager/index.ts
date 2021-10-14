@@ -145,7 +145,7 @@ export class VirtualDataPointManager {
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
   ): boolean | number | null {
-    switch (config.type) {
+    switch (config.operationType) {
       case 'and':
         return this.and(sourceEvents, config);
       case 'or':
@@ -156,7 +156,7 @@ export class VirtualDataPointManager {
         return this.count(sourceEvents, config);
       default:
         winston.warn(
-          `Invalid type (${config.type}) provided for virtual data point ${config.id}!`
+          `Invalid type (${config.operationType}) provided for virtual data point ${config.id}!`
         );
         return null;
     }

@@ -114,7 +114,7 @@ export class SourceDataPointService {
     }
   }
 
-  async getLiveDataForIoshieldDataPoints() {
+  async getLiveDataForDataPoints(protocol: DataSourceProtocol) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
       state.dataPointsLivedata = {};
@@ -122,7 +122,7 @@ export class SourceDataPointService {
 
     try {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
-        `/livedata/datasource/ioshield`
+        `/livedata/datasource/${protocol}`
       );
       this._store.patchState((state) => {
         state.dataPointsLivedata = array2map(liveData, item => item.dataPointId);

@@ -96,9 +96,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.sourceDataPointService.getDataPoints(obj.protocol!);
     this.dataSourceService.getStatus(obj.protocol!);
 
-    if (obj.protocol! === DataSourceProtocol.IOShield) {
-      this.sourceDataPointService.getLiveDataForIoshieldDataPoints();
-    }
+    this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!)
 
     this.clearUnsavedRow();
   }
@@ -169,20 +167,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       this.sourceDataPointService.updateDataPoint(
         this.dataSource!.protocol!,
         this.unsavedRow!
-      ).then(() => {
-        if (this.dataSource?.protocol! === DataSourceProtocol.IOShield) {
-          this.sourceDataPointService.getLiveDataForIoshieldDataPoints();
-        }
-      });
+      ).then(() => this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!));
     } else {
       this.sourceDataPointService.addDataPoint(
         this.dataSource!.protocol!,
         this.unsavedRow!
-      ).then(() => {
-        if (this.dataSource?.protocol! === DataSourceProtocol.IOShield) {
-          this.sourceDataPointService.getLiveDataForIoshieldDataPoints();
-        }
-      });
+      ).then(() => this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!));
     }
     this.clearUnsavedRow();
   }

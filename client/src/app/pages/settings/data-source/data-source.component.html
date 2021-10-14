@@ -202,7 +202,6 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          *ngIf="dataSource?.protocol === Protocol.IOShield"
           [name]="'settings-data-source.LiveData' | translate"
           prop="livedata"
           [flexGrow]="1"

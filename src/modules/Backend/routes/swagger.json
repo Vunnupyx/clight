@@ -885,7 +885,16 @@
         }
       }
     },
-    "/livedata/datasource/ioshield": {
+    "/livedata/datasource/{datasourceProtocol}": {
+      "parameters": [
+        {
+          "name": "datasourceProtocol",
+          "in": "path",
+          "description": "id of the dataSource to get",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
         "tags": ["livedata"],
         "description": "Get livedata for dataSource dataPoints",
@@ -897,8 +906,15 @@
         }
       }
     },
-    "/livedata/datasource/ioshield/{dataPointId}": {
+    "/livedata/datasource/{datasourceProtocol}/{dataPointId}": {
       "parameters": [
+        {
+          "name": "datasourceProtocol",
+          "in": "path",
+          "description": "id of the dataSource to get",
+          "required": true,
+          "type": "string"
+        },
         {
           "name": "dataPointId",
           "in": "path",

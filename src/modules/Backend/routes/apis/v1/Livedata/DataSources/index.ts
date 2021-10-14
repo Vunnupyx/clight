@@ -18,7 +18,7 @@ export function setDataPointCache(cache: DataPointCache) {
 }
 
 function livedataDataSourceDataPointsGetHandler(request: Request, response: Response): void {
-    const dataSource = configManager.config.dataSources.find((ds) => ds.protocol === DataSourceProtocols.IOSHIELD);
+    const dataSource = configManager.config.dataSources.find((ds) => ds.protocol === request.params.datasourceProtocol);
 
     if (!dataSource) {
         response.status(404).send();

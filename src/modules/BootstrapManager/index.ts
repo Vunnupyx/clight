@@ -81,8 +81,8 @@ export class BootstrapManager {
       configManager: this.configManager,
       dataSourcesManager: this.dataSourcesManager,
       dataSinksManager: this.dataSinkManager,
-      dataPointCache: this.dataPointCache,
-    }).start();
+      dataPointCache: this.dataPointCache
+    });
   }
 
   /**

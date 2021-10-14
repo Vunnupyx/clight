@@ -1,5 +1,4 @@
-import express, {
-  Express} from 'express';
+import express, { Express } from 'express';
 import winston from 'winston';
 import { ConfigManager } from '../../ConfigManager';
 import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
@@ -10,10 +9,10 @@ import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 
 interface RestApiManagerOptions {
-  configManager: ConfigManager,
-  dataSourcesManager: DataSourcesManager,
-  dataSinksManager: DataSinksManager,
-  dataPointCache: DataPointCache,
+  configManager: ConfigManager;
+  dataSourcesManager: DataSourcesManager;
+  dataSinksManager: DataSinksManager;
+  dataPointCache: DataPointCache;
 }
 
 /**
@@ -23,20 +22,29 @@ export class RestApiManager {
   private port: number;
   private config: IRestApiConfig;
   private readonly expressApp: Express = express();
+  private options: RestApiManagerOptions;
   private routeManager: RoutesManager;
 
   private static className: string;
 
   constructor(options: RestApiManagerOptions) {
+    this.options = options;
+
     RestApiManager.className = this.constructor.name;
     const logPrefix = `${RestApiManager.className}::constructor`;
 
-    const {configManager , dataSourcesManager} = options;
-    this.config = configManager.runtimeConfig.restApi;
-    configManager.on('newRuntimeConfig', this.newRuntimeConfigHandle.bind(this));
+    this.options.configManager.once('configsLoaded', () => {
+      return this.init();
+    });
+  }
+
+  private init() {
+    const logPrefix = `${RestApiManager.className}::init`;
+    winston.info(`${logPrefix} Initializing rest api`);
+
+    this.config = this.options.configManager.runtimeConfig.restApi;
     this.port = this.config.port || Number.parseInt(process.env.PORT) || 5000;
 
-    // TODO: Maybe move to init method
     this.expressApp.use(
       jsonParser({
         limit: this.config.maxFileSizeByte,
@@ -46,27 +54,27 @@ export class RestApiManager {
     this.expressApp.disable('x-powered-by');
     this.routeManager = new RoutesManager({
       app: this.expressApp,
-      configManager :configManager,
-      dataSourcesManager: dataSourcesManager,
-      dataSinksManager: options.dataSinksManager,
-      dataPointCache: options.dataPointCache
+      configManager: this.options.configManager,
+      dataSourcesManager: this.options.dataSourcesManager,
+      dataSinksManager: this.options.dataSinksManager,
+      dataPointCache: this.options.dataPointCache
     });
+
+    this.start();
   }
 
   /**
    * Start RestApiManager and all dependencies.
    */
-  public start(): RestApiManager {
+  private start(): RestApiManager {
     const logPrefix = `${RestApiManager.className}::start`;
+
+    winston.info(`${logPrefix} Starting backend server`);
     this.expressApp.listen(this.port, () =>
-      winston.info(`Backend server listening on port ${this.config.port}`)
+      winston.info(
+        `${logPrefix} Backend server listening on port ${this.config.port}`
+      )
     );
     return this;
-  }
-
-  private newRuntimeConfigHandle(config: IRuntimeConfig) {
-    const logPrefix = `${RestApiManager.className}::newRuntimeConfigHandle`;
-    //TODO: implement restart of the express server
-    winston.warn(`${logPrefix} receive a config change. Reactions to this event not implemented, yet.`)
   }
 }

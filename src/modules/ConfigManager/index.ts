@@ -1,4 +1,4 @@
-import fs from 'fs';
+import {promises as fs, readFileSync} from 'fs';
 import path from 'path';
 import { EventEmitter } from 'stream';
 import {
@@ -25,6 +25,7 @@ import winston from 'winston';
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
   newRuntimeConfig: (config: IRuntimeConfig) => void;
+  configsLoaded: () => void;
 }
 
 type ChangeOperation = 'insert' | 'update' | 'delete';
@@ -47,6 +48,8 @@ const defaultIoShieldDataSource: IDataSourceConfig = {
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false
 };
+
+
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
@@ -105,13 +108,15 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   );
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
+
   private _runtimeConfig: IRuntimeConfig;
   private _config: IConfig;
   private _defaultTemplates: IDefaultTemplates;
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private static className: string;
+
+  private static className: string = ConfigManager.name;
 
   public get config(): IConfig {
     return this._config;
@@ -145,8 +150,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.errorEventsBus = errorEventsBus;
     this.lifecycleEventsBus = lifecycleEventsBus;
 
-    ConfigManager.className = this.constructor.name;
-
     // Initial values
     this._runtimeConfig = {
       users: [],
@@ -169,28 +172,37 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Initializes and parses config items
    */
-  public async init() {
-    this._runtimeConfig = await this.loadConfig<IRuntimeConfig>(
+  public init(): Promise<void> {
+    const logPrefix = `${ConfigManager.className}::init`;
+    winston.info(`${logPrefix} initializing.`);
+    return Promise.all([
+      this.loadConfig<IRuntimeConfig>(
       this.runtimeConfigName,
       this.runtimeConfig
-    );
-    this._config = await this.loadConfig<IConfig>(this.configName, this.config);
-
-    this.setupDefaultDataSources();
+    ), this.loadConfig<IConfig>(this.configName, this.config)]).then(([runTime, config]) => {
+      this._runtimeConfig = runTime;
+      this._config = config;
+      this.setupDefaultDataSources();
     this.setupDefaultDataSinks();
-
     this.loadTemplates();
-
-    this.checkType(
-      this.runtimeConfig.mtconnect.listenerPort,
-      'number',
-      'runtime.mtconnect.listenerPort'
-    );
-    this.checkType(
-      this.runtimeConfig.restApi.port,
-      'number',
-      'runtime.restApi.port'
-    );
+    }).then(() => {
+      this.checkType(
+        this.runtimeConfig.mtconnect.listenerPort,
+        'number',
+        'runtime.mtconnect.listenerPort'
+      );
+      this.checkType(
+        this.runtimeConfig.restApi.port,
+        'number',
+        'runtime.restApi.port'
+      );
+    }).then(() => {
+      this.emit('configsLoaded');
+      winston.info(`${logPrefix} initialized.`);
+    })
+    .catch((err) => {
+      return Promise.reject(JSON.stringify(err));
+    });
   }
 
   /**
@@ -254,34 +266,41 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Loads config files by filename and adds missing values
    */
-  private async loadConfig<ConfigType>(
+  private loadConfig<ConfigType>(
     configName: string,
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
     const configPath = path.join(this.configFolder, configName);
-    winston.info(`Loading config file from path "${configPath}"`);
-    const pathExists = fs.existsSync(this.configFolder);
-    const fileExists = fs.existsSync(configPath);
-    if (!pathExists || !fileExists) {
-      await this.lifecycleEventsBus.push({
-        id: 'device',
-        type: DeviceLifecycleEventTypes.DeviceConfigDoesNotExists,
-        level: EventLevels.Device,
-        payload: `Configuration ${
-          !fileExists ? 'file' : 'folder'
-        } does not exist!`
-      });
-      return Promise.reject(
-        new Error(
+
+    return Promise.all([fs.readFile(configPath, {encoding: 'utf-8'})])
+      .catch(() => {
+        this.lifecycleEventsBus.push({
+          id: 'device',
+          type: DeviceLifecycleEventTypes.DeviceConfigDoesNotExists,
+          level: EventLevels.Device,
+          payload: `Configuration file does not exist!`
+        });
+        return Promise.reject(new Error(
           `${logPrefix} error due to ${DeviceLifecycleEventTypes.DeviceConfigDoesNotExists}`
-        )
-      );
-    }
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    return this.mergeDeep(defaultConfig, config);
+        ))
+      })
+      .then(([file]) => {
+        return this.mergeDeep(defaultConfig, JSON.parse(file));
+      }).catch((err) => {
+        this.lifecycleEventsBus.push({
+          id: 'device',
+          type: DeviceLifecycleEventTypes.ErrorOnParseLocalConfig,
+          level: EventLevels.Device,
+          payload: `Error merging configs.`
+        });
+        return Promise.reject(new Error(`${logPrefix} error due to merging error.`));
+      })
   }
 
+  /**
+   * TODO: @patrick please make this method async and add comment
+   */
   private loadTemplate(templateName) {
     try {
       const configPath = path.join(
@@ -289,7 +308,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         'defaulttemplates',
         `${templateName}.json`
       );
-      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      return JSON.parse(readFileSync(configPath, 'utf8'));
     } catch (err) {
       return null;
     }
@@ -424,15 +443,19 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Save the current data from config property into a JSON config file on hard drive
    */
-  private saveConfigToFile(): void {
-    fs.writeFileSync(
+  private saveConfigToFile(): Promise<void> {
+    const logPrefix = `${ConfigManager.className}::saveConfigToFile`;
+    return fs.writeFile(
       path.join(this.configFolder, this.configName),
       JSON.stringify(this._config, null, 2),
       { encoding: 'utf-8' }
-    );
-    winston.info(
-      `${ConfigManager.className}::saveConfigToFile saved new config to file`
-    );
+    ).then(() => {
+      winston.info(
+        `${ConfigManager.className}::saveConfigToFile saved new config to file`
+      );
+    }).catch((err) => {
+      winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
+    });
   }
 
   public saveConfig(obj: Partial<IConfig> = null): void {

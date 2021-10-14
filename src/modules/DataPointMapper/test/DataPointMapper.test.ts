@@ -1,13 +1,20 @@
-import { DataPointMapper } from '..';
-import { ConfigManager, emptyDefaultConfig } from '../../ConfigManager';
 import {
-  IConfig,
   IDataSinkConfig,
   IDataSourceConfig
 } from '../../ConfigManager/interfaces';
-import { EventBus } from '../../EventBus';
 
-jest.mock('fs');
+jest.mock('fs', () => {
+  return {
+    promises: {
+      writeFile: jest.fn().mockImplementation(() => Promise.resolve())
+    }
+  };
+});
+jest.mock('winston');
+
+import { DataPointMapper } from '..';
+import { ConfigManager, emptyDefaultConfig } from '../../ConfigManager';
+import { EventBus } from '../../EventBus';
 
 describe('Test DataPointMapper', () => {
   test("should map a source to it's target", async () => {

@@ -8,7 +8,7 @@
       "email": "info@codestryke.com"
     }
   },
-  "host": "localhost:8080",
+  "host": "localhost:80",
   "basePath": "/api/v1",
   "tags": [
     {
@@ -930,6 +930,39 @@
         "responses": {
           "200": {
             "description": "Returns all information about the livedata for dataSource dataPoint"
+          }
+        }
+      }
+    },
+    "/livedata/vdps": {
+      "get": {
+        "tags": ["livedata"],
+        "description": "Get livedata for vdps",
+        "operationId": "livedataVirtualDataPointsGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the livedata for vdps"
+          }
+        }
+      }
+    },
+    "/livedata/vdps/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "id of vdp",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["livedata"],
+        "description": "Get livedata for vdp",
+        "operationId": "livedataVirtualDataPointGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the livedata for vdp"
           }
         }
       }

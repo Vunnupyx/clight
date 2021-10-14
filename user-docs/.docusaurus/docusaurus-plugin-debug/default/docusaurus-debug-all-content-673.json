@@ -8,9 +8,9 @@
           "versionPath": "/help/docs",
           "isLast": true,
           "routePriority": -1,
-          "sidebarFilePath": "/Users/patrickkopp/Source/mdc-light/user-docs/sidebars.js",
-          "contentPath": "/Users/patrickkopp/Source/mdc-light/user-docs/docs",
-          "contentPathLocalized": "/Users/patrickkopp/Source/mdc-light/user-docs/i18n/en/docusaurus-plugin-content-docs/current",
+          "sidebarFilePath": "/home/codestryke/Documents/mdc-light/user-docs/sidebars.js",
+          "contentPath": "/home/codestryke/Documents/mdc-light/user-docs/docs",
+          "contentPathLocalized": "/home/codestryke/Documents/mdc-light/user-docs/i18n/en/docusaurus-plugin-content-docs/current",
           "mainDocId": "QuckStart",
           "sidebars": {
             "docs": [
@@ -57,7 +57,7 @@
               "formattedLastUpdatedAt": "10/14/2018",
               "sidebar": "docs",
               "previous": {
-                "title": "Install Operation System to IoT2050 Advanced",
+                "title": "Getting Started - Operating System Installation and MDCLight Commissioning",
                 "permalink": "/help/docs/"
               }
             },
@@ -65,7 +65,7 @@
               "unversionedId": "QuckStart",
               "id": "QuckStart",
               "isDocsHomePage": false,
-              "title": "Install Operation System to IoT2050 Advanced",
+              "title": "Getting Started - Operating System Installation and MDCLight Commissioning",
               "description": "Prepare SD Card",
               "source": "@site/docs/QuckStart.md",
               "slug": "/",

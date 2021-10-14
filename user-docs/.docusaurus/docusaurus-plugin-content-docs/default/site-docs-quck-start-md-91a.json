@@ -2,7 +2,7 @@
   "unversionedId": "QuckStart",
   "id": "QuckStart",
   "isDocsHomePage": false,
-  "title": "Install Operation System to IoT2050 Advanced",
+  "title": "Getting Started - Operating System Installation and MDCLight Commissioning",
   "description": "Prepare SD Card",
   "source": "@site/docs/QuckStart.md",
   "slug": "/",

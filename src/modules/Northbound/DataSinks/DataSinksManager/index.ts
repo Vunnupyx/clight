@@ -39,12 +39,12 @@ export class DataSinksManager {
     this.configManager = params.configManager;
     this.configManager.once('configsLoaded', () => {
       return this.init();
-    })
+    });
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
   }
 
-  public init(): Promise<DataSinksManager> {
+  private init(): Promise<DataSinksManager> {
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
 
@@ -57,7 +57,9 @@ export class DataSinksManager {
       })
       .then(() => this)
       .catch((err) => {
-        return Promise.reject(new NorthBoundError(`${logPrefix} error due to ${err.message}`));
+        return Promise.reject(
+          new NorthBoundError(`${logPrefix} error due to ${err.message}`)
+        );
       });
   }
 

@@ -57,7 +57,6 @@ export class BootstrapManager {
     try {
       this.configManager.init();
       DataPointMapper.createInstance(this.configManager);
-      await this.dataSinkManager.init();
 
       await this.loadModules();
       this.lifecycleEventsBus.push({

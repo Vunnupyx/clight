@@ -97,7 +97,6 @@ export interface IDataHubConfig {
     regId: string,
     symKey: string
     groupDevice: boolean,
-    minMsgSize: number;
     proxy?: IProxyConfig,
     signalGroups: ISignalGroups
     dataPointTypesData: {
@@ -108,7 +107,6 @@ export interface IDataHubConfig {
 
 interface IDataHubDataPointTypesData {
   intervalHours: number | null,
-  bufferSizeBytes: number | null
 }
 
 export interface ISignalGroups {

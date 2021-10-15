@@ -160,7 +160,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       datahub: {
         serialNumber: "No serial number found",
-        minMsgSize: 500,
         provisioningHost: "",
         scopeId: "",
         regId: "unknownDevice",
@@ -170,11 +169,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         signalGroups: undefined,
         dataPointTypesData: {
           probe: {
-            bufferSizeBytes: 500,
             intervalHours: undefined
           },
           telemetry: {
-            bufferSizeBytes: 500,
             intervalHours: undefined
           }
         }

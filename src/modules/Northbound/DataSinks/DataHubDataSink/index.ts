@@ -5,12 +5,19 @@ import winston from 'winston';
 import {
   IDataHubConfig,
   IDataSinkConfig,
-  ISignalGroups
+  ISignalGroups,
+  TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
 
 export interface DataHubDataSinkOptions {
   config: IDataSinkConfig;
   runTimeConfig: IDataHubConfig;
+}
+
+export type TGroupedMeasurements = Record<TDataHubDataPointType, Array<IMeasurement>>
+
+interface IMeasurement {
+  [address: string]: any
 }
 
 /**
@@ -27,40 +34,47 @@ export class DataHubDataSink extends DataSink {
     this.#signalGroups = options.runTimeConfig.signalGroups;
     this.#datahubAdapter = new DataHubAdapter(options.runTimeConfig);
   }
+
   /**
    * Send data to data hub via data hub adapter object.
    */
-  protected processDataPointValue(dataPointId: string, value: any): void {
+  protected processDataPointValues(dataPointsObj): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
     winston.debug(
-      `${logPrefix} receive measurement for dataPoint: ${dataPointId} with value: ${value}`
+      `${logPrefix} receive measurements.`
     );
-    if (!this.#connected) {
-      winston.info(
-        `${logPrefix} receive measurement data but datasink is not connected.`
-      );
-      return;
-    }
 
-    const desiredProps = this.#datahubAdapter.getDesiredProps().services;
+    const services = this.#datahubAdapter.getDesiredProps().services;
+   
+    winston.debug(`${logPrefix} active services: ${Object.keys(services)}`);
+    const data: TGroupedMeasurements = {
+      probe: [],
+      event: [],
+      telemetry: [],
+    };
+    // add all datapoints from enabled services to the type group
+    for (const serviceName of Object.keys(services)) {
+      if (services[serviceName].enabled) {
+        const validDatapoints = this.#signalGroups[serviceName];
 
-    for (const serviceName of Object.keys(desiredProps)) {
-      if (
-        desiredProps[serviceName].enabled &&
-        this.#signalGroups[serviceName]?.includes(dataPointId)
-      ) {
-        const {type, address } = this.config.dataPoints.find(
-          (dp) => dp.id === dataPointId
+        winston.debug(
+          `${logPrefix} datapoints in ${serviceName}: ${validDatapoints}`
         );
-        if (type === 'condition') return
-        this.#datahubAdapter.sendData(type, address, value);
-        return;
+        for (const id of Object.keys(dataPointsObj)) {
+          if (validDatapoints.includes(id)) {
+            const { type, address } = this.config.dataPoints.find(
+              (dp) => dp.id === id
+            );
+            data[type].push({ [address]: dataPointsObj[id] });
+          }
+        }
       }
     }
-    winston.debug(
-      `${logPrefix} not signal group found for ${dataPointId} datapoint. Maybe disabled from backend.`
-    );
+    this.#datahubAdapter.sendData(data);
+    winston.debug(`${logPrefix} transfer grouped data to adapter.`);
   }
+
+  protected processDataPointValue() {}
 
   /**
    * Not implemented for DataHub!

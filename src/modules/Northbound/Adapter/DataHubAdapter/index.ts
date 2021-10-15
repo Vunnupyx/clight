@@ -10,7 +10,7 @@ import {
 import { SymmetricKeySecurityClient } from 'azure-iot-security-symmetric-key';
 import { createHmac } from 'crypto';
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import { SocksProxyAgent} from 'socks-proxy-agent';
+import { SocksProxyAgent } from 'socks-proxy-agent';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
@@ -44,7 +44,6 @@ export class DataHubAdapter {
   #proxyConfig: DataHubAdapterOptions['proxy'];
   #proxy: HttpsProxyAgent | SocksProxyAgent;
 
-  
   // Provisioning
   #registrationId: string;
   #symKey: string;
@@ -69,10 +68,23 @@ export class DataHubAdapter {
   #telemetrySendInterval: number;
   #runningTimers: Array<NodeJS.Timer> = [];
 
-
   public constructor(options: DataHubAdapterOptions) {
-    this.#probeSendInterval = this.hoursToMs(options.dataPointTypesData.probe.intervalHours);
-    this.#telemetrySendInterval = this.hoursToMs(options.dataPointTypesData.telemetry.intervalHours);
+    if (
+      !options.dataPointTypesData.probe.intervalHours ||
+      !options.dataPointTypesData.telemetry.intervalHours
+    ) {
+      throw new NorthBoundError(
+        `${
+          DataHubAdapter.#className
+        } can not build instance. No send interval available`
+      );
+    }
+    this.#probeSendInterval = this.hoursToMs(
+      options.dataPointTypesData.probe.intervalHours
+    );
+    this.#telemetrySendInterval = this.hoursToMs(
+      options.dataPointTypesData.telemetry.intervalHours
+    );
     this.#dpsServiceAddress = options.provisioningHost;
     this.#registrationId = options.regId;
     this.#symKey = options.symKey;
@@ -111,12 +123,14 @@ export class DataHubAdapter {
         winston.debug(`${logPrefix} initializing.`);
         if (this.#proxyConfig) {
           winston.debug(
-            `${logPrefix} proxy config detected. Building ${this.#proxyConfig.type} proxy object.`
+            `${logPrefix} proxy config detected. Building ${
+              this.#proxyConfig.type
+            } proxy object.`
           );
           this.#proxy = this.getProxyAgent();
         }
-        if(this.#isGroupRegistration) {
-          this.#groupDeviceKey = this.generateSymKeyForGroupDevice()
+        if (this.#isGroupRegistration) {
+          this.#groupDeviceKey = this.generateSymKeyForGroupDevice();
         }
       })
       .then(() => this.startProvisioning())
@@ -175,7 +189,10 @@ export class DataHubAdapter {
     }
     this.createDatahubClient();
 
-    return this.#dataHubClient.on('error', (...args) => winston.error(`DatahubClient error due to ${JSON.stringify(args)}`))
+    return this.#dataHubClient
+      .on('error', (...args) =>
+        winston.error(`DatahubClient error due to ${JSON.stringify(args)}`)
+      )
       .open()
       .then((result) => {
         this.isRunning = result ? true : false;
@@ -185,13 +202,17 @@ export class DataHubAdapter {
         this.#deviceTwin = twin;
         twin.on('properties.desired.services', () => {
           winston.debug(`${logPrefix} got services update.`);
-        })
-        this.#runningTimers.push(setInterval(() => {
-          this.sendMessage('probe');
-        }, this.#probeSendInterval));
-        this.#runningTimers.push(setInterval(() => {
-          this.sendMessage('telemetry');
-        }, this.#telemetrySendInterval));
+        });
+        this.#runningTimers.push(
+          setInterval(() => {
+            this.sendMessage('probe');
+          }, this.#probeSendInterval)
+        );
+        this.#runningTimers.push(
+          setInterval(() => {
+            this.sendMessage('telemetry');
+          }, this.#telemetrySendInterval)
+        );
         winston.info(`${logPrefix} successful. Adapter ready to send data.`);
       })
       .catch((err) => {
@@ -278,7 +299,9 @@ export class DataHubAdapter {
   private getProxyAgent(): HttpsProxyAgent | SocksProxyAgent {
     switch (this.#proxyConfig.type) {
       case 'http': {
-        return new HttpsProxyAgent(parse(`http://${this.#proxyConfig.ip}:${this.#proxyConfig.port}`));
+        return new HttpsProxyAgent(
+          parse(`http://${this.#proxyConfig.ip}:${this.#proxyConfig.port}`)
+        );
       }
       case 'socks5': {
         const { username, password, ip, port } = this.#proxyConfig;
@@ -343,16 +366,18 @@ export class DataHubAdapter {
   public sendData(groupedMeasurements: TGroupedMeasurements): void {
     const logPrefix = `${DataHubAdapter.#className}::sendData`;
 
-    for(const [group, measurementArray] of Object.entries(groupedMeasurements)) {
+    for (const [group, measurementArray] of Object.entries(
+      groupedMeasurements
+    )) {
       // TODO: why object.entries infer string instead real strings?
       let buffer: MessageBuffer;
-      switch(group as TDataHubDataPointType) {
+      switch (group as TDataHubDataPointType) {
         case 'event': {
           const eventBuffer = new MessageBuffer(this.#serialNumber);
           eventBuffer.addAssetList(measurementArray);
           const msg = this.addMsgType('event', eventBuffer.getMessage());
           this.#dataHubClient.sendEvent(msg, () => {
-            winston.debug(`${logPrefix} send event data`)
+            winston.debug(`${logPrefix} send event data`);
           });
           continue;
         }
@@ -365,14 +390,16 @@ export class DataHubAdapter {
           break;
         }
         default: {
-          winston.error(`${logPrefix} received data with invalid datapoint type`);
+          winston.error(
+            `${logPrefix} received data with invalid datapoint type`
+          );
           continue;
         }
       }
       buffer = new MessageBuffer(this.#serialNumber);
       buffer.addAssetList(measurementArray);
     }
-    if(this.#firstMeasurement) {
+    if (this.#firstMeasurement) {
       this.sendMessage('probe');
       this.sendMessage('telemetry');
       this.#firstMeasurement = false;
@@ -381,11 +408,20 @@ export class DataHubAdapter {
 
   private sendMessage(msgType: Exclude<TDataHubDataPointType, 'event'>): void {
     const logPrefix = `${DataHubAdapter.#className}::sendMessage`;
-    if(!this.#dataHubClient || !this.isRunning) {
-      winston.error(`${logPrefix} try to send event to datahub on not running adapter.`);
+    if (!this.#dataHubClient || !this.isRunning) {
+      winston.error(
+        `${logPrefix} try to send event to datahub on not running adapter.`
+      );
       return;
     }
-    const buffer = msgType === 'telemetry' ? this.#telemetryBuffer : this.#probeBuffer;
+    const buffer =
+      msgType === 'telemetry' ? this.#telemetryBuffer : this.#probeBuffer;
+    if (!buffer) {
+      winston.warn(
+        `${logPrefix} try to send data but no data buffer available`
+      );
+      return;
+    }
     const msg = this.addMsgType(msgType, buffer.getMessage());
     this.#dataHubClient.sendEvent(msg, () => {
       winston.debug(`${logPrefix} send ${msgType} message`);
@@ -424,18 +460,16 @@ class MessageBuffer {
   #startDate = new Date().toISOString();
   #assetBuffer: IAssetData[] = [];
 
-  constructor(
-    private serialNumber: string
-  ){}
+  constructor(private serialNumber: string) {}
 
   /**
    * Add a iterable array of asset datasets to the buffer.
    */
-  public addAssetList(
-    assets: Array<{ [address: string]: any}>
-  ): void {
+  public addAssetList(assets: Array<{ [address: string]: any }>): void {
     assets.forEach((obj) => {
-      this.#assetBuffer.push(this.generateAssetData(Object.keys(obj)[0], obj.address));
+      this.#assetBuffer.push(
+        this.generateAssetData(Object.keys(obj)[0], obj.address)
+      );
     });
   }
 
@@ -469,8 +503,6 @@ class MessageBuffer {
    * Get sendable message object.
    */
   public getMessage(): Message {
-      return new Message(JSON.stringify(this.getCurrentMsg()));
+    return new Message(JSON.stringify(this.getCurrentMsg()));
   }
-
-
 }

@@ -92,6 +92,10 @@
           <mat-icon>info</mat-icon>
           <span routerLinkActive="active" class="menu-text">{{ 'layout.SystemInformation' | translate }}</span>
         </a>
+        <a mat-list-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{ 'layout.Logout' | translate }}</span>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>

@@ -9,6 +9,11 @@ export interface IRuntimeConfig {
   restApi: IRestApiConfig;
 }
 
+export interface IAuthConfig {
+    secret: string;
+    expiresIn: number;
+}
+
 export interface IGeneralConfig {
   manufacturer: string;
   serialNumber: string;

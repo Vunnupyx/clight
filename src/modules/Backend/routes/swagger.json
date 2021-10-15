@@ -12,6 +12,10 @@
   "basePath": "/api/v1",
   "tags": [
     {
+      "name": "auth",
+      "description": "Everything about authorization"
+    },
+    {
       "name": "datasource",
       "description": "Everything about the data source"
     },
@@ -42,11 +46,42 @@
     {
       "name": "templates",
       "description": "Everything about the templates."
+    },
+    {
+      "name": "livedata",
+      "description": "Everything about the livedata."
     }
   ],
   "produces": ["application/json"],
   "schemes": ["http", "https"],
   "paths": {
+    "/auth/login": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "loginPost",
+        "description": "Login in system",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "loginRequest",
+            "description": "Login in system",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Auth token",
+            "schema": {
+              "$ref": "#/definitions/loginResponse"
+            }
+          }
+        }
+      }
+    },
     "/datasources": {
       "get": {
         "tags": ["datasource"],
@@ -1053,6 +1088,14 @@
       }
     }
   },
+  "securityDefinitions": {
+    "jwt": {
+      "name": "Authorization",
+      "type": "apiKey",
+      "in": "header"
+    }
+  },
+  "security": [{ "jwt": [] }],
   "definitions": {
     "changeDatasource": {
       "description": "JSON type for change enable state or connection",
@@ -1582,6 +1625,26 @@
       "properties": {
         "completed": {
           "type": "boolean"
+        }
+      }
+    },
+    "loginRequest": {
+      "type": "object",
+      "required": ["userName", "password"],
+      "properties": {
+        "userName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "loginResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
         }
       }
     }

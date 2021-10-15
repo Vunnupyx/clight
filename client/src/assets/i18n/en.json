@@ -8,7 +8,14 @@
     "DataMapping": "Data Mapping",
     "DataSinks": "Application Interfaces",
     "Network": "Network",
-    "SystemInformation": "System Information"
+    "SystemInformation": "System Information",
+    "Logout": "Logout"
+  },
+  "auth-login": {
+    "Login": "Login into system!",
+    "Username": "Username",
+    "Password": "Password",
+    "SignIn": "Sign in"
   },
   "quick-start": {
     "Language": "Language",

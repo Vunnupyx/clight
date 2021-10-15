@@ -14,6 +14,7 @@ import { AppRoutingModule } from './app.routing';
 import { AppTranslationModule } from './app.translation';
 import { QuickStartModule } from './pages/quick-start/quick-start.module';
 import { SystemInformationModule } from './pages/system-information/system-information.module';
+import { AuthModule } from "./pages/auth/auth.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,6 +29,7 @@ import { SystemInformationModule } from './pages/system-information/system-infor
 
     AppTranslationModule,
 
+    AuthModule,
     LayoutModule,
     SettingsModule,
     QuickStartModule,

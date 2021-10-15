@@ -13,7 +13,7 @@ const routes: Routes = [
   {
     path: 'settings',
     redirectTo: 'settings/general',
-    pathMatch: 'full'
+    pathMatch: 'full',
   }
 ];
 

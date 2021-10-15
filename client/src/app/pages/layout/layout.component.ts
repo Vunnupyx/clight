@@ -3,6 +3,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import {Observable, of} from 'rxjs';
 import {filter, map, mergeMap, shareReplay} from 'rxjs/operators';
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {AuthService} from "../../shared";
 
 @Component({
   selector: 'app-layer',
@@ -38,5 +39,10 @@ export class LayoutComponent {
     private breakpointObserver: BreakpointObserver,
     private router: Router,
     private route: ActivatedRoute,
+    private auth: AuthService
   ) {}
+
+  async logout() {
+    await this.auth.logout();
+  }
 }

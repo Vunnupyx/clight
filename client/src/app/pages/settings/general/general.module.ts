@@ -5,11 +5,13 @@ import { SharedModule } from 'app/shared/shared.module';
 
 import { GeneralComponent } from './general.component';
 import { DeviceInfoComponent } from './device-info/device-info.component';
+import {AuthGuard} from "../../../shared/guards/auth.guard";
 
 const routes: Routes = [
   {
     path: 'settings/general',
-    component: GeneralComponent
+    component: GeneralComponent,
+    canActivate: [AuthGuard],
   }
 ];
 

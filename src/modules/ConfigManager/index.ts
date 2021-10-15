@@ -13,11 +13,12 @@ import { EventBus } from '../EventBus';
 import {
   IDefaultTemplates,
   IConfig,
+  IAuthConfig,
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
   IRuntimeConfig,
-  isDataPointMapping
+  isDataPointMapping,
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -107,10 +108,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   );
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
-
+  private authConfigName = 'auth.json';
   private _runtimeConfig: IRuntimeConfig;
   private _config: IConfig;
   private _defaultTemplates: IDefaultTemplates;
+  private _authConfig: IAuthConfig;
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
@@ -125,6 +127,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this._config = config;
     this.saveConfigToFile();
     this.emit('newConfig', this.config);
+  }
+
+  public get authConfig(): IAuthConfig {
+    return this._authConfig;
   }
 
   public get runtimeConfig(): IRuntimeConfig {
@@ -165,6 +171,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       }
     };
 
+    this._authConfig = {
+      secret: 'secret',
+      expiresIn: 60 * 60,
+    };
+
     this._config = emptyDefaultConfig;
   }
 
@@ -179,11 +190,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.runtimeConfigName,
         this.runtimeConfig
       ),
-      this.loadConfig<IConfig>(this.configName, this.config)
+      this.loadConfig<IConfig>(this.configName, this.config),
+      this.loadConfig<IAuthConfig>(this.authConfigName, this.authConfig),
     ])
-      .then(([runTime, config]) => {
+      .then(([runTime, config, authConfig]) => {
         this._runtimeConfig = runTime;
         this._config = config;
+        this._authConfig = authConfig;
         this.setupDefaultDataSources();
         this.setupDefaultDataSinks();
         this.loadTemplates();

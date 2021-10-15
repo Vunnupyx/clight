@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 
 import { AuthService } from './auth.service';
-import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
+import {HttpHeaders, HttpParams, HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {catchError} from "rxjs/operators";
+import {EMPTY, of} from "rxjs";
 
-const OPTIONS_DEFAULTS = { withCredentials: true };
+const OPTIONS_DEFAULTS = { withCredentials: true, headers: new HttpHeaders() as RequestHttpHeaders };
 
 export type RequestHttpHeaders =
-  | HttpHeaders
+    HttpHeaders
   | {
       [header: string]: string | string[];
     };
@@ -32,30 +34,36 @@ export class HttpService {
   get<T = any>(url: string, options?: RequestOptionsArgs) {
     return this.http
       .get<T>(this._getUrl(url), this._getOptions(options))
-      .toPromise();
+      .pipe(catchError((err) => this._catchError(err)))
+      .toPromise()
+      // .catch((err) => this._catchError(err));
   }
 
   patch<T = any>(url: string, body: any, options?: RequestOptionsArgs) {
     return this.http
       .patch<T>(this._getUrl(url), body, this._getOptions(options))
+      // .pipe(catchError((err, caught) => this._catchError(err, caught)))
       .toPromise();
   }
 
   put<T = any>(url: string, body: any, options?: RequestOptionsArgs) {
     return this.http
       .put<T>(this._getUrl(url), body, this._getOptions(options))
+      // .pipe(catchError((err, caught) => this._catchError(err, caught)))
       .toPromise();
   }
 
   post<T = any>(url: string, body: any, options?: RequestOptionsArgs) {
     return this.http
       .post<T>(this._getUrl(url), body, this._getOptions(options))
+      // .pipe(catchError((err, caught) => this._catchError(err, caught)))
       .toPromise();
   }
 
   delete(url: string, options?: RequestOptionsArgs) {
     return this.http
       .delete(this._getUrl(url), this._getOptions(options))
+      // .pipe(catchError((err, caught) => this._catchError(err, caught)))
       .toPromise();
   }
 
@@ -63,11 +71,20 @@ export class HttpService {
     return `${environment.apiRoot}${url}`;
   }
 
+  protected _catchError(err: HttpErrorResponse) {
+    if (err.status === 401 || err.status === 403) {
+
+      this.authService.logout();
+      return EMPTY;
+    }
+
+    throw err;
+  }
+
   protected _getOptions(
     customOptions: RequestOptionsArgs = {} as RequestOptionsArgs
   ) {
     const options = Object.assign({}, OPTIONS_DEFAULTS, customOptions);
-
     if (this.authService.token) {
       options.headers = this._setAuthHeaders(
         options.headers as RequestHttpHeaders,
@@ -86,13 +103,14 @@ export class HttpService {
   }
 
   private _setAuthHeaders(existingHeaders: RequestHttpHeaders, token: string) {
-    if (typeof existingHeaders.append === 'function') {
-      existingHeaders.append('Authorization', token);
+    if (typeof existingHeaders.set === 'function') {
+      existingHeaders = existingHeaders.set('Authorization', `Bearer ${token}`);
+
       return existingHeaders;
     }
     return {
       ...existingHeaders,
-      Authorization: token
+      Authorization: `Bearer ${token}`
     };
   }
 }

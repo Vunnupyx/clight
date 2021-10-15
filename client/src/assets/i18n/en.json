@@ -12,10 +12,12 @@
     "Logout": "Logout"
   },
   "auth-login": {
-    "Login": "Login into system!",
     "Username": "Username",
     "Password": "Password",
-    "SignIn": "Sign in"
+    "SignIn": "Sign in",
+    "ForCustomers": "For our customers:",
+    "ForCustomersDescription": "Please log in with your current my DMG MORI ID",
+    "ForgotPassword": "Forgot your password?"
   },
   "quick-start": {
     "Language": "Language",

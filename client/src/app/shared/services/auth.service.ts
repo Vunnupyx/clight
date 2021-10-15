@@ -30,6 +30,6 @@ export class AuthService {
 
   logout() {
     this.localStorageService.clear('accessToken');
-    return this.router.navigate(['/auth/login']);
+    return this.router.navigate(['/login']);
   }
 }

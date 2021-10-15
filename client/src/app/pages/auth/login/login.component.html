@@ -1,11 +1,14 @@
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h2 class="text-center">{{ 'auth-login.Login' | translate }}</h2>
+<main class="login-layout">
+  <div class="split-screen"></div>
+  <div class="login-screen">
+    <div class="login-logo">
+      <img src="/assets/images/logo-login.png" alt="logotype">
     </div>
-  </div>
-  <div class="row">
-    <div class="col-12 col-md-9 col-lg-6 sign-in">
+    <div class="login-texts">
+      <p>{{ 'auth-login.ForCustomers' | translate }}</p>
+      <p>{{ 'auth-login.ForCustomersDescription' | translate }}</p>
+    </div>
+    <div class="login-form">
       <form #form="ngForm" (ngSubmit)="form.valid && onSubmit()">
         <mat-form-field>
           <mat-label>{{ 'auth-login.Username' | translate }}</mat-label>
@@ -17,15 +20,21 @@
           />
         </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>{{ 'auth-login.Password' | translate }}</mat-label>
-          <input
-            matInput
-            type="password"
-            name="password"
-            [(ngModel)]="data.password"
-          />
-        </mat-form-field>
+        <div class="password-block">
+          <mat-form-field>
+            <mat-label>{{ 'auth-login.Password' | translate }}</mat-label>
+            <input
+              matInput
+              type="password"
+              name="password"
+              [(ngModel)]="data.password"
+            />
+          </mat-form-field>
+
+          <div class="forgot-password">
+            <a href="">{{ 'auth-login.ForgotPassword' | translate }}</a>
+          </div>
+        </div>
 
         <div class="text-center">
           <button
@@ -38,4 +47,4 @@
       </form>
     </div>
   </div>
-</div>
+</main>

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-import { IDataSourceConfig } from '../ConfigManager/interfaces';
+import { IDataSourceConfig } from '../../ConfigManager/interfaces';
 import {
   DataSourceEventTypes,
   IDataSourceMeasurementEvent,
@@ -15,9 +15,9 @@ import {
   IBaseLifecycleEvent,
   ILifecycleEvent,
   LifecycleEventStatus
-} from '../../common/interfaces';
+} from '../../../common/interfaces';
 import Timeout = NodeJS.Timeout;
-import { SynchronousIntervalScheduler } from '../SyncScheduler';
+import { SynchronousIntervalScheduler } from '../../SyncScheduler';
 
 /**
  * Implements data source

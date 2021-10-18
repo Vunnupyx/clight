@@ -58,7 +58,7 @@ import {
 } from '../routes/apis/v1/Templates';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
-import { DataSourcesManager } from '../../DataSourcesManager';
+import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import swaggerFile from '../routes/swagger';
@@ -68,7 +68,7 @@ interface RoutesManagerOptions {
   configManager: ConfigManager;
   dataSourcesManager: DataSourcesManager;
   dataSinksManager: DataSinksManager;
-  dataPointCache: DataPointCache,
+  dataPointCache: DataPointCache;
 }
 export class RoutesManager {
   private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');

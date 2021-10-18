@@ -1,4 +1,4 @@
-import { IDataSourceMeasurementEvent } from '../DataSource';
+import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
 
 type EventsById = {
   [id: string]: {

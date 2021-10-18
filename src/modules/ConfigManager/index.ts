@@ -205,7 +205,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.emit('configsLoaded');
       })
       .catch((err) => {
-        return Promise.reject(JSON.stringify(err));
+        return Promise.reject(err);
       });
   }
 
@@ -292,18 +292,24 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         );
       })
       .then(([file]) => {
-        return this.mergeDeep(defaultConfig, JSON.parse(file));
+        console.log(file);
+        return JSON.parse(file);
       })
-      .catch((err) => {
+      .catch((error) => {
+        winston.error(`${logPrefix} Invalid json file ${configPath}`);
+        return Promise.reject(error);
+      })
+      .then((parsedFile) => {
+        return this.mergeDeep(defaultConfig, parsedFile);
+      })
+      .catch((error) => {
         this.lifecycleEventsBus.push({
           id: 'device',
           type: DeviceLifecycleEventTypes.ErrorOnParseLocalConfig,
           level: EventLevels.Device,
-          payload: `Error merging configs.`
+          payload: `Error loading config file ${configPath}`
         });
-        return Promise.reject(
-          new Error(`${logPrefix} error due to merging error.`)
-        );
+        return Promise.reject(error);
       });
   }
 
@@ -454,6 +460,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private saveConfigToFile(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfigToFile`;
+
+    console.log(this._config);
     return fs
       .writeFile(
         path.join(this.configFolder, this.configName),

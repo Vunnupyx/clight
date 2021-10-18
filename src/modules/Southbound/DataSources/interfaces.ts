@@ -1,8 +1,9 @@
-import { IDataSourceConfig } from '../ConfigManager/interfaces';
+import { IDataSourceConfig } from '../../ConfigManager/interfaces';
 import {
   IBaseLifecycleEvent,
   LifecycleEventStatus
-} from '../../common/interfaces';
+} from '../../../common/interfaces';
+
 export interface IDataSourceLifecycleEvent extends IBaseLifecycleEvent {
   dataSource: IDataSourceEvent;
   status: LifecycleEventStatus;

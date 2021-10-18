@@ -1,21 +1,36 @@
 import winston from 'winston';
+import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { CounterManager } from '../CounterManager';
 import { DataPointCache } from '../DatapointCache';
-import { IDataSourceMeasurementEvent } from '../DataSource';
+import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
+
+interface IVirtualDataPointManagerParams {
+  configManager: ConfigManager;
+  cache: DataPointCache;
+}
 
 /**
  * Calculates virtual datapoints
  */
 export class VirtualDataPointManager {
+  private configManager: ConfigManager;
   private config: IVirtualDataPointConfig[];
   private cache: DataPointCache;
   private counters: CounterManager;
 
-  constructor(config: IVirtualDataPointConfig[], cache: DataPointCache) {
-    this.config = config;
-    this.cache = cache;
+  constructor(params: IVirtualDataPointManagerParams) {
+    params.configManager.once('configsLoaded', () => {
+      return this.init();
+    });
+
+    this.configManager = params.configManager;
+    this.cache = params.cache;
     this.counters = new CounterManager();
+  }
+
+  private init() {
+    this.config = this.configManager.config.virtualDataPoints;
   }
 
   /**

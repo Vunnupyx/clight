@@ -13,7 +13,11 @@
       "outputCapture": "std",
       "env": {
         "LOG_LEVEL": "debug"
-      }
+      },
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**/*.js"
+      ]
     }
   ]
 }

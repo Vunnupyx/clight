@@ -1,32 +1,46 @@
-import { IDataSourceConfig } from '../ConfigManager/interfaces';
-import { DataSourceEventTypes } from '../DataSource';
-import { DataSource } from '../DataSource/DataSource';
-import { EventBus, MeasurementEventBus } from '../EventBus/index';
+import { IDataSourceConfig } from '../../../ConfigManager/interfaces';
+import { DataSourceEventTypes, IDataSourceParams } from '../interfaces';
+import { DataSource } from '../DataSource';
+import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
 import { IDataSourcesManagerParams } from './interfaces';
-import { createDataSource } from '../DataSource/DataSourceFactory';
-import { ILifecycleEvent } from '../../common/interfaces';
-import { DataPointCache } from '../DatapointCache';
-import { IDataSourceMeasurementEvent } from '../DataSource/interfaces';
-import { VirtualDataPointManager } from '../VirtualDataPointManager';
+import {
+  DataSourceProtocols,
+  ILifecycleEvent
+} from '../../../../common/interfaces';
+import { DataPointCache } from '../../../DatapointCache';
+import { IDataSourceMeasurementEvent } from '../interfaces';
+import { VirtualDataPointManager } from '../../../VirtualDataPointManager';
+import winston from 'winston';
+import { ConfigManager } from '../../../ConfigManager';
+import { S7DataSource } from '../S7';
+import { IoshieldDataSource } from '../Ioshield';
 
 /**
  * Creates and manages all data sources
  */
 export class DataSourcesManager {
-  private dataSourcesConfig: ReadonlyArray<IDataSourceConfig>;
+  private static className: string = DataSourcesManager.name;
+  private configManager: Readonly<ConfigManager>;
   private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
-  private dataSources: ReadonlyArray<DataSource>;
+  private dataSources: Array<DataSource> = [];
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
 
   constructor(params: IDataSourcesManagerParams) {
-    this.dataSourcesConfig = params.dataSourcesConfigs;
+    params.configManager.once('configsLoaded', () => {
+      return this.init();
+    });
+
+    this.configManager = params.configManager;
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
     this.dataPointCache = params.dataPointCache;
     this.virtualDataPointManager = params.virtualDataPointManager;
-    this.spawnDataSources(this.dataSourcesConfig);
+  }
+
+  private init() {
+    this.spawnDataSources();
   }
 
   /**
@@ -54,20 +68,39 @@ export class DataSourcesManager {
    * Spawns and initializes all configured data sources
    * @returns void
    */
-  public spawnDataSources(dataSourcesConfig): void {
-    this.dataSourcesConfig = dataSourcesConfig;
-    this.dataSources = dataSourcesConfig.map(createDataSource);
+  public spawnDataSources(): void {
+    const s7DataSourceParams: IDataSourceParams = {
+      config: this.findDataSourceConfig(DataSourceProtocols.S7)
+    };
+
+    const ioshieldDataSourceParams: IDataSourceParams = {
+      config: this.findDataSourceConfig(DataSourceProtocols.IOSHIELD)
+    };
+
+    this.dataSources.push(new S7DataSource(s7DataSourceParams));
+    this.dataSources.push(new IoshieldDataSource(ioshieldDataSourceParams));
+
+    const logPrefix = `${DataSourcesManager.className}::init`;
+    winston.info(`${logPrefix} Setup data sources`);
+
     this.dataSources.forEach((dataSource) => {
       if (!dataSource) {
         return;
       }
 
-      // TODO Does this even work?
       dataSource.on(DataSourceEventTypes.Measurement, this.onMeasurementEvent);
       dataSource.on(DataSourceEventTypes.Lifecycle, this.onLifecycleEvent);
 
       dataSource.init();
     });
+  }
+
+  private findDataSourceConfig(
+    protocol: DataSourceProtocols
+  ): IDataSourceConfig {
+    return this.configManager.config.dataSources.find(
+      (sink) => sink.protocol === protocol
+    );
   }
 
   /**

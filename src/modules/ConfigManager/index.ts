@@ -461,7 +461,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private saveConfigToFile(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfigToFile`;
 
-    console.log(this._config);
     return fs
       .writeFile(
         path.join(this.configFolder, this.configName),

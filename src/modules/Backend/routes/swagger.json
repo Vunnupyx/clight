@@ -82,6 +82,78 @@
         }
       }
     },
+    "/auth/forgot-password": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "sendResetLinkPost",
+        "description": "Sends reset link",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "forgotPasswordRequest",
+            "description": "Forgot Password Request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/forgotPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/forgot-password/verify": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "verifyResetPasswordTokenPost",
+        "description": "Verifies reset token",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "forgotPasswordVerifyRequest",
+            "description": "Forgot Password Verify Request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/forgotPasswordVerifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "security": [],
+        "tags": ["auth"],
+        "operationId": "resetPasswordPost",
+        "description": "Resets password",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "resetPasswordRequest",
+            "description": "Reset Password Request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/resetPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/datasources": {
       "get": {
         "tags": ["datasource"],
@@ -1644,6 +1716,33 @@
       "type": "object",
       "properties": {
         "accessToken": {
+          "type": "string"
+        }
+      }
+    },
+    "forgotPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "forgotPasswordVerifyRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "resetPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "resetToken": {
+          "type": "string"
+        },
+        "newPassword": {
           "type": "string"
         }
       }

@@ -154,6 +154,29 @@
         }
       }
     },
+    "/auth/change-password": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "changePasswordPost",
+        "description": "Changes password",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "changePasswordRequest",
+            "description": "Change Password Request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changePasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/datasources": {
       "get": {
         "tags": ["datasource"],
@@ -1717,6 +1740,9 @@
       "properties": {
         "accessToken": {
           "type": "string"
+        },
+        "passwordChangeRequired": {
+          "type": "boolean"
         }
       }
     },
@@ -1740,6 +1766,17 @@
       "type": "object",
       "properties": {
         "resetToken": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "changePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "oldPassword": {
           "type": "string"
         },
         "newPassword": {

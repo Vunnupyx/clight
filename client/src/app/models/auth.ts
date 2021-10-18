@@ -5,6 +5,7 @@ export class LoginRequest {
 
 export class LoginResponse {
   accessToken!: string;
+  passwordChangeRequired!: boolean;
 }
 
 export class ForgotPasswordRequest {
@@ -13,5 +14,10 @@ export class ForgotPasswordRequest {
 
 export class ResetPasswordRequest {
   resetToken!: string;
+  newPassword!: string;
+}
+
+export class ChangePasswordRequest {
+  oldPassword!: string;
   newPassword!: string;
 }

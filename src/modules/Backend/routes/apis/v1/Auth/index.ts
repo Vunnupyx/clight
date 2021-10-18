@@ -39,9 +39,16 @@ function resetPasswordPostHandler(request: Request, response: Response) {
     response.status(200).send();
 }
 
+function changePasswordPostHandler(request: Request, response: Response) {
+    // TODO: implement change password post handler
+
+    response.status(200).send();
+}
+
 export const authHandlers = {
     loginPost: loginPostHandler,
     sendResetLinkPost: sendResetLinkPostHandler,
     verifyResetPasswordTokenPost: verifyResetPasswordTokenPostHandler,
     resetPasswordPost: resetPasswordPostHandler,
+    changePasswordPost: changePasswordPostHandler,
 }

@@ -32,7 +32,9 @@ export class AuthManager {
 
         const accessToken = jwt.sign(userTokenPayload, authConfig.secret, { expiresIn: authConfig.expiresIn });
 
-        return Promise.resolve({ accessToken });
+        const passwordChangeRequired = true;
+
+        return Promise.resolve({ accessToken, passwordChangeRequired });
     }
 
     verifyJWTAuth(request: Request, response: Response, next: NextFunction) {

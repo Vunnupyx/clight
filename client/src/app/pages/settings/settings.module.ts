@@ -8,6 +8,7 @@ import { DataSourceModule } from './data-source/data-source.module';
 import { DataMappingModule } from './data-mapping/data-mapping.module';
 import { NetworkModule } from './network/network.module';
 import { VirtualDataPointModule } from './virtual-data-point/virtual-data-point.module';
+import { ChangePasswordModule } from './change-password/change-password.module';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
     DataMappingModule,
     NetworkModule,
     VirtualDataPointModule,
+    ChangePasswordModule,
     RouterModule.forRoot(routes)
   ],
   exports: [RouterModule]

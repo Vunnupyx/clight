@@ -32,6 +32,14 @@
     "ResetPassword": "Reset Password",
     "ResetPasswordSuccess": "Password has been reset successfully!"
   },
+  "settings-change-password": {
+    "ChangePasswordTitle": "Change your password",
+    "ChangePassword": "Change Password",
+    "NewPassword": "New Password",
+    "ConfirmPassword": "Confirm Password",
+    "OldPassword": "Old Password",
+    "ChangePasswordSuccess": "Password has been changed successfully!"
+  },
   "quick-start": {
     "Language": "Language",
     "SelectLanguage": "Select Language",

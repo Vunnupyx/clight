@@ -44,7 +44,13 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     return this.auth.login(this.loginRequest)
-      .then(() => this.router.navigate(['/']))
+      .then((response) => {
+        if (response.passwordChangeRequired) {
+          return this.router.navigate(['/settings', 'change-password']);
+        }
+
+        return this.router.navigate(['/']);
+      })
       .catch((error) => this.toastr.error(error.error.message));
   }
 

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { LocalStorageService } from './local-storage.service';
-import { LoginRequest, LoginResponse } from "../../models/auth";
+import { ForgotPasswordRequest, LoginRequest, LoginResponse, ResetPasswordRequest } from "../../models/auth";
 import { environment } from 'environments/environment';
 
 @Injectable()
@@ -26,6 +26,21 @@ export class AuthService {
 
         return response;
       });
+  }
+
+  sendResetToken(data: ForgotPasswordRequest) {
+    return this.http.post(`${environment.apiRoot}/auth/forgot-password`, data)
+      .toPromise();
+  }
+
+  verifyResetToken(token: string) {
+    return this.http.post(`${environment.apiRoot}/auth/forgot-password/verify`, { token })
+      .toPromise();
+  }
+
+  resetPassword(data: ResetPasswordRequest) {
+    return this.http.post(`${environment.apiRoot}/auth/reset-password`, data)
+      .toPromise();
   }
 
   logout() {

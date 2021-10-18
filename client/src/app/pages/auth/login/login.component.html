@@ -5,46 +5,82 @@
       <img src="/assets/images/logo-login.png" alt="logotype">
     </div>
     <div class="login-texts">
-      <p>{{ 'auth-login.ForCustomers' | translate }}</p>
-      <p>{{ 'auth-login.ForCustomersDescription' | translate }}</p>
+      <ng-container [ngSwitch]="mode">
+        <ng-container *ngSwitchCase="LoginPageMode.Login">
+          <p>{{ 'auth-login.ForCustomers' | translate }}</p>
+          <p>{{ 'auth-login.ForCustomersDescription' | translate }}</p>
+        </ng-container>
+        <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
+          <p>{{ 'auth-login.ForgotPasswordForCustomers' | translate }}</p>
+          <p>{{ 'auth-login.ForgotPasswordForCustomersDescription' | translate }}</p>
+        </ng-container>
+      </ng-container>
     </div>
     <div class="login-form">
-      <form #form="ngForm" (ngSubmit)="form.valid && onSubmit()">
-        <mat-form-field>
-          <mat-label>{{ 'auth-login.Username' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="userName"
-            [(ngModel)]="data.userName"
-          />
-        </mat-form-field>
+      <ng-container [ngSwitch]="mode">
+        <ng-container *ngSwitchCase="LoginPageMode.Login">
+          <form #form="ngForm" (ngSubmit)="form.valid && onSubmit()">
+            <mat-form-field>
+              <mat-label>{{ 'auth-login.Username' | translate }}</mat-label>
+              <input
+                matInput
+                type="text"
+                name="userName"
+                [(ngModel)]="loginRequest.userName"
+              />
+            </mat-form-field>
 
-        <div class="password-block">
-          <mat-form-field>
-            <mat-label>{{ 'auth-login.Password' | translate }}</mat-label>
-            <input
-              matInput
-              type="password"
-              name="password"
-              [(ngModel)]="data.password"
-            />
-          </mat-form-field>
+            <div class="password-block">
+              <mat-form-field>
+                <mat-label>{{ 'auth-login.Password' | translate }}</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  name="password"
+                  [(ngModel)]="loginRequest.password"
+                />
+              </mat-form-field>
 
-          <div class="forgot-password">
-            <a href="">{{ 'auth-login.ForgotPassword' | translate }}</a>
-          </div>
-        </div>
+              <div class="forgot-password">
+                <a href="#" (click)="$event.preventDefault(); mode = LoginPageMode.ForgotPassword">{{ 'auth-login.ForgotPassword' | translate }}</a>
+              </div>
+            </div>
 
-        <div class="text-center">
-          <button
-            mat-raised-button
-            color="primary"
-            type="submit"
-            [disabled]="form.invalid"
-          >{{ 'auth-login.SignIn' | translate }}</button>
-        </div>
-      </form>
+            <div class="text-center">
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="form.invalid"
+              >{{ 'auth-login.SignIn' | translate }}</button>
+            </div>
+          </form>
+        </ng-container>
+        <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
+          <form #form="ngForm" (ngSubmit)="form.valid && onForgotPasswordSubmit(form)">
+            <mat-form-field>
+              <mat-label>{{ 'auth-login.Email' | translate }}</mat-label>
+              <input
+                matInput
+                type="email"
+                name="email"
+                [required]="true"
+                [pattern]="EMAIL_REGEX"
+                [(ngModel)]="forgotPasswordRequest.email"
+              />
+            </mat-form-field>
+
+            <div class="text-center">
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="form.invalid"
+              >{{ 'auth-login.SendResetPassword' | translate }}</button>
+            </div>
+          </form>
+        </ng-container>
+      </ng-container>
     </div>
   </div>
 </main>

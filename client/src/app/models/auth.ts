@@ -6,3 +6,12 @@ export class LoginRequest {
 export class LoginResponse {
   accessToken!: string;
 }
+
+export class ForgotPasswordRequest {
+  email!: string;
+}
+
+export class ResetPasswordRequest {
+  resetToken!: string;
+  newPassword!: string;
+}

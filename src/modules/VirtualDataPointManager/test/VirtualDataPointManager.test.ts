@@ -1,7 +1,7 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
 import { DataPointCache } from '../../DatapointCache';
-import { IDataSourceMeasurementEvent } from '../../DataSource';
+import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../EventBus';
 
 jest.mock('winston');
@@ -47,10 +47,10 @@ describe('Test VirtualDataPointManager', () => {
   ];
 
   const cache = new DataPointCache();
-  const virtualDpManager = new VirtualDataPointManager(
-    config.config.virtualDataPoints,
+  const virtualDpManager = new VirtualDataPointManager({
+    configManager: config,
     cache
-  );
+  });
 
   afterEach(() => {
     cache.clearAll();

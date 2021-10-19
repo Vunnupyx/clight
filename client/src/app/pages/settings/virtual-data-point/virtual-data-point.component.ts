@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from "@angular/material/dialog";
-import { Subscription } from "rxjs";
-import { TranslateService } from "@ngx-translate/core";
+import {Component, OnInit} from '@angular/core';
+import {MatDialog} from "@angular/material/dialog";
+import {Subscription} from "rxjs";
+import {TranslateService} from "@ngx-translate/core";
 
 import {DataPointLiveData, SourceDataPoint, VirtualDataPoint, VirtualDataPointOperationType} from '../../../models';
 import {
@@ -9,8 +9,8 @@ import {
   ConfirmDialogModel
 } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {clone, ObjectMap} from "../../../shared/utils";
-import { Status } from '../../../shared/state';
-import { SourceDataPointService, VirtualDataPointService } from '../../../services';
+import {SourceDataPointService, VirtualDataPointService} from '../../../services';
+import {SetThresholdsModalComponent} from "./set-thresholds-modal/set-thresholds-modal.component";
 
 
 @Component({
@@ -21,11 +21,14 @@ import { SourceDataPointService, VirtualDataPointService } from '../../../servic
 export class VirtualDataPointComponent implements OnInit {
   datapointRows?: VirtualDataPoint[];
 
+  VirtualDataPointOperationType = VirtualDataPointOperationType;
+
   Operations = [
     VirtualDataPointOperationType.AND,
     VirtualDataPointOperationType.OR,
     VirtualDataPointOperationType.NOT,
     VirtualDataPointOperationType.COUNTER,
+    VirtualDataPointOperationType.THRESHOLDS,
   ];
 
   unsavedRow?: VirtualDataPoint;
@@ -173,6 +176,17 @@ export class VirtualDataPointComponent implements OnInit {
 
   getRowIndex(id: string) {
     return this.datapointRows?.findIndex(x => x.id === id)!;
+  }
+
+  onSetThreshold(virtualPoint: VirtualDataPoint) {
+    const dialogRef = this.dialog.open(SetThresholdsModalComponent, {
+      data: {},
+      width: '850px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+    });
   }
 
   private onSourceDataPoints(x: SourceDataPoint[]) {

@@ -105,9 +105,25 @@
               *ngIf="unsavedRowIndex === rowIndex"
             >
               <mat-select
+                *ngIf="unsavedRow?.operationType !== VirtualDataPointOperationType.THRESHOLDS"
                 [ngModel]="value"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = $event)"
                 multiple
+              >
+                <mat-option
+                  *ngFor="let s of dataSources;"
+                  [value]="s.id"
+                >{{ getDataSourceDataPointPrefix(s.id) }} {{ s.name }}</mat-option>
+                <mat-option
+                  *ngFor="let s of previousVirtualPoints; let idx = index"
+                  [value]="s.id"
+                  [disabled]="getRowIndex(s.id) > idx"
+                >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option>
+              </mat-select>
+              <mat-select
+                *ngIf="unsavedRow?.operationType === VirtualDataPointOperationType.THRESHOLDS"
+                [ngModel]="value[0]"
+                (ngModelChange)="unsavedRow && (unsavedRow.sources = [$event])"
               >
                 <mat-option
                   *ngFor="let s of dataSources;"
@@ -153,6 +169,15 @@
           >
             <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
               <mat-button-toggle
+                *ngIf="row?.operationType === VirtualDataPointOperationType.THRESHOLDS"
+                (click)="onSetThreshold(row)"
+                [matTooltip]="'settings-virtual-data-point.SetThreshold' | translate"
+                matTooltipPosition="above"
+              ><mat-icon
+              >show_chart</mat-icon
+              ></mat-button-toggle
+              >
+              <mat-button-toggle
                 (click)="onEditStart(rowIndex, row)"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
@@ -166,6 +191,16 @@
               >
             </mat-button-toggle-group>
             <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+              <mat-button-toggle
+                *ngIf="unsavedRow?.operationType === VirtualDataPointOperationType.THRESHOLDS"
+                (click)="(unsavedRow && unsavedRow.sources && unsavedRow.sources.length > 0) && onSetThreshold(unsavedRow)"
+                [matTooltip]="'settings-virtual-data-point.SetThreshold' | translate"
+                matTooltipPosition="above"
+                [disabled]="!(unsavedRow && unsavedRow.sources && unsavedRow.sources.length > 0)"
+              ><mat-icon
+              >show_chart</mat-icon
+              ></mat-button-toggle
+              >
               <mat-button-toggle
                 (click)="onEditEnd()"
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"

@@ -223,6 +223,10 @@ export class SourceDataPointService {
   }
 
   getPrefix(id: string) {
+    if (!this._store?.snapshot?.dataPointsSourceMap) {
+      return '';
+    }
+
     const protocol = this._store?.snapshot?.dataPointsSourceMap[id];
 
     switch (protocol) {

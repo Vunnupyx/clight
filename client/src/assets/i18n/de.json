@@ -25,7 +25,8 @@
     "DeviceInfo": "Device Info",
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
-    "Deutsch": "Deutsch"
+    "Deutsch": "Deutsch",
+    "OpenConfigurationWizard": "Open Configuration Wizard"
   },
   "settings-device-info": {
     "Manufacturer": "",
@@ -55,6 +56,7 @@
     "Name": "",
     "Type": "",
     "Address": "",
+    "LiveData": "Live Data",
     "Actions": "",
     "Area": "",
     "Component": "",
@@ -81,6 +83,7 @@
     "Delete": "Delete",
     "Save": "Save",
     "Cancel": "Cancel",
+    "LiveData": "Live Data",
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",

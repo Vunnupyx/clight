@@ -29,6 +29,16 @@ import {
   setConfigManager as deviceInfosSetConfigManager
 } from '../routes/apis/v1/DeviceInfos';
 import {
+  livedataDataSourcesHandlers,
+  setConfigManager as livedataDataSourcesSetConfigManager,
+  setDataPointCache as livedataDataSourcesSetDataPointCache
+} from '../routes/apis/v1/Livedata/DataSources';
+import {
+  livedataVirtualDataPointsHandlers,
+  setConfigManager as livedataVirtualDataPointsSetConfigManager,
+  setDataPointCache as livedataVirtualDataPointsSetDataPointCache
+} from '../routes/apis/v1/Livedata/VirtualDataPoints';
+import {
   mappingHandlers,
   setConfigManager as mappingSetConfigManager
 } from '../routes/apis/v1/Mapping';
@@ -48,8 +58,9 @@ import {
 } from '../routes/apis/v1/Templates';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
-import { DataSourcesManager } from '../../DataSourcesManager';
+import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
+import { DataPointCache } from '../../DatapointCache';
 import swaggerFile from '../routes/swagger';
 
 interface RoutesManagerOptions {
@@ -57,6 +68,7 @@ interface RoutesManagerOptions {
   configManager: ConfigManager;
   dataSourcesManager: DataSourcesManager;
   dataSinksManager: DataSinksManager;
+  dataPointCache: DataPointCache;
 }
 export class RoutesManager {
   private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');
@@ -68,6 +80,8 @@ export class RoutesManager {
     ...backupHandlers,
     ...virtualDatapointHandlers,
     ...deviceInfosHandlers,
+    ...livedataDataSourcesHandlers,
+    ...livedataVirtualDataPointsHandlers,
     ...mappingHandlers,
     ...networkConfigHandlers,
     ...systemInfoHandlers,
@@ -91,6 +105,8 @@ export class RoutesManager {
       backupSetConfigManager,
       vdpsSetConfigManager,
       deviceInfosSetConfigManager,
+      livedataDataSourcesSetConfigManager,
+      livedataVirtualDataPointsSetConfigManager,
       mappingSetConfigManager,
       networkConfigSetConfigManager,
       systemInfoSetConfigManager,
@@ -100,6 +116,8 @@ export class RoutesManager {
     setTemplateDataSinksManager(options.dataSinksManager);
     setDataSourcesManager(options.dataSourcesManager);
     setTemplateDataSourcesManager(options.dataSourcesManager);
+    livedataDataSourcesSetDataPointCache(options.dataPointCache);
+    livedataVirtualDataPointsSetDataPointCache(options.dataPointCache);
 
     this.inputValidator = OpenApiValidator.middleware({
       // @ts-ignore

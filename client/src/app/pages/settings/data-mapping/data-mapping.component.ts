@@ -45,11 +45,12 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     return !!this.unsavedRow;
   }
 
-  get sources() {
-    return [
-      ...this.sourceDataPoints || [],
-      ...this.virtualDataPoints || [],
-    ];
+  get sourcesPoints() {
+    return this.sourceDataPoints || [];
+  }
+
+  get sourcesVirtualPoints() {
+    return this.virtualDataPoints || [];
   }
 
   ngOnInit() {
@@ -74,6 +75,22 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     this.virtualDataPointService.getDataPoints();
     this.dataPointService.getDataPointsAll();
     this.dataMappingService.getDataMappingsAll();
+  }
+
+  getSourcePrefix(id: string | undefined) {
+    if (!this.sourceDataPointsById || !this.virtualDataPointsById) {
+      return null;
+    }
+
+    if (this.sourceDataPointsById[id!]) {
+      return this.sourceDataPointService.getPrefix(id!);
+    }
+
+    return this.virtualDataPointService.getPrefix();
+  }
+
+  getTargetPrefix(id: string | undefined) {
+    return this.dataPointService.getPrefix(id!);
   }
 
   onSourceDataPoints(arr: SourceDataPoint[]) {

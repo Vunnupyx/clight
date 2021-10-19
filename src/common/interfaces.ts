@@ -1,4 +1,4 @@
-import { IDataSourceLifecycleEvent } from '../modules/DataSource';
+import { IDataSourceLifecycleEvent } from '../modules/Southbound/DataSources/interfaces';
 
 export enum EventLevels {
   Device = 'device',

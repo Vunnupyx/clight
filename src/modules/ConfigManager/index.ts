@@ -1,4 +1,4 @@
-import {promises as fs, readFileSync} from 'fs';
+import { promises as fs, readFileSync } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'stream';
 import {
@@ -48,7 +48,6 @@ const defaultIoShieldDataSource: IDataSourceConfig = {
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false
 };
-
 
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
@@ -177,32 +176,37 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     winston.info(`${logPrefix} initializing.`);
     return Promise.all([
       this.loadConfig<IRuntimeConfig>(
-      this.runtimeConfigName,
-      this.runtimeConfig
-    ), this.loadConfig<IConfig>(this.configName, this.config)]).then(([runTime, config]) => {
-      this._runtimeConfig = runTime;
-      this._config = config;
-      this.setupDefaultDataSources();
-    this.setupDefaultDataSinks();
-    this.loadTemplates();
-    }).then(() => {
-      this.checkType(
-        this.runtimeConfig.mtconnect.listenerPort,
-        'number',
-        'runtime.mtconnect.listenerPort'
-      );
-      this.checkType(
-        this.runtimeConfig.restApi.port,
-        'number',
-        'runtime.restApi.port'
-      );
-    }).then(() => {
-      this.emit('configsLoaded');
-      winston.info(`${logPrefix} initialized.`);
-    })
-    .catch((err) => {
-      return Promise.reject(JSON.stringify(err));
-    });
+        this.runtimeConfigName,
+        this.runtimeConfig
+      ),
+      this.loadConfig<IConfig>(this.configName, this.config)
+    ])
+      .then(([runTime, config]) => {
+        this._runtimeConfig = runTime;
+        this._config = config;
+        this.setupDefaultDataSources();
+        this.setupDefaultDataSinks();
+        this.loadTemplates();
+      })
+      .then(() => {
+        this.checkType(
+          this.runtimeConfig.mtconnect.listenerPort,
+          'number',
+          'runtime.mtconnect.listenerPort'
+        );
+        this.checkType(
+          this.runtimeConfig.restApi.port,
+          'number',
+          'runtime.restApi.port'
+        );
+      })
+      .then(() => {
+        winston.info(`${logPrefix} config loaded.`);
+        this.emit('configsLoaded');
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
   }
 
   /**
@@ -273,7 +277,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const logPrefix = `${ConfigManager.className}::loadConfig`;
     const configPath = path.join(this.configFolder, configName);
 
-    return Promise.all([fs.readFile(configPath, {encoding: 'utf-8'})])
+    return Promise.all([fs.readFile(configPath, { encoding: 'utf-8' })])
       .catch(() => {
         this.lifecycleEventsBus.push({
           id: 'device',
@@ -281,21 +285,31 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           level: EventLevels.Device,
           payload: `Configuration file does not exist!`
         });
-        return Promise.reject(new Error(
-          `${logPrefix} error due to ${DeviceLifecycleEventTypes.DeviceConfigDoesNotExists}`
-        ))
+        return Promise.reject(
+          new Error(
+            `${logPrefix} error due to ${DeviceLifecycleEventTypes.DeviceConfigDoesNotExists}`
+          )
+        );
       })
       .then(([file]) => {
-        return this.mergeDeep(defaultConfig, JSON.parse(file));
-      }).catch((err) => {
+        return JSON.parse(file);
+      })
+      .catch((error) => {
+        winston.error(`${logPrefix} Invalid json file ${configPath}`);
+        return Promise.reject(error);
+      })
+      .then((parsedFile) => {
+        return this.mergeDeep(defaultConfig, parsedFile);
+      })
+      .catch((error) => {
         this.lifecycleEventsBus.push({
           id: 'device',
           type: DeviceLifecycleEventTypes.ErrorOnParseLocalConfig,
           level: EventLevels.Device,
-          payload: `Error merging configs.`
+          payload: `Error loading config file ${configPath}`
         });
-        return Promise.reject(new Error(`${logPrefix} error due to merging error.`));
-      })
+        return Promise.reject(error);
+      });
   }
 
   /**
@@ -445,17 +459,21 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private saveConfigToFile(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfigToFile`;
-    return fs.writeFile(
-      path.join(this.configFolder, this.configName),
-      JSON.stringify(this._config, null, 2),
-      { encoding: 'utf-8' }
-    ).then(() => {
-      winston.info(
-        `${ConfigManager.className}::saveConfigToFile saved new config to file`
-      );
-    }).catch((err) => {
-      winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
-    });
+
+    return fs
+      .writeFile(
+        path.join(this.configFolder, this.configName),
+        JSON.stringify(this._config, null, 2),
+        { encoding: 'utf-8' }
+      )
+      .then(() => {
+        winston.info(
+          `${ConfigManager.className}::saveConfigToFile saved new config to file`
+        );
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
+      });
   }
 
   public saveConfig(obj: Partial<IConfig> = null): void {

@@ -3,12 +3,12 @@ import { MatDialog } from "@angular/material/dialog";
 import { Subscription } from "rxjs";
 import { TranslateService } from "@ngx-translate/core";
 
-import { SourceDataPoint, VirtualDataPoint, VirtualDataPointOperationType } from '../../../models';
+import {DataPointLiveData, SourceDataPoint, VirtualDataPoint, VirtualDataPointOperationType} from '../../../models';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { clone } from "../../../shared/utils";
+import {clone, ObjectMap} from "../../../shared/utils";
 import { Status } from '../../../shared/state';
 import { SourceDataPointService, VirtualDataPointService } from '../../../services';
 
@@ -30,6 +30,7 @@ export class VirtualDataPointComponent implements OnInit {
 
   unsavedRow?: VirtualDataPoint;
   unsavedRowIndex: number | undefined;
+  liveData: ObjectMap<DataPointLiveData> = {};
 
   sub = new Subscription();
 
@@ -69,17 +70,32 @@ export class VirtualDataPointComponent implements OnInit {
     );
 
     this.sub.add(
+      this.virtualDataPointService.dataPointsLivedata.subscribe((x) =>
+        this.onLiveData(x)
+      )
+    );
+
+    this.sub.add(
       this.sourceDataPointService.dataPoints.subscribe((x) =>
         this.onSourceDataPoints(x)
       )
     );
 
     this.virtualDataPointService.getDataPoints();
+    this.virtualDataPointService.getLiveDataForDataPoints();
     this.sourceDataPointService.getSourceDataPointsAll();
   }
 
   onDataPoints(arr: VirtualDataPoint[]) {
     this.datapointRows = arr;
+  }
+
+  getVirtualDataPointPrefix() {
+    return this.virtualDataPointService.getPrefix();
+  }
+
+  getDataSourceDataPointPrefix(id: string) {
+    return this.sourceDataPointService.getPrefix(id);
   }
 
   onAdd() {
@@ -110,11 +126,13 @@ export class VirtualDataPointComponent implements OnInit {
       this.virtualDataPointService.updateDataPoint(
         this.unsavedRow?.id!,
         this.unsavedRow!
-      );
+      )
+        .then(() => this.virtualDataPointService.getLiveDataForDataPoints());
     } else {
       this.virtualDataPointService.addDataPoint(
         this.unsavedRow!
-      );
+      )
+        .then(() => this.virtualDataPointService.getLiveDataForDataPoints());
     }
     this.clearUnsavedRow();
   }
@@ -146,7 +164,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   getSourceNames(sources: string[]) {
-    return this.sources.filter(x => sources.includes(x.id)).map(x => x.name).join(', ');
+    return this.sources.filter(x => sources.includes(x.id)).map(x => `${this.getDataSourceDataPointPrefix(x.id) || this.getVirtualDataPointPrefix()} ${x.name}`).join(', ');
   }
 
   ngOnDestroy() {
@@ -159,5 +177,9 @@ export class VirtualDataPointComponent implements OnInit {
 
   private onSourceDataPoints(x: SourceDataPoint[]) {
     this.sourceDataPoints = x;
+  }
+
+  private onLiveData(x: ObjectMap<DataPointLiveData>) {
+    this.liveData = x;
   }
 }

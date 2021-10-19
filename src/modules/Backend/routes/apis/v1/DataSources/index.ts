@@ -6,7 +6,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
-import { DataSourcesManager } from '../../../../../DataSourcesManager';
+import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import { LifecycleEventStatus } from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
@@ -220,6 +220,7 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
     status !== LifecycleEventStatus.Connected
       ? LifecycleEventStatus.Disconnected
       : status;
+
   response.status(200).json({ status });
 }
 

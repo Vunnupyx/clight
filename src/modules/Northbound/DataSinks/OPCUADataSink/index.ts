@@ -3,15 +3,13 @@ import {
   DataSourceLifecycleEventTypes,
   ILifecycleEvent
 } from '../../../../common/interfaces';
-import { IDataSourceMeasurementEvent } from '../../../DataSource';
 import { DataSink } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
 import { Variant, UAVariable } from 'node-opcua';
 import {
   IDataSinkConfig,
   IGeneralConfig,
-  IOPCUAConfig,
-  IRuntimeConfig
+  IOPCUAConfig
 } from '../../../ConfigManager/interfaces';
 
 type OPCUANodeDict = {

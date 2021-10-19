@@ -156,7 +156,7 @@
               class="text-ellipsis"
               [title]="value"
             >
-              {{ value }}
+              {{ getDataSourceDataPointPrefix(row.id) }} {{ value }}
             </div>
             <input
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -199,6 +199,23 @@
               <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
               <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
             </mat-select>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-data-source.LiveData' | translate"
+          prop="livedata"
+          [flexGrow]="1"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <span *ngIf="liveData[row.id]; else noLiveData">
+              {{ liveData[row.id].value }}
+            </span>
+            <ng-template #noLiveData>-</ng-template>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column

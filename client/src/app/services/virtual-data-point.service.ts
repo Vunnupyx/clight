@@ -4,10 +4,10 @@ import { ToastrService } from 'ngx-toastr';
 import { filter, map } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
-import { VirtualDataPoint } from '../models';
+import {DataPointLiveData, VirtualDataPoint} from '../models';
 import { HttpService } from '../shared';
 import * as api from "../api/models";
-import { errorHandler } from "../shared/utils";
+import {array2map, errorHandler, ObjectMap} from "../shared/utils";
 import {CreateEntityResponse} from "../models/responses/create-entity.response";
 import {UpdateEntityResponse} from "../models/responses/update-entity.response";
 
@@ -15,6 +15,7 @@ import {UpdateEntityResponse} from "../models/responses/update-entity.response";
 export class VirtualDataPointsState {
   status!: Status;
   dataPoints!: VirtualDataPoint[];
+  dataPointsLivedata!: ObjectMap<DataPointLiveData>;
 }
 
 
@@ -30,6 +31,12 @@ export class VirtualDataPointService {
     return this._store.state
       .pipe(filter((x) => x.status != Status.NotInitialized))
       .pipe(map((x) => x.dataPoints));
+  }
+
+  get dataPointsLivedata() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(map((x) => x.dataPointsLivedata));
   }
 
   constructor(
@@ -65,19 +72,43 @@ export class VirtualDataPointService {
     }
   }
 
+  async getLiveDataForDataPoints() {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+      state.dataPointsLivedata = {};
+    });
+
+    try {
+      const liveData = await this.httpService.get<DataPointLiveData[]>('/livedata/vdps');
+
+      this._store.patchState((state) => {
+        state.dataPointsLivedata = array2map(liveData, item => item.dataPointId);
+        state.status = Status.Ready;
+      });
+    } catch (err) {
+      this.toastr.error(
+        this.translate.instant('settings-virtual-data-point.LoadError')
+      );
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Ready
+      }));
+    }
+  }
+
   async addDataPoint(obj: VirtualDataPoint) {
     this._store.patchState((state) => {
       state.status = Status.Creating;
     });
 
     try {
-      const vdp = await this.httpService.post<CreateEntityResponse<VirtualDataPoint>>(
+      const vdp = await this.httpService.post<CreateEntityResponse<api.VirtualDataPointType>>(
         `/vdps`,
         obj
       );
 
       this._store.patchState((state) => {
-        const dataPoint = vdp.created;
+        const dataPoint = this._parseDataPoint(vdp.created);
 
         obj.id = dataPoint.id;
         state.dataPoints.push(obj);
@@ -100,14 +131,14 @@ export class VirtualDataPointService {
     });
 
     try {
-      const vdp = await this.httpService.patch<UpdateEntityResponse<VirtualDataPoint>>(
+      const vdp = await this.httpService.patch<UpdateEntityResponse<api.VirtualDataPointType>>(
         `/vdps/${id}`,
         obj
       );
 
       this._store.patchState((state) => {
         state.dataPoints = state.dataPoints.map((x) =>
-          x.id != id ? x : ({ ...x, ...vdp.changed })
+          x.id != id ? x : ({ ...x, ...this._parseDataPoint(vdp.changed) })
         );
         state.status = Status.Ready;
       });
@@ -143,6 +174,10 @@ export class VirtualDataPointService {
         status: Status.Ready
       }));
     }
+  }
+
+  public getPrefix() {
+    return '[VDP]';
   }
 
   private _parseDataPoint(obj: api.VirtualDataPointType) {

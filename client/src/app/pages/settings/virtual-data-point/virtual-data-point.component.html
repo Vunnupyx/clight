@@ -45,7 +45,7 @@
               class="text-ellipsis"
               [title]="value"
             >
-              {{ value }}
+              {{ getVirtualDataPointPrefix() }} {{ value }}
             </div>
             <input
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -112,14 +112,31 @@
                 <mat-option
                   *ngFor="let s of dataSources;"
                   [value]="s.id"
-                >{{ s.name }}</mat-option>
+                >{{ getDataSourceDataPointPrefix(s.id) }} {{ s.name }}</mat-option>
                 <mat-option
                   *ngFor="let s of previousVirtualPoints; let idx = index"
                   [value]="s.id"
                   [disabled]="getRowIndex(s.id) > idx"
-                >{{ s.name }}</mat-option>
+                >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option>
               </mat-select>
             </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [name]="'settings-virtual-data-point.LiveData' | translate"
+          prop="livedata"
+          [flexGrow]="1"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <span *ngIf="liveData && liveData[row.id]; else noLiveData">
+              {{ liveData[row.id]?.value }}
+            </span>
+            <ng-template #noLiveData>-</ng-template>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column

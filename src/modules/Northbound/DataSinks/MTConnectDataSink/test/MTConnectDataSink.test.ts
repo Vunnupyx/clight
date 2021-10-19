@@ -10,7 +10,7 @@ import {
   IDataSourceConfig
 } from '../../../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../../../DataPointMapper';
-import { IDataSourceMeasurementEvent } from '../../../../DataSource';
+import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 

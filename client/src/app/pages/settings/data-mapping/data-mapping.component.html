@@ -40,7 +40,7 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ getSourceDataPoint(value)?.name }}
+              {{ getSourcePrefix(value) }} {{ getSourceDataPoint(value)?.name }}
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -49,8 +49,13 @@
             >
               <mat-option
                 [value]="item.id"
-                *ngFor="let item of sources"
-                >{{ item.name }}</mat-option
+                *ngFor="let item of sourcesPoints"
+                >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
+              >
+              <mat-option
+                [value]="item.id"
+                *ngFor="let item of sourcesVirtualPoints"
+              >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
             </mat-select>
           </ng-template>
@@ -67,16 +72,16 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ getDataPoint(value)?.name }}
+              {{ getTargetPrefix(value) }} {{ getDataPoint(value)?.name }}
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
             >
-              <mat-option [value]="item.id" *ngFor="let item of dataPoints">{{
-                item.name
-              }}</mat-option>
+              <mat-option [value]="item.id" *ngFor="let item of dataPoints">
+                {{ getTargetPrefix(item.id) }} {{ item.name }}
+              </mat-option>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>

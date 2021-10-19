@@ -52,6 +52,8 @@ describe('Test VirtualDataPointManager', () => {
     cache
   });
 
+  config.emit('configsLoaded');
+
   afterEach(() => {
     cache.clearAll();
   });

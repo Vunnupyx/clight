@@ -5,6 +5,10 @@
       "password": "user"
     }
   ],
+  "auth": {
+    "secret": "secret",
+    "expiresIn": 3600
+  },
   "mtconnect": { "listenerPort": 7878 },
   "restApi": {
     "port": 80,

@@ -40,7 +40,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     DataSourceSoftwareVersion.v4_7
   ];
 
-  DigitalInputAddresses = new Array(10).fill(0).map((_, i) => `DI${i}`);
+  DigitalInputAddresses = [
+    ...new Array(10).fill(0).map((_, i) => `DI${i}`),
+    ...new Array(2).fill(0).map((_, i) => `AI${i}`),
+  ];
 
   unsavedRow?: SourceDataPoint;
   unsavedRowIndex: number | undefined;

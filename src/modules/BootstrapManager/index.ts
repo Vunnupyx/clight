@@ -1,5 +1,5 @@
 import winston from 'winston';
-import { DataSourcesManager } from '../DataSourcesManager';
+import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { EventBus, MeasurementEventBus } from '../EventBus';
 import {
   DeviceLifecycleEventTypes,
@@ -39,6 +39,15 @@ export class BootstrapManager {
       lifecycleEventsBus: this.lifecycleEventsBus
     });
 
+    this.dataPointCache = new DataPointCache();
+
+    this.virtualDataPointManager = new VirtualDataPointManager({
+      configManager: this.configManager,
+      cache: this.dataPointCache
+    });
+
+    DataPointMapper.createInstance(this.configManager);
+
     this.dataSinkManager = new DataSinksManager({
       configManager: this.configManager,
       dataPointCache: this.dataPointCache,
@@ -47,7 +56,21 @@ export class BootstrapManager {
       measurementsBus: this.measurementsEventsBus
     });
 
-    this.dataPointCache = new DataPointCache();
+    this.dataSourcesManager = new DataSourcesManager({
+      configManager: this.configManager,
+      dataPointCache: this.dataPointCache,
+      virtualDataPointManager: this.virtualDataPointManager,
+      errorBus: this.errorEventsBus,
+      lifecycleBus: this.lifecycleEventsBus,
+      measurementsBus: this.measurementsEventsBus
+    });
+
+    this.backend = new RestApiManager({
+      configManager: this.configManager,
+      dataSourcesManager: this.dataSourcesManager,
+      dataSinksManager: this.dataSinkManager,
+      dataPointCache: this.dataPointCache
+    });
   }
 
   /**
@@ -55,10 +78,8 @@ export class BootstrapManager {
    */
   public async start() {
     try {
-      this.configManager.init();
-      DataPointMapper.createInstance(this.configManager);
+      await this.configManager.init();
 
-      await this.loadModules();
       this.lifecycleEventsBus.push({
         id: 'device',
         level: EventLevels.Device,
@@ -72,46 +93,8 @@ export class BootstrapManager {
         payload: error.toString()
       });
 
-      winston.error(error);
       winston.error('Error while launching. Exiting program.');
       process.exit(1);
-    }
-
-    this.backend = new RestApiManager({
-      configManager: this.configManager,
-      dataSourcesManager: this.dataSourcesManager,
-      dataSinksManager: this.dataSinkManager,
-      dataPointCache: this.dataPointCache
-    });
-  }
-
-  /**
-   * Loads modules
-   * @returns Promise
-   */
-  private async loadModules(): Promise<void> {
-    const {
-      dataSources: dataSourcesConfigs,
-      dataSinks: dataSinksConfig,
-      virtualDataPoints: virtualDataPointConfig
-    } = this.configManager.config;
-
-    if (!this.virtualDataPointManager) {
-      this.virtualDataPointManager = new VirtualDataPointManager(
-        virtualDataPointConfig,
-        this.dataPointCache
-      );
-    }
-
-    if (!this.dataSourcesManager) {
-      this.dataSourcesManager = new DataSourcesManager({
-        dataSourcesConfigs,
-        dataPointCache: this.dataPointCache,
-        virtualDataPointManager: this.virtualDataPointManager,
-        errorBus: this.errorEventsBus,
-        lifecycleBus: this.lifecycleEventsBus,
-        measurementsBus: this.measurementsEventsBus
-      });
     }
   }
 }

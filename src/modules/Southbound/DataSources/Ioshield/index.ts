@@ -4,10 +4,10 @@ import { DataSource } from '../DataSource';
 import {
   DataSourceLifecycleEventTypes,
   LifecycleEventStatus
-} from '../../../common/interfaces';
-import { IDataPointConfig } from '../../ConfigManager/interfaces';
+} from '../../../../common/interfaces';
+import { IDataPointConfig } from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
-import { Iot2050MraaDI10 } from '../../Iot2050MraaDI10/Iot2050mraa';
+import { Iot2050MraaDI10 } from '../../../Iot2050MraaDI10/Iot2050mraa';
 
 /**
  * Implementation of io shield data source
@@ -31,7 +31,7 @@ export class IoshieldDataSource extends DataSource {
 
     this.mraaClient = new Iot2050MraaDI10();
     this.mraaClient.init();
-    
+
     this.validateDataPointConfiguration();
     this.setupDataPoints();
     this.currentStatus = LifecycleEventStatus.Connected;
@@ -89,7 +89,8 @@ export class IoshieldDataSource extends DataSource {
    */
   private validateDataPointConfiguration() {
     this.config.dataPoints.forEach((dp) => {
-      if(!/\bDI[0-9]\b/.test(dp.address)) throw new Error(`Invalid data point address: ${dp.address}`);
+      if (!/\bDI[0-9]\b/.test(dp.address))
+        throw new Error(`Invalid data point address: ${dp.address}`);
     });
   }
 }

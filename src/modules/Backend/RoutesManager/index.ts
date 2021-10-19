@@ -1,13 +1,11 @@
 import { Application, Request } from 'express';
-import {
-  connector as connectorFactory
-} from 'swagger-routes-express';
+import { connector as connectorFactory } from 'swagger-routes-express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import path from 'path';
 import fs from 'fs';
 import {
   authHandlers,
-  setAuthManager as authSetAuthManager,
+  setAuthManager as authSetAuthManager
 } from '../routes/apis/v1/Auth';
 import {
   dataSourceHandlers,
@@ -61,7 +59,7 @@ import {
 } from '../routes/apis/v1/Templates';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
-import { DataSourcesManager } from '../../DataSourcesManager';
+import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
@@ -72,7 +70,7 @@ interface RoutesManagerOptions {
   configManager: ConfigManager;
   dataSourcesManager: DataSourcesManager;
   dataSinksManager: DataSinksManager;
-  dataPointCache: DataPointCache,
+  dataPointCache: DataPointCache;
   authManager: AuthManager;
 }
 export class RoutesManager {
@@ -136,7 +134,8 @@ export class RoutesManager {
     //TODO: Make code async ?
     connectorFactory(this.routeHandlers, swaggerFile, {
       security: {
-        jwt: (req, res, next) => options.authManager.verifyJWTAuth(req as Request, res, next)
+        jwt: (req, res, next) =>
+          options.authManager.verifyJWTAuth(req as Request, res, next)
       }
     })(this.app);
     // this.app.use(this.inputValidator);

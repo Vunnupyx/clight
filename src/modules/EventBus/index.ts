@@ -1,6 +1,6 @@
 import winston from 'winston';
 import { IAppEvent } from '../../common/interfaces';
-import { IDataSourceMeasurementEvent } from '../DataSource';
+import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
 import { LogLevel } from '../Logger/interfaces';
 import { TSubscriberFn } from './interfaces';
 

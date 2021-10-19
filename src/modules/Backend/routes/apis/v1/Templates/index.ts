@@ -4,7 +4,7 @@
 
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
-import { DataSourcesManager } from '../../../../../DataSourcesManager';
+import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 
 let configManager: ConfigManager;

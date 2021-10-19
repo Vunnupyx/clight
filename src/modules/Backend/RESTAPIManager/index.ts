@@ -4,7 +4,7 @@ import { ConfigManager } from '../../ConfigManager';
 import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
 import { RoutesManager } from '../RoutesManager';
 import { json as jsonParser } from 'body-parser';
-import { DataSourcesManager } from '../../DataSourcesManager';
+import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';

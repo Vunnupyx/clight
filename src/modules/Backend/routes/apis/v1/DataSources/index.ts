@@ -213,8 +213,6 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  console.log(request.params.datasourceProtocol);
-
   let status = dataSourcesManager
     .getDataSourceByProto(request.params.datasourceProtocol)
     .getCurrentStatus();

@@ -292,7 +292,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         );
       })
       .then(([file]) => {
-        console.log(file);
         return JSON.parse(file);
       })
       .catch((error) => {

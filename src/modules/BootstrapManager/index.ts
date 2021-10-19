@@ -39,6 +39,15 @@ export class BootstrapManager {
       lifecycleEventsBus: this.lifecycleEventsBus
     });
 
+    this.dataPointCache = new DataPointCache();
+
+    this.virtualDataPointManager = new VirtualDataPointManager({
+      configManager: this.configManager,
+      cache: this.dataPointCache
+    });
+
+    DataPointMapper.createInstance(this.configManager);
+
     this.dataSinkManager = new DataSinksManager({
       configManager: this.configManager,
       dataPointCache: this.dataPointCache,
@@ -56,18 +65,11 @@ export class BootstrapManager {
       measurementsBus: this.measurementsEventsBus
     });
 
-    this.dataPointCache = new DataPointCache();
-
     this.backend = new RestApiManager({
       configManager: this.configManager,
       dataSourcesManager: this.dataSourcesManager,
       dataSinksManager: this.dataSinkManager,
       dataPointCache: this.dataPointCache
-    });
-
-    this.virtualDataPointManager = new VirtualDataPointManager({
-      configManager: this.configManager,
-      cache: this.dataPointCache
     });
   }
 
@@ -77,7 +79,6 @@ export class BootstrapManager {
   public async start() {
     try {
       await this.configManager.init();
-      DataPointMapper.createInstance(this.configManager);
 
       this.lifecycleEventsBus.push({
         id: 'device',

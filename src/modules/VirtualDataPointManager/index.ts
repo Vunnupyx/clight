@@ -15,9 +15,11 @@ interface IVirtualDataPointManagerParams {
  */
 export class VirtualDataPointManager {
   private configManager: ConfigManager;
-  private config: IVirtualDataPointConfig[];
+  private config: IVirtualDataPointConfig[] = null;
   private cache: DataPointCache;
   private counters: CounterManager;
+
+  private static className: string = VirtualDataPointManager.name;
 
   constructor(params: IVirtualDataPointManagerParams) {
     params.configManager.once('configsLoaded', () => {
@@ -187,6 +189,14 @@ export class VirtualDataPointManager {
   public getVirtualEvents(
     events: IDataSourceMeasurementEvent[]
   ): IDataSourceMeasurementEvent[] {
+    const logPrefix = `${VirtualDataPointManager.className}::getVirtualEvents`;
+    if (this.config === null) {
+      winston.warn(
+        `${logPrefix} Config not yet loaded. Skipping virtual event calculation`
+      );
+      return [];
+    }
+
     // Contains all events, "source events" first and "virtual events" after
     const _events = [...events];
     const virtualEvents: IDataSourceMeasurementEvent[] = [];

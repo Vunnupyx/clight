@@ -8,9 +8,10 @@ export class DataPointMapper {
   private static instance: DataPointMapper;
   private mapping: IDataPointMapping[] = [];
 
-  constructor(config: ConfigManager) {
-    this.mapping = config.config.mapping;
-    config.on('newConfig', this.newConfigHandler.bind(this));
+  constructor(configManager: ConfigManager) {
+    configManager.once('configsLoaded', () => {
+      this.mapping = configManager.config.mapping;
+    });
   }
 
   /**

@@ -61,7 +61,7 @@ import {
 } from '../routes/apis/v1/Templates';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
-import { DataSourcesManager } from '../../DataSourcesManager';
+import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';

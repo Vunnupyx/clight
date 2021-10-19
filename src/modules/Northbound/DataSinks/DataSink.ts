@@ -1,8 +1,11 @@
 import winston from 'winston';
 import { ILifecycleEvent } from '../../../common/interfaces';
-import { IDataSinkConfig, ITargetDataMap } from '../../ConfigManager/interfaces';
+import {
+  IDataSinkConfig,
+  ITargetDataMap
+} from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
-import { IDataSourceMeasurementEvent } from '../../DataSource';
+import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
 /**
  * Base class of northbound data sinks
@@ -31,7 +34,7 @@ export abstract class DataSink {
    */
   public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
     // No datapoints no event handling :)
-    if(this.config.dataPoints.length < 1) return;
+    if (this.config.dataPoints.length < 1) return;
     interface IEvent {
       mapValue?: string;
       map?: ITargetDataMap;
@@ -56,7 +59,7 @@ export abstract class DataSink {
           (dp) => dp.id === targetMapping.target
         );
 
-        if(!dp) return;
+        if (!dp) return;
 
         eventsByTarget[targetMapping.target].push({
           mapValue: targetMapping.mapValue,

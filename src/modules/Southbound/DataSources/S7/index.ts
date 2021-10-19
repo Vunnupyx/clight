@@ -6,8 +6,8 @@ import {
   LifecycleEventStatus,
   DataPointLifecycleEventTypes,
   EventLevels
-} from '../../../common/interfaces';
-import { IDataPointConfig } from '../../ConfigManager/interfaces';
+} from '../../../../common/interfaces';
+import { IDataPointConfig } from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
 import SinumerikNCK from './SinumerikNCK/NCDriver';
 interface S7DataPointsWithError {

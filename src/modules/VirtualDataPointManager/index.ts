@@ -1,21 +1,38 @@
 import winston from 'winston';
+import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { CounterManager } from '../CounterManager';
 import { DataPointCache } from '../DatapointCache';
-import { IDataSourceMeasurementEvent } from '../DataSource';
+import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
+
+interface IVirtualDataPointManagerParams {
+  configManager: ConfigManager;
+  cache: DataPointCache;
+}
 
 /**
  * Calculates virtual datapoints
  */
 export class VirtualDataPointManager {
-  private config: IVirtualDataPointConfig[];
+  private configManager: ConfigManager;
+  private config: IVirtualDataPointConfig[] = null;
   private cache: DataPointCache;
   private counters: CounterManager;
 
-  constructor(config: IVirtualDataPointConfig[], cache: DataPointCache) {
-    this.config = config;
-    this.cache = cache;
+  private static className: string = VirtualDataPointManager.name;
+
+  constructor(params: IVirtualDataPointManagerParams) {
+    params.configManager.once('configsLoaded', () => {
+      return this.init();
+    });
+
+    this.configManager = params.configManager;
+    this.cache = params.cache;
     this.counters = new CounterManager();
+  }
+
+  private init() {
+    this.config = this.configManager.config.virtualDataPoints;
   }
 
   /**
@@ -172,6 +189,14 @@ export class VirtualDataPointManager {
   public getVirtualEvents(
     events: IDataSourceMeasurementEvent[]
   ): IDataSourceMeasurementEvent[] {
+    const logPrefix = `${VirtualDataPointManager.className}::getVirtualEvents`;
+    if (this.config === null) {
+      winston.warn(
+        `${logPrefix} Config not yet loaded. Skipping virtual event calculation`
+      );
+      return [];
+    }
+
     // Contains all events, "source events" first and "virtual events" after
     const _events = [...events];
     const virtualEvents: IDataSourceMeasurementEvent[] = [];

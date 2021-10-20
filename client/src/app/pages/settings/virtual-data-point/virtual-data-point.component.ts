@@ -125,6 +125,11 @@ export class VirtualDataPointComponent implements OnInit {
     if (!this.datapointRows) {
       return;
     }
+
+    if (this.unsavedRow?.operationType !== VirtualDataPointOperationType.THRESHOLDS) {
+      delete this.unsavedRow?.thresholds;
+    }
+
     if (this.unsavedRow!.id) {
       this.virtualDataPointService.updateDataPoint(
         this.unsavedRow?.id!,
@@ -179,13 +184,26 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onSetThreshold(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.thresholds) {
+      virtualPoint.thresholds = {};
+    }
+
     const dialogRef = this.dialog.open(SetThresholdsModalComponent, {
-      data: {},
+      data: {
+        thresholds: { ...virtualPoint.thresholds },
+      },
       width: '850px',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.thresholds = result;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, { ...virtualPoint, thresholds: result });
+      }
     });
   }
 

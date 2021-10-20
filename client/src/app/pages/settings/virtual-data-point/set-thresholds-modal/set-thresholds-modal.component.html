@@ -13,17 +13,19 @@
           <div class="col-5 text-center">{{ 'settings-virtual-data-point.Value' | translate }}</div>
           <div class="col-5 text-center">{{ 'settings-virtual-data-point.Threshold' | translate }}</div>
         </div>
-        <div class="row mb-5">
+        <div class="row mb-5" *ngFor="let row of rows; let i = index">
           <div class="col-5">
             <input
               type="text"
               class="w-100 h-100"
+              [(ngModel)]="row.value"
             />
           </div>
           <div class="col-5">
             <input
               type="text"
               class="w-100 h-100"
+              [(ngModel)]="row.threshold"
             />
           </div>
           <div class="col-2">
@@ -31,6 +33,7 @@
               <mat-button-toggle
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
+                (click)="deleteThreshold(i)"
               ><mat-icon
               >delete_outline</mat-icon
               ></mat-button-toggle

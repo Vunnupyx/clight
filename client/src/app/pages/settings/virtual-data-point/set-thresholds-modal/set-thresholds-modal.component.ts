@@ -1,7 +1,10 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+import { ObjectMap } from '../../../../shared/utils';
+
 export interface SetThresholdsModalData {
+  thresholds: ObjectMap<number>;
 }
 
 @Component({
@@ -9,7 +12,6 @@ export interface SetThresholdsModalData {
   templateUrl: 'set-thresholds-modal.component.html'
 })
 export class SetThresholdsModalComponent implements OnInit, OnDestroy {
-
   rows: any[] = [];
 
   options: any;
@@ -22,6 +24,11 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.rows = Object.entries(this.data.thresholds).map(([value, threshold]) => ({
+      value,
+      threshold,
+    }));
+
     this.options = {
       tooltip: {
         trigger: 'axis',
@@ -60,11 +67,11 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     };
 
     this.interval = setInterval(() => {
-      this.updateOptions = {
-        series: [{
-          data: this.fetchData()
-        }]
-      };
+      // this.updateOptions = {
+      //   series: [{
+      //     data: this.fetchData()
+      //   }]
+      // };
     }, 1000);
   }
 
@@ -80,19 +87,33 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  onSelect({ selected }) {
-    this.dialogRef.close(selected[0]);
-  }
-
   onClose() {
-    this.dialogRef.close();
+    console.log(this.prepareThresholds());
+    this.dialogRef.close(this.prepareThresholds());
   }
 
   onAdd() {
-
+    this.rows.push({
+      value: '',
+      threshold: '',
+    });
   }
 
   ngOnDestroy() {
     clearInterval(this.interval);
+  }
+
+  deleteThreshold(i: number) {
+    this.rows.splice(i, 1);
+  }
+
+  private prepareThresholds() {
+    return this.rows.reduce((acc, curr) => {
+      if (Number.isFinite(Number(curr.value)) && Number.isFinite(Number(curr.threshold))) {
+        acc[Number(curr.value)] = Number(curr.threshold);
+      }
+
+      return acc;
+    }, {});
   }
 }

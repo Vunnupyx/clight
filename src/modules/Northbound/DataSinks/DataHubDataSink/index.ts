@@ -16,7 +16,7 @@ export interface DataHubDataSinkOptions {
 
 export type TGroupedMeasurements = Record<TDataHubDataPointType, Array<IMeasurement>>
 
-interface IMeasurement {
+export interface IMeasurement {
   [address: string]: any
 }
 
@@ -46,32 +46,65 @@ export class DataHubDataSink extends DataSink {
 
     const services = this.#datahubAdapter.getDesiredProps().services;
    
-    winston.debug(`${logPrefix} active services: ${Object.keys(services)}`);
+    winston.debug(`${logPrefix} known services: ${Object.keys(services)}`);
     const data: TGroupedMeasurements = {
       probe: [],
       event: [],
       telemetry: [],
     };
-    // add all datapoints from enabled services to the type group
-    for (const serviceName of Object.keys(services)) {
-      if (services[serviceName].enabled) {
-        const validDatapoints = this.#signalGroups[serviceName];
 
-        winston.debug(
-          `${logPrefix} datapoints in ${serviceName}: ${validDatapoints}`
+    const activeServices = Object.keys(services).reduce((prev: Array<string>, current) => {
+      if(services[current].enabled) prev.push(current)
+      return prev;
+    }, [])
+
+    const allDatapoints = []
+    activeServices.forEach((service) => {
+      this.#signalGroups[service].forEach((datapoint) => {
+        allDatapoints.push(datapoint);
+      })
+    })
+
+    // make datapoint in array unique
+    const uniqueDatapoints = Array.from(new Set(allDatapoints));
+
+    for (const id of Object.keys(dataPointsObj)) {
+      if(uniqueDatapoints.includes(id)) {
+        const { type, address } = this.config.dataPoints.find(
+          (dp) => dp.id === id
         );
-        for (const id of Object.keys(dataPointsObj)) {
-          if (validDatapoints.includes(id)) {
-            const { type, address } = this.config.dataPoints.find(
-              (dp) => dp.id === id
-            );
-            data[type].push({ [address]: dataPointsObj[id] });
-          }
-        }
+        data[type].push({ [address]: dataPointsObj[id] });
       }
     }
-    this.#datahubAdapter.sendData(data);
+
+
+
+    // add all datapoints from enabled services to the type group
+    // for (const serviceName of Object.keys(services)) {
+    //   if (services[serviceName].enabled) {
+    //     const validDatapoints = this.#signalGroups[serviceName];
+
+    //     winston.debug(
+    //       `${logPrefix} datapoints in ${serviceName}: ${validDatapoints}`
+    //     );
+    //     for (const id of Object.keys(dataPointsObj)) {
+    //       if (validDatapoints.includes(id)) {
+    //         const { type, address } = this.config.dataPoints.find(
+    //           (dp) => dp.id === id
+    //         );
+    //         // detect duplicated datapoint and do not add twice
+    //         if(!data[type].some((value) => {
+    //           return value[address] !== undefined
+    //         })) {
+    //           data[type].push({ [address]: dataPointsObj[id] });
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     winston.debug(`${logPrefix} transfer grouped data to adapter.`);
+    this.#datahubAdapter.setReportedProps(activeServices);
+    this.#datahubAdapter.sendData(data);
   }
 
   protected processDataPointValue() {}

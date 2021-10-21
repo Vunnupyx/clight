@@ -18,7 +18,7 @@ import {
   IDataHubConfig,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
-import { TGroupedMeasurements } from '../../DataSinks/DataHubDataSink';
+import { TGroupedMeasurements, IMeasurement } from '../../DataSinks/DataHubDataSink';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
@@ -114,6 +114,26 @@ export class DataHubAdapter {
   }
 
   /**
+   * Set reported properties on device twin.
+   */
+  public setReportedProps(reportedServices: string[]): void {
+    const logPrefix = `${DataHubAdapter.#className}::getDesiredProps`;
+    if (!this.#deviceTwin) {
+      winston.warn(`${logPrefix} no device twin available.`);
+      return;
+    }
+    const patch = {};
+    reportedServices.forEach((name) => {
+      patch[name] = {
+        enabled: true
+      }
+    })
+    this.#deviceTwin.properties.reported.update(patch, (err) => {
+      if(err) winston.error(`${logPrefix} error due to ${err.message}`);
+    });
+  }
+
+  /**
    * Initialize the DataHubAdapter and get provisioning for the device.
    */
   public init(): Promise<DataHubAdapter> {
@@ -177,6 +197,7 @@ export class DataHubAdapter {
    */
   public start(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::start`;
+    winston.debug(`${logPrefix} starting...`);
     if (!this.#initialized || !this.#connectionSting)
       return Promise.reject(
         new NorthBoundError(`${logPrefix} try to start uninitialized adapter.`)
@@ -369,8 +390,8 @@ export class DataHubAdapter {
     for (const [group, measurementArray] of Object.entries(
       groupedMeasurements
     )) {
-      // TODO: why object.entries infer string instead real strings?
-      let buffer: MessageBuffer;
+      if (measurementArray.length < 1) continue;
+      //why object.entries infer string instead real strings?
       switch (group as TDataHubDataPointType) {
         case 'event': {
           const eventBuffer = new MessageBuffer(this.#serialNumber);
@@ -382,11 +403,13 @@ export class DataHubAdapter {
           continue;
         }
         case 'telemetry': {
-          buffer = this.#telemetryBuffer;
+          this.#telemetryBuffer = new MessageBuffer(this.#serialNumber);
+          this.#telemetryBuffer.addAssetList(measurementArray);
           break;
         }
         case 'probe': {
-          buffer = this.#probeBuffer;
+          this.#probeBuffer = new MessageBuffer(this.#serialNumber);
+          this.#probeBuffer.addAssetList(measurementArray);
           break;
         }
         default: {
@@ -396,8 +419,6 @@ export class DataHubAdapter {
           continue;
         }
       }
-      buffer = new MessageBuffer(this.#serialNumber);
-      buffer.addAssetList(measurementArray);
     }
     if (this.#firstMeasurement) {
       this.sendMessage('probe');
@@ -410,7 +431,7 @@ export class DataHubAdapter {
     const logPrefix = `${DataHubAdapter.#className}::sendMessage`;
     if (!this.#dataHubClient || !this.isRunning) {
       winston.error(
-        `${logPrefix} try to send event to datahub on not running adapter.`
+        `${logPrefix} try to send ${msgType} to datahub on not running adapter.`
       );
       return;
     }
@@ -418,7 +439,7 @@ export class DataHubAdapter {
       msgType === 'telemetry' ? this.#telemetryBuffer : this.#probeBuffer;
     if (!buffer) {
       winston.warn(
-        `${logPrefix} try to send data but no data buffer available`
+        `${logPrefix} try to send ${msgType} but no data buffer available`
       );
       return;
     }
@@ -465,12 +486,14 @@ class MessageBuffer {
   /**
    * Add a iterable array of asset datasets to the buffer.
    */
-  public addAssetList(assets: Array<{ [address: string]: any }>): void {
-    assets.forEach((obj) => {
-      this.#assetBuffer.push(
-        this.generateAssetData(Object.keys(obj)[0], obj.address)
-      );
-    });
+  public addAssetList(assets: Array<IMeasurement>): void {
+    for(const measurement of Object.values(assets)) {
+      for(const [key, value] of Object.entries(measurement)) {
+        this.#assetBuffer.push(
+          this.generateAssetData(key, value)
+        );
+      }
+    }
   }
 
   /**

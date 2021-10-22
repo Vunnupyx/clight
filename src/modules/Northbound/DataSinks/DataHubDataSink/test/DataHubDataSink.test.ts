@@ -6,7 +6,8 @@ const dataHubAdapterMock = {
   init: jest.fn().mockImplementation(() => Promise.resolve(dataHubAdapterMock)),
   start: jest.fn(),
   stop: jest.fn(),
-  sendData: jest.fn()
+  sendData: jest.fn(),
+  setReportedProps: jest.fn()
 };
 
 const dataHubAdapterMockConstructor = jest
@@ -52,19 +53,16 @@ const runTimeConfigMock: IDataHubConfig = {
   scopeId: 'UTScopeId',
   groupDevice: false,
   provisioningHost: 'UTHost.test',
-  minMsgSize: 500,
   signalGroups: {
-    group1: [],
-    group2: [],
-    group3: []
+    group1: ['datapoint1', 'datapoint2', 'datapoint3'],
+    group2: ['datapoint4', 'datapoint5', 'datapoint6'],
+    group3: ['datapoint7']
   },
   dataPointTypesData: {
     probe: {
-      bufferSizeBytes: 500,
       intervalHours: 24
     },
     telemetry: {
-      bufferSizeBytes: 500,
       intervalHours: 12
     }
   }
@@ -82,7 +80,7 @@ const DataPointMapperGetInstanceSpy = jest
 /**
  * TESTS
  */
-describe('DataHubDataSink test', () => {
+describe('DataHubDataSink', () => {
   let datasinkUUT: DataHubDataSink;
   let dataHubDataSinkOptions: DataHubDataSinkOptions = {
     config: configMock,
@@ -115,7 +113,6 @@ describe('DataHubDataSink test', () => {
     });
 
     it('handles measurements and sendData to adapter', async () => {
-
       //INFO: Only 1,3,5,6 are sendable because of of twin settings.
       const mockedEvents = [
         {
@@ -143,47 +140,43 @@ describe('DataHubDataSink test', () => {
         {
           id: dataPointName1,
           type: 'probe',
-          address: 'address',
+          address: 'address/1',
           name: 'name'
         },
         {
           id: dataPointName2,
           type: 'probe',
-          address: 'address',
+          address: 'address/2',
           name: 'name'
-        }
-        ,
+        },
         {
           id: dataPointName3,
           type: 'probe',
-          address: 'address',
+          address: 'address/3',
           name: 'name'
-        }
-        ,
+        },
         {
           id: dataPointName4,
           type: 'probe',
-          address: 'address',
+          address: 'address/4',
           name: 'name'
-        }
-        ,
+        },
         {
           id: dataPointName5,
           type: 'probe',
-          address: 'address',
+          address: 'address/5',
           name: 'name'
-        }
-        ,
+        },
         {
           id: dataPointName6,
           type: 'probe',
-          address: 'address',
+          address: 'address/6',
           name: 'name'
         },
         {
           id: dataPointName7,
           type: 'probe',
-          address: 'address',
+          address: 'address/7',
           name: 'name'
         }
       ];
@@ -230,20 +223,13 @@ describe('DataHubDataSink test', () => {
         return {
           services: {
             group1: {
-              enabled: true,
-              datapoint1: true,
-              datapoint2: false,
-              datapoint3: true
+              enabled: true
             },
             group2: {
-              enabled: false,
-              datapoint18: true,
+              enabled: false
             },
             group3: {
-              enabled: true,
-              datapoint4: true,
-              datapoint5: false,
-              datapoint6: true
+              enabled: true
             }
           }
         };
@@ -256,26 +242,20 @@ describe('DataHubDataSink test', () => {
         })
         .then(() => {
           expect(dataPointMapperMock.getTargets).toBeCalled();
-          expect(dataHubAdapterMock.sendData).toBeCalledWith(
-            'probe',
-            dataPointName1,
-            mockedEvents[0].measurement.value
-          );
-          expect(dataHubAdapterMock.sendData).toBeCalledWith(
-            'probe',
-            dataPointName3,
-            mockedEvents[0].measurement.value
-          );
-          expect(dataHubAdapterMock.sendData).toBeCalledWith(
-            'probe',
-            dataPointName4,
-            mockedEvents[0].measurement.value
-          );
-          expect(dataHubAdapterMock.sendData).toBeCalledWith(
-            'probe',
-            dataPointName6,
-            mockedEvents[0].measurement.value
-          );
+          expect(dataHubAdapterMock.sendData).toBeCalledWith({
+            probe: [
+              { 'address/1': 15 },
+              { 'address/2': 15 },
+              { 'address/3': 15 },
+              { 'address/7': 15 }
+            ],
+            event: [],
+            telemetry: []
+          });
+          expect(dataHubAdapterMock.setReportedProps).toBeCalledWith([
+            'group1',
+            'group3'
+          ]);
         });
     });
   });

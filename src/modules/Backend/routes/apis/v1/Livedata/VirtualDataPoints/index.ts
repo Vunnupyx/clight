@@ -31,6 +31,7 @@ function livedataVirtualDataPointsGetHandler(request: Request, response: Respons
             dataPointId: id,
             value: event.measurement.value,
             timestamp: Math.round(Date.now() / 1000),
+            timeseries: dataPointCache.getTimeSeries(id),
         };
     }).filter(Boolean);
 
@@ -49,7 +50,8 @@ function livedataVirtualDataPointGetHandler(request: Request, response: Response
     const payload = {
         dataPointId: request.params.id,
         value: event.measurement.value,
-        timestamp: Math.round(Date.now() / 1000)
+        timestamp: Math.round(Date.now() / 1000),
+        timeseries: dataPointCache.getTimeSeries(request.params.id),
     };
 
     response.status(200).json(payload);

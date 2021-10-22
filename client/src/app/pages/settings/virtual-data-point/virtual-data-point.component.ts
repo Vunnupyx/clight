@@ -191,6 +191,7 @@ export class VirtualDataPointComponent implements OnInit {
     const dialogRef = this.dialog.open(SetThresholdsModalComponent, {
       data: {
         thresholds: { ...virtualPoint.thresholds },
+        timeseries: this.liveData[virtualPoint.id!]?.timeseries || [],
       },
       width: '850px',
     });

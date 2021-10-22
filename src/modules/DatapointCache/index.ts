@@ -67,6 +67,15 @@ export class DataPointCache {
   }
 
   /**
+   * Returns array of timeseries for specific event
+   * @param  {string} id
+   * @returns TimeSeriesValue[]
+   */
+  public getTimeSeries(id: string): TimeSeriesValue[] {
+    return this.dataPoints[id] ? this.dataPoints[id].timeseries : [];
+  }
+
+  /**
    * Whether a event has changed in the last cycle or not
    * @param  {string} id
    * @returns boolean

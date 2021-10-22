@@ -2,16 +2,21 @@ import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
 
+export interface IAuthConfig {
+  secret: any;
+}
+
+export interface IAuthRuntimeConfig {
+  expiresIn: number;
+  defaultPassword: string;
+}
+
 export interface IRuntimeConfig {
   users: IUser[];
   mtconnect: IMTConnectConfig;
   opcua: IOPCUAConfig;
   restApi: IRestApiConfig;
-}
-
-export interface IAuthConfig {
-    secret: string;
-    expiresIn: number;
+  auth: IAuthRuntimeConfig;
 }
 
 export interface IGeneralConfig {
@@ -24,6 +29,14 @@ export interface IGeneralConfig {
 export interface IUser {
   userName: string;
   password: string;
+}
+
+export interface IAuthUser extends IUser {
+  passwordChangeRequired: boolean;
+}
+
+export interface IAuthUsersConfig {
+  users: IAuthUser[];
 }
 
 export interface IRestApiConfig {

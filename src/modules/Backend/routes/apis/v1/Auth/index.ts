@@ -10,7 +10,6 @@ export function setAuthManager(auth: AuthManager) {
 }
 
 function loginPostHandler(request: Request, response: Response) {
-  console.log('Incoming login request');
   if (!request.body.userName || !request.body.password) {
     response.status(400).json({ message: 'Wrong Data!' });
     return;
@@ -18,8 +17,8 @@ function loginPostHandler(request: Request, response: Response) {
 
   authManager
     .login(request.body.userName, request.body.password)
-    .then((payload) => response.status(200).json(payload))
-    .catch((error) => response.status(400).json({ message: error.message }));
+      .then((payload) => response.status(200).json(payload))
+      .catch((error) => response.status(400).json({ message: error.message }));
 }
 
 function sendResetLinkPostHandler(request: Request, response: Response) {
@@ -44,10 +43,10 @@ function resetPasswordPostHandler(request: Request, response: Response) {
   response.status(200).send();
 }
 
-function changePasswordPostHandler(request: Request, response: Response) {
-  // TODO: implement change password post handler
-
-  response.status(200).send();
+async function changePasswordPostHandler(request: Request, response: Response) {
+  authManager.changePassword(request.user.userName, request.body.oldPassword, request.body.newPassword)
+      .then((payload) => response.status(200).json(payload))
+      .catch((error) => response.status(400).json({ message: error.message }));
 }
 
 export const authHandlers = {

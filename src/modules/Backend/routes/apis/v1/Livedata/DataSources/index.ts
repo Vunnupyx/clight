@@ -33,8 +33,6 @@ function livedataDataSourceDataPointsGetHandler(
 
   const dataPointIds = dataSource.dataPoints.map((dp) => dp.id);
 
-  console.log(dataPointIds);
-
   const payload = dataPointIds
     .map((dataPointId) => {
       const event = dataPointCache.getLastEvent(dataPointId);

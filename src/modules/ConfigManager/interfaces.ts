@@ -120,6 +120,7 @@ export interface IProxyConfig {
   type: 'socks5' | 'http',
   username?: string;
   password?: string;
+  enabled: boolean;
 }
 
 export interface IDataPointMapping {

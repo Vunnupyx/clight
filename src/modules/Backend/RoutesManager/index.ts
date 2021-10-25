@@ -135,7 +135,9 @@ export class RoutesManager {
     connectorFactory(this.routeHandlers, swaggerFile, {
       security: {
         jwt: (req, res, next) =>
-          options.authManager.verifyJWTAuth(req as Request, res, next)
+          options.authManager.verifyJWTAuth({ withPasswordChangeDetection: true })(req as Request, res, next),
+        jwtNoPasswordChangeDetection: (req, res, next) =>
+            options.authManager.verifyJWTAuth({ withPasswordChangeDetection: false })(req as Request, res, next),
       }
     })(this.app);
     // this.app.use(this.inputValidator);

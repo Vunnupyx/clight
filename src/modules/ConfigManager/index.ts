@@ -205,7 +205,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.runtimeConfig
       ),
       this.loadConfig<IConfig>(this.configName, this.config),
-      this.loadConfig<IAuthUsersConfig>(this.authUsersConfigName, this._authUsers),
+      this.loadConfig<IAuthUsersConfig>(this.authUsersConfigName, this._authUsers)
+          .catch(() => this._authUsers),
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;

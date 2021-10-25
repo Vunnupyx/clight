@@ -157,6 +157,11 @@
     "/auth/change-password": {
       "post": {
         "tags": ["auth"],
+        "security": [
+          {
+            "jwtNoPasswordChangeDetection": []
+          }
+        ],
         "operationId": "changePasswordPost",
         "description": "Changes password",
         "parameters": [

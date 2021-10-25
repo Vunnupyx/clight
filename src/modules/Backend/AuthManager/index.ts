@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from "express";
 import { hash, compare } from 'bcrypt';
+import { promises as fs } from 'fs';
 
 import { ConfigManager } from '../../ConfigManager';
-import {IAuthUser} from "../../ConfigManager/interfaces";
+import { IAuthUser } from '../../ConfigManager/interfaces';
 
 interface LoginDto {
     accessToken: string;
@@ -20,6 +21,8 @@ declare module "express" {
 }
 
 export class AuthManager {
+    private readonly EMPTY_MAC_ADDRESS = '000000000000';
+
     constructor(private configManager: ConfigManager) {}
 
     async login(username: string, password: string): Promise<LoginDto> {
@@ -29,6 +32,12 @@ export class AuthManager {
         let loggedUser = this.configManager.authUsers.find((user) => user.userName === serializedUsername);
 
         if (!loggedUser && !username.startsWith('DM_')) {
+            throw new Error('User with these credentials could not be found!');
+        }
+
+        const macAddress = await this.readMacAddress();
+
+        if (macAddress !== serializedUsername.substring(3)) {
             throw new Error('User with these credentials could not be found!');
         }
 
@@ -58,24 +67,33 @@ export class AuthManager {
         return Promise.resolve({ accessToken, passwordChangeRequired });
     }
 
-    verifyJWTAuth(request: Request, response: Response, next: NextFunction) {
-        const header = request.headers['authorization'];
+    verifyJWTAuth({ withPasswordChangeDetection }: { withPasswordChangeDetection: boolean }) {
+        return (request: Request, response: Response, next: NextFunction) => {
+            const header = request.headers['authorization'];
 
-        if (!header) {
-            response.status(403).json({ message: 'Authorization token is required!' });
-            return;
-        }
+            if (!header) {
+                response.status(403).json({ message: 'Authorization token is required!' });
+                return;
+            }
 
-        try {
-            const token = header.substring('Bearer '.length);
+            try {
+                const token = header.substring('Bearer '.length);
 
-            const user = jwt.verify(token, this.configManager.authConfig.secret);
+                const user = jwt.verify(token, this.configManager.authConfig.secret) as UserTokenPayload;
 
-            request.user = user as UserTokenPayload;
+                const loggedUser = this.configManager.authUsers.find((auth) => auth.userName === user.userName);
 
-            next();
-        } catch (err) {
-            response.status(401).json({ message: 'Unauthorized!' });
+                if (withPasswordChangeDetection && loggedUser.passwordChangeRequired) {
+                    response.status(403).json({ message: 'Change default password is required!' });
+                    return;
+                }
+
+                request.user = user;
+
+                next();
+            } catch (err) {
+                response.status(401).json({ message: 'Unauthorized!' });
+            }
         }
     }
 
@@ -109,5 +127,15 @@ export class AuthManager {
         await this.configManager.saveAuthConfig();
 
         return user;
+    }
+
+    private async readMacAddress() {
+        try {
+            const content = await fs.readFile('/sys/class/net/eth0/address', { encoding: 'utf-8' });
+
+            return content;
+        } catch (err) {
+            return this.EMPTY_MAC_ADDRESS;
+        }
     }
 }

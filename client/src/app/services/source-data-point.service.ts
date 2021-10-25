@@ -222,6 +222,10 @@ export class SourceDataPointService {
     }
   }
 
+  getProtocol(id: string) {
+    return this._store?.snapshot?.dataPointsSourceMap[id];
+  }
+
   getPrefix(id: string) {
     if (!this._store?.snapshot?.dataPointsSourceMap) {
       return '';

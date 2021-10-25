@@ -5,7 +5,7 @@ export enum VirtualDataPointOperationType {
   OR = 'or',
   NOT = 'not',
   COUNTER = 'counter',
-  THRESHOLDS = 'THRESHOLDS'
+  THRESHOLDS = 'thresholds'
 }
 
 export class VirtualDataPoint {

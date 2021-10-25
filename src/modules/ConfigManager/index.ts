@@ -69,7 +69,7 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
 };
 
 
-export const emptyDefaultConfig = {
+export const emptyDefaultConfig: IConfig = {
   general: {
     manufacturer: '',
     serialNumber: '',
@@ -79,7 +79,6 @@ export const emptyDefaultConfig = {
   networkConfig: {
     x1: {},
     x2: {},
-    proxy: {}
   },
   dataSources: [],
   dataSinks: [],
@@ -165,7 +164,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         regId: "unknownDevice",
         symKey: "",
         groupDevice: false,
-        proxy: null,
         signalGroups: undefined,
         dataPointTypesData: {
           probe: {

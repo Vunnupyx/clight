@@ -97,7 +97,6 @@ export interface IDataHubConfig {
     regId: string,
     symKey: string
     groupDevice: boolean,
-    proxy?: IProxyConfig,
     signalGroups: ISignalGroups
     dataPointTypesData: {
       probe: IDataHubDataPointTypesData,
@@ -146,8 +145,10 @@ export interface NetworkConfigItem {
 }
 
 export type NetworkConfig = {
-  [key in 'x1' | 'x2' | 'proxy']: NetworkConfigItem;
-};
+  [key in 'x1' | 'x2']: NetworkConfigItem;
+} & {
+  proxy?: IProxyConfig;
+}
 
 export interface ITemplateDataSource {
   id: string;

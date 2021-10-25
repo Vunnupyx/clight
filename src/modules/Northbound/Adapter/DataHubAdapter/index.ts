@@ -16,6 +16,7 @@ import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
 import {
   IDataHubConfig,
+  IProxyConfig,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
 import { TGroupedMeasurements, IMeasurement } from '../../DataSinks/DataHubDataSink';
@@ -23,7 +24,9 @@ import { TGroupedMeasurements, IMeasurement } from '../../DataSinks/DataHubDataS
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
 
-interface DataHubAdapterOptions extends IDataHubConfig {}
+interface DataHubAdapterOptions extends IDataHubConfig {
+  proxy?: IProxyConfig;
+}
 
 interface IDesiredProps {
   services: {
@@ -141,7 +144,7 @@ export class DataHubAdapter {
     return Promise.resolve()
       .then(() => {
         winston.debug(`${logPrefix} initializing.`);
-        if (this.#proxyConfig) {
+        if (this.#proxyConfig && this.#proxyConfig.enabled) {
           winston.debug(
             `${logPrefix} proxy config detected. Building ${
               this.#proxyConfig.type

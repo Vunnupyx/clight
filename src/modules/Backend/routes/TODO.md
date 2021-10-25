@@ -78,7 +78,7 @@ Response:
 ]
 ```
 
-## DONE Templates Endpoint
+## Templates Endpoint
 
 GET /api/v1/templates
 

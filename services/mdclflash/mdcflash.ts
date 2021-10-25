@@ -30,7 +30,7 @@ class MDCLFlasher {
   readonly #watchDurationMs = 3000;
   readonly #pollingIntervalMs = 250;
   readonly #durationPollRatio = this.#watchDurationMs/this.#pollingIntervalMs;
-  blinkTimers = [];
+  #blinkTimers = [];
 
   constructor() {
     this.setupGPIOPaths();
@@ -97,7 +97,7 @@ class MDCLFlasher {
     let paths: Array<string> = this.getLedPaths(color);
 
     const unset = () => {
-      this.blinkTimer[1] = setTimeout(() => {
+      this.#blinkTimers[1] = setTimeout(() => {
         paths.forEach((path) => {
           writeFileSync(path, LED.OFF);
         });
@@ -105,7 +105,7 @@ class MDCLFlasher {
       }, interval / 2);
     };
     const set = () => {
-      this.blinkTimer[0] = setTimeout(() => {
+      this.#blinkTimers[0] = setTimeout(() => {
         paths.forEach((path) => {
           writeFileSync(path, LED.ON);
         });
@@ -119,7 +119,7 @@ class MDCLFlasher {
    * Stop blinking of user led.
    */
   private stopBlink() {
-    this.blinkTimer.forEach(timer => clearTimeout(timer));
+    this.#blinkTimers.forEach(timer => clearTimeout(timer));
     this.clearAll();
   }
 

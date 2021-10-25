@@ -128,7 +128,7 @@ export class DataHubAdapter {
         enabled: true
       }
     })
-    this.#deviceTwin.properties.reported.update(patch, (err) => {
+    this.#deviceTwin.properties.reported.update({services: patch}, (err) => {
       if(err) winston.error(`${logPrefix} error due to ${err.message}`);
     });
   }

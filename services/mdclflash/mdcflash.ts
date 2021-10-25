@@ -26,11 +26,11 @@ class MDCLFlasher {
     '/sys/devices/platform/interconnect@100000/interconnect@100000:interconnect@28380000/interconnect@100000:interconnect@28380000:interconnect@42040000/42110000.wkup_gpio0/gpio';
   #userButtonWatcher = null;
   #userButtonPath;
-  #blink = false;
   #lastButtonCount: number = 0;
   readonly #watchDurationMs = 3000;
   readonly #pollingIntervalMs = 250;
   readonly #durationPollRatio = this.#watchDurationMs/this.#pollingIntervalMs;
+  blinkTimers = [];
 
   constructor() {
     this.setupGPIOPaths();
@@ -78,7 +78,6 @@ class MDCLFlasher {
         this.#lastButtonCount++;
         if (this.#lastButtonCount >= this.#durationPollRatio) {
           this.stopBlink();
-          this.clearAll();
           clearInterval(this.#userButtonWatcher);
           this.transferData();
         }
@@ -93,26 +92,20 @@ class MDCLFlasher {
    */
   private blink(
     interval: number,
-    color: TLedColors = 'green',
-    count: number = undefined
+    color: TLedColors = 'green'
   ) {
     let paths: Array<string> = this.getLedPaths(color);
-    let counter = 0;
-    this.#blink = true;
 
     const unset = () => {
-      setTimeout(() => {
+      this.blinkTimer[1] = setTimeout(() => {
         paths.forEach((path) => {
           writeFileSync(path, LED.OFF);
         });
         set();
       }, interval / 2);
-      if (count) counter++;
     };
     const set = () => {
-      if (!this.#blink) return;
-      if (counter >= count) return;
-      setTimeout(() => {
+      this.blinkTimer[0] = setTimeout(() => {
         paths.forEach((path) => {
           writeFileSync(path, LED.ON);
         });
@@ -126,7 +119,8 @@ class MDCLFlasher {
    * Stop blinking of user led.
    */
   private stopBlink() {
-    this.#blink = false;
+    this.blinkTimer.forEach(timer => clearTimeout(timer));
+    this.clearAll();
   }
 
   /**
@@ -178,8 +172,6 @@ class MDCLFlasher {
     const target = '/dev/mmcblk1p1';
     const source = '/dev/sda1';
     const command = `dd if=${source} of=${target} bs=4M`;
-    // const command = `sleep 30`;
-    // Start blinking
     this.blink(1000, 'orange');
     exec(command, (err, _stdout, stderr) => {
       this.stopBlink();

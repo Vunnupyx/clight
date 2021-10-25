@@ -8,7 +8,6 @@
       "email": "info@codestryke.com"
     }
   },
-  "host": "localhost:80",
   "basePath": "/api/v1",
   "tags": [
     {
@@ -1423,7 +1422,7 @@
     "currentStatus": {
       "type": "object",
       "properties": {
-        "status":{
+        "status": {
           "type": "string",
           "enum": ["connected", "disconnected"]
         }

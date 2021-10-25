@@ -2,14 +2,14 @@
 
 ## First login
 
-1. Username: The user is able to login with this username: DM\_<MAC_ADRESS>
+1. Username: The user is able to login with this username: `DM_<MAC_ADDRESS>`
    - Non alpha numeric characters are removed from the mac address. It should look like: afbfcfdfefff
    - Mac address is read from the file /sys/class/net/eth0/address)
-   - Fallback, if the file /sys/class/net/eth0/address is not accessible: 000000000000
+   - Mac address fallback, if the file /sys/class/net/eth0/address is not accessible: 000000000000
 2. Password: For the first login, a default password is used. It's configured inside the runtime.json (auth.defaultpassword)
 3. After the login, the user is then required to change the password
 4. the new password is then stored inside mdclight/config/auth.json
-5. If the auth.json gets removed, the user should again be able to login with DM\_<MAC_ADRESS> and the default password. The steps above are then repeated.
+5. If the auth.json gets removed, the user should again be able to login with `DM_<MAC_ADDRESS>` and the default password. The steps above are then repeated.
 
 ## JWT Authentication
 

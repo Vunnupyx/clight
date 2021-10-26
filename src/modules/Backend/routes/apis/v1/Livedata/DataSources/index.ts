@@ -33,7 +33,7 @@ function livedataDataSourceDataPointsGetHandler(
 
   const dataPointIds = dataSource.dataPoints.map((dp) => dp.id);
 
-  console.log(dataPointIds);
+  const timeseriesIncluded = request.query.timeseries === 'true';
 
   const payload = dataPointIds
     .map((dataPointId) => {
@@ -43,11 +43,17 @@ function livedataDataSourceDataPointsGetHandler(
         return undefined;
       }
 
-      return {
+      const obj: any = {
         dataPointId,
         value: event.measurement.value,
         timestamp: Math.round(Date.now() / 1000)
       };
+
+      if (timeseriesIncluded) {
+        obj.timeseries = dataPointCache.getTimeSeries(dataPointId);
+      }
+
+      return obj;
     })
     .filter(Boolean);
 
@@ -66,11 +72,17 @@ function livedataDataSourceDataPointGetHandler(
     return;
   }
 
-  const payload = {
+  const timeseriesIncluded = request.query.timeseries === 'true';
+
+  const payload: any = {
     dataPointId: request.params.dataPointId,
     value: event.measurement.value,
     timestamp: Math.round(Date.now() / 1000)
   };
+
+  if (timeseriesIncluded) {
+    payload.timeseries = dataPointCache.getTimeSeries(request.params.dataPointId);
+  }
 
   response.status(200).json(payload);
 }

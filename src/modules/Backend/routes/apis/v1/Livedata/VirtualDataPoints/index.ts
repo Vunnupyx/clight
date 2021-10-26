@@ -19,6 +19,7 @@ export function setDataPointCache(cache: DataPointCache) {
 
 function livedataVirtualDataPointsGetHandler(request: Request, response: Response): void {
     const dataPoints = configManager.config.virtualDataPoints;
+    const timeseriesIncluded = request.query.timeseries === 'true';
 
     const payload = dataPoints.map(({ id }) => {
         const event = dataPointCache.getLastEvent(id);
@@ -27,12 +28,17 @@ function livedataVirtualDataPointsGetHandler(request: Request, response: Respons
             return undefined;
         }
 
-        return {
+        const obj: any = {
             dataPointId: id,
             value: event.measurement.value,
             timestamp: Math.round(Date.now() / 1000),
-            timeseries: dataPointCache.getTimeSeries(id),
         };
+
+        if (timeseriesIncluded) {
+            obj.timeseries = dataPointCache.getTimeSeries(id);
+        }
+
+        return obj;
     }).filter(Boolean);
 
     response.status(200).json(payload);
@@ -40,6 +46,7 @@ function livedataVirtualDataPointsGetHandler(request: Request, response: Respons
 
 function livedataVirtualDataPointGetHandler(request: Request, response: Response): void {
     const event = dataPointCache.getLastEvent(request.params.id);
+    const timeseriesIncluded = request.query.timeseries === 'true';
 
     if (!event) {
         response.status(404).send();
@@ -47,12 +54,15 @@ function livedataVirtualDataPointGetHandler(request: Request, response: Response
         return;
     }
 
-    const payload = {
+    const payload: any = {
         dataPointId: request.params.id,
         value: event.measurement.value,
         timestamp: Math.round(Date.now() / 1000),
-        timeseries: dataPointCache.getTimeSeries(request.params.id),
     };
+
+    if (timeseriesIncluded) {
+        payload.timeseries = dataPointCache.getTimeSeries(request.params.id);
+    }
 
     response.status(200).json(payload);
 }

@@ -78,7 +78,7 @@ Response:
 ]
 ```
 
-## DONE Templates Endpoint
+## Templates Endpoint
 
 GET /api/v1/templates
 
@@ -86,20 +86,8 @@ Response/Body
 
 ```json
 {
-  "availableDataSources": [
-    {
-      "id": "",
-      "name": "",
-      "description": ""
-    }
-  ],
-  "availableDataSinks": [
-    {
-      "id": "",
-      "name": "",
-      "type": ""
-    }
-  ]
+  "availableDataSources": ["<protocol>"],
+  "availableDataSinks": ["<protocol>"]
 }
 ```
 
@@ -107,8 +95,8 @@ POST /api/v1/templates/apply
 
 ```json
 {
-  "dataSource": "<dataSourceId>",
-  "dataSinks": ["<dataSourceId>", ...]
+  "dataSource": "<dataSourceProtocol>",
+  "dataSinks": ["<dataSinkProtocol>", ...]
 }
 ```
 

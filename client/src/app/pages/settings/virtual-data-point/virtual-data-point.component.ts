@@ -84,6 +84,10 @@ export class VirtualDataPointComponent implements OnInit {
       )
     );
 
+    this.sub.add(
+      this.virtualDataPointService.setLivedataTimer().subscribe()
+    );
+
     this.virtualDataPointService.getDataPoints();
     this.virtualDataPointService.getLiveDataForDataPoints();
     this.sourceDataPointService.getSourceDataPointsAll();

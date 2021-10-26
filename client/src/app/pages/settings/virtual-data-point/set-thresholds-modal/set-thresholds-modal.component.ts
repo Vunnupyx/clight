@@ -23,6 +23,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   updateOptions: any;
 
   sub = new Subscription();
+  liveDataSub!: Subscription;
 
   constructor(
     private dialogRef: MatDialogRef<SetThresholdsModalComponent>,
@@ -34,6 +35,10 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     const sub = this.sourceDataPointsService.dataPointsLivedata.subscribe((x) => this.onLiveData(x));
 
     this.sub.add(sub);
+
+    this.liveDataSub = this.sourceDataPointsService.setLivedataTimer(
+      this.sourceDataPointsService.getProtocol(this.data.source)
+    ).subscribe();
 
     this.rows = Object.entries(this.data.thresholds).map(([value, threshold]) => ({
       value,
@@ -79,6 +84,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+    this.liveDataSub.unsubscribe();
   }
 
   onClose() {

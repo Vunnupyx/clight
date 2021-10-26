@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, mergeMap} from 'rxjs/operators';
 import {ToastrService} from 'ngx-toastr';
 import {TranslateService} from '@ngx-translate/core';
 
@@ -9,6 +9,7 @@ import {Status, Store, StoreFactory} from 'app/shared/state';
 import {array2map, errorHandler, ObjectMap} from 'app/shared/utils';
 import * as api from 'app/api/models';
 import {CreateEntityResponse} from 'app/models/responses/create-entity.response';
+import {from, interval, Observable} from "rxjs";
 
 export class SourceDataPointsState {
   status!: Status;
@@ -112,6 +113,11 @@ export class SourceDataPointService {
         status: Status.Ready
       }));
     }
+  }
+
+  setLivedataTimer(protocol: DataSourceProtocol): Observable<void> {
+    return interval(5000)
+      .pipe(mergeMap(() => from(this.getLiveDataForDataPoints(protocol))));
   }
 
   async getLiveDataForDataPoints(protocol: DataSourceProtocol) {

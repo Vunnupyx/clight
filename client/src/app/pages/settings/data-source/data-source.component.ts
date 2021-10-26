@@ -51,6 +51,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   liveData: ObjectMap<DataPointLiveData> = {};
 
   sub = new Subscription();
+  liveDataSub!: Subscription;
 
   constructor(
     private sourceDataPointService: SourceDataPointService,
@@ -99,7 +100,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.sourceDataPointService.getDataPoints(obj.protocol!);
     this.dataSourceService.getStatus(obj.protocol!);
 
-    this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!)
+    this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!);
+
+    if (this.liveDataSub) {
+      this.liveDataSub.unsubscribe();
+    }
+
+    this.liveDataSub = this.sourceDataPointService.setLivedataTimer(obj.protocol!).subscribe();
 
     this.clearUnsavedRow();
   }
@@ -234,7 +241,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sub && this.sub.unsubscribe();
+    this.sub.unsubscribe();
+    this.liveDataSub && this.liveDataSub.unsubscribe();
   }
 
   updateSoftwareVersion(version: string) {

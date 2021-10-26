@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
 import {DataPointLiveData, VirtualDataPoint} from '../models';
@@ -10,6 +10,7 @@ import * as api from "../api/models";
 import {array2map, errorHandler, ObjectMap} from "../shared/utils";
 import {CreateEntityResponse} from "../models/responses/create-entity.response";
 import {UpdateEntityResponse} from "../models/responses/update-entity.response";
+import {from, interval, Observable, timer} from "rxjs";
 
 
 export class VirtualDataPointsState {
@@ -70,6 +71,11 @@ export class VirtualDataPointService {
         status: Status.Ready
       }));
     }
+  }
+
+  setLivedataTimer(): Observable<void> {
+    return interval(5000)
+      .pipe(mergeMap(() => from(this.getLiveDataForDataPoints())));
   }
 
   async getLiveDataForDataPoints() {

@@ -215,7 +215,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public setupDefaultDataSources() {
     const sources = [defaultS7DataSource, defaultIoShieldDataSource];
 
-    this.saveConfig({
+    this._config = {
+      ...this._config,
       dataSources: [
         ...this._config.dataSources,
         // Add missing sources
@@ -226,7 +227,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             )
         )
       ]
-    });
+    }
   }
 
   /**
@@ -239,7 +240,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       defaultDataHubDataSink
     ];
 
-    this.saveConfig({
+    this._config = {
+      ...this._config,
       dataSinks: [
         ...this._config.dataSinks,
         // Add missing sinks
@@ -248,7 +250,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             !this._config.dataSinks.some((x) => x.protocol === sink.protocol)
         )
       ]
-    });
+    };
   }
 
   /**
@@ -460,15 +462,22 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private saveConfigToFile(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfigToFile`;
 
+    const file =  path.join(this.configFolder, this.configName)
+    const content = JSON.stringify(this._config, null, 2)
+
+    winston.debug(
+      `${logPrefix} Saving ${content.length} bytes to config ${file}`
+    );
+
     return fs
       .writeFile(
-        path.join(this.configFolder, this.configName),
-        JSON.stringify(this._config, null, 2),
+        file,
+        content,
         { encoding: 'utf-8' }
       )
       .then(() => {
         winston.info(
-          `${ConfigManager.className}::saveConfigToFile saved new config to file`
+          `${logPrefix} Saved ${content.length} bytes to config ${file}`
         );
       })
       .catch((err) => {
@@ -477,9 +486,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public saveConfig(obj: Partial<IConfig> = null): void {
+    const logPrefix = `${ConfigManager.className}::saveConfig`;
+
     if (obj) {
       this._config = this.mergeDeep(this._config, obj);
     }
+
+    winston.debug(`${logPrefix}`)
 
     this.saveConfigToFile();
   }

@@ -108,22 +108,10 @@ export type NetworkConfig = {
   [key in 'x1' | 'x2' | 'proxy']: NetworkConfigItem;
 };
 
-export interface ITemplateDataSource {
-  id: string;
-  name: string;
-  description?: string;
-}
-
-export interface ITemplateDataSink {
-  id: string;
-  name: string;
-  description?: string;
-  dataSources: string[];
-}
 
 export interface IDefaultTemplates {
-  availableDataSources: ITemplateDataSource[];
-  availableDataSinks: ITemplateDataSink[];
+  availableDataSources: IDataSourceConfig[];
+  availableDataSinks: IDataSinkConfig[];
 }
 
 export interface TemplatesConfig {

@@ -1,12 +1,50 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { LocalStorageService } from './local-storage.service';
+import { ForgotPasswordRequest, LoginRequest, LoginResponse, ResetPasswordRequest } from "../../models/auth";
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class AuthService {
-  constructor(private localStorageService: LocalStorageService) {}
+  constructor(
+    private localStorageService: LocalStorageService,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   get token() {
-    return this.localStorageService.get<string>('token');
+    return this.localStorageService.get<string>('accessToken');
+  }
+
+  login(data: LoginRequest) {
+    return this.http.post<LoginResponse>(`${environment.apiRoot}/auth/login`, data)
+      .toPromise()
+      .then((response) => {
+        this.localStorageService.set('accessToken', response.accessToken);
+
+        return response;
+      });
+  }
+
+  sendResetToken(data: ForgotPasswordRequest) {
+    return this.http.post(`${environment.apiRoot}/auth/forgot-password`, data)
+      .toPromise();
+  }
+
+  verifyResetToken(token: string) {
+    return this.http.post(`${environment.apiRoot}/auth/forgot-password/verify`, { token })
+      .toPromise();
+  }
+
+  resetPassword(data: ResetPasswordRequest) {
+    return this.http.post(`${environment.apiRoot}/auth/reset-password`, data)
+      .toPromise();
+  }
+
+  logout() {
+    this.localStorageService.clear('accessToken');
+    return this.router.navigate(['/login']);
   }
 }

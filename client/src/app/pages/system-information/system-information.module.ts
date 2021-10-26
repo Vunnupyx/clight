@@ -4,11 +4,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SystemInformationComponent } from './system-information.component';
 import { SharedModule } from '../../shared/shared.module';
+import {AuthGuard} from "../../shared/guards/auth.guard";
 
 const routes: Routes = [
   {
     path: 'system-information',
     component: SystemInformationComponent,
+    canActivate: [AuthGuard],
   }
 ];
 

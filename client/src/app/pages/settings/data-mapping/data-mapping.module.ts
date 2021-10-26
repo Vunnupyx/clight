@@ -5,11 +5,13 @@ import { SharedModule } from 'app/shared/shared.module';
 import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
 
 import { DataMappingComponent } from './data-mapping.component';
+import { AuthGuard } from "../../../shared/guards/auth.guard";
 
 const routes: Routes = [
   {
     path: 'settings/data-mapping',
-    component: DataMappingComponent
+    component: DataMappingComponent,
+    canActivate: [AuthGuard],
   }
 ];
 

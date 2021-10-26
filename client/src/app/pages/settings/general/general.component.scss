@@ -1,0 +1,8 @@
+.quick-start {
+  margin-top: 25px;
+
+  @media screen and (min-width: 992px) {
+    text-align: right;
+    margin-top: 0;
+  }
+}

@@ -8,9 +8,12 @@ export default {
       email: 'info@codestryke.com'
     }
   },
-  host: 'localhost:5000',
   basePath: '/api/v1',
   tags: [
+    {
+      name: 'auth',
+      description: 'Everything about authorization'
+    },
     {
       name: 'datasource',
       description: 'Everything about the data source'
@@ -42,11 +45,142 @@ export default {
     {
       name: 'templates',
       description: 'Everything about the templates.'
+    },
+    {
+      name: 'livedata',
+      description: 'Everything about the livedata.'
     }
   ],
   produces: ['application/json'],
   schemes: ['http', 'https'],
   paths: {
+    '/auth/login': {
+      post: {
+        security: [],
+        tags: ['auth'],
+        operationId: 'loginPost',
+        description: 'Login in system',
+        parameters: [
+          {
+            in: 'body',
+            name: 'loginRequest',
+            description: 'Login in system',
+            required: true,
+            schema: {
+              $ref: '#/definitions/loginRequest'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Auth token',
+            schema: {
+              $ref: '#/definitions/loginResponse'
+            }
+          }
+        }
+      }
+    },
+    '/auth/forgot-password': {
+      post: {
+        security: [],
+        tags: ['auth'],
+        operationId: 'sendResetLinkPost',
+        description: 'Sends reset link',
+        parameters: [
+          {
+            in: 'body',
+            name: 'forgotPasswordRequest',
+            description: 'Forgot Password Request',
+            required: true,
+            schema: {
+              $ref: '#/definitions/forgotPasswordRequest'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: ''
+          }
+        }
+      }
+    },
+    '/auth/forgot-password/verify': {
+      post: {
+        security: [],
+        tags: ['auth'],
+        operationId: 'verifyResetPasswordTokenPost',
+        description: 'Verifies reset token',
+        parameters: [
+          {
+            in: 'body',
+            name: 'forgotPasswordVerifyRequest',
+            description: 'Forgot Password Verify Request',
+            required: true,
+            schema: {
+              $ref: '#/definitions/forgotPasswordVerifyRequest'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: ''
+          }
+        }
+      }
+    },
+    '/auth/reset-password': {
+      post: {
+        security: [],
+        tags: ['auth'],
+        operationId: 'resetPasswordPost',
+        description: 'Resets password',
+        parameters: [
+          {
+            in: 'body',
+            name: 'resetPasswordRequest',
+            description: 'Reset Password Request',
+            required: true,
+            schema: {
+              $ref: '#/definitions/resetPasswordRequest'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: ''
+          }
+        }
+      }
+    },
+    '/auth/change-password': {
+      post: {
+        tags: ['auth'],
+        security: [
+          {
+            jwtNoPasswordChangeDetection: []
+          }
+        ],
+        operationId: 'changePasswordPost',
+        description: 'Changes password',
+        parameters: [
+          {
+            in: 'body',
+            name: 'changePasswordRequest',
+            description: 'Change Password Request',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changePasswordRequest'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: ''
+          }
+        }
+      }
+    },
     '/datasources': {
       get: {
         tags: ['datasource'],
@@ -888,6 +1022,90 @@ export default {
         }
       }
     },
+    '/livedata/datasource/{datasourceProtocol}': {
+      parameters: [
+        {
+          name: 'datasourceProtocol',
+          in: 'path',
+          description: 'id of the dataSource to get',
+          required: true,
+          type: 'string'
+        }
+      ],
+      get: {
+        tags: ['livedata'],
+        description: 'Get livedata for dataSource dataPoints',
+        operationId: 'livedataDataSourceDataPointsGet',
+        responses: {
+          '200': {
+            description:
+              'Returns all information about the livedata for dataSource dataPoints'
+          }
+        }
+      }
+    },
+    '/livedata/datasource/{datasourceProtocol}/{dataPointId}': {
+      parameters: [
+        {
+          name: 'datasourceProtocol',
+          in: 'path',
+          description: 'id of the dataSource to get',
+          required: true,
+          type: 'string'
+        },
+        {
+          name: 'dataPointId',
+          in: 'path',
+          description: 'id of the datapoint to get',
+          required: true,
+          type: 'string'
+        }
+      ],
+      get: {
+        tags: ['livedata'],
+        description: 'Get livedata for dataSource dataPoint',
+        operationId: 'livedataDataSourceDataPointGet',
+        responses: {
+          '200': {
+            description:
+              'Returns all information about the livedata for dataSource dataPoint'
+          }
+        }
+      }
+    },
+    '/livedata/vdps': {
+      get: {
+        tags: ['livedata'],
+        description: 'Get livedata for vdps',
+        operationId: 'livedataVirtualDataPointsGet',
+        responses: {
+          '200': {
+            description: 'Returns all information about the livedata for vdps'
+          }
+        }
+      }
+    },
+    '/livedata/vdps/{id}': {
+      parameters: [
+        {
+          name: 'id',
+          in: 'path',
+          description: 'id of vdp',
+          required: true,
+          type: 'string'
+        }
+      ],
+      get: {
+        tags: ['livedata'],
+        description: 'Get livedata for vdp',
+        operationId: 'livedataVirtualDataPointGet',
+        responses: {
+          '200': {
+            description: 'Returns all information about the livedata for vdp'
+          }
+        }
+      }
+    },
     '/networkconfig': {
       get: {
         tags: ['networkConfig'],
@@ -974,6 +1192,14 @@ export default {
       }
     }
   },
+  securityDefinitions: {
+    jwt: {
+      name: 'Authorization',
+      type: 'apiKey',
+      in: 'header'
+    }
+  },
+  security: [{ jwt: [] }],
   definitions: {
     changeDatasource: {
       description: 'JSON type for change enable state or connection',
@@ -1503,6 +1729,67 @@ export default {
       properties: {
         completed: {
           type: 'boolean'
+        }
+      }
+    },
+    loginRequest: {
+      type: 'object',
+      required: ['userName', 'password'],
+      properties: {
+        userName: {
+          type: 'string'
+        },
+        password: {
+          type: 'string'
+        }
+      }
+    },
+    loginResponse: {
+      type: 'object',
+      properties: {
+        accessToken: {
+          type: 'string'
+        },
+        passwordChangeRequired: {
+          type: 'boolean'
+        }
+      }
+    },
+    forgotPasswordRequest: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string'
+        }
+      }
+    },
+    forgotPasswordVerifyRequest: {
+      type: 'object',
+      properties: {
+        token: {
+          type: 'string'
+        }
+      }
+    },
+    resetPasswordRequest: {
+      type: 'object',
+      properties: {
+        resetToken: {
+          type: 'string'
+        },
+        newPassword: {
+          type: 'string'
+        }
+      }
+    },
+    changePasswordRequest: {
+      type: 'object',
+      properties: {
+        oldPassword: {
+          type: 'string'
+        },
+        newPassword: {
+          type: 'string'
         }
       }
     }

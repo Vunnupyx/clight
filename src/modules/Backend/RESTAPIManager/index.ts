@@ -7,6 +7,7 @@ import { json as jsonParser } from 'body-parser';
 import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
+import { AuthManager } from '../AuthManager';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager;
@@ -45,6 +46,8 @@ export class RestApiManager {
     this.config = this.options.configManager.runtimeConfig.restApi;
     this.port = this.config.port || Number.parseInt(process.env.PORT) || 5000;
 
+    const authManager = new AuthManager(this.options.configManager);
+
     this.expressApp.use(
       jsonParser({
         limit: this.config.maxFileSizeByte,
@@ -57,7 +60,8 @@ export class RestApiManager {
       configManager: this.options.configManager,
       dataSourcesManager: this.options.dataSourcesManager,
       dataSinksManager: this.options.dataSinksManager,
-      dataPointCache: this.options.dataPointCache
+      dataPointCache: this.options.dataPointCache,
+      authManager,
     });
 
     this.start();

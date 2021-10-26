@@ -5,11 +5,13 @@ import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confir
 import { SharedModule } from 'app/shared/shared.module';
 
 import { VirtualDataPointComponent } from './virtual-data-point.component';
+import {AuthGuard} from "../../../shared/guards/auth.guard";
 
 const routes: Routes = [
   {
     path: 'settings/virtual-data-point',
     component: VirtualDataPointComponent,
+    canActivate: [AuthGuard],
   }
 ];
 

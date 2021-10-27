@@ -1,9 +1,15 @@
 import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
 
+type TimeSeriesValue = {
+  ts: string,
+  value: boolean | number | string
+}
+
 type EventsById = {
   [id: string]: {
     changed: boolean;
     event: IDataSourceMeasurementEvent;
+    timeseries: TimeSeriesValue[];
   };
 };
 
@@ -34,7 +40,19 @@ export class DataPointCache {
         changed: lastEvent
           ? lastEvent.measurement.value !== event.measurement.value
           : false,
-        event
+        event,
+        timeseries: [
+          ...(this.dataPoints[event.measurement.id]?.timeseries || []),
+          {
+            ts: new Date().toISOString(),
+            value: event.measurement.value,
+          },
+        ].filter((time) => {
+          const ts = new Date(time.ts);
+          const pastDate = new Date(Date.now() - 30000);
+
+          return ts >= pastDate;
+        })
       };
     });
   }
@@ -46,6 +64,15 @@ export class DataPointCache {
    */
   public getLastEvent(id: string): IDataSourceMeasurementEvent | null {
     return this.dataPoints[id] ? this.dataPoints[id].event : undefined;
+  }
+
+  /**
+   * Returns array of timeseries for specific event
+   * @param  {string} id
+   * @returns TimeSeriesValue[]
+   */
+  public getTimeSeries(id: string): TimeSeriesValue[] {
+    return this.dataPoints[id] ? this.dataPoints[id].timeseries : [];
   }
 
   /**

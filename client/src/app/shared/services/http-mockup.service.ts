@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { RequestOptionsArgs, HttpService } from './http.service';
 import { errorMockup, sleep } from 'app/shared/utils';
@@ -9,8 +10,8 @@ const SLEEP_INTERVAL_MS = 250;
 
 @Injectable()
 export class HttpMockupService extends HttpService {
-  constructor(http: HttpClient, authService: AuthService) {
-    super(http, authService);
+  constructor(http: HttpClient, router: Router, authService: AuthService) {
+    super(http, router, authService);
   }
 
   async get<T = any>(url: string, options?: RequestOptionsArgs, mockup?: T) {

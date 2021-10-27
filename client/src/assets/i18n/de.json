@@ -8,7 +8,37 @@
     "DataMapping": "",
     "DataSinks": "Anwendungs Schnittstellen",
     "Network": "Netzwerk",
-    "SystemInformation": "System Informationen"
+    "SystemInformation": "System Informationen",
+    "Logout": "Logout"
+  },
+  "auth-login": {
+    "Email": "Email",
+    "Username": "Username",
+    "Password": "Password",
+    "SignIn": "Sign in",
+    "SendResetPassword": "Send reset email",
+    "ResetEmailSentSuccess": "Reset email has been sent successfully!",
+    "ForCustomers": "For our customers:",
+    "ForCustomersDescription": "Please log in with your current my DMG MORI ID",
+    "ForgotPasswordForCustomers": "For our customers:",
+    "ForgotPasswordForCustomersDescription": "Please use your email to reset your password!",
+    "ForgotPassword": "Forgot your password?"
+  },
+  "auth-reset-password": {
+    "ForCustomers": "For our customers:",
+    "ForCustomersDescription": "Description",
+    "NewPassword": "New Password",
+    "ConfirmPassword": "Confirm Password",
+    "ResetPassword": "Reset Password",
+    "ResetPasswordSuccess": "Password has been reset successfully!"
+  },
+  "settings-change-password": {
+    "ChangePasswordTitle": "Change your password",
+    "ChangePassword": "Change Password",
+    "NewPassword": "New Password",
+    "ConfirmPassword": "Confirm Password",
+    "OldPassword": "Old Password",
+    "ChangePasswordSuccess": "Password has been changed successfully!"
   },
   "quick-start": {
     "Language": "Language",
@@ -103,13 +133,19 @@
     "Delete": "Delete",
     "Save": "Save",
     "Cancel": "Cancel",
+    "SetThreshold": "Set Threshold",
     "LiveData": "Live Data",
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
     "DeleteError": "",
     "DeleteTitle": "Delete",
-    "DeleteMessage": "Are you sure you want to delete data point?"
+    "DeleteMessage": "Are you sure you want to delete data point?",
+    "SetThresholds": "Set Thresholds",
+    "Set": "Set",
+    "Value": "Value",
+    "Threshold": "Threshold",
+    "AddThreshold": "Add Threshold"
   },
   "settings-data-source-point": {
     "LoadError": "",

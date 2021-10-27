@@ -8,11 +8,13 @@ import { DataSinkComponent } from './data-sink.component';
 import { DataSinkMtConnectComponent } from './data-sink-mt-connect/data-sink-mt-connect.component';
 import { CreateDataItemModalComponent } from './create-data-item-modal/create-data-item-modal.component';
 import { SelectMapModalComponent } from './select-map-modal/select-map-modal.component';
+import {AuthGuard} from "../../../shared/guards/auth.guard";
 
 const routes: Routes = [
   {
     path: 'settings/data-sink',
-    component: DataSinkComponent
+    component: DataSinkComponent,
+    canActivate: [AuthGuard],
   }
 ];
 

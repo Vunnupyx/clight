@@ -1,12 +1,22 @@
 import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import { OPCUAServerOptions } from 'node-opcua';
+import {OPCUAServerOptions} from 'node-opcua';
+
+export interface IAuthConfig {
+  secret: any;
+}
+
+export interface IAuthRuntimeConfig {
+  expiresIn: number;
+  defaultPassword: string;
+}
 
 export interface IRuntimeConfig {
   users: IUser[];
   mtconnect: IMTConnectConfig;
   opcua: IOPCUAConfig;
   restApi: IRestApiConfig;
+  auth: IAuthRuntimeConfig;
 }
 
 export interface IGeneralConfig {
@@ -19,6 +29,14 @@ export interface IGeneralConfig {
 export interface IUser {
   userName: string;
   password: string;
+}
+
+export interface IAuthUser extends IUser {
+  passwordChangeRequired: boolean;
+}
+
+export interface IAuthUsersConfig {
+  users: IAuthUser[];
 }
 
 export interface IRestApiConfig {
@@ -125,7 +143,8 @@ export function isDataPointMapping(obj: any): obj is IDataPointMapping {
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  operationType: 'and' | 'or' | 'not' | 'counter';
+  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds';
+  thresholds?: ITargetDataMap;
 }
 
 export interface ISystemInfoItem {

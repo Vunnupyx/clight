@@ -40,7 +40,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     DataSourceSoftwareVersion.v4_7
   ];
 
-  DigitalInputAddresses = new Array(10).fill(0).map((_, i) => `DI${i}`);
+  DigitalInputAddresses = [
+    ...new Array(10).fill(0).map((_, i) => `DI${i}`),
+    ...new Array(2).fill(0).map((_, i) => `AI${i}`),
+  ];
 
   unsavedRow?: SourceDataPoint;
   unsavedRowIndex: number | undefined;
@@ -48,6 +51,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   liveData: ObjectMap<DataPointLiveData> = {};
 
   sub = new Subscription();
+  liveDataSub!: Subscription;
 
   constructor(
     private sourceDataPointService: SourceDataPointService,
@@ -96,7 +100,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.sourceDataPointService.getDataPoints(obj.protocol!);
     this.dataSourceService.getStatus(obj.protocol!);
 
-    this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!)
+    this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!);
+
+    if (this.liveDataSub) {
+      this.liveDataSub.unsubscribe();
+    }
+
+    this.liveDataSub = this.sourceDataPointService.setLivedataTimer(obj.protocol!).subscribe();
 
     this.clearUnsavedRow();
   }
@@ -231,7 +241,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sub && this.sub.unsubscribe();
+    this.sub.unsubscribe();
+    this.liveDataSub && this.liveDataSub.unsubscribe();
   }
 
   updateSoftwareVersion(version: string) {

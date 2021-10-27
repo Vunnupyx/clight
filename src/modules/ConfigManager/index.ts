@@ -1,4 +1,4 @@
-import {promises as fs} from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'stream';
 import {
@@ -10,15 +10,18 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import { unique } from "../Utilities";
+import { unique } from '../Utilities';
 import {
   IDefaultTemplates,
   IConfig,
+  IAuthConfig,
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
   IRuntimeConfig,
-  isDataPointMapping
+  isDataPointMapping,
+  IAuthUser,
+  IAuthUsersConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -108,10 +111,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   );
   private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
-
+  private authUsersConfigName = 'auth.json';
   private _runtimeConfig: IRuntimeConfig;
   private _config: IConfig;
   private _defaultTemplates: IDefaultTemplates;
+  private _authConfig: IAuthConfig;
+  private _authUsers: IAuthUsersConfig;
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
@@ -128,6 +133,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.emit('newConfig', this.config);
   }
 
+  public get authConfig(): IAuthConfig {
+    return this._authConfig;
+  }
+
   public get runtimeConfig(): IRuntimeConfig {
     return this._runtimeConfig;
   }
@@ -139,6 +148,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   public get defaultTemplates(): IDefaultTemplates {
     return this._defaultTemplates;
+  }
+
+  public get authUsers(): IAuthUser[] {
+    return this._authUsers.users;
   }
 
   /**
@@ -163,10 +176,22 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       restApi: {
         port: 5000,
         maxFileSizeByte: 20000000
+      },
+      auth: {
+        expiresIn: 60 * 60,
+        defaultPassword: ''
       }
     };
 
+    this._authConfig = {
+      secret: null
+    };
+
     this._config = emptyDefaultConfig;
+
+    this._authUsers = {
+      users: []
+    };
   }
 
   /**
@@ -181,11 +206,24 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.runtimeConfig
       ),
       this.loadConfig<IConfig>(this.configName, this.config),
-      this.loadTemplates(),
+      this.loadConfig<IAuthUsersConfig>(
+        this.authUsersConfigName,
+        this._authUsers
+      ).catch(() => this._authUsers),
+      this.loadTemplates()
     ])
-      .then(([runTime, config]) => {
+      .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;
         this._config = config;
+
+        this._authUsers = authUsers;
+
+        return this.loadJwtPrivateKey();
+      })
+      .then((secret) => {
+        this._authConfig = {
+          secret
+        };
         this.setupDefaultDataSources();
         this.setupDefaultDataSinks();
       })
@@ -216,7 +254,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public setupDefaultDataSources() {
     const sources = [defaultS7DataSource, defaultIoShieldDataSource];
 
-    this.saveConfig({
+    this._config = {
+      ...this._config,
       dataSources: [
         ...this._config.dataSources,
         // Add missing sources
@@ -227,7 +266,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             )
         )
       ]
-    });
+    };
   }
 
   /**
@@ -240,7 +279,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       defaultDataHubDataSink
     ];
 
-    this.saveConfig({
+    this._config = {
+      ...this._config,
       dataSinks: [
         ...this._config.dataSinks,
         // Add missing sinks
@@ -249,7 +289,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             !this._config.dataSinks.some((x) => x.protocol === sink.protocol)
         )
       ]
-    });
+    };
   }
 
   /**
@@ -313,6 +353,15 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       });
   }
 
+  private loadJwtPrivateKey(): Promise<string> {
+    try {
+      const configPath = path.join(this.configFolder, 'keys', 'jwtRS256.key');
+      return fs.readFile(configPath, 'utf8');
+    } catch (err) {
+      return null;
+    }
+  }
+
   /**
    * Loads default template by filename
    */
@@ -331,16 +380,27 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   private async loadTemplates() {
     try {
-      const templateNames = await fs.readdir(path.join(this.configFolder, 'defaulttemplates'), { encoding: 'utf-8' });
+      const templateNames = await fs.readdir(
+        path.join(this.configFolder, 'defaulttemplates'),
+        { encoding: 'utf-8' }
+      );
 
-      const templates = await Promise.all(templateNames.map((template) => this.loadTemplate(template)));
+      const templates = await Promise.all(
+        templateNames.map((template) => this.loadTemplate(template))
+      );
 
-      const dataSources = unique(templates.map(x => x.dataSources).flat(), (ds) => ds.protocol);
-      const dataSinks = unique(templates.map(x => x.dataSinks).flat(), (ds) => ds.protocol);
+      const dataSources = unique(
+        templates.map((x) => x.dataSources).flat(),
+        (ds) => ds.protocol
+      );
+      const dataSinks = unique(
+        templates.map((x) => x.dataSinks).flat(),
+        (ds) => ds.protocol
+      );
 
       this._defaultTemplates = {
         availableDataSources: dataSources,
-        availableDataSinks: dataSinks,
+        availableDataSinks: dataSinks
       };
     } catch {
       this._defaultTemplates = {
@@ -452,10 +512,47 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private saveConfigToFile(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfigToFile`;
 
+    const file = path.join(this.configFolder, this.configName);
+    const content = JSON.stringify(this._config, null, 2);
+
+    winston.debug(
+      `${logPrefix} Saving ${content.length} bytes to config ${file}`
+    );
+
+    return fs
+      .writeFile(file, content, { encoding: 'utf-8' })
+      .then(() => {
+        winston.info(
+          `${logPrefix} Saved ${content.length} bytes to config ${file}`
+        );
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
+      });
+  }
+
+  public saveConfig(obj: Partial<IConfig> = null): void {
+    const logPrefix = `${ConfigManager.className}::saveConfig`;
+
+    if (obj) {
+      this._config = this.mergeDeep(this._config, obj);
+    }
+
+    winston.debug(`${logPrefix}`);
+
+    this.saveConfigToFile();
+  }
+
+  /**
+   * Save the current data from auth config property into a JSON config file on hard drive
+   */
+  saveAuthConfig(): Promise<void> {
+    const logPrefix = `${ConfigManager.className}::saveAuthConfig`;
+
     return fs
       .writeFile(
-        path.join(this.configFolder, this.configName),
-        JSON.stringify(this._config, null, 2),
+        path.join(this.configFolder, this.authUsersConfigName),
+        JSON.stringify(this._authUsers, null, 2),
         { encoding: 'utf-8' }
       )
       .then(() => {
@@ -466,13 +563,5 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
       });
-  }
-
-  public saveConfig(obj: Partial<IConfig> = null): void {
-    if (obj) {
-      this._config = this.mergeDeep(this._config, obj);
-    }
-
-    this.saveConfigToFile();
   }
 }

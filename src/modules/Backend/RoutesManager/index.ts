@@ -1,11 +1,10 @@
-import express, { Application, Response, Router } from 'express';
-import {
-  connector as connectorFactory,
-  Controllers
-} from 'swagger-routes-express';
+import { Application, Request } from 'express';
+import { connector as connectorFactory } from 'swagger-routes-express';
 import * as OpenApiValidator from 'express-openapi-validator';
-import path from 'path';
-import fs from 'fs';
+import {
+  authHandlers,
+  setAuthManager as authSetAuthManager
+} from '../routes/apis/v1/Auth';
 import {
   dataSourceHandlers,
   setConfigManager as dataSourcesSetConfigManager,
@@ -61,6 +60,7 @@ import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
+import { AuthManager } from '../AuthManager';
 import swaggerFile from '../routes/swagger';
 
 interface RoutesManagerOptions {
@@ -69,12 +69,13 @@ interface RoutesManagerOptions {
   dataSourcesManager: DataSourcesManager;
   dataSinksManager: DataSinksManager;
   dataPointCache: DataPointCache;
+  authManager: AuthManager;
 }
 export class RoutesManager {
-  private swaggerFilePath = path.join(__dirname, '../routes/swagger.json');
   private inputValidator;
   private app: Application;
   private routeHandlers = {
+    ...authHandlers,
     ...dataSourceHandlers,
     ...dataSinksHandlers,
     ...backupHandlers,
@@ -112,6 +113,7 @@ export class RoutesManager {
       systemInfoSetConfigManager,
       templatesConfigSetConfigManager
     ].forEach((func) => func(options.configManager));
+    authSetAuthManager(options.authManager);
     setDataSinksManager(options.dataSinksManager);
     setTemplateDataSinksManager(options.dataSinksManager);
     setDataSourcesManager(options.dataSourcesManager);
@@ -127,7 +129,18 @@ export class RoutesManager {
     });
 
     //TODO: Make code async ?
-    connectorFactory(this.routeHandlers, swaggerFile)(this.app);
+    connectorFactory(this.routeHandlers, swaggerFile, {
+      security: {
+        jwt: (req, res, next) =>
+          options.authManager.verifyJWTAuth({
+            withPasswordChangeDetection: true
+          })(req as Request, res, next),
+        jwtNoPasswordChangeDetection: (req, res, next) =>
+          options.authManager.verifyJWTAuth({
+            withPasswordChangeDetection: false
+          })(req as Request, res, next)
+      }
+    })(this.app);
     // this.app.use(this.inputValidator);
     this.app.use(this.requestErrorHandler);
   }

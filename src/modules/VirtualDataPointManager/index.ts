@@ -170,15 +170,20 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    const measurement = sourceEvents[0].measurement;
-    // if (
-    //   this.toBoolean(measurement.value) &&
-    //   this.cache.hasChanged(measurement.id)
-    // ) {
-    //   return this.counters.increment(measurement.id);
-    // }
+    const thresholds = (Object.keys(config.thresholds) || [])
+      .map((key) => config.thresholds?.[key])
+      .sort((a, b) => a - b)
+      .reverse();
 
-    return null;
+    const activeThreshold = thresholds.find(
+      (x) => sourceEvents[0].measurement.value > x
+    );
+
+    const value = (Object.keys(config.thresholds) || []).find(
+      (key) => config.thresholds[key] === activeThreshold
+    );
+
+    return typeof value !== 'undefined' ? parseInt(value, 10) : null;
   }
 
   /**

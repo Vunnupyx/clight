@@ -26,7 +26,8 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
-    "dev:webserver": "cd client && yarn start",
+    "dev:all": "concurrently --kill-others-on-fail \"yarn dev\" \"yarn dev:webserver\"",
+    "dev:webserver": "cd client && yarn dev",
     "build": "tsc -p tsconfig.json",
     "build:dist": "ncc build build/main/index.js -o runtime --minify",
     "build:mdclight": "yarn docker:build:mdclight",
@@ -53,6 +54,7 @@
     "@types/jsonwebtoken": "^8.5.5",
     "@types/node": "^16.9.1",
     "@vercel/ncc": "^0.28.6",
+    "concurrently": "^6.3.0",
     "jest": "^27.0.6",
     "prettier": "^2.4.1",
     "ts-jest": "^27.0.3",

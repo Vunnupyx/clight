@@ -20,7 +20,7 @@ import {
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
-  IAuthUsersConfig,
+  IAuthUsersConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -178,7 +178,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       auth: {
         expiresIn: 60 * 60,
-        defaultPassword: '',
+        defaultPassword: ''
       }
     };
 
@@ -189,7 +189,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this._config = emptyDefaultConfig;
 
     this._authUsers = {
-      users: [],
+      users: []
     };
   }
 
@@ -205,8 +205,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.runtimeConfig
       ),
       this.loadConfig<IConfig>(this.configName, this.config),
-      this.loadConfig<IAuthUsersConfig>(this.authUsersConfigName, this._authUsers)
-          .catch(() => this._authUsers),
+      this.loadConfig<IAuthUsersConfig>(
+        this.authUsersConfigName,
+        this._authUsers
+      ).catch(() => this._authUsers)
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;
@@ -258,7 +260,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             )
         )
       ]
-    }
+    };
   }
 
   /**
@@ -347,11 +349,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   private loadJwtPrivateKey() {
     try {
-      const configPath = path.join(
-          this.configFolder,
-          'keys',
-          'jwtRS256.key'
-      );
+      const configPath = path.join(this.configFolder, 'keys', 'jwtRS256.key');
       return readFileSync(configPath, 'utf8');
     } catch (err) {
       return null;
@@ -506,19 +504,15 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private saveConfigToFile(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfigToFile`;
 
-    const file =  path.join(this.configFolder, this.configName)
-    const content = JSON.stringify(this._config, null, 2)
+    const file = path.join(this.configFolder, this.configName);
+    const content = JSON.stringify(this._config, null, 2);
 
     winston.debug(
       `${logPrefix} Saving ${content.length} bytes to config ${file}`
     );
 
     return fs
-      .writeFile(
-        file,
-        content,
-        { encoding: 'utf-8' }
-      )
+      .writeFile(file, content, { encoding: 'utf-8' })
       .then(() => {
         winston.info(
           `${logPrefix} Saved ${content.length} bytes to config ${file}`
@@ -536,7 +530,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       this._config = this.mergeDeep(this._config, obj);
     }
 
-    winston.debug(`${logPrefix}`)
+    winston.debug(`${logPrefix}`);
 
     this.saveConfigToFile();
   }
@@ -548,18 +542,16 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const logPrefix = `${ConfigManager.className}::saveAuthConfig`;
 
     return fs
-        .writeFile(
-            path.join(this.configFolder, this.authUsersConfigName),
-            JSON.stringify(this._authUsers, null, 2),
-            { encoding: 'utf-8' }
-        )
-        .then(() => {
-          winston.info(
-              `${ConfigManager.className}::saveConfigToFile saved new config to file`
-          );
-        })
-        .catch((err) => {
-          winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
-        });
+      .writeFile(
+        path.join(this.configFolder, this.authUsersConfigName),
+        JSON.stringify(this._authUsers, null, 2),
+        { encoding: 'utf-8' }
+      )
+      .then(() => {
+        winston.info(`${logPrefix} Saved auth config`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
+      });
   }
 }

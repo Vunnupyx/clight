@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
+import { Router } from '@angular/router';
 
 import { AuthService } from './auth.service';
 import {HttpHeaders, HttpParams, HttpClient, HttpErrorResponse} from '@angular/common/http';
@@ -29,7 +30,11 @@ export interface RequestOptionsArgs {
 
 @Injectable()
 export class HttpService {
-  constructor(protected http: HttpClient, private authService: AuthService) {}
+  constructor(
+    protected http: HttpClient,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   get<T = any>(url: string, options?: RequestOptionsArgs) {
     return this.http
@@ -72,9 +77,15 @@ export class HttpService {
   }
 
   protected _catchError(err: HttpErrorResponse) {
-    if (err.status === 401 || err.status === 403) {
+    if (err.status === 401) {
 
       this.authService.logout();
+      return EMPTY;
+    }
+
+    if (err.status === 403) {
+
+      this.router.navigate(['/settings', 'change-password']);
       return EMPTY;
     }
 

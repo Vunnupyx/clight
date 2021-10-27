@@ -81,7 +81,9 @@ function livedataDataSourceDataPointGetHandler(
   };
 
   if (timeseriesIncluded) {
-    payload.timeseries = dataPointCache.getTimeSeries(request.params.dataPointId);
+    payload.timeseries = dataPointCache.getTimeSeries(
+      request.params.dataPointId
+    );
   }
 
   response.status(200).json(payload);

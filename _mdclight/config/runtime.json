@@ -1,10 +1,8 @@
 {
-  "users": [
-    {
-      "userName": "user",
-      "password": "user"
-    }
-  ],
+  "auth": {
+    "expiresIn": 3600,
+    "defaultPassword": "abcdef"
+  },
   "mtconnect": { "listenerPort": 7878 },
   "restApi": {
     "port": 80,

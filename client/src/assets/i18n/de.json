@@ -113,13 +113,19 @@
     "Delete": "Delete",
     "Save": "Save",
     "Cancel": "Cancel",
+    "SetThreshold": "Set Threshold",
     "LiveData": "Live Data",
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
     "DeleteError": "",
     "DeleteTitle": "Delete",
-    "DeleteMessage": "Are you sure you want to delete data point?"
+    "DeleteMessage": "Are you sure you want to delete data point?",
+    "SetThresholds": "Set Thresholds",
+    "Set": "Set",
+    "Value": "Value",
+    "Threshold": "Threshold",
+    "AddThreshold": "Add Threshold"
   },
   "settings-data-source-point": {
     "LoadError": "",

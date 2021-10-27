@@ -1030,6 +1030,13 @@ export default {
           description: 'id of the dataSource to get',
           required: true,
           type: 'string'
+        },
+        {
+          name: 'timeseries',
+          in: 'query',
+          description: 'should include timeseries',
+          required: false,
+          type: 'boolean'
         }
       ],
       get: {
@@ -1059,6 +1066,13 @@ export default {
           description: 'id of the datapoint to get',
           required: true,
           type: 'string'
+        },
+        {
+          name: 'timeseries',
+          in: 'query',
+          description: 'should include timeseries',
+          required: false,
+          type: 'boolean'
         }
       ],
       get: {
@@ -1074,6 +1088,15 @@ export default {
       }
     },
     '/livedata/vdps': {
+      parameters: [
+        {
+          name: 'timeseries',
+          in: 'query',
+          description: 'should include timeseries',
+          required: false,
+          type: 'boolean'
+        }
+      ],
       get: {
         tags: ['livedata'],
         description: 'Get livedata for vdps',
@@ -1093,6 +1116,13 @@ export default {
           description: 'id of vdp',
           required: true,
           type: 'string'
+        },
+        {
+          name: 'timeseries',
+          in: 'query',
+          description: 'should include timeseries',
+          required: false,
+          type: 'boolean'
         }
       ],
       get: {

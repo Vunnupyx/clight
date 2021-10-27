@@ -1,6 +1,6 @@
 import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import { OPCUAServerOptions } from 'node-opcua';
+import {OPCUAServerOptions} from 'node-opcua';
 
 export interface IAuthConfig {
   secret: any;
@@ -155,7 +155,8 @@ export function isDataPointMapping(obj: any): obj is IDataPointMapping {
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  operationType: 'and' | 'or' | 'not' | 'counter';
+  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds';
+  thresholds?: ITargetDataMap;
 }
 
 export interface ISystemInfoItem {

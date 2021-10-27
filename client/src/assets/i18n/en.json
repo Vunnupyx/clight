@@ -122,6 +122,13 @@
     "Tabs": {
       "s7": "SINUMERIK 840D sl",
       "ioshield": "Digital Inputs"
+    },
+    "Livedata": {
+      "ioshield": {
+        "0": "Off",
+        "1": "On",
+        "2": "Blinking"
+      }
     }
   },
   "settings-virtual-data-point": {

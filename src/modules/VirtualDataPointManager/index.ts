@@ -153,6 +153,40 @@ export class VirtualDataPointManager {
   }
 
   /**
+   * Calculates virtual data points from type thresholds
+   *
+   * @param  {IDataSourceMeasurementEvent[]} sourceEvents
+   * @param  {IVirtualDataPointConfig} config
+   * @returns boolean
+   */
+  private thresholds(
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig
+  ): number | null {
+    if (sourceEvents.length !== 1) {
+      winston.warn(
+        `Virtual data point (${config.id}) requires exactly 1 source!`
+      );
+      return null;
+    }
+
+    const thresholds = (Object.keys(config.thresholds) || [])
+      .map((key) => config.thresholds?.[key])
+      .sort((a, b) => a - b)
+      .reverse();
+
+    const activeThreshold = thresholds.find(
+      (x) => sourceEvents[0].measurement.value > x
+    );
+
+    const value = (Object.keys(config.thresholds) || []).find(
+      (key) => config.thresholds[key] === activeThreshold
+    );
+
+    return typeof value !== 'undefined' ? parseInt(value, 10) : null;
+  }
+
+  /**
    * Calculates an virtual data point
    * @param  {IDataSourceMeasurementEvent[]} sourceEvents
    * @param  {IVirtualDataPointConfig} config
@@ -171,6 +205,8 @@ export class VirtualDataPointManager {
         return this.not(sourceEvents, config);
       case 'counter':
         return this.count(sourceEvents, config);
+      case 'thresholds':
+        return this.thresholds(sourceEvents, config);
       default:
         winston.warn(
           `Invalid type (${config.operationType}) provided for virtual data point ${config.id}!`

@@ -42,11 +42,12 @@ export class DataHubDataSink extends DataSink {
    * Send data to data hub via data hub adapter object.
    */
   protected processDataPointValues(dataPointsObj): void {
-    return;
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
     winston.debug(`${logPrefix} receive measurements.`);
 
-    const services = this.#datahubAdapter.getDesiredProps().services;
+    const services = this.#datahubAdapter.getDesiredProps()?.services;
+
+    if (!services) return;
 
     winston.debug(`${logPrefix} known services: ${Object.keys(services)}`);
     const data: TGroupedMeasurements = {
@@ -74,10 +75,10 @@ export class DataHubDataSink extends DataSink {
     const uniqueDatapoints = Array.from(new Set(allDatapoints));
 
     for (const id of Object.keys(dataPointsObj)) {
-      if (uniqueDatapoints.includes(id)) {
-        const { type, address } = this.config.dataPoints.find(
-          (dp) => dp.id === id
-        );
+      const { type, address } = this.config.dataPoints.find(
+        (dp) => dp.id === id
+      );
+      if (uniqueDatapoints.includes(address)) {
         data[type].push({ [address]: dataPointsObj[id] });
       }
     }

@@ -114,8 +114,10 @@ export class DataHubAdapter {
       return;
     }
     if (!isDesiredProps(this.#deviceTwin.properties.desired)) {
-      throw new NorthBoundError(`${logPrefix} no desired properties found.`);
+      winston.warn(`${logPrefix} no desired properties found.`);
+      return;
     }
+
     return this.#deviceTwin.properties.desired;
   }
 

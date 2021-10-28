@@ -147,7 +147,20 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   }
 
   continueWithoutTemplate() {
-    this.router.navigate(['/']);
+    const title = this.translate.instant('quick-start.Attention');
+    const message = this.translate.instant('quick-start.SkipMessage');
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: new ConfirmDialogModel(title, message)
+    });
+
+    dialogRef.afterClosed().subscribe((dialogResult) => {
+      if (!dialogResult) {
+        return;
+      }
+
+      this.templateService.skip().then(() => this.router.navigate(['/']));
+    });
   }
 
   private onTemplates(x: ITemplate[]) {

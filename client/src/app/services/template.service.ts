@@ -75,6 +75,27 @@ export class TemplateService {
     }
   }
 
+  async skip() {
+    this._store.patchState(() => ({
+      status: Status.Loading
+    }));
+
+    try {
+      await this.httpService.post<any>(`/templates/skip`, {});
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.completed = true;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('quick-start.LoadError'));
+      errorHandler(err);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
   async isCompleted() {
     try {
       if (this._store.snapshot.completed === undefined) {

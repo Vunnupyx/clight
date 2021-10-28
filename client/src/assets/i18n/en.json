@@ -52,6 +52,7 @@
     "ContinueWithoutTemplate": "Continue without template",
     "Attention": "Attention",
     "AttentionMessage": "When saving, your current configuration will be overwritten. Do you still want to continue?",
+    "SkipMessage": "Do you really want to continue without template?",
     "DataSources": {
       "ioshield": {
         "name": "Ioshield",

@@ -76,8 +76,23 @@ function templatesApplyPostHandler(request: Request, response: Response): void {
   response.status(200).json(null);
 }
 
+/**
+ * Handle POST skip templates request
+ */
+function templatesSkipPostHandler(request: Request, response: Response): void {
+  configManager.config = {
+    ...configManager.config,
+    quickStart: {
+      completed: true
+    }
+  };
+
+  response.status(200).json(null);
+}
+
 export const templatesHandlers = {
   templatesGetHandler,
   templatesGetStatusHandler,
-  templatesApplyPostHandler
+  templatesApplyPostHandler,
+  templatesSkipPostHandler
 };

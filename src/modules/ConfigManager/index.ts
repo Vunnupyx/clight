@@ -1,4 +1,4 @@
-import { promises as fs, readFileSync } from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import {
@@ -10,6 +10,7 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
+import { unique } from '../Utilities';
 import {
   IDefaultTemplates,
   IConfig,
@@ -220,18 +221,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       this.loadConfig<IAuthUsersConfig>(
         this.authUsersConfigName,
         this._authUsers
-      ).catch(() => this._authUsers)
+      ).catch(() => this._authUsers),
+      this.loadTemplates()
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;
         this._config = config;
-        this._authConfig = {
-          secret: this.loadJwtPrivateKey()
-        };
+
         this._authUsers = authUsers;
+
+        return this.loadJwtPrivateKey();
+      })
+      .then((secret) => {
+        this._authConfig = {
+          secret
+        };
         this.setupDefaultDataSources();
         this.setupDefaultDataSinks();
-        this.loadTemplates();
       })
       .then(() => {
         this.checkType(
@@ -359,53 +365,55 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       });
   }
 
-  private loadJwtPrivateKey() {
+  private loadJwtPrivateKey(): Promise<string> {
     try {
       const configPath = path.join(this.configFolder, 'keys', 'jwtRS256.key');
-      return readFileSync(configPath, 'utf8');
+      return fs.readFile(configPath, 'utf8');
     } catch (err) {
       return null;
     }
   }
 
   /**
-   * TODO: @patrick please make this method async and add comment
+   * Loads default template by filename
    */
-  private loadTemplate(templateName) {
+  private async loadTemplate(templateName) {
     try {
       const configPath = path.join(
         this.configFolder,
         'defaulttemplates',
-        `${templateName}.json`
+        templateName
       );
-      return JSON.parse(readFileSync(configPath, 'utf8'));
+      return JSON.parse(await fs.readFile(configPath, { encoding: 'utf-8' }));
     } catch (err) {
       return null;
     }
   }
 
-  private loadTemplates() {
+  private async loadTemplates() {
     try {
-      const templates = [
-        's7toopcua',
-        's7tomtconnect',
-        's7toopcuaandmtconnect',
-        'ioshieldtoopcua',
-        'ioshieldtomtconnect',
-        'ioshieldtoopcuaandmtconnect'
-      ]
-        .map((template) => this.loadTemplate(template))
-        .reduce(
-          (acc, curr) => ({
-            availableDataSources: [
-              ...acc.availableDataSources,
-              ...curr.dataSources
-            ],
-            availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
-          }),
-          { availableDataSources: [], availableDataSinks: [] }
-        );
-      this._defaultTemplates = templates;
+      const templateNames = await fs.readdir(
+        path.join(this.configFolder, 'defaulttemplates'),
+        { encoding: 'utf-8' }
+      );
+
+      const templates = await Promise.all(
+        templateNames.map((template) => this.loadTemplate(template))
+      );
+
+      const dataSources = unique(
+        templates.map((x) => x.dataSources).flat(),
+        (ds) => ds.protocol
+      );
+      const dataSinks = unique(
+        templates.map((x) => x.dataSinks).flat(),
+        (ds) => ds.protocol
+      );
+
+      this._defaultTemplates = {
+        availableDataSources: dataSources,
+        availableDataSinks: dataSinks
+      };
     } catch {
       this._defaultTemplates = {
         availableDataSources: [],

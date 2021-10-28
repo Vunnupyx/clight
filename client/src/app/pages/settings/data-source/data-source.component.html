@@ -1,5 +1,7 @@
 <div class="layout-header">
-  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-data-source.DataSource' | translate }}</h2>
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
+    {{ 'settings-data-source.DataSource' | translate }}
+  </h2>
   <div class="layout-header__tabs">
     <nav mat-tab-nav-bar mat-align-tabs="center">
       <a
@@ -7,7 +9,7 @@
         *ngFor="let item of dataSourceList"
         (click)="switchDataSource(item)"
         [active]="dataSource?.protocol === item.protocol"
-      >{{ 'settings-data-source.Tabs.' + item.protocol | translate }}</a
+        >{{ 'settings-data-source.Tabs.' + item.protocol | translate }}</a
       >
     </nav>
   </div>
@@ -30,9 +32,7 @@
       </div>
 
       <div *ngIf="dataSource?.protocol === Protocol.S7">
-        <div
-          class="mt-20 d-flex align-items-center"
-        >
+        <div class="mt-20 d-flex align-items-center">
           <div class="mt-0 mr-25 text-nowrap">
             {{ 'settings-data-source.IPAddress' | translate }}
           </div>
@@ -53,10 +53,10 @@
               </ng-container>
               <ng-container *ngIf="form.dirty">
                 <mat-icon *ngIf="form.valid" class="color-success"
-                >check</mat-icon
+                  >check</mat-icon
                 >
                 <mat-icon *ngIf="!form.valid" class="color-error"
-                >error_outline</mat-icon
+                  >error_outline</mat-icon
                 >
               </ng-container>
             </div>
@@ -66,12 +66,21 @@
         <div *ngIf="false">
           <div class="row d-flex align-items-center">
             <div class="col-12 col-md-5">
-              <label>{{ 'settings-data-source.SoftwareVersion' | translate }}</label>
+              <label>{{
+                'settings-data-source.SoftwareVersion' | translate
+              }}</label>
             </div>
             <div class="col-12 col-md-7">
               <mat-form-field>
-                <mat-select [ngModel]="dataSource?.softwareVersion" (ngModelChange)="updateSoftwareVersion($event)">
-                  <mat-option *ngFor="let version of SoftwareVersions" [value]="version">{{ version }}</mat-option>
+                <mat-select
+                  [ngModel]="dataSource?.softwareVersion"
+                  (ngModelChange)="updateSoftwareVersion($event)"
+                >
+                  <mat-option
+                    *ngFor="let version of SoftwareVersions"
+                    [value]="version"
+                    >{{ version }}</mat-option
+                  >
                 </mat-select>
               </mat-form-field>
             </div>
@@ -79,7 +88,10 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6" *ngIf="connection">
+    <div
+      class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6"
+      *ngIf="connection"
+    >
       <div class="mt-25">
         {{ 'settings-data-source.Connection' | translate }}
       </div>
@@ -90,10 +102,14 @@
         <div>
           <div style="font-weight: 600">
             <ng-container [ngSwitch]="connection.status">
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connected">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Connected"
+              >
                 {{ 'settings-data-source.Running' | translate }}
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disconnected">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
+              >
                 {{ 'settings-data-source.Disconnected' | translate }}
               </ng-container>
             </ng-container>
@@ -107,7 +123,9 @@
             <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connected">
               <mat-icon class="color-success">check_circle_outline</mat-icon>
             </ng-container>
-            <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disconnected">
+            <ng-container
+              *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
+            >
               <mat-icon class="color-danger">highlight_off</mat-icon>
             </ng-container>
           </ng-container>
@@ -213,7 +231,15 @@
             let-row="row"
           >
             <span *ngIf="liveData[row.id]; else noLiveData">
-              {{ liveData[row.id].value }}
+              <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
+                {{
+                  'settings-data-source.Livedata.ioshield.' +
+                    liveData[row.id].value | translate
+                }}
+              </ng-container>
+              <ng-container *ngIf="dataSource?.protocol != Protocol.IOShield">
+                {{ liveData[row.id].value }}
+              </ng-container>
             </span>
             <ng-template #noLiveData>-</ng-template>
           </ng-template>
@@ -231,10 +257,7 @@
             let-row="row"
           >
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-              <div
-                class="text-ellipsis"
-                [title]="value"
-              >
+              <div class="text-ellipsis" [title]="value">
                 {{ value }}
               </div>
             </ng-container>
@@ -258,11 +281,20 @@
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                   <mat-select
-                    *ngIf="dataSource?.protocol === Protocol.IOShield; else s7InputAddress"
+                    *ngIf="
+                      dataSource?.protocol === Protocol.IOShield;
+                      else s7InputAddress
+                    "
                     [ngModel]="value"
-                    (ngModelChange)="unsavedRow && (unsavedRow.address = $event)"
+                    (ngModelChange)="
+                      unsavedRow && (unsavedRow.address = $event)
+                    "
                   >
-                    <mat-option *ngFor="let address of DigitalInputAddresses" [value]="address">{{ address }}</mat-option>
+                    <mat-option
+                      *ngFor="let address of DigitalInputAddresses"
+                      [value]="address"
+                      >{{ address }}</mat-option
+                    >
                   </mat-select>
                   <ng-template #s7InputAddress>
                     <input

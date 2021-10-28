@@ -47,7 +47,27 @@
     "SelectApplicationInterfaces": "Select Application Interfaces",
     "LoadError": "Error",
     "Next": "",
-    "Save": ""
+    "Save": "",
+    "DataSources": {
+      "ioshield": {
+        "name": "Ioshield",
+        "description": "Ioshield description"
+      },
+      "s7": {
+        "name": "S7",
+        "description": "S7 description"
+      }
+    },
+    "DataSinks": {
+      "mtconnect": {
+        "name": "MTConnect",
+        "description": "MTConnect description"
+      },
+      "opcua": {
+        "name": "OPCUA",
+        "description": "OPCUA Description"
+      }
+    }
   },
   "settings-general": {
     "General": "Erfolgreich",
@@ -100,6 +120,13 @@
     "Tabs": {
       "s7": "SINUMERIK 840D sl",
       "ioshield": "Digital Inputs"
+    },
+    "Livedata": {
+      "ioshield": {
+        "0": "Off",
+        "1": "On",
+        "2": "Blinking"
+      }
     }
   },
   "settings-virtual-data-point": {

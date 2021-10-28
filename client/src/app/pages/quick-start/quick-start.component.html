@@ -29,9 +29,9 @@
       <form [formGroup]="sourceForm" class="pt-20">
         <div>
           <mat-radio-group formControlName="source" class="source-radio-group">
-            <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source.id">
-              <h3 class="mt-0 mb-0">{{ source.name }}</h3>
-              <p class="mt-0">{{ source.description }}</p>
+            <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source">
+              <h3 class="mt-0 mb-0">{{ 'quick-start.DataSources.' + source + '.name' | translate }}</h3>
+              <p class="mt-0">{{ 'quick-start.DataSources.' + source + '.description' | translate }}</p>
             </mat-radio-button>
           </mat-radio-group>
         </div>
@@ -45,12 +45,12 @@
           <mat-checkbox
             class="source-radio-button source-checkbox"
             *ngFor="let sink of filteredSinks"
-            [(ngModel)]="checkedSinks[sink.id]"
+            [(ngModel)]="checkedSinks[sink]"
             (ngModelChange)="onInterfacesChange()"
             [ngModelOptions]="{standalone: true}"
           >
-            <h3 class="mt-0 mb-0">{{ sink.name }}</h3>
-            <p class="mt-0">{{ sink.description }}</p>
+            <h3 class="mt-0 mb-0">{{ 'quick-start.DataSinks.' + sink + '.name' | translate }}</h3>
+            <p class="mt-0">{{ 'quick-start.DataSinks.' + sink + '.description' | translate }}</p>
           </mat-checkbox>
         </div>
 

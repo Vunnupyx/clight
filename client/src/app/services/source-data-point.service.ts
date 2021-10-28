@@ -1,15 +1,20 @@
-import {Injectable} from '@angular/core';
-import {filter, map, mergeMap} from 'rxjs/operators';
-import {ToastrService} from 'ngx-toastr';
-import {TranslateService} from '@ngx-translate/core';
+import { Injectable } from '@angular/core';
+import { filter, map, mergeMap } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
-import {DataPointLiveData, DataSourceProtocol, SourceDataPoint, SourceDataPointType} from 'app/models';
-import {HttpService} from 'app/shared';
-import {Status, Store, StoreFactory} from 'app/shared/state';
-import {array2map, errorHandler, ObjectMap} from 'app/shared/utils';
+import {
+  DataPointLiveData,
+  DataSourceProtocol,
+  SourceDataPoint,
+  SourceDataPointType
+} from 'app/models';
+import { HttpService } from 'app/shared';
+import { Status, Store, StoreFactory } from 'app/shared/state';
+import { array2map, errorHandler, ObjectMap } from 'app/shared/utils';
 import * as api from 'app/api/models';
-import {CreateEntityResponse} from 'app/models/responses/create-entity.response';
-import {from, interval, Observable} from "rxjs";
+import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
+import { from, interval, Observable } from 'rxjs';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -50,7 +55,7 @@ export class SourceDataPointService {
   async getDataPoints(datasourceProtocol: DataSourceProtocol) {
     this._store.patchState((state) => ({
       status: Status.Loading,
-      dataPoints: [],
+      dataPoints: []
     }));
 
     try {
@@ -60,7 +65,11 @@ export class SourceDataPointService {
 
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
-        state.dataPointsSourceMap = array2map(state.dataPoints, item => item.id, () => datasourceProtocol);
+        state.dataPointsSourceMap = array2map(
+          state.dataPoints,
+          (item) => item.id,
+          () => datasourceProtocol
+        );
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -89,14 +98,20 @@ export class SourceDataPointService {
       let wholeMap = {};
 
       for (const dataSource of dataSources!) {
-        const map = array2map(dataSource.dataPoints!, item => item.id!, () => dataSource.protocol);
+        const map = array2map(
+          dataSource.dataPoints!,
+          (item) => item.id!,
+          () => dataSource.protocol
+        );
 
         wholeMap = {
           ...wholeMap,
-          ...map,
+          ...map
         };
 
-        dataPoints = dataPoints.concat(...(dataSource.dataPoints as api.Sourcedatapoint[]));
+        dataPoints = dataPoints.concat(
+          ...(dataSource.dataPoints as api.Sourcedatapoint[])
+        );
       }
 
       this._store.patchState((state) => {
@@ -116,8 +131,9 @@ export class SourceDataPointService {
   }
 
   setLivedataTimer(protocol: DataSourceProtocol): Observable<void> {
-    return interval(5000)
-      .pipe(mergeMap(() => from(this.getLiveDataForDataPoints(protocol))));
+    return interval(5000).pipe(
+      mergeMap(() => from(this.getLiveDataForDataPoints(protocol)))
+    );
   }
 
   async getLiveDataForDataPoints(protocol: DataSourceProtocol) {
@@ -128,10 +144,13 @@ export class SourceDataPointService {
 
     try {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
-        `/livedata/datasource/${protocol}`
+        `/livedata/datasource/${protocol}?timeseries=true`
       );
       this._store.patchState((state) => {
-        state.dataPointsLivedata = array2map(liveData, item => item.dataPointId);
+        state.dataPointsLivedata = array2map(
+          liveData,
+          (item) => item.dataPointId
+        );
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -241,7 +260,7 @@ export class SourceDataPointService {
 
     switch (protocol) {
       case DataSourceProtocol.S7:
-        const dp = this._store.snapshot.dataPoints.find(x => x.id === id);
+        const dp = this._store.snapshot.dataPoints.find((x) => x.id === id);
         if (dp!.type === SourceDataPointType.NCK) {
           return '[NC]';
         }
@@ -260,7 +279,7 @@ export class SourceDataPointService {
   private _emptyState() {
     return <SourceDataPointsState>{
       status: Status.NotInitialized,
-      dataPointsSourceMap: {},
+      dataPointsSourceMap: {}
     };
   }
 }

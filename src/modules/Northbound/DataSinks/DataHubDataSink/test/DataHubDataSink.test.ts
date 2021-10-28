@@ -54,9 +54,9 @@ const runTimeConfigMock: IDataHubConfig = {
   groupDevice: false,
   provisioningHost: 'UTHost.test',
   signalGroups: {
-    group1: ['datapoint1', 'datapoint2', 'datapoint3'],
-    group2: ['datapoint4', 'datapoint5', 'datapoint6'],
-    group3: ['datapoint7']
+    group1: ['address/1', 'address/2', 'address/3'],
+    group2: ['address/4', 'address/5', 'address/6'],
+    group3: ['address/7']
   },
   dataPointTypesData: {
     probe: {
@@ -94,9 +94,6 @@ describe('DataHubDataSink', () => {
     afterEach(() => {
       jest.clearAllMocks();
       configMock.dataPoints = [];
-      (runTimeConfigMock.signalGroups.group1 = []),
-        (runTimeConfigMock.signalGroups.group2 = []),
-        (runTimeConfigMock.signalGroups.group3 = []);
     });
 
     it('initializing successfully', async () => {

@@ -1,6 +1,6 @@
 import { promises as fs, readFileSync } from 'fs';
 import path from 'path';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'events';
 import {
   DataSinkProtocols,
   DataSourceProtocols,
@@ -17,6 +17,7 @@ import {
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
+  IOpcuaDataSinkConfig,
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
@@ -56,12 +57,7 @@ const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.OPCUA,
-  auth: {
-    type: 'none',
-    password: '',
-    userName: ''
-  }
+  protocol: DataSinkProtocols.OPCUA
 };
 const defaultDataHubDataSink: IDataSinkConfig = {
   name: '',
@@ -77,7 +73,8 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   protocol: DataSinkProtocols.MTCONNECT
 };
 
-export const emptyDefaultConfig = {
+
+export const emptyDefaultConfig: IConfig = {
   general: {
     manufacturer: '',
     serialNumber: '',
@@ -87,7 +84,6 @@ export const emptyDefaultConfig = {
   networkConfig: {
     x1: {},
     x2: {},
-    proxy: {}
   },
   dataSources: [],
   dataSinks: [],
@@ -179,6 +175,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       auth: {
         expiresIn: 60 * 60,
         defaultPassword: '',
+      },
+      datahub: {
+        serialNumber: "No serial number found",
+        provisioningHost: "",
+        scopeId: "",
+        regId: "unknownDevice",
+        symKey: "",
+        groupDevice: false,
+        signalGroups: undefined,
+        dataPointTypesData: {
+          probe: {
+            intervalHours: undefined
+          },
+          telemetry: {
+            intervalHours: undefined
+          }
+        }
       }
     };
 

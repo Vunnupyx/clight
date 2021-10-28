@@ -1664,10 +1664,10 @@ export default {
         proxy: {
           type: 'object',
           properties: {
-            useProxy: {
+            enabled: {
               type: 'boolean'
             },
-            ipAddr: {
+            ip: {
               type: 'string'
             },
             port: {
@@ -1679,11 +1679,9 @@ export default {
             password: {
               type: 'string'
             },
-            configurationState: {
-              type: 'boolean'
-            },
-            serviceState: {
-              type: 'boolean'
+            type: {
+              type: 'string',
+              enum: ['socks5', 'http']
             }
           }
         }
@@ -1735,10 +1733,10 @@ export default {
         proxy: {
           type: 'object',
           properties: {
-            useProxy: {
+            enabled: {
               type: 'boolean'
             },
-            ipAddr: {
+            ip: {
               type: 'string'
             },
             port: {
@@ -1749,6 +1747,10 @@ export default {
             },
             password: {
               type: 'string'
+            },
+            type: {
+              type: 'string',
+              enum: ['socks5' , 'http']
             }
           }
         }

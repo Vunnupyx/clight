@@ -16,7 +16,8 @@ import {
   IOPCUAConfig,
   IUser,
   IConfig,
-  IDataSinkConfig
+  IDataSinkConfig,
+  IOpcuaDataSinkConfig
 } from '../../../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import path from 'path';

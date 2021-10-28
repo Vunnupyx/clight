@@ -23,7 +23,7 @@ declare module 'express' {
 
 export class AuthManager {
   private static className: string = AuthManager.name;
-  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00';
+  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00\n';
 
   constructor(private configManager: ConfigManager) {}
 
@@ -193,6 +193,6 @@ export class AuthManager {
       address = this.EMPTY_MAC_ADDRESS;
     }
 
-    return address.split(':').join('');
+    return address.split(':').join('').trim();
   }
 }

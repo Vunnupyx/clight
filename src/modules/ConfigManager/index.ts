@@ -1,4 +1,4 @@
-import {promises as fs, readFileSync} from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'stream';
 import {
@@ -210,7 +210,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.authUsersConfigName,
         this._authUsers
       ).catch(() => this._authUsers),
-      this.loadTemplates(),
+      this.loadTemplates()
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;
@@ -556,9 +556,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         { encoding: 'utf-8' }
       )
       .then(() => {
-        winston.info(
-          `${ConfigManager.className}::saveConfigToFile saved new config to file`
-        );
+        winston.info(`${logPrefix} Saved auth config`);
       })
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);

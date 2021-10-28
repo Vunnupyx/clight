@@ -19,7 +19,10 @@ import {
   IProxyConfig,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
-import { TGroupedMeasurements, IMeasurement } from '../../DataSinks/DataHubDataSink';
+import {
+  TGroupedMeasurements,
+  IMeasurement
+} from '../../DataSinks/DataHubDataSink';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
@@ -129,10 +132,10 @@ export class DataHubAdapter {
     reportedServices.forEach((name) => {
       patch[name] = {
         enabled: true
-      }
-    })
-    this.#deviceTwin.properties.reported.update({services: patch}, (err) => {
-      if(err) winston.error(`${logPrefix} error due to ${err.message}`);
+      };
+    });
+    this.#deviceTwin.properties.reported.update({ services: patch }, (err) => {
+      if (err) winston.error(`${logPrefix} error due to ${err.message}`);
     });
   }
 
@@ -175,6 +178,9 @@ export class DataHubAdapter {
    * Start the provisioning process for this device
    */
   private startProvisioning(): Promise<void> {
+    const logPrefix = `${DataHubAdapter.#className}::startProvisioning`;
+    winston.debug(`${logPrefix} Starting provisioning...`);
+
     this.#provSecClient = new SymmetricKeySecurityClient(
       this.#registrationId,
       this.#groupDeviceKey || this.#symKey
@@ -304,8 +310,11 @@ export class DataHubAdapter {
    */
   private getProvisioning(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::getProvisioning`;
+
     return new Promise((res, rej) => {
-      this.#provClient.register(async (err, response) => {
+      winston.debug(`${logPrefix} Registering...`);
+      this.#provClient.register((err, response) => {
+        console.log('HELLO');
         try {
           this.registrationHandler(err, response);
           res();
@@ -355,6 +364,7 @@ export class DataHubAdapter {
    */
   private registrationHandler(error: Error, res: RegistrationResult): void {
     const logPrefix = `${DataHubAdapter.#className}::registrationHandler`;
+    console.log('HELLO');
     if (error)
       throw new NorthBoundError(
         `${logPrefix} error due to ${JSON.stringify(error)}`
@@ -490,11 +500,9 @@ class MessageBuffer {
    * Add a iterable array of asset datasets to the buffer.
    */
   public addAssetList(assets: Array<IMeasurement>): void {
-    for(const measurement of Object.values(assets)) {
-      for(const [key, value] of Object.entries(measurement)) {
-        this.#assetBuffer.push(
-          this.generateAssetData(key, value)
-        );
+    for (const measurement of Object.values(assets)) {
+      for (const [key, value] of Object.entries(measurement)) {
+        this.#assetBuffer.push(this.generateAssetData(key, value));
       }
     }
   }

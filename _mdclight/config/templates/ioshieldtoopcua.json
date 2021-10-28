@@ -1,4 +1,6 @@
 {
+  "name": "Template Ioshield and OPCUA",
+  "description": "Description",
   "dataSources": [
     {
       "id": "",

@@ -36,10 +36,11 @@ export function setDataSinksManager(manager: DataSinksManager) {
  * Handle all requests for the list of templates.
  */
 function templatesGetHandler(request: Request, response: Response): void {
-  const payload = {
-    availableDataSources: configManager.defaultTemplates.availableDataSources.map(x => x.protocol),
-    availableDataSinks: configManager.defaultTemplates.availableDataSinks.map(x => x.protocol),
-  };
+  const payload = configManager.defaultTemplates.templates.map((x) => ({
+    ...x,
+    dataSources: x.dataSources.map((y) => y.protocol),
+    dataSinks: x.dataSinks.map((y) => y.protocol)
+  }));
 
   response.status(200).json(payload);
 }
@@ -48,7 +49,7 @@ function templatesGetHandler(request: Request, response: Response): void {
  * Returns the current status of the templates completion
  */
 function templatesGetStatusHandler(request: Request, response: Response) {
-  const completed = configManager.config.templates.completed;
+  const completed = configManager.config.quickStart.completed;
 
   response.status(200).json({ completed });
 }
@@ -57,10 +58,20 @@ function templatesGetStatusHandler(request: Request, response: Response) {
  * Handle POST apply templates request
  */
 function templatesApplyPostHandler(request: Request, response: Response): void {
-  // TODO Dont set default data sinks and sources here
-  // configManager.setDataSources([request.body.dataSource]);
-  // configManager.setDataSinks(request.body.dataSinks);
-  configManager.saveConfig({ templates: { completed: true } });
+  if (
+    !request.body.templateId ||
+    !request.body.dataSources?.length ||
+    !request.body.dataSinks?.length
+  ) {
+    response.status(400).json({ message: 'Invalid Body' });
+    return;
+  }
+
+  configManager.applyTemplate(
+    request.body.templateId,
+    request.body.dataSources,
+    request.body.dataSinks
+  );
 
   response.status(200).json(null);
 }

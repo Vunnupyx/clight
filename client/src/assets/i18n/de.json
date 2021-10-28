@@ -43,11 +43,13 @@
   "quick-start": {
     "Language": "Language",
     "SelectLanguage": "Select Language",
+    "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
     "LoadError": "Error",
     "Next": "",
     "Save": "",
+    "ContinueWithoutTemplate": "Continue without template",
     "DataSources": {
       "ioshield": {
         "name": "Ioshield",

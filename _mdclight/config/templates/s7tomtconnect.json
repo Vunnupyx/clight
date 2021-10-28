@@ -1,54 +1,130 @@
 {
+  "name": "Template S7 and MTConnect",
+  "description": "Description",
   "dataSources": [
     {
-      "id": "",
       "name": "",
       "dataPoints": [
         {
-          "type": null,
-          "address": "DI0",
-          "name": "Emergency Stop",
-          "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b",
+          "type": "nck",
+          "name": "selectedWorkPProg",
+          "address": "/Channel/Programinfo/selectedWorkPProg",
+          "id": "55455192-9e2b-4423-b6e9-8466089cd299",
           "readFrequency": 1000
         },
         {
-          "type": null,
-          "address": "DI1",
-          "name": "Red Light",
-          "id": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
+          "type": "nck",
+          "name": "progName",
+          "address": "/Channel/ProgramPointer/progName",
+          "id": "66e44f24-8638-401d-8fcd-fdd1f197ae6d",
           "readFrequency": 1000
         },
         {
-          "type": null,
-          "address": "DI2",
-          "name": "Yellow Light",
-          "id": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7",
+          "type": "nck",
+          "name": "numSpindles",
+          "address": "/Channel/Configuration/numSpindles",
+          "id": "0da733b0-6036-4aff-a6dc-d602711d10e8",
           "readFrequency": 1000
         },
         {
-          "type": null,
-          "address": "DI3",
-          "name": "Green Light",
-          "id": "831268a3-6088-4bca-b099-27f745a84637",
+          "type": "nck",
+          "name": "SpindleType",
+          "address": "/Channel/Spindle/SpindleType",
+          "id": "ebd2c9c5-9dcc-4f30-996e-57ecb702ca5d",
           "readFrequency": 1000
         },
         {
-          "type": null,
-          "address": "DI4",
-          "name": "Blue Light",
-          "id": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
+          "type": "nck",
+          "name": "feedRateOvr",
+          "address": "/Nck/MachineAxis/feedRateOvr",
+          "id": "34ad0f9b-7ce6-49f1-a3c2-27d29fb19343",
           "readFrequency": 1000
         },
         {
-          "type": null,
-          "address": "DI5",
-          "name": "Availability",
-          "id": "604d583a-ce3a-4d19-a930-a8ba0579d8b2",
+          "type": "nck",
+          "name": "OpMode",
+          "address": "/Bag/State/OpMode",
+          "id": "3622de59-8ddf-457a-b816-9088102385d4",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "singleBlockActive",
+          "address": "/Channel/ProgramModification/singleBlockActive",
+          "id": "234b2dbe-ab2a-4afb-a903-b3349d18de5b",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "speedOvr",
+          "address": "/Channel/Spindle/speedOvr",
+          "id": "e2ebdead-5484-4bd7-b757-f0c3af3fadfe",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "rapFeedRateOvr",
+          "address": "/Channel/State/rapFeedRateOvr",
+          "id": "5f443465-8e52-4f60-9032-1fe09c45cb08",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "totalParts",
+          "address": "/Channel/State/totalParts",
+          "id": "2e23f057-09d5-4744-ba94-da38f3210e88",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "actParts",
+          "address": "/Channel/State/actParts",
+          "id": "9b0aba24-a662-40fb-b7ea-90a2662a3907",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "reqParts",
+          "address": "/Channel/State/reqParts",
+          "id": "d2e3ac9b-f7e3-4251-8e79-52ab364fba63",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "actTNumber",
+          "address": "/Channel/State/actTNumber",
+          "id": "2ef0135f-4d06-4cda-be46-58898c47cb50",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "numAlarms",
+          "address": "/Nck/State/numAlarms",
+          "id": "21e40920-15fc-4e2e-b9b1-70e53a0e5cfe",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "actProgNetTime",
+          "address": "/Channel/State/actProgNetTime",
+          "id": "49200590-2046-4c3d-ad02-535c4af0d0ac",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "feedRateIpoOvr",
+          "address": "/Channel/State/feedRateIpoOvr",
+          "id": "06acbeba-969f-4f36-9da5-bea4a4e2fe95",
           "readFrequency": 1000
         }
       ],
-      "protocol": "ioshield",
-      "connection": null,
+      "protocol": "s7",
+      "connection": {
+        "ipAddr": "192.168.214.1",
+        "port": 102,
+        "rack": 0,
+        "slot": 2
+      },
       "enabled": true
     }
   ],
@@ -168,76 +244,6 @@
       ],
       "protocol": "mtconnect",
       "enabled": true
-    },
-    {
-      "name": "",
-      "dataPoints": [
-        {
-          "name": "Operation Duration",
-          "address": "NodeId\tns=7;s=OperationDuration",
-          "enabled": true,
-          "id": "7a79047b-6e79-41ff-9ce5-729d11b3b4e8"
-        },
-        {
-          "name": "Power On Duration",
-          "address": "NodeId\tns=7;s=PowerOnDuration",
-          "enabled": true,
-          "id": "873bb4df-d4c8-4aeb-b29f-e23ad5f1bec3"
-        },
-        {
-          "name": "Emergency Stop Triggered",
-          "address": "ns=7;s=EmergencyStopTriggered",
-          "enabled": true,
-          "id": "93456cf7-249d-4edd-9025-f0c822f9b081"
-        },
-        {
-          "name": "Program Path",
-          "address": "ns=7;s=ActiveProgram-ProgramPath",
-          "enabled": true,
-          "id": "ca6af0a9-68f7-4585-8699-a5ded85bc95e"
-        },
-        {
-          "name": "Current State",
-          "address": "ns=7;s=ActiveProgram-State-CurrentState",
-          "enabled": true,
-          "id": "f40e3289-7d64-4d0d-b752-55ba09a26de4"
-        },
-        {
-          "name": "Current Run Time",
-          "address": "ns=7;s=ActiveProgram-CurrentRunTime",
-          "enabled": true,
-          "id": "67f44404-9eb6-45dc-afc3-c61e2a61cdcd"
-        },
-        {
-          "name": "Part Count",
-          "address": "ns=7;s=ActiveProgram-PartCounter",
-          "enabled": true,
-          "id": "9582b8e8-3bc2-4161-bc20-333fb9943134"
-        },
-        {
-          "name": "Operation Mode",
-          "address": "NodeId\tns=7;s=OperationMode",
-          "enabled": true,
-          "id": "a5912bf4-770a-4c79-8a42-f43da2ed881f"
-        },
-        {
-          "name": "Desired Parts",
-          "address": "ns=7;s=ActiveProgram-DesiredParts",
-          "enabled": true,
-          "id": "f9978c9a-ea04-4f1f-b3c7-7972bb481ae1"
-        },
-        {
-          "name": "Program Name",
-          "address": "ns=7;s=ActiveProgram-Name",
-          "enabled": true,
-          "id": "1a468843-e2e2-4831-a111-a6844887586d"
-        }
-      ],
-      "enabled": true,
-      "protocol": "opcua",
-      "auth": {
-        "type": "anonymous"
-      }
     }
   ]
 }

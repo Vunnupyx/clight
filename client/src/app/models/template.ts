@@ -1,9 +1,13 @@
-import {DataSourceProtocol} from './data-source';
-import {DataSinkProtocol} from './data-sink';
+import { DataSourceProtocol } from './data-source';
+import { DataSinkProtocol } from './data-sink';
 
-export type AvailableDataSource = DataSourceProtocol;
-
-export type AvailableDataSink = DataSinkProtocol
+export interface ITemplate {
+  id: string;
+  name: string;
+  description: string;
+  dataSources: DataSourceProtocol[];
+  dataSinks: DataSinkProtocol[];
+}
 
 export class TemplatesStatus {
   completed!: boolean;

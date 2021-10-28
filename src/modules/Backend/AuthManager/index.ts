@@ -193,6 +193,6 @@ export class AuthManager {
       address = this.EMPTY_MAC_ADDRESS;
     }
 
-    return address.split(':').join('').trim();
+    return address.split(':').join('').split('\n').join('');
   }
 }

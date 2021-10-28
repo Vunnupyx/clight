@@ -14,10 +14,13 @@ export interface DataHubDataSinkOptions {
   runTimeConfig: IDataHubConfig;
 }
 
-export type TGroupedMeasurements = Record<TDataHubDataPointType, Array<IMeasurement>>
+export type TGroupedMeasurements = Record<
+  TDataHubDataPointType,
+  Array<IMeasurement>
+>;
 
 export interface IMeasurement {
-  [address: string]: any
+  [address: string]: any;
 }
 
 /**
@@ -40,39 +43,42 @@ export class DataHubDataSink extends DataSink {
    */
   protected processDataPointValues(dataPointsObj): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
-    winston.debug(
-      `${logPrefix} receive measurements.`
-    );
+    winston.debug(`${logPrefix} receive measurements.`);
 
-    const services = this.#datahubAdapter.getDesiredProps().services;
-   
+    const services = this.#datahubAdapter.getDesiredProps()?.services;
+
+    if (!services) return;
+
     winston.debug(`${logPrefix} known services: ${Object.keys(services)}`);
     const data: TGroupedMeasurements = {
       probe: [],
       event: [],
-      telemetry: [],
+      telemetry: []
     };
 
-    const activeServices = Object.keys(services).reduce((prev: Array<string>, current) => {
-      if(services[current].enabled) prev.push(current)
-      return prev;
-    }, [])
+    const activeServices = Object.keys(services).reduce(
+      (prev: Array<string>, current) => {
+        if (services[current].enabled) prev.push(current);
+        return prev;
+      },
+      []
+    );
 
-    const allDatapoints = []
+    const allDatapoints = [];
     activeServices.forEach((service) => {
       this.#signalGroups[service].forEach((datapoint) => {
         allDatapoints.push(datapoint);
-      })
-    })
+      });
+    });
 
     // make datapoint in array unique
     const uniqueDatapoints = Array.from(new Set(allDatapoints));
 
     for (const id of Object.keys(dataPointsObj)) {
-      if(uniqueDatapoints.includes(id)) {
-        const { type, address } = this.config.dataPoints.find(
-          (dp) => dp.id === id
-        );
+      const { type, address } = this.config.dataPoints.find(
+        (dp) => dp.id === id
+      );
+      if (uniqueDatapoints.includes(address)) {
         data[type].push({ [address]: dataPointsObj[id] });
       }
     }

@@ -88,14 +88,16 @@ export class DataHubDataSink extends DataSink {
     this.#datahubAdapter.sendData(data);
   }
 
+  /**
+   * Info: Data are handled as batch.
+   */
   protected processDataPointValue() {}
 
   /**
-   * Not implemented for DataHub!
+   * Info: Not implemented for DataHub!
    */
   public onLifecycleEvent(event: ILifecycleEvent): Promise<void> {
     const logPrefix = `${DataHubDataSink.name}::onLifecycleEvent`;
-    //TODO: @Patrick please check with DMG if source lifecycle events are required
     winston.debug(`${logPrefix} not implemented.`);
     return Promise.resolve();
   }

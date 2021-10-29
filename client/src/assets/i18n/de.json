@@ -178,7 +178,8 @@
     },
     "LoadError": "",
     "LoadStatusError": "",
-    "UpdateError": ""
+    "UpdateError": "",
+    "OpenMTConnectStream": "Open MTConnect Stream"
   },
   "settings-data-mapping": {
     "DataMapping": "",

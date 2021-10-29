@@ -56,7 +56,11 @@
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch",
-    "OpenConfigurationWizard": "Open Configuration Wizard"
+    "OpenConfigurationWizard": "Open Configuration Wizard",
+    "BackupConfiguration": "Backup Configuration",
+    "RestoreConfiguration": "Restore Configuration",
+    "BackupDownloadError": "Could not download backup. Please try again!",
+    "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
   },
   "settings-device-info": {
     "Manufacturer": "",

@@ -218,6 +218,7 @@
     "Port": "Port",
     "Username": "Username",
     "Password": "Password",
+    "Apply": "Apply",
     "LoadError": "Failed to load network settings. Try again later",
     "UpdateError": "Failed to update network settings. Try again later",
     "Tabs": {

@@ -1,12 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
-import { Status } from '../../../shared/state';
 import { clone, ObjectMap } from '../../../shared/utils';
 import { NetworkConfig, NetworkType } from '../../../models';
 import { HOST_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
-import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-network',
@@ -33,12 +32,16 @@ export class NetworkComponent implements OnInit, OnDestroy {
   sub: Subscription = new Subscription();
   selectedTab!: string;
 
-  constructor(private networkService: NetworkService) { }
+  constructor(private networkService: NetworkService) {}
 
   ngOnInit(): void {
     this.sub.add(
-      this.networkService.config.pipe(filter(el => !!el)).subscribe(x => this.onConfig(x))
+      this.networkService.config
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onConfig(x))
     );
+
+    this.sub.add(this.networkService.setNetworkConfigTimer().subscribe());
 
     this.networkService.getNetworkConfig();
   }
@@ -59,8 +62,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   saveChanges() {
-    this.networkService.updateNetworkConfig(this.config)
-      .then(() => this.originalConfig = clone(this.config));
+    this.networkService
+      .updateNetworkConfig(this.config)
+      .then(() => (this.originalConfig = clone(this.config)));
   }
 
   saveDhcpChanges(ethernetType: NetworkType) {
@@ -70,12 +74,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
       const newConfig = {
         ...this.config,
         [ethernetType]: {
-          useDhcp,
+          useDhcp
         }
-      }
+      };
 
-      return this.networkService.updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
-        .then(() => this.originalConfig = clone(this.config));
+      return this.networkService
+        .updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
+        .then(() => (this.originalConfig = clone(this.config)));
     }
 
     return this.saveChanges();
@@ -88,12 +93,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
       const newConfig = {
         ...this.config,
         [NetworkType.PROXY]: {
-          useProxy,
-        },
-      }
+          useProxy
+        }
+      };
 
-      return this.networkService.updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
-        .then(() => this.originalConfig = clone(this.config));
+      return this.networkService
+        .updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
+        .then(() => (this.originalConfig = clone(this.config)));
     }
 
     return this.saveChanges();

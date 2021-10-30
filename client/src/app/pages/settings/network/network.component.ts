@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -47,7 +48,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   private onConfig(x: ObjectMap<NetworkConfig>) {
-    this.config = x;
+    this.config = clone(x);
     this.originalConfig = clone(x);
 
     if (!this.selectedTab) {
@@ -61,51 +62,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.config = clone(this.originalConfig);
   }
 
-  saveChanges() {
+  saveChanges(mainForm: NgForm, networkType: NetworkType) {
     this.networkService
       .updateNetworkConfig(this.config)
-      .then(() => (this.originalConfig = clone(this.config)));
-  }
-
-  saveDhcpChanges(ethernetType: NetworkType) {
-    const useDhcp = this.config[ethernetType].useDhcp;
-
-    if (useDhcp) {
-      const newConfig = {
-        ...this.config,
-        [ethernetType]: {
-          useDhcp
-        }
-      };
-
-      return this.networkService
-        .updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
-        .then(() => (this.originalConfig = clone(this.config)));
-    }
-
-    return this.saveChanges();
-  }
-
-  saveUseProxyChanges() {
-    const useProxy = this.config[NetworkType.PROXY].useProxy;
-
-    if (!useProxy) {
-      const newConfig = {
-        ...this.config,
-        [NetworkType.PROXY]: {
-          useProxy
-        }
-      };
-
-      return this.networkService
-        .updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
-        .then(() => (this.originalConfig = clone(this.config)));
-    }
-
-    return this.saveChanges();
+      .then(() => (this.originalConfig = clone(this.config)))
+      .then(() =>
+        mainForm.resetForm({
+          ...this.config[networkType],
+          notToUseDhcp: !this.config[networkType]?.useDhcp
+        })
+      );
   }
 
   ngOnDestroy() {
-    this.sub && this.sub.unsubscribe();
+    this.sub.unsubscribe();
   }
 }

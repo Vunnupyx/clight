@@ -357,6 +357,29 @@
 
           <div class="d-flex align-items-center justify-content-between">
             <div class="mr-30">
+              {{ 'settings-network.ProxyType' | translate }}
+            </div>
+
+            <div>
+              <mat-form-field>
+                <mat-select
+                  name="type"
+                  [(ngModel)]="config[NetworkType.PROXY].type"
+                  [disabled]="!config[NetworkType.PROXY].useProxy"
+                >
+                  <mat-option [value]="ProxyType.Socks5">
+                    {{ ProxyType.Socks5 }}
+                  </mat-option>
+                  <mat-option [value]="ProxyType.Http">
+                    {{ ProxyType.Http }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="mr-30">
               {{ 'settings-network.Host' | translate }}
             </div>
 

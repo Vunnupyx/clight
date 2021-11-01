@@ -60,3 +60,22 @@ cat /dev/null > ~/.bash_history && history -c && exit
 
 1. Pull newer containers: `docker-compose pull`
 2. Restart `docker-compose down && docker-compose up -d)`
+
+## V2
+
+## SSL Cert generation
+
+```
+[Unit]
+Description=Generate SSL certificate & private key if they don't exist already
+WantedBy=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=bash -c 'test ! -e /etc/MDCLight/config/ssl_private.key && openssl req -x509 -nodes -days 10950 -newkey rsa:2048 -keyout /etc/MDCLight/config/ssl_private.key -out /etc/MDCLight/config/ssl.crt -subj "/C=DE/L=Munich/O=codestryke GmbH/CN=IOT2050/emailAddress=info@codestryke.com" || true'
+RemainAfterExit=true
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
+```

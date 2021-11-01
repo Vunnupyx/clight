@@ -1,6 +1,6 @@
 import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import {OPCUAServerOptions} from 'node-opcua';
+import { OPCUAServerOptions } from 'node-opcua';
 
 export interface IAuthConfig {
   secret: any;
@@ -92,12 +92,21 @@ export interface IOpcuaAuth {
   userName: string;
   password: string;
 }
+
+export interface IDataHubConfig {
+  provisioningHost: string;
+  scopeId: string;
+  regId: string;
+  symKey: string;
+}
+
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
+  datahubconfig?: IDataHubConfig;
 }
 
 export interface IDataPointMapping {

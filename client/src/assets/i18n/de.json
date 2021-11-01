@@ -166,6 +166,12 @@
     "From": "",
     "To": "",
     "AddMapping": "",
+    "ProvisioningHost": "",
+    "ScopeId": "",
+    "RegId": "",
+    "SymKey": "",
+    "Apply": "Apply",
+    "DataHubConfigSaveSuccess": "",
     "AlreadyExistDataPoint": "",
     "AuthenticationLevels": {
       "anonymous": "",

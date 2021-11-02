@@ -2,7 +2,7 @@
   <div class="split-screen"></div>
   <div class="login-screen">
     <div class="login-logo">
-      <img src="/assets/images/logo-login.png" alt="logotype">
+      <img src="/assets/images/logo-login.png" alt="logotype" />
     </div>
     <div class="login-texts">
       <ng-container [ngSwitch]="mode">
@@ -12,7 +12,9 @@
         </ng-container>
         <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
           <p>{{ 'auth-login.ForgotPasswordForCustomers' | translate }}</p>
-          <p>{{ 'auth-login.ForgotPasswordForCustomersDescription' | translate }}</p>
+          <p>
+            {{ 'auth-login.ForgotPasswordForCustomersDescription' | translate }}
+          </p>
         </ng-container>
       </ng-container>
     </div>
@@ -27,6 +29,7 @@
                 type="text"
                 name="userName"
                 [(ngModel)]="loginRequest.userName"
+                required
               />
             </mat-form-field>
 
@@ -38,6 +41,7 @@
                   type="password"
                   name="password"
                   [(ngModel)]="loginRequest.password"
+                  required
                 />
               </mat-form-field>
             </div>
@@ -48,12 +52,17 @@
                 color="primary"
                 type="submit"
                 [disabled]="form.invalid"
-              >{{ 'auth-login.SignIn' | translate }}</button>
+              >
+                {{ 'auth-login.SignIn' | translate }}
+              </button>
             </div>
           </form>
         </ng-container>
         <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
-          <form #form="ngForm" (ngSubmit)="form.valid && onForgotPasswordSubmit(form)">
+          <form
+            #form="ngForm"
+            (ngSubmit)="form.valid && onForgotPasswordSubmit(form)"
+          >
             <mat-form-field>
               <mat-label>{{ 'auth-login.Email' | translate }}</mat-label>
               <input
@@ -72,7 +81,9 @@
                 color="primary"
                 type="submit"
                 [disabled]="form.invalid"
-              >{{ 'auth-login.SendResetPassword' | translate }}</button>
+              >
+                {{ 'auth-login.SendResetPassword' | translate }}
+              </button>
             </div>
           </form>
         </ng-container>

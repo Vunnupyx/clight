@@ -332,7 +332,6 @@ export class DataHubAdapter {
     return new Promise((res, rej) => {
       winston.debug(`${logPrefix} Registering...`);
       this.#provClient.register((err, response) => {
-        console.log('HELLO');
         try {
           this.registrationHandler(err, response);
           res();
@@ -382,7 +381,6 @@ export class DataHubAdapter {
    */
   private registrationHandler(error: Error, res: RegistrationResult): void {
     const logPrefix = `${DataHubAdapter.#className}::registrationHandler`;
-    console.log('HELLO');
     if (error)
       throw new NorthBoundError(
         `${logPrefix} error due to ${JSON.stringify(error)}`

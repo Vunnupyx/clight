@@ -8,10 +8,8 @@ RUN npm install
 COPY src src
 COPY tsconfig.json tsconfig.json
 RUN npm run build
-RUN npm run build:dist
 
-RUN mv runtime app
-RUN rm -r node_modules && rm -r build
+RUN mv build/main app
 
 WORKDIR /app
 

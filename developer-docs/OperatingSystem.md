@@ -47,6 +47,9 @@ apt purge python3-setuptools python3.7-dev
 10. Remove device specific configuration
 
 ```
+rm -rf /etc/MDCLight/config/auth.json
+rm -rf /etc/MDCLight/config/ssl.crt
+rm -rf /etc/MDCLight/config/ssl_private.key
 rm -rf /etc/ssh/ssh_host_*
 rm -rf  rm -rf /etc/MDCLight/logs/*.log
 cat /dev/null > ~/.bash_history && history -c && exit
@@ -59,7 +62,7 @@ cat /dev/null > ~/.bash_history && history -c && exit
 ## Update containers
 
 1. Pull newer containers: `docker-compose pull`
-2. Restart `docker-compose down && docker-compose up -d)`
+2. Restart `docker-compose down && docker-compose up -d`
 
 ## V2
 

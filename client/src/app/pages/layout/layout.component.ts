@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import {Observable, of} from 'rxjs';
-import {filter, map, mergeMap, shareReplay} from 'rxjs/operators';
-import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
-import {AuthService} from "../../shared";
+import { Observable, of } from 'rxjs';
+import { filter, map, mergeMap, shareReplay } from 'rxjs/operators';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { AuthService } from '../../shared';
 
 @Component({
   selector: 'app-layer',
@@ -18,21 +18,20 @@ export class LayoutComponent {
       shareReplay()
     );
 
-  routeData$ = this.router.events
-    .pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map(() => this.route),
-      mergeMap((route) => {
-        if (route.firstChild) {
-          return route.firstChild!.data;
-        }
+  routeData$ = this.router.events.pipe(
+    filter((event) => event instanceof NavigationEnd),
+    map(() => this.route),
+    mergeMap((route) => {
+      if (route.firstChild) {
+        return route.firstChild!.data;
+      }
 
-        return of({});
-      })
-    )
+      return of({});
+    })
+  );
 
   get supportHref() {
-    return `${window.location.protocol}//${window.location.hostname}:3000`;
+    return `${window.location.protocol}//${window.location.hostname}/help/docs/`;
   }
 
   constructor(

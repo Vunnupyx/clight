@@ -84,6 +84,7 @@ export class S7DataSource extends DataSource {
         this.currentStatus = LifecycleEventStatus.Reconnecting;
         this.init();
       }, this.RECONNECT_TIMEOUT);
+      return;
     }
 
     this.submitLifecycleEvent({

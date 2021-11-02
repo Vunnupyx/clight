@@ -1,6 +1,6 @@
-import {promises as fs, readFileSync} from 'fs';
+import { promises as fs, readFileSync } from 'fs';
 import path from 'path';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'events';
 import {
   DataSinkProtocols,
   DataSourceProtocols,
@@ -18,6 +18,7 @@ import {
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
+  IOpcuaDataSinkConfig,
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
@@ -52,17 +53,11 @@ const defaultIoShieldDataSource: IDataSourceConfig = {
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false
 };
-
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.OPCUA,
-  auth: {
-    type: 'none',
-    password: '',
-    userName: ''
-  }
+  protocol: DataSinkProtocols.OPCUA
 };
 const defaultDataHubDataSink: IDataSinkConfig = {
   name: '',
@@ -78,7 +73,7 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   protocol: DataSinkProtocols.MTCONNECT
 };
 
-export const emptyDefaultConfig = {
+export const emptyDefaultConfig: IConfig = {
   general: {
     manufacturer: '',
     serialNumber: '',
@@ -87,8 +82,7 @@ export const emptyDefaultConfig = {
   },
   networkConfig: {
     x1: {},
-    x2: {},
-    proxy: {}
+    x2: {}
   },
   dataSources: [],
   dataSinks: [],
@@ -180,6 +174,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       auth: {
         expiresIn: 60 * 60,
         defaultPassword: ''
+      },
+      datahub: {
+        serialNumber: 'No serial number found', // TODO Use mac address?
+        provisioningHost: '',
+        scopeId: '',
+        regId: 'unknownDevice',
+        symKey: '',
+        groupDevice: false,
+        signalGroups: undefined,
+        dataPointTypesData: {
+          probe: {
+            intervalHours: undefined
+          },
+          telemetry: {
+            intervalHours: undefined
+          }
+        }
       }
     };
 
@@ -210,7 +221,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.authUsersConfigName,
         this._authUsers
       ).catch(() => this._authUsers),
-      this.loadTemplates(),
+      this.loadTemplates()
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;

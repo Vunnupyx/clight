@@ -1,20 +1,17 @@
-import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
-import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
-import {
-  DataSinkProtocols,
-  IErrorEvent,
-  ILifecycleEvent
-} from '../../../../common/interfaces';
-import { DataSink } from '../DataSink';
 import winston from 'winston';
-import { DataPointCache } from '../../../DatapointCache';
+import { NorthBoundError } from '../../../../common/errors';
+import { DataSinkProtocols, IErrorEvent, ILifecycleEvent } from '../../../../common/interfaces';
 import { ConfigManager } from '../../../ConfigManager';
+import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
+import { DataPointCache } from '../../../DatapointCache';
+import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
+import { DataHubDataSink, DataHubDataSinkOptions } from '../DataHubDataSink';
+import { DataSink } from '../DataSink';
 import {
   IMTConnectDataSinkOptions,
   MTConnectDataSink
 } from '../MTConnectDataSink';
 import { IOPCUADataSinkOptions, OPCUADataSink } from '../OPCUADataSink';
-import { NorthBoundError } from '../../../../common/errors';
 
 export interface IDataSinkManagerParams {
   configManager: ConfigManager;
@@ -93,7 +90,12 @@ export class DataSinksManager {
       generalConfig: this.configManager.config.general,
       runtimeConfig: this.configManager.runtimeConfig.opcua
     };
+    const dataHubDataSinkOptions: DataHubDataSinkOptions = {
+      config: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
+      runTimeConfig: this.configManager.runtimeConfig.datahub
+    }
 
+    this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
     this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
     this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
 

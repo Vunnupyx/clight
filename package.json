@@ -9,6 +9,13 @@
   "private": true,
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
+    "azure-iot-device": "^1.17.6",
+    "azure-iot-device-mqtt": "^1.15.6",
+    "azure-iot-provisioning-device": "^1.8.10",
+    "azure-iot-provisioning-device-amqp": "^1.8.10",
+    "azure-iot-provisioning-device-http": "^1.8.10",
+    "azure-iot-provisioning-device-mqtt": "^1.7.10",
+    "azure-iot-security-symmetric-key": "^1.7.10",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "date-fns": "^2.22.1",
@@ -16,18 +23,19 @@
     "express-openapi-validator": "^4.13.1",
     "fs-extra": "^10.0.0",
     "jsonwebtoken": "^8.5.1",
+    "https-proxy-agent": "^5.0.0",
     "node-opcua": "^2.50.0",
     "node-opcua-pki": "^2.12.0",
     "nodes7": "^0.3.12",
+    "socks-proxy-agent": "^6.1.0",
     "swagger-routes-express": "^3.3.1",
     "swagger-ui-express": "^4.1.6",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
-    "dev:all": "concurrently --kill-others-on-fail \"yarn dev\" \"yarn dev:webserver\"",
-    "dev:webserver": "cd client && yarn dev",
+    "dev": "npm run loglevel:debug && ts-node-dev --respawn src/index.ts",
+    "dev:webserver": "cd client && yarn start",
     "build": "tsc -p tsconfig.json",
     "build:dist": "ncc build build/main/index.js -o runtime --minify",
     "build:mdclight": "yarn docker:build:mdclight",
@@ -46,7 +54,8 @@
     "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight",
     "copy_mtc_conf": "scp -r _mdclight/mtc_config/MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
     "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "loglevel:debug": "export LOG_LEVEL=debug"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

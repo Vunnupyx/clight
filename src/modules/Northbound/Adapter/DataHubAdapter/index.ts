@@ -11,7 +11,6 @@ import { SymmetricKeySecurityClient } from 'azure-iot-security-symmetric-key';
 import { createHmac } from 'crypto';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { SocksProxyAgent } from 'socks-proxy-agent';
-import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
 import {
@@ -73,6 +72,7 @@ export class DataHubAdapter {
   #probeSendInterval: number;
   #telemetrySendInterval: number;
   #runningTimers: Array<NodeJS.Timer> = [];
+  #alreadyReportedServices: Array<string> = [];
 
   public constructor(options: DataHubAdapterOptions) {
     if (
@@ -130,15 +130,32 @@ export class DataHubAdapter {
       winston.warn(`${logPrefix} no device twin available.`);
       return;
     }
+    const removedServices = this.#alreadyReportedServices.filter(
+      (s) => !reportedServices.includes(s)
+    );
+    const newServices = reportedServices.filter(
+      (s) => !this.#alreadyReportedServices.includes(s)
+    );
+
+    // Nothing to update
+    if (!(removedServices.length > 0) && !(newServices.length > 0)) return;
     const patch = {};
-    reportedServices.forEach((name) => {
-      patch[name] = {
+    //enable new services
+    newServices.forEach((serviceName) => {
+      patch[serviceName] = {
         enabled: true
+      };
+    });
+    //disable new services
+    removedServices.forEach((serviceName) => {
+      patch[serviceName] = {
+        enabled: false
       };
     });
     this.#deviceTwin.properties.reported.update({ services: patch }, (err) => {
       if (err) winston.error(`${logPrefix} error due to ${err.message}`);
     });
+    this.#alreadyReportedServices = reportedServices.concat(removedServices);
   }
 
   /**
@@ -169,9 +186,7 @@ export class DataHubAdapter {
       })
       .catch((err) => {
         return Promise.reject(
-          new NorthBoundError(
-            `${logPrefix} error due to ${JSON.stringify(err)}`
-          )
+          new NorthBoundError(`${logPrefix} error due to ${err.message}`)
         );
       });
   }
@@ -219,6 +234,7 @@ export class DataHubAdapter {
       );
       return Promise.resolve();
     }
+
     this.createDatahubClient();
 
     return this.#dataHubClient

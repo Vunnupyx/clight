@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -33,6 +33,18 @@ export class SourceDataPointService {
       .pipe(map((x) => x.dataPointsLivedata));
   }
 
+  get status() {
+    return this._store.snapshot.status;
+  }
+
+  get dataPoints() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.dataPoints),
+      distinctUntilChanged()
+    );
+  }
+
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
     private httpService: HttpService,
@@ -40,16 +52,6 @@ export class SourceDataPointService {
     private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
-  }
-
-  get status() {
-    return this._store.snapshot.status;
-  }
-
-  get dataPoints() {
-    return this._store.state
-      .pipe(filter((x) => x.status != Status.NotInitialized))
-      .pipe(map((x) => x.dataPoints));
   }
 
   async getDataPoints(datasourceProtocol: DataSourceProtocol) {
@@ -131,14 +133,13 @@ export class SourceDataPointService {
   }
 
   setLivedataTimer(protocol: DataSourceProtocol): Observable<void> {
-    return interval(5000).pipe(
+    return interval(1000).pipe(
       mergeMap(() => from(this.getLiveDataForDataPoints(protocol)))
     );
   }
 
   async getLiveDataForDataPoints(protocol: DataSourceProtocol) {
     this._store.patchState((state) => {
-      state.status = Status.Loading;
       state.dataPointsLivedata = {};
     });
 
@@ -151,13 +152,9 @@ export class SourceDataPointService {
           liveData,
           (item) => item.dataPointId
         );
-        state.status = Status.Ready;
       });
     } catch (err) {
       errorHandler(err);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
     }
   }
 
@@ -176,7 +173,7 @@ export class SourceDataPointService {
       this._store.patchState((state) => {
         state.status = Status.Ready;
         obj.id = response.created.id;
-        state.dataPoints.push(obj);
+        state.dataPoints = [...state.dataPoints, obj];
         state.dataPointsSourceMap[obj.id] = datasourceProtocol;
       });
     } catch (err) {
@@ -279,7 +276,8 @@ export class SourceDataPointService {
   private _emptyState() {
     return <SourceDataPointsState>{
       status: Status.NotInitialized,
-      dataPointsSourceMap: {}
+      dataPointsSourceMap: {},
+      dataPointsLivedata: {}
     };
   }
 }

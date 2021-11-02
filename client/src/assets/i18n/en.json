@@ -212,7 +212,8 @@
     "OPCUAServerPassword": "OPC UA Server Password",
     "LoadError": "Failed to load data sinks. Try again later",
     "LoadStatusError": "Failed to load status. Try again later",
-    "UpdateError": "Failed to update a data sink. Try again later"
+    "UpdateError": "Failed to update a data sink. Try again later",
+    "OpenMTConnectStream": "Open MTConnect Stream"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

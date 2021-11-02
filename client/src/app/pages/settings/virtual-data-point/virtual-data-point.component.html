@@ -1,5 +1,7 @@
 <div class="layout-header">
-  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-virtual-data-point.DataPoints' | translate }}</h2>
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
+    {{ 'settings-virtual-data-point.DataPoints' | translate }}
+  </h2>
 </div>
 
 <mat-divider></mat-divider>
@@ -70,14 +72,18 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-             {{ value | uppercase }}
+              {{ value | uppercase }}
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
-              (ngModelChange)="unsavedRow && (unsavedRow.operationType = $event)"
+              (ngModelChange)="
+                unsavedRow && (unsavedRow.operationType = $event)
+              "
             >
-              <mat-option *ngFor="let op of Operations" [value]="op">{{ op | uppercase }}</mat-option>
+              <mat-option *ngFor="let op of Operations" [value]="op">{{
+                op | uppercase
+              }}</mat-option>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
@@ -94,46 +100,45 @@
             let-row="row"
           >
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-              <div
-                class="text-ellipsis"
-                [title]="value"
-              >
+              <div class="text-ellipsis" [title]="value">
                 {{ getSourceNames(value) }}
               </div>
             </ng-container>
-            <div
-              *ngIf="unsavedRowIndex === rowIndex"
-            >
+            <div *ngIf="unsavedRowIndex === rowIndex">
               <mat-select
-                *ngIf="unsavedRow?.operationType !== VirtualDataPointOperationType.THRESHOLDS"
+                *ngIf="isAbleToSelectMultipleSources(unsavedRow?.operationType)"
                 [ngModel]="value"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = $event)"
                 multiple
               >
-                <mat-option
-                  *ngFor="let s of dataSources;"
-                  [value]="s.id"
-                >{{ getDataSourceDataPointPrefix(s.id) }} {{ s.name }}</mat-option>
+                <mat-option *ngFor="let s of dataSources" [value]="s.id"
+                  >{{ getDataSourceDataPointPrefix(s.id) }}
+                  {{ s.name }}</mat-option
+                >
                 <mat-option
                   *ngFor="let s of previousVirtualPoints; let idx = index"
                   [value]="s.id"
                   [disabled]="getRowIndex(s.id) > idx"
-                >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option>
+                  >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
+                >
               </mat-select>
               <mat-select
-                *ngIf="unsavedRow?.operationType === VirtualDataPointOperationType.THRESHOLDS"
+                *ngIf="
+                  !isAbleToSelectMultipleSources(unsavedRow?.operationType)
+                "
                 [ngModel]="value[0]"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = [$event])"
               >
-                <mat-option
-                  *ngFor="let s of dataSources;"
-                  [value]="s.id"
-                >{{ getDataSourceDataPointPrefix(s.id) }} {{ s.name }}</mat-option>
+                <mat-option *ngFor="let s of dataSources" [value]="s.id"
+                  >{{ getDataSourceDataPointPrefix(s.id) }}
+                  {{ s.name }}</mat-option
+                >
                 <mat-option
                   *ngFor="let s of previousVirtualPoints; let idx = index"
                   [value]="s.id"
                   [disabled]="getRowIndex(s.id) > idx"
-                >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option>
+                  >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
+                >
               </mat-select>
             </div>
           </ng-template>
@@ -169,53 +174,70 @@
           >
             <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
               <mat-button-toggle
-                *ngIf="row?.operationType === VirtualDataPointOperationType.THRESHOLDS"
+                *ngIf="
+                  row?.operationType ===
+                  VirtualDataPointOperationType.THRESHOLDS
+                "
                 (click)="onSetThreshold(row)"
-                [matTooltip]="'settings-virtual-data-point.SetThreshold' | translate"
+                [matTooltip]="
+                  'settings-virtual-data-point.SetThreshold' | translate
+                "
                 matTooltipPosition="above"
-              ><mat-icon
-              >show_chart</mat-icon
-              ></mat-button-toggle
+                ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="onEditStart(rowIndex, row)"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
-              ><mat-icon>edit</mat-icon></mat-button-toggle
+                ><mat-icon>edit</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="onDelete(row)"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
-              ><mat-icon>delete_outline</mat-icon></mat-button-toggle
+                ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
             <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
               <mat-button-toggle
-                *ngIf="unsavedRow?.operationType === VirtualDataPointOperationType.THRESHOLDS"
-                (click)="(unsavedRow && unsavedRow.sources && unsavedRow.sources.length > 0) && onSetThreshold(unsavedRow)"
-                [matTooltip]="'settings-virtual-data-point.SetThreshold' | translate"
+                *ngIf="
+                  unsavedRow?.operationType ===
+                  VirtualDataPointOperationType.THRESHOLDS
+                "
+                (click)="
+                  unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0 &&
+                    onSetThreshold(unsavedRow)
+                "
+                [matTooltip]="
+                  'settings-virtual-data-point.SetThreshold' | translate
+                "
                 matTooltipPosition="above"
-                [disabled]="!(unsavedRow && unsavedRow.sources && unsavedRow.sources.length > 0)"
-              ><mat-icon
-              >show_chart</mat-icon
-              ></mat-button-toggle
+                [disabled]="
+                  !(
+                    unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0
+                  )
+                "
+                ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="onEditEnd()"
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"
                 matTooltipPosition="above"
-              ><mat-icon class="color-success"
-              >check</mat-icon
-              ></mat-button-toggle
+                ><mat-icon class="color-success"
+                  >check</mat-icon
+                ></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="onEditCancel()"
                 [matTooltip]="'settings-virtual-data-point.Cancel' | translate"
                 matTooltipPosition="above"
-              ><mat-icon class="color-error"
-              >close</mat-icon
-              ></mat-button-toggle
+                ><mat-icon class="color-error"
+                  >close</mat-icon
+                ></mat-button-toggle
               >
             </mat-button-toggle-group>
           </ng-template>

@@ -42,6 +42,7 @@ export class GeneralComponent {
       this.toastr.success(
         this.translate.instant('settings-general.BackupHasBeenUploaded')
       );
+      event.target.value = null;
     }
   }
 }

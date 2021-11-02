@@ -245,6 +245,15 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  isAbleToSelectMultipleSources(
+    operationType: VirtualDataPointOperationType | undefined
+  ) {
+    return [
+      VirtualDataPointOperationType.AND,
+      VirtualDataPointOperationType.OR
+    ].includes(operationType!);
+  }
+
   private onSourceDataPoints(x: SourceDataPoint[]) {
     this.sourceDataPoints = x;
   }

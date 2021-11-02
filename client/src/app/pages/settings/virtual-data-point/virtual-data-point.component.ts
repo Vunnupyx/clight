@@ -1,17 +1,24 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
-import {Subscription} from "rxjs";
-import {TranslateService} from "@ngx-translate/core";
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
-import {DataPointLiveData, SourceDataPoint, VirtualDataPoint, VirtualDataPointOperationType} from '../../../models';
+import {
+  DataPointLiveData,
+  SourceDataPoint,
+  VirtualDataPoint,
+  VirtualDataPointOperationType
+} from '../../../models';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-import {clone, ObjectMap} from "../../../shared/utils";
-import {SourceDataPointService, VirtualDataPointService} from '../../../services';
-import {SetThresholdsModalComponent} from "./set-thresholds-modal/set-thresholds-modal.component";
-
+import { clone, ObjectMap } from '../../../shared/utils';
+import {
+  SourceDataPointService,
+  VirtualDataPointService
+} from '../../../services';
+import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -28,7 +35,7 @@ export class VirtualDataPointComponent implements OnInit {
     VirtualDataPointOperationType.OR,
     VirtualDataPointOperationType.NOT,
     VirtualDataPointOperationType.COUNTER,
-    VirtualDataPointOperationType.THRESHOLDS,
+    VirtualDataPointOperationType.THRESHOLDS
   ];
 
   unsavedRow?: VirtualDataPoint;
@@ -44,17 +51,21 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   get dataSources() {
-    return (this.sourceDataPoints || []) as { id: string, name: string }[];
+    return (this.sourceDataPoints || []) as { id: string; name: string }[];
   }
 
   get previousVirtualPoints() {
-    return (this.datapointRows || []).filter(x => x.id !== this.unsavedRow?.id) as { id: string, name: string }[];
+    return (this.datapointRows || []).filter(
+      (x) => x.id !== this.unsavedRow?.id
+    ) as { id: string; name: string }[];
   }
 
   get sources() {
     return [
-      ...(this.sourceDataPoints || []) as { id: string, name: string }[],
-      ...(this.datapointRows || []).filter(x => x.id !== this.unsavedRow?.id) as { id: string, name: string }[],
+      ...((this.sourceDataPoints || []) as { id: string; name: string }[]),
+      ...((this.datapointRows || []).filter(
+        (x) => x.id !== this.unsavedRow?.id
+      ) as { id: string; name: string }[])
     ];
   }
 
@@ -62,7 +73,7 @@ export class VirtualDataPointComponent implements OnInit {
     private virtualDataPointService: VirtualDataPointService,
     private sourceDataPointService: SourceDataPointService,
     private dialog: MatDialog,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -84,9 +95,7 @@ export class VirtualDataPointComponent implements OnInit {
       )
     );
 
-    this.sub.add(
-      this.virtualDataPointService.setLivedataTimer().subscribe()
-    );
+    this.sub.add(this.virtualDataPointService.setLivedataTimer().subscribe());
 
     this.virtualDataPointService.getDataPoints();
     this.virtualDataPointService.getLiveDataForDataPoints();
@@ -94,6 +103,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDataPoints(arr: VirtualDataPoint[]) {
+    console.log(arr);
     this.datapointRows = arr;
   }
 
@@ -106,13 +116,14 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onAdd() {
-    if (!this.datapointRows) { return; }
+    if (!this.datapointRows) {
+      return;
+    }
 
     const obj = {
       sources: [],
-      operationType: VirtualDataPointOperationType.AND,
+      operationType: VirtualDataPointOperationType.AND
     } as VirtualDataPoint;
-
 
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
@@ -130,20 +141,20 @@ export class VirtualDataPointComponent implements OnInit {
       return;
     }
 
-    if (this.unsavedRow?.operationType !== VirtualDataPointOperationType.THRESHOLDS) {
+    if (
+      this.unsavedRow?.operationType !==
+      VirtualDataPointOperationType.THRESHOLDS
+    ) {
       delete this.unsavedRow?.thresholds;
     }
 
     if (this.unsavedRow!.id) {
-      this.virtualDataPointService.updateDataPoint(
-        this.unsavedRow?.id!,
-        this.unsavedRow!
-      )
+      this.virtualDataPointService
+        .updateDataPoint(this.unsavedRow?.id!, this.unsavedRow!)
         .then(() => this.virtualDataPointService.getLiveDataForDataPoints());
     } else {
-      this.virtualDataPointService.addDataPoint(
-        this.unsavedRow!
-      )
+      this.virtualDataPointService
+        .addDataPoint(this.unsavedRow!)
         .then(() => this.virtualDataPointService.getLiveDataForDataPoints());
     }
     this.clearUnsavedRow();
@@ -160,8 +171,12 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDelete(obj: VirtualDataPoint) {
-    const title = this.translate.instant('settings-virtual-data-point.DeleteTitle');
-    const message = this.translate.instant('settings-virtual-data-point.DeleteMessage');
+    const title = this.translate.instant(
+      'settings-virtual-data-point.DeleteTitle'
+    );
+    const message = this.translate.instant(
+      'settings-virtual-data-point.DeleteMessage'
+    );
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)
@@ -176,7 +191,16 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   getSourceNames(sources: string[]) {
-    return this.sources.filter(x => sources.includes(x.id)).map(x => `${this.getDataSourceDataPointPrefix(x.id) || this.getVirtualDataPointPrefix()} ${x.name}`).join(', ');
+    return this.sources
+      .filter((x) => sources.includes(x.id))
+      .map(
+        (x) =>
+          `${
+            this.getDataSourceDataPointPrefix(x.id) ||
+            this.getVirtualDataPointPrefix()
+          } ${x.name}`
+      )
+      .join(', ');
   }
 
   ngOnDestroy() {
@@ -184,7 +208,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   getRowIndex(id: string) {
-    return this.datapointRows?.findIndex(x => x.id === id)!;
+    return this.datapointRows?.findIndex((x) => x.id === id)!;
   }
 
   onSetThreshold(virtualPoint: VirtualDataPoint) {
@@ -192,16 +216,18 @@ export class VirtualDataPointComponent implements OnInit {
       virtualPoint.thresholds = {};
     }
 
-    const protocol = this.sourceDataPointService.getProtocol(virtualPoint.sources![0]);
+    const protocol = this.sourceDataPointService.getProtocol(
+      virtualPoint.sources![0]
+    );
 
     this.sourceDataPointService.getLiveDataForDataPoints(protocol);
 
     const dialogRef = this.dialog.open(SetThresholdsModalComponent, {
       data: {
         thresholds: { ...virtualPoint.thresholds },
-        source: virtualPoint.sources![0],
+        source: virtualPoint.sources![0]
       },
-      width: '850px',
+      width: '850px'
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -211,7 +237,10 @@ export class VirtualDataPointComponent implements OnInit {
           return;
         }
 
-        this.virtualDataPointService.updateDataPoint(virtualPoint.id, { ...virtualPoint, thresholds: result });
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          ...virtualPoint,
+          thresholds: result
+        });
       }
     });
   }

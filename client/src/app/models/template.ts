@@ -1,16 +1,9 @@
-export class AvailableDataSource {
-  id!: string;
-  name!: string;
-  description!: string;
-}
+import {DataSourceProtocol} from './data-source';
+import {DataSinkProtocol} from './data-sink';
 
-export class AvailableDataSink {
-  id!: string;
-  name!: string;
-  type!: string;
-  description!: string;
-  dataSources!: string[];
-}
+export type AvailableDataSource = DataSourceProtocol;
+
+export type AvailableDataSink = DataSinkProtocol
 
 export class TemplatesStatus {
   completed!: boolean;

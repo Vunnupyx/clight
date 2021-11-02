@@ -77,6 +77,11 @@ export default {
             schema: {
               $ref: '#/definitions/loginResponse'
             }
+          },
+          '400': {
+            schema: {
+              $ref: '#/definitions/badRequestMessage'
+            }
           }
         }
       }
@@ -176,7 +181,14 @@ export default {
         ],
         responses: {
           '200': {
-            description: ''
+            schema: {
+              type: 'boolean'
+            }
+          },
+          '400': {
+            schema: {
+              $ref: '#/definitions/badRequestMessage'
+            }
           }
         }
       }
@@ -1017,7 +1029,10 @@ export default {
         ],
         responses: {
           '200': {
-            description: ''
+            description: '',
+            schema: {
+              $ref: '#/definitions/deviceInfos'
+            }
           }
         }
       }
@@ -1046,7 +1061,13 @@ export default {
         responses: {
           '200': {
             description:
-              'Returns all information about the livedata for dataSource dataPoints'
+              'Returns all information about the livedata for dataSource dataPoints',
+            schema: {
+              type: 'array',
+              items: {
+                allOf: [{ $ref: '#/definitions/livedataItem' }]
+              }
+            }
           }
         }
       }
@@ -1082,7 +1103,10 @@ export default {
         responses: {
           '200': {
             description:
-              'Returns all information about the livedata for dataSource dataPoint'
+              'Returns all information about the livedata for dataSource dataPoint',
+            schema: {
+              $ref: '#/definitions/livedataItem'
+            }
           }
         }
       }
@@ -1103,7 +1127,13 @@ export default {
         operationId: 'livedataVirtualDataPointsGet',
         responses: {
           '200': {
-            description: 'Returns all information about the livedata for vdps'
+            description: 'Returns all information about the livedata for vdps',
+            schema: {
+              type: 'array',
+              items: {
+                allOf: [{ $ref: '#/definitions/livedataItem' }]
+              }
+            }
           }
         }
       }
@@ -1131,7 +1161,10 @@ export default {
         operationId: 'livedataVirtualDataPointGet',
         responses: {
           '200': {
-            description: 'Returns all information about the livedata for vdp'
+            description: 'Returns all information about the livedata for vdp',
+            schema: {
+              $ref: '#/definitions/livedataItem'
+            }
           }
         }
       }
@@ -1165,7 +1198,10 @@ export default {
         ],
         responses: {
           '200': {
-            description: ''
+            description: '',
+            schema: {
+              $ref: '#/definitions/changeNetworkconfig'
+            }
           }
         }
       }
@@ -1177,7 +1213,13 @@ export default {
         operationId: 'systemInfoGet',
         responses: {
           '200': {
-            description: 'Returns all information about the system'
+            description: 'Returns all information about the system',
+            schema: {
+              type: 'array',
+              items: {
+                allOf: [{ $ref: '#/definitions/systemInfoItem' }]
+              }
+            }
           }
         }
       }
@@ -1189,7 +1231,10 @@ export default {
         operationId: 'templatesGetHandler',
         responses: {
           '200': {
-            description: 'Returns all information about the templates'
+            description: 'Returns all information about the templates',
+            schema: {
+              $ref: '#/definitions/templates'
+            }
           }
         }
       }
@@ -1214,6 +1259,16 @@ export default {
         tags: ['templates'],
         description: 'Applies templates settings',
         operationId: 'templatesApplyPostHandler',
+        parameters: [
+          {
+            in: 'body',
+            name: 'postObject',
+            description: 'Templates Properties',
+            schema: {
+              $ref: '#/definitions/templatesApply'
+            }
+          }
+        ],
         responses: {
           '200': {
             description: 'Template settings were successfully saved!'
@@ -1754,6 +1809,37 @@ export default {
         }
       }
     },
+    templates: {
+      type: 'object',
+      properties: {
+        availableDataSources: {
+          type: 'array',
+          items: {
+            allOf: [{ type: 'string' }]
+          }
+        },
+        availableDataSinks: {
+          type: 'array',
+          items: {
+            allOf: [{ type: 'string' }]
+          }
+        }
+      }
+    },
+    templatesApply: {
+      type: 'object',
+      properties: {
+        dataSource: {
+          type: 'string'
+        },
+        dataSinks: {
+          type: 'array',
+          items: {
+            allOf: [{ type: 'string' }]
+          }
+        }
+      }
+    },
     templatesStatus: {
       type: 'object',
       properties: {
@@ -1820,6 +1906,81 @@ export default {
         },
         newPassword: {
           type: 'string'
+        }
+      }
+    },
+    badRequestMessage: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string'
+        }
+      }
+    },
+    livedataItem: {
+      type: 'object',
+      properties: {
+        dataPointId: {
+          type: 'string'
+        },
+        timestamp: {
+          type: 'number'
+        },
+        value: {
+          type: 'string'
+        },
+        timeseries: {
+          type: 'array',
+          items: {
+            allOf: [
+              {
+                type: 'object',
+                properties: {
+                  ts: {
+                    type: 'number'
+                  },
+                  value: {
+                    type: 'string'
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    systemInfoItem: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string'
+        },
+        description: {
+          type: 'string'
+        },
+        items: {
+          type: 'array',
+          items: {
+            allOf: [
+              {
+                type: 'object',
+                properties: {
+                  key: {
+                    type: 'string'
+                  },
+                  keyDescription: {
+                    type: 'string'
+                  },
+                  value: {
+                    type: 'string'
+                  },
+                  valueDescription: {
+                    type: 'string'
+                  }
+                }
+              }
+            ]
+          }
         }
       }
     }

@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { ToastrService}  from "ngx-toastr";
 import { TranslateService } from "@ngx-translate/core";
+import { NgForm } from '@angular/forms';
 
-import { AuthService } from '../../../shared';
+import { AuthService, LocalStorageService } from '../../../shared';
 import { ForgotPasswordRequest, LoginRequest } from "../../../models/auth";
 import { EMAIL_REGEX } from "../../../shared/utils/regex";
-import {NgForm} from "@angular/forms";
 
 enum LoginPageMode {
   Login = 'Login',
@@ -37,7 +37,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private auth: AuthService
+    private auth: AuthService,
+    private localStorageService: LocalStorageService
   ) { }
 
   ngOnInit(): void {}
@@ -46,6 +47,10 @@ export class LoginComponent implements OnInit {
     return this.auth.login(this.loginRequest)
       .then((response) => {
         if (response.passwordChangeRequired) {
+          this.localStorageService.set(
+            'old-password',
+            this.loginRequest.password
+          );
           return this.router.navigate(['/settings', 'change-password']);
         }
 

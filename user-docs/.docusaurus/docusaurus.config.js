@@ -167,7 +167,7 @@ export default {
       "@docusaurus/preset-classic",
       {
         "docs": {
-          "sidebarPath": "/Users/patrickkopp/Source/mdc-light/user-docs/sidebars.js",
+          "sidebarPath": "/home/codestryke/Documents/mdc-light/user-docs/sidebars.js",
           "showLastUpdateAuthor": false,
           "showLastUpdateTime": true,
           "includeCurrentVersion": true,
@@ -177,7 +177,7 @@ export default {
           "showReadingTime": true
         },
         "theme": {
-          "customCss": "/Users/patrickkopp/Source/mdc-light/user-docs/src/css/custom.css"
+          "customCss": "/home/codestryke/Documents/mdc-light/user-docs/src/css/custom.css"
         }
       }
     ]

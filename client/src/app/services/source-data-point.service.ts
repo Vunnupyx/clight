@@ -139,10 +139,6 @@ export class SourceDataPointService {
   }
 
   async getLiveDataForDataPoints(protocol: DataSourceProtocol) {
-    this._store.patchState((state) => {
-      state.dataPointsLivedata = {};
-    });
-
     try {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
         `/livedata/datasource/${protocol}?timeseries=true`

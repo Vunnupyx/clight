@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -35,6 +35,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
   sub: Subscription = new Subscription();
   selectedTab!: string;
 
+  @ViewChild('mainForm') mainForm!: NgForm;
+
   constructor(private networkService: NetworkService) {}
 
   ngOnInit(): void {
@@ -50,6 +52,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   private onConfig(x: ObjectMap<NetworkConfig>) {
+    if (this.mainForm && this.mainForm.dirty) {
+      return;
+    }
+
     this.config = clone(x);
     this.originalConfig = clone(x);
 

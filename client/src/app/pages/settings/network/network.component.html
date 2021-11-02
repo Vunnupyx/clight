@@ -343,7 +343,7 @@
         </form>
       </ng-container>
       <ng-container *ngSwitchCase="NetworkType.PROXY">
-        <form #proxyForm="ngForm">
+        <form #mainForm="ngForm">
           <div class="d-flex align-items-center justify-content-between mb-10">
             <div class="mr-30">
               {{ 'settings-network.UseProxy' | translate }}
@@ -459,8 +459,8 @@
           <div class="d-flex justify-content-end mt-25">
             <button
               mat-raised-button
-              [disabled]="proxyForm.invalid || !proxyForm.dirty"
-              (click)="saveChanges(proxyForm, NetworkType.PROXY)"
+              [disabled]="mainForm.invalid || !mainForm.dirty"
+              (click)="saveChanges(mainForm, NetworkType.PROXY)"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>

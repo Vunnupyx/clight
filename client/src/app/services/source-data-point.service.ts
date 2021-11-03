@@ -132,6 +132,10 @@ export class SourceDataPointService {
     }
   }
 
+  /**
+   * Triggers every 1 second /livedata/datasource/:protocol endpoint
+   * @returns Observable
+   */
   setLivedataTimer(protocol: DataSourceProtocol): Observable<void> {
     return interval(1000).pipe(
       mergeMap(() => from(this.getLiveDataForDataPoints(protocol)))

@@ -14,6 +14,7 @@ let dataSourcesManager: DataSourcesManager;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param {ConfigManager} manager
  */
 export function setConfigManager(manager: ConfigManager) {
   configManager = manager;
@@ -21,6 +22,7 @@ export function setConfigManager(manager: ConfigManager) {
 
 /**
  * Set dataSourcesManager to make accessible for local function
+ * @param {DataSourcesManager} manager
  */
 export function setDataSourcesManager(manager: DataSourcesManager) {
   dataSourcesManager = manager;
@@ -28,6 +30,9 @@ export function setDataSourcesManager(manager: DataSourcesManager) {
 
 /**
  * Handle all requests for the list of datasources.
+ * @param  {Request} request
+ * @param  {Response} response
+ *
  */
 function dataSourcesGetHandler(request: Request, response: Response): void {
   response
@@ -37,6 +42,8 @@ function dataSourcesGetHandler(request: Request, response: Response): void {
 
 /**
  * Handle all get requests for a specific datasource.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourceGetHandler(request: Request, response: Response): void {
   const dataSource = configManager.config.dataSources.find(
@@ -48,6 +55,8 @@ function dataSourceGetHandler(request: Request, response: Response): void {
 /**
  * Handle all patch requests for modifying a specific datasource.
  * Only enabling and disabling is allowed.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourcePatchHandler(request: Request, response: Response): void {
   const allowed = ['connection', 'enabled', 'softwareVersion'];
@@ -86,6 +95,8 @@ function dataSourcePatchHandler(request: Request, response: Response): void {
 
 /**
  * Return all datapoints of the selected datasource
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourcesGetDatapointsHandler(
   request: Request,
@@ -101,6 +112,8 @@ function dataSourcesGetDatapointsHandler(
 
 /**
  * Insert a new datapoint
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourcesPostDatapointHandler(
   request: Request,
@@ -121,8 +134,11 @@ function dataSourcesPostDatapointHandler(
     href: `${request.originalUrl}/${newData.id}`
   });
 }
+
 /**
  * Returns datapoint selected by datasourceid and datapointid
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourcesGetDatapointHandler(
   request: Request,
@@ -139,6 +155,8 @@ function dataSourcesGetDatapointHandler(
 
 /**
  * Deletes a datapoint selected by datasourceid and datapointid
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourcesDeleteDatapointHandler(
   request: Request,
@@ -164,6 +182,8 @@ function dataSourcesDeleteDatapointHandler(
 
 /**
  * Overwrite a datapoint selected by datasourceid and datapointid
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourcesPatchDatapointHandler(
   request: Request,
@@ -197,6 +217,8 @@ function dataSourcesPatchDatapointHandler(
 
 /**
  * Returns the current status of the selected datasource
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSourceGetStatusHandler(request: Request, response: Response) {
   //TODO: Make more generic @markus

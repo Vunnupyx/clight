@@ -26,11 +26,11 @@ export class LoginComponent implements OnInit {
 
   loginRequest: LoginRequest = {
     userName: '',
-    password: '',
+    password: ''
   };
 
   forgotPasswordRequest: ForgotPasswordRequest = {
-    email: '',
+    email: ''
   };
 
   constructor(
@@ -44,7 +44,8 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
 
   onSubmit() {
-    return this.auth.login(this.loginRequest)
+    return this.auth
+      .login(this.loginRequest)
       .then((response) => {
         if (response.passwordChangeRequired) {
           this.localStorageService.set(
@@ -60,11 +61,14 @@ export class LoginComponent implements OnInit {
   }
 
   onForgotPasswordSubmit(form: NgForm) {
-    return this.auth.sendResetToken(this.forgotPasswordRequest)
+    return this.auth
+      .sendResetToken(this.forgotPasswordRequest)
       .then(() => {
         this.mode = LoginPageMode.Login;
         form.resetForm({ email: '' });
-        this.toastr.success(this.translate.instant('auth-login.ResetEmailSentSuccess'));
+        this.toastr.success(
+          this.translate.instant('auth-login.ResetEmailSentSuccess')
+        );
       })
       .catch((error) => this.toastr.error(error.error.message));
   }

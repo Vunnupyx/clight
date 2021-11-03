@@ -1,5 +1,7 @@
 import {Request, Response} from "express";
+import winston from "winston";
 import {ConfigManager} from "../../../../../ConfigManager";
+import NetworkManagerCliController from '../../../../../NetworkManager'
 
 let configManager: ConfigManager;
 
@@ -10,13 +12,52 @@ export function setConfigManager(config: ConfigManager) {
     configManager = config;
 }
 
-function networkConfigGetHandler(request: Request, response: Response): void {
-    response.status(200).json(configManager.config.networkConfig);
+/**
+ * Collect information about current network configuration and return merged information.
+ */
+async function networkConfigGetHandler(request: Request, response: Response): Promise<void> {
+    // Get real configuration of host
+    const [x2, x1] = await Promise.all([
+        NetworkManagerCliController.getConfiguration('eth0'),
+        NetworkManagerCliController.getConfiguration('eth1'),
+    ])
+    const {x1: cx1, x2: cx2} = configManager.config.networkConfig
+    const merged = {
+        x1: {
+            useDhcp: x1.dhcp || cx1.useDhcp,
+            ipAddr: x1.ipAddress || cx1.ipAddr,
+            netmask: x1.subnetMask || cx1.netmask,
+            defaultGateway: x1.gateway || cx1.defaultGateway,
+            dnsServer: x1.dns || cx1.dnsServer,
+        },
+        x2: {
+            useDhcp: x2.dhcp || cx2.useDhcp,
+            ipAddr: x2.ipAddress || cx2.ipAddr,
+            netmask: x2.subnetMask || cx2.netmask,
+            defaultGateway: x2.gateway || cx2.defaultGateway,
+            dnsServer: x2.dns || cx2.dnsServer,
+        },
+        proxy: configManager.config.networkConfig.proxy
+    }
+    response.status(200).json(merged);
 }
 
-function networkConfigPatchHandler(request: Request, response: Response): void {
-    configManager.saveConfig({ networkConfig: request.body });
+/**
+ * Set changed configuration.
+ */
+async function networkConfigPatchHandler(request: Request, response: Response): Promise<void> {
+    const x2Config = NetworkManagerCliController.generateNetworkInterfaceInfo(request.body.x2, 'eth0')
+    const x1Config = NetworkManagerCliController.generateNetworkInterfaceInfo(request.body.x1, 'eth1')
 
+    await Promise.allSettled([
+        NetworkManagerCliController.setConfiguration('eth0', x2Config),
+        NetworkManagerCliController.setConfiguration('eth1', x1Config)
+    ]).then((results) => {
+        results.forEach((result) => {
+            if(result.status === 'rejected') winston.error(`networkConfigPatchHandler error due to ${result.reason}`);
+        })
+    });
+    configManager.saveConfig({ networkConfig: request.body });
     response.status(200).json(configManager.config.networkConfig);
 }
 

@@ -150,9 +150,9 @@ export class OPCUAAdapter {
         );
       })
       .catch((err) => {
-        winston.error(JSON.stringify(err));
+        winston.error(err.message);
         winston.error(err);
-        const errorMsg = `${logPrefix} error due to ${JSON.stringify(err)}`;
+        const errorMsg = `${logPrefix} error due to ${err.message}`;
         return Promise.reject(new NorthBoundError(errorMsg));
       });
   }

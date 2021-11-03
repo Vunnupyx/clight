@@ -14,8 +14,8 @@ type TLedColors = 'red' | 'green' | 'orange';
  * If button is clicked triggers flashing from USB port to internal eMMC drive.
  */
 class MDCLFlasher {
-  #ledPathRed = '/sys/class/leds/user-led0-red/brightness';
-  #ledPathGreen = '/sys/class/leds/user-led0-green/brightness';
+  #ledPathRed = '/sys/class/leds/user-led1-red/brightness';
+  #ledPathGreen = '/sys/class/leds/user-led1-green/brightness';
   #gpioExportPath = '/sys/class/gpio/export';
   #gpioChipPath =
     '/sys/devices/platform/interconnect@100000/interconnect@100000:interconnect@28380000/interconnect@100000:interconnect@28380000:interconnect@42040000/42110000.wkup_gpio0/gpio';
@@ -31,10 +31,10 @@ class MDCLFlasher {
     this.setupGPIOPaths();
     this.clearAll();
 
-    process.on('SIGKILL', () => {
-      this.clearAll();
-      exit(0);
-    });
+    // process.on('SIGKILL', () => {
+    //   this.clearAll();
+    //   exit(0);
+    // });
 
     this.initUserButtonWatcher();
     this.blink(500, 'green');

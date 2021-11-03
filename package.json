@@ -57,7 +57,8 @@
     "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
     "format": "prettier --write .",
     "loglevel:debug": "export LOG_LEVEL=debug",
-    "dump:remote": "ssh $REMOTE_HOST \"dd if=/dev/mmcblk1 | gzip -1 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\""
+    "dump:remote:external": "ssh $REMOTE_HOST \"rm -rf /etc/ssh/ssh_host_* /etc/MDCLight/logs/*.log && cat /dev/null > ~/.bash_history && history -c && dd if=/dev/mmcblk0 | gzip -9 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
+    "dump:remote:internal": "ssh $REMOTE_HOST \"dd if=/dev/mmcblk1 | gzip -1 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\""
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

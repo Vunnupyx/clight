@@ -1,9 +1,4 @@
-import {
-  writeFileSync,
-  readdirSync,
-  readFileSync,
-  existsSync
-} from 'fs';
+import { writeFileSync, readdirSync, readFileSync, existsSync } from 'fs';
 import { exec, execSync } from 'child_process';
 import { exit } from 'process';
 
@@ -29,16 +24,16 @@ class MDCLFlasher {
   #lastButtonCount: number = 0;
   readonly #watchDurationMs = 3000;
   readonly #pollingIntervalMs = 250;
-  readonly #durationPollRatio = this.#watchDurationMs/this.#pollingIntervalMs;
+  readonly #durationPollRatio = this.#watchDurationMs / this.#pollingIntervalMs;
   #blinkTimers = [];
 
   constructor() {
     this.setupGPIOPaths();
     this.clearAll();
 
-    process.on('SIGINT', () => {
+    process.on('SIGKILL', () => {
       this.clearAll();
-      exit(1);
+      exit(0);
     });
 
     this.initUserButtonWatcher();
@@ -47,15 +42,15 @@ class MDCLFlasher {
 
   /**
    * Read the base id of the gpio chip. User button id is base id +25.
-   * Export the button value file if necessary. 
+   * Export the button value file if necessary.
    */
-  private setupGPIOPaths (): void {
+  private setupGPIOPaths(): void {
     const filesAndFolders = readdirSync(this.#gpioChipPath);
     if (filesAndFolders.length > 1)
       throw Error(`Can not detect gpio chip number`);
     const chipNumber = filesAndFolders.join().match(/\d+/g)?.join();
 
-    const buttonID = parseInt(chipNumber) + 25 ;
+    const buttonID = parseInt(chipNumber) + 25;
 
     this.#userButtonPath = `/sys/class/gpio/gpio${buttonID}/value`;
 
@@ -90,10 +85,7 @@ class MDCLFlasher {
   /**
    * Start blinking of the user led.
    */
-  private blink(
-    interval: number,
-    color: TLedColors = 'green'
-  ) {
+  private blink(interval: number, color: TLedColors = 'green') {
     let paths: Array<string> = this.getLedPaths(color);
 
     const unset = () => {
@@ -119,7 +111,7 @@ class MDCLFlasher {
    * Stop blinking of user led.
    */
   private stopBlink() {
-    this.#blinkTimers.forEach(timer => clearTimeout(timer));
+    this.#blinkTimers.forEach((timer) => clearTimeout(timer));
     this.clearAll();
   }
 
@@ -169,10 +161,23 @@ class MDCLFlasher {
    * Restart device after success or exit with status code 1 on any error.
    */
   private transferData() {
-    const target = '/dev/mmcblk1p1';
-    const source = '/dev/sda1';
-    const command = `dd if=${source} of=${target} bs=4M`;
     this.blink(1000, 'orange');
+    // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
+    const imagePath = '/root/iot-connector-light-os-*.img.gz';
+    let target;
+    try {
+      target = execSync('ls /dev/mmcblk*boot0 2>/dev/null | sed "s/boot0//"')
+        .toString('ascii')
+        .trim();
+    } catch (err) {
+      console.log(`Error due to detect target device. Abort`);
+      exit(1);
+    }
+    if (!target || target.length === 0) {
+      console.log(`Error due to detect target device. Abort`);
+      exit(1);
+    }
+    const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
     exec(command, (err, _stdout, stderr) => {
       this.stopBlink();
       if (err) {
@@ -183,9 +188,10 @@ class MDCLFlasher {
           exit(1);
         }, 10000);
       }
+      execSync(`partx -a ${target}`);
       this.glow(10000, 'green');
       setTimeout(() => {
-        execSync('sudo /sbin/shutdown -r now');
+        execSync('sudo /sbin/shutdown now');
       }, 10000);
     });
   }

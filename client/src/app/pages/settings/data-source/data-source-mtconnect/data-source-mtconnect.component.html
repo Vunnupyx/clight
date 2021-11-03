@@ -1,38 +1,4 @@
-<div class="layout-header">
-  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
-    {{ 'settings-data-source.DataSource' | translate }}
-  </h2>
-  <div class="layout-header__tabs">
-    <nav mat-tab-nav-bar mat-align-tabs="center">
-      <a
-        mat-tab-link
-        *ngFor="let item of dataSourceList"
-        (click)="switchDataSource(item)"
-        [active]="dataSource?.protocol === item.protocol"
-        >{{ 'settings-data-source.Tabs.' + item.protocol | translate }}</a
-      >
-    </nav>
-  </div>
-</div>
-
-<mat-divider></mat-divider>
-
-<ng-container [ngSwitch]="dataSource?.protocol">
-  <app-data-source-mtconnect
-    *ngSwitchCase="'mtconnect'"
-    [dataSource]="dataSource!"
-  ></app-data-source-mtconnect>
-  <app-data-source-ioshield
-    *ngSwitchCase="Protocol.IOShield"
-    [dataSource]="dataSource!"
-  ></app-data-source-ioshield>
-  <app-data-source-ioshield
-    *ngSwitchCase="Protocol.S7"
-    [dataSource]="dataSource!"
-  ></app-data-source-ioshield>
-</ng-container>
-
-<!-- <div class="d-block m-20">
+<div class="d-block m-20">
   <div class="row">
     <div class="col-12 col-md-6 col-lg-4">
       <div class="row mt-20 mb-25">
@@ -46,61 +12,11 @@
         ></mat-slide-toggle>
       </div>
 
-      <div *ngIf="dataSource?.protocol === Protocol.S7">
-        <div class="mt-20 d-flex align-items-center">
-          <div class="mt-0 mr-25 text-nowrap">
-            {{ 'settings-data-source.IPAddress' | translate }}
-          </div>
-          <form #form="ngForm">
-            <div class="d-flex align-items-center">
-              <ngx-ip
-                [ngModel]="dataSource?.connection?.ipAddr"
-                name="ipAddress"
-                inputValidation="block"
-                separator="."
-                [required]="true"
-                [highlightInvalidBlocks]="true"
-                theme="ngx-ip-theme-material"
-                (ngModelChange)="updateIpAddress(form.valid, $event)"
-              ></ngx-ip>
-              <ng-container *ngIf="!form.dirty">
-                <div class="p-10"></div>
-              </ng-container>
-              <ng-container *ngIf="form.dirty">
-                <mat-icon *ngIf="form.valid" class="color-success"
-                  >check</mat-icon
-                >
-                <mat-icon *ngIf="!form.valid" class="color-error"
-                  >error_outline</mat-icon
-                >
-              </ng-container>
-            </div>
-          </form>
+      <div class="row mt-20 mb-25">
+        <div class="col-6 col-lg-5">
+          {{ 'settings-data-source.Connection' | translate }}
         </div>
-
-        <div *ngIf="false">
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>{{
-                'settings-data-source.SoftwareVersion' | translate
-              }}</label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <mat-select
-                  [ngModel]="dataSource?.softwareVersion"
-                  (ngModelChange)="updateSoftwareVersion($event)"
-                >
-                  <mat-option
-                    *ngFor="let version of SoftwareVersions"
-                    [value]="version"
-                    >{{ version }}</mat-option
-                  >
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </div>
-        </div>
+        <mat-slide-toggle class="col-6 col-lg-4"></mat-slide-toggle>
       </div>
     </div>
     <div
@@ -189,7 +105,7 @@
               class="text-ellipsis"
               [title]="value"
             >
-              {{ getDataSourceDataPointPrefix(row.id) }} {{ value }}
+              {{ value }}
             </div>
             <input
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -199,39 +115,6 @@
               (ngModelChange)="unsavedRow.name = $event"
               autofocus
             />
-          </ng-template>
-        </ngx-datatable-column>
-        <ngx-datatable-column
-          *ngIf="dataSource?.protocol != Protocol.IOShield"
-          [name]="'settings-data-source.Type' | translate"
-          prop="type"
-          [flexGrow]="1"
-          cellClass="input-cell"
-        >
-          <ng-template
-            ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
-            let-value="value"
-            let-row="row"
-          >
-            <span *ngIf="unsavedRowIndex !== rowIndex">
-              <ng-container [ngSwitch]="value">
-                <ng-container *ngSwitchCase="SourceDataPointType.PLC"
-                  >PLC</ng-container
-                >
-                <ng-container *ngSwitchCase="SourceDataPointType.NCK"
-                  >NCK</ng-container
-                >
-              </ng-container>
-            </span>
-            <mat-select
-              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
-              [ngModel]="value"
-              (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
-            >
-              <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
-              <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
-            </mat-select>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
@@ -246,15 +129,7 @@
             let-row="row"
           >
             <span *ngIf="liveData[row.id]; else noLiveData">
-              <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
-                {{
-                  'settings-data-source.Livedata.ioshield.' +
-                    liveData[row.id].value | translate
-                }}
-              </ng-container>
-              <ng-container *ngIf="dataSource?.protocol != Protocol.IOShield">
-                {{ liveData[row.id].value }}
-              </ng-container>
+              {{ liveData[row.id].value }}
             </span>
             <ng-template #noLiveData>-</ng-template>
           </ng-template>
@@ -277,51 +152,16 @@
               </div>
             </ng-container>
             <div
-              *ngIf="unsavedRowIndex === rowIndex"
+              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               class="d-flex align-items-center"
               [class.address-nck]="unsavedRow!.type === SourceDataPointType.NCK"
             >
-              <ng-container [ngSwitch]="unsavedRow!.type">
-                <ng-container *ngSwitchCase="SourceDataPointType.NCK">
-                  <div>{{ unsavedRow?.address }}</div>
-                  <mat-button-toggle-group class="mt-0 ml-10">
-                    <mat-button-toggle
-                      class="small-button"
-                      (click)="unsavedRow && onAddressSelect(unsavedRow)"
-                      [matTooltip]="'settings-data-source.Select' | translate"
-                      matTooltipPosition="above"
-                      ><mat-icon>open_in_new</mat-icon></mat-button-toggle
-                    >
-                  </mat-button-toggle-group>
-                </ng-container>
-                <ng-container *ngSwitchDefault>
-                  <mat-select
-                    *ngIf="
-                      dataSource?.protocol === Protocol.IOShield;
-                      else s7InputAddress
-                    "
-                    [ngModel]="value"
-                    (ngModelChange)="
-                      unsavedRow && (unsavedRow.address = $event)
-                    "
-                  >
-                    <mat-option
-                      *ngFor="let address of DigitalInputAddresses"
-                      [value]="address"
-                      >{{ address }}</mat-option
-                    >
-                  </mat-select>
-                  <ng-template #s7InputAddress>
-                    <input
-                      *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
-                      type="text"
-                      class="w-100"
-                      [ngModel]="value"
-                      (ngModelChange)="unsavedRow.address = $event"
-                    />
-                  </ng-template>
-                </ng-container>
-              </ng-container>
+              <input
+                type="text"
+                class="w-100"
+                [ngModel]="value"
+                (ngModelChange)="unsavedRow.address = $event"
+              />
             </div>
           </ng-template>
         </ngx-datatable-column>
@@ -374,4 +214,4 @@
       </ngx-datatable>
     </div>
   </div>
-</div> -->
+</div>

@@ -225,6 +225,30 @@
     "UpdateError": "",
     "DeleteError": ""
   },
+  "settings-network": {
+    "Network": "Network",
+    "AdapterSettings": "Adapter Settings",
+    "ProxySettings": "Proxy Settings",
+    "AssignIPManually": "Assign IP address manually (do not use DHCP)",
+    "IPAddress": "IP address",
+    "Netmask": "Netmask",
+    "DefaultGateway": "Default Gateway",
+    "DNSServer": "DNS Server",
+    "UseProxy": "Use Proxy",
+    "ProxyType": "Type",
+    "Host": "Host",
+    "Port": "Port",
+    "Username": "Username",
+    "Password": "Password",
+    "Apply": "Apply",
+    "LoadError": "Failed to load network settings. Try again later",
+    "UpdateError": "Failed to update network settings. Try again later",
+    "Tabs": {
+      "x1": "Ethernet X1",
+      "x2": "Ethernet X2",
+      "proxy": "Proxy"
+    }
+  },
   "system-information": {
     "SystemInformation": "System Information",
     "LoadError": ""

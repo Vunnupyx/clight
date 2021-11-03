@@ -242,10 +242,12 @@
     "DefaultGateway": "Default Gateway",
     "DNSServer": "DNS Server",
     "UseProxy": "Use Proxy",
+    "ProxyType": "Type",
     "Host": "Host",
     "Port": "Port",
     "Username": "Username",
     "Password": "Password",
+    "Apply": "Apply",
     "LoadError": "Failed to load network settings. Try again later",
     "UpdateError": "Failed to update network settings. Try again later",
     "Tabs": {

@@ -148,6 +148,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     return this._authUsers.users;
   }
 
+  public get configPath(): string {
+    return path.join(this.configFolder, this.configName);
+  }
+
   /**
    * Creates config and check types
    */
@@ -574,5 +578,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
       });
+  }
+
+  /**
+   * Save configFile content into config
+   */
+  restoreConfigFile(configFile) {
+    const buffer = configFile.data;
+
+    this.config = JSON.parse(buffer.toString());
   }
 }

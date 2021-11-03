@@ -1,12 +1,15 @@
-{
+{ 
   "name": "mdclflash",
   "version": "1.0.0",
   "description": "Watch the user button and if event is triggert copy usb stick data to internal eMMC",
   "main": "mdclflash.js",
   "scripts": {
     "build": "tsc",
-    "bundle": "tsc && node bundle.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "bundle": "node bundle.js",
+    "install": "npm run bundle && npm run copy:service && npm run copy:script && npm run enable:service",
+    "copy:service": "scp mdclflash.service $INSTALL_HOST:/etc/systemd/system",
+    "copy:script": "scp ./build/flashService.js $INSTALL_HOST:/root",
+    "enable:service": "ssh $INSTALL_HOST systemctl enable mdclflash.service"
   },
   "author": "Markus Leitz",
   "license": "UNLICENCED",

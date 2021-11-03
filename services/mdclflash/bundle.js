@@ -37,9 +37,9 @@ const nativeNodeModulesPlugin = {
 }
 
 esbuild.build({
-    entryPoints: ['build/main/mdcflash.js'],
+    entryPoints: ['mdcflash.ts'],
     bundle: true,
-    outfile: 'build/main/bundle/flashService.js',
+    outfile: 'build/flashService.js',
     platform: 'node',
     plugins: [
         nativeNodeModulesPlugin,

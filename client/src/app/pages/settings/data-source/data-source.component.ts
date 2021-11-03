@@ -1,6 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Connection} from 'app/api/models';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Connection } from 'app/api/models';
 import {
   DataPointLiveData,
   DataSource,
@@ -11,14 +11,14 @@ import {
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
-import {DataSourceService, SourceDataPointService} from 'app/services';
+import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import {clone, ObjectMap} from 'app/shared/utils';
-import {Subscription} from 'rxjs';
-import {SelectTypeModalComponent} from './select-type-modal/select-type-modal.component';
+import { clone, ObjectMap } from 'app/shared/utils';
+import { Subscription } from 'rxjs';
+import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 
 @Component({
   selector: 'app-data-source',
@@ -42,7 +42,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   DigitalInputAddresses = [
     ...new Array(10).fill(0).map((_, i) => `DI${i}`),
-    ...new Array(2).fill(0).map((_, i) => `AI${i}`),
+    ...new Array(2).fill(0).map((_, i) => `AI${i}`)
   ];
 
   unsavedRow?: SourceDataPoint;
@@ -100,13 +100,17 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.sourceDataPointService.getDataPoints(obj.protocol!);
     this.dataSourceService.getStatus(obj.protocol!);
 
-    this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!);
+    this.sourceDataPointService.getLiveDataForDataPoints(
+      this.dataSource?.protocol!
+    );
 
     if (this.liveDataSub) {
       this.liveDataSub.unsubscribe();
     }
 
-    this.liveDataSub = this.sourceDataPointService.setLivedataTimer(obj.protocol!).subscribe();
+    this.liveDataSub = this.sourceDataPointService
+      .setLivedataTimer(obj.protocol!)
+      .subscribe();
 
     this.clearUnsavedRow();
   }
@@ -174,15 +178,21 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.unsavedRow!.id) {
-      this.sourceDataPointService.updateDataPoint(
-        this.dataSource!.protocol!,
-        this.unsavedRow!
-      ).then(() => this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!));
+      this.sourceDataPointService
+        .updateDataPoint(this.dataSource!.protocol!, this.unsavedRow!)
+        .then(() =>
+          this.sourceDataPointService.getLiveDataForDataPoints(
+            this.dataSource?.protocol!
+          )
+        );
     } else {
-      this.sourceDataPointService.addDataPoint(
-        this.dataSource!.protocol!,
-        this.unsavedRow!
-      ).then(() => this.sourceDataPointService.getLiveDataForDataPoints(this.dataSource?.protocol!));
+      this.sourceDataPointService
+        .addDataPoint(this.dataSource!.protocol!, this.unsavedRow!)
+        .then(() =>
+          this.sourceDataPointService.getLiveDataForDataPoints(
+            this.dataSource?.protocol!
+          )
+        );
     }
     this.clearUnsavedRow();
   }

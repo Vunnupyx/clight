@@ -14,6 +14,8 @@ import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
 import { RestApiManager } from '../Backend/RESTAPIManager';
 import { DataPointMapper } from '../DataPointMapper';
+import NetworkManagerCliController from '../NetworkManager';
+import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 
 /**
  * Launches agent and handles module life cycles
@@ -78,6 +80,23 @@ export class BootstrapManager {
    */
   public async start() {
     try {
+      this.configManager.on('configsLoaded', async () => {
+        const log = `${BootstrapManager.name} send network configuration to host.`;
+        winston.info(log);
+        const { x1, x2 } = this.configManager.config.networkConfig;
+        const nx1: NetworkInterfaceInfo =
+          NetworkManagerCliController.generateNetworkInterfaceInfo(x1, 'eth1');
+        const nx2: NetworkInterfaceInfo =
+          NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth0');
+
+        Promise.all([
+          Object.keys(x2).length !== 0 ? NetworkManagerCliController.setConfiguration('eth0', nx2) : Promise.resolve(),
+          Object.keys(x2).length !== 0 ? NetworkManagerCliController.setConfiguration('eth1', nx1) : Promise.resolve(),
+        ]).then(() => winston.info(log + ' Successfully.'))
+        .catch((err) => {
+          winston.error(`${log} Failed due to ${err.message}`);
+        })
+      });
       await this.configManager.init();
 
       this.lifecycleEventsBus.push({

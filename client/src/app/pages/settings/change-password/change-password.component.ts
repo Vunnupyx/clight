@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 
 import { ProfileService } from '../../../services/profile.service';
 import { ChangePasswordRequest } from '../../../models/auth';
+import { LocalStorageService } from 'app/shared';
 
 @Component({
   selector: 'app-change-password',
@@ -16,7 +17,7 @@ export class ChangePasswordComponent implements OnInit {
   changePassword = {
     oldPassword: '',
     newPassword: '',
-    confirmPassword: '',
+    confirmPassword: ''
   };
 
   constructor(
@@ -24,11 +25,18 @@ export class ChangePasswordComponent implements OnInit {
     private toastr: ToastrService,
     private translate: TranslateService,
     private profileService: ProfileService,
+    private localStorageService: LocalStorageService
   ) { }
 
   ngOnInit(): void {
+    const oldPassword = this.localStorageService.get<string>('old-password');
+
+    this.changePassword.oldPassword = oldPassword || '';
   }
 
+  /**
+   * if passwords mismatch it sets an error
+   */
   validateConfirmPassword(form: NgForm) {
     const { newPassword, confirmPassword } = form.controls;
 
@@ -38,23 +46,29 @@ export class ChangePasswordComponent implements OnInit {
       if (prevErrors) {
         delete prevErrors.pattern;
 
-        confirmPassword.setErrors(Object.keys(prevErrors).length === 0 ? null : prevErrors);
+        confirmPassword.setErrors(
+          Object.keys(prevErrors).length === 0 ? null : prevErrors
+        );
       } else {
         confirmPassword.setErrors(null);
       }
     } else {
-      confirmPassword.setErrors({ pattern: 'Confirm password does not match to new password' });
+      confirmPassword.setErrors({
+        pattern: 'Confirm password does not match to new password'
+      });
     }
   }
 
   onSubmit() {
     const data: ChangePasswordRequest = {
       oldPassword: this.changePassword.oldPassword,
-      newPassword: this.changePassword.newPassword,
+      newPassword: this.changePassword.newPassword
     };
 
-    return this.profileService.changePassword(data)
+    return this.profileService
+      .changePassword(data)
       .then(() => {
+        this.localStorageService.clear('old-password');
         this.toastr.success(this.translate.instant('settings-change-password.ChangePasswordSuccess'));
         this.router.navigate(['/settings/general']);
       })

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 
+import { BackupService } from './backup.service';
 import { DataMappingService } from './data-mapping.service';
 import { DataSourceService } from './data-source.service';
 import { DataSinkService } from './data-sink.service';
@@ -12,9 +13,9 @@ import { VirtualDataPointService } from './virtual-data-point.service';
 import { SystemInformationService } from './system-information.service';
 import { ProfileService } from './profile.service';
 
-
 @NgModule({
   providers: [
+    BackupService,
     DataMappingService,
     DataPointService,
     DataSinkService,
@@ -25,7 +26,7 @@ import { ProfileService } from './profile.service';
     NetworkService,
     VirtualDataPointService,
     SystemInformationService,
-    ProfileService,
+    ProfileService
   ]
 })
 export class ServicesModule {}

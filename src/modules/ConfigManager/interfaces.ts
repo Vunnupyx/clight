@@ -17,6 +17,7 @@ export interface IRuntimeConfig {
   opcua: IOPCUAConfig;
   restApi: IRestApiConfig;
   auth: IAuthRuntimeConfig;
+  datahub: IDataHubConfig;
 }
 
 export interface IGeneralConfig {
@@ -83,7 +84,7 @@ export interface IDataSinkDataPointConfig {
   id: string;
   address: string;
   name: string;
-  type: IMTConnectDataPointTypes;
+  type: IMTConnectDataPointTypes | TDataHubDataPointType;
   map?: ITargetDataMap;
   initialValue?: string | number;
 }
@@ -92,12 +93,74 @@ export interface IOpcuaAuth {
   userName: string;
   password: string;
 }
+
+export interface IDataHubSettings {
+  provisioningHost: string;
+  scopeId: string;
+  regId: string;
+  symKey: string;
+}
+
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
+  datahub?: IDataHubSettings;
+}
+
+export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
+  auth?: IOpcuaAuth;
+}
+
+export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
+  auth?: IOpcuaAuth;
+}
+
+export interface IDataHubConfig {
+  groupDevice: boolean;
+  serialNumber: string;
+  signalGroups: ISignalGroups;
+  dataPointTypesData: {
+    probe: IDataHubDataPointTypesData;
+    telemetry: IDataHubDataPointTypesData;
+  };
+}
+
+interface IDataHubDataPointTypesData {
+  intervalHours: number | null;
+}
+
+export interface ISignalGroups {
+  [key: string]: Array<string>;
+}
+
+export type TDataHubDataPointType = 'event' | 'probe' | 'telemetry';
+
+export interface IProxyConfig {
+  ip: string;
+  port: number;
+  type: 'socks5' | 'http';
+  username?: string;
+  password?: string;
+  enabled: boolean;
 }
 
 export interface IDataPointMapping {
@@ -123,7 +186,9 @@ export interface NetworkConfigItem {
 }
 
 export type NetworkConfig = {
-  [key in 'x1' | 'x2' | 'proxy']: NetworkConfigItem;
+  [key in 'x1' | 'x2']: NetworkConfigItem;
+} & {
+  proxy?: IProxyConfig;
 };
 
 export interface IDefaultTemplate {
@@ -168,7 +233,9 @@ export interface ISystemInfo {
 
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: IDataSinkConfig[];
+  dataSinks: Array<
+    IDataSinkConfig | IDataHubDataSinkConfig | IOpcuaDataSinkConfig
+  >;
   virtualDataPoints: IVirtualDataPointConfig[];
   // dataPoints: IDataSinkDataPointConfig[]; // TODO ??
   mapping: IDataPointMapping[];

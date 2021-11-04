@@ -26,6 +26,7 @@
     "@ngx-translate/http-loader": "^6.0.0",
     "@swimlane/ngx-datatable": "^20.0.0",
     "echarts": "^5.2.1",
+    "file-saver": "^2.0.5",
     "ng": "^0.0.0",
     "ngx-echarts": "^7.0.2",
     "ngx-ip": "^1.1.4",

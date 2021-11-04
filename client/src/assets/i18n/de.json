@@ -81,7 +81,11 @@
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch",
-    "OpenConfigurationWizard": "Open Configuration Wizard"
+    "OpenConfigurationWizard": "Open Configuration Wizard",
+    "BackupConfiguration": "Backup Configuration",
+    "RestoreConfiguration": "Restore Configuration",
+    "BackupDownloadError": "Could not download backup. Please try again!",
+    "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
   },
   "settings-device-info": {
     "Manufacturer": "",
@@ -125,6 +129,13 @@
     "Tabs": {
       "s7": "SINUMERIK 840D sl",
       "ioshield": "Digital Inputs"
+    },
+    "Livedata": {
+      "ioshield": {
+        "0": "Off",
+        "1": "On",
+        "2": "Blinking"
+      }
     }
   },
   "settings-virtual-data-point": {
@@ -191,6 +202,12 @@
     "From": "",
     "To": "",
     "AddMapping": "",
+    "ProvisioningHost": "",
+    "ScopeId": "",
+    "RegId": "",
+    "SymKey": "",
+    "Apply": "Apply",
+    "DataHubConfigSaveSuccess": "",
     "AlreadyExistDataPoint": "",
     "AuthenticationLevels": {
       "anonymous": "",
@@ -203,7 +220,8 @@
     },
     "LoadError": "",
     "LoadStatusError": "",
-    "UpdateError": ""
+    "UpdateError": "",
+    "OpenMTConnectStream": "Open MTConnect Stream"
   },
   "settings-data-mapping": {
     "DataMapping": "",
@@ -221,6 +239,30 @@
     "CreateError": "",
     "UpdateError": "",
     "DeleteError": ""
+  },
+  "settings-network": {
+    "Network": "Network",
+    "AdapterSettings": "Adapter Settings",
+    "ProxySettings": "Proxy Settings",
+    "AssignIPManually": "Assign IP address manually (do not use DHCP)",
+    "IPAddress": "IP address",
+    "Netmask": "Netmask",
+    "DefaultGateway": "Default Gateway",
+    "DNSServer": "DNS Server",
+    "UseProxy": "Use Proxy",
+    "ProxyType": "Type",
+    "Host": "Host",
+    "Port": "Port",
+    "Username": "Username",
+    "Password": "Password",
+    "Apply": "Apply",
+    "LoadError": "Failed to load network settings. Try again later",
+    "UpdateError": "Failed to update network settings. Try again later",
+    "Tabs": {
+      "x1": "Ethernet X1",
+      "x2": "Ethernet X2",
+      "proxy": "Proxy"
+    }
   },
   "system-information": {
     "SystemInformation": "System Information",

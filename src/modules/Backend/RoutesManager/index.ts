@@ -71,6 +71,10 @@ interface RoutesManagerOptions {
   dataPointCache: DataPointCache;
   authManager: AuthManager;
 }
+
+/**
+ * Controls all REST Routes
+ */
 export class RoutesManager {
   private inputValidator;
   private app: Application;

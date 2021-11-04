@@ -1,6 +1,15 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Subscription} from 'rxjs';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import {
   DataPoint,
@@ -12,16 +21,15 @@ import {
   DataSinkConnectionStatus,
   DataSinkProtocol
 } from 'app/models';
-import {DataPointService, DataSinkService} from 'app/services';
-import {Status} from 'app/shared/state';
-import {arrayToMap, clone} from 'app/shared/utils';
+import { DataPointService, DataSinkService } from 'app/services';
+import { arrayToMap, clone } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import {CreateDataItemModalComponent} from '../create-data-item-modal/create-data-item-modal.component';
-import {SelectMapModalComponent} from '../select-map-modal/select-map-modal.component';
-import {PreDefinedDataPoint} from '../create-data-item-modal/create-data-item-modal.component.mock';
+import { CreateDataItemModalComponent } from '../create-data-item-modal/create-data-item-modal.component';
+import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
+import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -56,10 +64,16 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   sub = new Subscription();
 
+  get MTConnectStreamHref() {
+    return `${window.location.protocol}//${window.location.hostname}:15504/current`;
+  }
+
   constructor(
     private dataPointService: DataPointService,
     private dataSinkService: DataSinkService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   get isEditing() {
@@ -67,7 +81,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.MTConnectItems = this.dataSinkService.getPredefinedMtConnectDataPoints();
+    this.MTConnectItems =
+      this.dataSinkService.getPredefinedMtConnectDataPoints();
     this.OPCUAAddresses = this.dataSinkService.getPredefinedOPCDataPoints();
     this.sub.add(
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
@@ -119,8 +134,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
         selection: undefined,
         dataSinkProtocol: this.dataSink?.protocol,
         existedAddresses: this.datapointRows
-          .map(x => x.address)
-          .filter(Boolean),
+          .map((x) => x.address)
+          .filter(Boolean)
       }
     });
 
@@ -228,23 +243,40 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   onSaveAuth() {
     if (
       this.dataSink?.auth?.type === this.auth.type &&
-      (this.auth.userName && this.dataSink?.auth?.userName === this.auth.userName) &&
-      (this.auth.password && this.dataSink?.auth?.password === this.auth.password)
+      this.auth.userName &&
+      this.dataSink?.auth?.userName === this.auth.userName &&
+      this.auth.password &&
+      this.dataSink?.auth?.password === this.auth.password
     ) {
       return;
     }
 
     this.dataSinkService.updateDataSink(this.dataSink?.protocol!, {
-      auth: this.auth,
+      auth: this.auth
     });
   }
 
   isExistingDataPointAddress(address: string) {
-    return this.datapointRows?.some(x => x.address === address);
+    return this.datapointRows?.some((x) => x.address === address);
   }
 
   getDataSinkDataPointPrefix(id: string) {
     return this.dataPointService.getPrefix(id);
+  }
+
+  saveDatahubConfig(form: NgForm) {
+    this.dataSinkService
+      .updateDataSink(this.dataSink?.protocol!, { datahub: form.value })
+      .then(() =>
+        this.toastr.success(
+          this.translate.instant('settings-data-sink.DataHubConfigSaveSuccess')
+        )
+      )
+      .then(() => form.resetForm(form.value));
+  }
+
+  goToMtConnectStream() {
+    window.open(this.MTConnectStreamHref, '_blank');
   }
 
   private onConnection(x: DataSinkConnection | undefined) {

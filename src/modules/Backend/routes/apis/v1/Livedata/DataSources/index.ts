@@ -8,15 +8,25 @@ let dataPointCache: DataPointCache;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param {ConfigManager} config
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
 }
 
+/**
+ * Set DataPointCache to make accessible for local function
+ * @param {DataPointCache} cache
+ */
 export function setDataPointCache(cache: DataPointCache) {
   dataPointCache = cache;
 }
 
+/**
+ * Get Livedata for DataSource DataPoints
+ * @param  {Request} request
+ * @param  {Response} response
+ */
 function livedataDataSourceDataPointsGetHandler(
   request: Request,
   response: Response
@@ -60,6 +70,11 @@ function livedataDataSourceDataPointsGetHandler(
   response.status(200).json(payload);
 }
 
+/**
+ * Get Livedata for DataSource DataPoint by dataPointId
+ * @param  {Request} request
+ * @param  {Response} response
+ */
 function livedataDataSourceDataPointGetHandler(
   request: Request,
   response: Response

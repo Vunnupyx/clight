@@ -6,27 +6,33 @@ let configManager: ConfigManager;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param  {ConfigManager} config
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
 }
+
 /**
  * Return a list of virtual datapoints
+ * @param  {Request} request
+ * @param  {Response} response
  */
-function vdpsGetHandler(req: Request, res: Response): void {
-  res
+function vdpsGetHandler(request: Request, response: Response): void {
+  response
     .status(200)
     .json({ vdps: configManager?.config?.virtualDataPoints || [] });
 }
 
 /**
  * Create a new virtual datapoint
+ * @param  {Request} request
+ * @param  {Response} response
  */
-function vdpsPostHandler(req: Request, res: Response): void {
+function vdpsPostHandler(request: Request, response: Response): void {
   //TODO: Input validation
-  const newData = { ...req.body, ...{ id: uuidv4() } };
+  const newData = { ...request.body, ...{ id: uuidv4() } };
   configManager.changeConfig('insert', 'virtualDataPoints', newData);
-  res.status(200).json({
+  response.status(200).json({
     created: newData,
     href: `/vdps/${newData.id}`
   });
@@ -34,36 +40,42 @@ function vdpsPostHandler(req: Request, res: Response): void {
 
 /**
  * Get a virtual datapoint selected by id
+ * @param  {Request} request
+ * @param  {Response} response
  */
-function vdpGetHandler(req: Request, res: Response): void {
+function vdpGetHandler(request: Request, response: Response): void {
   const vdp = configManager?.config?.virtualDataPoints.find(
-    (point) => point.id === req.params.id
+    (point) => point.id === request.params.id
   );
-  res.status(vdp ? 200 : 404).json(vdp);
+  response.status(vdp ? 200 : 404).json(vdp);
 }
 /**
  * Delete a vdp by selected id
+ * @param  {Request} request
+ * @param  {Response} response
  */
-function vdpDeleteHandler(req: Request, res: Response): void {
+function vdpDeleteHandler(request: Request, response: Response): void {
   const vdp = configManager?.config?.virtualDataPoints.find(
-    (point) => point.id === req.params.id
+    (point) => point.id === request.params.id
   );
   configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-  res.status(vdp ? 200 : 404).json({
+  response.status(vdp ? 200 : 404).json({
     deleted: vdp
   });
 }
 /**
  * Overwrites a virtual datapoint
+ * @param  {Request} request
+ * @param  {Response} response
  */
-function vdpPatchHandler(req: Request, res: Response): void {
+function vdpPatchHandler(request: Request, response: Response): void {
   const vdp = configManager?.config?.virtualDataPoints.find(
-    (point) => point.id === req.params.id
+    (point) => point.id === request.params.id
   );
   configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-  const newData = { ...req.body, ...{ id: uuidv4() } };
+  const newData = { ...request.body, ...{ id: uuidv4() } };
   configManager.changeConfig('insert', 'virtualDataPoints', newData);
-  res.status(200).json({
+  response.status(200).json({
     changed: newData,
     href: `/vdps/${newData.id}`
   });

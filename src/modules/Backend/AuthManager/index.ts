@@ -27,11 +27,17 @@ export class AuthManager {
 
   constructor(private configManager: ConfigManager) {}
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<LoginDto>} Promise<LoginDto>
+   */
   async login(username: string, password: string): Promise<LoginDto> {
     const logPrefix = `${AuthManager.className}::login`;
     const regex = /[^A-Za-z0-9]/g;
     const serializedUsername =
-      username.substring(0, 3) + username.substring(3).replace(regex, '');
+      username.substring(0, 2) + username.substring(2).replace(regex, '');
 
     winston.debug(`${logPrefix} User ${username} attempting to login`);
 
@@ -39,14 +45,14 @@ export class AuthManager {
       (user) => user.userName === serializedUsername
     );
 
-    if (!loggedUser && !username.startsWith('DM_')) {
+    if (!loggedUser && !username.startsWith('DM')) {
       winston.warn(`${logPrefix} User ${username} could not be found!`);
       throw new Error('User with these credentials could not be found!');
     }
 
     const macAddress = await this.readMacAddress();
 
-    if (macAddress !== serializedUsername.substring(3)) {
+    if (macAddress !== serializedUsername.substring(2)) {
       winston.warn(
         `${logPrefix} Mac address ${macAddress} is not matching the username ${username}!`
       );
@@ -86,6 +92,10 @@ export class AuthManager {
     return Promise.resolve({ accessToken, passwordChangeRequired });
   }
 
+  /**
+   * @param  {{withPasswordChangeDetection:boolean}} options
+   * @returns {Function} callback
+   */
   verifyJWTAuth({
     withPasswordChangeDetection
   }: {
@@ -129,6 +139,13 @@ export class AuthManager {
     };
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} oldPassword
+   * @param  {string} newPassword
+   * @returns {Promise<boolean>} boolean
+   */
   async changePassword(
     username: string,
     oldPassword: string,
@@ -166,6 +183,12 @@ export class AuthManager {
     return true;
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<IAuthUser>} Promise<IAuthUser>
+   */
   private async createUser(
     username: string,
     password: string
@@ -182,7 +205,11 @@ export class AuthManager {
     return user;
   }
 
-  private async readMacAddress() {
+  /**
+   * @async
+   * @returns {Promise<string>} Mac Address
+   */
+  private async readMacAddress(): Promise<string> {
     let address;
 
     try {

@@ -1,0 +1,8 @@
+.status {
+  min-width: 290px;
+  max-width: 310px;
+
+  @media (min-width: 1200px) {
+    margin-left: auto !important;
+  }
+}

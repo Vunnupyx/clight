@@ -275,6 +275,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       .then(() => form.resetForm(form.value));
   }
 
+  goToMtConnectStream() {
+    window.open(this.MTConnectStreamHref, '_blank');
+  }
+
   private onConnection(x: DataSinkConnection | undefined) {
     this.connection = x;
   }

@@ -210,16 +210,14 @@
     </ng-container>
   </div>
 
-  <div
-    class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6"
-    *ngIf="connection"
-  >
-    <div class="mt-25">
+  <div class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6">
+    <div class="mt-25" *ngIf="connection">
       {{ 'settings-data-sink.Connection' | translate }}
     </div>
     <div
       class="mt-10 d-flex align-items-center justify-content-between"
       style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+      *ngIf="connection"
     >
       <div>
         <div style="font-weight: 600">

@@ -30,6 +30,7 @@ import { System } from '../System';
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
   newRuntimeConfig: (config: IRuntimeConfig) => void;
+  configChange: () => void;
   configsLoaded: () => void;
 }
 
@@ -571,6 +572,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         winston.info(
           `${logPrefix} Saved ${content.length} bytes to config ${file}`
         );
+        this.emit('configChange');
       })
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);

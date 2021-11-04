@@ -36,7 +36,12 @@ export function setDataSinksManager(manager: DataSinksManager) {
  * Handle all requests for the list of templates.
  */
 function templatesGetHandler(request: Request, response: Response): void {
-  response.status(200).json(configManager.defaultTemplates);
+  const payload = {
+    availableDataSources: configManager.defaultTemplates.availableDataSources.map(x => x.protocol),
+    availableDataSinks: configManager.defaultTemplates.availableDataSinks.map(x => x.protocol),
+  };
+
+  response.status(200).json(payload);
 }
 
 /**

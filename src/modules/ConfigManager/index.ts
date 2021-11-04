@@ -1,6 +1,6 @@
 import { promises as fs, readFileSync } from 'fs';
 import path from 'path';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'events';
 import {
   DataSinkProtocols,
   DataSourceProtocols,
@@ -10,6 +10,7 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
+import { unique } from '../Utilities';
 import {
   IDefaultTemplates,
   IConfig,
@@ -17,6 +18,7 @@ import {
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
+  IOpcuaDataSinkConfig,
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
@@ -51,17 +53,11 @@ const defaultIoShieldDataSource: IDataSourceConfig = {
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false
 };
-
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.OPCUA,
-  auth: {
-    type: 'none',
-    password: '',
-    userName: ''
-  }
+  protocol: DataSinkProtocols.OPCUA
 };
 const defaultDataHubDataSink: IDataSinkConfig = {
   name: '',
@@ -83,7 +79,7 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   protocol: DataSinkProtocols.MTCONNECT
 };
 
-export const emptyDefaultConfig = {
+export const emptyDefaultConfig: IConfig = {
   general: {
     manufacturer: '',
     serialNumber: '',
@@ -92,8 +88,7 @@ export const emptyDefaultConfig = {
   },
   networkConfig: {
     x1: {},
-    x2: {},
-    proxy: {}
+    x2: {}
   },
   dataSources: [],
   dataSinks: [],
@@ -159,6 +154,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     return this._authUsers.users;
   }
 
+  public get configPath(): string {
+    return path.join(this.configFolder, this.configName);
+  }
+
   /**
    * Creates config and check types
    */
@@ -185,6 +184,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       auth: {
         expiresIn: 60 * 60,
         defaultPassword: ''
+      },
+      datahub: {
+        serialNumber: 'No serial number found', // TODO Use mac address?
+        provisioningHost: '',
+        scopeId: '',
+        regId: 'unknownDevice',
+        symKey: '',
+        groupDevice: false,
+        signalGroups: undefined,
+        dataPointTypesData: {
+          probe: {
+            intervalHours: undefined
+          },
+          telemetry: {
+            intervalHours: undefined
+          }
+        }
       }
     };
 
@@ -214,18 +230,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       this.loadConfig<IAuthUsersConfig>(
         this.authUsersConfigName,
         this._authUsers
-      ).catch(() => this._authUsers)
+      ).catch(() => this._authUsers),
+      this.loadTemplates()
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;
         this._config = config;
-        this._authConfig = {
-          secret: this.loadJwtPrivateKey()
-        };
+
         this._authUsers = authUsers;
+
+        return this.loadJwtPrivateKey();
+      })
+      .then((secret) => {
+        this._authConfig = {
+          secret
+        };
         this.setupDefaultDataSources();
         this.setupDefaultDataSinks();
-        this.loadTemplates();
       })
       .then(() => {
         this.checkType(
@@ -353,53 +374,55 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       });
   }
 
-  private loadJwtPrivateKey() {
+  private loadJwtPrivateKey(): Promise<string> {
     try {
       const configPath = path.join(this.configFolder, 'keys', 'jwtRS256.key');
-      return readFileSync(configPath, 'utf8');
+      return fs.readFile(configPath, 'utf8');
     } catch (err) {
       return null;
     }
   }
 
   /**
-   * TODO: @patrick please make this method async and add comment
+   * Loads default template by filename
    */
-  private loadTemplate(templateName) {
+  private async loadTemplate(templateName) {
     try {
       const configPath = path.join(
         this.configFolder,
         'defaulttemplates',
-        `${templateName}.json`
+        templateName
       );
-      return JSON.parse(readFileSync(configPath, 'utf8'));
+      return JSON.parse(await fs.readFile(configPath, { encoding: 'utf-8' }));
     } catch (err) {
       return null;
     }
   }
 
-  private loadTemplates() {
+  private async loadTemplates() {
     try {
-      const templates = [
-        's7toopcua',
-        's7tomtconnect',
-        's7toopcuaandmtconnect',
-        'ioshieldtoopcua',
-        'ioshieldtomtconnect',
-        'ioshieldtoopcuaandmtconnect'
-      ]
-        .map((template) => this.loadTemplate(template))
-        .reduce(
-          (acc, curr) => ({
-            availableDataSources: [
-              ...acc.availableDataSources,
-              ...curr.dataSources
-            ],
-            availableDataSinks: [...acc.availableDataSinks, ...curr.dataSinks]
-          }),
-          { availableDataSources: [], availableDataSinks: [] }
-        );
-      this._defaultTemplates = templates;
+      const templateNames = await fs.readdir(
+        path.join(this.configFolder, 'defaulttemplates'),
+        { encoding: 'utf-8' }
+      );
+
+      const templates = await Promise.all(
+        templateNames.map((template) => this.loadTemplate(template))
+      );
+
+      const dataSources = unique(
+        templates.map((x) => x.dataSources).flat(),
+        (ds) => ds.protocol
+      );
+      const dataSinks = unique(
+        templates.map((x) => x.dataSinks).flat(),
+        (ds) => ds.protocol
+      );
+
+      this._defaultTemplates = {
+        availableDataSources: dataSources,
+        availableDataSinks: dataSinks
+      };
     } catch {
       this._defaultTemplates = {
         availableDataSources: [],
@@ -554,10 +577,21 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         { encoding: 'utf-8' }
       )
       .then(() => {
-        winston.info(`${logPrefix} Saved auth config`);
+        winston.info(
+          `${ConfigManager.className}::saveConfigToFile saved new config to file`
+        );
       })
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
       });
+  }
+
+  /**
+   * Save configFile content into config
+   */
+  restoreConfigFile(configFile) {
+    const buffer = configFile.data;
+
+    this.config = JSON.parse(buffer.toString());
   }
 }

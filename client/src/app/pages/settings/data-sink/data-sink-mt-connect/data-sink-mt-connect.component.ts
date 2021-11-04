@@ -64,6 +64,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   sub = new Subscription();
 
+  get MTConnectStreamHref() {
+    return `${window.location.protocol}//${window.location.hostname}:15504/current`;
+  }
+
   constructor(
     private dataPointService: DataPointService,
     private dataSinkService: DataSinkService,

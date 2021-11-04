@@ -20,3 +20,13 @@ export const sleep = (ms: number): Promise<void> => {
     setTimeout(resolve, ms);
   });
 };
+
+/**
+ * Make unique array
+ * @param array input array with duplication
+ * @param selector key to filter array
+ * @returns
+ */
+export function unique<T>(array: T[], selector: (item: T) => any): T[] {
+  return [...new Map(array.map(item => [selector(item), item])).values()];
+}

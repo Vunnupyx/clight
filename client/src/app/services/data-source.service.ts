@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { filter, map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { DataSource, DataSourceConnection, DataSourceProtocol } from 'app/models';
+import {
+  DataSource,
+  DataSourceConnection,
+  DataSourceProtocol
+} from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler, mapOrder } from 'app/shared/utils';
@@ -36,9 +40,10 @@ export class DataSourceService {
   }
 
   get dataSources() {
-    return this._store.state
-      .pipe(filter((x) => x.status != Status.NotInitialized))
-      .pipe(map((x) => x.dataSources));
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.dataSources)
+    );
   }
 
   get connection() {

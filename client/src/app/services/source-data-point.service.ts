@@ -1,15 +1,20 @@
-import {Injectable} from '@angular/core';
-import {filter, map, mergeMap} from 'rxjs/operators';
-import {ToastrService} from 'ngx-toastr';
-import {TranslateService} from '@ngx-translate/core';
+import { Injectable } from '@angular/core';
+import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
-import {DataPointLiveData, DataSourceProtocol, SourceDataPoint, SourceDataPointType} from 'app/models';
-import {HttpService} from 'app/shared';
-import {Status, Store, StoreFactory} from 'app/shared/state';
-import {array2map, errorHandler, ObjectMap} from 'app/shared/utils';
+import {
+  DataPointLiveData,
+  DataSourceProtocol,
+  SourceDataPoint,
+  SourceDataPointType
+} from 'app/models';
+import { HttpService } from 'app/shared';
+import { Status, Store, StoreFactory } from 'app/shared/state';
+import { array2map, errorHandler, ObjectMap } from 'app/shared/utils';
 import * as api from 'app/api/models';
-import {CreateEntityResponse} from 'app/models/responses/create-entity.response';
-import {from, interval, Observable} from "rxjs";
+import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
+import { from, interval, Observable } from 'rxjs';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -28,6 +33,18 @@ export class SourceDataPointService {
       .pipe(map((x) => x.dataPointsLivedata));
   }
 
+  get status() {
+    return this._store.snapshot.status;
+  }
+
+  get dataPoints() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.dataPoints),
+      distinctUntilChanged()
+    );
+  }
+
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
     private httpService: HttpService,
@@ -37,20 +54,10 @@ export class SourceDataPointService {
     this._store = storeFactory.startFrom(this._emptyState());
   }
 
-  get status() {
-    return this._store.snapshot.status;
-  }
-
-  get dataPoints() {
-    return this._store.state
-      .pipe(filter((x) => x.status != Status.NotInitialized))
-      .pipe(map((x) => x.dataPoints));
-  }
-
   async getDataPoints(datasourceProtocol: DataSourceProtocol) {
     this._store.patchState((state) => ({
       status: Status.Loading,
-      dataPoints: [],
+      dataPoints: []
     }));
 
     try {
@@ -60,7 +67,11 @@ export class SourceDataPointService {
 
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
-        state.dataPointsSourceMap = array2map(state.dataPoints, item => item.id, () => datasourceProtocol);
+        state.dataPointsSourceMap = array2map(
+          state.dataPoints,
+          (item) => item.id,
+          () => datasourceProtocol
+        );
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -89,14 +100,20 @@ export class SourceDataPointService {
       let wholeMap = {};
 
       for (const dataSource of dataSources!) {
-        const map = array2map(dataSource.dataPoints!, item => item.id!, () => dataSource.protocol);
+        const map = array2map(
+          dataSource.dataPoints!,
+          (item) => item.id!,
+          () => dataSource.protocol
+        );
 
         wholeMap = {
           ...wholeMap,
-          ...map,
+          ...map
         };
 
-        dataPoints = dataPoints.concat(...(dataSource.dataPoints as api.Sourcedatapoint[]));
+        dataPoints = dataPoints.concat(
+          ...(dataSource.dataPoints as api.Sourcedatapoint[])
+        );
       }
 
       this._store.patchState((state) => {
@@ -115,30 +132,31 @@ export class SourceDataPointService {
     }
   }
 
-  setLivedataTimer(protocol: DataSourceProtocol): Observable<void> {
-    return interval(5000)
-      .pipe(mergeMap(() => from(this.getLiveDataForDataPoints(protocol))));
+  setLivedataTimer(
+    protocol: DataSourceProtocol,
+    timeseries = 'false'
+  ): Observable<void> {
+    return interval(1000).pipe(
+      mergeMap(() => from(this.getLiveDataForDataPoints(protocol, timeseries)))
+    );
   }
 
-  async getLiveDataForDataPoints(protocol: DataSourceProtocol) {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-      state.dataPointsLivedata = {};
-    });
-
+  async getLiveDataForDataPoints(
+    protocol: DataSourceProtocol,
+    timeseries = 'false'
+  ) {
     try {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
-        `/livedata/datasource/${protocol}`
+        `/livedata/datasource/${protocol}?timeseries=${timeseries}`
       );
       this._store.patchState((state) => {
-        state.dataPointsLivedata = array2map(liveData, item => item.dataPointId);
-        state.status = Status.Ready;
+        state.dataPointsLivedata = array2map(
+          liveData,
+          (item) => item.dataPointId
+        );
       });
     } catch (err) {
       errorHandler(err);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
     }
   }
 
@@ -157,7 +175,7 @@ export class SourceDataPointService {
       this._store.patchState((state) => {
         state.status = Status.Ready;
         obj.id = response.created.id;
-        state.dataPoints.push(obj);
+        state.dataPoints = [...state.dataPoints, obj];
         state.dataPointsSourceMap[obj.id] = datasourceProtocol;
       });
     } catch (err) {
@@ -241,7 +259,7 @@ export class SourceDataPointService {
 
     switch (protocol) {
       case DataSourceProtocol.S7:
-        const dp = this._store.snapshot.dataPoints.find(x => x.id === id);
+        const dp = this._store.snapshot.dataPoints.find((x) => x.id === id);
         if (dp!.type === SourceDataPointType.NCK) {
           return '[NC]';
         }
@@ -261,6 +279,7 @@ export class SourceDataPointService {
     return <SourceDataPointsState>{
       status: Status.NotInitialized,
       dataPointsSourceMap: {},
+      dataPointsLivedata: {}
     };
   }
 }

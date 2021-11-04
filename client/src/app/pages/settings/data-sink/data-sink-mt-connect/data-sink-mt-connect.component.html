@@ -247,6 +247,14 @@
         </ng-container>
       </div>
     </div>
+
+    <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
+      <div>
+        <button mat-raised-button type="button" (click)="goToMtConnectStream()">
+          {{ 'settings-data-sink.OpenMTConnectStream' | translate }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 

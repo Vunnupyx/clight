@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { DataSourceService, TemplateService } from '../../services';
 import { AvailableDataSink, AvailableDataSource } from '../../models/template';
 import { LocalStorageService } from '../../shared';
-import { unique } from '../../shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
@@ -38,7 +37,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
       return [];
     }
 
-    return unique(this.sinks.filter((sink) => sink.dataSources?.includes(this.sourceForm.value.source)), item => item.id);
+    return this.sinks;
   }
 
   constructor(

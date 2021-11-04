@@ -59,12 +59,13 @@ const defaultOpcuaDataSink: IDataSinkConfig = {
   enabled: false,
   protocol: DataSinkProtocols.OPCUA
 };
+
 const defaultDataHubDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
   protocol: DataSinkProtocols.DATAHUB,
-  datahubconfig: {
+  datahub: {
     provisioningHost: '',
     scopeId: '',
     regId: '',
@@ -187,10 +188,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       datahub: {
         serialNumber: 'No serial number found', // TODO Use mac address?
-        provisioningHost: '',
-        scopeId: '',
-        regId: 'unknownDevice',
-        symKey: '',
         groupDevice: false,
         signalGroups: undefined,
         dataPointTypesData: {

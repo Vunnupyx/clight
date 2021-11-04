@@ -3,12 +3,14 @@ const proxyMock = {
   enabled: true
 };
 const signalGroupsMock = {};
-const dataHubAdapterOptionsMock = {
+const dataHubSettingsMock = {
   provisioningHost: 'dummy.host.codestryke',
-  serialNumber: 'dummy serialnumber',
   scopeId: 'dummy scopeId',
   regId: 'dummy regid',
-  symKey: 'dummy key',
+  symKey: 'dummy key'
+};
+const dataHubAdapterOptionsMock = {
+  serialNumber: 'dummy serialnumber',
   groupDevice: false,
   signalGroups: signalGroupsMock,
   dataPointTypesData: {
@@ -86,11 +88,11 @@ jest.useFakeTimers();
 // All tests in this block depends on each other. Not single runnable.
 describe('DataHubAdapter', () => {
   afterEach(() => {
-      jest.clearAllMocks();
-      jest.resetAllMocks();
+    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
   beforeAll(async () => {
-    UUT = new DataHubAdapter(dataHubAdapterOptionsMock);
+    UUT = new DataHubAdapter(dataHubAdapterOptionsMock, dataHubSettingsMock);
     return UUT.init().then((adapter) => adapter.start());
   });
   it('reported properties are reported', () => {
@@ -124,7 +126,6 @@ describe('DataHubAdapter', () => {
     });
   });
 
-  
   it('already reported properties are not updated again', () => {
     const reported = [
       'reported1',
@@ -144,11 +145,13 @@ describe('DataHubAdapter', () => {
       'reported3',
       'reported4',
       'reported5',
-      'reported6',
+      'reported6'
     ];
     UUT.setReportedProps(reported);
     expect(twinMock.properties.reported.update).toHaveBeenCalled();
-    expect(twinMock.properties.reported.update.mock.calls[0][0]).toStrictEqual({"services": {"reported6": {"enabled": true}}});
+    expect(twinMock.properties.reported.update.mock.calls[0][0]).toStrictEqual({
+      services: { reported6: { enabled: true } }
+    });
   });
 
   it('not reported properties are disabled if the are reported in a run before.', () => {
@@ -157,10 +160,12 @@ describe('DataHubAdapter', () => {
       'reported3',
       'reported4',
       'reported5',
-      'reported6',
+      'reported6'
     ];
     UUT.setReportedProps(reported);
     expect(twinMock.properties.reported.update).toHaveBeenCalled();
-    expect(twinMock.properties.reported.update.mock.calls[0][0]).toStrictEqual({"services": {"reported1": {"enabled": false}}});
+    expect(twinMock.properties.reported.update.mock.calls[0][0]).toStrictEqual({
+      services: { reported1: { enabled: false } }
+    });
   });
 });

@@ -329,7 +329,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       dataSinks.includes(x.protocol)
     );
 
-    this._config = {
+    this.config = {
       ...this._config,
       dataSources: sources,
       dataSinks: sinks,

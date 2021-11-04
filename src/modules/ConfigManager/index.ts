@@ -97,7 +97,7 @@ export const emptyDefaultConfig = {
   mapping: [],
   systemInfo: [],
   quickStart: {
-    completed: true // TODO Set false when template implementation is finished
+    completed: false // TODO Set false when template implementation is finished
   }
 };
 

@@ -30,8 +30,9 @@ jest.doMock('winston', () => {
 
 import {
   IDataHubConfig,
-  IDataSinkConfig,
-  } from '../../../../ConfigManager/interfaces';
+  IDataHubSettings,
+  IDataSinkConfig
+} from '../../../../ConfigManager/interfaces';
 import { DataHubDataSink, DataHubDataSinkOptions } from '..';
 
 /**
@@ -41,16 +42,18 @@ const configMock: IDataSinkConfig = {
   name: 'UnitTestDataHubDataSink',
   protocol: 'datahub',
   enabled: true,
-  dataPoints: []
+  dataPoints: [],
+  datahub: {
+    regId: 'UTregId',
+    symKey: 'UTKey',
+    scopeId: 'UTScopeId',
+    provisioningHost: 'UTHost.test'
+  }
 };
 
 const runTimeConfigMock: IDataHubConfig = {
   serialNumber: 'UTSerialNumber',
-  regId: 'UTregId',
-  symKey: 'UTKey',
-  scopeId: 'UTScopeId',
   groupDevice: false,
-  provisioningHost: 'UTHost.test',
   signalGroups: {
     group1: ['address/1', 'address/2', 'address/3'],
     group2: ['address/4', 'address/5', 'address/6'],

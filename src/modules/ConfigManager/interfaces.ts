@@ -88,12 +88,38 @@ export interface IDataSinkDataPointConfig {
   map?: ITargetDataMap;
   initialValue?: string | number;
 }
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IDataHubSettings {
+  provisioningHost: string;
+  scopeId: string;
+  regId: string;
+  symKey: string;
+}
+
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
+  datahub?: IDataHubSettings;
+}
+
+export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
+  auth?: IOpcuaAuth;
 }
 
 export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
@@ -109,32 +135,8 @@ export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
 }
 
 export interface IDataHubConfig {
-  provisioningHost: string;
-  scopeId: string;
-  regId: string;
-  symKey: string;
   groupDevice: boolean;
-}
-
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
-}
-
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
-}
-
-export interface IDataHubConfig {
-  provisioningHost: string;
   serialNumber: string;
-  scopeId: string;
-  regId: string;
-  symKey: string;
-  groupDevice: boolean;
   signalGroups: ISignalGroups;
   dataPointTypesData: {
     probe: IDataHubDataPointTypesData;

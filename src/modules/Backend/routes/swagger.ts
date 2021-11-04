@@ -1275,6 +1275,18 @@ export default {
           }
         }
       }
+    },
+    '/templates/skip': {
+      post: {
+        tags: ['templates'],
+        description: 'Skips templates settings',
+        operationId: 'templatesSkipPostHandler',
+        responses: {
+          '200': {
+            description: 'Template settings were successfully saved!'
+          }
+        }
+      }
     }
   },
   securityDefinitions: {

@@ -24,10 +24,15 @@ services:
       - type: bind
         source: $HOST/sys
         target: /sys
+      - type: bind
+        source: $HOST/root/.ssh/nmcli
+        target: /root/.ssh/nmcli
     environment:
       - PORT=80
     ports:
       - '4840:4840'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   mtconnect-agent:
     image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
     restart: always

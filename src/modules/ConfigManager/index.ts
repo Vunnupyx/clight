@@ -1,6 +1,6 @@
-import {promises as fs, readFileSync} from 'fs';
+import { promises as fs, readFileSync } from 'fs';
 import path from 'path';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'events';
 import {
   DataSinkProtocols,
   DataSourceProtocols,
@@ -18,6 +18,7 @@ import {
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
+  IOpcuaDataSinkConfig,
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
@@ -52,23 +53,24 @@ const defaultIoShieldDataSource: IDataSourceConfig = {
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false
 };
-
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.OPCUA,
-  auth: {
-    type: 'none',
-    password: '',
-    userName: ''
-  }
+  protocol: DataSinkProtocols.OPCUA
 };
+
 const defaultDataHubDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.DATAHUB
+  protocol: DataSinkProtocols.DATAHUB,
+  datahub: {
+    provisioningHost: '',
+    scopeId: '',
+    regId: '',
+    symKey: ''
+  }
 };
 
 const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
@@ -78,7 +80,7 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
   protocol: DataSinkProtocols.MTCONNECT
 };
 
-export const emptyDefaultConfig = {
+export const emptyDefaultConfig: IConfig = {
   general: {
     manufacturer: '',
     serialNumber: '',
@@ -87,8 +89,7 @@ export const emptyDefaultConfig = {
   },
   networkConfig: {
     x1: {},
-    x2: {},
-    proxy: {}
+    x2: {}
   },
   dataSources: [],
   dataSinks: [],
@@ -154,6 +155,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     return this._authUsers.users;
   }
 
+  public get configPath(): string {
+    return path.join(this.configFolder, this.configName);
+  }
+
   /**
    * Creates config and check types
    */
@@ -180,6 +185,19 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       auth: {
         expiresIn: 60 * 60,
         defaultPassword: ''
+      },
+      datahub: {
+        serialNumber: 'No serial number found', // TODO Use mac address?
+        groupDevice: false,
+        signalGroups: undefined,
+        dataPointTypesData: {
+          probe: {
+            intervalHours: undefined
+          },
+          telemetry: {
+            intervalHours: undefined
+          }
+        }
       }
     };
 
@@ -210,7 +228,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.authUsersConfigName,
         this._authUsers
       ).catch(() => this._authUsers),
-      this.loadTemplates(),
+      this.loadTemplates()
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;
@@ -566,5 +584,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
       });
+  }
+
+  /**
+   * Save configFile content into config
+   */
+  restoreConfigFile(configFile) {
+    const buffer = configFile.data;
+
+    this.config = JSON.parse(buffer.toString());
   }
 }

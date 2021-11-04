@@ -69,6 +69,7 @@ export abstract class DataSink {
       });
     });
 
+    let dataPoints = {};
     Object.keys(eventsByTarget).forEach((target) => {
       const events = eventsByTarget[target];
 
@@ -80,7 +81,7 @@ export abstract class DataSink {
           );
         }
         if (events.some((event) => typeof event.mapValue === 'undefined')) {
-          winston.warn(`Map value for enum taget: ${target} not provided!`);
+          winston.warn(`Map value for enum target: ${target} not provided!`);
           return;
         }
 
@@ -122,8 +123,15 @@ export abstract class DataSink {
         value = setEvent.value;
       }
 
-      this.processDataPointValue(target, value);
+      dataPoints[target] = value;
     });
+    this.processDataPointValues(dataPoints);
+  }
+
+  protected processDataPointValues(obj) {
+      Object.keys(obj).forEach((key) => {
+        this.processDataPointValue(key, obj[key])
+      })
   }
 
   protected abstract processDataPointValue(dataPointId, value): void;

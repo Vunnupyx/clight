@@ -24,7 +24,11 @@ const OPCUAServerMock = {
     OPCUAServerMock.initialized = true;
     return Promise.resolve();
   }),
-  initialized: false
+  initialized: false,
+  endpoints: [
+    {
+    endpointDescriptions: jest.fn().mockReturnValue([{endpointUrl: 'DummeTestUrl'}])
+  }]
 };
 
 const OPCUACertManagerMock = {
@@ -114,8 +118,8 @@ describe(`OPCUAAdapter Test`, () => {
             jest.clearAllMocks();
           });
 
-          it(`starting adapter`, async () => {
-            await testAdapter.start();
+          it(`starting adapter`, (done) => {
+            testAdapter.start().then(() => done()).catch(() => done.fail());
           });
           // TODO BUG: FIXME!
           //   it(`starting already running adapter`, async (done) => {

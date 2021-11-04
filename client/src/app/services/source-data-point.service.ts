@@ -136,20 +136,22 @@ export class SourceDataPointService {
    * Triggers every 1 second /livedata/datasource/:protocol endpoint
    * @returns Observable
    */
-  setLivedataTimer(protocol: DataSourceProtocol): Observable<void> {
+  setLivedataTimer(
+    protocol: DataSourceProtocol,
+    timeseries = 'false'
+  ): Observable<void> {
     return interval(1000).pipe(
-      mergeMap(() => from(this.getLiveDataForDataPoints(protocol)))
+      mergeMap(() => from(this.getLiveDataForDataPoints(protocol, timeseries)))
     );
   }
 
-  async getLiveDataForDataPoints(protocol: DataSourceProtocol) {
-    this._store.patchState((state) => {
-      state.dataPointsLivedata = {};
-    });
-
+  async getLiveDataForDataPoints(
+    protocol: DataSourceProtocol,
+    timeseries = 'false'
+  ) {
     try {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
-        `/livedata/datasource/${protocol}?timeseries=true`
+        `/livedata/datasource/${protocol}?timeseries=${timeseries}`
       );
       this._store.patchState((state) => {
         state.dataPointsLivedata = array2map(

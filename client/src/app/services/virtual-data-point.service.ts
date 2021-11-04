@@ -86,10 +86,6 @@ export class VirtualDataPointService {
   }
 
   async getLiveDataForDataPoints() {
-    this._store.patchState((state) => {
-      state.dataPointsLivedata = {};
-    });
-
     try {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
         '/livedata/vdps'

@@ -4,6 +4,7 @@ import { v1 as uuidv1 } from 'uuid';
 import winston from 'winston';
 import { IMTConnectConfig } from '../../../ConfigManager/interfaces';
 import { DataItem } from './DataItem';
+import { promisify } from 'util';
 
 export interface Socket extends net.Socket {
   id?: string;
@@ -242,5 +243,18 @@ export class MTConnectAdapter {
     }
     this._running = false;
     return;
+  }
+
+  public shutdown(): Promise<void> {
+    const shutdownFunctions = [promisify(this.server.close)];
+    this.clients.forEach((sock) => {
+      shutdownFunctions.push(promisify(sock.end));
+    })
+    Object.getOwnPropertyNames(this).forEach((prop) => {
+      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown);
+      delete this[prop];
+    })
+
+    return Promise.all(shutdownFunctions).then();
   }
 }

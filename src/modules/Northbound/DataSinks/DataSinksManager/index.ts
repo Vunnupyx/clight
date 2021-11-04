@@ -37,6 +37,7 @@ export class DataSinksManager {
     this.configManager.once('configsLoaded', () => {
       return this.init();
     });
+    this.configManager.on('configChange', this.configChangeHandler.bind(this))
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
   }
@@ -124,5 +125,20 @@ export class DataSinksManager {
    */
   public getDataSinkByProto(protocol: string) {
     return this.dataSinks.find((sink) => sink.protocol === protocol);
+  }
+
+  private configChangeHandler(): Promise<void> {
+    const logPrefix = `${DataSinksManager.name}::configChangeHandler`;
+    const shutdownFunctions = [];
+    this.dataSinks.forEach((sink) => {
+      shutdownFunctions.push(sink.shutdown);
+    })
+    return Promise.all(shutdownFunctions)
+    .then(() => {
+      this.createDataSinks();
+      winston.info(`${logPrefix} reload datasinks successfully.`);
+    }).catch((err) => {
+      winston.error(`${logPrefix} error due to ${err.message}`);
+    });
   }
 }

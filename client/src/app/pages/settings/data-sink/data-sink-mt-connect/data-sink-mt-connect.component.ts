@@ -266,7 +266,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   saveDatahubConfig(form: NgForm) {
     this.dataSinkService
-      .updateDataSink(this.dataSink?.protocol!, { datahubconfig: form.value })
+      .updateDataSink(this.dataSink?.protocol!, { datahub: form.value })
       .then(() =>
         this.toastr.success(
           this.translate.instant('settings-data-sink.DataHubConfigSaveSuccess')

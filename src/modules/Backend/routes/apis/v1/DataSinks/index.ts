@@ -57,8 +57,8 @@ async function dataSinkPatchHandler(
   // If protocol is s7 it´s not allowed to change auth prop,
   if (protocol === 's7') allowed = ['enabled'];
 
-  // If protocol is datahub it´s allowed to change only datahubconfig,
-  if (protocol === 'datahub') allowed = ['datahubconfig'];
+  // If protocol is datahub it´s allowed to change only datahub,
+  if (protocol === 'datahub') allowed = ['datahub'];
 
   if (!dataSink) {
     winston.warn(

@@ -40,5 +40,5 @@ export class DataSink {
   enabled!: boolean;
   protocol!: DataSinkProtocol;
   auth?: DataSinkAuth;
-  datahubconfig?: DataHubConfig;
+  datahub?: DataHubConfig;
 }

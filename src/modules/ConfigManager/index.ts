@@ -549,6 +549,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       });
   }
 
+  /**
+   * Save the current data from config property into a JSON config file on hard drive
+   */
   public saveConfig(obj: Partial<IConfig> = null): void {
     const logPrefix = `${ConfigManager.className}::saveConfig`;
 

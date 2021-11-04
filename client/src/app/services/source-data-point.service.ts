@@ -132,6 +132,10 @@ export class SourceDataPointService {
     }
   }
 
+  /**
+   * Triggers every 1 second /livedata/datasource/:protocol endpoint
+   * @returns Observable
+   */
   setLivedataTimer(
     protocol: DataSourceProtocol,
     timeseries = 'false'

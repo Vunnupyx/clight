@@ -6,6 +6,7 @@ let configManager: ConfigManager;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param {ConfigManager} config
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
@@ -13,6 +14,8 @@ export function setConfigManager(config: ConfigManager) {
 
 /**
  * Returns list of mapping
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function mappingGetHandler(request: Request, response: Response): void {
   response.status(200).json({
@@ -22,6 +25,8 @@ function mappingGetHandler(request: Request, response: Response): void {
 
 /**
  * Creates mapping
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function mapPostHandler(request: Request, response: Response): void {
   const config = configManager.config;
@@ -37,9 +42,13 @@ function mapPostHandler(request: Request, response: Response): void {
 
 /**
  * Updates mapping
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function mapPatchHandler(request: Request, response: Response): void {
-  const mapping = configManager.config.mapping.find(x => x.id === request.params.mapId);
+  const mapping = configManager.config.mapping.find(
+    (x) => x.id === request.params.mapId
+  );
 
   if (!mapping) {
     response.status(404).json(null);
@@ -49,10 +58,15 @@ function mapPatchHandler(request: Request, response: Response): void {
   const newMapping = {
     ...mapping,
     ...request.body,
-    id: request.params.mapId,
+    id: request.params.mapId
   };
 
-  configManager.changeConfig('update', 'mapping', newMapping, item => item.id);
+  configManager.changeConfig(
+    'update',
+    'mapping',
+    newMapping,
+    (item) => item.id
+  );
 
   response.status(200).json({
     changed: mapping
@@ -61,6 +75,8 @@ function mapPatchHandler(request: Request, response: Response): void {
 
 /**
  * Deletes mapping
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function mapDeleteHandler(request: Request, response: Response): void {
   const config = configManager.config;
@@ -88,6 +104,8 @@ function mapDeleteHandler(request: Request, response: Response): void {
 
 /**
  * Returns specific mapping
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function mapGetHandler(request: Request, response: Response): void {
   const map = configManager.config.mapping.find(

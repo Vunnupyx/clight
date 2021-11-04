@@ -14,6 +14,8 @@ export function setConfigManager(config: ConfigManager) {
 
 /**
  * Handles download requests of the config file.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function backupGetHandle(request: Request, response: Response): void {
   try {
@@ -36,6 +38,8 @@ function backupGetHandle(request: Request, response: Response): void {
 
 /**
  * Handles upload requests of a new config file
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function backupPostHandle(request: Request, response: Response): void {
   const configFile = (request.files as any)?.config;

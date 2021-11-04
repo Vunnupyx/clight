@@ -11,17 +11,24 @@ let dataSinksManager: DataSinksManager;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param {ConfigManager} config
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
 }
 
+/**
+ * Set DataSinksManager to make accessible for local function
+ * @param {DataSinksManager} manager
+ */
 export function setDataSinksManager(manager: DataSinksManager) {
   dataSinksManager = manager;
 }
 
 /**
  * Returns list of datasinks
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSinksGetHandler(request: Request, response: Response): void {
   response.status(200).json({
@@ -30,6 +37,8 @@ function dataSinksGetHandler(request: Request, response: Response): void {
 }
 /**
  * Return single datasink resource selected by id
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSinkGetHandler(request, response): void {
   const dataSink = configManager.config.dataSinks.find(
@@ -41,6 +50,8 @@ function dataSinkGetHandler(request, response): void {
 /**
  * Handle all patch requests for modifying a specific datasource.
  * Only enabling and disabling is allowed.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 async function dataSinkPatchHandler(
   request: Request,
@@ -113,6 +124,8 @@ async function dataSinkPatchHandler(
 
 /**
  * Handle get request for a list of datapoints.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataPointsGetHandler(request: Request, response: Response) {
   // @ts-ignore // TODO
@@ -126,6 +139,8 @@ function dataPointsGetHandler(request: Request, response: Response) {
 
 /**
  * Handle get request for a single datapoint, selected by id via path parameter.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataPointGetHandler(request: Request, response: Response) {
   const sink = configManager?.config?.dataSinks.find(
@@ -139,6 +154,8 @@ function dataPointGetHandler(request: Request, response: Response) {
 
 /**
  * Create a new dataPoints resource for datasink selected by id.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataPointsPostHandler(request: Request, response: Response) {
   // TODO: Input validation, maybe id is already taken
@@ -169,6 +186,8 @@ function dataPointsPostHandler(request: Request, response: Response) {
 }
 /**
  * Change datapoint resource for datasink with selected id
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataPointPatchHandler(request: Request, response: Response) {
   //TODO: INPUT VALIDATION
@@ -209,6 +228,8 @@ function dataPointPatchHandler(request: Request, response: Response) {
 
 /**
  * Delete a datapoint inside of a datasink selected by datasinkProtocol and datapointid
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataPointDeleteHandler(request: Request, response: Response) {
   // TODO: INPUT VALIDATION
@@ -229,6 +250,8 @@ function dataPointDeleteHandler(request: Request, response: Response) {
 
 /**
  * Return the current status of the selected datasink. Status is collected from the EventBus
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function dataSinkGetStatusHandler(request: Request, response: Response) {
   const proto = request.params?.datasinkProtocol;

@@ -26,6 +26,9 @@
     <ng-container *ngSwitchCase="NetworkType.PROXY">
       <h3>{{ 'settings-network.ProxySettings' | translate }}</h3>
     </ng-container>
+    <ng-container *ngSwitchCase="NetworkType.TIME">
+      <h3>{{ 'settings-network.TimeSettings' | translate }}</h3>
+    </ng-container>
     <mat-divider></mat-divider>
   </div>
 
@@ -461,6 +464,78 @@
               mat-raised-button
               [disabled]="mainForm.invalid || !mainForm.dirty"
               (click)="saveChanges(mainForm, NetworkType.PROXY)"
+            >
+              {{ 'settings-network.Apply' | translate }}
+            </button>
+          </div>
+        </form>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="NetworkType.TIME">
+        <form #mainForm="ngForm">
+          <div class="d-flex align-items-center justify-content-between mb-10">
+            <div class="mr-30">
+              {{ 'settings-network.UseNTPServer' | translate }}
+            </div>
+            <mat-slide-toggle
+              class="ml-20"
+              name="useNtp"
+              [(ngModel)]="config[NetworkType.TIME].useNtp"
+            ></mat-slide-toggle>
+          </div>
+
+          <div
+            *ngIf="config[NetworkType.TIME].useNtp"
+            class="d-flex align-items-center justify-content-between"
+          >
+            <div class="mr-30">
+              {{ 'settings-network.SetNTPServer' | translate }}
+            </div>
+
+            <div>
+              <mat-form-field>
+                <input
+                  matInput
+                  name="ntpHost"
+                  #ipAddr="ngModel"
+                  [(ngModel)]="config[NetworkType.TIME].ntpHost"
+                  [pattern]="hostRegex"
+                  [required]="!!config[NetworkType.TIME].useNtp"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div
+            *ngIf="!config[NetworkType.TIME].useNtp"
+            class="d-flex align-items-center justify-content-between"
+          >
+            <div class="mr-30">
+              {{ 'settings-network.SetCurrentTime' | translate }}
+            </div>
+
+            <div>
+              <mat-form-field>
+                <input
+                  name="currentTime"
+                  matInput
+                  [ngxMatDatetimePicker]="picker"
+                  [(ngModel)]="config[NetworkType.TIME].currentTime"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="$any(picker)"
+                ></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-25">
+            <button
+              mat-raised-button
+              [disabled]="mainForm.invalid || !mainForm.dirty"
+              (click)="saveChanges(mainForm, NetworkType.TIME)"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>

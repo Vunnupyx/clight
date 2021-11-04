@@ -82,7 +82,8 @@ export const emptyDefaultConfig: IConfig = {
   },
   networkConfig: {
     x1: {},
-    x2: {}
+    x2: {},
+    time: {}
   },
   dataSources: [],
   dataSinks: [],

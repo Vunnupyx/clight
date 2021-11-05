@@ -7,6 +7,9 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import {
   DataPoint,
@@ -19,7 +22,6 @@ import {
   DataSinkProtocol
 } from 'app/models';
 import { DataPointService, DataSinkService } from 'app/services';
-import { Status } from 'app/shared/state';
 import { arrayToMap, clone } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
@@ -69,7 +71,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   constructor(
     private dataPointService: DataPointService,
     private dataSinkService: DataSinkService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   get isEditing() {
@@ -258,6 +262,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   getDataSinkDataPointPrefix(id: string) {
     return this.dataPointService.getPrefix(id);
+  }
+
+  saveDatahubConfig(form: NgForm) {
+    this.dataSinkService
+      .updateDataSink(this.dataSink?.protocol!, { datahub: form.value })
+      .then(() =>
+        this.toastr.success(
+          this.translate.instant('settings-data-sink.DataHubConfigSaveSuccess')
+        )
+      )
+      .then(() => form.resetForm(form.value));
   }
 
   goToMtConnectStream() {

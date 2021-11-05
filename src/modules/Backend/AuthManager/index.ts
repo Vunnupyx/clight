@@ -27,6 +27,12 @@ export class AuthManager {
 
   constructor(private configManager: ConfigManager) {}
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<LoginDto>} Promise<LoginDto>
+   */
   async login(username: string, password: string): Promise<LoginDto> {
     const logPrefix = `${AuthManager.className}::login`;
     const regex = /[^A-Za-z0-9]/g;
@@ -86,6 +92,10 @@ export class AuthManager {
     return Promise.resolve({ accessToken, passwordChangeRequired });
   }
 
+  /**
+   * @param  {{withPasswordChangeDetection:boolean}} options
+   * @returns {Function} callback
+   */
   verifyJWTAuth({
     withPasswordChangeDetection
   }: {
@@ -129,6 +139,13 @@ export class AuthManager {
     };
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} oldPassword
+   * @param  {string} newPassword
+   * @returns {Promise<boolean>} boolean
+   */
   async changePassword(
     username: string,
     oldPassword: string,
@@ -166,6 +183,12 @@ export class AuthManager {
     return true;
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<IAuthUser>} Promise<IAuthUser>
+   */
   private async createUser(
     username: string,
     password: string
@@ -182,7 +205,11 @@ export class AuthManager {
     return user;
   }
 
-  private async readDeviceLabelMacAddress() {
+  /**
+   * @async
+   * @returns {Promise<string>} Mac Address
+   */
+  private async readDeviceLabelMacAddress(): Promise<string> {
     let address;
 
     try {

@@ -15,6 +15,7 @@ import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
 import {
   IDataHubConfig,
+  IDataHubSettings,
   IProxyConfig,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
@@ -74,10 +75,18 @@ export class DataHubAdapter {
   #runningTimers: Array<NodeJS.Timer> = [];
   #alreadyReportedServices: Array<string> = [];
 
-  public constructor(options: DataHubAdapterOptions) {
+  /**
+   *
+   * @param options Static options defined inside the runtime config
+   * @param settings Dynamic options defined inside the config and editable via the ui
+   */
+  public constructor(
+    staticOptions: DataHubAdapterOptions,
+    dynamicOptions: IDataHubSettings
+  ) {
     if (
-      !options.dataPointTypesData.probe.intervalHours ||
-      !options.dataPointTypesData.telemetry.intervalHours
+      !staticOptions.dataPointTypesData.probe.intervalHours ||
+      !staticOptions.dataPointTypesData.telemetry.intervalHours
     ) {
       throw new NorthBoundError(
         `${
@@ -86,18 +95,18 @@ export class DataHubAdapter {
       );
     }
     this.#probeSendInterval = this.hoursToMs(
-      options.dataPointTypesData.probe.intervalHours
+      staticOptions.dataPointTypesData.probe.intervalHours
     );
     this.#telemetrySendInterval = this.hoursToMs(
-      options.dataPointTypesData.telemetry.intervalHours
+      staticOptions.dataPointTypesData.telemetry.intervalHours
     );
-    this.#dpsServiceAddress = options.provisioningHost;
-    this.#registrationId = options.regId;
-    this.#symKey = options.symKey;
-    this.#scopeId = options.scopeId;
-    this.#isGroupRegistration = options.groupDevice || false;
-    this.#proxyConfig = options.proxy || null;
-    this.#serialNumber = options.serialNumber;
+    this.#dpsServiceAddress = dynamicOptions.provisioningHost;
+    this.#registrationId = dynamicOptions.regId;
+    this.#symKey = dynamicOptions.symKey;
+    this.#scopeId = dynamicOptions.scopeId;
+    this.#isGroupRegistration = staticOptions.groupDevice || false;
+    this.#proxyConfig = staticOptions.proxy || null;
+    this.#serialNumber = staticOptions.serialNumber;
   }
 
   public get running(): boolean {

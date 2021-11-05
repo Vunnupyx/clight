@@ -1,6 +1,6 @@
 import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import {OPCUAServerOptions} from 'node-opcua';
+import { OPCUAServerOptions } from 'node-opcua';
 
 export interface IAuthConfig {
   secret: any;
@@ -88,46 +88,92 @@ export interface IDataSinkDataPointConfig {
   map?: ITargetDataMap;
   initialValue?: string | number;
 }
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IDataHubSettings {
+  provisioningHost: string;
+  scopeId: string;
+  regId: string;
+  symKey: string;
+}
+
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
+  datahub?: IDataHubSettings;
 }
 
 export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
 
 export interface IOpcuaAuth {
-  type: "none" | "userpassword",
-  userName: string,
-  password: string
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
 }
 
 export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth
+  auth?: IOpcuaAuth;
 }
 
+export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
+  auth?: IOpcuaAuth;
+}
 export interface IDataHubConfig {
-    provisioningHost: string,
-    serialNumber: string,
-    scopeId: string,
-    regId: string,
-    symKey: string
-    groupDevice: boolean,
-    signalGroups: ISignalGroups
-    dataPointTypesData: {
-      probe: IDataHubDataPointTypesData,
-      telemetry: IDataHubDataPointTypesData
-    }
+  groupDevice: boolean;
+  serialNumber: string;
+  signalGroups: ISignalGroups;
+  dataPointTypesData: {
+    probe: IDataHubDataPointTypesData;
+    telemetry: IDataHubDataPointTypesData;
+  };
 }
 
 interface IDataHubDataPointTypesData {
-  intervalHours: number | null,
+  intervalHours: number | null;
 }
 
 export interface ISignalGroups {
-  [key: string]: Array<string>
+  [key: string]: Array<string>;
+}
+
+export interface IProxyConfig {
+  ip: string;
+  port: number;
+  type: 'socks5' | 'http';
+  username?: string;
+  password?: string;
+  enabled: boolean;
+}
+
+export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
+  auth?: IOpcuaAuth;
+}
+
+interface IDataHubDataPointTypesData {
+  intervalHours: number | null;
 }
 
 export type TDataHubDataPointType = 'event' | 'probe' | 'telemetry';
@@ -135,7 +181,7 @@ export type TDataHubDataPointType = 'event' | 'probe' | 'telemetry';
 export interface IProxyConfig {
   ip: string;
   port: number;
-  type: 'socks5' | 'http',
+  type: 'socks5' | 'http';
   username?: string;
   password?: string;
   enabled: boolean;
@@ -167,8 +213,7 @@ export type NetworkConfig = {
   [key in 'x1' | 'x2']: NetworkConfigItem;
 } & {
   proxy?: IProxyConfig;
-}
-
+};
 
 export interface IDefaultTemplates {
   availableDataSources: IDataSourceConfig[];
@@ -205,9 +250,10 @@ export interface ISystemInfo {
 
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: Array<IDataSinkConfig | IDataHubDataSinkConfig | IOpcuaDataSinkConfig>;
+  dataSinks: Array<
+    IDataSinkConfig | IDataHubDataSinkConfig | IOpcuaDataSinkConfig
+  >;
   virtualDataPoints: IVirtualDataPointConfig[];
-  // dataPoints: IDataSinkDataPointConfig[]; // TODO ??
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
   networkConfig: NetworkConfig;

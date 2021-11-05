@@ -1,5 +1,6 @@
 import express, { Express } from 'express';
 import winston from 'winston';
+import fileUpload from 'express-fileupload';
 import { ConfigManager } from '../../ConfigManager';
 import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
 import { RoutesManager } from '../RoutesManager';
@@ -39,6 +40,9 @@ export class RestApiManager {
     });
   }
 
+  /**
+   * Init all REST Api dependencies
+   */
   private init() {
     const logPrefix = `${RestApiManager.className}::init`;
     winston.info(`${logPrefix} Initializing rest api`);
@@ -54,6 +58,9 @@ export class RestApiManager {
         inflate: true
       })
     );
+
+    this.expressApp.use(fileUpload());
+
     this.expressApp.disable('x-powered-by');
     this.routeManager = new RoutesManager({
       app: this.expressApp,
@@ -61,7 +68,7 @@ export class RestApiManager {
       dataSourcesManager: this.options.dataSourcesManager,
       dataSinksManager: this.options.dataSinksManager,
       dataPointCache: this.options.dataPointCache,
-      authManager,
+      authManager
     });
 
     this.start();
@@ -69,6 +76,7 @@ export class RestApiManager {
 
   /**
    * Start RestApiManager and all dependencies.
+   * @returns RestApiManager
    */
   private start(): RestApiManager {
     const logPrefix = `${RestApiManager.className}::start`;

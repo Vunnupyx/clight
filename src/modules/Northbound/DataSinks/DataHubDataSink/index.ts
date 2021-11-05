@@ -35,7 +35,10 @@ export class DataHubDataSink extends DataSink {
   public constructor(options: DataHubDataSinkOptions) {
     super(options.config);
     this.#signalGroups = options.runTimeConfig.signalGroups;
-    this.#datahubAdapter = new DataHubAdapter(options.runTimeConfig);
+    this.#datahubAdapter = new DataHubAdapter(
+      options.runTimeConfig,
+      options.config.datahub
+    );
   }
 
   /**

@@ -75,6 +75,10 @@ export class VirtualDataPointService {
     }
   }
 
+  /**
+   * Triggers every 1 second /livedata/vdps endpoint
+   * @returns Observable
+   */
   setLivedataTimer(): Observable<void> {
     return interval(1000).pipe(
       mergeMap(() => from(this.getLiveDataForDataPoints()))
@@ -82,10 +86,6 @@ export class VirtualDataPointService {
   }
 
   async getLiveDataForDataPoints() {
-    this._store.patchState((state) => {
-      state.dataPointsLivedata = {};
-    });
-
     try {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
         '/livedata/vdps'

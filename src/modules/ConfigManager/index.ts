@@ -1,4 +1,4 @@
-import {promises as fs, readFileSync} from 'fs';
+import { promises as fs, readFileSync } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import {
@@ -53,18 +53,24 @@ const defaultIoShieldDataSource: IDataSourceConfig = {
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false
 };
-
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
   protocol: DataSinkProtocols.OPCUA
 };
+
 const defaultDataHubDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.DATAHUB
+  protocol: DataSinkProtocols.DATAHUB,
+  datahub: {
+    provisioningHost: '',
+    scopeId: '',
+    regId: '',
+    symKey: ''
+  }
 };
 
 const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
@@ -90,8 +96,8 @@ export const emptyDefaultConfig: IConfig = {
   virtualDataPoints: [],
   mapping: [],
   systemInfo: [],
-  templates: {
-    completed: true // TODO Set false when template implementation is finished
+  quickStart: {
+    completed: true
   }
 };
 
@@ -105,6 +111,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     'mdclight/config'
   );
   private configName = 'config.json';
+  
   private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private _runtimeConfig: IRuntimeConfig;
@@ -149,6 +156,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     return this._authUsers.users;
   }
 
+  public get configPath(): string {
+    return path.join(this.configFolder, this.configName);
+  }
+
   /**
    * Creates config and check types
    */
@@ -177,11 +188,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         defaultPassword: ''
       },
       datahub: {
-        serialNumber: 'No serial number found',
-        provisioningHost: '',
-        scopeId: '',
-        regId: 'unknownDevice',
-        symKey: '',
+        serialNumber: 'No serial number found', // TODO Use mac address?
         groupDevice: false,
         signalGroups: undefined,
         dataPointTypesData: {
@@ -222,7 +229,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.authUsersConfigName,
         this._authUsers
       ).catch(() => this._authUsers),
-      this.loadTemplates(),
+      this.loadTemplates()
     ])
       .then(([runTime, config, authUsers]) => {
         this._runtimeConfig = runTime;
@@ -543,6 +550,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       });
   }
 
+  /**
+   * Save the current data from config property into a JSON config file on hard drive
+   */
   public saveConfig(obj: Partial<IConfig> = null): void {
     const logPrefix = `${ConfigManager.className}::saveConfig`;
 
@@ -575,5 +585,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
       });
+  }
+
+  /**
+   * Save configFile content into config
+   */
+  restoreConfigFile(configFile) {
+    const buffer = configFile.data;
+
+    this.config = JSON.parse(buffer.toString());
   }
 }

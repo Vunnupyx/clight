@@ -1,14 +1,33 @@
 {
   "general": {
-    "manufacturer": "DMGMORI",
+    "manufacturer": "DMGMORI111",
     "serialNumber": "12345678901",
     "model": "CMX 50 U",
     "control": "SIEMENS SINUMERIK 840D sl"
   },
   "networkConfig": {
-    "x1": {},
-    "x2": {},
-    "proxy": {}
+    "x1": {
+      "useDhcp": false,
+      "ipAddr": "192.168.214.230",
+      "netmask": "255.255.255.0",
+      "defaultGateway": "",
+      "dnsServer": ""
+    },
+    "x2": {
+      "useDhcp": true,
+      "ipAddr": "",
+      "netmask": "",
+      "defaultGateway": "",
+      "dnsServer": ""
+    },
+    "proxy": {
+      "useProxy": false,
+      "password": "",
+      "username": "",
+      "port": "",
+      "ipAddr": "",
+      "type": "http"
+    }
   },
   "dataSources": [
     {
@@ -332,7 +351,13 @@
         }
       ],
       "enabled": false,
-      "protocol": "datahub"
+      "protocol": "datahub",
+      "datahub": {
+        "provisioningHost": "mdclight-provisioning-service.azure-devices-provisioning.net",
+        "scopeId": "0ne003D4872",
+        "regId": "mdclpk01",
+        "symKey": "F6d7yubqvdY0En5Tf7puHxeD/I9zdx1efPcPEKUnIdzYZmRTD9f+bCWCK01yag7BIYEQQp1BWVfK+3tnbcrq7g=="
+      }
     },
     {
       "name": "",

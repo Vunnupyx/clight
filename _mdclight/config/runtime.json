@@ -22,10 +22,6 @@
     "nodesetDir": "mdclight/config/opcua_nodeSet"
   },
   "datahub": {
-    "provisioningHost": "",
-    "scopeId": "",
-    "regId": "",
-    "symKey": "",
     "groupDevice": false,
     "signalGroups": {
       "mdaBasic": [
@@ -75,10 +71,10 @@
     },
     "dataPointTypesData": {
       "probe": {
-        "intervalHours": 24
+        "intervalHours": 1
       },
       "telemetry": {
-        "intervalHours": 24
+        "intervalHours": 1
       }
     }
   }

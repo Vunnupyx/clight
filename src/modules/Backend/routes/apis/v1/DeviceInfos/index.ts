@@ -5,6 +5,7 @@ let configManager: ConfigManager;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param {ConfigManager} manager
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
@@ -12,6 +13,8 @@ export function setConfigManager(config: ConfigManager) {
 
 /**
  * Returns all data from config.general section
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function deviceInfosGetHandler(request: Request, response: Response): void {
   response.status(200).json(configManager?.config?.general);
@@ -19,6 +22,8 @@ function deviceInfosGetHandler(request: Request, response: Response): void {
 
 /**
  * Update all properties provided by the request body.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function deviceInfosPatchHandler(request: Request, response: Response): void {
   const newData = { ...configManager.config.general, ...request.body };

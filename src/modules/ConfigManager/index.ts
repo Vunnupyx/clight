@@ -98,7 +98,7 @@ export const emptyDefaultConfig: IConfig = {
   mapping: [],
   systemInfo: [],
   quickStart: {
-    completed: false // TODO Set false when template implementation is finished
+    completed: false
   }
 };
 
@@ -112,6 +112,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     'mdclight/config'
   );
   private configName = 'config.json';
+
   private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private _runtimeConfig: IRuntimeConfig;

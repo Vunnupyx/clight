@@ -204,6 +204,9 @@ export class DataHubAdapter {
    * Start the provisioning process for this device
    */
   private startProvisioning(): Promise<void> {
+    const logPrefix = `${DataHubAdapter.#className}::startProvisioning`;
+    winston.debug(`${logPrefix} Starting provisioning...`);
+
     this.#provSecClient = new SymmetricKeySecurityClient(
       this.#registrationId,
       this.#groupDeviceKey || this.#symKey
@@ -334,8 +337,10 @@ export class DataHubAdapter {
    */
   private getProvisioning(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::getProvisioning`;
+
     return new Promise((res, rej) => {
-      this.#provClient.register(async (err, response) => {
+      winston.debug(`${logPrefix} Registering...`);
+      this.#provClient.register((err, response) => {
         try {
           this.registrationHandler(err, response);
           res();

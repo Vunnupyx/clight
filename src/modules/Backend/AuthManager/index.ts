@@ -50,7 +50,7 @@ export class AuthManager {
       throw new Error('User with these credentials could not be found!');
     }
 
-    const macAddress = await this.readMacAddress();
+    const macAddress = await this.readDeviceLabelMacAddress();
 
     if (macAddress !== serializedUsername.substring(2)) {
       winston.warn(
@@ -209,17 +209,17 @@ export class AuthManager {
    * @async
    * @returns {Promise<string>} Mac Address
    */
-  private async readMacAddress(): Promise<string> {
+  private async readDeviceLabelMacAddress(): Promise<string> {
     let address;
 
     try {
-      address = await fs.readFile('/sys/class/net/eth0/address', {
+      address = await fs.readFile('/sys/class/net/eth1/address', {
         encoding: 'utf-8'
       });
     } catch (err) {
       address = this.EMPTY_MAC_ADDRESS;
     }
 
-    return address.split(':').join('').split('\n').join('');
+    return address.split(':').join('').split('\n').join('').toUpperCase();
   }
 }

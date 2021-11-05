@@ -86,78 +86,6 @@ export default {
         }
       }
     },
-    '/auth/forgot-password': {
-      post: {
-        security: [],
-        tags: ['auth'],
-        operationId: 'sendResetLinkPost',
-        description: 'Sends reset link',
-        parameters: [
-          {
-            in: 'body',
-            name: 'forgotPasswordRequest',
-            description: 'Forgot Password Request',
-            required: true,
-            schema: {
-              $ref: '#/definitions/forgotPasswordRequest'
-            }
-          }
-        ],
-        responses: {
-          '200': {
-            description: ''
-          }
-        }
-      }
-    },
-    '/auth/forgot-password/verify': {
-      post: {
-        security: [],
-        tags: ['auth'],
-        operationId: 'verifyResetPasswordTokenPost',
-        description: 'Verifies reset token',
-        parameters: [
-          {
-            in: 'body',
-            name: 'forgotPasswordVerifyRequest',
-            description: 'Forgot Password Verify Request',
-            required: true,
-            schema: {
-              $ref: '#/definitions/forgotPasswordVerifyRequest'
-            }
-          }
-        ],
-        responses: {
-          '200': {
-            description: ''
-          }
-        }
-      }
-    },
-    '/auth/reset-password': {
-      post: {
-        security: [],
-        tags: ['auth'],
-        operationId: 'resetPasswordPost',
-        description: 'Resets password',
-        parameters: [
-          {
-            in: 'body',
-            name: 'resetPasswordRequest',
-            description: 'Reset Password Request',
-            required: true,
-            schema: {
-              $ref: '#/definitions/resetPasswordRequest'
-            }
-          }
-        ],
-        responses: {
-          '200': {
-            description: ''
-          }
-        }
-      }
-    },
     '/auth/change-password': {
       post: {
         tags: ['auth'],
@@ -1817,7 +1745,7 @@ export default {
             },
             type: {
               type: 'string',
-              enum: ['socks5' , 'http']
+              enum: ['socks5', 'http']
             }
           }
         }

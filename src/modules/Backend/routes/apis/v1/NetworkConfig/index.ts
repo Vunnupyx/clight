@@ -23,25 +23,34 @@ async function networkConfigGetHandler(
   response: Response
 ): Promise<void> {
   // Get real configuration of host
+  const logPrefix = `${networkConfigGetHandler.name}`;
+
   const [x2, x1] = await Promise.all([
     NetworkManagerCliController.getConfiguration('eth0'),
     NetworkManagerCliController.getConfiguration('eth1')
-  ]);
+  ]).catch((e) => {
+    winston.warn(
+      `${logPrefix} connection to host network manager failed. Returning configuration from config file.`
+    );
+    return [undefined, undefined];
+  });
+
   const { x1: cx1, x2: cx2 } = configManager.config.networkConfig;
+
   const merged = {
     x1: {
-      useDhcp: x1.dhcp || cx1.useDhcp,
-      ipAddr: x1.ipAddress || cx1.ipAddr,
-      netmask: x1.subnetMask || cx1.netmask,
-      defaultGateway: x1.gateway || cx1.defaultGateway,
-      dnsServer: x1.dns || cx1.dnsServer
+      useDhcp: x1?.dhcp || cx1.useDhcp,
+      ipAddr: x1?.ipAddress || cx1.ipAddr,
+      netmask: x1?.subnetMask || cx1.netmask,
+      defaultGateway: x1?.gateway || cx1.defaultGateway,
+      dnsServer: x1?.dns || cx1.dnsServer
     },
     x2: {
-      useDhcp: x2.dhcp || cx2.useDhcp,
-      ipAddr: x2.ipAddress || cx2.ipAddr,
-      netmask: x2.subnetMask || cx2.netmask,
-      defaultGateway: x2.gateway || cx2.defaultGateway,
-      dnsServer: x2.dns || cx2.dnsServer
+      useDhcp: x2?.dhcp || cx2.useDhcp,
+      ipAddr: x2?.ipAddress || cx2.ipAddr,
+      netmask: x2?.subnetMask || cx2.netmask,
+      defaultGateway: x2?.gateway || cx2.defaultGateway,
+      dnsServer: x2?.dns || cx2.dnsServer
     },
     proxy: configManager.config.networkConfig.proxy
   };
@@ -57,6 +66,8 @@ async function networkConfigPatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
+  const logPrefix = `${networkConfigPatchHandler.name}`;
+
   const x2Config = NetworkManagerCliController.generateNetworkInterfaceInfo(
     request.body.x2,
     'eth0'
@@ -73,7 +84,7 @@ async function networkConfigPatchHandler(
     results.forEach((result) => {
       if (result.status === 'rejected')
         winston.error(
-          `networkConfigPatchHandler error due to ${result.reason}`
+          `networkConfigPatchHandler error due to ${result.reason}. Only writing configuration to config file.`
         );
     });
   });

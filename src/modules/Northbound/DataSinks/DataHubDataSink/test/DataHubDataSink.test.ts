@@ -30,7 +30,6 @@ jest.doMock('winston', () => {
 
 import {
   IDataHubConfig,
-  IDataHubSettings,
   IDataSinkConfig
 } from '../../../../ConfigManager/interfaces';
 import { DataHubDataSink, DataHubDataSinkOptions } from '..';

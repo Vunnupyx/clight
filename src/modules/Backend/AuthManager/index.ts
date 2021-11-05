@@ -24,7 +24,7 @@ declare module 'express' {
 
 export class AuthManager {
   private static className: string = AuthManager.name;
-  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00\n';
+  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00';
 
   constructor(private configManager: ConfigManager) {}
 
@@ -52,6 +52,7 @@ export class AuthManager {
     }
 
     const macAddress = await this.readDeviceLabelMacAddress();
+    console.log(macAddress);
 
     if (macAddress !== serializedUsername.substring(2)) {
       winston.warn(
@@ -211,6 +212,7 @@ export class AuthManager {
    * @returns {Promise<string>} Mac Address
    */
   private async readDeviceLabelMacAddress(): Promise<string> {
-    return new System().readMacAddress('eth1') || this.EMPTY_MAC_ADDRESS;
+    const address = await new System().readMacAddress('eth1');
+    return address === null ? this.EMPTY_MAC_ADDRESS : address;
   }
 }

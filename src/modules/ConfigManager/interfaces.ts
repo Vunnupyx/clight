@@ -18,6 +18,7 @@ export interface IRuntimeConfig {
   restApi: IRestApiConfig;
   auth: IAuthRuntimeConfig;
   datahub: IDataHubConfig;
+  systemInfo: ISystemInfo[];
 }
 
 export interface IGeneralConfig {
@@ -265,7 +266,6 @@ export interface IConfig {
   general: IGeneralConfig;
   networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
-  systemInfo: ISystemInfo[];
 }
 
 export interface IConfigManagerParams {

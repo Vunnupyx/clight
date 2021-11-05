@@ -52,7 +52,7 @@ build-docker-webserver:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     # - yarn docker:build:webserver
-    - docker buildx build --platform linux/arm64-t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile --push client
+    - docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile --push client
   only:
     refs:
       - main

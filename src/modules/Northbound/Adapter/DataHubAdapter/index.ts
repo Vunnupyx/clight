@@ -172,6 +172,7 @@ export class DataHubAdapter {
    */
   public init(): Promise<DataHubAdapter> {
     const logPrefix = `${DataHubAdapter.#className}::init`;
+
     return Promise.resolve()
       .then(() => {
         winston.debug(`${logPrefix} initializing.`);

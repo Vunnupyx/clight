@@ -100,10 +100,10 @@ export class DataHubAdapter {
     this.#telemetrySendInterval = this.hoursToMs(
       staticOptions.dataPointTypesData.telemetry.intervalHours
     );
-    this.#dpsServiceAddress = dynamicOptions.provisioningHost;
-    this.#registrationId = dynamicOptions.regId;
-    this.#symKey = dynamicOptions.symKey;
-    this.#scopeId = dynamicOptions.scopeId;
+    this.#dpsServiceAddress = dynamicOptions?.provisioningHost || '';
+    this.#registrationId = dynamicOptions?.regId || '';
+    this.#symKey = dynamicOptions?.symKey || '';
+    this.#scopeId = dynamicOptions?.scopeId || '';
     this.#isGroupRegistration = staticOptions.groupDevice || false;
     this.#proxyConfig = staticOptions.proxy || null;
     this.#serialNumber = staticOptions.serialNumber;

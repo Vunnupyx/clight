@@ -39,6 +39,7 @@
           <mat-radio-group
             formControlName="templateId"
             class="source-radio-group"
+            (change)="onTemplateChange()"
           >
             <mat-radio-button
               class="source-radio-button"
@@ -46,7 +47,7 @@
               [value]="template.id"
             >
               <h3 class="mt-0 mb-0">{{ template.name }}</h3>
-              <p class="mt-0">{{ template.name }}</p>
+              <p class="mt-0">{{ template.description }}</p>
             </mat-radio-button>
           </mat-radio-group>
         </div>

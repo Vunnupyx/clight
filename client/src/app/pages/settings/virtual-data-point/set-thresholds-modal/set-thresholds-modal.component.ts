@@ -80,6 +80,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         }
       },
       series: [
+        ...this.getThresholdsSeries(),
         {
           name: 'Mocking Data',
           type: 'line',
@@ -138,15 +139,27 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     }, {});
   }
 
+  private getThresholdsSeries() {
+    return Object.values(this.data.thresholds).map((threshold) => ({
+      name: `Threshold val: ${threshold}`,
+      type: 'line',
+      showSymbol: false,
+      hoverAnimation: false,
+      data: [{ value: [-30, threshold] }, { value: [0, threshold] }]
+    }));
+  }
+
   private onLiveData(x: ObjectMap<DataPointLiveData>) {
     if (!x) {
       return;
     }
+    const thresholdsSeries = this.getThresholdsSeries();
 
     this.timeseries = x[this.data.source]?.timeseries || [];
 
     this.updateOptions = {
       series: [
+        ...thresholdsSeries,
         {
           data: this.prepareTimeseries()
         }

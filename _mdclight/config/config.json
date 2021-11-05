@@ -31,7 +31,6 @@
   },
   "dataSources": [
     {
-      "name": "",
       "dataPoints": [
         {
           "type": "nck",
@@ -156,8 +155,6 @@
       "enabled": true
     },
     {
-      "id": "",
-      "name": "",
       "dataPoints": [
         {
           "type": null,
@@ -209,7 +206,6 @@
   ],
   "dataSinks": [
     {
-      "name": "",
       "dataPoints": [
         {
           "id": "0c24235c-f56d-435b-a560-6874079effb4",
@@ -360,7 +356,6 @@
       }
     },
     {
-      "name": "",
       "dataPoints": [
         {
           "name": "Operation Duration",
@@ -430,8 +425,6 @@
       }
     },
     {
-      "id": "mtconnect",
-      "name": "My MTConnect Machine",
       "dataPoints": [
         {
           "name": "Operation Time",

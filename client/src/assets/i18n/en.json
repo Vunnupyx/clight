@@ -43,13 +43,16 @@
   "quick-start": {
     "Language": "Language",
     "SelectLanguage": "Select Language",
+    "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
     "LoadError": "Failed to load info. Try again later",
     "Next": "Next",
     "Save": "Save",
+    "ContinueWithoutTemplate": "Continue without template",
     "Attention": "Attention",
     "AttentionMessage": "When saving, your current configuration will be overwritten. Do you still want to continue?",
+    "SkipMessage": "Do you really want to continue without template?",
     "DataSources": {
       "ioshield": {
         "name": "Ioshield",

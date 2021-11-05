@@ -215,12 +215,19 @@ export type NetworkConfig = {
   proxy?: IProxyConfig;
 };
 
-export interface IDefaultTemplates {
-  availableDataSources: IDataSourceConfig[];
-  availableDataSinks: IDataSinkConfig[];
+export interface IDefaultTemplate {
+  id?: string;
+  name: string;
+  description: string;
+  dataSources: IDataSourceConfig[];
+  dataSinks: IDataSinkConfig[];
 }
 
-export interface TemplatesConfig {
+export interface IDefaultTemplates {
+  templates: IDefaultTemplate[];
+}
+
+export interface QuickStartConfig {
   completed: boolean;
 }
 
@@ -257,7 +264,7 @@ export interface IConfig {
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
   networkConfig: NetworkConfig;
-  templates: TemplatesConfig;
+  quickStart: QuickStartConfig;
   systemInfo: ISystemInfo[];
 }
 

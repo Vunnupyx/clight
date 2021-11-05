@@ -22,7 +22,8 @@ import {
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
-  IAuthUsersConfig
+  IAuthUsersConfig,
+  IDefaultTemplate
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -97,7 +98,7 @@ export const emptyDefaultConfig: IConfig = {
   mapping: [],
   systemInfo: [],
   quickStart: {
-    completed: true
+    completed: false
   }
 };
 
@@ -111,7 +112,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     'mdclight/config'
   );
   private configName = 'config.json';
-  
+
   private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private _runtimeConfig: IRuntimeConfig;
@@ -312,6 +313,34 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
+   * Applies template settings.
+   */
+  public applyTemplate(
+    templateFileName: string,
+    dataSources: string[],
+    dataSinks: string[]
+  ) {
+    const template = this._defaultTemplates.templates.find(
+      (x) => x.id === templateFileName
+    );
+    const sources = template.dataSources.filter((x) =>
+      dataSources.includes(x.protocol)
+    );
+    const sinks = template.dataSinks.filter((x) =>
+      dataSinks.includes(x.protocol)
+    );
+
+    this.config = {
+      ...this._config,
+      dataSources: sources,
+      dataSinks: sinks,
+      quickStart: {
+        completed: true
+      }
+    };
+  }
+
+  /**
    * Checks type of configuration value.
    */
   private checkType(value: any, type: string, name: string) {
@@ -388,7 +417,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     try {
       const configPath = path.join(
         this.configFolder,
-        'defaulttemplates',
+        'templates',
         templateName
       );
       return JSON.parse(await fs.readFile(configPath, { encoding: 'utf-8' }));
@@ -400,31 +429,25 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplates() {
     try {
       const templateNames = await fs.readdir(
-        path.join(this.configFolder, 'defaulttemplates'),
+        path.join(this.configFolder, 'templates'),
         { encoding: 'utf-8' }
       );
 
-      const templates = await Promise.all(
-        templateNames.map((template) => this.loadTemplate(template))
-      );
-
-      const dataSources = unique(
-        templates.map((x) => x.dataSources).flat(),
-        (ds) => ds.protocol
-      );
-      const dataSinks = unique(
-        templates.map((x) => x.dataSinks).flat(),
-        (ds) => ds.protocol
+      const templates = await Promise.all<IDefaultTemplate>(
+        templateNames.map((template) =>
+          this.loadTemplate(template).then((data) => ({
+            ...data,
+            id: template
+          }))
+        )
       );
 
       this._defaultTemplates = {
-        availableDataSources: dataSources,
-        availableDataSinks: dataSinks
+        templates
       };
     } catch {
       this._defaultTemplates = {
-        availableDataSources: [],
-        availableDataSinks: []
+        templates: []
       };
     }
   }

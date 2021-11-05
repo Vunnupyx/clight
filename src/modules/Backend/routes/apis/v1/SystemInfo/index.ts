@@ -17,8 +17,9 @@ export function setConfigManager(config: ConfigManager) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function systemInfoGetHandler(request: Request, response: Response) {
-  response.status(200).json(configManager.config.systemInfo);
+async function systemInfoGetHandler(request: Request, response: Response) {
+  const systemInfo = await configManager.getSystemInformation();
+  response.status(200).json(systemInfo);
 }
 
 export const systemInfoHandlers = {

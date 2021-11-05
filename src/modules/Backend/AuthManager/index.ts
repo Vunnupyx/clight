@@ -6,6 +6,7 @@ import { promises as fs } from 'fs';
 import { ConfigManager } from '../../ConfigManager';
 import { IAuthUser } from '../../ConfigManager/interfaces';
 import winston from 'winston';
+import { System } from '../../System';
 
 interface LoginDto {
   accessToken: string;
@@ -210,16 +211,6 @@ export class AuthManager {
    * @returns {Promise<string>} Mac Address
    */
   private async readDeviceLabelMacAddress(): Promise<string> {
-    let address;
-
-    try {
-      address = await fs.readFile('/sys/class/net/eth1/address', {
-        encoding: 'utf-8'
-      });
-    } catch (err) {
-      address = this.EMPTY_MAC_ADDRESS;
-    }
-
-    return address.split(':').join('').split('\n').join('').toUpperCase();
+    return new System().readMacAddress('eth1') || this.EMPTY_MAC_ADDRESS;
   }
 }

@@ -25,7 +25,7 @@ export class System {
       return null;
     }
 
-    return address.split(':').join('').split('\n').join('').toUpperCase();
+    return address.trim();
   }
 
   /**

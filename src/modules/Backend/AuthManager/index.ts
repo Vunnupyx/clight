@@ -51,8 +51,9 @@ export class AuthManager {
       throw new Error('User with these credentials could not be found!');
     }
 
-    const macAddress = await this.readDeviceLabelMacAddress();
-    console.log(macAddress);
+    const macAddress = (await this.readDeviceLabelMacAddress())
+      .split(':')
+      .join('');
 
     if (macAddress !== serializedUsername.substring(2)) {
       winston.warn(

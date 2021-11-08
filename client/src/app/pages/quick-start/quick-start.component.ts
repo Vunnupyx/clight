@@ -92,6 +92,19 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
+  onTemplateChange() {
+    const dataSources =
+      this.templatesObj[this.templateForm.value.templateId].dataSources;
+    const dataSinks =
+      this.templatesObj[this.templateForm.value.templateId].dataSinks;
+
+    dataSources.forEach((x) => (this.checkedSources[x] = true));
+    dataSinks.forEach((x) => (this.checkedSinks[x] = true));
+
+    this.onSourcesChange();
+    this.onInterfacesChange();
+  }
+
   onLanguageChange(value: string) {
     this.translate.use(value);
     this.localStorageService.set('ui-lang', value);

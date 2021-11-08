@@ -1,0 +1,187 @@
+{
+  "general": {
+    "manufacturer": "DMGMORI",
+    "serialNumber": "",
+    "model": "GM",
+    "control": "S7 1500"
+  },
+  "networkConfig": {
+    "x1": {
+      "useDhcp": false,
+      "ipAddr": "192.168.214.230",
+      "netmask": "255.255.255.0",
+      "defaultGateway": "",
+      "dnsServer": ""
+    },
+    "x2": {
+      "useDhcp": true,
+      "ipAddr": "",
+      "netmask": "",
+      "defaultGateway": "",
+      "dnsServer": ""
+    },
+    "proxy": {
+      "useProxy": false,
+      "password": "",
+      "username": "",
+      "port": "",
+      "ipAddr": "",
+      "type": "http"
+    }
+  },
+  "dataSources": [
+    {
+      "dataPoints": [
+        {
+          "type": "s7",
+          "name": "Serial Number",
+          "address": "DB125,S0.11",
+          "id": "c33be9ae-be2f-43b6-b250-ed2ce6349eb3",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Power On Time Drives",
+          "address": "DB25,DWORD0",
+          "id": "34dd12f0-3dd6-4d07-b610-f7457857b9e5"
+        },
+        {
+          "type": "s7",
+          "name": "Power On Time Overall",
+          "address": "DB25,DWORD4",
+          "id": "b2c4e28b-4c75-4a26-9638-8ba7b95b6571",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Part Count Overall",
+          "address": "DB80,DWORD142",
+          "id": "4a2ccdca-a0f4-49b9-be43-75993ffa78d9",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Software Version",
+          "address": "DB125,S14.11",
+          "id": "ead624a5-3666-48c8-8619-d004be96fe60",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Red Stack Light",
+          "address": "Q34.0",
+          "id": "6a55e0f0-0229-48b2-95d2-723a9b8904c1",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Green Stack Light",
+          "address": "Q34.2",
+          "id": "b3cc71f0-99bc-4315-8419-b82235801cb4",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Blue Stack Light",
+          "address": "Q34.3",
+          "id": "63dd085b-a4dc-4fff-aa25-e1ebc980f0a2",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Yellow Stack Light",
+          "address": "Q34.1",
+          "id": "00d94f68-20e8-460d-b732-7db59da2549c",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Alarm active",
+          "address": "M65.4",
+          "id": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Execution Stopped",
+          "address": "M15.0",
+          "id": "8c75703b-6aac-42cf-be8b-2fcc0ff68486"
+        },
+        {
+          "type": "s7",
+          "name": "Controller Mode",
+          "address": "DB340,BYTE60",
+          "id": "bc226243-3473-4924-8fa7-e603ac37234c",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Main NC Progam",
+          "address": "DB340,S0.18",
+          "id": "6f20efdc-fcbe-402c-bc07-fa51739705d4"
+        },
+        {
+          "type": "s7",
+          "name": "NC Program",
+          "address": "DB340,S22.18",
+          "id": "2734bc19-1ceb-424a-a87b-80044473d6c0"
+        },
+        {
+          "type": "s7",
+          "name": "Actual Parts",
+          "address": "DB80,DWORD134",
+          "id": "e578a5ec-e2e2-4ca8-b19b-1d256c5a3dec",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Least one axis moving",
+          "address": "DB201,X1.6",
+          "id": "e85d2ede-5554-46c8-8ba1-b2613dce0a51",
+          "readFrequency": 1000
+        }
+      ],
+      "protocol": "s7",
+      "connection": {
+        "ipAddr": "192.168.214.1",
+        "port": 102,
+        "rack": 0,
+        "slot": 2
+      },
+      "enabled": true
+    },
+    {
+      "dataPoints": [],
+      "protocol": "ioshield",
+      "connection": null,
+      "enabled": true
+    }
+  ],
+  "dataSinks": [
+    {
+      "dataPoints": [],
+      "enabled": false,
+      "protocol": "datahub"
+    },
+    {
+      "dataPoints": [],
+      "enabled": true,
+      "protocol": "opcua",
+      "auth": {
+        "type": "anonymous"
+      }
+    },
+    {
+      "dataPoints": [],
+      "protocol": "mtconnect",
+      "enabled": true
+    }
+  ],
+  "virtualDataPoints": [],
+  "mapping": [],
+  "quickStart": {
+    "completed": true
+  },
+  "name": "GM Series",
+  "description": "GM 16-6 or GM 20-6"
+}

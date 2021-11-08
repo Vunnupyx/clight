@@ -1,4 +1,4 @@
-import { promises as fs, readFileSync } from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import {
@@ -10,7 +10,6 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import { unique } from '../Utilities';
 import {
   IDefaultTemplates,
   IConfig,
@@ -18,7 +17,6 @@ import {
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
-  IOpcuaDataSinkConfig,
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
@@ -27,6 +25,7 @@ import {
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
+import { System } from '../System';
 
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
@@ -96,9 +95,8 @@ export const emptyDefaultConfig: IConfig = {
   dataSinks: [],
   virtualDataPoints: [],
   mapping: [],
-  systemInfo: [],
   quickStart: {
-    completed: false // TODO Set false when template implementation is finished
+    completed: false
   }
 };
 
@@ -112,6 +110,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     'mdclight/config'
   );
   private configName = 'config.json';
+
   private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private _runtimeConfig: IRuntimeConfig;
@@ -172,6 +171,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     // Initial values
     this._runtimeConfig = {
       users: [],
+      systemInfo: [],
       mtconnect: {
         listenerPort: 7878
       },
@@ -329,7 +329,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       dataSinks.includes(x.protocol)
     );
 
-    this.config = {
+    this._config = {
       ...this._config,
       dataSources: sources,
       dataSinks: sinks,
@@ -337,6 +337,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         completed: true
       }
     };
+
+    this.setupDefaultDataSources();
+    this.setupDefaultDataSinks();
+
+    this.config = this._config;
   }
 
   /**
@@ -616,5 +621,38 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const buffer = configFile.data;
 
     this.config = JSON.parse(buffer.toString());
+  }
+
+  /**
+   * Returns system information
+   */
+  public async getSystemInformation() {
+    const system = new System();
+    return [
+      {
+        title: 'General system information',
+        items: [
+          {
+            key: 'Board serial number',
+            keyDescription: '',
+            value: await system.readSerialNumber(),
+            valueDescription: 'Serial number'
+          },
+          {
+            key: 'Mac address X1',
+            keyDescription: '',
+            value: await system.readMacAddress('eth0'),
+            valueDescription: 'Mac adress'
+          },
+          {
+            key: 'Mac address X2',
+            keyDescription: '',
+            value: await system.readMacAddress('eth1'),
+            valueDescription: 'Mac adress'
+          }
+        ]
+      },
+      ...this.runtimeConfig.systemInfo
+    ];
   }
 }

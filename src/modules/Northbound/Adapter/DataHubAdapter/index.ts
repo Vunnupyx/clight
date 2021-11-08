@@ -100,10 +100,10 @@ export class DataHubAdapter {
     this.#telemetrySendInterval = this.hoursToMs(
       staticOptions.dataPointTypesData.telemetry.intervalHours
     );
-    this.#dpsServiceAddress = dynamicOptions.provisioningHost;
-    this.#registrationId = dynamicOptions.regId;
-    this.#symKey = dynamicOptions.symKey;
-    this.#scopeId = dynamicOptions.scopeId;
+    this.#dpsServiceAddress = dynamicOptions?.provisioningHost || '';
+    this.#registrationId = dynamicOptions?.regId || '';
+    this.#symKey = dynamicOptions?.symKey || '';
+    this.#scopeId = dynamicOptions?.scopeId || '';
     this.#isGroupRegistration = staticOptions.groupDevice || false;
     this.#proxyConfig = staticOptions.proxy || null;
     this.#serialNumber = staticOptions.serialNumber;
@@ -172,6 +172,7 @@ export class DataHubAdapter {
    */
   public init(): Promise<DataHubAdapter> {
     const logPrefix = `${DataHubAdapter.#className}::init`;
+
     return Promise.resolve()
       .then(() => {
         winston.debug(`${logPrefix} initializing.`);
@@ -204,6 +205,9 @@ export class DataHubAdapter {
    * Start the provisioning process for this device
    */
   private startProvisioning(): Promise<void> {
+    const logPrefix = `${DataHubAdapter.#className}::startProvisioning`;
+    winston.debug(`${logPrefix} Starting provisioning...`);
+
     this.#provSecClient = new SymmetricKeySecurityClient(
       this.#registrationId,
       this.#groupDeviceKey || this.#symKey
@@ -334,8 +338,10 @@ export class DataHubAdapter {
    */
   private getProvisioning(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::getProvisioning`;
+
     return new Promise((res, rej) => {
-      this.#provClient.register(async (err, response) => {
+      winston.debug(`${logPrefix} Registering...`);
+      this.#provClient.register((err, response) => {
         try {
           this.registrationHandler(err, response);
           res();

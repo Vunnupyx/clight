@@ -1,10 +1,10 @@
 {
-  "name": "Full Template",
-  "description": "NC / IOShield => OPCUA / MTConnect",
+  "name": "SINUMERIK 840D sl to Messanger",
+  "description": "SINUMERIK 840D sl to Messanger",
   "general": {
     "manufacturer": "DMGMORI",
-    "serialNumber": "12345678901",
-    "model": "CMX 50 U",
+    "serialNumber": "",
+    "model": "",
     "control": "SIEMENS SINUMERIK 840D sl"
   },
   "networkConfig": {

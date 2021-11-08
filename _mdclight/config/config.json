@@ -8,24 +8,29 @@
   "networkConfig": {
     "x1": {
       "useDhcp": false,
-      "ipAddr": "111.111.111.111",
-      "netmask": "111.111.111.111",
-      "defaultGateway": "0.0.0.0",
-      "dnsServer": "111.111.111.111"
+      "ipAddr": "192.168.214.230",
+      "netmask": "255.255.255.0",
+      "defaultGateway": "",
+      "dnsServer": ""
     },
-    "x2": {},
+    "x2": {
+      "useDhcp": true,
+      "ipAddr": "",
+      "netmask": "",
+      "defaultGateway": "",
+      "dnsServer": ""
+    },
     "proxy": {
-      "useProxy": true,
+      "useProxy": false,
       "password": "",
       "username": "",
-      "port": "443",
-      "ipAddr": "google.com",
+      "port": "",
+      "ipAddr": "",
       "type": "http"
     }
   },
   "dataSources": [
     {
-      "name": "",
       "dataPoints": [
         {
           "type": "nck",
@@ -150,8 +155,6 @@
       "enabled": true
     },
     {
-      "id": "",
-      "name": "",
       "dataPoints": [
         {
           "type": null,
@@ -203,7 +206,6 @@
   ],
   "dataSinks": [
     {
-      "name": "",
       "dataPoints": [
         {
           "id": "0c24235c-f56d-435b-a560-6874079effb4",
@@ -354,7 +356,6 @@
       }
     },
     {
-      "name": "",
       "dataPoints": [
         {
           "name": "Operation Duration",
@@ -424,8 +425,6 @@
       }
     },
     {
-      "id": "mtconnect",
-      "name": "My MTConnect Machine",
       "dataPoints": [
         {
           "name": "Operation Time",
@@ -640,8 +639,7 @@
       "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a27"
     }
   ],
-  "systemInfo": [],
-  "templates": {
-    "completed": true
+  "quickStart": {
+    "completed": false
   }
 }

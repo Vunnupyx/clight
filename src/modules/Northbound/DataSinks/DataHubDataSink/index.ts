@@ -31,9 +31,11 @@ export class DataHubDataSink extends DataSink {
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
   #connected = false;
+  options: DataHubDataSinkOptions;
 
   public constructor(options: DataHubDataSinkOptions) {
     super(options.config);
+    this.options = options;
     this.#signalGroups = options.runTimeConfig.signalGroups;
     this.#datahubAdapter = new DataHubAdapter(
       options.runTimeConfig,
@@ -111,6 +113,20 @@ export class DataHubDataSink extends DataSink {
   public init(): Promise<DataHubDataSink> {
     const logPrefix = `${DataHubDataSink.#className}::init`;
     winston.debug(`${logPrefix} initializing.`);
+
+    if (
+      !this.options.config.datahub ||
+      !this.options.config.datahub.provisioningHost ||
+      !this.options.config.datahub.regId ||
+      !this.options.config.datahub.scopeId ||
+      !this.options.config.datahub.symKey
+    ) {
+      winston.warn(
+        `${logPrefix} aborting data hub adapter initializing due to missing configuration.`
+      );
+      return null;
+    }
+
     return this.#datahubAdapter
       .init()
       .then((adapter) => adapter.start())

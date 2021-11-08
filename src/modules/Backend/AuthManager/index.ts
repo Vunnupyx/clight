@@ -6,6 +6,7 @@ import { promises as fs } from 'fs';
 import { ConfigManager } from '../../ConfigManager';
 import { IAuthUser } from '../../ConfigManager/interfaces';
 import winston from 'winston';
+import { System } from '../../System';
 
 interface LoginDto {
   accessToken: string;
@@ -23,7 +24,7 @@ declare module 'express' {
 
 export class AuthManager {
   private static className: string = AuthManager.name;
-  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00\n';
+  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00';
 
   constructor(private configManager: ConfigManager) {}
 
@@ -50,7 +51,9 @@ export class AuthManager {
       throw new Error('User with these credentials could not be found!');
     }
 
-    const macAddress = await this.readMacAddress();
+    const macAddress = (await this.readDeviceLabelMacAddress())
+      .split(':')
+      .join('');
 
     if (macAddress !== serializedUsername.substring(2)) {
       winston.warn(
@@ -209,17 +212,8 @@ export class AuthManager {
    * @async
    * @returns {Promise<string>} Mac Address
    */
-  private async readMacAddress(): Promise<string> {
-    let address;
-
-    try {
-      address = await fs.readFile('/sys/class/net/eth0/address', {
-        encoding: 'utf-8'
-      });
-    } catch (err) {
-      address = this.EMPTY_MAC_ADDRESS;
-    }
-
-    return address.split(':').join('').split('\n').join('');
+  private async readDeviceLabelMacAddress(): Promise<string> {
+    const address = await new System().readMacAddress('eth1');
+    return address === null ? this.EMPTY_MAC_ADDRESS : address;
   }
 }

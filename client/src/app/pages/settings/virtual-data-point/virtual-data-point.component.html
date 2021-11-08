@@ -172,13 +172,16 @@
             let-value="value"
             let-row="row"
           >
-            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex !== rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
                 *ngIf="
                   row?.operationType ===
                   VirtualDataPointOperationType.THRESHOLDS
                 "
-                (click)="onSetThreshold(row)"
+                (click)="onSetThreshold(row); group.value = null"
                 [matTooltip]="
                   'settings-virtual-data-point.SetThreshold' | translate
                 "
@@ -186,19 +189,22 @@
                 ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditStart(rowIndex, row)"
+                (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>edit</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onDelete(row)"
+                (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
-            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+            <mat-button-toggle-group
+              #group="matButtonToggleGroup"
+              *ngIf="unsavedRowIndex === rowIndex"
+            >
               <mat-button-toggle
                 *ngIf="
                   unsavedRow?.operationType ===
@@ -208,7 +214,8 @@
                   unsavedRow &&
                     unsavedRow.sources &&
                     unsavedRow.sources.length > 0 &&
-                    onSetThreshold(unsavedRow)
+                    onSetThreshold(unsavedRow);
+                  group.value = null
                 "
                 [matTooltip]="
                   'settings-virtual-data-point.SetThreshold' | translate
@@ -224,7 +231,7 @@
                 ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditEnd()"
+                (click)="onEditEnd(); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
@@ -232,7 +239,7 @@
                 ></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditCancel()"
+                (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"

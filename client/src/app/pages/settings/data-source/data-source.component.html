@@ -230,7 +230,7 @@
             let-value="value"
             let-row="row"
           >
-            <span *ngIf="liveData[row.id]; else noLiveData">
+            <span *ngIf="liveData && liveData[row.id]; else noLiveData">
               <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
                 {{
                   'settings-data-source.Livedata.ioshield.' +
@@ -269,10 +269,16 @@
               <ng-container [ngSwitch]="unsavedRow!.type">
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK">
                   <div>{{ unsavedRow?.address }}</div>
-                  <mat-button-toggle-group class="mt-0 ml-10">
+                  <mat-button-toggle-group
+                    class="mt-0 ml-10"
+                    #group="matButtonToggleGroup"
+                  >
                     <mat-button-toggle
                       class="small-button"
-                      (click)="unsavedRow && onAddressSelect(unsavedRow)"
+                      (click)="
+                        unsavedRow && onAddressSelect(unsavedRow);
+                        group.value = null
+                      "
                       [matTooltip]="'settings-data-source.Select' | translate"
                       matTooltipPosition="above"
                       ><mat-icon>open_in_new</mat-icon></mat-button-toggle
@@ -322,23 +328,29 @@
             let-value="value"
             let-row="row"
           >
-            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex !== rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditStart(rowIndex, row)"
+                (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-data-source.Edit' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>edit</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onDelete(row)"
+                (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-source.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
-            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex === rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditEnd()"
+                (click)="onEditEnd(); group.value = null"
                 [matTooltip]="'settings-data-source.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
@@ -346,7 +358,7 @@
                 ></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditCancel()"
+                (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-data-source.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"

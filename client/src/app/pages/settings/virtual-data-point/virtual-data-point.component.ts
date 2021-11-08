@@ -225,7 +225,8 @@ export class VirtualDataPointComponent implements OnInit {
     const dialogRef = this.dialog.open(SetThresholdsModalComponent, {
       data: {
         thresholds: { ...virtualPoint.thresholds },
-        source: virtualPoint.sources![0]
+        source: virtualPoint.sources![0],
+        sourceName: this.getSourceNames(virtualPoint.sources!)
       },
       width: '850px'
     });

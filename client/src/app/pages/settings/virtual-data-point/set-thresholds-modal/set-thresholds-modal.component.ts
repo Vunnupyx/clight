@@ -9,6 +9,7 @@ import { SourceDataPointService } from '../../../../services';
 export interface SetThresholdsModalData {
   thresholds: ObjectMap<number>;
   source: string;
+  sourceName: string;
 }
 
 @Component({
@@ -70,6 +71,18 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
           formatter: (value) => {
             return `${value}s`;
           }
+        },
+        axisPointer: {
+          label: {
+            formatter: ({ value }) => {
+              const time = new Date(Date.now() + value * 1000);
+              const hours = this.parseNum(time.getHours());
+              const minutes = this.parseNum(time.getMinutes());
+              const seconds = this.parseNum(time.getSeconds());
+
+              return `${hours}:${minutes}:${seconds}`;
+            }
+          }
         }
       },
       yAxis: {
@@ -82,7 +95,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
       series: [
         ...this.getThresholdsSeries(),
         {
-          name: 'Mocking Data',
+          name: this.data.sourceName,
           type: 'line',
           showSymbol: false,
           hoverAnimation: false,
@@ -112,6 +125,23 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     this.rows.splice(i, 1);
   }
 
+  onThresholdChanged() {
+    const thresholdsSeries = this.getThresholdsSeries();
+
+    this.updateOptions = {
+      series: [
+        ...thresholdsSeries,
+        {
+          data: this.prepareTimeseries()
+        }
+      ]
+    };
+  }
+
+  private parseNum(num: number) {
+    return num < 10 ? `0${num}` : num;
+  }
+
   private prepareTimeseries() {
     return this.timeseries.map((el) => {
       const now = new Date();
@@ -139,13 +169,17 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     }, {});
   }
 
+  private getChartXAxisValues() {
+    return new Array(31).fill(0).map((el, i) => -i);
+  }
+
   private getThresholdsSeries() {
-    return Object.values(this.data.thresholds).map((threshold) => ({
+    return this.rows.map(({ threshold }) => ({
       name: `Threshold val: ${threshold}`,
       type: 'line',
       showSymbol: false,
       hoverAnimation: false,
-      data: [{ value: [-30, threshold] }, { value: [0, threshold] }]
+      data: this.getChartXAxisValues().map((el) => ({ value: [el, threshold] }))
     }));
   }
 

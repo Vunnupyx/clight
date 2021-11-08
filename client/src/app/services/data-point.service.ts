@@ -4,7 +4,12 @@ import { filter, map } from 'rxjs/operators';
 import { DataPoint, DataSinkProtocol } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import {array2map, errorHandler, flatArray, ObjectMap} from 'app/shared/utils';
+import {
+  array2map,
+  errorHandler,
+  flatArray,
+  ObjectMap
+} from 'app/shared/utils';
 import * as api from 'app/api/models';
 
 export class DataPointsState {
@@ -47,7 +52,11 @@ export class DataPointService {
       this._store.patchState((state) => {
         state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
-        state.dataPointsSinkMap = array2map(state.dataPoints, (item) => item.id!, () => protocol);
+        state.dataPointsSinkMap = array2map(
+          state.dataPoints,
+          (item) => item.id!,
+          () => protocol
+        );
       });
     } catch (err) {
       errorHandler(err);
@@ -73,14 +82,20 @@ export class DataPointService {
       let wholeMap = {};
 
       for (const dataSink of dataSinks) {
-        const map = array2map(dataSink.dataPoints!, item => item.id!, () => dataSink.protocol)
+        const map = array2map(
+          dataSink.dataPoints!,
+          (item) => item.id!,
+          () => dataSink.protocol
+        );
 
         wholeMap = {
           ...wholeMap,
-          ...map,
+          ...map
         };
 
-        dataPoints = dataPoints.concat(...(dataSink.dataPoints as api.DataPointType[]));
+        dataPoints = dataPoints.concat(
+          ...(dataSink.dataPoints as api.DataPointType[])
+        );
       }
 
       this._store.patchState((state) => {
@@ -174,7 +189,7 @@ export class DataPointService {
 
     switch (protocol) {
       case DataSinkProtocol.DH:
-        return '';
+        return '[DATAHUB]';
       case DataSinkProtocol.MTConnect:
         return '[MTC]';
       case DataSinkProtocol.OPC:

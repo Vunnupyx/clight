@@ -329,7 +329,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       dataSinks.includes(x.protocol)
     );
 
-    this.config = {
+    this._config = {
       ...this._config,
       dataSources: sources,
       dataSinks: sinks,
@@ -337,6 +337,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         completed: true
       }
     };
+
+    this.setupDefaultDataSources();
+    this.setupDefaultDataSinks();
+
+    this.config = this._config;
   }
 
   /**

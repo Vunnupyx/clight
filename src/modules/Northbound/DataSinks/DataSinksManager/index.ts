@@ -123,6 +123,12 @@ export class DataSinksManager {
     });
   }
 
+  private disconnectDataSinksFromBus(): void {
+    this.dataSinks.forEach((ds) => {
+      this.measurementsBus.offEvent(ds.onMeasurements);
+    })
+  }
+
   /**
    * Returns datasink by protocol
    */
@@ -138,6 +144,7 @@ export class DataSinksManager {
     this.dataSinksRestartPending = true;
     const logPrefix = `${DataSinksManager.name}::configChangeHandler`;
     const shutdownFunctions = [];
+    this.disconnectDataSinksFromBus()
     this.dataSinks.forEach((sink) => {
         if (!sink.shutdown) winston.error(`${logPrefix} ${sink} does not have a shutdown method.`);
         shutdownFunctions.push(sink.shutdown());

@@ -251,7 +251,7 @@ export class MTConnectAdapter {
     const shutdownFunctions = [];
     this.clients.forEach((sock) => {
       sock.removeAllListeners();
-      shutdownFunctions.push(promisify(sock.end)());
+      shutdownFunctions.push(sock.end());
     })
     console.log()
     Object.getOwnPropertyNames(this).forEach((prop) => {

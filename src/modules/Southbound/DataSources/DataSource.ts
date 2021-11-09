@@ -18,11 +18,14 @@ import {
 } from '../../../common/interfaces';
 import Timeout = NodeJS.Timeout;
 import { SynchronousIntervalScheduler } from '../../SyncScheduler';
+import winston from 'winston';
 
 /**
  * Implements data source
  */
 export abstract class DataSource extends EventEmitter {
+  protected static className = DataSource.name;
+
   protected config: IDataSourceConfig;
   protected level = EventLevels.DataSource;
   protected reconnectTimeoutId: Timeout = null;
@@ -61,13 +64,17 @@ export abstract class DataSource extends EventEmitter {
    */
   protected setupDataPoints(): void {
     if (this.schedulerListenerId) return;
+
+    const logPrefix = `${DataSource.className}::setupDataPoints`;
+    winston.debug(`${logPrefix} setup data points`);
     const datapointIntervals: Array<number> = this.config.dataPoints.map(
       (dataPointConfig) => {
         // Limit read frequency to 1/s
-        return Math.max(dataPointConfig.readFrequency, 1000);
+        return Math.max(dataPointConfig.readFrequency || 1000, 1000);
       }
     );
     const intervals = Array.from(new Set(datapointIntervals));
+
     this.schedulerListenerId = this.scheduler.addListener(
       intervals,
       this.dataSourceCycle.bind(this)

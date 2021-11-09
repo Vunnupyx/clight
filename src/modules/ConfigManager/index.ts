@@ -575,7 +575,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.emit('configChange');
       })
       .catch((err) => {
-        winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
+        winston.error(`${logPrefix} error due to ${err.message}`);
       });
   }
 

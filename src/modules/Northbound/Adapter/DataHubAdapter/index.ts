@@ -495,6 +495,36 @@ export class DataHubAdapter {
     msg.properties.add('messageType', type);
     return msg;
   }
+
+  public shutdown(): Promise<void> {
+    const logPrefix = `${DataHubAdapter.name}::shutdown`;
+    const shutdownFunctions = [];
+    [
+      this.#proxy,
+      this.#provClient,
+      this.#provGroupClient, 
+      this.#provSecClient,
+      this.#symKeyProvTransport,
+      this.#dataHubClient,
+      this.#deviceTwin].forEach((prop) => {
+        // @ts-ignore
+      if (prop?.shutdown) shutdownFunctions.push(prop.shutdown());
+      // @ts-ignore
+      if (prop?.close) shutdownFunctions.push(prop.close());
+      // @ts-ignore
+      if (prop?.removeAllListeners) shutdownFunctions.push(prop.removeAllListeners());
+      prop = undefined;
+    })
+    this.#runningTimers.forEach((timer) => {
+      clearTimeout(timer);
+    });
+    return Promise.all(
+      shutdownFunctions).then(() => {
+        winston.info(`${logPrefix} successfully.`);
+      }).catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}.`);
+      });
+  }
 }
 
 /**

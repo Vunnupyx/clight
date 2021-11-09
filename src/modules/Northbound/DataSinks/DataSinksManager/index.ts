@@ -36,7 +36,7 @@ export class DataSinksManager {
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: Array<DataSink> = [];
   private dataSinksRestartPending = false;
-  private dataAddedDurringRestart = false;
+  private dataAddedDuringRestart = false;
 
   constructor(params: IDataSinkManagerParams) {
     this.configManager = params.configManager;
@@ -132,7 +132,7 @@ export class DataSinksManager {
 
   private configChangeHandler(): Promise<void> {
     if (this.dataSinksRestartPending) {
-      this.dataAddedDurringRestart = true;
+      this.dataAddedDuringRestart = true;
       return
     };
     this.dataSinksRestartPending = true;
@@ -152,8 +152,8 @@ export class DataSinksManager {
         winston.error(`${logPrefix} error due to ${err.message}`);
       }).finally(() => {
         this.dataSinksRestartPending = false;
-        if (this.dataAddedDurringRestart) {
-          this.dataAddedDurringRestart = false;
+        if (this.dataAddedDuringRestart) {
+          this.dataAddedDuringRestart = false;
           this.configChangeHandler()
         };
       });

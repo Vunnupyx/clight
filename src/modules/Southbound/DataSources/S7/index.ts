@@ -32,6 +32,7 @@ export class S7DataSource extends DataSource {
     silent: true
   });
   private nckClient = new SinumerikNCK();
+
   /**
    * Initializes s7 data source and connects to device
    * @returns void

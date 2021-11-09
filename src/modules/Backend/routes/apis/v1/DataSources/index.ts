@@ -58,7 +58,10 @@ function dataSourceGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourcePatchHandler(request: Request, response: Response): void {
+async function dataSourcePatchHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion'];
   const protocol = request.params.datasourceProtocol;
 
@@ -89,7 +92,7 @@ function dataSourcePatchHandler(request: Request, response: Response): void {
     changedDatasource
   ];
   configManager.config = config;
-
+  await configManager.configChangeCompleted();
   response.status(200).json(changedDatasource);
 }
 
@@ -115,10 +118,10 @@ function dataSourcesGetDatapointsHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourcesPostDatapointHandler(
+async function dataSourcesPostDatapointHandler(
   request: Request,
   response: Response
-): void {
+): Promise<void> {
   //TODO: Inputvaidlation
 
   const config = configManager.config;
@@ -128,7 +131,7 @@ function dataSourcesPostDatapointHandler(
   const newData = { ...request.body, ...{ id: uuidv4() } };
   dataSource.dataPoints.push({ ...newData, readFrequency: 1000 });
   configManager.config = config;
-
+  await configManager.configChangeCompleted();
   response.status(200).json({
     created: newData,
     href: `${request.originalUrl}/${newData.id}`
@@ -158,10 +161,10 @@ function dataSourcesGetDatapointHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourcesDeleteDatapointHandler(
+async function dataSourcesDeleteDatapointHandler(
   request: Request,
   response: Response
-): void {
+): Promise<void> {
   const config = configManager.config;
   const dataSource = config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
@@ -174,7 +177,7 @@ function dataSourcesDeleteDatapointHandler(
     dataSource.dataPoints.splice(index, 1);
   }
   configManager.config = config;
-
+  await configManager.configChangeCompleted();
   response
     .status(dataSource && point ? 200 : 404)
     .json(dataSource && index >= 0 ? { deleted: point } : null);
@@ -185,10 +188,10 @@ function dataSourcesDeleteDatapointHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourcesPatchDatapointHandler(
+async function dataSourcesPatchDatapointHandler(
   request: Request,
   response: Response
-): void {
+): Promise<void> {
   //TODO: Input validation
   const config = configManager.config;
   const dataSource = config.dataSources.find(
@@ -207,6 +210,7 @@ function dataSourcesPatchDatapointHandler(
     const newData = { ...request.body, dataPoint };
     dataSource.dataPoints.push(newData);
     configManager.config = config;
+    await configManager.configChangeCompleted();
     response.status(200).json({
       changed: newData,
       href: `/api/v1/datasources/${request.params.datasourceId}/dataPoints/${newData.id}`

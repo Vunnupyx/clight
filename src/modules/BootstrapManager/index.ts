@@ -23,7 +23,7 @@ import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 export class BootstrapManager {
   private configManager: ConfigManager;
   private dataSourcesManager: DataSourcesManager;
-  private dataSinkManager: DataSinksManager;
+  private dataSinksManager: DataSinksManager;
   private errorEventsBus: EventBus<IErrorEvent>;
   private lifecycleEventsBus: EventBus<ILifecycleEvent>;
   private measurementsEventsBus: MeasurementEventBus;
@@ -38,7 +38,9 @@ export class BootstrapManager {
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,
-      lifecycleEventsBus: this.lifecycleEventsBus
+      lifecycleEventsBus: this.lifecycleEventsBus,
+      dataSourcesManager: this.dataSourcesManager,
+      dataSinksManager: this.dataSinksManager
     });
 
     this.dataPointCache = new DataPointCache();
@@ -50,7 +52,7 @@ export class BootstrapManager {
 
     DataPointMapper.createInstance(this.configManager);
 
-    this.dataSinkManager = new DataSinksManager({
+    this.dataSinksManager = new DataSinksManager({
       configManager: this.configManager,
       dataPointCache: this.dataPointCache,
       errorBus: this.errorEventsBus,
@@ -70,7 +72,7 @@ export class BootstrapManager {
     this.backend = new RestApiManager({
       configManager: this.configManager,
       dataSourcesManager: this.dataSourcesManager,
-      dataSinksManager: this.dataSinkManager,
+      dataSinksManager: this.dataSinksManager,
       dataPointCache: this.dataPointCache
     });
   }
@@ -90,12 +92,17 @@ export class BootstrapManager {
           NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth0');
 
         Promise.all([
-          Object.keys(x2).length !== 0 ? NetworkManagerCliController.setConfiguration('eth0', nx2) : Promise.resolve(),
-          Object.keys(x2).length !== 0 ? NetworkManagerCliController.setConfiguration('eth1', nx1) : Promise.resolve(),
-        ]).then(() => winston.info(log + ' Successfully.'))
-        .catch((err) => {
-          winston.error(`${log} Failed due to ${err.message}`);
-        })
+          Object.keys(x2).length !== 0
+            ? NetworkManagerCliController.setConfiguration('eth0', nx2)
+            : Promise.resolve(),
+          Object.keys(x2).length !== 0
+            ? NetworkManagerCliController.setConfiguration('eth1', nx1)
+            : Promise.resolve()
+        ])
+          .then(() => winston.info(log + ' Successfully.'))
+          .catch((err) => {
+            winston.error(`${log} Failed due to ${err.message}`);
+          });
       });
       await this.configManager.init();
 

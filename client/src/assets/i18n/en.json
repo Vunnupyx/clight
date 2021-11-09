@@ -61,6 +61,10 @@
       "s7": {
         "name": "S7",
         "description": "S7 description"
+      },
+      "datahub": {
+        "name": "Data Hub",
+        "description": "Data Hub description"
       }
     },
     "DataSinks": {

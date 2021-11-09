@@ -1,4 +1,4 @@
-import {ObjectMap} from "../shared/utils";
+import { ObjectMap } from '../shared/utils';
 
 export enum VirtualDataPointOperationType {
   AND = 'and',
@@ -9,7 +9,7 @@ export enum VirtualDataPointOperationType {
 }
 
 export class VirtualDataPoint {
-  id?: string;
+  id!: string;
   operationType?: VirtualDataPointOperationType;
   sources?: string[];
   name?: string;

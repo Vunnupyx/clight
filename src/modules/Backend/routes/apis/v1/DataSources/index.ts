@@ -7,7 +7,10 @@ import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
-import { LifecycleEventStatus } from '../../../../../../common/interfaces';
+import {
+  DataSourceProtocols,
+  LifecycleEventStatus
+} from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -108,6 +111,40 @@ function dataSourcesGetDatapointsHandler(
   response.status(dataSource ? 200 : 404).json({
     dataPoints: dataSource.dataPoints
   });
+}
+
+/**
+ * @async
+ * Bulk dataPoint changes
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function dataSourcesPostDatapointBulkHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  try {
+    if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
+      response.status(404).json({ error: 'Protocol not valid' });
+      winston.error(
+        `dataSourcesPostDatapointBulkHandler error due to no valid protocol!`
+      );
+      return;
+    }
+
+    await configManager.bulkChangeDataSourceDataPoints(
+      request.params.datasourceProtocol as DataSourceProtocols,
+      request.body || {}
+    );
+    response.status(200).send();
+  } catch {
+    winston.warn(
+      `dataSourcesPostDatapointBulkHandler tried to change bulk dataSource.dataPoints`
+    );
+    response
+      .status(400)
+      .json({ error: 'Cannot change datapoints. Try again!' });
+  }
 }
 
 /**
@@ -253,6 +290,7 @@ export const dataSourceHandlers = {
   dataSourcePatch: dataSourcePatchHandler,
   dataSourcesGet: dataSourcesGetHandler,
   // Multiple DataSources
+  dataSourcesPostDatapointBulk: dataSourcesPostDatapointBulkHandler,
   dataSourcesGetDatapoints: dataSourcesGetDatapointsHandler,
   dataSourcesPostDatapoint: dataSourcesPostDatapointHandler,
   dataSourcesGetDatapoint: dataSourcesGetDatapointHandler,

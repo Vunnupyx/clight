@@ -291,7 +291,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   onApply() {
-    return this.sourceDataPointService.apply().then().catch();
+    return this.sourceDataPointService.apply(this.dataSource?.protocol!);
   }
 
   private onConnection(x: DataSourceConnection | undefined) {

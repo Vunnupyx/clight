@@ -169,7 +169,9 @@
     "LoadError": "Failed to load data points. Try again later",
     "CreateError": "Failed to create a data point. Try again later",
     "UpdateError": "Failed to update a data point. Try again later",
-    "DeleteError": "Failed to delete a data point. Try again later"
+    "DeleteError": "Failed to delete a data point. Try again later",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!"
   },
   "settings-data-sink": {
     "DataSink": "Data Sink",

@@ -169,7 +169,9 @@
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
-    "DeleteError": ""
+    "DeleteError": "",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!"
   },
   "settings-data-sink": {
     "DataSink": "",

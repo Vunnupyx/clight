@@ -25,5 +25,5 @@ export interface IChangesAccumulatable<TKey, TEntity> {
 
 export interface IChangesAppliable {
   revert(): Promise<boolean>;
-  apply(): Promise<boolean>;
+  apply(...args: any): Promise<boolean>;
 }

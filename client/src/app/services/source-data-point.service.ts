@@ -20,7 +20,11 @@ import {
 } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import { from, interval, Observable } from 'rxjs';
-import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
+import {
+  IChangesAccumulatable,
+  IChangesAppliable,
+  IChangesState
+} from 'app/models/core/data-changes';
 import { BaseChangesService } from './base-changes.service';
 
 export class SourceDataPointsState {
@@ -82,19 +86,48 @@ export class SourceDataPointService
     return Promise.resolve(true);
   }
 
-  async apply(): Promise<boolean> {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-    });
+  async apply(datasourceProtocol: DataSourceProtocol): Promise<boolean> {
+    try {
+      this._store.patchState((state) => {
+        state.status = Status.Loading;
+      });
 
-    // call method to save changes
-    await sleep(3000);
+      const payload: Partial<IChangesState<string, SourceDataPoint>> = {};
 
-    this.resetState();
+      if (Object.keys(this._changes.snapshot.created).length) {
+        payload.created = this._changes.snapshot.created;
+      }
 
-    this._store.patchState((state) => {
-      state.status = Status.Ready;
-    });
+      if (Object.keys(this._changes.snapshot.updated).length) {
+        payload.updated = this._changes.snapshot.updated;
+      }
+
+      if (this._changes.snapshot.deleted.length) {
+        payload.deleted = this._changes.snapshot.deleted;
+      }
+
+      await this.httpService.post(
+        `/datasources/${datasourceProtocol}/bulk`,
+        payload
+      );
+
+      this.resetState();
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+
+      this.toastr.success(
+        this.translate.instant('settings-data-source-point.BulkSuccess')
+      );
+    } catch {
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.BulkError')
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
 
     return true;
   }

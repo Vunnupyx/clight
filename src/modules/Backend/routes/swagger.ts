@@ -185,6 +185,38 @@ export default {
         }
       }
     },
+    '/datasources/{datasourceProtocol}/bulk': {
+      parameters: [
+        {
+          name: 'datasourceProtocol',
+          in: 'path',
+          description: 'id of the datasource',
+          required: true,
+          type: 'string'
+        }
+      ],
+      post: {
+        tags: ['datasource'],
+        summary: 'change bulk datasource datapoints',
+        description: '',
+        operationId: 'dataSourcesPostDatapointBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed datasource'
+          }
+        }
+      }
+    },
     '/datasources/{datasourceProtocol}/status': {
       parameters: [
         {
@@ -1924,6 +1956,40 @@ export default {
             ]
           }
         }
+      }
+    },
+    changeBulk: {
+      type: 'object',
+      properties: {
+        created: {
+          type: 'object'
+        },
+        updated: {
+          type: 'object'
+        },
+        deleted: {
+          type: 'array',
+          items: {
+            allOf: [
+              {
+                type: 'string'
+              }
+            ]
+          }
+        }
+      },
+      example: {
+        created: {
+          entityId: {
+            entityProp: 'entityValue'
+          }
+        },
+        updated: {
+          entityId: {
+            entityProp: 'entityValue'
+          }
+        },
+        deleted: ['entityId']
       }
     }
   }

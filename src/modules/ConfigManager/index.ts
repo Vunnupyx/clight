@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
 import {
   DataSinkProtocols,
   DataSourceProtocols,
@@ -484,6 +485,45 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     }
 
     return this.mergeDeep(target, ...sources);
+  }
+
+  /**
+   * bulk config changes.
+   */
+  public async bulkChangeDataSourceDataPoints(
+    protocol: DataSourceProtocols,
+    changes: any
+  ): Promise<void> {
+    const { created, updated, deleted } = changes;
+
+    const dataSource = this._config.dataSources.find(
+      (ds) => ds.protocol === protocol
+    );
+
+    if (created) {
+      dataSource.dataPoints.push(
+        ...Object.values<any>(created).map((item) => ({
+          ...item,
+          id: uuidv4()
+        }))
+      );
+    }
+
+    if (updated) {
+      dataSource.dataPoints.forEach((dp) => {
+        if (updated[dp.id]) {
+          Object.assign(dp, updated[dp.id]);
+        }
+      });
+    }
+
+    if (deleted) {
+      dataSource.dataPoints = dataSource.dataPoints.filter(
+        (dp) => !deleted.includes(dp.id)
+      );
+    }
+
+    await this.saveConfigToFile();
   }
 
   /**

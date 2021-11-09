@@ -146,11 +146,12 @@ async function dataSinksPostDatapointBulkHandler(
     }
 
     await configManager.bulkChangeDataSinkDataPoints(
-      request.params.datasourceProtocol as DataSinkProtocols,
+      proto as DataSinkProtocols,
       request.body || {}
     );
     response.status(200).send();
-  } catch {
+  } catch (err) {
+    console.log(err);
     winston.warn(
       `dataSinksPostDatapointBulkHandler tried to change bulk dataSink.dataPoints`
     );

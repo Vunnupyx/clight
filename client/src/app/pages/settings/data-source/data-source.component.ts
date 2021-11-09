@@ -287,7 +287,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   onDiscard() {
-    return this.sourceDataPointService.revert().then().catch();
+    return this.sourceDataPointService.revert();
   }
 
   onApply() {

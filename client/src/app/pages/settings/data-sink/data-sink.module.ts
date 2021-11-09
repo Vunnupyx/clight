@@ -8,13 +8,15 @@ import { DataSinkComponent } from './data-sink.component';
 import { DataSinkMtConnectComponent } from './data-sink-mt-connect/data-sink-mt-connect.component';
 import { CreateDataItemModalComponent } from './create-data-item-modal/create-data-item-modal.component';
 import { SelectMapModalComponent } from './select-map-modal/select-map-modal.component';
-import {AuthGuard} from "../../../shared/guards/auth.guard";
+import { AuthGuard } from '../../../shared/guards/auth.guard';
+import { DataSinkGuard } from './data-sink.guard';
 
 const routes: Routes = [
   {
     path: 'settings/data-sink',
     component: DataSinkComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [DataSinkGuard]
   }
 ];
 
@@ -28,6 +30,7 @@ const COMPONENTS = [
 @NgModule({
   imports: [SharedModule, ConfirmDialogModule, RouterModule.forRoot(routes)],
   declarations: COMPONENTS,
-  exports: [RouterModule, ...COMPONENTS]
+  exports: [RouterModule, ...COMPONENTS],
+  providers: [DataSinkGuard]
 })
 export class DataSinkModule {}

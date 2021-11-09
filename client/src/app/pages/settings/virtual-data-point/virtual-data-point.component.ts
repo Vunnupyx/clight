@@ -121,6 +121,7 @@ export class VirtualDataPointComponent implements OnInit {
     }
 
     const obj = {
+      id: '',
       sources: [],
       operationType: VirtualDataPointOperationType.AND
     } as VirtualDataPoint;

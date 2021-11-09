@@ -80,4 +80,22 @@ export class BaseChangesService<TEntity extends ITrackable>
       Object.assign(state, emptyState);
     });
   }
+
+  getPayload(): Partial<IChangesState<string, TEntity>> {
+    const payload: Partial<IChangesState<string, TEntity>> = {};
+
+    if (Object.keys(this._changes.snapshot.created).length) {
+      payload.created = this._changes.snapshot.created;
+    }
+
+    if (Object.keys(this._changes.snapshot.updated).length) {
+      payload.updated = this._changes.snapshot.updated;
+    }
+
+    if (this._changes.snapshot.deleted.length) {
+      payload.deleted = this._changes.snapshot.deleted;
+    }
+
+    return payload;
+  }
 }

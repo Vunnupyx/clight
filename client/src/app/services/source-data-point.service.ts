@@ -11,20 +11,10 @@ import {
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import {
-  array2map,
-  clone,
-  errorHandler,
-  ObjectMap,
-  sleep
-} from 'app/shared/utils';
+import { array2map, clone, errorHandler, ObjectMap } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import { from, interval, Observable } from 'rxjs';
-import {
-  IChangesAccumulatable,
-  IChangesAppliable,
-  IChangesState
-} from 'app/models/core/data-changes';
+import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
 import { BaseChangesService } from './base-changes.service';
 
 export class SourceDataPointsState {
@@ -50,10 +40,6 @@ export class SourceDataPointService
 
   get status() {
     return this._store.snapshot.status;
-  }
-
-  get changes$() {
-    return this._changes.state;
   }
 
   get dataPoints() {
@@ -92,23 +78,9 @@ export class SourceDataPointService
         state.status = Status.Loading;
       });
 
-      const payload: Partial<IChangesState<string, SourceDataPoint>> = {};
-
-      if (Object.keys(this._changes.snapshot.created).length) {
-        payload.created = this._changes.snapshot.created;
-      }
-
-      if (Object.keys(this._changes.snapshot.updated).length) {
-        payload.updated = this._changes.snapshot.updated;
-      }
-
-      if (this._changes.snapshot.deleted.length) {
-        payload.deleted = this._changes.snapshot.deleted;
-      }
-
       await this.httpService.post(
-        `/datasources/${datasourceProtocol}/bulk`,
-        payload
+        `/datasources/${datasourceProtocol}/dataPoints/bulk`,
+        this.getPayload()
       );
 
       this.resetState();

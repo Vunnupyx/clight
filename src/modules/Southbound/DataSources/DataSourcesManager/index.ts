@@ -22,6 +22,10 @@ interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
 }
 
+interface IDataSourceManagerEvents {
+  dataSourcesRestarted: (error: Error | null) => void;
+}
+
 /**
  * Creates and manages all data sources
  */

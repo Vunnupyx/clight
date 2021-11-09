@@ -119,6 +119,7 @@ async function dataSinkPatchHandler(
     dataSink,
     (item) => item.protocol
   );
+  await configManager.configChangeCompleted();
   response.status(200).json(dataSink);
 }
 
@@ -157,7 +158,10 @@ function dataPointGetHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointsPostHandler(request: Request, response: Response) {
+async function dataPointsPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   // TODO: Input validation, maybe id is already taken
   const config = configManager.config;
   const changedSinkObject = config.dataSinks.find(
@@ -178,18 +182,22 @@ function dataPointsPostHandler(request: Request, response: Response) {
   const newData = { ...request.body, ...{ id: uuidv4() } };
   changedSinkObject.dataPoints.push(newData);
   configManager.config = config;
-
+  await configManager.configChangeCompleted();
   response.status(200).json({
     created: newData,
     href: `${request.originalUrl}/datapoints/${newData.id}`
   });
 }
+
 /**
  * Change datapoint resource for datasink with selected id
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointPatchHandler(request: Request, response: Response) {
+async function dataPointPatchHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   //TODO: INPUT VALIDATION
   const config = configManager.config;
   const sink = config?.dataSinks.find(
@@ -219,7 +227,7 @@ function dataPointPatchHandler(request: Request, response: Response) {
   const newData = { ...dataPoint, ...request.body };
   sink.dataPoints.push(newData);
   configManager.config = config;
-
+  await configManager.configChangeCompleted();
   response.status(200).json({
     changed: newData,
     href: `${request.originalUrl}/${newData.id}`
@@ -231,7 +239,10 @@ function dataPointPatchHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointDeleteHandler(request: Request, response: Response) {
+async function dataPointDeleteHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   // TODO: INPUT VALIDATION
   const config = configManager?.config;
   const sink = config?.dataSinks.find(
@@ -243,6 +254,7 @@ function dataPointDeleteHandler(request: Request, response: Response) {
   const point = sink.dataPoints[index];
   sink.dataPoints.splice(index, 1);
   configManager.config = config;
+  await configManager.configChangeCompleted();
   response.status(200).json({
     deleted: point
   });

@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+import TypedEmitter from 'typed-emitter';
 import { IDataSourceConfig } from '../../../ConfigManager/interfaces';
 import { DataSourceEventTypes, IDataSourceParams } from '../interfaces';
 import { DataSource } from '../DataSource';
@@ -16,10 +18,14 @@ import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
 import { promisify } from 'util';
 
+interface IDataSourceManagerEvents {
+  dataSourcesRestarted: (error: Error | null) => void;
+}
+
 /**
  * Creates and manages all data sources
  */
-export class DataSourcesManager {
+export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<IDataSourceManagerEvents>) {
   private static className: string = DataSourcesManager.name;
   private configManager: Readonly<ConfigManager>;
   private measurementsBus: MeasurementEventBus;
@@ -32,6 +38,8 @@ export class DataSourcesManager {
 
 
   constructor(params: IDataSourcesManagerParams) {
+    super();
+
     params.configManager.once('configsLoaded', () => {
       return this.init();
     });

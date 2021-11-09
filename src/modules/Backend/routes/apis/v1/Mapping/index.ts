@@ -28,7 +28,10 @@ function mappingGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function mapPostHandler(request: Request, response: Response): void {
+async function mapPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const config = configManager.config;
   const mapping = config.mapping;
 
@@ -36,6 +39,7 @@ function mapPostHandler(request: Request, response: Response): void {
   mapping.push(map);
 
   configManager.config = config;
+  await configManager.configChangeCompleted();
 
   response.status(200).json(map);
 }
@@ -63,7 +67,10 @@ async function mapPostBulkHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function mapPatchHandler(request: Request, response: Response): void {
+async function mapPatchHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const mapping = configManager.config.mapping.find(
     (x) => x.id === request.params.mapId
   );
@@ -85,6 +92,7 @@ function mapPatchHandler(request: Request, response: Response): void {
     newMapping,
     (item) => item.id
   );
+  await configManager.configChangeCompleted();
 
   response.status(200).json({
     changed: mapping
@@ -96,7 +104,10 @@ function mapPatchHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function mapDeleteHandler(request: Request, response: Response): void {
+async function mapDeleteHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const config = configManager.config;
 
   const index = config.mapping.findIndex(
@@ -109,6 +120,7 @@ function mapDeleteHandler(request: Request, response: Response): void {
     );
     config.mapping.splice(index, 1);
     configManager.config = config;
+    await configManager.configChangeCompleted();
 
     response.status(200).json({
       deleted: dataPoint

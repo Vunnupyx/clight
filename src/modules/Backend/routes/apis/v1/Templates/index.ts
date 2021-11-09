@@ -66,7 +66,10 @@ function templatesGetStatusHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function templatesApplyPostHandler(request: Request, response: Response): void {
+async function templatesApplyPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   if (
     !request.body.templateId ||
     !request.body.dataSources?.length ||
@@ -81,6 +84,7 @@ function templatesApplyPostHandler(request: Request, response: Response): void {
     request.body.dataSources,
     request.body.dataSinks
   );
+  await configManager.configChangeCompleted();
 
   response.status(200).json(null);
 }

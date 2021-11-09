@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+import TypedEventEmitter from 'typed-emitter';
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
 import {
@@ -17,6 +19,10 @@ import {
 } from '../MTConnectDataSink';
 import { IOPCUADataSinkOptions, OPCUADataSink } from '../OPCUADataSink';
 
+interface IDataSinkManagerEvents {
+  dataSinksRestarted: (error: Error | null) => void;
+}
+
 export interface IDataSinkManagerParams {
   configManager: ConfigManager;
   dataPointCache: DataPointCache;
@@ -28,7 +34,7 @@ export interface IDataSinkManagerParams {
 /**
  * Manage and init all available Datasinks
  */
-export class DataSinksManager {
+export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitter<IDataSinkManagerEvents>) {
   static readonly #className = DataSinksManager.name;
 
   private configManager: Readonly<ConfigManager>;
@@ -39,6 +45,8 @@ export class DataSinksManager {
   private dataAddedDuringRestart = false;
 
   constructor(params: IDataSinkManagerParams) {
+    super();
+
     this.configManager = params.configManager;
     this.configManager.once('configsLoaded', () => this.init());
     this.configManager.on('configChange', this.configChangeHandler.bind(this));
@@ -123,7 +131,7 @@ export class DataSinksManager {
       this.lifecycleBus.onEvent(ds.onLifecycleEvent.bind(ds));
     });
   }
- 
+
   /**
    * Remove datasinks event handlers from buses
    */
@@ -132,7 +140,7 @@ export class DataSinksManager {
     this.dataSinks.forEach((ds) => {
       this.measurementsBus.offEvent(ds.onMeasurements);
       this.lifecycleBus.offEvent(ds.onLifecycleEvent);
-    })
+    });
   }
 
   /**
@@ -145,41 +153,53 @@ export class DataSinksManager {
   /**
    * Stop all datasinks and dependencies and start new datasinks instances.
    */
-  private configChangeHandler(): Promise<void> {
-    console.log('MARKUS', this.dataSinksRestartPending );
-    console.log('MARKUS', this.dataAddedDuringRestart );
-    if (this.dataSinksRestartPending) {
-      this.dataAddedDuringRestart = true;
-      return
-    };
-    this.dataSinksRestartPending = true;
+  private async configChangeHandler(): Promise<void> {
     const logPrefix = `${DataSinksManager.name}::configChangeHandler`;
 
-    console.log('MARKUS', logPrefix)
-    const shutdownFunctions = [];
-    this.disconnectDataSinksFromBus()
+    console.log('MARKUS', this.dataSinksRestartPending);
+    console.log('MARKUS', this.dataAddedDuringRestart);
+
+    if (this.dataSinksRestartPending) {
+      this.dataAddedDuringRestart = true;
+      return;
+    }
+    this.dataSinksRestartPending = true;
+
+    console.log('MARKUS', logPrefix);
     console.log(1);
+
+    winston.info(`${logPrefix} reloading datasinks.`);
+
+    const shutdownFunctions = [];
+    this.disconnectDataSinksFromBus();
     this.dataSinks.forEach((sink) => {
-        if (!sink.shutdown) winston.error(`${logPrefix} ${sink} does not have a shutdown method.`);
-        shutdownFunctions.push(sink.shutdown());
+      if (!sink.shutdown)
+        winston.error(`${logPrefix} ${sink} does not have a shutdown method.`);
+      shutdownFunctions.push(sink.shutdown());
     });
     console.log(2);
     this.dataSinks = [];
-    return Promise.all(shutdownFunctions)
-    .then(() => console.log(3))
+
+    let err: Error = null;
+    await Promise.all(shutdownFunctions)
       .then(() => this.init())
       .then(() => {
         console.log(4);
         winston.info(`${logPrefix} reload datasinks successfully.`);
       })
-      .catch((err) => {
-        winston.error(`${logPrefix} error due to ${err.message}`);
-      }).finally(() => {
+      .catch((error: Error) => {
+        winston.error(`${logPrefix} error due to ${error.message}`);
+        err = error;
+      })
+      .finally(() => {
         this.dataSinksRestartPending = false;
         if (this.dataAddedDuringRestart) {
           this.dataAddedDuringRestart = false;
-          this.configChangeHandler()
-        };
+          this.configChangeHandler();
+        } else {
+          // emit event
+          this.emit('dataSinksRestarted', err);
+        }
       });
   }
 }

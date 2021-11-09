@@ -41,7 +41,10 @@ function backupGetHandle(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function backupPostHandle(request: Request, response: Response): void {
+async function backupPostHandle(
+  request: Request,
+  response: Response
+): Promise<void> {
   const configFile = (request.files as any)?.config;
 
   if (!configFile) {
@@ -53,6 +56,7 @@ function backupPostHandle(request: Request, response: Response): void {
 
   try {
     configManager.restoreConfigFile(configFile);
+    await configManager.configChangeCompleted();
     response.status(200).send();
   } catch {
     winston.error('Backup restore failed. Wrong file provided!');

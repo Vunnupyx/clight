@@ -50,6 +50,7 @@ export class DataSinksManager {
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
 
+    console.log('MARKUS', 'DataSinksManager INIT');
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
     return Promise.all(initMethods)
@@ -145,22 +146,30 @@ export class DataSinksManager {
    * Stop all datasinks and dependencies and start new datasinks instances.
    */
   private configChangeHandler(): Promise<void> {
+    console.log('MARKUS', this.dataSinksRestartPending );
+    console.log('MARKUS', this.dataAddedDuringRestart );
     if (this.dataSinksRestartPending) {
       this.dataAddedDuringRestart = true;
       return
     };
     this.dataSinksRestartPending = true;
     const logPrefix = `${DataSinksManager.name}::configChangeHandler`;
+
+    console.log('MARKUS', logPrefix)
     const shutdownFunctions = [];
     this.disconnectDataSinksFromBus()
+    console.log(1);
     this.dataSinks.forEach((sink) => {
         if (!sink.shutdown) winston.error(`${logPrefix} ${sink} does not have a shutdown method.`);
         shutdownFunctions.push(sink.shutdown());
     });
+    console.log(2);
     this.dataSinks = [];
     return Promise.all(shutdownFunctions)
+    .then(() => console.log(3))
       .then(() => this.init())
       .then(() => {
+        console.log(4);
         winston.info(`${logPrefix} reload datasinks successfully.`);
       })
       .catch((err) => {

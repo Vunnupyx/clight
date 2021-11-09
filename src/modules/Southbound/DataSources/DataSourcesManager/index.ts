@@ -148,11 +148,13 @@ export class DataSourcesManager {
     this.dataSinksRestartPending = true;
     const logPrefix = `${DataSourcesManager.name}::configChangeHandler`;
 
+    console.log('Markus', logPrefix);
     const shutdownFns = [];
     let error = false;
     this.dataSources.forEach((source) => {
       shutdownFns.push(source.shutdown());
     })
+    this.dataSources = [];
     Promise.allSettled(shutdownFns).then((results) => {
       results.forEach((result) => {
         if (result.status === 'rejected') winston.error(`${logPrefix} error due to ${result.reason}`)

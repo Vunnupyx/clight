@@ -108,7 +108,7 @@ export class Iot2050MraaDI10 {
   private async sysfs_prefix() {
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
-      if (board.indexOf('SIMATIC IOT2050') > 0) return '';
+      if (board.indexOf('SIMATIC IOT2050') >= 0) return '';
     } catch (e) {
       if (e.code !== 'ENOENT') throw e;
     }

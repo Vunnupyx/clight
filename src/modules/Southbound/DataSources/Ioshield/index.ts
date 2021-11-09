@@ -52,11 +52,12 @@ export class IoshieldDataSource extends DataSource {
       });
 
     try {
-      const results = await this.mraaClient.getValues();
-
+      const digitalInputValues = await this.mraaClient.getDigitalValues();
+      const analogInputValues = await this.mraaClient.getAnalogValues();
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
-        const value = results[dp.address];
+        const value =
+          digitalInputValues[dp.address] || analogInputValues[dp.address];
 
         if (typeof value === 'undefined') continue;
 
@@ -68,7 +69,6 @@ export class IoshieldDataSource extends DataSource {
 
         measurements.push(measurement);
       }
-
       if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
       // TODO: Markus welcher status ist hier? Die Messungen sind fehlgeschlagen? Disconnected? Reconnection?
@@ -89,7 +89,7 @@ export class IoshieldDataSource extends DataSource {
    */
   private validateDataPointConfiguration() {
     this.config.dataPoints.forEach((dp) => {
-      if (!/\bDI[0-9]\b/.test(dp.address))
+      if (!/\b(DI|AI)[0-9]\b/.test(dp.address))
         throw new Error(`Invalid data point address: ${dp.address}`);
     });
   }

@@ -151,7 +151,7 @@ export class DataSourcesManager {
     const shutdownFns = [];
     let error = false;
     this.dataSources.forEach((source) => {
-      shutdownFns.push(promisify(source.shutdown)());
+      shutdownFns.push(source.shutdown());
     })
     Promise.allSettled(shutdownFns).then((results) => {
       results.forEach((result) => {

@@ -90,29 +90,35 @@
         let-value="value"
         let-row="row"
       >
-        <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+        <mat-button-toggle-group
+          *ngIf="unsavedRowIndex !== rowIndex"
+          #group="matButtonToggleGroup"
+        >
           <mat-button-toggle
-            (click)="onEditStart(rowIndex, row)"
+            (click)="onEditStart(rowIndex, row); group.value = null"
             [matTooltip]="'settings-data-sink.Edit' | translate"
             matTooltipPosition="above"
             ><mat-icon>edit</mat-icon></mat-button-toggle
           >
           <mat-button-toggle
-            (click)="onDelete(row)"
+            (click)="onDelete(row); group.value = null"
             [matTooltip]="'settings-data-sink.Delete' | translate"
             matTooltipPosition="above"
             ><mat-icon>delete_outline</mat-icon></mat-button-toggle
           >
         </mat-button-toggle-group>
-        <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+        <mat-button-toggle-group
+          *ngIf="unsavedRowIndex === rowIndex"
+          #group="matButtonToggleGroup"
+        >
           <mat-button-toggle
-            (click)="onEditEnd()"
+            (click)="onEditEnd(); group.value = null"
             [matTooltip]="'settings-data-sink.Save' | translate"
             matTooltipPosition="above"
             ><mat-icon class="color-success">check</mat-icon></mat-button-toggle
           >
           <mat-button-toggle
-            (click)="onEditCancel()"
+            (click)="onEditCancel(); group.value = null"
             [matTooltip]="'settings-data-sink.Cancel' | translate"
             matTooltipPosition="above"
             ><mat-icon class="color-error">close</mat-icon></mat-button-toggle

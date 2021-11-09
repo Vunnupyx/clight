@@ -220,12 +220,13 @@ export class VirtualDataPointComponent implements OnInit {
       virtualPoint.sources![0]
     );
 
-    this.sourceDataPointService.getLiveDataForDataPoints(protocol);
+    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
 
     const dialogRef = this.dialog.open(SetThresholdsModalComponent, {
       data: {
         thresholds: { ...virtualPoint.thresholds },
-        source: virtualPoint.sources![0]
+        source: virtualPoint.sources![0],
+        sourceName: this.getSourceNames(virtualPoint.sources!)
       },
       width: '850px'
     });

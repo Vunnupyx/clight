@@ -6,6 +6,7 @@ import { promises as fs } from 'fs';
 import { ConfigManager } from '../../ConfigManager';
 import { IAuthUser } from '../../ConfigManager/interfaces';
 import winston from 'winston';
+import { System } from '../../System';
 
 interface LoginDto {
   accessToken: string;
@@ -23,10 +24,16 @@ declare module 'express' {
 
 export class AuthManager {
   private static className: string = AuthManager.name;
-  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00\n';
+  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00';
 
   constructor(private configManager: ConfigManager) {}
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<LoginDto>} Promise<LoginDto>
+   */
   async login(username: string, password: string): Promise<LoginDto> {
     const logPrefix = `${AuthManager.className}::login`;
     const regex = /[^A-Za-z0-9]/g;
@@ -44,7 +51,9 @@ export class AuthManager {
       throw new Error('User with these credentials could not be found!');
     }
 
-    const macAddress = await this.readMacAddress();
+    const macAddress = (await this.readDeviceLabelMacAddress())
+      .split(':')
+      .join('');
 
     if (macAddress !== serializedUsername.substring(2)) {
       winston.warn(
@@ -86,6 +95,10 @@ export class AuthManager {
     return Promise.resolve({ accessToken, passwordChangeRequired });
   }
 
+  /**
+   * @param  {{withPasswordChangeDetection:boolean}} options
+   * @returns {Function} callback
+   */
   verifyJWTAuth({
     withPasswordChangeDetection
   }: {
@@ -129,6 +142,13 @@ export class AuthManager {
     };
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} oldPassword
+   * @param  {string} newPassword
+   * @returns {Promise<boolean>} boolean
+   */
   async changePassword(
     username: string,
     oldPassword: string,
@@ -166,6 +186,12 @@ export class AuthManager {
     return true;
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<IAuthUser>} Promise<IAuthUser>
+   */
   private async createUser(
     username: string,
     password: string
@@ -182,17 +208,12 @@ export class AuthManager {
     return user;
   }
 
-  private async readMacAddress() {
-    let address;
-
-    try {
-      address = await fs.readFile('/sys/class/net/eth0/address', {
-        encoding: 'utf-8'
-      });
-    } catch (err) {
-      address = this.EMPTY_MAC_ADDRESS;
-    }
-
-    return address.split(':').join('').split('\n').join('');
+  /**
+   * @async
+   * @returns {Promise<string>} Mac Address
+   */
+  private async readDeviceLabelMacAddress(): Promise<string> {
+    const address = await new System().readMacAddress('eth1');
+    return address === null ? this.EMPTY_MAC_ADDRESS : address;
   }
 }

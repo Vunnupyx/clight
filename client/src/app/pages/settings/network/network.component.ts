@@ -1,12 +1,12 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
-import { Status } from '../../../shared/state';
 import { clone, ObjectMap } from '../../../shared/utils';
-import { NetworkConfig, NetworkType } from '../../../models';
-import { HOST_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
-import {filter} from "rxjs/operators";
+import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
+import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 
 @Component({
   selector: 'app-network',
@@ -21,6 +21,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
+  ipRegex = IP_REGEX;
+
+  ProxyType = ProxyType;
 
   get tabs() {
     if (!this.config) {
@@ -33,18 +36,28 @@ export class NetworkComponent implements OnInit, OnDestroy {
   sub: Subscription = new Subscription();
   selectedTab!: string;
 
-  constructor(private networkService: NetworkService) { }
+  @ViewChild('mainForm') mainForm!: NgForm;
+
+  constructor(private networkService: NetworkService) {}
 
   ngOnInit(): void {
     this.sub.add(
-      this.networkService.config.pipe(filter(el => !!el)).subscribe(x => this.onConfig(x))
+      this.networkService.config
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onConfig(x))
     );
+
+    this.sub.add(this.networkService.setNetworkConfigTimer().subscribe());
 
     this.networkService.getNetworkConfig();
   }
 
   private onConfig(x: ObjectMap<NetworkConfig>) {
-    this.config = x;
+    if (this.mainForm && this.mainForm.dirty) {
+      return;
+    }
+
+    this.config = clone(x);
     this.originalConfig = clone(x);
 
     if (!this.selectedTab) {
@@ -58,48 +71,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.config = clone(this.originalConfig);
   }
 
-  saveChanges() {
-    this.networkService.updateNetworkConfig(this.config)
-      .then(() => this.originalConfig = clone(this.config));
-  }
-
-  saveDhcpChanges(ethernetType: NetworkType) {
-    const useDhcp = this.config[ethernetType].useDhcp;
-
-    if (useDhcp) {
-      const newConfig = {
-        ...this.config,
-        [ethernetType]: {
-          useDhcp,
-        }
-      }
-
-      return this.networkService.updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
-        .then(() => this.originalConfig = clone(this.config));
-    }
-
-    return this.saveChanges();
-  }
-
-  saveUseProxyChanges() {
-    const useProxy = this.config[NetworkType.PROXY].useProxy;
-
-    if (!useProxy) {
-      const newConfig = {
-        ...this.config,
-        [NetworkType.PROXY]: {
-          useProxy,
-        },
-      }
-
-      return this.networkService.updateNetworkConfig(newConfig as ObjectMap<NetworkConfig>)
-        .then(() => this.originalConfig = clone(this.config));
-    }
-
-    return this.saveChanges();
+  saveChanges(mainForm: NgForm, networkType: NetworkType) {
+    this.networkService
+      .updateNetworkConfig(this.config)
+      .then(() => (this.originalConfig = clone(this.config)))
+      .then(() =>
+        mainForm.resetForm({
+          ...this.config[networkType],
+          notToUseDhcp: !this.config[networkType]?.useDhcp
+        })
+      );
   }
 
   ngOnDestroy() {
-    this.sub && this.sub.unsubscribe();
+    this.sub.unsubscribe();
   }
 }

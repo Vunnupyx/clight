@@ -43,13 +43,16 @@
   "quick-start": {
     "Language": "Language",
     "SelectLanguage": "Select Language",
+    "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
     "LoadError": "Failed to load info. Try again later",
     "Next": "Next",
     "Save": "Save",
+    "ContinueWithoutTemplate": "Continue without template",
     "Attention": "Attention",
     "AttentionMessage": "When saving, your current configuration will be overwritten. Do you still want to continue?",
+    "SkipMessage": "Do you really want to continue without template?",
     "DataSources": {
       "ioshield": {
         "name": "Ioshield",
@@ -78,7 +81,11 @@
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
-    "OpenConfigurationWizard": "Open Configuration Wizard"
+    "OpenConfigurationWizard": "Open Configuration Wizard",
+    "BackupConfiguration": "Backup Configuration",
+    "RestoreConfiguration": "Restore Configuration",
+    "BackupDownloadError": "Could not download backup. Please try again!",
+    "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
   },
   "settings-device-info": {
     "Manufacturer": "Manufacturer",
@@ -195,6 +202,12 @@
     "From": "From",
     "To": "To",
     "AddMapping": "Add mapping",
+    "ProvisioningHost": "Provisioning Host",
+    "ScopeId": "Scope Id",
+    "RegId": "Reg Id",
+    "SymKey": "Sym Key",
+    "Apply": "Apply",
+    "DataHubConfigSaveSuccess": "Datahub config has been saved successfully!",
     "UserDataState": "User Data State",
     "AlarmState": "Alarm State",
     "AlreadyExistDataPoint": "This item is already added!",
@@ -242,10 +255,12 @@
     "DefaultGateway": "Default Gateway",
     "DNSServer": "DNS Server",
     "UseProxy": "Use Proxy",
+    "ProxyType": "Type",
     "Host": "Host",
     "Port": "Port",
     "Username": "Username",
     "Password": "Password",
+    "Apply": "Apply",
     "LoadError": "Failed to load network settings. Try again later",
     "UpdateError": "Failed to update network settings. Try again later",
     "Tabs": {

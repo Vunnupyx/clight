@@ -1,4 +1,4 @@
-import { promises as fs, readFileSync } from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import {
@@ -10,7 +10,6 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
-import { unique } from '../Utilities';
 import {
   IDefaultTemplates,
   IConfig,
@@ -18,14 +17,15 @@ import {
   IConfigManagerParams,
   IDataSinkConfig,
   IDataSourceConfig,
-  IOpcuaDataSinkConfig,
   IRuntimeConfig,
   isDataPointMapping,
   IAuthUser,
-  IAuthUsersConfig
+  IAuthUsersConfig,
+  IDefaultTemplate
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
+import { System } from '../System';
 
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
@@ -59,11 +59,18 @@ const defaultOpcuaDataSink: IDataSinkConfig = {
   enabled: false,
   protocol: DataSinkProtocols.OPCUA
 };
+
 const defaultDataHubDataSink: IDataSinkConfig = {
   name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.DATAHUB
+  protocol: DataSinkProtocols.DATAHUB,
+  datahub: {
+    provisioningHost: '',
+    scopeId: '',
+    regId: '',
+    symKey: ''
+  }
 };
 
 const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
@@ -88,9 +95,8 @@ export const emptyDefaultConfig: IConfig = {
   dataSinks: [],
   virtualDataPoints: [],
   mapping: [],
-  systemInfo: [],
-  templates: {
-    completed: true // TODO Set false when template implementation is finished
+  quickStart: {
+    completed: false
   }
 };
 
@@ -104,6 +110,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     'mdclight/config'
   );
   private configName = 'config.json';
+
   private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private _runtimeConfig: IRuntimeConfig;
@@ -148,6 +155,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     return this._authUsers.users;
   }
 
+  public get configPath(): string {
+    return path.join(this.configFolder, this.configName);
+  }
+
   /**
    * Creates config and check types
    */
@@ -160,6 +171,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     // Initial values
     this._runtimeConfig = {
       users: [],
+      systemInfo: [],
       mtconnect: {
         listenerPort: 7878
       },
@@ -177,10 +189,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       datahub: {
         serialNumber: 'No serial number found', // TODO Use mac address?
-        provisioningHost: '',
-        scopeId: '',
-        regId: 'unknownDevice',
-        symKey: '',
         groupDevice: false,
         signalGroups: undefined,
         dataPointTypesData: {
@@ -304,6 +312,39 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
+   * Applies template settings.
+   */
+  public applyTemplate(
+    templateFileName: string,
+    dataSources: string[],
+    dataSinks: string[]
+  ) {
+    const template = this._defaultTemplates.templates.find(
+      (x) => x.id === templateFileName
+    );
+    const sources = template.dataSources.filter((x) =>
+      dataSources.includes(x.protocol)
+    );
+    const sinks = template.dataSinks.filter((x) =>
+      dataSinks.includes(x.protocol)
+    );
+
+    this._config = {
+      ...this._config,
+      dataSources: sources,
+      dataSinks: sinks,
+      quickStart: {
+        completed: true
+      }
+    };
+
+    this.setupDefaultDataSources();
+    this.setupDefaultDataSinks();
+
+    this.config = this._config;
+  }
+
+  /**
    * Checks type of configuration value.
    */
   private checkType(value: any, type: string, name: string) {
@@ -380,7 +421,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     try {
       const configPath = path.join(
         this.configFolder,
-        'defaulttemplates',
+        'templates',
         templateName
       );
       return JSON.parse(await fs.readFile(configPath, { encoding: 'utf-8' }));
@@ -392,31 +433,25 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplates() {
     try {
       const templateNames = await fs.readdir(
-        path.join(this.configFolder, 'defaulttemplates'),
+        path.join(this.configFolder, 'templates'),
         { encoding: 'utf-8' }
       );
 
-      const templates = await Promise.all(
-        templateNames.map((template) => this.loadTemplate(template))
-      );
-
-      const dataSources = unique(
-        templates.map((x) => x.dataSources).flat(),
-        (ds) => ds.protocol
-      );
-      const dataSinks = unique(
-        templates.map((x) => x.dataSinks).flat(),
-        (ds) => ds.protocol
+      const templates = await Promise.all<IDefaultTemplate>(
+        templateNames.map((template) =>
+          this.loadTemplate(template).then((data) => ({
+            ...data,
+            id: template
+          }))
+        )
       );
 
       this._defaultTemplates = {
-        availableDataSources: dataSources,
-        availableDataSinks: dataSinks
+        templates
       };
     } catch {
       this._defaultTemplates = {
-        availableDataSources: [],
-        availableDataSinks: []
+        templates: []
       };
     }
   }
@@ -542,6 +577,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       });
   }
 
+  /**
+   * Save the current data from config property into a JSON config file on hard drive
+   */
   public saveConfig(obj: Partial<IConfig> = null): void {
     const logPrefix = `${ConfigManager.className}::saveConfig`;
 
@@ -574,5 +612,47 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
       });
+  }
+
+  /**
+   * Save configFile content into config
+   */
+  restoreConfigFile(configFile) {
+    const buffer = configFile.data;
+
+    this.config = JSON.parse(buffer.toString());
+  }
+
+  /**
+   * Returns system information
+   */
+  public async getSystemInformation() {
+    const system = new System();
+    return [
+      {
+        title: 'General system information',
+        items: [
+          {
+            key: 'Board serial number',
+            keyDescription: '',
+            value: await system.readSerialNumber(),
+            valueDescription: 'Serial number'
+          },
+          {
+            key: 'Mac address X1',
+            keyDescription: '',
+            value: await system.readMacAddress('eth0'),
+            valueDescription: 'Mac adress'
+          },
+          {
+            key: 'Mac address X2',
+            keyDescription: '',
+            value: await system.readMacAddress('eth1'),
+            valueDescription: 'Mac adress'
+          }
+        ]
+      },
+      ...this.runtimeConfig.systemInfo
+    ];
   }
 }

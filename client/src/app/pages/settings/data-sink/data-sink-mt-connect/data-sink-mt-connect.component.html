@@ -93,7 +93,7 @@
       </div>
 
       <div *ngSwitchCase="Protocol.DH">
-        <div class="row">
+        <div class="row" *ngIf="false">
           <div class="col-12">
             <div class="row mt-20 mb-25">
               <div class="col-6 col-lg-5">
@@ -108,7 +108,7 @@
           </div>
         </div>
 
-        <div class="row">
+        <div class="row" *ngIf="false">
           <div class="col-12">
             <div class="row">
               <div class="col-6 col-lg-5 mt-20">
@@ -122,28 +122,102 @@
             </div>
           </div>
         </div>
+
+        <form
+          #form="ngForm"
+          class="mt-25"
+          (ngSubmit)="form.valid && saveDatahubConfig(form)"
+        >
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>
+                {{ 'settings-data-sink.ProvisioningHost' | translate }}
+              </label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <input
+                  matInput
+                  name="provisioningHost"
+                  autocomplete="off"
+                  [ngModel]="dataSink?.datahub?.provisioningHost"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>
+                {{ 'settings-data-sink.ScopeId' | translate }}
+              </label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <input
+                  matInput
+                  name="scopeId"
+                  autocomplete="off"
+                  [ngModel]="dataSink?.datahub?.scopeId"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>
+                {{ 'settings-data-sink.RegId' | translate }}
+              </label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <input
+                  matInput
+                  name="regId"
+                  autocomplete="off"
+                  [ngModel]="dataSink?.datahub?.regId"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>
+                {{ 'settings-data-sink.SymKey' | translate }}
+              </label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <input
+                  matInput
+                  name="symKey"
+                  autocomplete="off"
+                  [ngModel]="dataSink?.datahub?.symKey"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-25">
+            <button mat-raised-button [disabled]="form.invalid || !form.dirty">
+              {{ 'settings-data-sink.Apply' | translate }}
+            </button>
+          </div>
+        </form>
       </div>
     </ng-container>
   </div>
 
-  <div
-    class="
-      status
-      col-12 col-sm-4
-      offset-sm-4
-      col-lg-4
-      offset-lg-4
-      col-xl-3
-      offset-xl-5
-    "
-    *ngIf="connection"
-  >
-    <div class="mt-25">
+  <div class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6">
+    <div class="mt-25" *ngIf="connection">
       {{ 'settings-data-sink.Connection' | translate }}
     </div>
     <div
       class="mt-10 d-flex align-items-center justify-content-between"
       style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+      *ngIf="connection"
     >
       <div>
         <div style="font-weight: 600">
@@ -375,10 +449,15 @@
                 >{{ item[0] }} -> {{ item[1] }}
               </span>
             </div>
-            <mat-button-toggle-group class="ml-10">
+            <mat-button-toggle-group
+              class="ml-10"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
                 class="small-button"
-                (click)="unsavedRow && onMapEdit(unsavedRow)"
+                (click)="
+                  unsavedRow && onMapEdit(unsavedRow); group.value = null
+                "
                 [matTooltip]="'settings-data-sink.Select' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>open_in_new</mat-icon></mat-button-toggle
@@ -399,23 +478,29 @@
           let-value="value"
           let-row="row"
         >
-          <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+          <mat-button-toggle-group
+            *ngIf="unsavedRowIndex !== rowIndex"
+            #group="matButtonToggleGroup"
+          >
             <mat-button-toggle
-              (click)="onEditStart(rowIndex, row)"
+              (click)="onEditStart(rowIndex, row); group.value = null"
               [matTooltip]="'settings-data-sink.Edit' | translate"
               matTooltipPosition="above"
               ><mat-icon>edit</mat-icon></mat-button-toggle
             >
             <mat-button-toggle
-              (click)="onDelete(row)"
+              (click)="onDelete(row); group.value = null"
               [matTooltip]="'settings-data-sink.Delete' | translate"
               matTooltipPosition="above"
               ><mat-icon>delete_outline</mat-icon></mat-button-toggle
             >
           </mat-button-toggle-group>
-          <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+          <mat-button-toggle-group
+            *ngIf="unsavedRowIndex === rowIndex"
+            #group="matButtonToggleGroup"
+          >
             <mat-button-toggle
-              (click)="onEditEnd()"
+              (click)="onEditEnd(); group.value = null"
               [matTooltip]="'settings-data-sink.Save' | translate"
               matTooltipPosition="above"
               ><mat-icon class="color-success"
@@ -423,7 +508,7 @@
               ></mat-button-toggle
             >
             <mat-button-toggle
-              (click)="onEditCancel()"
+              (click)="onEditCancel(); group.value = null"
               [matTooltip]="'settings-data-sink.Cancel' | translate"
               matTooltipPosition="above"
               ><mat-icon class="color-error">close</mat-icon></mat-button-toggle

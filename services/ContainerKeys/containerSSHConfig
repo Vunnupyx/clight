@@ -1,0 +1,7 @@
+Host dockerhost
+  HostName host.docker.internal
+  User root
+  IdentityFile /root/.ssh/nmcli/nmclikey
+
+StrictHostKeyChecking accept-new
+

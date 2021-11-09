@@ -43,11 +43,16 @@
   "quick-start": {
     "Language": "Language",
     "SelectLanguage": "Select Language",
+    "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
+    "SkipMessage": "Do you really want to continue without template?",
+    "Attention": "Attention",
+    "AttentionMessage": "When saving, your current configuration will be overwritten. Do you still want to continue?",
     "LoadError": "Error",
     "Next": "",
     "Save": "",
+    "ContinueWithoutTemplate": "Continue without template",
     "DataSources": {
       "ioshield": {
         "name": "Ioshield",
@@ -76,7 +81,11 @@
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch",
-    "OpenConfigurationWizard": "Open Configuration Wizard"
+    "OpenConfigurationWizard": "Open Configuration Wizard",
+    "BackupConfiguration": "Backup Configuration",
+    "RestoreConfiguration": "Restore Configuration",
+    "BackupDownloadError": "Could not download backup. Please try again!",
+    "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
   },
   "settings-device-info": {
     "Manufacturer": "",
@@ -193,6 +202,12 @@
     "From": "",
     "To": "",
     "AddMapping": "",
+    "ProvisioningHost": "",
+    "ScopeId": "",
+    "RegId": "",
+    "SymKey": "",
+    "Apply": "Apply",
+    "DataHubConfigSaveSuccess": "",
     "AlreadyExistDataPoint": "",
     "AuthenticationLevels": {
       "anonymous": "",
@@ -224,6 +239,30 @@
     "CreateError": "",
     "UpdateError": "",
     "DeleteError": ""
+  },
+  "settings-network": {
+    "Network": "Network",
+    "AdapterSettings": "Adapter Settings",
+    "ProxySettings": "Proxy Settings",
+    "AssignIPManually": "Assign IP address manually (do not use DHCP)",
+    "IPAddress": "IP address",
+    "Netmask": "Netmask",
+    "DefaultGateway": "Default Gateway",
+    "DNSServer": "DNS Server",
+    "UseProxy": "Use Proxy",
+    "ProxyType": "Type",
+    "Host": "Host",
+    "Port": "Port",
+    "Username": "Username",
+    "Password": "Password",
+    "Apply": "Apply",
+    "LoadError": "Failed to load network settings. Try again later",
+    "UpdateError": "Failed to update network settings. Try again later",
+    "Tabs": {
+      "x1": "Ethernet X1",
+      "x2": "Ethernet X2",
+      "proxy": "Proxy"
+    }
   },
   "system-information": {
     "SystemInformation": "System Information",

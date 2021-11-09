@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { filter, map } from 'rxjs/operators';
+import { from, interval } from 'rxjs';
+import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 
-import { HttpMockupService } from '../shared';
+import { HttpService } from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler, ObjectMap } from '../shared/utils';
 import { NetworkConfig } from '../models';
-import { GET_RESPONSE } from './network.mock';
 
 export class NetworkState {
   status!: Status;
@@ -20,7 +20,7 @@ export class NetworkService {
 
   constructor(
     storeFactory: StoreFactory<NetworkState>,
-    private httpService: HttpMockupService,
+    private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -32,27 +32,28 @@ export class NetworkService {
   }
 
   get config() {
-    return this._store.state
-      .pipe(filter((x) => x.status != Status.NotInitialized))
-      .pipe(map((x) => x.config));
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.config),
+      distinctUntilChanged()
+    );
+  }
+
+  setNetworkConfigTimer() {
+    return interval(10 * 1000).pipe(
+      mergeMap(() => from(this.getNetworkConfig()))
+    );
   }
 
   async getNetworkConfig() {
-    this._store.patchState((state) => ({
-      status: Status.Loading,
-      config: null
-    }));
-
     try {
-      const response = await this.httpService.get<any>(`/networkconfig`, undefined, GET_RESPONSE);
+      const response = await this.httpService.get<any>(`/networkconfig`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.config = response;
       });
     } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-network.LoadError')
-      );
+      this.toastr.error(this.translate.instant('settings-network.LoadError'));
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed
@@ -72,9 +73,7 @@ export class NetworkService {
         state.config = response;
       });
     } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-network.UpdateError')
-      );
+      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed

@@ -5,13 +5,16 @@ WORKDIR /
 COPY package.json package.json
 RUN npm install
 
+# Install key pair for network manager cli
+RUN mkdir /root/.ssh/
+COPY services/ContainerKeys/containerSSHConfig /root/.ssh
+RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
+
 COPY src src
 COPY tsconfig.json tsconfig.json
 RUN npm run build
-RUN npm run build:dist
 
-RUN mv runtime app
-RUN rm -r node_modules && rm -r build
+RUN mv build/main app
 
 WORKDIR /app
 

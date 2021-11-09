@@ -9,6 +9,7 @@ import { SourceDataPointService } from '../../../../services';
 export interface SetThresholdsModalData {
   thresholds: ObjectMap<number>;
   source: string;
+  sourceName: string;
 }
 
 @Component({
@@ -28,22 +29,29 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   constructor(
     private dialogRef: MatDialogRef<SetThresholdsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SetThresholdsModalData,
-    private sourceDataPointsService: SourceDataPointService,
+    private sourceDataPointsService: SourceDataPointService
   ) {}
 
   ngOnInit() {
-    const sub = this.sourceDataPointsService.dataPointsLivedata.subscribe((x) => this.onLiveData(x));
+    const sub = this.sourceDataPointsService.dataPointsLivedata.subscribe((x) =>
+      this.onLiveData(x)
+    );
 
     this.sub.add(sub);
 
-    this.liveDataSub = this.sourceDataPointsService.setLivedataTimer(
-      this.sourceDataPointsService.getProtocol(this.data.source)
-    ).subscribe();
+    this.liveDataSub = this.sourceDataPointsService
+      .setLivedataTimer(
+        this.sourceDataPointsService.getProtocol(this.data.source),
+        'true'
+      )
+      .subscribe();
 
-    this.rows = Object.entries(this.data.thresholds).map(([value, threshold]) => ({
-      value,
-      threshold,
-    }));
+    this.rows = Object.entries(this.data.thresholds).map(
+      ([value, threshold]) => ({
+        value,
+        threshold
+      })
+    );
 
     const data = this.prepareTimeseries();
 
@@ -62,23 +70,38 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         axisLabel: {
           formatter: (value) => {
             return `${value}s`;
-          },
+          }
         },
+        axisPointer: {
+          label: {
+            formatter: ({ value }) => {
+              const time = new Date(Date.now() + value * 1000);
+              const hours = this.parseNum(time.getHours());
+              const minutes = this.parseNum(time.getMinutes());
+              const seconds = this.parseNum(time.getSeconds());
+
+              return `${hours}:${minutes}:${seconds}`;
+            }
+          }
+        }
       },
       yAxis: {
         type: 'value',
         boundaryGap: [0, '100%'],
         splitLine: {
           show: false
-        },
+        }
       },
-      series: [{
-        name: 'Mocking Data',
-        type: 'line',
-        showSymbol: false,
-        hoverAnimation: false,
-        data,
-      }]
+      series: [
+        ...this.getThresholdsSeries(),
+        {
+          name: this.data.sourceName,
+          type: 'line',
+          showSymbol: false,
+          hoverAnimation: false,
+          data
+        }
+      ]
     };
   }
 
@@ -94,12 +117,29 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   onAdd() {
     this.rows.push({
       value: '',
-      threshold: '',
+      threshold: ''
     });
   }
 
   deleteThreshold(i: number) {
     this.rows.splice(i, 1);
+  }
+
+  onThresholdChanged() {
+    const thresholdsSeries = this.getThresholdsSeries();
+
+    this.updateOptions = {
+      series: [
+        ...thresholdsSeries,
+        {
+          data: this.prepareTimeseries()
+        }
+      ]
+    };
+  }
+
+  private parseNum(num: number) {
+    return num < 10 ? `0${num}` : num;
   }
 
   private prepareTimeseries() {
@@ -110,7 +150,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
       return {
         value: [
           Math.round((ts.getTime() - now.getTime()) / 1000),
-          Number(el.value),
+          Number(el.value)
         ]
       };
     });
@@ -118,7 +158,10 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   private prepareThresholds() {
     return this.rows.reduce((acc, curr) => {
-      if (Number.isFinite(Number(curr.value)) && Number.isFinite(Number(curr.threshold))) {
+      if (
+        Number.isFinite(Number(curr.value)) &&
+        Number.isFinite(Number(curr.threshold))
+      ) {
         acc[Number(curr.value)] = Number(curr.threshold);
       }
 
@@ -126,19 +169,35 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     }, {});
   }
 
+  private getChartXAxisValues() {
+    return new Array(31).fill(0).map((el, i) => -i);
+  }
+
+  private getThresholdsSeries() {
+    return this.rows.map(({ threshold }) => ({
+      name: `Threshold val: ${threshold}`,
+      type: 'line',
+      showSymbol: false,
+      hoverAnimation: false,
+      data: this.getChartXAxisValues().map((el) => ({ value: [el, threshold] }))
+    }));
+  }
+
   private onLiveData(x: ObjectMap<DataPointLiveData>) {
     if (!x) {
       return;
     }
+    const thresholdsSeries = this.getThresholdsSeries();
 
     this.timeseries = x[this.data.source]?.timeseries || [];
 
     this.updateOptions = {
       series: [
+        ...thresholdsSeries,
         {
-          data: this.prepareTimeseries(),
-        },
+          data: this.prepareTimeseries()
+        }
       ]
-    }
+    };
   }
 }

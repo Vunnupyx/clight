@@ -51,7 +51,8 @@ build-docker-webserver:
   stage: build-docker
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - yarn docker:build:webserver
+    # - yarn docker:build:webserver
+    - docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile --push client
   only:
     refs:
       - main
@@ -87,7 +88,8 @@ build-docker-runtime:
   stage: build-docker
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - yarn docker:build:mdclight
+    # - yarn
+    - docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest -f docker/mdclight.Dockerfile --push .
   only:
     refs:
       - main

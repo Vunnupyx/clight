@@ -1,5 +1,7 @@
 <div class="layout-header">
-  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-general.General' | translate }}</h2>
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
+    {{ 'settings-general.General' | translate }}
+  </h2>
 </div>
 
 <mat-divider></mat-divider>
@@ -33,9 +35,32 @@
       </mat-expansion-panel>
     </div>
     <div class="col-12 col-lg-7 quick-start">
-      <button mat-raised-button color="primary" [routerLink]="['/quick-start']">
-        {{ 'settings-general.OpenConfigurationWizard' | translate }}
-      </button>
+      <div class="mb-10">
+        <button
+          mat-raised-button
+          color="primary"
+          [routerLink]="['/quick-start']"
+        >
+          {{ 'settings-general.OpenConfigurationWizard' | translate }}
+        </button>
+      </div>
+      <div class="mb-10">
+        <button mat-raised-button color="primary" (click)="download()">
+          {{ 'settings-general.BackupConfiguration' | translate }}
+        </button>
+      </div>
+      <div>
+        <button mat-raised-button color="primary" (click)="fileInput.click()">
+          {{ 'settings-general.RestoreConfiguration' | translate }}
+        </button>
+        <input
+          style="display: none !important"
+          type="file"
+          accept="application/JSON"
+          #fileInput
+          (change)="onRestoreFileChange($event)"
+        />
+      </div>
     </div>
   </div>
 

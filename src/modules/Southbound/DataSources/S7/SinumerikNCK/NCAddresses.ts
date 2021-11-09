@@ -163,8 +163,62 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     line: 0x1,
     blockType: 0x7f,
     numOfLine: 0x1,
+    dataType: 0x13,
+    byteLength: 0x2
+  },
+  '/Nck/Configuration/maxnumAlarms': {
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x13,
+    line: 0x1,
+    blockType: 0x10,
+    numOfLine: 0x1,
     dataType: 0x4,
     byteLength: 0x2
+  },
+  '/Nck/SequencedAlarms/alarmNo': {
+    // N_SALA_alarmNo1_2
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x2,
+    line: 0x1,
+    blockType: 0x77,
+    numOfLine: 0x1,
+    dataType: 0x7,
+    byteLength: 0x4
+  },
+  '/Nck/AlarmEvent/alarmNo': {
+    // N_SALAC_alarmNo1_2
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x2,
+    line: 0x1,
+    blockType: 0x54,
+    numOfLine: 0x1,
+    dataType: 0x7,
+    byteLength: 0x4
+  },
+  '/Nck/LastAlarm/alarmNo': {
+    // N_SALAL_alarmNo1_2
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x2,
+    line: 0x1,
+    blockType: 0x75,
+    numOfLine: 0x1,
+    dataType: 0x7,
+    byteLength: 0x4
+  },
+  '/Nck/TopPrioAlarm/alarmNo': {
+    // N_SALAP_alarmNo1_2
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x2,
+    line: 0x1,
+    blockType: 0x76,
+    numOfLine: 0x1,
+    dataType: 0x7,
+    byteLength: 0x4
   }
   // SSP_SPEED_OVR: {
   //   qualityBuffer: null,

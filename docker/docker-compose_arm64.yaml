@@ -4,7 +4,14 @@ services:
     image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server:latest
     restart: always
     ports:
-      - '80:8080'
+      - '443:443'
+    volumes:
+      - type: bind
+        source: $HOST/etc/MDCLight/config/ssl_private.key
+        target: /etc/ssl/private/private.key
+      - type: bind
+        source: $HOST/etc/MDCLight/config/ssl.crt
+        target: /etc/ssl/certs/ssl.crt
     depends_on:
       - mdclight
   mdclight:
@@ -24,10 +31,15 @@ services:
       - type: bind
         source: $HOST/sys
         target: /sys
+      - type: bind
+        source: $HOST/root/.ssh/nmcli
+        target: /root/.ssh/nmcli
     environment:
       - PORT=80
     ports:
       - '4840:4840'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   mtconnect-agent:
     image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
     restart: always
@@ -38,4 +50,4 @@ services:
     depends_on:
       - mdclight
     ports:
-      - '5000:5000'
+      - '15504:5000'

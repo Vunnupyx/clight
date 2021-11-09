@@ -185,7 +185,7 @@ export default {
         }
       }
     },
-    '/datasources/{datasourceProtocol}/bulk': {
+    '/datasources/{datasourceProtocol}/dataPoints/bulk': {
       parameters: [
         {
           name: 'datasourceProtocol',
@@ -488,6 +488,38 @@ export default {
         }
       }
     },
+    '/datasinks/{datasinkProtocol}/dataPoints/bulk': {
+      parameters: [
+        {
+          name: 'datasinkProtocol',
+          in: 'path',
+          description: 'id of the datasink',
+          required: true,
+          type: 'string'
+        }
+      ],
+      post: {
+        tags: ['datasinks'],
+        summary: 'change bulk datasink datapoints',
+        description: '',
+        operationId: 'dataSinksPostDatapointBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed datasink'
+          }
+        }
+      }
+    },
     '/datasinks/{datasinkProtocol}/status': {
       parameters: [
         {
@@ -719,6 +751,29 @@ export default {
         }
       }
     },
+    '/vdps/bulk': {
+      post: {
+        tags: ['virtual datapoints'],
+        summary: 'change bulk vdps',
+        description: '',
+        operationId: 'vdpsPostBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed vdps'
+          }
+        }
+      }
+    },
     '/vdps/{id}': {
       parameters: [
         {
@@ -878,6 +933,29 @@ export default {
                 { $ref: '#/definitions/uuid' }
               ]
             }
+          }
+        }
+      }
+    },
+    '/mappings/bulk': {
+      post: {
+        tags: ['mappings'],
+        summary: 'change bulk mappings',
+        description: '',
+        operationId: 'mapPostBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed mappings'
           }
         }
       }

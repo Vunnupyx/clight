@@ -39,6 +39,24 @@ function vdpsPostHandler(request: Request, response: Response): void {
 }
 
 /**
+ * Bulk changes vdps
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function vdpsPostBulkHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  try {
+    await configManager.bulkChangeVirtualDataPoints(request.body || {});
+
+    response.status(200).send();
+  } catch {
+    response.status(400).json({ error: 'Cannot change VDPs. Try again!' });
+  }
+}
+
+/**
  * Get a virtual datapoint selected by id
  * @param  {Request} request
  * @param  {Response} response
@@ -84,6 +102,7 @@ function vdpPatchHandler(request: Request, response: Response): void {
 export const virtualDatapointHandlers = {
   vdpsGet: vdpsGetHandler,
   vdpsPost: vdpsPostHandler,
+  vdpsPostBulk: vdpsPostBulkHandler,
   vdpGet: vdpGetHandler,
   vdpDelete: vdpDeleteHandler,
   vdpPatch: vdpPatchHandler

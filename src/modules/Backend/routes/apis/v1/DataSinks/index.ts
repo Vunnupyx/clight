@@ -4,7 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
 import { hash } from 'bcrypt';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
-import { LifecycleEventStatus } from '../../../../../../common/interfaces';
+import {
+  DataSinkProtocols,
+  LifecycleEventStatus
+} from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
 let dataSinksManager: DataSinksManager;
@@ -120,6 +123,41 @@ async function dataSinkPatchHandler(
     (item) => item.protocol
   );
   response.status(200).json(dataSink);
+}
+
+/**
+ * @async
+ * Bulk dataPoint changes
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function dataSinksPostDatapointBulkHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  try {
+    const proto = request.params?.datasinkProtocol;
+    if (!proto || !['mtconnect', 'opcua', 'datahub'].includes(proto)) {
+      response.status(404).json({ error: 'Protocol not valid.' });
+      winston.warn(
+        'dataSinksPostDatapointBulkHandler error due to no valid protocol!'
+      );
+      return;
+    }
+
+    await configManager.bulkChangeDataSinkDataPoints(
+      request.params.datasourceProtocol as DataSinkProtocols,
+      request.body || {}
+    );
+    response.status(200).send();
+  } catch {
+    winston.warn(
+      `dataSinksPostDatapointBulkHandler tried to change bulk dataSink.dataPoints`
+    );
+    response
+      .status(400)
+      .json({ error: 'Cannot change datapoints. Try again!' });
+  }
 }
 
 /**
@@ -280,6 +318,7 @@ export const dataSinksHandlers = {
   dataSinksGet: dataSinksGetHandler,
   dataSinkGet: dataSinkGetHandler,
   dataSinkPatch: dataSinkPatchHandler,
+  dataSinksPostDatapointBulk: dataSinksPostDatapointBulkHandler,
   dataSinksDataPointsGet: dataPointsGetHandler,
   dataSinksDataPointsPost: dataPointsPostHandler,
   dataSinksDataPointPatch: dataPointPatchHandler,

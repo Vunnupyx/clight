@@ -151,6 +151,7 @@ export class OPCUAAdapter {
         );
       })
       .catch((err) => {
+        winston.error('Failed to start opcua adapter');
         winston.error(err.message);
         winston.error(err);
         const errorMsg = `${logPrefix} error due to ${err.message}`;

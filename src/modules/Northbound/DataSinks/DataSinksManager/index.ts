@@ -122,10 +122,15 @@ export class DataSinksManager {
       this.lifecycleBus.onEvent(ds.onLifecycleEvent.bind(ds));
     });
   }
-
+ 
+  /**
+   * Remove datasinks event handlers from buses
+   */
   private disconnectDataSinksFromBus(): void {
+    const logPrefix = `${DataSinksManager.name}::disconnectDataSinksFromBus`;
     this.dataSinks.forEach((ds) => {
       this.measurementsBus.offEvent(ds.onMeasurements);
+      this.lifecycleBus.offEvent(ds.onLifecycleEvent);
     })
   }
 
@@ -136,6 +141,9 @@ export class DataSinksManager {
     return this.dataSinks.find((sink) => sink.protocol === protocol);
   }
 
+  /**
+   * Stop all datasinks and dependencies and start new datasinks instances.
+   */
   private configChangeHandler(): Promise<void> {
     if (this.dataSinksRestartPending) {
       this.dataAddedDuringRestart = true;

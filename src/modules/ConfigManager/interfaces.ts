@@ -273,6 +273,4 @@ export interface IConfig {
 export interface IConfigManagerParams {
   errorEventsBus: EventBus<IErrorEvent>;
   lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  dataSinksManager: DataSinksManager;
-  dataSourcesManager: DataSourcesManager;
 }

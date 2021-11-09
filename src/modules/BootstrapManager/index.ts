@@ -38,9 +38,7 @@ export class BootstrapManager {
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,
-      lifecycleEventsBus: this.lifecycleEventsBus,
-      dataSourcesManager: this.dataSourcesManager,
-      dataSinksManager: this.dataSinksManager
+      lifecycleEventsBus: this.lifecycleEventsBus
     });
 
     this.dataPointCache = new DataPointCache();
@@ -59,6 +57,7 @@ export class BootstrapManager {
       lifecycleBus: this.lifecycleEventsBus,
       measurementsBus: this.measurementsEventsBus
     });
+    this.configManager.dataSinksManager = this.dataSinksManager;
 
     this.dataSourcesManager = new DataSourcesManager({
       configManager: this.configManager,
@@ -68,6 +67,7 @@ export class BootstrapManager {
       lifecycleBus: this.lifecycleEventsBus,
       measurementsBus: this.measurementsEventsBus
     });
+    this.configManager.dataSourcesManager = this.dataSourcesManager;
 
     this.backend = new RestApiManager({
       configManager: this.configManager,

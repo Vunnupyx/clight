@@ -128,8 +128,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private readonly dataSinksManager: DataSinksManager;
-  private readonly dataSourcesManager: DataSourcesManager;
+  private _dataSinksManager: DataSinksManager;
+  private _dataSourcesManager: DataSourcesManager;
 
   private static className: string = ConfigManager.name;
 
@@ -173,16 +173,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   constructor(params: IConfigManagerParams) {
     super();
-    const {
-      errorEventsBus,
-      lifecycleEventsBus,
-      dataSourcesManager,
-      dataSinksManager
-    } = params;
+    const { errorEventsBus, lifecycleEventsBus } = params;
     this.errorEventsBus = errorEventsBus;
     this.lifecycleEventsBus = lifecycleEventsBus;
-    this.dataSinksManager = dataSinksManager;
-    this.dataSourcesManager = dataSourcesManager;
 
     // Initial values
     this._runtimeConfig = {
@@ -236,11 +229,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const logPrefix = `${ConfigManager.className}::init`;
     winston.info(`${logPrefix} initializing.`);
 
-    this.dataSinksManager.on(
+    this._dataSinksManager.on(
       'dataSinksRestarted',
       this.onDataSinksRestarted.bind(this)
     );
-    this.dataSourcesManager.on(
+    this._dataSourcesManager.on(
       'dataSourcesRestarted',
       this.onDataSourcesRestarted.bind(this)
     );
@@ -684,6 +677,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     ];
   }
 
+  set dataSinksManager(manager: DataSinksManager) {
+    this._dataSinksManager = manager;
+  }
+
+  set dataSourcesManager(manager: DataSourcesManager) {
+    this._dataSourcesManager = manager;
+  }
+
   /**
    * Adds all required pending events to the list
    */
@@ -741,14 +742,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private resolveConfigChanged(error: Error | null) {
     if (error) {
-      this.#rejectConfigChanged(error);
+      if (this.#rejectConfigChanged) this.#rejectConfigChanged(error);
       this.#resolveConfigChanged = null;
       this.#rejectConfigChanged = null;
       this.pendingEvents = [];
     }
 
     if (this.pendingEvents.length === 0) {
-      this.#resolveConfigChanged(error);
+      if (this.#resolveConfigChanged) this.#resolveConfigChanged(error);
       this.#resolveConfigChanged = null;
       this.#rejectConfigChanged = null;
       this.pendingEvents = [];

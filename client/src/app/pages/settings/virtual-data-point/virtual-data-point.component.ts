@@ -19,6 +19,7 @@ import {
   VirtualDataPointService
 } from '../../../services';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
+import { Status } from 'app/shared/state';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -69,6 +70,14 @@ export class VirtualDataPointComponent implements OnInit {
     ];
   }
 
+  get isTouchedTable() {
+    return this.virtualDataPointService.isTouched;
+  }
+
+  get isLoading() {
+    return this.virtualDataPointService.status === Status.Loading;
+  }
+
   constructor(
     private virtualDataPointService: VirtualDataPointService,
     private sourceDataPointService: SourceDataPointService,
@@ -100,6 +109,14 @@ export class VirtualDataPointComponent implements OnInit {
     this.virtualDataPointService.getDataPoints();
     this.virtualDataPointService.getLiveDataForDataPoints();
     this.sourceDataPointService.getSourceDataPointsAll();
+  }
+
+  onDiscard() {
+    return this.virtualDataPointService.revert();
+  }
+
+  onApply() {
+    return this.virtualDataPointService.apply();
   }
 
   onDataPoints(arr: VirtualDataPoint[]) {

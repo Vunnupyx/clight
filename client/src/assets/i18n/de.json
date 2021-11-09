@@ -165,7 +165,9 @@
     "Threshold": "Threshold",
     "AddThreshold": "Add Threshold",
     "BulkSuccess": "Changes have been applied successfully!",
-    "BulkError": "Changes have not been applied. Please, try again!"
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-data-source-point": {
     "LoadError": "",
@@ -229,7 +231,9 @@
     "UpdateError": "",
     "OpenMTConnectStream": "Open MTConnect Stream",
     "BulkSuccess": "Changes have been applied successfully!",
-    "BulkError": "Changes have not been applied. Please, try again!"
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-data-mapping": {
     "DataMapping": "",
@@ -248,7 +252,9 @@
     "UpdateError": "",
     "DeleteError": "",
     "BulkSuccess": "Changes have been applied successfully!",
-    "BulkError": "Changes have not been applied. Please, try again!"
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-network": {
     "Network": "Network",

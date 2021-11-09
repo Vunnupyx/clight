@@ -287,7 +287,7 @@
             *ngIf="isTouchedTable && !isLoading"
             (click)="onDiscard()"
           >
-            {{ 'settings-data-source.DiscardChanges' | translate }}
+            {{ 'settings-data-sink.DiscardChanges' | translate }}
           </button>
 
           <mat-spinner
@@ -303,7 +303,7 @@
             [disabled]="!isTouchedTable || isLoading"
             (click)="onApply()"
           >
-            {{ 'settings-data-source.ApplyChanges' | translate }}
+            {{ 'settings-data-sink.ApplyChanges' | translate }}
           </button>
         </div>
       </div>

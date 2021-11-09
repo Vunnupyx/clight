@@ -1,4 +1,6 @@
-var child = require('child_process');
+import { promises as fs } from 'fs';
+import winston from 'winston';
+const child = require('child_process');
 
 interface PinStatus {
   pin: number;
@@ -17,7 +19,7 @@ export enum PinState {
  * Order-No: 6ES7647-0KA02-0AA2
  */
 export class Iot2050MraaDI10 {
-  private PIN_LABELS = [
+  private DIGITAL_PIN_LABELS = [
     'DI0',
     'DI1',
     'DI2',
@@ -29,7 +31,12 @@ export class Iot2050MraaDI10 {
     'DI8',
     'DI9'
   ];
+  private ANALOG_PIN_LABELS = ['AI0', 'AI1'];
   private MONITOR_PINS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+  private ANALOG_READ_ADDRESSES = [
+    '/sys/bus/iio/devices/iio:device0/in_voltage1_raw',
+    '/sys/bus/iio/devices/iio:device0/in_voltage2_raw'
+  ];
   // Maximum time (ms) between the last three edges for detecting the state as blinking
   private BLINKING_MAX_TIME_BETWEEN_EDGES = 2250; // 0,5Hz + tolerance
   private childProcesses: Array<number> = [];
@@ -64,14 +71,48 @@ export class Iot2050MraaDI10 {
    * Get current pin states (ON, OFF or BLINKING)
    * @returns dictionary of pin labels with current pin states as values
    */
-  public getValues(): { [label: string]: PinState } {
+  public async getDigitalValues(): Promise<{ [label: string]: PinState }> {
     let labeledValues = {};
-    for (let i = 0; i < this.PIN_LABELS.length; i++) {
-      const label = this.PIN_LABELS[i];
+    for (let i = 0; i < this.DIGITAL_PIN_LABELS.length; i++) {
+      const label = this.DIGITAL_PIN_LABELS[i];
       const value = this.currentState[this.MONITOR_PINS[i]];
       labeledValues[label] = value;
     }
     return labeledValues;
+  }
+
+  /**
+   * Get
+   * @returns dictionary of pin labels with current pin states as values
+   */
+  public async getAnalogValues(): Promise<{ [label: string]: number }> {
+    let labeledValues = {};
+    for (let i = 0; i < this.ANALOG_PIN_LABELS.length; i++) {
+      const label = this.ANALOG_PIN_LABELS[i];
+      const address = this.ANALOG_READ_ADDRESSES[i];
+      labeledValues[label] = await this.analogRead(address);
+    }
+    return labeledValues;
+  }
+
+  private async analogRead(sysfs_file: string): Promise<number> {
+    const data = await fs.readFile(
+      `${await this.sysfs_prefix()}${sysfs_file}`,
+      'utf-8'
+    );
+    const parsedValue = parseInt(data, 10);
+    const scaledValue = (parsedValue / 4096) * 100.0;
+    return scaledValue;
+  }
+
+  private async sysfs_prefix() {
+    try {
+      const board = await fs.readFile('/sys/firmware/devicetree/base/model');
+      if (board.indexOf('SIMATIC IOT2050') > 0) return '';
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw e;
+    }
+    return 'src/modules/Iot2050MraaDI10';
   }
 
   /**
@@ -139,6 +180,7 @@ export class Iot2050MraaDI10 {
 // const io = new Iot2050MraaDI10();
 // io.init();
 
-// setInterval(() => {
-//     console.log(io.getValues());
-// }, 100);
+// setInterval(async () => {
+//   console.log(io.getDigitalValues());
+//   console.log(await io.getAnalogValues());
+// }, 3000);

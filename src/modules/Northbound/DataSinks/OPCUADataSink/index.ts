@@ -124,9 +124,9 @@ export class OPCUADataSink extends DataSink {
     return Promise.resolve();
   }
 
-  public shutdown() {
+  public shutdown(): Promise<void> {
     const logPrefix = `${OPCUADataSink.className}::shutdown`;
-    throw new Error('Method not implemented.');
+    return this.opcuaAdapter.shutdown();
   }
 
   public async disconnect() {

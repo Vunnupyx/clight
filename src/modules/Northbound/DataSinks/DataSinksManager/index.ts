@@ -1,6 +1,10 @@
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
-import { DataSinkProtocols, IErrorEvent, ILifecycleEvent } from '../../../../common/interfaces';
+import {
+  DataSinkProtocols,
+  IErrorEvent,
+  ILifecycleEvent
+} from '../../../../common/interfaces';
 import { ConfigManager } from '../../../ConfigManager';
 import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
@@ -31,12 +35,13 @@ export class DataSinksManager {
   private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: Array<DataSink> = [];
+  private dataSinksRestartPending = false;
+  private dataAddedDuringRestart = false;
 
   constructor(params: IDataSinkManagerParams) {
     this.configManager = params.configManager;
-    this.configManager.once('configsLoaded', () => {
-      return this.init();
-    });
+    this.configManager.once('configsLoaded', () => this.init());
+    this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
   }
@@ -45,32 +50,32 @@ export class DataSinksManager {
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
 
+    console.log('MARKUS', 'DataSinksManager INIT');
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
     return Promise.all(initMethods)
-      .then((res) => {
-        //TODO: Handle rejected init
+      .then(() => {
+        // TODO: Handle rejected init
         winston.info(`${logPrefix} initialized.`);
       })
       .then(() => this)
-      .catch((err) => {
-        return Promise.reject(
+      .catch((err) =>
+        Promise.reject(
           new NorthBoundError(`${logPrefix} error due to ${err.message}`)
-        );
-      });
+        )
+      );
   }
 
   /**
-   * Not in use
-   * @returns boolean
+   * Shutdown all available data sinks.
    */
   public async shutdownDataSink(): Promise<void> {
-    for await (const dataSink of this.dataSinks) {
-      if (dataSink) {
-        await dataSink.shutdown();
-      }
-    }
+    const shutdownFn = [];
+    this.dataSinks.forEach(async (dataSink) => {
+      shutdownFn.push(dataSink.shutdown);
+    });
     this.dataSinks = [];
+    Promise.all(shutdownFn);
   }
 
   /**
@@ -93,7 +98,7 @@ export class DataSinksManager {
     const dataHubDataSinkOptions: DataHubDataSinkOptions = {
       config: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
       runTimeConfig: this.configManager.runtimeConfig.datahub
-    }
+    };
 
     this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
     this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
@@ -118,11 +123,63 @@ export class DataSinksManager {
       this.lifecycleBus.onEvent(ds.onLifecycleEvent.bind(ds));
     });
   }
+ 
+  /**
+   * Remove datasinks event handlers from buses
+   */
+  private disconnectDataSinksFromBus(): void {
+    const logPrefix = `${DataSinksManager.name}::disconnectDataSinksFromBus`;
+    this.dataSinks.forEach((ds) => {
+      this.measurementsBus.offEvent(ds.onMeasurements);
+      this.lifecycleBus.offEvent(ds.onLifecycleEvent);
+    })
+  }
 
   /**
    * Returns datasink by protocol
    */
   public getDataSinkByProto(protocol: string) {
     return this.dataSinks.find((sink) => sink.protocol === protocol);
+  }
+
+  /**
+   * Stop all datasinks and dependencies and start new datasinks instances.
+   */
+  private configChangeHandler(): Promise<void> {
+    console.log('MARKUS', this.dataSinksRestartPending );
+    console.log('MARKUS', this.dataAddedDuringRestart );
+    if (this.dataSinksRestartPending) {
+      this.dataAddedDuringRestart = true;
+      return
+    };
+    this.dataSinksRestartPending = true;
+    const logPrefix = `${DataSinksManager.name}::configChangeHandler`;
+
+    console.log('MARKUS', logPrefix)
+    const shutdownFunctions = [];
+    this.disconnectDataSinksFromBus()
+    console.log(1);
+    this.dataSinks.forEach((sink) => {
+        if (!sink.shutdown) winston.error(`${logPrefix} ${sink} does not have a shutdown method.`);
+        shutdownFunctions.push(sink.shutdown());
+    });
+    console.log(2);
+    this.dataSinks = [];
+    return Promise.all(shutdownFunctions)
+    .then(() => console.log(3))
+      .then(() => this.init())
+      .then(() => {
+        console.log(4);
+        winston.info(`${logPrefix} reload datasinks successfully.`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}`);
+      }).finally(() => {
+        this.dataSinksRestartPending = false;
+        if (this.dataAddedDuringRestart) {
+          this.dataAddedDuringRestart = false;
+          this.configChangeHandler()
+        };
+      });
   }
 }

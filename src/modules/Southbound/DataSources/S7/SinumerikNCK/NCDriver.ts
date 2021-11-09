@@ -574,10 +574,7 @@ export default class SinumerikNCKProtocolDriver {
    */
   public async disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.tcpClient.removeAllListeners('connect');
-      this.tcpClient.removeAllListeners('data');
-      this.tcpClient.removeAllListeners('error');
-      this.tcpClient.on('close', () => {
+      this.tcpClient.once('close', () => {
         winston.debug('NCK Driver: Close callback called!');
         resolve();
       });

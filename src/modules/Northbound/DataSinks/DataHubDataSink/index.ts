@@ -113,6 +113,7 @@ export class DataHubDataSink extends DataSink {
   public init(): Promise<DataHubDataSink> {
     const logPrefix = `${DataHubDataSink.#className}::init`;
     winston.debug(`${logPrefix} initializing.`);
+    console.log('MARKUS', 'DATAHUBSINK INIT');
 
     if (
       !this.options.config.datahub ||
@@ -140,10 +141,17 @@ export class DataHubDataSink extends DataSink {
   /**
    * Shutdown datasink
    */
-  public async shutdown() {
-    await this.#datahubAdapter.stop();
-    this.#datahubAdapter = null;
-    winston.info(`${DataHubDataSink.#className}::shutdown successful.`);
+  public shutdown(): Promise<void> {
+    const logPrefix = `${DataHubDataSink.#className}::shutdown`;
+    return this.#datahubAdapter
+      .shutdown()
+      .then(() => (this.#datahubAdapter = null))
+      .then(() => {
+        winston.info(`${logPrefix} successful.`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}`);
+      });
   }
 
   /**

@@ -14,6 +14,7 @@ import winston from 'winston';
 import { ConfigManager } from '../../../ConfigManager';
 import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
+import { promisify } from 'util';
 
 /**
  * Creates and manages all data sources
@@ -26,11 +27,15 @@ export class DataSourcesManager {
   private dataSources: Array<DataSource> = [];
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
+  private dataAddedDuringRestart = false;
+  private dataSinksRestartPending = false;
+
 
   constructor(params: IDataSourcesManagerParams) {
     params.configManager.once('configsLoaded', () => {
       return this.init();
     });
+    params.configManager.on('configChange', this.configChangeHandler.bind(this));
 
     this.configManager = params.configManager;
     this.lifecycleBus = params.lifecycleBus;
@@ -133,5 +138,41 @@ export class DataSourcesManager {
    */
   public getDataSourceByProto(protocol: string) {
     return this.dataSources.find((src) => src.protocol === protocol);
+  }
+
+  private configChangeHandler(forced: boolean = false): Promise<void> {
+    if (this.dataSinksRestartPending) {
+      this.dataAddedDuringRestart = true;
+      return;
+    };
+    this.dataSinksRestartPending = true;
+    const logPrefix = `${DataSourcesManager.name}::configChangeHandler`;
+
+    console.log('Markus', logPrefix);
+    const shutdownFns = [];
+    let error = false;
+    this.dataSources.forEach((source) => {
+      shutdownFns.push(source.shutdown());
+    })
+    this.dataSources = [];
+    Promise.allSettled(shutdownFns).then((results) => {
+      results.forEach((result) => {
+        if (result.status === 'rejected') winston.error(`${logPrefix} error due to ${result.reason}`)
+      })
+    }).then(() => {
+      return this.init();
+    }).then(() => {
+      winston.info(`${logPrefix} datasources restart successfully.`);
+    }).catch((err) => {
+      winston.error(`${logPrefix} datasources restart error due to ${err.message}`)
+      error = true;
+    }).finally(() => {
+      this.dataSinksRestartPending = false;
+      if (this.dataAddedDuringRestart || error) {
+        this.dataAddedDuringRestart = false;
+        this.configChangeHandler(error);
+        };
+    });
+
   }
 }

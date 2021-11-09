@@ -26,7 +26,7 @@ export class ChangePasswordComponent implements OnInit {
     private translate: TranslateService,
     private profileService: ProfileService,
     private localStorageService: LocalStorageService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const oldPassword = this.localStorageService.get<string>('old-password');
@@ -69,8 +69,12 @@ export class ChangePasswordComponent implements OnInit {
       .changePassword(data)
       .then(() => {
         this.localStorageService.clear('old-password');
-        this.toastr.success(this.translate.instant('settings-change-password.ChangePasswordSuccess'));
-        this.router.navigate(['/settings/general']);
+        this.toastr.success(
+          this.translate.instant(
+            'settings-change-password.ChangePasswordSuccess'
+          )
+        );
+        this.router.navigate(['/']);
       })
       .catch((error) => this.toastr.error(error.error.message));
   }

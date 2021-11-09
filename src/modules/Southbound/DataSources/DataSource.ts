@@ -77,9 +77,9 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Shuts down the data source
    */
-  public shutdown() {
+  public async shutdown() {
     this.scheduler.removeListener(this.schedulerListenerId);
-    this.disconnect();
+    await this.disconnect();
   }
 
   /**
@@ -92,7 +92,7 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Should disconnect the data source and clean up all connection resources
    */
-  public abstract disconnect();
+  public abstract disconnect(): Promise<void>;
 
   /**
    * Maps process data from each data point to the data source

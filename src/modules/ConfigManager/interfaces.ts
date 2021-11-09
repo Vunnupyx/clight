@@ -222,6 +222,8 @@ export interface IDefaultTemplate {
   description: string;
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];
+  mapping: IDataPointMapping[];
+  virtualDataPoints: IVirtualDataPointConfig[];
 }
 
 export interface IDefaultTemplates {

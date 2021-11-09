@@ -333,6 +333,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       ...this._config,
       dataSources: sources,
       dataSinks: sinks,
+      virtualDataPoints: template.virtualDataPoints,
+      mapping: template.mapping,
       quickStart: {
         completed: true
       }

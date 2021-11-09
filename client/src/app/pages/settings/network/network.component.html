@@ -52,30 +52,16 @@
               {{ 'settings-network.IPAddress' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X1].ipAddr"
+              <mat-form-field>
+                <input
+                  matInput
                   name="ipAddr"
                   #ipAddr="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].ipAddr"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!ipAddr.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="ipAddr.dirty">
-                  <mat-icon *ngIf="ipAddr.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!ipAddr.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -84,30 +70,16 @@
               {{ 'settings-network.Netmask' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X1].netmask"
+              <mat-form-field>
+                <input
+                  matInput
                   name="netmask"
                   #netmask="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].netmask"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!netmask.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="netmask.dirty">
-                  <mat-icon *ngIf="netmask.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!netmask.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -116,30 +88,16 @@
               {{ 'settings-network.DefaultGateway' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X1].defaultGateway"
+              <mat-form-field>
+                <input
+                  matInput
                   name="defaultGateway"
                   #defaultGateway="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].defaultGateway"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!defaultGateway.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="defaultGateway.dirty">
-                  <mat-icon *ngIf="defaultGateway.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!defaultGateway.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -148,30 +106,16 @@
               {{ 'settings-network.DNSServer' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X1].dnsServer"
+              <mat-form-field>
+                <input
+                  matInput
                   name="dnsServer"
                   #dnsServer="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X1].dnsServer"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X1].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!dnsServer.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="dnsServer.dirty">
-                  <mat-icon *ngIf="dnsServer.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!dnsServer.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -208,30 +152,16 @@
               {{ 'settings-network.IPAddress' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X2].ipAddr"
+              <mat-form-field>
+                <input
+                  matInput
                   name="ipAddr"
-                  #ipAddr="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  #netmask="ngModel"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].ipAddr"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!ipAddr.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="ipAddr.dirty">
-                  <mat-icon *ngIf="ipAddr.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!ipAddr.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -240,30 +170,16 @@
               {{ 'settings-network.Netmask' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X2].netmask"
+              <mat-form-field>
+                <input
+                  matInput
                   name="netmask"
                   #netmask="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].netmask"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!netmask.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="netmask.dirty">
-                  <mat-icon *ngIf="netmask.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!netmask.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -272,30 +188,16 @@
               {{ 'settings-network.DefaultGateway' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X2].defaultGateway"
+              <mat-form-field>
+                <input
+                  matInput
                   name="defaultGateway"
                   #defaultGateway="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].defaultGateway"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!defaultGateway.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="defaultGateway.dirty">
-                  <mat-icon *ngIf="defaultGateway.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!defaultGateway.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 
@@ -304,30 +206,16 @@
               {{ 'settings-network.DNSServer' | translate }}
             </div>
             <div>
-              <div class="d-flex align-items-center">
-                <ngx-ip
-                  [(ngModel)]="config[NetworkType.ETHERNET_X2].dnsServer"
+              <mat-form-field>
+                <input
+                  matInput
                   name="dnsServer"
                   #dnsServer="ngModel"
-                  inputValidation="block"
-                  separator="."
-                  [required]="true"
-                  [highlightInvalidBlocks]="true"
-                  theme="ngx-ip-theme-material"
+                  [(ngModel)]="config[NetworkType.ETHERNET_X2].dnsServer"
+                  [pattern]="ipRegex"
                   [disabled]="!!config[NetworkType.ETHERNET_X2].useDhcp"
-                ></ngx-ip>
-                <ng-container *ngIf="!dnsServer.dirty">
-                  <div class="p-10"></div>
-                </ng-container>
-                <ng-container *ngIf="dnsServer.dirty">
-                  <mat-icon *ngIf="dnsServer.valid" class="color-success"
-                    >check</mat-icon
-                  >
-                  <mat-icon *ngIf="!dnsServer.valid" class="color-error"
-                    >error_outline</mat-icon
-                  >
-                </ng-container>
-              </div>
+                />
+              </mat-form-field>
             </div>
           </div>
 

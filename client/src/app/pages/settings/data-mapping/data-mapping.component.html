@@ -1,5 +1,7 @@
 <div class="layout-header">
-  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-data-mapping.DataMapping' | translate }}</h2>
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
+    {{ 'settings-data-mapping.DataMapping' | translate }}
+  </h2>
 </div>
 
 <mat-divider></mat-divider>
@@ -47,15 +49,13 @@
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
             >
-              <mat-option
-                [value]="item.id"
-                *ngFor="let item of sourcesPoints"
+              <mat-option [value]="item.id" *ngFor="let item of sourcesPoints"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
               <mat-option
                 [value]="item.id"
                 *ngFor="let item of sourcesVirtualPoints"
-              >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
+                >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
             </mat-select>
           </ng-template>
@@ -120,23 +120,29 @@
             let-value="value"
             let-row="row"
           >
-            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex !== rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditStart(rowIndex, row)"
+                (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Edit' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>edit</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onDelete(row)"
+                (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
-            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex === rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditEnd()"
+                (click)="onEditEnd(); group.value = null"
                 [matTooltip]="'settings-data-mapping.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
@@ -144,7 +150,7 @@
                 ></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditCancel()"
+                (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-data-mapping.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"

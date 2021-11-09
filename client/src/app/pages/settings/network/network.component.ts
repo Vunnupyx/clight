@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 import { NetworkService } from '../../../services/network.service';
 import { clone, ObjectMap } from '../../../shared/utils';
 import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
-import { HOST_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
+import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 
 @Component({
   selector: 'app-network',
@@ -21,6 +21,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
+  ipRegex = IP_REGEX;
 
   ProxyType = ProxyType;
 

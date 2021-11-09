@@ -30,6 +30,7 @@ import {
 import { CreateDataItemModalComponent } from '../create-data-item-modal/create-data-item-modal.component';
 import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
 import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
+import { Status } from 'app/shared/state';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -64,6 +65,14 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   sub = new Subscription();
 
+  get isTouchedTable() {
+    return this.dataPointService.isTouched;
+  }
+
+  get isLoading() {
+    return this.dataPointService.status === Status.Loading;
+  }
+
   get MTConnectStreamHref() {
     return `http://${window.location.hostname}:15504/current`;
   }
@@ -97,6 +106,14 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     if (dataSink) {
       this.onDataSink(dataSink);
     }
+  }
+
+  onDiscard() {
+    return this.dataPointService.revert();
+  }
+
+  onApply() {
+    return this.dataPointService.apply(this.dataSink?.protocol!);
   }
 
   onDataSink(dataSink: DataSink) {

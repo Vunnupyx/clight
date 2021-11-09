@@ -1,11 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import {SourceDataPoint, DataPoint, DataMapping, VirtualDataPoint} from 'app/models';
+import {
+  SourceDataPoint,
+  DataPoint,
+  DataMapping,
+  VirtualDataPoint
+} from 'app/models';
 import {
   SourceDataPointService,
   DataPointService,
-  DataMappingService, VirtualDataPointService
+  DataMappingService,
+  VirtualDataPointService
 } from 'app/services';
 import { Status } from 'app/shared/state';
 import { array2map, clone, ObjectMap } from 'app/shared/utils';
@@ -53,6 +59,14 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     return this.virtualDataPoints || [];
   }
 
+  get isTouchedTable() {
+    return this.dataMappingService.isTouched;
+  }
+
+  get isLoading() {
+    return this.dataMappingService.status === Status.Loading;
+  }
+
   ngOnInit() {
     this.sub.add(
       this.sourceDataPointService.dataPoints.subscribe((x) =>
@@ -63,7 +77,9 @@ export class DataMappingComponent implements OnInit, OnDestroy {
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
     );
     this.sub.add(
-      this.virtualDataPointService.dataPoints.subscribe((x) => this.onVirtualDataPoints(x))
+      this.virtualDataPointService.dataPoints.subscribe((x) =>
+        this.onVirtualDataPoints(x)
+      )
     );
     this.sub.add(
       this.dataMappingService.dataMappings.subscribe((x) =>
@@ -159,6 +175,14 @@ export class DataMappingComponent implements OnInit, OnDestroy {
 
   onEditCancel() {
     this.clearUnsavedRow();
+  }
+
+  onDiscard() {
+    return this.dataMappingService.revert();
+  }
+
+  onApply() {
+    return this.dataMappingService.apply();
   }
 
   private clearUnsavedRow() {

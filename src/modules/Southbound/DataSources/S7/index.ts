@@ -287,5 +287,6 @@ export class S7DataSource extends DataSource {
     this.currentStatus = LifecycleEventStatus.Disconnected;
     clearTimeout(this.reconnectTimeoutId);
     this.client.dropConnection();
+    await this.nckClient.disconnect();
   }
 }

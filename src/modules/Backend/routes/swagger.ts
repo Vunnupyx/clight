@@ -185,6 +185,38 @@ export default {
         }
       }
     },
+    '/datasources/{datasourceProtocol}/dataPoints/bulk': {
+      parameters: [
+        {
+          name: 'datasourceProtocol',
+          in: 'path',
+          description: 'id of the datasource',
+          required: true,
+          type: 'string'
+        }
+      ],
+      post: {
+        tags: ['datasource'],
+        summary: 'change bulk datasource datapoints',
+        description: '',
+        operationId: 'dataSourcesPostDatapointBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed datasource'
+          }
+        }
+      }
+    },
     '/datasources/{datasourceProtocol}/status': {
       parameters: [
         {
@@ -456,6 +488,38 @@ export default {
         }
       }
     },
+    '/datasinks/{datasinkProtocol}/dataPoints/bulk': {
+      parameters: [
+        {
+          name: 'datasinkProtocol',
+          in: 'path',
+          description: 'id of the datasink',
+          required: true,
+          type: 'string'
+        }
+      ],
+      post: {
+        tags: ['datasinks'],
+        summary: 'change bulk datasink datapoints',
+        description: '',
+        operationId: 'dataSinksPostDatapointBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed datasink'
+          }
+        }
+      }
+    },
     '/datasinks/{datasinkProtocol}/status': {
       parameters: [
         {
@@ -687,6 +751,29 @@ export default {
         }
       }
     },
+    '/vdps/bulk': {
+      post: {
+        tags: ['virtual datapoints'],
+        summary: 'change bulk vdps',
+        description: '',
+        operationId: 'vdpsPostBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed vdps'
+          }
+        }
+      }
+    },
     '/vdps/{id}': {
       parameters: [
         {
@@ -846,6 +933,29 @@ export default {
                 { $ref: '#/definitions/uuid' }
               ]
             }
+          }
+        }
+      }
+    },
+    '/mappings/bulk': {
+      post: {
+        tags: ['mappings'],
+        summary: 'change bulk mappings',
+        description: '',
+        operationId: 'mapPostBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed mappings'
           }
         }
       }
@@ -1924,6 +2034,40 @@ export default {
             ]
           }
         }
+      }
+    },
+    changeBulk: {
+      type: 'object',
+      properties: {
+        created: {
+          type: 'object'
+        },
+        updated: {
+          type: 'object'
+        },
+        deleted: {
+          type: 'array',
+          items: {
+            allOf: [
+              {
+                type: 'string'
+              }
+            ]
+          }
+        }
+      },
+      example: {
+        created: {
+          entityId: {
+            entityProp: 'entityValue'
+          }
+        },
+        updated: {
+          entityId: {
+            entityProp: 'entityValue'
+          }
+        },
+        deleted: ['entityId']
       }
     }
   }

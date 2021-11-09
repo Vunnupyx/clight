@@ -140,7 +140,9 @@
         "1": "On",
         "2": "Blinking"
       }
-    }
+    },
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",
@@ -165,13 +167,19 @@
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",
-    "AddThreshold": "Add Threshold"
+    "AddThreshold": "Add Threshold",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-data-source-point": {
     "LoadError": "Failed to load data points. Try again later",
     "CreateError": "Failed to create a data point. Try again later",
     "UpdateError": "Failed to update a data point. Try again later",
-    "DeleteError": "Failed to delete a data point. Try again later"
+    "DeleteError": "Failed to delete a data point. Try again later",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!"
   },
   "settings-data-sink": {
     "DataSink": "Data Sink",
@@ -230,7 +238,11 @@
     "LoadError": "Failed to load data sinks. Try again later",
     "LoadStatusError": "Failed to load status. Try again later",
     "UpdateError": "Failed to update a data sink. Try again later",
-    "OpenMTConnectStream": "Open MTConnect Stream"
+    "OpenMTConnectStream": "Open MTConnect Stream",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",
@@ -247,7 +259,11 @@
     "LoadError": "Failed to load mappings. Try again later",
     "CreateError": "Failed to create a mapping. Try again later",
     "UpdateError": "Failed to update a mapping. Try again later",
-    "DeleteError": "Failed to delete a mapping. Try again later"
+    "DeleteError": "Failed to delete a mapping. Try again later",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-network": {
     "Network": "Network",
@@ -276,5 +292,9 @@
   "system-information": {
     "SystemInformation": "System Information",
     "LoadError": "Failed to load system information. Try again later"
+  },
+  "prompt": {
+    "warningTitle": "Warning!",
+    "warningText": "You have unsaved changes, do you really want to continue?"
   }
 }

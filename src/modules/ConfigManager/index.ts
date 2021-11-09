@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
 import {
   DataSinkProtocols,
   DataSourceProtocols,
@@ -30,6 +31,7 @@ import { System } from '../System';
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
   newRuntimeConfig: (config: IRuntimeConfig) => void;
+  configChange: () => void;
   configsLoaded: () => void;
 }
 
@@ -489,6 +491,148 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
+   * bulk config dataSource changes.
+   */
+  public async bulkChangeDataSourceDataPoints(
+    protocol: DataSourceProtocols,
+    changes: any
+  ): Promise<void> {
+    const { created, updated, deleted } = changes;
+
+    const dataSource = this._config.dataSources.find(
+      (ds) => ds.protocol === protocol
+    );
+
+    if (created) {
+      dataSource.dataPoints.push(
+        ...Object.values<any>(created).map((item) => ({
+          ...item,
+          id: uuidv4()
+        }))
+      );
+    }
+
+    if (updated) {
+      dataSource.dataPoints.forEach((dp) => {
+        if (updated[dp.id]) {
+          Object.assign(dp, updated[dp.id]);
+        }
+      });
+    }
+
+    if (deleted) {
+      dataSource.dataPoints = dataSource.dataPoints.filter(
+        (dp) => !deleted.includes(dp.id)
+      );
+    }
+
+    await this.saveConfigToFile();
+  }
+
+  /**
+   * bulk config dataSink changes.
+   */
+  public async bulkChangeDataSinkDataPoints(
+    protocol: DataSinkProtocols,
+    changes: any
+  ): Promise<void> {
+    const { created, updated, deleted } = changes;
+
+    const dataSink = this._config.dataSinks.find(
+      (ds) => ds.protocol === protocol
+    );
+
+    if (created) {
+      dataSink.dataPoints.push(
+        ...Object.values<any>(created).map((item) => ({
+          ...item,
+          id: uuidv4()
+        }))
+      );
+    }
+
+    if (updated) {
+      dataSink.dataPoints.forEach((dp) => {
+        if (updated[dp.id]) {
+          Object.assign(dp, updated[dp.id]);
+        }
+      });
+    }
+
+    if (deleted) {
+      dataSink.dataPoints = dataSink.dataPoints.filter(
+        (dp) => !deleted.includes(dp.id)
+      );
+    }
+
+    await this.saveConfigToFile();
+  }
+
+  /**
+   * bulk config VDP changes.
+   */
+  public async bulkChangeVirtualDataPoints(changes: any): Promise<void> {
+    const { created, updated, deleted } = changes;
+
+    if (created) {
+      this._config.virtualDataPoints.push(
+        ...Object.values<any>(created).map((item) => ({
+          ...item,
+          id: uuidv4()
+        }))
+      );
+    }
+
+    if (updated) {
+      this._config.virtualDataPoints.forEach((dp) => {
+        if (updated[dp.id]) {
+          Object.assign(dp, updated[dp.id]);
+        }
+      });
+    }
+
+    if (deleted) {
+      this._config.virtualDataPoints = this._config.virtualDataPoints.filter(
+        (dp) => !deleted.includes(dp.id)
+      );
+    }
+
+    await this.saveConfigToFile();
+  }
+
+  /**
+   * bulk config mapping changes.
+   */
+  public async bulkChangeMapings(changes: any): Promise<void> {
+    const { created, updated, deleted } = changes;
+
+    if (created) {
+      this._config.mapping.push(
+        ...Object.values<any>(created).map((item) => ({
+          ...item,
+          id: uuidv4()
+        }))
+      );
+    }
+
+    if (updated) {
+      this._config.mapping.forEach((dp) => {
+        if (updated[dp.id]) {
+          Object.assign(dp, updated[dp.id]);
+        }
+      });
+    }
+
+    if (deleted) {
+      this._config.mapping = this._config.mapping.filter(
+        (dp) => !deleted.includes(dp.id)
+      );
+    }
+
+    await this.saveConfigToFile();
+  }
+
+  /**
    * change the config with a given object or change it.
    */
   public changeConfig<
@@ -573,9 +717,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         winston.info(
           `${logPrefix} Saved ${content.length} bytes to config ${file}`
         );
+        this.emit('configChange');
       })
       .catch((err) => {
-        winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
+        winston.error(`${logPrefix} error due to ${err.message}`);
       });
   }
 

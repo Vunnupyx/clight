@@ -1,5 +1,5 @@
 export interface DataMapping {
-  id?: string;
+  id: string;
   source: string;
   target: string;
   mapValue: string;

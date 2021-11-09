@@ -6,26 +6,40 @@ import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import {
   array2map,
+  clone,
   errorHandler,
   flatArray,
   ObjectMap
 } from 'app/shared/utils';
 import * as api from 'app/api/models';
+import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
+import { BaseChangesService } from './base-changes.service';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 
 export class DataPointsState {
   status!: Status;
+  originalDataPoints!: DataPoint[];
   dataPoints!: DataPoint[];
   dataPointsSinkMap!: ObjectMap<DataSinkProtocol>;
 }
 
 @Injectable()
-export class DataPointService {
+export class DataPointService
+  extends BaseChangesService<DataPoint>
+  implements IChangesAppliable
+{
   private _store: Store<DataPointsState>;
 
   constructor(
     storeFactory: StoreFactory<DataPointsState>,
-    private httpService: HttpService
+    changesFactory: StoreFactory<IChangesState<string, DataPoint>>,
+    private httpService: HttpService,
+    private translate: TranslateService,
+    private toastr: ToastrService
   ) {
+    super(changesFactory);
+
     this._store = storeFactory.startFrom(this._emptyState());
   }
 
@@ -52,6 +66,7 @@ export class DataPointService {
       this._store.patchState((state) => {
         state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
+        state.originalDataPoints = clone(state.dataPoints);
         state.dataPointsSinkMap = array2map(
           state.dataPoints,
           (item) => item.id!,
@@ -113,75 +128,138 @@ export class DataPointService {
   }
 
   async addDataPoint(protocol: DataSinkProtocol, obj: DataPoint) {
+    this.create(obj);
     this._store.patchState((state) => {
-      state.status = Status.Creating;
+      state.status = Status.Ready;
+      state.dataPoints = [...state.dataPoints, obj];
+      state.dataPointsSinkMap[obj.id] = protocol;
     });
 
-    try {
-      const response = await this.httpService.post(
-        `/datasinks/${protocol}/dataPoints`,
-        obj
-      );
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-        obj.id = response.created.id;
-        state.dataPoints.push(obj);
-        state.dataPointsSinkMap[obj.id!] = protocol;
-      });
-    } catch (err) {
-      errorHandler(err);
-      // TODO: Show error message (toast notification?)
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    }
+    // this._store.patchState((state) => {
+    //   state.status = Status.Creating;
+    // });
+
+    // try {
+    //   const response = await this.httpService.post(
+    //     `/datasinks/${protocol}/dataPoints`,
+    //     obj
+    //   );
+    //   this._store.patchState((state) => {
+    //     state.status = Status.Ready;
+    //     obj.id = response.created.id;
+    //     state.dataPoints.push(obj);
+    //     state.dataPointsSinkMap[obj.id!] = protocol;
+    //   });
+    // } catch (err) {
+    //   errorHandler(err);
+    //   // TODO: Show error message (toast notification?)
+    //   this._store.patchState((state) => {
+    //     state.status = Status.Ready;
+    //   });
+    // }
   }
 
   async updateDataPoint(protocol: DataSinkProtocol, obj: DataPoint) {
+    const oldDp = this._store.snapshot.dataPoints.find(
+      (dp) => dp.id === obj.id
+    );
+
+    this.update(obj.id, { ...oldDp, ...obj });
+
     this._store.patchState((state) => {
-      state.status = Status.Updating;
+      state.dataPoints = state.dataPoints.map((x) =>
+        x.id != obj.id ? x : obj
+      );
     });
 
-    try {
-      await this.httpService.patch(
-        `/datasinks/${protocol}/dataPoints/${obj.id}`,
-        obj
-      );
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-        state.dataPoints = state.dataPoints.map((x) =>
-          x.id != obj.id ? x : obj
-        );
-      });
-    } catch (err) {
-      errorHandler(err);
-      // TODO: Show error message (toast notification?)
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    }
+    // this._store.patchState((state) => {
+    //   state.status = Status.Updating;
+    // });
+
+    // try {
+    //   await this.httpService.patch(
+    //     `/datasinks/${protocol}/dataPoints/${obj.id}`,
+    //     obj
+    //   );
+    //   this._store.patchState((state) => {
+    //     state.status = Status.Ready;
+    //     state.dataPoints = state.dataPoints.map((x) =>
+    //       x.id != obj.id ? x : obj
+    //     );
+    //   });
+    // } catch (err) {
+    //   errorHandler(err);
+    //   // TODO: Show error message (toast notification?)
+    //   this._store.patchState((state) => {
+    //     state.status = Status.Ready;
+    //   });
+    // }
   }
 
   async deleteDataPoint(protocol: DataSinkProtocol, obj: DataPoint) {
+    this.delete(obj.id);
+
     this._store.patchState((state) => {
-      state.status = Status.Deleting;
+      state.status = Status.Ready;
+      state.dataPoints = state.dataPoints.filter((x) => x.id != obj.id);
     });
 
+    // this._store.patchState((state) => {
+    //   state.status = Status.Deleting;
+    // });
+
+    // try {
+    //   await this.httpService.delete(
+    //     `/datasinks/${protocol}/dataPoints/${obj.id}`
+    //   );
+
+    // } catch (err) {
+    //   errorHandler(err);
+    //   // TODO: Show error message (toast notification?)
+    //   this._store.patchState((state) => {
+    //     state.status = Status.Ready;
+    //   });
+    // }
+  }
+
+  revert(): Promise<boolean> {
+    this._store.patchState((state) => {
+      state.dataPoints = clone(state.originalDataPoints);
+    });
+
+    this.resetState();
+
+    return Promise.resolve(true);
+  }
+
+  async apply(protocol: DataSinkProtocol): Promise<boolean> {
     try {
-      await this.httpService.delete(
-        `/datasinks/${protocol}/dataPoints/${obj.id}`
+      this._store.patchState((state) => {
+        state.status = Status.Loading;
+      });
+
+      await this.httpService.post(
+        `/datasinks/${protocol}/dataPoints/bulk`,
+        this.getPayload()
       );
+
+      this.resetState();
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataPoints = state.dataPoints.filter((x) => x != obj);
       });
-    } catch (err) {
-      errorHandler(err);
-      // TODO: Show error message (toast notification?)
+
+      this.toastr.success(
+        this.translate.instant('settings-data-sink.BulkSuccess')
+      );
+    } catch {
+      this.toastr.error(this.translate.instant('settings-data-sink.BulkError'));
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
     }
+
+    return true;
   }
 
   getPrefix(id: string) {

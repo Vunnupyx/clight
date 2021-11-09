@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { DataSink, DataSinkProtocol } from 'app/models';
-import { DataSinkService } from 'app/services';
-import { Status } from 'app/shared/state';
+import { DataPointService, DataSinkService } from 'app/services';
+import { PromptService } from 'app/shared/services/prompt.service';
 
 @Component({
   selector: 'app-data-sink',
@@ -18,7 +18,15 @@ export class DataSinkComponent implements OnInit {
 
   sub = new Subscription();
 
-  constructor(private dataSinkService: DataSinkService) {}
+  get isTouched() {
+    return this.dataPointService.isTouched;
+  }
+
+  constructor(
+    private dataSinkService: DataSinkService,
+    private dataPointService: DataPointService,
+    private promptService: PromptService
+  ) {}
 
   ngOnInit() {
     this.sub.add(
@@ -39,7 +47,16 @@ export class DataSinkComponent implements OnInit {
     }
   }
 
-  switchDataSink(obj: DataSink) {
+  async switchDataSink(obj: DataSink) {
+    if (this.isTouched) {
+      try {
+        await this.promptService.warn();
+        await this.dataPointService.revert();
+      } catch {
+        return;
+      }
+    }
+
     this.dataSink = obj;
   }
 

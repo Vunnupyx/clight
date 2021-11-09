@@ -8,18 +8,24 @@ import { Status, Store, StoreFactory } from '../shared/state';
 import { DataPointLiveData, VirtualDataPoint } from '../models';
 import { HttpService } from '../shared';
 import * as api from '../api/models';
-import { array2map, errorHandler, ObjectMap } from '../shared/utils';
+import { array2map, clone, errorHandler, ObjectMap } from '../shared/utils';
 import { CreateEntityResponse } from '../models/responses/create-entity.response';
 import { UpdateEntityResponse } from '../models/responses/update-entity.response';
+import { BaseChangesService } from './base-changes.service';
+import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
 
 export class VirtualDataPointsState {
   status!: Status;
   dataPoints!: VirtualDataPoint[];
+  originalDataPoints!: VirtualDataPoint[];
   dataPointsLivedata!: ObjectMap<DataPointLiveData>;
 }
 
 @Injectable()
-export class VirtualDataPointService {
+export class VirtualDataPointService
+  extends BaseChangesService<VirtualDataPoint>
+  implements IChangesAppliable
+{
   private _store: Store<VirtualDataPointsState>;
 
   get status() {
@@ -42,11 +48,53 @@ export class VirtualDataPointService {
 
   constructor(
     storeFactory: StoreFactory<VirtualDataPointsState>,
+    changesFactory: StoreFactory<IChangesState<string, VirtualDataPoint>>,
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
+    super(changesFactory);
+
     this._store = storeFactory.startFrom(this._emptyState());
+  }
+
+  async revert(): Promise<boolean> {
+    this._store.patchState((state) => {
+      state.dataPoints = clone(state.originalDataPoints);
+    });
+
+    this.resetState();
+
+    return Promise.resolve(true);
+  }
+
+  async apply(): Promise<boolean> {
+    try {
+      this._store.patchState((state) => {
+        state.status = Status.Loading;
+      });
+
+      await this.httpService.post(`/vdps/bulk`, this.getPayload());
+
+      this.resetState();
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+
+      this.toastr.success(
+        this.translate.instant('settings-virtual-data-point.BulkSuccess')
+      );
+    } catch {
+      this.toastr.error(
+        this.translate.instant('settings-virtual-data-point.BulkError')
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+
+    return true;
   }
 
   async getDataPoints() {
@@ -62,6 +110,7 @@ export class VirtualDataPointService {
 
       this._store.patchState((state) => {
         state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
+        state.originalDataPoints = clone(state.dataPoints);
         state.status = Status.Ready;
       });
     } catch (err) {
@@ -106,81 +155,103 @@ export class VirtualDataPointService {
   }
 
   async addDataPoint(obj: VirtualDataPoint) {
+    this.create(obj);
     this._store.patchState((state) => {
-      state.status = Status.Creating;
+      state.status = Status.Ready;
+      state.dataPoints = [...state.dataPoints, obj];
     });
 
-    try {
-      const vdp = await this.httpService.post<
-        CreateEntityResponse<api.VirtualDataPointType>
-      >(`/vdps`, obj);
+    // this._store.patchState((state) => {
+    //   state.status = Status.Creating;
+    // });
 
-      this._store.patchState((state) => {
-        const dataPoint = this._parseDataPoint(vdp.created);
+    // try {
+    //   const vdp = await this.httpService.post<
+    //     CreateEntityResponse<api.VirtualDataPointType>
+    //   >(`/vdps`, obj);
 
-        obj.id = dataPoint.id;
-        state.dataPoints = [...state.dataPoints, obj];
-        state.status = Status.Ready;
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-virtual-data-point.CreateError')
-      );
-      errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Ready
-      }));
-    }
+    //   this._store.patchState((state) => {
+    //     const dataPoint = this._parseDataPoint(vdp.created);
+
+    //     obj.id = dataPoint.id;
+    //     state.dataPoints = [...state.dataPoints, obj];
+    //     state.status = Status.Ready;
+    //   });
+    // } catch (err) {
+    //   this.toastr.error(
+    //     this.translate.instant('settings-virtual-data-point.CreateError')
+    //   );
+    //   errorHandler(err);
+    //   this._store.patchState(() => ({
+    //     status: Status.Ready
+    //   }));
+    // }
   }
 
   async updateDataPoint(id: string, obj: Partial<VirtualDataPoint>) {
+    const oldDp = this._store.snapshot.dataPoints.find((dp) => dp.id === id);
+
+    const newDp = { ...oldDp, ...obj } as VirtualDataPoint;
+
+    this.update(id, newDp);
+
     this._store.patchState((state) => {
-      state.status = Status.Updating;
+      state.dataPoints = state.dataPoints.map((x) => (x.id != id ? x : newDp));
     });
 
-    try {
-      const vdp = await this.httpService.patch<
-        UpdateEntityResponse<api.VirtualDataPointType>
-      >(`/vdps/${id}`, obj);
+    // this._store.patchState((state) => {
+    //   state.status = Status.Updating;
+    // });
 
-      this._store.patchState((state) => {
-        state.dataPoints = state.dataPoints.map((x) =>
-          x.id != id ? x : { ...x, ...this._parseDataPoint(vdp.changed) }
-        );
-        state.status = Status.Ready;
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-virtual-data-point.UpdateError')
-      );
-      errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Ready
-      }));
-    }
+    // try {
+    //   const vdp = await this.httpService.patch<
+    //     UpdateEntityResponse<api.VirtualDataPointType>
+    //   >(`/vdps/${id}`, obj);
+
+    //   this._store.patchState((state) => {
+    //     state.dataPoints = state.dataPoints.map((x) =>
+    //       x.id != id ? x : { ...x, ...this._parseDataPoint(vdp.changed) }
+    //     );
+    //     state.status = Status.Ready;
+    //   });
+    // } catch (err) {
+    //   this.toastr.error(
+    //     this.translate.instant('settings-virtual-data-point.UpdateError')
+    //   );
+    //   errorHandler(err);
+    //   this._store.patchState(() => ({
+    //     status: Status.Ready
+    //   }));
+    // }
   }
 
   async deleteDataPoint(id: string) {
+    this.delete(id);
+
     this._store.patchState((state) => {
-      state.status = Status.Deleting;
+      state.dataPoints = state.dataPoints.filter((x) => x.id != id);
     });
 
-    try {
-      await this.httpService.delete(`/vdps/${id}`);
+    // this._store.patchState((state) => {
+    //   state.status = Status.Deleting;
+    // });
 
-      this._store.patchState((state) => {
-        state.dataPoints = state.dataPoints.filter((x) => x.id != id);
-        state.status = Status.Ready;
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-virtual-data-point.DeleteError')
-      );
-      errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Ready
-      }));
-    }
+    // try {
+    //   await this.httpService.delete(`/vdps/${id}`);
+
+    //   this._store.patchState((state) => {
+    //     state.dataPoints = state.dataPoints.filter((x) => x.id != id);
+    //     state.status = Status.Ready;
+    //   });
+    // } catch (err) {
+    //   this.toastr.error(
+    //     this.translate.instant('settings-virtual-data-point.DeleteError')
+    //   );
+    //   errorHandler(err);
+    //   this._store.patchState(() => ({
+    //     status: Status.Ready
+    //   }));
+    // }
   }
 
   public getPrefix() {

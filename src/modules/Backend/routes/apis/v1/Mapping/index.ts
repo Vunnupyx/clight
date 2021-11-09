@@ -41,6 +41,24 @@ function mapPostHandler(request: Request, response: Response): void {
 }
 
 /**
+ * Bulk changes mapping
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function mapPostBulkHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  try {
+    await configManager.bulkChangeMapings(request.body || {});
+
+    response.status(200).send();
+  } catch {
+    response.status(400).json({ error: 'Cannot change mapping. Try again!' });
+  }
+}
+
+/**
  * Updates mapping
  * @param  {Request} request
  * @param  {Response} response
@@ -124,6 +142,7 @@ function mapGetHandler(request: Request, response: Response): void {
 export const mappingHandlers = {
   mappingsGet: mappingGetHandler,
   mapPost: mapPostHandler,
+  mapPostBulk: mapPostBulkHandler,
   mapPatch: mapPatchHandler,
   mapDelete: mapDeleteHandler,
   mapGet: mapGetHandler

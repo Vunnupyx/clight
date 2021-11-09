@@ -258,20 +258,55 @@
 
 <div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
   <div class="col-12">
-    <div class="d-flex align-items-center">
-      <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
-      <button
-        type="button"
-        [disabled]="isEditing"
-        mat-mini-fab
-        color="primary"
-        class="wh-32 border-round ml-15"
-        (click)="onAdd()"
-        [matTooltip]="'settings-data-sink.AddDataPoint' | translate"
-        matTooltipPosition="above"
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="d-flex align-items-center">
+          <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
+          <button
+            type="button"
+            [disabled]="isEditing"
+            mat-mini-fab
+            color="primary"
+            class="wh-32 border-round ml-15"
+            (click)="onAdd()"
+            [matTooltip]="'settings-data-sink.AddDataPoint' | translate"
+            matTooltipPosition="above"
+          >
+            <mat-icon style="margin-top: -10px">add</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div
+        class="col-12 col-md-6 d-flex align-items-center justify-content-end"
       >
-        <mat-icon style="margin-top: -10px">add</mat-icon>
-      </button>
+        <div class="d-flex align-items-center">
+          <button
+            mat-button
+            type="button"
+            class="btn-sm mr-10"
+            *ngIf="isTouchedTable && !isLoading"
+            (click)="onDiscard()"
+          >
+            {{ 'settings-data-sink.DiscardChanges' | translate }}
+          </button>
+
+          <mat-spinner
+            diameter="20"
+            *ngIf="isLoading"
+            class="mr-10"
+          ></mat-spinner>
+
+          <button
+            mat-raised-button
+            type="button"
+            class="btn-sm"
+            [disabled]="!isTouchedTable || isLoading"
+            (click)="onApply()"
+          >
+            {{ 'settings-data-sink.ApplyChanges' | translate }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <ngx-datatable

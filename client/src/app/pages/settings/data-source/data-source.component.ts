@@ -16,6 +16,8 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import { PromptService } from 'app/shared/services/prompt.service';
+import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
@@ -53,11 +55,24 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   sub = new Subscription();
   liveDataSub!: Subscription;
 
+  get isTouchedTable() {
+    return this.sourceDataPointService.isTouched;
+  }
+
+  get isLoading() {
+    return this.sourceDataPointService.status === Status.Loading;
+  }
+
   constructor(
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private promptService: PromptService
+  ) {
+    this.promptService.initWarnBeforePageUnload(
+      () => this.sourceDataPointService.isTouched
+    );
+  }
 
   get isEditing() {
     return !!this.unsavedRow;
@@ -100,7 +115,16 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     }
   }
 
-  switchDataSource(obj: DataSource) {
+  async switchDataSource(obj: DataSource) {
+    if (this.isTouchedTable) {
+      try {
+        await this.promptService.warn();
+        await this.sourceDataPointService.revert();
+      } catch {
+        return;
+      }
+    }
+
     this.dataSource = obj;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
     this.dataSourceService.getStatus(obj.protocol!);
@@ -258,12 +282,21 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.sub.unsubscribe();
     this.liveDataSub && this.liveDataSub.unsubscribe();
+    this.promptService.destroyWarnBeforePageUnload();
   }
 
   updateSoftwareVersion(version: string) {
     this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
       softwareVersion: version
     });
+  }
+
+  onDiscard() {
+    return this.sourceDataPointService.revert();
+  }
+
+  onApply() {
+    return this.sourceDataPointService.apply(this.dataSource?.protocol!);
   }
 
   private onConnection(x: DataSourceConnection | undefined) {

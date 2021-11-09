@@ -136,7 +136,9 @@
         "1": "On",
         "2": "Blinking"
       }
-    }
+    },
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",
@@ -161,13 +163,19 @@
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",
-    "AddThreshold": "Add Threshold"
+    "AddThreshold": "Add Threshold",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-data-source-point": {
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
-    "DeleteError": ""
+    "DeleteError": "",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!"
   },
   "settings-data-sink": {
     "DataSink": "",
@@ -221,7 +229,11 @@
     "LoadError": "",
     "LoadStatusError": "",
     "UpdateError": "",
-    "OpenMTConnectStream": "Open MTConnect Stream"
+    "OpenMTConnectStream": "Open MTConnect Stream",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-data-mapping": {
     "DataMapping": "",
@@ -238,7 +250,11 @@
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
-    "DeleteError": ""
+    "DeleteError": "",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-network": {
     "Network": "Network",
@@ -267,5 +283,9 @@
   "system-information": {
     "SystemInformation": "System Information",
     "LoadError": ""
+  },
+  "prompt": {
+    "warningTitle": "Warning!",
+    "warningText": "You have unsaved changes, do you really want to continue?"
   }
 }

@@ -246,15 +246,26 @@ export class MTConnectAdapter {
   }
 
   public shutdown(): Promise<void> {
-    const shutdownFunctions = [promisify(this.server.close)];
+    const logPrefix = `${MTConnectAdapter.name}::shutdown`;
+    winston.debug(`${logPrefix} triggered.`)
+    const shutdownFunctions = [];
     this.clients.forEach((sock) => {
-      shutdownFunctions.push(promisify(sock.end));
+      sock.removeAllListeners();
+      shutdownFunctions.push(promisify(sock.end)());
     })
+    console.log()
     Object.getOwnPropertyNames(this).forEach((prop) => {
-      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown);
+      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
+      if (this[prop].removeAllListeners) shutdownFunctions.push(this[prop].removeAllListeners());
+      if (this[prop].close) shutdownFunctions.push(this[prop].close());
       delete this[prop];
     })
 
-    return Promise.all(shutdownFunctions).then();
+    return Promise.all(shutdownFunctions).then(() => {
+      winston.info(`${logPrefix} successfully.`);
+    }).catch((err) => {
+      winston.error(`${logPrefix} error due to ${err.message}`);
+      winston.error(err.stack);
+    });
   }
 }

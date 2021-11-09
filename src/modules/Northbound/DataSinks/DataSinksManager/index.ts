@@ -1,6 +1,10 @@
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
-import { DataSinkProtocols, IErrorEvent, ILifecycleEvent } from '../../../../common/interfaces';
+import {
+  DataSinkProtocols,
+  IErrorEvent,
+  ILifecycleEvent
+} from '../../../../common/interfaces';
 import { ConfigManager } from '../../../ConfigManager';
 import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
@@ -31,13 +35,13 @@ export class DataSinksManager {
   private measurementsBus: MeasurementEventBus;
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: Array<DataSink> = [];
+  private dataSinksRestartPending = false;
+  private dataAddedDurringRestart = false;
 
   constructor(params: IDataSinkManagerParams) {
     this.configManager = params.configManager;
-    this.configManager.once('configsLoaded', () => {
-      return this.init();
-    });
-    this.configManager.on('configChange', this.configChangeHandler.bind(this))
+    this.configManager.once('configsLoaded', () => this.init());
+    this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
   }
@@ -49,29 +53,28 @@ export class DataSinksManager {
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
     return Promise.all(initMethods)
-      .then((res) => {
-        //TODO: Handle rejected init
+      .then(() => {
+        // TODO: Handle rejected init
         winston.info(`${logPrefix} initialized.`);
       })
       .then(() => this)
-      .catch((err) => {
-        return Promise.reject(
+      .catch((err) =>
+        Promise.reject(
           new NorthBoundError(`${logPrefix} error due to ${err.message}`)
-        );
-      });
+        )
+      );
   }
 
   /**
-   * Not in use
-   * @returns boolean
+   * Shutdown all available data sinks.
    */
   public async shutdownDataSink(): Promise<void> {
-    for await (const dataSink of this.dataSinks) {
-      if (dataSink) {
-        await dataSink.shutdown();
-      }
-    }
+    const shutdownFn = [];
+    this.dataSinks.forEach(async (dataSink) => {
+      shutdownFn.push(dataSink.shutdown);
+    });
     this.dataSinks = [];
+    Promise.all(shutdownFn);
   }
 
   /**
@@ -94,7 +97,7 @@ export class DataSinksManager {
     const dataHubDataSinkOptions: DataHubDataSinkOptions = {
       config: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
       runTimeConfig: this.configManager.runtimeConfig.datahub
-    }
+    };
 
     this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
     this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
@@ -128,17 +131,31 @@ export class DataSinksManager {
   }
 
   private configChangeHandler(): Promise<void> {
+    if (this.dataSinksRestartPending) {
+      this.dataAddedDurringRestart = true;
+      return
+    };
+    this.dataSinksRestartPending = true;
     const logPrefix = `${DataSinksManager.name}::configChangeHandler`;
     const shutdownFunctions = [];
     this.dataSinks.forEach((sink) => {
-      shutdownFunctions.push(sink.shutdown);
-    })
-    return Promise.all(shutdownFunctions)
-    .then(() => {
-      this.createDataSinks();
-      winston.info(`${logPrefix} reload datasinks successfully.`);
-    }).catch((err) => {
-      winston.error(`${logPrefix} error due to ${err.message}`);
+        if (!sink.shutdown) winston.error(`${logPrefix} ${sink} does not have a shutdown method.`);
+        shutdownFunctions.push(sink.shutdown());
     });
+    this.dataSinks = [];
+    return Promise.all(shutdownFunctions)
+      .then(() => this.init())
+      .then(() => {
+        winston.info(`${logPrefix} reload datasinks successfully.`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}`);
+      }).finally(() => {
+        this.dataSinksRestartPending = false;
+        if (this.dataAddedDurringRestart) {
+          this.dataAddedDurringRestart = false;
+          this.configChangeHandler()
+        };
+      });
   }
 }

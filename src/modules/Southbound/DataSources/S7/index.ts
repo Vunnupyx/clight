@@ -38,6 +38,7 @@ export class S7DataSource extends DataSource {
    * @returns void
    */
   public async init(): Promise<void> {
+    const logPrefix = `${S7DataSource.name}::init`;
     const { name, protocol, connection } = this.config;
     this.submitLifecycleEvent({
       id: protocol,
@@ -62,6 +63,7 @@ export class S7DataSource extends DataSource {
         ]);
       else await this.connectPLC(connection);
     } catch (error) {
+      winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.submitLifecycleEvent({
         id: protocol,
         level: this.level,

@@ -1,6 +1,7 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { ECharts } from 'echarts';
 
 import { ObjectMap } from '../../../../shared/utils';
 import { DataPointLiveData, TimeSeriesValue } from '../../../../models';
@@ -25,6 +26,8 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   sub = new Subscription();
   liveDataSub!: Subscription;
+
+  chart!: ECharts;
 
   constructor(
     private dialogRef: MatDialogRef<SetThresholdsModalComponent>,
@@ -52,8 +55,6 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         threshold
       })
     );
-
-    const data = this.prepareTimeseries();
 
     this.options = {
       tooltip: {
@@ -92,16 +93,25 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
           show: false
         }
       },
-      series: [
-        ...this.getThresholdsSeries(),
-        {
-          name: this.data.sourceName,
-          type: 'line',
-          showSymbol: false,
-          hoverAnimation: false,
-          data
-        }
-      ]
+      series: [...this.getThresholdsSeries(), this.getMainLineSeries()]
+    };
+  }
+
+  onChartInit(event) {
+    this.chart = event;
+  }
+
+  getMainLineSeries() {
+    return {
+      name: this.data.sourceName,
+      type: 'line',
+      showSymbol: false,
+      hoverAnimation: false,
+      data: this.prepareTimeseries(),
+      color: '#000000',
+      lineStyle: {
+        width: 4
+      }
     };
   }
 
@@ -126,16 +136,22 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   }
 
   onThresholdChanged() {
+    if (!this.chart) {
+      return;
+    }
+
     const thresholdsSeries = this.getThresholdsSeries();
 
-    this.updateOptions = {
-      series: [
-        ...thresholdsSeries,
-        {
-          data: this.prepareTimeseries()
-        }
-      ]
-    };
+    this.chart.setOption(
+      {
+        series: [...thresholdsSeries, this.getMainLineSeries()]
+      },
+      {
+        replaceMerge: ['series'],
+        lazyUpdate: false,
+        silent: true
+      }
+    );
   }
 
   private parseNum(num: number) {
@@ -179,25 +195,25 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
       type: 'line',
       showSymbol: false,
       hoverAnimation: false,
-      data: this.getChartXAxisValues().map((el) => ({ value: [el, threshold] }))
+      data: this.getChartXAxisValues().map((el) => ({
+        value: [el, threshold]
+      })),
+      lineStyle: {
+        width: 2
+      }
     }));
   }
 
   private onLiveData(x: ObjectMap<DataPointLiveData>) {
-    if (!x) {
+    if (!x || !this.chart) {
       return;
     }
     const thresholdsSeries = this.getThresholdsSeries();
 
     this.timeseries = x[this.data.source]?.timeseries || [];
 
-    this.updateOptions = {
-      series: [
-        ...thresholdsSeries,
-        {
-          data: this.prepareTimeseries()
-        }
-      ]
-    };
+    this.chart.setOption({
+      series: [...thresholdsSeries, this.getMainLineSeries()]
+    });
   }
 }

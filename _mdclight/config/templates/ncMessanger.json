@@ -8,9 +8,28 @@
     "control": "SIEMENS SINUMERIK 840D sl"
   },
   "networkConfig": {
-    "x1": {},
-    "x2": {},
-    "proxy": {}
+    "x1": {
+      "useDhcp": true,
+      "ipAddr": "",
+      "netmask": "",
+      "defaultGateway": "",
+      "dnsServer": ""
+    },
+    "x2": {
+      "useDhcp": false,
+      "ipAddr": "192.168.214.230",
+      "netmask": "255.255.255.0",
+      "defaultGateway": "",
+      "dnsServer": ""
+    },
+    "proxy": {
+      "useProxy": false,
+      "password": "",
+      "username": "",
+      "port": "",
+      "ipAddr": "",
+      "type": "http"
+    }
   },
   "dataSources": [
     {
@@ -325,7 +344,11 @@
           "address": "execution1",
           "type": "event",
           "enabled": true,
-          "id": "441ca41c-d6f2-4f66-bcbf-241f4251e44c"
+          "id": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+          "map": {
+            "0": "READY",
+            "1": "ACTIVE"
+          }
         },
         {
           "name": "Rapid Override 1",

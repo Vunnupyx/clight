@@ -340,6 +340,12 @@ export class SourceDataPointService
         }
         return '[PLC]';
       case DataSourceProtocol.IOShield:
+        const ioDp = this._store.snapshot.dataPoints.find((x) => x.id === id);
+
+        if (ioDp?.address && ioDp.address.startsWith('AI')) {
+          return '[AI]';
+        }
+
         return `[DI]`;
       default:
         return '';

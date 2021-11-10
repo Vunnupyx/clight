@@ -99,9 +99,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.dataSourceService.getDataSources();
   }
 
-  parseInt(x: any): number {
-    console.log(x);
-    return parseInt(x, 10);
+  toString(x: any): string {
+    return String(x);
   }
 
   onDataSources(arr: DataSource[]) {

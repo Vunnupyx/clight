@@ -23,7 +23,7 @@ import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 export class BootstrapManager {
   private configManager: ConfigManager;
   private dataSourcesManager: DataSourcesManager;
-  private dataSinkManager: DataSinksManager;
+  private dataSinksManager: DataSinksManager;
   private errorEventsBus: EventBus<IErrorEvent>;
   private lifecycleEventsBus: EventBus<ILifecycleEvent>;
   private measurementsEventsBus: MeasurementEventBus;
@@ -50,13 +50,14 @@ export class BootstrapManager {
 
     DataPointMapper.createInstance(this.configManager);
 
-    this.dataSinkManager = new DataSinksManager({
+    this.dataSinksManager = new DataSinksManager({
       configManager: this.configManager,
       dataPointCache: this.dataPointCache,
       errorBus: this.errorEventsBus,
       lifecycleBus: this.lifecycleEventsBus,
       measurementsBus: this.measurementsEventsBus
     });
+    this.configManager.dataSinksManager = this.dataSinksManager;
 
     this.dataSourcesManager = new DataSourcesManager({
       configManager: this.configManager,
@@ -66,11 +67,12 @@ export class BootstrapManager {
       lifecycleBus: this.lifecycleEventsBus,
       measurementsBus: this.measurementsEventsBus
     });
+    this.configManager.dataSourcesManager = this.dataSourcesManager;
 
     this.backend = new RestApiManager({
       configManager: this.configManager,
       dataSourcesManager: this.dataSourcesManager,
-      dataSinksManager: this.dataSinkManager,
+      dataSinksManager: this.dataSinksManager,
       dataPointCache: this.dataPointCache
     });
   }
@@ -85,17 +87,22 @@ export class BootstrapManager {
         winston.info(log);
         const { x1, x2 } = this.configManager.config.networkConfig;
         const nx1: NetworkInterfaceInfo =
-          NetworkManagerCliController.generateNetworkInterfaceInfo(x1, 'eth1');
+          NetworkManagerCliController.generateNetworkInterfaceInfo(x1, 'eth0');
         const nx2: NetworkInterfaceInfo =
-          NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth0');
+          NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth1');
 
         Promise.all([
-          Object.keys(x2).length !== 0 ? NetworkManagerCliController.setConfiguration('eth0', nx2) : Promise.resolve(),
-          Object.keys(x2).length !== 0 ? NetworkManagerCliController.setConfiguration('eth1', nx1) : Promise.resolve(),
-        ]).then(() => winston.info(log + ' Successfully.'))
-        .catch((err) => {
-          winston.error(`${log} Failed due to ${err.message}`);
-        })
+          Object.keys(x1).length !== 0
+            ? NetworkManagerCliController.setConfiguration('eth0', nx1)
+            : Promise.resolve(),
+          Object.keys(x2).length !== 0
+            ? NetworkManagerCliController.setConfiguration('eth1', nx2)
+            : Promise.resolve()
+        ])
+          .then(() => winston.info(log + ' Successfully.'))
+          .catch((err) => {
+            winston.error(`${log} Failed due to ${err.message}`);
+          });
       });
       await this.configManager.init();
 

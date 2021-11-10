@@ -134,7 +134,24 @@ export class MTConnectDataSink extends DataSink {
   /**
    * Shutdown data sink
    */
-  public shutdown() {}
+  public shutdown(): Promise<void> {
+      const logPrefix = `${MTConnectDataSink.name}::shutdown`;
+      winston.debug(`${logPrefix} triggered.`);
+      const shutdownFunctions = []
+      this.disconnect();
+      MTConnectDataSink.scheduler.removeListener(MTConnectDataSink.schedulerListenerId);
+      Object.getOwnPropertyNames(this).forEach((prop) => {
+        if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
+        if (this[prop].close) shutdownFunctions.push(this[prop].close());
+        delete this[prop];
+      })
+      return Promise.all(
+        shutdownFunctions).then(() => {
+          winston.info(`${logPrefix} successfully.`);
+        }).catch((err) => {
+          winston.error(`${logPrefix} error due to ${err.message}.`);
+        });
+  }
 
   /**
    * Disconnects all data items

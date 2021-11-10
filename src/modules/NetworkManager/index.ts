@@ -21,7 +21,8 @@ export default class NetworkManagerCliController {
     networkInterface: 'eth0' | 'eth1'
   ): Promise<NetworkInterfaceInfo> {
     const configName = `lastConfig${networkInterface.replace('e', 'E')}`;
-    if(NetworkManagerCliController[configName]) return NetworkManagerCliController[configName];
+    if (NetworkManagerCliController[configName])
+      return NetworkManagerCliController[configName];
     const nmcliCommand = `${NetworkManagerCliController.sshCommand} nmcli -t -f IP4,IPV4,CONNECTION,GENERAL con show ${networkInterface}-default`;
     const result = await exec(nmcliCommand);
     const parsedResult = NetworkManagerCliController.parseNmCliOutput(
@@ -72,14 +73,16 @@ export default class NetworkManagerCliController {
           `Could not activate on ${networkInterface} - error ignored because DHCP server might not be available`
         );
       } else {
+        winston.error('Failed to set network configuration');
         winston.error(e);
         return Promise.reject(e);
       }
     }
     // Update cached configuration
-    const configName = `lastConfig${networkInterface.replace('e', 'E')}`
+    const configName = `lastConfig${networkInterface.replace('e', 'E')}`;
     NetworkManagerCliController[configName] = null;
-    NetworkManagerCliController[configName] = await NetworkManagerCliController.getConfiguration(networkInterface)
+    NetworkManagerCliController[configName] =
+      await NetworkManagerCliController.getConfiguration(networkInterface);
   }
 
   /**
@@ -92,7 +95,7 @@ export default class NetworkManagerCliController {
     const dhcpConfig = {
       name,
       activated: true,
-      dhcp: true,
+      dhcp: true
     };
     return body.userDhcp
       ? dhcpConfig
@@ -108,9 +111,9 @@ export default class NetworkManagerCliController {
         };
   }
 
-/**
- * Parse output of the cli
- */
+  /**
+   * Parse output of the cli
+   */
   private static parseNmCliOutput(output: string) {
     const lines = output.split('\n');
     const rawOutput = {};

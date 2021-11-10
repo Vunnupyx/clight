@@ -1,10 +1,8 @@
 {
-  "name": "SINUMERIK 840d sl",
-  "description": "SINUMERIK 840D sl to Messanger, OPC UA and Data hub",
   "general": {
-    "manufacturer": "DMGMORI",
-    "serialNumber": "",
-    "model": "",
+    "manufacturer": "DMGMORI111",
+    "serialNumber": "12345678901",
+    "model": "CMX 50 U",
     "control": "SIEMENS SINUMERIK 840D sl"
   },
   "networkConfig": {
@@ -33,7 +31,6 @@
   },
   "dataSources": [
     {
-      "name": "",
       "dataPoints": [
         {
           "type": "nck",
@@ -158,8 +155,6 @@
       "enabled": true
     },
     {
-      "id": "",
-      "name": "",
       "dataPoints": [
         {
           "type": null,
@@ -202,6 +197,18 @@
           "name": "Availability",
           "id": "604d583a-ce3a-4d19-a930-a8ba0579d8b2",
           "readFrequency": 1000
+        },
+        {
+          "type": null,
+          "address": "AI0",
+          "name": "AI0",
+          "id": "95a71ef8-119c-4bf7-b0b0-ae7e169e8c10"
+        },
+        {
+          "type": null,
+          "address": "AI1",
+          "name": "AI1",
+          "id": "fda5000e-0942-4605-a995-9c49bd1e99d6"
         }
       ],
       "protocol": "ioshield",
@@ -211,13 +218,156 @@
   ],
   "dataSinks": [
     {
-      "name": "",
-      "dataPoints": [],
+      "dataPoints": [
+        {
+          "id": "0c24235c-f56d-435b-a560-6874079effb4",
+          "address": "production.activeProgram.currentExecutionState",
+          "name": "Execution State",
+          "type": "event"
+        },
+        {
+          "id": "10456f7b-6d0c-4488-8d19-71de07754305",
+          "address": "auxiliaries.stacklight.colorBlue",
+          "name": "Stacklight Blue",
+          "type": "event"
+        },
+        {
+          "id": "7944466f-c49f-4d75-a65d-b6fe5d18b77c",
+          "address": "production.activeProgram.selectedProgramName",
+          "name": "Program Name",
+          "type": "event"
+        },
+        {
+          "id": "ecaa79f4-3b7b-487d-b9a2-2571ce2df700",
+          "address": "spindles.spindle[0].override",
+          "name": "Spindel Overwrite",
+          "type": "event"
+        },
+        {
+          "id": "e08af667-e120-48af-b8df-97973cffeddc",
+          "address": "channels.channel[0].feedOverride",
+          "name": "Feed Override",
+          "type": "event"
+        },
+        {
+          "id": "cdcb3a80-d7bf-4db2-8b91-c24568056c1d",
+          "address": "channels.channel[0].rapidFeedOverride",
+          "name": "Rapid Feed Override",
+          "type": "event"
+        },
+        {
+          "id": "4b78da19-d01c-4e07-aa4e-52d17218b110",
+          "address": "channels.channel[0].activeToolID1",
+          "name": "Active Tool Id 1",
+          "type": "event"
+        },
+        {
+          "id": "cf678a0c-cfe1-4950-b967-00f18d141b2d",
+          "address": "channels.channel[0].activeToolID2",
+          "name": "Active Tool Id 2",
+          "type": "event"
+        },
+        {
+          "id": "aad10e45-402b-44b4-ba0e-4396ee7f6ef1",
+          "address": "channels.channel[0].activeToolName",
+          "name": "Active Tool Name",
+          "type": "event"
+        },
+        {
+          "id": "ad0afa42-4120-485b-a1f4-07282e731fd4",
+          "address": "auxiliaries.stacklight.colorGreen",
+          "name": "Green Stack Light",
+          "type": "event"
+        },
+        {
+          "id": "e8691adc-e1ab-4271-a0b3-897b9ead0b7e",
+          "address": "auxiliaries.stacklight.colorRed",
+          "name": "Red Stack Light",
+          "type": "event"
+        },
+        {
+          "id": "9a972f4c-45ef-4477-840c-d4fc141c8694",
+          "address": "auxiliaries.stacklight.colorYellow",
+          "name": "Yellow Stack Light",
+          "type": "event"
+        },
+        {
+          "id": "218e217d-2288-4007-a8f8-2ce4c371de14",
+          "address": "channels.channel[0].controllerMode",
+          "name": "Controller Mode",
+          "type": "event"
+        },
+        {
+          "id": "14171496-239e-406b-b300-437bfde86798",
+          "address": "production.currentJob.partsCounter",
+          "name": "Part Counter",
+          "type": "event"
+        },
+        {
+          "id": "54c2a7aa-8f1c-4ed1-8d22-b8444592d032",
+          "address": "production.currentJob.partsDesired",
+          "name": "Parts Desired",
+          "type": "event"
+        },
+        {
+          "id": "631f18d0-734b-44a7-aeb7-065b5c9b3c36",
+          "address": "systems.machine.operationMode",
+          "name": "Operation Mode",
+          "type": "event"
+        },
+        {
+          "id": "04f941f3-dc23-42ea-a48c-fc4a4c317e1d",
+          "address": "systems.machine.partCounter",
+          "name": "Overall Part Counter",
+          "type": "event"
+        },
+        {
+          "id": "2b00fe5e-add6-478a-be59-63cd0919dcca",
+          "address": "production.activeProgram.selectedProgramPath",
+          "name": "Selected Program Path",
+          "type": "event"
+        },
+        {
+          "id": "3d31ed64-3e42-4d38-bde0-0c721f6915bd",
+          "address": "systems.machineDataConnector.machineConnectionEstablished",
+          "name": "Connection Etablished",
+          "type": "event"
+        },
+        {
+          "id": "d81e8146-5a79-46ef-bec2-659b1d6c3c5a",
+          "address": "systems.machine.operationTime",
+          "name": "Operation Time",
+          "type": "event"
+        },
+        {
+          "id": "ae92e7d9-3775-4b40-b3ad-58bc5a839b1e",
+          "address": "systems.machine.powerOnTime",
+          "name": "Power On Time",
+          "type": "event"
+        },
+        {
+          "id": "afe29acd-15d9-494f-bf85-a162b68f8190",
+          "address": "systems.machineController.PLCRuntime",
+          "name": "PLC Runtime",
+          "type": "event"
+        },
+        {
+          "id": "40052ee5-41a8-4bca-a783-6c200ce401e6",
+          "address": "spindles.spindle[0].operationTime",
+          "name": "Spindle Operation Time",
+          "type": "event"
+        }
+      ],
       "enabled": false,
-      "protocol": "datahub"
+      "protocol": "datahub",
+      "datahub": {
+        "provisioningHost": "mdclight-provisioning-service.azure-devices-provisioning.net",
+        "scopeId": "0ne003D4872",
+        "regId": "mdclpk01",
+        "symKey": "F6d7yubqvdY0En5Tf7puHxeD/I9zdx1efPcPEKUnIdzYZmRTD9f+bCWCK01yag7BIYEQQp1BWVfK+3tnbcrq7g=="
+      }
     },
     {
-      "name": "",
       "dataPoints": [
         {
           "name": "Operation Duration",
@@ -287,8 +437,6 @@
       }
     },
     {
-      "id": "mtconnect",
-      "name": "My MTConnect Machine",
       "dataPoints": [
         {
           "name": "Operation Time",
@@ -413,6 +561,16 @@
       "operationType": "not",
       "name": "Emergency Stop Triggered",
       "id": "dd88cdb9-994c-40ce-be60-1d37f3aa755a"
+    },
+    {
+      "id": "9d62359b-c48b-4084-825f-1ce56c93e202",
+      "sources": ["fda5000e-0942-4605-a995-9c49bd1e99d6"],
+      "operationType": "thresholds",
+      "name": "Virtual Execution Mode",
+      "thresholds": {
+        "0": 0,
+        "1": 40
+      }
     }
   ],
   "mapping": [
@@ -474,11 +632,45 @@
     {
       "source": "49200590-2046-4c3d-ad02-535c4af0d0ac",
       "target": "67f44404-9eb6-45dc-afc3-c61e2a61cdcd",
+      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a21"
+    },
+    {
+      "source": "9b0aba24-a662-40fb-b7ea-90a2662a3907",
+      "target": "14171496-239e-406b-b300-437bfde86798",
       "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a22"
+    },
+    {
+      "source": "66e44f24-8638-401d-8fcd-fdd1f197ae6d",
+      "target": "7944466f-c49f-4d75-a65d-b6fe5d18b77c",
+      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a23"
+    },
+    {
+      "source": "34ad0f9b-7ce6-49f1-a3c2-27d29fb19343",
+      "target": "ecaa79f4-3b7b-487d-b9a2-2571ce2df700",
+      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a24"
+    },
+    {
+      "source": "3622de59-8ddf-457a-b816-9088102385d4",
+      "target": "631f18d0-734b-44a7-aeb7-065b5c9b3c36",
+      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a25"
+    },
+    {
+      "source": "2e23f057-09d5-4744-ba94-da38f3210e88",
+      "target": "04f941f3-dc23-42ea-a48c-fc4a4c317e1d",
+      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a26"
+    },
+    {
+      "source": "d2e3ac9b-f7e3-4251-8e79-52ab364fba63",
+      "target": "54c2a7aa-8f1c-4ed1-8d22-b8444592d032",
+      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a27"
+    },
+    {
+      "source": "9d62359b-c48b-4084-825f-1ce56c93e202",
+      "target": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+      "id": "e199f4d8-3a6c-4e46-999d-a0ef1a0c30ea"
     }
   ],
-  "systemInfo": [],
-  "templates": {
-    "completed": true
+  "quickStart": {
+    "completed": false
   }
 }

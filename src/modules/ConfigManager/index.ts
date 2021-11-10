@@ -27,10 +27,13 @@ import {
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { System } from '../System';
+import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
+import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
   newRuntimeConfig: (config: IRuntimeConfig) => void;
+  configChange: () => void;
   configsLoaded: () => void;
 }
 
@@ -119,9 +122,15 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private _defaultTemplates: IDefaultTemplates;
   private _authConfig: IAuthConfig;
   private _authUsers: IAuthUsersConfig;
+  #resolveConfigChanged = null;
+  #rejectConfigChanged = null;
+  #configChangeCompletedPromise = null;
+  private pendingEvents: string[] = [];
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
+  private _dataSinksManager: DataSinksManager;
+  private _dataSourcesManager: DataSourcesManager;
 
   private static className: string = ConfigManager.name;
 
@@ -220,6 +229,16 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public init(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::init`;
     winston.info(`${logPrefix} initializing.`);
+
+    this._dataSinksManager.on(
+      'dataSinksRestarted',
+      this.onDataSinksRestarted.bind(this)
+    );
+    this._dataSourcesManager.on(
+      'dataSourcesRestarted',
+      this.onDataSourcesRestarted.bind(this)
+    );
+
     return Promise.all([
       this.loadConfig<IRuntimeConfig>(
         this.runtimeConfigName,
@@ -334,6 +353,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       ...this._config,
       dataSources: sources,
       dataSinks: sinks,
+      virtualDataPoints: template.virtualDataPoints,
+      mapping: template.mapping,
       quickStart: {
         completed: true
       }
@@ -638,9 +659,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   >(
     operation: ChangeOperation,
     configCategory: Category,
-    // @ts-ignore // TODO @markus pls fix
+    // @ts-ignore // TODO Remove ts-ignore
     data: DataType[number] | string,
-    // @ts-ignore // TODO @markus pls fix
+    // @ts-ignore // TODO Remove ts-ignore
     selector: (item: DataType[number]) => string = (item) => item.id
   ) {
     const logPrefix = `${this.constructor.name}::changeConfig`;
@@ -672,8 +693,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         const index = categoryArray.findIndex(
           (entry) => selector(entry) === selector(data)
         );
-        if (index < 0) throw Error(`NO Entry found`); //TODO:
-        const change = categoryArray[index];
+        if (index < 0) throw Error(`No Entry found`); //TODO:
         categoryArray.splice(index, 1);
         //@ts-ignore
         categoryArray.push(data);
@@ -714,9 +734,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         winston.info(
           `${logPrefix} Saved ${content.length} bytes to config ${file}`
         );
+
+        this.addPendingConfigChangedEvents();
+        this.emit('configChange');
       })
       .catch((err) => {
-        winston.error(`${logPrefix} error due to ${JSON.stringify(err)}`);
+        winston.error(`${logPrefix} error due to ${err.message}`);
       });
   }
 
@@ -797,5 +820,116 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       ...this.runtimeConfig.systemInfo
     ];
+  }
+
+  set dataSinksManager(manager: DataSinksManager) {
+    this._dataSinksManager = manager;
+  }
+
+  set dataSourcesManager(manager: DataSourcesManager) {
+    this._dataSourcesManager = manager;
+  }
+
+  /**
+   * Adds all required pending events to the list
+   */
+  private addPendingConfigChangedEvents() {
+    // this.addPendingEvent('dataSourcesRestarted'); // TODO Enable if datasources are also reinitialising
+    this.addPendingEvent('dataSinksRestarted');
+  }
+
+  /**
+   * Handle the "dataSourcesRestarted" event
+   * @param error
+   */
+  private onDataSourcesRestarted(error: Error | null) {
+    const logPrefix = `${ConfigManager.className}::onDataSinksRestarted`;
+    winston.warn(`${logPrefix} data sources restarted!`);
+    this.removePendingEvent('dataSourcesRestarted');
+    this.resolveConfigChanged(error);
+  }
+
+  /**
+   * Hanldes the "dataSinksRestarted" event
+   * @param error
+   */
+  private onDataSinksRestarted(error: Error | null) {
+    const logPrefix = `${ConfigManager.className}::onDataSinksRestarted`;
+    winston.warn(`${logPrefix} data sinks restarted!`);
+    this.removePendingEvent('dataSinksRestarted');
+    this.resolveConfigChanged(error);
+  }
+
+  /**
+   * Adds a pending event to the list
+   * @param eventName
+   */
+  private addPendingEvent(eventName: string) {
+    if (!this.pendingEvents.includes(eventName))
+      this.pendingEvents.push(eventName);
+  }
+
+  /**
+   *
+   * @param eventName Removes an pending event for the list
+   */
+  private removePendingEvent(eventName: string) {
+    this.pendingEvents = this.pendingEvents.filter(
+      (tmpEventName) => tmpEventName !== eventName
+    );
+  }
+
+  /**
+   * Should be called after every restarted event.
+   * Rejects if an error was thrown during restart.
+   * Resolves if all restart events where fired
+   * @param error
+   */
+  private resolveConfigChanged(error: Error | null) {
+    if (error) {
+      if (this.#rejectConfigChanged) this.#rejectConfigChanged(error);
+      this.#resolveConfigChanged = null;
+      this.#rejectConfigChanged = null;
+      this.pendingEvents = [];
+    }
+
+    if (this.pendingEvents.length === 0) {
+      if (this.#resolveConfigChanged) this.#resolveConfigChanged(error);
+      this.#resolveConfigChanged = null;
+      this.#rejectConfigChanged = null;
+      this.pendingEvents = [];
+    }
+  }
+
+  /**
+   * Waits for restarting events after an configuration change. Timeout if not all events were fired in 60sec
+   * @returns
+   */
+  public configChangeCompleted(): Promise<void> {
+    const logPrefix = `${ConfigManager.className}::configChangeCompleted`;
+
+    if (!this.#configChangeCompletedPromise)
+      return this.#configChangeCompletedPromise;
+
+    if (this.pendingEvents.length === 0) return;
+
+    this.#configChangeCompletedPromise = Promise.race([
+      new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+          winston.warn(
+            `${logPrefix} timed out while waiting for config change.`
+          );
+          this.#resolveConfigChanged = null;
+          this.#rejectConfigChanged = null;
+          reject(new Error('Timeout while waiting for config change.'));
+        }, 60000);
+      }),
+      new Promise((resolve, reject) => {
+        this.#resolveConfigChanged = resolve;
+        this.#rejectConfigChanged = reject;
+      })
+    ]);
+
+    return this.#configChangeCompletedPromise;
   }
 }

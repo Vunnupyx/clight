@@ -61,6 +61,10 @@
       "s7": {
         "name": "S7",
         "description": "S7 description"
+      },
+      "datahub": {
+        "name": "Data Hub",
+        "description": "Data Hub description"
       }
     },
     "DataSinks": {
@@ -132,9 +136,9 @@
     },
     "Livedata": {
       "ioshield": {
-        "0": "Off",
-        "1": "On",
-        "2": "Blinking"
+        "0": "0 (Off)",
+        "1": "1 (On)",
+        "2": "2 (Blinking)"
       }
     },
     "DiscardChanges": "Discard Changes",
@@ -280,8 +284,8 @@
     "LoadError": "Failed to load network settings. Try again later",
     "UpdateError": "Failed to update network settings. Try again later",
     "Tabs": {
-      "x1": "Ethernet X1",
-      "x2": "Ethernet X2",
+      "x1": "Ethernet X1 P1",
+      "x2": "Ethernet X2 P2",
       "proxy": "Proxy"
     }
   },

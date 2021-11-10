@@ -360,7 +360,7 @@
       ],
       "enabled": false,
       "protocol": "datahub",
-      "datahub": {
+      "datahub1": {
         "provisioningHost": "mdclight-provisioning-service.azure-devices-provisioning.net",
         "scopeId": "0ne003D4872",
         "regId": "mdclpk01",

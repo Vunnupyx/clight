@@ -7,15 +7,24 @@ module.exports = {
       label: 'Introduction',
       collapsed: false,
       items: [
-        'QuckStart',
+        'GettingStarted',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Data Sources',
+      collapsed: false,
+      items: [
+        'Sinumerik840DSL',
+        'IO-Shield',
       ],
     },
     {
       type: 'category',
       label: 'Advanced',
-      collapsed: true,
+      collapsed: false,
       items: [
-        'MdcLightConfiguration',
+        'DataFlow',
       ],
     },
   ],

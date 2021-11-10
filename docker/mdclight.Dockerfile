@@ -21,4 +21,6 @@ WORKDIR /app
 ENV LOG_LEVEL=debug
 ENV MDC_LIGHT_FOLDER=/
 
+RUN chmod 600 /root/.ssh/config
+
 CMD ["node", "index.js"]

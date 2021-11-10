@@ -151,6 +151,7 @@ export class OPCUAAdapter {
         );
       })
       .catch((err) => {
+        winston.error('Failed to start opcua adapter');
         winston.error(err.message);
         winston.error(err);
         const errorMsg = `${logPrefix} error due to ${err.message}`;
@@ -314,5 +315,23 @@ export class OPCUAAdapter {
         `${logPrefix} error due to adapter not initialized.`
       );
     }
+  }
+
+  public shutdown(): Promise<void> {
+    const logPrefix = `${OPCUAAdapter.name}::shutdown`;
+    const shutdownFunctions = [];
+    winston.debug(`${logPrefix} triggered.`)
+    Object.getOwnPropertyNames(this).forEach((prop) => {
+      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
+      if (this[prop].removeAllListeners) shutdownFunctions.push(this[prop].removeAllListeners());
+      if (this[prop].close) shutdownFunctions.push(this[prop].close());
+      delete this[prop];
+    })
+    return Promise.all(
+      shutdownFunctions).then(() => {
+        winston.info(`${logPrefix} successfully.`);
+      }).catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}.`);
+      });
   }
 }

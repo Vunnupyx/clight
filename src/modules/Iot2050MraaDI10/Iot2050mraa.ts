@@ -34,7 +34,7 @@ export class Iot2050MraaDI10 {
   private ANALOG_PIN_LABELS = ['AI0', 'AI1'];
   private MONITOR_PINS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
   private ANALOG_READ_ADDRESSES = [
-    '/sys/bus/iio/devices/iio:device0/in_voltage1_raw',
+    '/sys/bus/iio/devices/iio:device0/in_voltage0_raw',
     '/sys/bus/iio/devices/iio:device0/in_voltage2_raw'
   ];
   // Maximum time (ms) between the last three edges for detecting the state as blinking
@@ -108,7 +108,7 @@ export class Iot2050MraaDI10 {
   private async sysfs_prefix() {
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
-      if (board.indexOf('SIMATIC IOT2050') > 0) return '';
+      if (board.indexOf('SIMATIC IOT2050') >= 0) return '';
     } catch (e) {
       if (e.code !== 'ENOENT') throw e;
     }

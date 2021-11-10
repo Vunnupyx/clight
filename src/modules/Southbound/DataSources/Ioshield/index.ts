@@ -13,6 +13,8 @@ import { Iot2050MraaDI10 } from '../../../Iot2050MraaDI10/Iot2050mraa';
  * Implementation of io shield data source
  */
 export class IoshieldDataSource extends DataSource {
+  protected static className = IoshieldDataSource.name;
+
   mraaClient: Iot2050MraaDI10;
 
   /**
@@ -45,19 +47,22 @@ export class IoshieldDataSource extends DataSource {
   protected async dataSourceCycle(
     currentIntervals: Array<number>
   ): Promise<void> {
+    const logPrefix = `${IoshieldDataSource.className}::dataSourceCycle`;
     const currentCycleDataPoints: Array<IDataPointConfig> =
       this.config.dataPoints.filter((dp: IDataPointConfig) => {
-        const rf = Math.max(dp.readFrequency, 1000);
+        const rf = Math.max(dp.readFrequency || 1000, 1000);
         return currentIntervals.includes(rf);
       });
 
     try {
+      winston.debug(`${logPrefix} reading io shield values`);
       const digitalInputValues = await this.mraaClient.getDigitalValues();
       const analogInputValues = await this.mraaClient.getAnalogValues();
+
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
         const value =
-          digitalInputValues[dp.address] || analogInputValues[dp.address];
+          digitalInputValues[dp.address] || analogInputValues[dp.address] || 0;
 
         if (typeof value === 'undefined') continue;
 
@@ -69,9 +74,14 @@ export class IoshieldDataSource extends DataSource {
 
         measurements.push(measurement);
       }
-      if (measurements.length > 0) this.onDataPointMeasurement(measurements);
+      if (measurements.length > 0) {
+        console.log(`Publishing ${measurements.length} measurements`);
+        this.onDataPointMeasurement(measurements);
+      }
     } catch (e) {
       // TODO: Markus welcher status ist hier? Die Messungen sind fehlgeschlagen? Disconnected? Reconnection?
+      winston.error('Failed to read ioshield data');
+      winston.error(JSON.stringify(e));
       winston.error(e);
     }
   }

@@ -28,10 +28,14 @@ function vdpsGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function vdpsPostHandler(request: Request, response: Response): void {
+async function vdpsPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   //TODO: Input validation
   const newData = { ...request.body, ...{ id: uuidv4() } };
   configManager.changeConfig('insert', 'virtualDataPoints', newData);
+  await configManager.configChangeCompleted();
   response.status(200).json({
     created: newData,
     href: `/vdps/${newData.id}`
@@ -72,11 +76,15 @@ function vdpGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function vdpDeleteHandler(request: Request, response: Response): void {
+async function vdpDeleteHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const vdp = configManager?.config?.virtualDataPoints.find(
     (point) => point.id === request.params.id
   );
   configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
+  await configManager.configChangeCompleted();
   response.status(vdp ? 200 : 404).json({
     deleted: vdp
   });
@@ -86,16 +94,22 @@ function vdpDeleteHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function vdpPatchHandler(request: Request, response: Response): void {
-  const vdp = configManager?.config?.virtualDataPoints.find(
-    (point) => point.id === request.params.id
+async function vdpPatchHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  configManager.changeConfig(
+    'update',
+    'virtualDataPoints',
+    request.body,
+    (vdp) => {
+      return (vdp.id = request.body.id);
+    }
   );
-  configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-  const newData = { ...request.body, ...{ id: uuidv4() } };
-  configManager.changeConfig('insert', 'virtualDataPoints', newData);
+  await configManager.configChangeCompleted();
   response.status(200).json({
-    changed: newData,
-    href: `/vdps/${newData.id}`
+    changed: request.body,
+    href: `/vdps/${request.body.id}`
   });
 }
 

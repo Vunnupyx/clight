@@ -48,6 +48,13 @@ export class EventBus<TEventType> {
     }
   }
 
+  public offEvent(cb: TSubscriberFn<TEventType>): void {
+    const index = this.callbacks.findIndex((_cb) => {
+      _cb === cb
+    });
+    if (index) this.callbacks.splice(index, 1);
+  }
+
   /**
    * Emits event to the event bus. This will call all callbacks with the event.
    * @param  {TEventType} event

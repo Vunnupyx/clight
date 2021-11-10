@@ -574,11 +574,12 @@ export default class SinumerikNCKProtocolDriver {
    */
   public async disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.tcpClient.on('close', () => {
+      this.tcpClient.once('close', () => {
         winston.debug('NCK Driver: Close callback called!');
         resolve();
       });
       this.tcpClient.destroy();
+
       winston.debug('NCK Driver: Successfully destroyed socket on disconnect');
       this.connectionState = ConnectionState.NOT_CONNECTED;
     });

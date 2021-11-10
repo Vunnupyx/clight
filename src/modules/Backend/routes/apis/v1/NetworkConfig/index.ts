@@ -25,7 +25,7 @@ async function networkConfigGetHandler(
   // Get real configuration of host
   const logPrefix = `${networkConfigGetHandler.name}`;
 
-  const [x2, x1] = await Promise.all([
+  const [x1, x2] = await Promise.all([
     NetworkManagerCliController.getConfiguration('eth0'),
     NetworkManagerCliController.getConfiguration('eth1')
   ]).catch((e) => {
@@ -70,16 +70,16 @@ async function networkConfigPatchHandler(
 
   const x2Config = NetworkManagerCliController.generateNetworkInterfaceInfo(
     request.body.x2,
-    'eth0'
+    'eth1'
   );
   const x1Config = NetworkManagerCliController.generateNetworkInterfaceInfo(
     request.body.x1,
-    'eth1'
+    'eth0'
   );
 
   await Promise.allSettled([
-    NetworkManagerCliController.setConfiguration('eth0', x2Config),
-    NetworkManagerCliController.setConfiguration('eth1', x1Config)
+    NetworkManagerCliController.setConfiguration('eth0', x1Config),
+    NetworkManagerCliController.setConfiguration('eth1', x2Config)
   ]).then((results) => {
     results.forEach((result) => {
       if (result.status === 'rejected')

@@ -270,7 +270,7 @@
               <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
                 <ng-container
                   *ngIf="
-                    [0, 1, 2].includes(parseInt(liveData[row.id].value));
+                    ['0', '1', '2'].includes(toString(liveData[row.id].value));
                     else noTranslate
                   "
                   >{{

@@ -267,17 +267,16 @@
             let-row="row"
           >
             <span *ngIf="liveData && liveData[row.id]; else noLiveData">
-              <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
-                <ng-container
-                  *ngIf="
-                    ['0', '1', '2'].includes(toString(liveData[row.id].value));
-                    else noTranslate
-                  "
-                  >{{
-                    'settings-data-source.Livedata.ioshield.' +
-                      liveData[row.id].value | translate
-                  }}</ng-container
-                >
+              <ng-container
+                *ngIf="
+                  dataSource?.protocol == Protocol.IOShield &&
+                    row.address?.startsWith('DI');
+                  else noTranslate
+                "
+                >{{
+                  'settings-data-source.Livedata.ioshield.' +
+                    liveData[row.id].value | translate
+                }}
               </ng-container>
               <ng-template #noTranslate>{{
                 liveData[row.id].value

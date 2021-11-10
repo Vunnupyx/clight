@@ -78,7 +78,7 @@ export class IoshieldDataSource extends DataSource {
         this.onDataPointMeasurement(measurements);
       }
     } catch (e) {
-      // TODO: Markus welcher status ist hier? Die Messungen sind fehlgeschlagen? Disconnected? Reconnection?
+      // TODO: Define status here. Disconnected?
       winston.error('Failed to read ioshield data');
       winston.error(JSON.stringify(e));
       winston.error(e);

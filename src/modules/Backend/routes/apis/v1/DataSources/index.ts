@@ -262,7 +262,7 @@ async function dataSourcesPatchDatapointHandler(
  * @param  {Response} response
  */
 function dataSourceGetStatusHandler(request: Request, response: Response) {
-  //TODO: Make more generic @markus
+  //TODO: Make more generic
   if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
     response.status(404).json({ error: 'Protocol not valid' });
     winston.error(`dataSourceGetStatusHandler error due to no valid protocol!`);

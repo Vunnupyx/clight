@@ -45,6 +45,7 @@ export default class NetworkManagerCliController {
     networkInterface: 'eth0' | 'eth1',
     config: NetworkInterfaceInfo
   ): Promise<void> {
+    const logPrefix = `${NetworkManagerCliController.name}::setConfiguration`;
     let ipAddress = '';
     if (!(isNil(config.ipAddress) || isNil(config.subnetMask))) {
       ipAddress = `${
@@ -61,8 +62,9 @@ export default class NetworkManagerCliController {
     const dhcpCommand = dhcp ? `ipv4.method ${dhcp}` : '';
 
     const nmcliCommand = `${NetworkManagerCliController.sshCommand} nmcli con mod ${networkInterface}-default ${addressCommand} ${gatewayCommand} ${dnsCommand} ${dhcpCommand}`;
-    await exec(nmcliCommand);
+    winston.debug(`${logPrefix} sending command to host: ${nmcliCommand}`);
     try {
+      await exec(nmcliCommand);
       const resultApply = await exec(
         `${NetworkManagerCliController.sshCommand} nmcli con up ${networkInterface}-default`
       );

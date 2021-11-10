@@ -10,7 +10,7 @@
           echarts
           [options]="options"
           [initOpts]="{ width: '450px' }"
-          [merge]="updateOptions"
+          (chartInit)="onChartInit($event)"
         ></div>
       </div>
       <div class="col-12 col-md-5 ngx-datatable select-type-table">

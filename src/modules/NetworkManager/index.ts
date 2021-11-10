@@ -47,7 +47,7 @@ export default class NetworkManagerCliController {
   ): Promise<void> {
     const logPrefix = `${NetworkManagerCliController.name}::setConfiguration`;
     let ipAddress = '';
-    if (!(isNil(config.ipAddress) || isNil(config.subnetMask))) {
+    if (!(isNil(config.ipAddress) || isNil(config.subnetMask) || config.ipAddress.length === 0 || config.subnetMask.length === 0)) {
       ipAddress = `${
         config.ipAddress
       }/${NetworkManagerCliController.netmaskToCidr(config.subnetMask)}`;
@@ -99,7 +99,7 @@ export default class NetworkManagerCliController {
       activated: true,
       dhcp: true
     };
-    return body.userDhcp
+    return body.useDhcp
       ? dhcpConfig
       : {
           ...dhcpConfig,

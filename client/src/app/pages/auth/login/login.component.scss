@@ -5,7 +5,7 @@
   .split-screen {
     flex-grow: 1;
     height: 100%;
-    background-image: url('~assets/images/login-split-screen.jpg');
+    background-image: url('~assets/images/login-split-screen.png');
     background-repeat: no-repeat;
     background-size: cover;
   }
@@ -18,6 +18,23 @@
       width: 100%;
       padding: 0 35px 0 35px;
     }
+  }
+
+  .brand {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 30px;
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+
+  .connectivity {
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    padding-left: 60px;
+    padding-right: 60px;
   }
 }
 

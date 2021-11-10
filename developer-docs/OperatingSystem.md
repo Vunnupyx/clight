@@ -53,7 +53,7 @@ rm -rf /etc/MDCLight/config/ssl_private.key
 rm -rf /etc/ssh/ssh_host_*
 rm -rf  rm -rf /etc/MDCLight/logs/*.log
 cat /dev/null > ~/.bash_history && history -c && exit
-nmcli con mod eth0-default ipv4.addresses 192.168.185.186/24 ipv4.gateway 0.0.0.0.0 ipv4.dns 0.0.0.0 ipv4.method auto
+nmcli con mod eth0-default ipv4.method auto
 nmcli con up eth0-default
 nmcli con mod eth1-default ipv4.addresses 192.168.214.230/24 ipv4.gateway 0.0.0.0.0 ipv4.dns 0.0.0.0 ipv4.method manual
 nmcli con up eth1-default

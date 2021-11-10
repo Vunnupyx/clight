@@ -9,6 +9,7 @@ RUN npm install
 RUN mkdir /root/.ssh/
 COPY services/ContainerKeys/containerSSHConfig /root/.ssh
 RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
+RUN chmod 600 /root/.ssh/config
 
 COPY src src
 COPY tsconfig.json tsconfig.json
@@ -20,7 +21,5 @@ WORKDIR /app
 
 ENV LOG_LEVEL=debug
 ENV MDC_LIGHT_FOLDER=/
-
-RUN chmod 600 /root/.ssh/config
 
 CMD ["node", "index.js"]

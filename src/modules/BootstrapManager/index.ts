@@ -87,16 +87,16 @@ export class BootstrapManager {
         winston.info(log);
         const { x1, x2 } = this.configManager.config.networkConfig;
         const nx1: NetworkInterfaceInfo =
-          NetworkManagerCliController.generateNetworkInterfaceInfo(x1, 'eth1');
+          NetworkManagerCliController.generateNetworkInterfaceInfo(x1, 'eth0');
         const nx2: NetworkInterfaceInfo =
-          NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth0');
+          NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth1');
 
         Promise.all([
-          Object.keys(x2).length !== 0
-            ? NetworkManagerCliController.setConfiguration('eth0', nx2)
+          Object.keys(x1).length !== 0
+            ? NetworkManagerCliController.setConfiguration('eth0', nx1)
             : Promise.resolve(),
           Object.keys(x2).length !== 0
-            ? NetworkManagerCliController.setConfiguration('eth1', nx1)
+            ? NetworkManagerCliController.setConfiguration('eth1', nx2)
             : Promise.resolve()
         ])
           .then(() => winston.info(log + ' Successfully.'))

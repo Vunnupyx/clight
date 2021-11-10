@@ -284,8 +284,8 @@
     "LoadError": "Failed to load network settings. Try again later",
     "UpdateError": "Failed to update network settings. Try again later",
     "Tabs": {
-      "x1": "Ethernet X1",
-      "x2": "Ethernet X2",
+      "x1": "Ethernet X1 P1",
+      "x2": "Ethernet X2 P2",
       "proxy": "Proxy"
     }
   },

@@ -32,7 +32,7 @@ After you have selected your template, you can fine tune the data source and app
 
 ### MTConnect
 
-- The MTConnect endpoint is exposed on port `15504` on both network interfaces
+- The MTConnect endpoint is exposed on port `15404` on both network interfaces
 - Checkout the "Network Settings"-Tab to see which IP addresses are configured for your device
 - You can use the "Open MTConnect Stream" button on the Application Interfaces/MTConnect page to see the current values in MTConnect
 

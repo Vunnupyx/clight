@@ -39,7 +39,7 @@ services:
     ports:
       - '4840:4840'
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
   mtconnect-agent:
     image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
     restart: always
@@ -50,4 +50,4 @@ services:
     depends_on:
       - mdclight
     ports:
-      - '15504:5000'
+      - '15404:5000'

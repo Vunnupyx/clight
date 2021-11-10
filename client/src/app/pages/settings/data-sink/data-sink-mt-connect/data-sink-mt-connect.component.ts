@@ -74,7 +74,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   get MTConnectStreamHref() {
-    return `http://${window.location.hostname}:15504/current`;
+    return `http://${window.location.hostname}:15404/current`;
   }
 
   constructor(

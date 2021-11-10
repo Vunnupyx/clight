@@ -40,14 +40,16 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private dataAddedDuringRestart = false;
   private dataSinksRestartPending = false;
 
-
   constructor(params: IDataSourcesManagerParams) {
     super();
 
     params.configManager.once('configsLoaded', () => {
       return this.init();
     });
-    params.configManager.on('configChange', this.configChangeHandler.bind(this));
+    params.configManager.on(
+      'configChange',
+      this.configChangeHandler.bind(this)
+    );
 
     this.configManager = params.configManager;
     this.lifecycleBus = params.lifecycleBus;
@@ -156,35 +158,46 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     if (this.dataSinksRestartPending) {
       this.dataAddedDuringRestart = true;
       return;
-    };
+    }
     this.dataSinksRestartPending = true;
     const logPrefix = `${DataSourcesManager.name}::configChangeHandler`;
+
+    winston.info(`${logPrefix} reloading datasources.`);
 
     console.log('Markus', logPrefix);
     const shutdownFns = [];
     let error = false;
     this.dataSources.forEach((source) => {
       shutdownFns.push(source.shutdown());
-    })
-    this.dataSources = [];
-    Promise.allSettled(shutdownFns).then((results) => {
-      results.forEach((result) => {
-        if (result.status === 'rejected') winston.error(`${logPrefix} error due to ${result.reason}`)
-      })
-    }).then(() => {
-      return this.init();
-    }).then(() => {
-      winston.info(`${logPrefix} datasources restart successfully.`);
-    }).catch((err) => {
-      winston.error(`${logPrefix} datasources restart error due to ${err.message}`)
-      error = true;
-    }).finally(() => {
-      this.dataSinksRestartPending = false;
-      if (this.dataAddedDuringRestart || error) {
-        this.dataAddedDuringRestart = false;
-        this.configChangeHandler(error);
-        };
     });
-
+    this.dataSources = [];
+    Promise.allSettled(shutdownFns)
+      .then((results) => {
+        winston.debug(`${logPrefix} datasources disconnected.`);
+        results.forEach((result) => {
+          if (result.status === 'rejected')
+            winston.error(`${logPrefix} error due to ${result.reason}`);
+        });
+      })
+      .then(() => {
+        winston.info(`${logPrefix} reinitializing datasources.`);
+        return this.init();
+      })
+      .then(() => {
+        winston.info(`${logPrefix} datasources restarted successfully.`);
+      })
+      .catch((err) => {
+        winston.error(
+          `${logPrefix} datasources restart error due to ${err.message}`
+        );
+        error = true;
+      })
+      .finally(() => {
+        this.dataSinksRestartPending = false;
+        if (this.dataAddedDuringRestart || error) {
+          this.dataAddedDuringRestart = false;
+          this.configChangeHandler(error);
+        }
+      });
   }
 }

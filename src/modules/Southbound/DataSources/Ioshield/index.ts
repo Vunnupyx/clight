@@ -91,6 +91,9 @@ export class IoshieldDataSource extends DataSource {
    * @returns Promise<void>
    */
   public async disconnect(): Promise<void> {
+    const logPrefix = `${IoshieldDataSource.className}::disconnect`;
+    winston.debug(`${logPrefix} triggered.`);
+
     this.currentStatus = LifecycleEventStatus.Disconnected;
   }
 

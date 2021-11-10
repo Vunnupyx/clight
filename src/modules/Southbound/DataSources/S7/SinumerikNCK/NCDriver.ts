@@ -575,13 +575,25 @@ export default class SinumerikNCKProtocolDriver {
   public async disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.tcpClient.once('close', () => {
-        winston.debug('NCK Driver: Close callback called!');
+        winston.debug(
+          'NCK Driver: Successfully destroyed socket on disconnect'
+        );
         resolve();
       });
-      this.tcpClient.destroy();
 
-      winston.debug('NCK Driver: Successfully destroyed socket on disconnect');
+      this.tcpClient.end();
+
+      winston.debug('NCK Driver: Waiting for destroy of socket');
       this.connectionState = ConnectionState.NOT_CONNECTED;
+
+      setTimeout(() => {
+        this.tcpClient.destroy();
+        console.log(this.tcpClient);
+        winston.debug(
+          'NCK Driver: Timeout while waiting for socket disconnect.'
+        );
+        resolve();
+      }, 5000);
     });
   }
 }

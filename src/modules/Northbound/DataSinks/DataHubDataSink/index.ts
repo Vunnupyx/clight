@@ -157,8 +157,8 @@ export class DataHubDataSink extends DataSink {
   /**
    * Stop connected adapter but don´t destroy reference
    */
-  public disconnect() {
-    this.#datahubAdapter.stop;
+  public async disconnect() {
+    await this.#datahubAdapter.stop();
     winston.info(`${DataHubDataSink.#className}::shutdown successful.`);
   }
 

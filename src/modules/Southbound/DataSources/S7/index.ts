@@ -276,6 +276,9 @@ export class S7DataSource extends DataSource {
    * @returns Promise
    */
   public async disconnect(): Promise<void> {
+    const logPrefix = `${S7DataSource.className}::disconnect`;
+    winston.debug(`${logPrefix} triggered.`);
+
     const { name, protocol } = this.config;
     this.isDisconnected = true;
     this.submitLifecycleEvent({

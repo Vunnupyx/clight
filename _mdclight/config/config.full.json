@@ -197,6 +197,18 @@
           "name": "Availability",
           "id": "604d583a-ce3a-4d19-a930-a8ba0579d8b2",
           "readFrequency": 1000
+        },
+        {
+          "type": null,
+          "address": "AI0",
+          "name": "AI0",
+          "id": "95a71ef8-119c-4bf7-b0b0-ae7e169e8c10"
+        },
+        {
+          "type": null,
+          "address": "AI1",
+          "name": "AI1",
+          "id": "fda5000e-0942-4605-a995-9c49bd1e99d6"
         }
       ],
       "protocol": "ioshield",
@@ -549,6 +561,16 @@
       "operationType": "not",
       "name": "Emergency Stop Triggered",
       "id": "dd88cdb9-994c-40ce-be60-1d37f3aa755a"
+    },
+    {
+      "id": "9d62359b-c48b-4084-825f-1ce56c93e202",
+      "sources": ["fda5000e-0942-4605-a995-9c49bd1e99d6"],
+      "operationType": "thresholds",
+      "name": "Virtual Execution Mode",
+      "thresholds": {
+        "0": 0,
+        "1": 40
+      }
     }
   ],
   "mapping": [
@@ -641,6 +663,11 @@
       "source": "d2e3ac9b-f7e3-4251-8e79-52ab364fba63",
       "target": "54c2a7aa-8f1c-4ed1-8d22-b8444592d032",
       "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a27"
+    },
+    {
+      "source": "9d62359b-c48b-4084-825f-1ce56c93e202",
+      "target": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+      "id": "e199f4d8-3a6c-4e46-999d-a0ef1a0c30ea"
     }
   ],
   "quickStart": {

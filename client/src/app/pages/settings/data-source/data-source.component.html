@@ -267,20 +267,19 @@
             let-row="row"
           >
             <span *ngIf="liveData && liveData[row.id]; else noLiveData">
-              <ng-container
-                *ngIf="
-                  dataSource?.protocol == Protocol.IOShield &&
-                    row.address?.startsWith('DI');
-                  else noTranslate
-                "
-                >{{
-                  'settings-data-source.Livedata.ioshield.' +
-                    liveData[row.id].value | translate
-                }}
+              <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
+                <ng-container
+                  *ngIf="row.address?.startsWith('DI'); else noTranslate"
+                  >{{
+                    'settings-data-source.Livedata.ioshield.' +
+                      liveData[row.id].value | translate
+                  }}
+                </ng-container>
+                <ng-template #noTranslate>{{
+                  liveData[row.id].value
+                }}</ng-template>
               </ng-container>
-              <ng-template #noTranslate>{{
-                liveData[row.id].value
-              }}</ng-template>
+
               <ng-container *ngIf="dataSource?.protocol != Protocol.IOShield">
                 {{ liveData[row.id].value }}
               </ng-container>

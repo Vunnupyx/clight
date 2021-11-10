@@ -110,7 +110,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
       data: this.prepareTimeseries(),
       color: '#000000',
       lineStyle: {
-        width: 1
+        width: 4
       }
     };
   }

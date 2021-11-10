@@ -759,6 +759,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           (entry) => selector(entry) === selector(data)
         );
         if (index < 0) throw Error(`No Entry found`); //TODO:
+        const change = categoryArray[index];
         categoryArray.splice(index, 1);
         //@ts-ignore
         categoryArray.push(data);

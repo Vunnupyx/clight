@@ -106,7 +106,10 @@ async function vdpPatchHandler(
       return (vdp.id = request.body.id);
     }
   );
-  await configManager.configChangeCompleted();
+  //TODO: MAKE CHANGE AND DELETE IN ONE CALL!!!!
+  configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
+  const newData = { ...request.body, ...{ id: uuidv4() } };
+  configManager.changeConfig('insert', 'virtualDataPoints', newData);
   response.status(200).json({
     changed: request.body,
     href: `/vdps/${request.body.id}`

@@ -106,10 +106,25 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       config: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
       runTimeConfig: this.configManager.runtimeConfig.datahub
     };
+    this.configManager.config.dataSinks.forEach((sink) => {
+      if (!sink.enabled) return;
+      switch (sink.protocol) {
+        case DataSinkProtocols.DATAHUB: {
+          this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
+          break;
+        };
+        case DataSinkProtocols.MTCONNECT: {
+          this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
+          break;
+        };
+        case DataSinkProtocols.OPCUA: {
+          this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
+          break;
+        };
 
-    this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
-    this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
-    this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
+        default: break;
+      }
+    })
 
     this.connectDataSinksToBus();
     winston.info(`${logPrefix} created.`);

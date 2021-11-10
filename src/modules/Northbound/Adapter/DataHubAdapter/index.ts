@@ -519,6 +519,7 @@ export class DataHubAdapter {
       if (prop?.close) shutdownFunctions.push(prop.close());
       // @ts-ignore
       if (prop?.removeAllListeners)
+        // @ts-ignore
         shutdownFunctions.push(prop.removeAllListeners());
       prop = undefined;
     });

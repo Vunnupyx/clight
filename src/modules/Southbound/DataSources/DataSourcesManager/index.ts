@@ -164,7 +164,6 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
 
     winston.info(`${logPrefix} reloading datasources.`);
 
-    console.log('Markus', logPrefix);
     const shutdownFns = [];
     let error = false;
     this.dataSources.forEach((source) => {

@@ -8,25 +8,22 @@
  * 10,11,12,13 = Always 1
  */
 
-if (process.argv[2] === "get") {
+if (process.argv[2] === 'get') {
   const pin = parseInt(process.argv[3], 10);
-  const state = pin > 8 ? "1" : "0";
-
-  console.log(`Pin ${pin} = ${state}`);
-} else if (process.argv[2] === "monitor") {
+  const state = pin > 8 ? '1' : '0';
+} else if (process.argv[2] === 'monitor') {
   const pin = parseInt(process.argv[3], 10);
   let lastState = false;
   if ([7, 8, 9].includes(pin)) {
     setInterval(() => {
-      const state = lastState ? "1" : "0";
+      const state = lastState ? '1' : '0';
       lastState = !lastState;
-      console.log(`Pin ${pin} = ${state}`);
     }, 1000);
   } else {
     setInterval(() => {}, 1000);
   }
 } else {
   console.log(
-    "No parameters specified. mraa-gpio get <pin> or mraa-gpio monitor <pin> are supported."
+    'No parameters specified. mraa-gpio get <pin> or mraa-gpio monitor <pin> are supported.'
   );
 }

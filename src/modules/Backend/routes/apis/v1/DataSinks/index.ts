@@ -152,7 +152,6 @@ async function dataSinksPostDatapointBulkHandler(
     );
     response.status(200).send();
   } catch (err) {
-    console.log(err);
     winston.warn(
       `dataSinksPostDatapointBulkHandler tried to change bulk dataSink.dataPoints`
     );

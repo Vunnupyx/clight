@@ -252,7 +252,7 @@ export class MTConnectAdapter {
       sock.removeAllListeners();
       shutdownFunctions.push(sock.end());
     });
-    console.log();
+
     Object.getOwnPropertyNames(this).forEach((prop) => {
       if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
       if (this[prop].removeAllListeners)

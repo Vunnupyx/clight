@@ -120,7 +120,6 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDataPoints(arr: VirtualDataPoint[]) {
-    console.log(arr);
     this.datapointRows = arr;
   }
 

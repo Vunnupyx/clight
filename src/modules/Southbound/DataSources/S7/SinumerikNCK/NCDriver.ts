@@ -588,7 +588,6 @@ export default class SinumerikNCKProtocolDriver {
 
       setTimeout(() => {
         this.tcpClient.destroy();
-        console.log(this.tcpClient);
         winston.debug(
           'NCK Driver: Timeout while waiting for socket disconnect.'
         );

@@ -113,7 +113,6 @@ export class DataHubDataSink extends DataSink {
   public init(): Promise<DataHubDataSink> {
     const logPrefix = `${DataHubDataSink.#className}::init`;
     winston.debug(`${logPrefix} initializing.`);
-    console.log('MARKUS', 'DATAHUBSINK INIT');
 
     if (
       !this.options.config.datahub ||

@@ -174,7 +174,6 @@ export class DataHubAdapter {
   public init(): Promise<DataHubAdapter> {
     const logPrefix = `${DataHubAdapter.#className}::init`;
 
-    console.log('MARKUS', 'DATAHUBINIT')
     return Promise.resolve()
       .then(() => {
         winston.debug(`${logPrefix} initializing.`);
@@ -189,11 +188,9 @@ export class DataHubAdapter {
         if (this.#isGroupRegistration) {
           this.#groupDeviceKey = this.generateSymKeyForGroupDevice();
         }
-        console.log('Markus', 'Vor start Prov');
       })
       .then(() => this.startProvisioning())
       .then(() => {
-        console.log('Markus', 'NACH start Prov');
         this.#initialized = true;
         winston.debug(`${logPrefix} initialized. Registered to DPS`);
         return this;
@@ -211,7 +208,6 @@ export class DataHubAdapter {
   private startProvisioning(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::startProvisioning`;
     winston.debug(`${logPrefix} Starting provisioning...`);
-    console.log('Markus', 'startProvisioning');
 
     this.#provSecClient = new SymmetricKeySecurityClient(
       this.#registrationId,
@@ -343,7 +339,7 @@ export class DataHubAdapter {
    */
   private getProvisioning(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::getProvisioning`;
-    console.log('getProvisioning');
+
     return new Promise((res, rej) => {
       winston.debug(`${logPrefix} Registering...`);
       this.#killProv = rej;
@@ -505,30 +501,35 @@ export class DataHubAdapter {
   public shutdown(): Promise<void> {
     const logPrefix = `${DataHubAdapter.name}::shutdown`;
     this.#killProv();
-    const shutdownFunctions = [this.#provClient?.cancel(),
-      this.#provGroupClient?.cancel()];
-    
+    const shutdownFunctions = [
+      this.#provClient?.cancel(),
+      this.#provGroupClient?.cancel()
+    ];
+
     [
       this.#proxy,
       this.#provSecClient,
       this.#symKeyProvTransport,
       this.#dataHubClient,
-      this.#deviceTwin].forEach((prop) => {
-        // @ts-ignore
+      this.#deviceTwin
+    ].forEach((prop) => {
+      // @ts-ignore
       if (prop?.shutdown) shutdownFunctions.push(prop.shutdown());
       // @ts-ignore
       if (prop?.close) shutdownFunctions.push(prop.close());
       // @ts-ignore
-      if (prop?.removeAllListeners) shutdownFunctions.push(prop.removeAllListeners());
+      if (prop?.removeAllListeners)
+        shutdownFunctions.push(prop.removeAllListeners());
       prop = undefined;
-    })
+    });
     this.#runningTimers.forEach((timer) => {
       clearTimeout(timer);
     });
-    return Promise.all(
-      shutdownFunctions).then(() => {
+    return Promise.all(shutdownFunctions)
+      .then(() => {
         winston.info(`${logPrefix} successfully.`);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         winston.error(`${logPrefix} error due to ${err.message}.`);
       });
   }

@@ -58,7 +58,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
 
-    console.log('MARKUS', 'DataSinksManager INIT');
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
     return Promise.all(initMethods)
@@ -156,17 +155,11 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private async configChangeHandler(): Promise<void> {
     const logPrefix = `${DataSinksManager.name}::configChangeHandler`;
 
-    console.log('MARKUS', this.dataSinksRestartPending);
-    console.log('MARKUS', this.dataAddedDuringRestart);
-
     if (this.dataSinksRestartPending) {
       this.dataAddedDuringRestart = true;
       return;
     }
     this.dataSinksRestartPending = true;
-
-    console.log('MARKUS', logPrefix);
-    console.log(1);
 
     winston.info(`${logPrefix} reloading datasinks.`);
 
@@ -177,14 +170,13 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         winston.error(`${logPrefix} ${sink} does not have a shutdown method.`);
       shutdownFunctions.push(sink.shutdown());
     });
-    console.log(2);
+
     this.dataSinks = [];
 
     let err: Error = null;
     await Promise.all(shutdownFunctions)
       .then(() => this.init())
       .then(() => {
-        console.log(4);
         winston.info(`${logPrefix} reload datasinks successfully.`);
       })
       .catch((error: Error) => {

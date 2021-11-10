@@ -75,7 +75,6 @@ export class IoshieldDataSource extends DataSource {
         measurements.push(measurement);
       }
       if (measurements.length > 0) {
-        console.log(`Publishing ${measurements.length} measurements`);
         this.onDataPointMeasurement(measurements);
       }
     } catch (e) {

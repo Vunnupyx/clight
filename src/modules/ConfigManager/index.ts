@@ -798,12 +798,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       {
         title: 'General system information',
         items: [
-          {
-            key: 'Board serial number',
-            keyDescription: '',
-            value: await system.readSerialNumber(),
-            valueDescription: 'Serial number'
-          },
+          // {
+          //   key: 'Board serial number',
+          //   keyDescription: '',
+          //   value: await system.readSerialNumber(),
+          //   valueDescription: 'Serial number'
+          // },
           {
             key: 'Mac address X1',
             keyDescription: '',

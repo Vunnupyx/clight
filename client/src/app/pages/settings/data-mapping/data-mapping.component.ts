@@ -37,7 +37,18 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   unsavedRow?: DataMapping;
   unsavedRowIndex: number | undefined;
 
+  filterTargetStr: string = '';
+  filterSourceStr: string = '';
+
   sub = new Subscription();
+
+  get targets() {
+    return (
+      this.dataPoints?.filter((x) =>
+        x.name?.toLowerCase().includes(this.filterTargetStr.toLowerCase())
+      ) || []
+    );
+  }
 
   constructor(
     private sourceDataPointService: SourceDataPointService,
@@ -55,8 +66,24 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     return this.sourceDataPoints || [];
   }
 
+  get sourcesPointsFiltered() {
+    return (
+      this.sourceDataPoints?.filter((x) =>
+        x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+      ) || []
+    );
+  }
+
   get sourcesVirtualPoints() {
     return this.virtualDataPoints || [];
+  }
+
+  get sourcesVirtualPointsFiltered() {
+    return (
+      this.virtualDataPoints?.filter((x) =>
+        x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+      ) || []
+    );
   }
 
   get isTouchedTable() {
@@ -209,5 +236,9 @@ export class DataMappingComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+  }
+
+  filterTargets(event) {
+    console.log(event);
   }
 }

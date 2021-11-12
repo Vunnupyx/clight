@@ -63,6 +63,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   unsavedRow?: DataPoint;
   unsavedRowIndex: number | undefined;
 
+  displayedColumns = ['name', 'enabled'];
+  desiredServices: Array<{ name: string; enabled: boolean }> = [];
+
   sub = new Subscription();
 
   get isTouchedTable() {
@@ -124,6 +127,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     if (dataSink.protocol !== DataSinkProtocol.DH) {
       this.dataPointService.getDataPoints(dataSink.protocol);
       this.dataSinkService.getStatus(dataSink.protocol);
+    } else {
+      if (dataSink.desired?.services) {
+        this.desiredServices = Object.entries(dataSink.desired?.services).map(
+          ([name, { enabled }]) => ({
+            name,
+            enabled
+          })
+        );
+      } else {
+        this.desiredServices = [];
+      }
     }
   }
 

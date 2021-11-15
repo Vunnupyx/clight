@@ -212,6 +212,9 @@ export class SourceDataPointService
       });
     } catch (err) {
       errorHandler(err);
+      this._store.patchState((state) => {
+        state.dataPointsLivedata = { ...state.dataPointsLivedata };
+      });
     }
   }
 

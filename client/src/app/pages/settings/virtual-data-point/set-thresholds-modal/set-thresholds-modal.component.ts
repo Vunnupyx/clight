@@ -159,17 +159,24 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   }
 
   private prepareTimeseries() {
-    return this.timeseries.map((el) => {
-      const now = new Date();
-      const ts = new Date(el.ts);
+    return this.timeseries
+      .filter((time) => {
+        const ts = new Date(time.ts);
+        const pastDate = new Date(Date.now() - 30000);
 
-      return {
-        value: [
-          Math.round((ts.getTime() - now.getTime()) / 1000),
-          Number(el.value)
-        ]
-      };
-    });
+        return ts >= pastDate;
+      })
+      .map((el) => {
+        const now = new Date();
+        const ts = new Date(el.ts);
+
+        return {
+          value: [
+            Math.round((ts.getTime() - now.getTime()) / 1000),
+            Number(el.value)
+          ]
+        };
+      });
   }
 
   private prepareThresholds() {

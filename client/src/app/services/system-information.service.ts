@@ -11,6 +11,7 @@ import { filter, map } from 'rxjs/operators';
 export class SystemInformationState {
   status!: Status;
   sections!: SystemInformationSection[];
+  serverOffset!: number;
 }
 
 @Injectable()
@@ -66,6 +67,22 @@ export class SystemInformationService {
     );
 
     return response.timestamp;
+  }
+
+  async getServerTimeOffset(): Promise<number> {
+    if (this._store.snapshot.serverOffset === undefined) {
+      const time = await this.getServerTime();
+
+      const offset = Math.round(Date.now() / 1000) - time;
+
+      this._store.patchState((state) => {
+        state.serverOffset = offset;
+      });
+
+      return offset;
+    }
+
+    return this._store.snapshot.serverOffset;
   }
 
   private _emptyState() {

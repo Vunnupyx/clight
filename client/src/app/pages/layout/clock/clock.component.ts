@@ -17,8 +17,8 @@ export class ClockComponent implements OnInit, OnDestroy {
   constructor(private systemInfoService: SystemInformationService) {}
 
   ngOnInit() {
-    this.systemInfoService.getServerTime().then((timestamp) => {
-      this.serverOffset = Math.round(Date.now() / 1000) - timestamp;
+    this.systemInfoService.getServerTimeOffset().then((offset) => {
+      this.serverOffset = offset;
 
       this.calculateTime();
 

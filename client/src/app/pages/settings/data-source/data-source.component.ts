@@ -126,7 +126,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
     this.dataSource = obj;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
-    this.dataSourceService.getStatus(obj.protocol!);
+
+    if (this.dataSource.protocol !== DataSourceProtocol.IOShield) {
+      this.dataSourceService.getStatus(obj.protocol!);
+    }
 
     this.sourceDataPointService.getLiveDataForDataPoints(
       this.dataSource?.protocol!

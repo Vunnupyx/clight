@@ -6,7 +6,7 @@ import { HttpService } from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { SystemInformationSection } from '../models';
 import { errorHandler } from '../shared/utils';
-import {filter, map} from "rxjs/operators";
+import { filter, map } from 'rxjs/operators';
 
 export class SystemInformationState {
   status!: Status;
@@ -43,16 +43,16 @@ export class SystemInformationService {
     }));
 
     try {
-      const sections = await this.httpService.get<SystemInformationSection[]>(`/systemInfo`);
+      const sections = await this.httpService.get<SystemInformationSection[]>(
+        `/systemInfo`
+      );
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.sections = sections;
       });
     } catch (err) {
-      this.toastr.error(
-        this.translate.instant('system-information.LoadError')
-      );
+      this.toastr.error(this.translate.instant('system-information.LoadError'));
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Ready
@@ -60,8 +60,16 @@ export class SystemInformationService {
     }
   }
 
+  async getServerTime(): Promise<number> {
+    const response = await this.httpService.get<{ timestamp: number }>(
+      `/systemInfo/time`
+    );
+
+    return response.timestamp;
+  }
+
   private _emptyState() {
-    return <SystemInformationState> {
+    return <SystemInformationState>{
       status: Status.NotInitialized
     };
   }

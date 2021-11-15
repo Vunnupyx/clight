@@ -85,9 +85,9 @@
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
-    "OpenConfigurationWizard": "Open Configuration Wizard",
-    "BackupConfiguration": "Backup Configuration",
-    "RestoreConfiguration": "Restore Configuration",
+    "OpenConfigurationWizard": "Templates",
+    "BackupConfiguration": "Backup",
+    "RestoreConfiguration": "Restore",
     "BackupDownloadError": "Could not download backup. Please try again!",
     "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
   },

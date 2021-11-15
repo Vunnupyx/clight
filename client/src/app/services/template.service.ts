@@ -12,6 +12,7 @@ export class TemplatesState {
   status!: Status;
   templates!: ITemplate[];
   completed!: boolean;
+  currentTemplate!: string;
 }
 
 @Injectable()
@@ -22,6 +23,12 @@ export class TemplateService {
     return this._store.state
       .pipe(filter((x) => x.status != Status.NotInitialized))
       .pipe(map((x) => x.templates));
+  }
+
+  get currentTemplate() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(map((x) => x.currentTemplate));
   }
 
   constructor(
@@ -39,11 +46,15 @@ export class TemplateService {
     }));
 
     try {
-      const response = await this.httpService.get<ITemplate[]>(`/templates`);
+      const response = await this.httpService.get<{
+        templates: ITemplate[];
+        currentTemplate: string;
+      }>(`/templates`);
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.templates = response;
+        state.templates = response.templates;
+        state.currentTemplate = response.currentTemplate;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('quick-start.LoadError'));

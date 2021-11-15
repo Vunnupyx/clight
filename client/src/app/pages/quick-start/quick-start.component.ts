@@ -14,6 +14,7 @@ import {
 import { DataSinkProtocol, DataSourceProtocol } from 'app/models';
 import { ITemplate } from 'app/models/template';
 import { array2map, ObjectMap } from 'app/shared/utils';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-quick-start',
@@ -69,12 +70,6 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.sub.add(
-      this.templateService.templates.subscribe((x) => this.onTemplates(x))
-    );
-
-    this.templateService.getAvailableTemplates();
-
     this.templateForm = this.formBuilder.group({
       templateId: ['', Validators.required]
     });
@@ -86,6 +81,21 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     this.applicationInterfacesForm = this.formBuilder.group({
       interfaces: [[], Validators.required]
     });
+
+    this.sub.add(
+      this.templateService.templates.subscribe((x) => this.onTemplates(x))
+    );
+
+    this.sub.add(
+      this.templateService.currentTemplate
+        .pipe(filter((x) => !!x))
+        .subscribe((templateId) => {
+          this.templateForm.patchValue({ templateId });
+          this.onTemplateChange();
+        })
+    );
+
+    this.templateService.getAvailableTemplates();
   }
 
   ngOnDestroy() {

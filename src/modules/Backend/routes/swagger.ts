@@ -1262,6 +1262,21 @@ export default {
         }
       }
     },
+    '/systemInfo/time': {
+      get: {
+        tags: ['systemInfo'],
+        description: 'Get system time',
+        operationId: 'systemTimeGet',
+        responses: {
+          '200': {
+            description: 'Returns all information about the system',
+            schema: {
+              $ref: '#/definitions/timeResponse'
+            }
+          }
+        }
+      }
+    },
     '/templates': {
       get: {
         tags: ['templates'],
@@ -2068,6 +2083,14 @@ export default {
           }
         },
         deleted: ['entityId']
+      }
+    },
+    timeResponse: {
+      type: 'object',
+      properties: {
+        timestamp: {
+          type: 'number'
+        }
       }
     }
   }

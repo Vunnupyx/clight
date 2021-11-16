@@ -1,6 +1,6 @@
 {
   "name": "SINUMERIK 840d sl",
-  "description": "SINUMERIK 840D sl to Messanger, OPC UA and Data hub",
+  "description": "SINUMERIK 840D sl to Messenger, OPC UA and Data hub",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",

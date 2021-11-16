@@ -31,7 +31,7 @@ interface DataHubAdapterOptions extends IDataHubConfig {
   proxy?: IProxyConfig;
 }
 
-interface IDesiredProps {
+export interface IDesiredProps {
   services: {
     [serviceName: string]: {
       enabled: boolean;

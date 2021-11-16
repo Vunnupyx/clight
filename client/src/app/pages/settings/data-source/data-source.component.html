@@ -37,28 +37,18 @@
             {{ 'settings-data-source.IPAddress' | translate }}
           </div>
           <form #form="ngForm">
-            <div class="d-flex align-items-center">
-              <ngx-ip
-                [ngModel]="dataSource?.connection?.ipAddr"
-                name="ipAddress"
-                inputValidation="block"
-                separator="."
-                [required]="true"
-                [highlightInvalidBlocks]="true"
-                theme="ngx-ip-theme-material"
-                (ngModelChange)="updateIpAddress(form.valid, $event)"
-              ></ngx-ip>
-              <ng-container *ngIf="!form.dirty">
-                <div class="p-10"></div>
-              </ng-container>
-              <ng-container *ngIf="form.dirty">
-                <mat-icon *ngIf="form.valid" class="color-success"
-                  >check</mat-icon
-                >
-                <mat-icon *ngIf="!form.valid" class="color-error"
-                  >error_outline</mat-icon
-                >
-              </ng-container>
+            <div>
+              <mat-form-field>
+                <input
+                  matInput
+                  name="ipAddress"
+                  #ipAddr="ngModel"
+                  [ngModel]="dataSource?.connection?.ipAddr"
+                  [pattern]="ipRegex"
+                  [required]="true"
+                  (ngModelChange)="updateIpAddress(form.valid, $event)"
+                />
+              </mat-form-field>
             </div>
           </form>
         </div>
@@ -90,7 +80,7 @@
     </div>
     <div
       class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6"
-      *ngIf="connection"
+      *ngIf="connection && dataSource?.protocol !== Protocol.IOShield"
     >
       <div class="mt-25">
         {{ 'settings-data-source.Connection' | translate }}

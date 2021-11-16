@@ -1,6 +1,6 @@
 import { DataSink } from '../DataSink';
 import { ILifecycleEvent } from '../../../../common/interfaces';
-import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
+import { DataHubAdapter, IDesiredProps } from '../../Adapter/DataHubAdapter';
 import winston from 'winston';
 import {
   IDataHubConfig,
@@ -166,5 +166,13 @@ export class DataHubDataSink extends DataSink {
    */
   public currentStatus(): boolean {
     return !!this.#datahubAdapter?.running;
+  }
+
+  /** 
+   * Return desired properties from device twin.
+   */
+  public getDesiredPropertiesServices(): IDesiredProps {
+    if(!this.#datahubAdapter) return {services: {}};
+    return this.#datahubAdapter.getDesiredProps();
   }
 }

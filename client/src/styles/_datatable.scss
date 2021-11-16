@@ -525,6 +525,8 @@ $datatable-summary-row-background-hover: #ddd !default;
   }
 
   .datatable-body-cell-label {
+    width: 100%;
+
     input {
       margin: -6px 0;
       height: 32px;

@@ -19,6 +19,7 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
+import { IP_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 
@@ -54,6 +55,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   sub = new Subscription();
   liveDataSub!: Subscription;
+
+  ipRegex = IP_REGEX;
 
   get isTouchedTable() {
     return this.sourceDataPointService.isTouched;

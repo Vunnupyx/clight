@@ -80,7 +80,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         },
         axisLabel: {
           formatter: (value) => {
-            return `${value}s`;
+            return `${(value / 60).toFixed(1)}m`;
           }
         },
         axisPointer: {
@@ -172,8 +172,10 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     return this.timeseries
       .filter((time) => {
         const ts = new Date(time.ts).valueOf() - this.serverOffsetTime * 1000;
+        const PERIOD = 5 * 60 * 1000;
+
         const pastDate = new Date(
-          Date.now() - this.serverOffsetTime * 1000 - 30000
+          Date.now() - this.serverOffsetTime * 1000 - PERIOD
         ).valueOf();
 
         return ts >= pastDate;
@@ -205,7 +207,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   }
 
   private getChartXAxisValues() {
-    return new Array(31).fill(0).map((el, i) => -i);
+    return new Array(5 * 60 + 1).fill(0).map((el, i) => -i);
   }
 
   private getThresholdsSeries() {

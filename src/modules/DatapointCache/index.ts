@@ -1,9 +1,9 @@
 import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
 
 type TimeSeriesValue = {
-  ts: string,
-  value: boolean | number | string
-}
+  ts: string;
+  value: boolean | number | string;
+};
 
 type EventsById = {
   [id: string]: {
@@ -45,11 +45,13 @@ export class DataPointCache {
           ...(this.dataPoints[event.measurement.id]?.timeseries || []),
           {
             ts: new Date().toISOString(),
-            value: event.measurement.value,
-          },
+            value: event.measurement.value
+          }
         ].filter((time) => {
+          const PERIOD = 5 * 60 * 1000; // 5 min
+
           const ts = new Date(time.ts);
-          const pastDate = new Date(Date.now() - 30000);
+          const pastDate = new Date(Date.now() - PERIOD);
 
           return ts >= pastDate;
         })

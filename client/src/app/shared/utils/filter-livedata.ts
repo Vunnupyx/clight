@@ -1,7 +1,7 @@
 import { DataPointLiveData } from 'app/models';
 
 export function filterLiveData(serverOffsetTime) {
-  const diff = 60000; // 1 min
+  const diff = 5 * 60 * 1000; // 5 min
 
   return (liveData: DataPointLiveData) => {
     const nowTime = Date.now() - serverOffsetTime * 1000;

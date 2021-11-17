@@ -22,6 +22,18 @@ async function systemInfoGetHandler(request: Request, response: Response) {
   response.status(200).json(systemInfo);
 }
 
+/**
+ * Get System Time
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function systemTimeGetHandler(request: Request, response: Response) {
+  response.status(200).json({
+    timestamp: Math.round(Date.now() / 1000)
+  });
+}
+
 export const systemInfoHandlers = {
-  systemInfoGet: systemInfoGetHandler
+  systemInfoGet: systemInfoGetHandler,
+  systemTimeGet: systemTimeGetHandler
 };

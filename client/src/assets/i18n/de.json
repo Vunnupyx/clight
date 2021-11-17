@@ -136,7 +136,10 @@
       }
     },
     "DiscardChanges": "Discard Changes",
-    "ApplyChanges": "Apply Changes"
+    "ApplyChanges": "Apply Changes",
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "DuplicatedAddress": "You are not allowed to duplicate addresses",
+    "SelectVariable": "Select Variable"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",

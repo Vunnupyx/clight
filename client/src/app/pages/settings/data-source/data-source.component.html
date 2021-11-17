@@ -208,6 +208,10 @@
               class="w-100"
               [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
+              [matTooltip]="'settings-data-source.DuplicatedName' | translate"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingField('name')"
+              [class.border-danger]="isDuplicatingField('name')"
               autofocus
             />
           </ng-template>
@@ -342,6 +346,12 @@
                       class="w-100"
                       [ngModel]="value"
                       (ngModelChange)="unsavedRow.address = $event"
+                      [matTooltip]="
+                        'settings-data-source.DuplicatedAddress' | translate
+                      "
+                      matTooltipPosition="above"
+                      [matTooltipDisabled]="!isDuplicatingField('address')"
+                      [class.border-danger]="isDuplicatingField('address')"
                     />
                   </ng-template>
                 </ng-container>
@@ -383,7 +393,12 @@
               #group="matButtonToggleGroup"
             >
               <mat-button-toggle
-                (click)="onEditEnd(); group.value = null"
+                (click)="
+                  !isDuplicatingField('name') &&
+                    !isDuplicatingField('address') &&
+                    onEditEnd();
+                  group.value = null
+                "
                 [matTooltip]="'settings-data-source.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"

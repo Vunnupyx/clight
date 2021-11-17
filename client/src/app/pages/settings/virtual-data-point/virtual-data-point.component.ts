@@ -183,11 +183,11 @@ export class VirtualDataPointComponent implements OnInit {
     }
 
     // check whether other VDPs do not have such name
-    const newName = this.unsavedRow?.name?.toLowerCase();
+    const newName = this.unsavedRow?.name?.toLowerCase().trim();
     const editableId = this.unsavedRow?.id;
 
     return this.datapointRows.some((dp) => {
-      return dp.name?.toLowerCase() === newName && dp.id !== editableId;
+      return dp.name?.toLowerCase().trim() === newName && dp.id !== editableId;
     });
   }
 

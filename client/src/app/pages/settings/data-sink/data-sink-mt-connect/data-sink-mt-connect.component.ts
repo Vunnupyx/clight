@@ -103,7 +103,12 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const dataSink = changes.dataSink?.currentValue;
-    if (dataSink) {
+    if (!dataSink) return;
+
+    if (
+      !changes.dataSink?.previousValue ||
+      dataSink.protocol !== changes.dataSink?.previousValue.protocol
+    ) {
       this.onDataSink(dataSink);
     }
   }
@@ -284,6 +289,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   saveDatahubConfig(form: NgForm) {
     this.dataSinkService
       .updateDataSink(this.dataSink?.protocol!, { datahub: form.value })
+      .then(() => this.dataSinkService.apply(this.dataSink?.protocol!))
       .then(() =>
         this.toastr.success(
           this.translate.instant('settings-data-sink.DataHubConfigSaveSuccess')

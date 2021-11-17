@@ -10,13 +10,15 @@ import {
 } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler, mapOrder } from 'app/shared/utils';
+import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
 
 export class DataSourcesState {
   status!: Status;
+  touched!: boolean;
   dataSources!: DataSource[];
+  originalDataSources!: DataSource[];
   connection?: DataSourceConnection;
 }
 
@@ -37,6 +39,10 @@ export class DataSourceService {
 
   get status() {
     return this._store.snapshot.status;
+  }
+
+  get touched() {
+    return this._store.snapshot.touched;
   }
 
   get dataSources() {
@@ -67,6 +73,7 @@ export class DataSourceService {
         state.dataSources = this._orderByProtocol(
           dataSources.map((x) => this._parseDataSource(x))
         );
+        state.originalDataSources = clone(state.dataSources);
       });
     } catch (err) {
       this.toastr.error(
@@ -105,28 +112,48 @@ export class DataSourceService {
     }
   }
 
+  revert() {
+    this._store.patchState((state) => {
+      state.status = Status.Ready;
+      state.dataSources = clone(state.originalDataSources);
+      state.touched = false;
+    });
+  }
+
+  async apply(protocol: DataSourceProtocol) {
+    const ds = this._store.snapshot.dataSources.find(
+      (x) => x.protocol === protocol
+    )!;
+
+    const payload: any = {};
+
+    payload.enabled = ds.enabled;
+
+    if (ds.connection) {
+      payload.connection = ds.connection;
+    }
+
+    if (ds.softwareVersion) {
+      payload.softwareVersion = ds.softwareVersion;
+    }
+
+    await this.httpService.patch(`/datasources/${protocol}`, payload);
+
+    this._store.patchState((state) => {
+      state.status = Status.Ready;
+      state.originalDataSources = clone(state.dataSources);
+      state.touched = false;
+    });
+  }
+
   async updateDataSource(protocol: string, obj: Partial<DataSource>) {
     this._store.patchState((state) => {
       state.status = Status.Updating;
       state.dataSources = state.dataSources.map((x) =>
-        x.protocol != obj.protocol ? x : obj
+        x.protocol != protocol ? x : { ...x, ...obj }
       );
+      state.touched = true;
     });
-
-    try {
-      await this.httpService.patch(`/datasources/${protocol}`, obj);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source.UpdateError')
-      );
-      errorHandler(err);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    }
   }
 
   getNckAddresses() {
@@ -143,7 +170,8 @@ export class DataSourceService {
 
   private _emptyState() {
     return <DataSourcesState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      touched: false
     };
   }
 }

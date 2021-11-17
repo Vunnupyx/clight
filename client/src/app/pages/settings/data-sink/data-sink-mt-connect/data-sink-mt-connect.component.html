@@ -211,41 +211,70 @@
   </div>
 
   <div
-    class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6"
+    class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4"
     *ngIf="dataSink?.protocol !== Protocol.DH"
   >
-    <div class="mt-25" *ngIf="connection">
-      {{ 'settings-data-sink.Connection' | translate }}
+    <div class="d-flex align-items-center justify-content-end">
+      <button
+        mat-button
+        type="button"
+        class="btn-sm mr-10"
+        *ngIf="isTouchedTable && !isLoading"
+        (click)="onDiscard()"
+      >
+        {{ 'settings-data-sink.DiscardChanges' | translate }}
+      </button>
+
+      <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
+
+      <button
+        mat-raised-button
+        type="button"
+        class="btn-sm"
+        [disabled]="!isTouchedTable || isLoading"
+        (click)="onApply()"
+      >
+        {{ 'settings-data-sink.ApplyChanges' | translate }}
+      </button>
     </div>
-    <div
-      class="mt-10 d-flex align-items-center justify-content-between"
-      style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
-      *ngIf="connection"
-    >
-      <div>
-        <div style="font-weight: 600">
+
+    <div class="connection-block">
+      <div class="mt-25" *ngIf="connection">
+        {{ 'settings-data-sink.Connection' | translate }}
+      </div>
+
+      <div
+        class="mt-10 d-flex align-items-center justify-content-between"
+        style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+        *ngIf="connection"
+      >
+        <div>
+          <div style="font-weight: 600">
+            <ng-container [ngSwitch]="connection.status">
+              <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
+                {{ 'settings-data-sink.Running' | translate }}
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSinkConnectionStatus.Disconnected"
+              >
+                {{ 'settings-data-sink.Disconnected' | translate }}
+              </ng-container>
+            </ng-container>
+          </div>
+          <small style="color: #999">{{
+            'settings-data-sink.ServiceState' | translate
+          }}</small>
+        </div>
+        <div class="mr-10">
           <ng-container [ngSwitch]="connection.status">
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
-              {{ 'settings-data-sink.Running' | translate }}
+              <mat-icon class="color-success">check_circle_outline</mat-icon>
             </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
-              {{ 'settings-data-sink.Disconnected' | translate }}
+              <mat-icon class="color-danger">highlight_off</mat-icon>
             </ng-container>
           </ng-container>
         </div>
-        <small style="color: #999">{{
-          'settings-data-sink.ServiceState' | translate
-        }}</small>
-      </div>
-      <div class="mr-10">
-        <ng-container [ngSwitch]="connection.status">
-          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
-            <mat-icon class="color-success">check_circle_outline</mat-icon>
-          </ng-container>
-          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
-            <mat-icon class="color-danger">highlight_off</mat-icon>
-          </ng-container>
-        </ng-container>
       </div>
     </div>
 
@@ -282,37 +311,6 @@
             matTooltipPosition="above"
           >
             <mat-icon style="margin-top: -10px">add</mat-icon>
-          </button>
-        </div>
-      </div>
-      <div
-        class="col-12 col-md-6 d-flex align-items-center justify-content-end"
-      >
-        <div class="d-flex align-items-center">
-          <button
-            mat-button
-            type="button"
-            class="btn-sm mr-10"
-            *ngIf="isTouchedTable && !isLoading"
-            (click)="onDiscard()"
-          >
-            {{ 'settings-data-sink.DiscardChanges' | translate }}
-          </button>
-
-          <mat-spinner
-            diameter="20"
-            *ngIf="isLoading"
-            class="mr-10"
-          ></mat-spinner>
-
-          <button
-            mat-raised-button
-            type="button"
-            class="btn-sm"
-            [disabled]="!isTouchedTable || isLoading"
-            (click)="onApply()"
-          >
-            {{ 'settings-data-sink.ApplyChanges' | translate }}
           </button>
         </div>
       </div>

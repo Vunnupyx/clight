@@ -177,6 +177,20 @@ export class VirtualDataPointComponent implements OnInit {
     this.clearUnsavedRow();
   }
 
+  isDuplicatingName() {
+    if (!this.datapointRows) {
+      return false;
+    }
+
+    // check whether other VDPs do not have such name
+    const newName = this.unsavedRow?.name?.toLowerCase();
+    const editableId = this.unsavedRow?.id;
+
+    return this.datapointRows.some((dp) => {
+      return dp.name?.toLowerCase() === newName && dp.id !== editableId;
+    });
+  }
+
   onEditCancel() {
     this.clearUnsavedRow();
   }

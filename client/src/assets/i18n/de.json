@@ -18,8 +18,6 @@
     "SignIn": "Sign in",
     "SendResetPassword": "Send reset email",
     "ResetEmailSentSuccess": "Reset email has been sent successfully!",
-    "ForCustomers": "For our customers:",
-    "ForCustomersDescription": "Please log in with your current my DMG MORI ID",
     "ForgotPasswordForCustomers": "For our customers:",
     "ForgotPasswordForCustomersDescription": "Please use your email to reset your password!",
     "ForgotPassword": "Forgot your password?"
@@ -167,7 +165,8 @@
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
     "DiscardChanges": "Discard Changes",
-    "ApplyChanges": "Apply Changes"
+    "ApplyChanges": "Apply Changes",
+    "DuplicatedName": "You are not allowed to duplicate names"
   },
   "settings-data-source-point": {
     "LoadError": "",

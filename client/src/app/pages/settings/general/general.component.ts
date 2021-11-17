@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { BackupService } from 'app/services';
+import { BackupService, TemplateService } from 'app/services';
 import { LocalStorageService } from 'app/shared';
 
 @Component({
@@ -10,11 +10,12 @@ import { LocalStorageService } from 'app/shared';
   templateUrl: './general.component.html',
   styleUrls: ['./general.component.scss']
 })
-export class GeneralComponent {
+export class GeneralComponent implements OnInit {
   constructor(
     private backupService: BackupService,
     private translate: TranslateService,
     private localStorageService: LocalStorageService,
+    private templatesService: TemplateService,
     private toastr: ToastrService
   ) {}
 
@@ -24,6 +25,14 @@ export class GeneralComponent {
 
   get currentLang() {
     return this.translate.currentLang;
+  }
+
+  get currentTemplate() {
+    return this.templatesService.currentTemplate;
+  }
+
+  ngOnInit() {
+    this.templatesService.getAvailableTemplates();
   }
 
   onLanguageChange(value: string) {

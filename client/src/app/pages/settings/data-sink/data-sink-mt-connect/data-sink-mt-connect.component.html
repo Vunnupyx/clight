@@ -93,36 +93,6 @@
       </div>
 
       <div *ngSwitchCase="Protocol.DH">
-        <div class="row" *ngIf="false">
-          <div class="col-12">
-            <div class="row mt-20 mb-25">
-              <div class="col-6 col-lg-5">
-                {{ 'settings-data-sink.UserDataState' | translate }}
-              </div>
-              <mat-slide-toggle
-                class="col-6 col-lg-4"
-                [checked]="dataSink?.enabled"
-                [disabled]="true"
-              ></mat-slide-toggle>
-            </div>
-          </div>
-        </div>
-
-        <div class="row" *ngIf="false">
-          <div class="col-12">
-            <div class="row">
-              <div class="col-6 col-lg-5 mt-20">
-                {{ 'settings-data-sink.AlarmState' | translate }}
-              </div>
-              <mat-slide-toggle
-                class="col-6 col-lg-4 mt-20"
-                [checked]="dataSink?.enabled"
-                [disabled]="true"
-              ></mat-slide-toggle>
-            </div>
-          </div>
-        </div>
-
         <form
           #form="ngForm"
           class="mt-25"

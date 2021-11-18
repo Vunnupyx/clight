@@ -31,10 +31,11 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { SharedServicesModule } from './services/shared-services.module';
 import { StateModule } from './state/state.module';
 import { AppTranslationModule } from 'app/app.translation';
+import { DocBtnComponent } from './components/doc-btn/doc-btn.component';
 
 @NgModule({
-  declarations: [],
-  imports: [],
+  declarations: [DocBtnComponent],
+  imports: [MatIconModule, MatButtonModule, MatTooltipModule],
   providers: [],
   exports: [
     CommonModule,
@@ -69,7 +70,8 @@ import { AppTranslationModule } from 'app/app.translation';
 
     AppTranslationModule,
     SharedServicesModule,
-    StateModule
+    StateModule,
+    DocBtnComponent
   ]
 })
 export class SharedModule {}

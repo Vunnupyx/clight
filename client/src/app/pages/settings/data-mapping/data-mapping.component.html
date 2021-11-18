@@ -84,12 +84,21 @@
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
             >
-              <mat-option [value]="item.id" *ngFor="let item of sourcesPoints"
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="filterSourceStr"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                [value]="item.id"
+                *ngFor="let item of sourcesPointsFiltered"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
               <mat-option
                 [value]="item.id"
-                *ngFor="let item of sourcesVirtualPoints"
+                *ngFor="let item of sourcesVirtualPointsFiltered"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
             </mat-select>
@@ -114,7 +123,14 @@
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
             >
-              <mat-option [value]="item.id" *ngFor="let item of dataPoints">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="filterTargetStr"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option [value]="item.id" *ngFor="let item of targets">
                 {{ getTargetPrefix(item.id) }} {{ item.name }}
               </mat-option>
             </mat-select>

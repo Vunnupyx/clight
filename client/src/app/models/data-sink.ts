@@ -41,4 +41,11 @@ export class DataSink {
   protocol!: DataSinkProtocol;
   auth?: DataSinkAuth;
   datahub?: DataHubConfig;
+  desired?: {
+    services?: {
+      [key: string]: {
+        enabled: boolean;
+      };
+    };
+  };
 }

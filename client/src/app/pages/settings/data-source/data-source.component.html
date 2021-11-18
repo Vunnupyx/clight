@@ -329,8 +329,15 @@
                       unsavedRow && (unsavedRow.address = $event)
                     "
                   >
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search..."
+                        noEntriesFoundLabel="No results found"
+                        [(ngModel)]="filterDigitalInputAddressStr"
+                      ></ngx-mat-select-search>
+                    </mat-option>
                     <mat-option
-                      *ngFor="let address of DigitalInputAddresses"
+                      *ngFor="let address of ioshieldAddresses"
                       [value]="address"
                       >{{ address }}</mat-option
                     >

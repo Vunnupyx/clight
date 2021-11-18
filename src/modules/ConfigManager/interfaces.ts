@@ -10,7 +10,6 @@ export interface IAuthConfig {
 
 export interface IAuthRuntimeConfig {
   expiresIn: number;
-  defaultPassword: string;
 }
 
 export interface IRuntimeConfig {
@@ -216,6 +215,8 @@ export interface IDefaultTemplates {
 }
 
 export interface QuickStartConfig {
+  currentTemplate?: string;
+  currentTemplateName?: string;
   completed: boolean;
 }
 

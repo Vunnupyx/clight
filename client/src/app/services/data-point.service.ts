@@ -263,7 +263,15 @@ export class DataPointService
   }
 
   getPrefix(id: string) {
-    const protocol = this._store?.snapshot?.dataPointsSinkMap[id];
+    if (
+      !this._store ||
+      !this._store.snapshot ||
+      !this._store.snapshot.dataPointsSinkMap
+    ) {
+      return '';
+    }
+
+    const protocol = this._store.snapshot.dataPointsSinkMap[id];
 
     switch (protocol) {
       case DataSinkProtocol.DH:

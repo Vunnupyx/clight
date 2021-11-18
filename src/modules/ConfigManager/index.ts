@@ -100,6 +100,8 @@ export const emptyDefaultConfig: IConfig = {
   virtualDataPoints: [],
   mapping: [],
   quickStart: {
+    currentTemplate: null,
+    currentTemplateName: null,
     completed: false
   }
 };
@@ -194,8 +196,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         maxFileSizeByte: 20000000
       },
       auth: {
-        expiresIn: 60 * 60,
-        defaultPassword: ''
+        expiresIn: 60 * 60
       },
       datahub: {
         serialNumber: 'No serial number found', // TODO Use mac address?
@@ -356,7 +357,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       virtualDataPoints: template.virtualDataPoints,
       mapping: template.mapping,
       quickStart: {
-        completed: true
+        completed: true,
+        currentTemplate: templateFileName,
+        currentTemplateName: template.name
       }
     };
 
@@ -364,6 +367,32 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.setupDefaultDataSinks();
 
     this.config = this._config;
+  }
+
+  /**
+   * Filters mapping array depends on enabled dataSources & dataSinks.
+   */
+  public getFilteredMapping() {
+    const enabledDataPointsOfDataSources = this.config.dataSources
+      .filter((x) => x.enabled)
+      .map((x) => x.dataPoints.map((y) => y.id))
+      .flat();
+
+    const enabledDataPointsOfDataSinks = this.config.dataSinks
+      .filter((x) => x.enabled)
+      .map((x) => x.dataPoints.map((y) => y.id))
+      .flat();
+
+    const vdps = this.config.virtualDataPoints.map((x) => x.id);
+
+    return this.config.mapping.filter((m) => {
+      const sourceExists =
+        enabledDataPointsOfDataSources.includes(m.source) ||
+        vdps.includes(m.source);
+      const targetExists = enabledDataPointsOfDataSinks.includes(m.target);
+
+      return sourceExists && targetExists;
+    });
   }
 
   /**

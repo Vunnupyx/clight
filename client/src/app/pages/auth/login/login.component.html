@@ -17,13 +17,6 @@
   </div>
   <div class="login-screen">
     <div class="login-logo" style="display: flex; width: 100%">
-      <img
-        style="width: 250px; margin: 0 auto"
-        src="/assets/images/logo-login.png"
-        alt="logotype"
-      />
-    </div>
-    <div style="display: flex; width: 100%">
       <div
         style="
           display: flex;
@@ -38,20 +31,6 @@
         </p>
         <p style="margin: 0 0 0 auto">light</p>
       </div>
-    </div>
-    <div class="login-texts">
-      <ng-container [ngSwitch]="mode">
-        <ng-container *ngSwitchCase="LoginPageMode.Login">
-          <p>{{ 'auth-login.ForCustomers' | translate }}</p>
-          <p>{{ 'auth-login.ForCustomersDescription' | translate }}</p>
-        </ng-container>
-        <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
-          <p>{{ 'auth-login.ForgotPasswordForCustomers' | translate }}</p>
-          <p>
-            {{ 'auth-login.ForgotPasswordForCustomersDescription' | translate }}
-          </p>
-        </ng-container>
-      </ng-container>
     </div>
     <div class="login-form">
       <ng-container [ngSwitch]="mode">

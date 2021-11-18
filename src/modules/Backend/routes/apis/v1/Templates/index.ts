@@ -49,7 +49,8 @@ function templatesGetHandler(request: Request, response: Response): void {
 
   const payload = {
     templates,
-    currentTemplate: configManager.config.quickStart.currentTemplate
+    currentTemplate: configManager.config.quickStart.currentTemplate,
+    currentTemplateName: configManager.config.quickStart.currentTemplateName
   };
 
   response.status(200).json(payload);
@@ -61,9 +62,12 @@ function templatesGetHandler(request: Request, response: Response): void {
  * @param  {Response} response
  */
 function templatesGetStatusHandler(request: Request, response: Response) {
-  const { completed, currentTemplate } = configManager.config.quickStart;
+  const { completed, currentTemplate, currentTemplateName } =
+    configManager.config.quickStart;
 
-  response.status(200).json({ completed, currentTemplate });
+  response
+    .status(200)
+    .json({ completed, currentTemplate, currentTemplateName });
 }
 
 /**
@@ -102,7 +106,9 @@ function templatesSkipPostHandler(request: Request, response: Response): void {
     ...configManager.config,
     quickStart: {
       completed: true,
-      currentTemplate: configManager.config.quickStart.currentTemplate || null
+      currentTemplate: configManager.config.quickStart.currentTemplate || null,
+      currentTemplateName:
+        configManager.config.quickStart.currentTemplateName || null
     }
   };
 

@@ -234,6 +234,7 @@ export interface IDefaultTemplates {
 
 export interface QuickStartConfig {
   currentTemplate?: string;
+  currentTemplateName?: string;
   completed: boolean;
 }
 

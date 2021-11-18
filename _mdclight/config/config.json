@@ -672,6 +672,7 @@
   ],
   "quickStart": {
     "completed": false,
-    "currentTemplate": null
+    "currentTemplate": null,
+    "currentTemplateName": null
   }
 }

@@ -101,6 +101,7 @@ export const emptyDefaultConfig: IConfig = {
   mapping: [],
   quickStart: {
     currentTemplate: null,
+    currentTemplateName: null,
     completed: false
   }
 };
@@ -358,7 +359,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       mapping: template.mapping,
       quickStart: {
         completed: true,
-        currentTemplate: templateFileName
+        currentTemplate: templateFileName,
+        currentTemplateName: template.name
       }
     };
 

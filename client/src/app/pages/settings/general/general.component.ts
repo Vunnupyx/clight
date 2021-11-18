@@ -28,7 +28,7 @@ export class GeneralComponent implements OnInit {
   }
 
   get currentTemplate() {
-    return this.templatesService.currentTemplate;
+    return this.templatesService.currentTemplateName;
   }
 
   ngOnInit() {

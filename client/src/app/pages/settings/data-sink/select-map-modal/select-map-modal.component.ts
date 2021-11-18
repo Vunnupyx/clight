@@ -108,4 +108,21 @@ export class SelectMapModalComponent {
   onCancel() {
     this.dialogRef.close();
   }
+
+  isDuplicatingField(field: 'from', idx: number) {
+    if (!this.unsavedRow || !this.unsavedRow[field]) {
+      return false;
+    }
+
+    // check whether other VDPs do not have such name
+    const newFieldValue = (this.unsavedRow[field] as string)
+      .toLowerCase()
+      .trim();
+
+    return this.rows!.some((mapping, index) => {
+      return (
+        mapping[field].toLowerCase().trim() === newFieldValue && idx !== index
+      );
+    });
+  }
 }

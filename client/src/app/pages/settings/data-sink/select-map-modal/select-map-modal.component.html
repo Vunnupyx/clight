@@ -45,6 +45,10 @@
           class="w-100"
           [ngModel]="value"
           (ngModelChange)="unsavedRow.from = $event"
+          [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
+          matTooltipPosition="above"
+          [matTooltipDisabled]="!isDuplicatingField('from', unsavedRowIndex!)"
+          [class.border-danger]="isDuplicatingField('from', unsavedRowIndex!)"
           autofocus
         />
       </ng-template>
@@ -112,7 +116,10 @@
           #group="matButtonToggleGroup"
         >
           <mat-button-toggle
-            (click)="onEditEnd(); group.value = null"
+            (click)="
+              !isDuplicatingField('from', unsavedRowIndex!) && onEditEnd();
+              group.value = null
+            "
             [matTooltip]="'settings-data-sink.Save' | translate"
             matTooltipPosition="above"
             ><mat-icon class="color-success">check</mat-icon></mat-button-toggle

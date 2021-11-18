@@ -245,7 +245,8 @@
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
     "DiscardChanges": "Discard Changes",
-    "ApplyChanges": "Apply Changes"
+    "ApplyChanges": "Apply Changes",
+    "DuplicatedKeys": "You are not allowed to duplicate keys"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

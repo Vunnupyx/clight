@@ -182,9 +182,13 @@
 
   <div
     *ngIf="dataSink?.protocol === Protocol.DH"
-    class="col-12 col-md-6 col-lg-5 offset-lg-1"
+    class="col-12 col-md-6 col-lg-7 offset-lg-1"
   >
-    <table mat-table [dataSource]="desiredServices" class="mt-25">
+    <div>
+      <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
+    </div>
+
+    <table mat-table [dataSource]="desiredServices" class="mt-15">
       <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
@@ -234,40 +238,7 @@
     class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6"
     *ngIf="dataSink?.protocol !== Protocol.DH"
   >
-    <div class="mt-25" *ngIf="connection">
-      {{ 'settings-data-sink.Connection' | translate }}
-    </div>
-    <div
-      class="mt-10 d-flex align-items-center justify-content-between"
-      style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
-      *ngIf="connection"
-    >
-      <div>
-        <div style="font-weight: 600">
-          <ng-container [ngSwitch]="connection.status">
-            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
-              {{ 'settings-data-sink.Running' | translate }}
-            </ng-container>
-            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
-              {{ 'settings-data-sink.Disconnected' | translate }}
-            </ng-container>
-          </ng-container>
-        </div>
-        <small style="color: #999">{{
-          'settings-data-sink.ServiceState' | translate
-        }}</small>
-      </div>
-      <div class="mr-10">
-        <ng-container [ngSwitch]="connection.status">
-          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
-            <mat-icon class="color-success">check_circle_outline</mat-icon>
-          </ng-container>
-          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
-            <mat-icon class="color-danger">highlight_off</mat-icon>
-          </ng-container>
-        </ng-container>
-      </div>
-    </div>
+    <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
 
     <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
       <div style="display: flex; width: 100%">
@@ -583,3 +554,41 @@
     </ngx-datatable>
   </div>
 </div>
+
+<ng-template #connectionBlock>
+  <div class="connection-block" *ngIf="connection">
+    <div class="mt-25">
+      {{ 'settings-data-sink.Connection' | translate }}
+    </div>
+    <div
+      class="mt-10 d-flex align-items-center justify-content-between"
+      style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+    >
+      <div>
+        <div style="font-weight: 600">
+          <ng-container [ngSwitch]="connection.status">
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
+              {{ 'settings-data-sink.Running' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
+              {{ 'settings-data-sink.Disconnected' | translate }}
+            </ng-container>
+          </ng-container>
+        </div>
+        <small style="color: #999">{{
+          'settings-data-sink.ServiceState' | translate
+        }}</small>
+      </div>
+      <div class="mr-10">
+        <ng-container [ngSwitch]="connection.status">
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
+            <mat-icon class="color-success">check_circle_outline</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -85,7 +85,10 @@
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
+    "Templates": "Templates",
+    "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",
+    "BackupAndRestore": "Backup and Restore Configuration",
     "BackupConfiguration": "Backup Configuration",
     "RestoreConfiguration": "Restore Configuration",
     "BackupDownloadError": "Could not download backup. Please try again!",
@@ -242,7 +245,12 @@
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
     "DiscardChanges": "Discard Changes",
-    "ApplyChanges": "Apply Changes"
+    "ApplyChanges": "Apply Changes",
+    "Desired": {
+      "Name": "Name",
+      "Enabled": "Enabled",
+      "Disabled": "Disabled"
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

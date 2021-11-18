@@ -1,9 +1,11 @@
 import { ConfigManager } from '../../../../../ConfigManager';
+import { IDataSinkConfig } from '../../../../../ConfigManager/interfaces';
 import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
 import { hash } from 'bcrypt';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
+import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
 import {
   DataSinkProtocols,
   LifecycleEventStatus
@@ -11,6 +13,16 @@ import {
 
 let configManager: ConfigManager;
 let dataSinksManager: DataSinksManager;
+
+interface IDataSinkConfigResponse extends IDataSinkConfig {
+  desired?: {
+    services?: {
+      [key: string]: {
+        enabled: boolean;
+      };
+    };
+  };
+}
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -34,6 +46,19 @@ export function setDataSinksManager(manager: DataSinksManager) {
  * @param  {Response} response
  */
 function dataSinksGetHandler(request: Request, response: Response): void {
+  const dataSinks: IDataSinkConfigResponse[] = configManager.config.dataSinks;
+
+  dataSinks.forEach((dataSink) => {
+    if (dataSink.protocol === DataSinkProtocols.DATAHUB) {
+      const sink = dataSinksManager.getDataSinkByProto(
+        DataSinkProtocols.DATAHUB
+      ) as DataHubDataSink;
+
+      console.log(sink?.getDesiredPropertiesServices());
+      dataSink.desired = sink?.getDesiredPropertiesServices();
+    }
+  });
+
   response.status(200).json({
     dataSinks: configManager.config.dataSinks
   });
@@ -44,9 +69,17 @@ function dataSinksGetHandler(request: Request, response: Response): void {
  * @param  {Response} response
  */
 function dataSinkGetHandler(request, response): void {
-  const dataSink = configManager.config.dataSinks.find(
+  const dataSink: IDataSinkConfigResponse = configManager.config.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
+
+  if (dataSink.protocol === DataSinkProtocols.DATAHUB) {
+    const sink = dataSinksManager.getDataSinkByProto(
+      DataSinkProtocols.DATAHUB
+    ) as DataHubDataSink;
+    dataSink.desired = sink?.getDesiredPropertiesServices();
+  }
+
   response.status(dataSink ? 200 : 404).json(dataSink);
 }
 

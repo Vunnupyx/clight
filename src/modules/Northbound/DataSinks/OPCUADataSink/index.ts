@@ -1,5 +1,6 @@
 import winston from 'winston';
 import {
+  DataSinkProtocols,
   DataSourceLifecycleEventTypes,
   ILifecycleEvent
 } from '../../../../common/interfaces';
@@ -28,7 +29,7 @@ export interface IOPCUADataSinkOptions {
 export class OPCUADataSink extends DataSink {
   private opcuaAdapter: OPCUAAdapter;
   private opcuaNodes: OPCUANodeDict = {};
-  protected _protocol = 'opcua';
+  protected _protocol = DataSinkProtocols.OPCUA;
   private static className = OPCUADataSink.name;
 
   constructor(options: IOPCUADataSinkOptions) {

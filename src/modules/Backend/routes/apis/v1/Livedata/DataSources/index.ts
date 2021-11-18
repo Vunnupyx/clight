@@ -47,16 +47,20 @@ function livedataDataSourceDataPointsGetHandler(
 
   const payload = dataPointIds
     .map((dataPointId) => {
-      const event = dataPointCache.getLastEvent(dataPointId);
+      const value = dataPointCache.getLastestValue(dataPointId);
 
-      if (!event) {
+      if (!value) {
         return undefined;
       }
 
+      console.log(value.ts);
+      console.log(new Date(value.ts));
+      console.log(new Date(value.ts).getTime());
+
       const obj: any = {
         dataPointId,
-        value: event.measurement.value,
-        timestamp: Math.round(Date.now() / 1000)
+        value: value.value,
+        timestamp: Math.round(new Date(value.ts).getTime() / 1000)
       };
 
       if (timeseriesIncluded) {
@@ -79,9 +83,9 @@ function livedataDataSourceDataPointGetHandler(
   request: Request,
   response: Response
 ): void {
-  const event = dataPointCache.getLastEvent(request.params.dataPointId);
+  const value = dataPointCache.getLastestValue(request.params.dataPointId);
 
-  if (!event) {
+  if (!value) {
     response.status(404).send();
 
     return;
@@ -91,8 +95,8 @@ function livedataDataSourceDataPointGetHandler(
 
   const payload: any = {
     dataPointId: request.params.dataPointId,
-    value: event.measurement.value,
-    timestamp: Math.round(Date.now() / 1000)
+    value: value.value,
+    timestamp: Math.round(new Date(value.ts).getTime() / 1000)
   };
 
   if (timeseriesIncluded) {

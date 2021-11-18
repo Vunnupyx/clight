@@ -49,7 +49,15 @@
 
             <div class="password-block">
               <mat-form-field>
-                <mat-label>{{ 'auth-login.Password' | translate }}</mat-label>
+                <mat-label
+                  >{{ 'auth-login.Password' | translate
+                  }}<span
+                    ><app-doc-btn
+                      link="http://localhost:3000/help/docs/#login"
+                      tooltip="Where do I find my login password?"
+                    ></app-doc-btn></span
+                ></mat-label>
+
                 <input
                   matInput
                   type="password"

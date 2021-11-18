@@ -194,8 +194,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         maxFileSizeByte: 20000000
       },
       auth: {
-        expiresIn: 60 * 60,
-        defaultPassword: ''
+        expiresIn: 60 * 60
       },
       datahub: {
         serialNumber: 'No serial number found', // TODO Use mac address?

@@ -100,6 +100,8 @@ export const emptyDefaultConfig: IConfig = {
   virtualDataPoints: [],
   mapping: [],
   quickStart: {
+    currentTemplate: null,
+    currentTemplateName: null,
     completed: false
   }
 };
@@ -356,7 +358,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       virtualDataPoints: template.virtualDataPoints,
       mapping: template.mapping,
       quickStart: {
-        completed: true
+        completed: true,
+        currentTemplate: templateFileName,
+        currentTemplateName: template.name
       }
     };
 

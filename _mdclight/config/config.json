@@ -671,6 +671,8 @@
     }
   ],
   "quickStart": {
-    "completed": false
+    "completed": false,
+    "currentTemplate": null,
+    "currentTemplateName": null
   }
 }

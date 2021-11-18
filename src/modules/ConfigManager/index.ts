@@ -371,6 +371,32 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
+   * Filters mapping array depends on enabled dataSources & dataSinks.
+   */
+  public getFilteredMapping() {
+    const enabledDataPointsOfDataSources = this.config.dataSources
+      .filter((x) => x.enabled)
+      .map((x) => x.dataPoints.map((y) => y.id))
+      .flat();
+
+    const enabledDataPointsOfDataSinks = this.config.dataSinks
+      .filter((x) => x.enabled)
+      .map((x) => x.dataPoints.map((y) => y.id))
+      .flat();
+
+    const vdps = this.config.virtualDataPoints.map((x) => x.id);
+
+    return this.config.mapping.filter((m) => {
+      const sourceExists =
+        enabledDataPointsOfDataSources.includes(m.source) ||
+        vdps.includes(m.source);
+      const targetExists = enabledDataPointsOfDataSinks.includes(m.target);
+
+      return sourceExists && targetExists;
+    });
+  }
+
+  /**
    * Checks type of configuration value.
    */
   private checkType(value: any, type: string, name: string) {

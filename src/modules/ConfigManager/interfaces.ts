@@ -10,7 +10,6 @@ export interface IAuthConfig {
 
 export interface IAuthRuntimeConfig {
   expiresIn: number;
-  defaultPassword: string;
 }
 
 export interface IRuntimeConfig {

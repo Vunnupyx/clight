@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   EMAIL_REGEX = EMAIL_REGEX;
 
   loginRequest: LoginRequest = {
-    userName: '',
+    userName: 'User',
     password: ''
   };
 

@@ -65,6 +65,21 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   sub = new Subscription();
 
+  filterAddressStr = '';
+
+  get addressesOrDataItems() {
+    const array =
+      this.dataSink?.protocol !== DataSinkProtocol.OPC
+        ? this.MTConnectItems
+        : this.OPCUAAddresses;
+
+    return array.filter((x) =>
+      (x.address! + x.name!)
+        .toLowerCase()
+        .includes(this.filterAddressStr.toLowerCase())
+    );
+  }
+
   get isTouchedTable() {
     return this.dataPointService.isTouched;
   }

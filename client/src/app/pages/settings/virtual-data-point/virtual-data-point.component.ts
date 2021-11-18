@@ -43,6 +43,8 @@ export class VirtualDataPointComponent implements OnInit {
   unsavedRowIndex: number | undefined;
   liveData: ObjectMap<DataPointLiveData> = {};
 
+  filterSourceStr: string = '';
+
   sub = new Subscription();
 
   private sourceDataPoints: SourceDataPoint[] = [];
@@ -59,6 +61,18 @@ export class VirtualDataPointComponent implements OnInit {
     return (this.datapointRows || []).filter(
       (x) => x.id !== this.unsavedRow?.id
     ) as { id: string; name: string }[];
+  }
+
+  get previousVirtualPointsFiltered() {
+    return this.previousVirtualPoints.filter((x) =>
+      x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+    );
+  }
+
+  get dataSourcesFiltered() {
+    return this.dataSources.filter((x) =>
+      x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+    );
   }
 
   get sources() {

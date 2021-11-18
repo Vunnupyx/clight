@@ -58,6 +58,14 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   ipRegex = IP_REGEX;
 
+  filterDigitalInputAddressStr = '';
+
+  get ioshieldAddresses() {
+    return this.DigitalInputAddresses.filter((x) =>
+      x.toLowerCase().includes(this.filterDigitalInputAddressStr.toLowerCase())
+    );
+  }
+
   get isTouchedTable() {
     return this.sourceDataPointService.isTouched;
   }

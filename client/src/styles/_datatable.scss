@@ -537,3 +537,11 @@ $datatable-summary-row-background-hover: #ddd !default;
 .select-type-table {
   box-shadow: none !important;
 }
+
+.mat-select-search-inner + .mat-select-search-no-entries-found {
+  padding: 0 16px !important;
+}
+
+.mat-select-search-inside-mat-option .mat-select-search-clear {
+  top: -1px !important;
+}

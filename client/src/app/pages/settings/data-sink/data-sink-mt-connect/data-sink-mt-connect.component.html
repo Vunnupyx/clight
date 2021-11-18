@@ -381,22 +381,20 @@
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.address = $event)"
           >
-            <ng-container *ngIf="dataSink?.protocol === Protocol.MTConnect">
-              <mat-option
-                *ngFor="let item of MTConnectItems"
-                [value]="item.address"
-                [disabled]="isExistingDataPointAddress(item.address!)"
-                >{{ item.name }}</mat-option
-              >
-            </ng-container>
-            <ng-container *ngIf="dataSink?.protocol === Protocol.OPC">
-              <mat-option
-                *ngFor="let item of OPCUAAddresses"
-                [value]="item.address"
-                [disabled]="isExistingDataPointAddress(item.address!)"
-                >{{ item.name }}</mat-option
-              >
-            </ng-container>
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search..."
+                noEntriesFoundLabel="No results found"
+                [(ngModel)]="filterAddressStr"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option
+              *ngFor="let item of addressesOrDataItems"
+              [value]="item.address"
+              [disabled]="isExistingDataPointAddress(item.address!)"
+            >
+              {{ item.name }}
+            </mat-option>
           </mat-select>
         </ng-template>
       </ngx-datatable-column>

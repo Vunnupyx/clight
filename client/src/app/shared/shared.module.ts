@@ -26,6 +26,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxIpModule } from 'ngx-ip';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 import { SharedServicesModule } from './services/shared-services.module';
 import { StateModule } from './state/state.module';
@@ -64,6 +65,7 @@ import { AppTranslationModule } from 'app/app.translation';
     MatProgressSpinnerModule,
     NgxDatatableModule,
     NgxIpModule,
+    NgxMatSelectSearchModule,
 
     AppTranslationModule,
     SharedServicesModule,

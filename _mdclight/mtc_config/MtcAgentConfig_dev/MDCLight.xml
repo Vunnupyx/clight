@@ -11,7 +11,7 @@
       <DataItems>
         <DataItem type="EMERGENCY_STOP" category="EVENT" id="DMG_MORI_NTX11140602_1" name="estop" />
         <DataItem type="AVAILABILITY" category="EVENT" id="DMG_MORI_NTX11140602_2" name="avail" />
-        <DataItem type="RUN_TIME" category="EVENT" id="DMG_MORI_NTX11140602_184" name="runTime" />
+        <DataItem type="RUN_TIME" category="EVENT" id="DMG_MORI_NTX11140602_191" name="runTime" />
         <DataItem type="SYSTEM" category="CONDITION" id="DMG_MORI_NTX11140602_184" name="system" />
       </DataItems>
       <Components>

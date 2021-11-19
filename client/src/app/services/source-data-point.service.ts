@@ -16,6 +16,7 @@ import * as api from 'app/api/models';
 import { from, interval, Observable } from 'rxjs';
 import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
 import { BaseChangesService } from './base-changes.service';
+import { DataSourceService } from './data-source.service';
 import { SystemInformationService } from './system-information.service';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
 
@@ -52,12 +53,17 @@ export class SourceDataPointService
     );
   }
 
+  get isTouched() {
+    return this._changes.snapshot.touched || this.dataSourceService.touched;
+  }
+
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
     changesFactory: StoreFactory<IChangesState<string, SourceDataPoint>>,
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService,
+    private dataSourceService: DataSourceService,
     private systemInformationService: SystemInformationService
   ) {
     super(changesFactory);
@@ -66,9 +72,15 @@ export class SourceDataPointService
   }
 
   async revert(): Promise<boolean> {
-    this._store.patchState((state) => {
-      state.dataPoints = clone(state.originalDataPoints);
-    });
+    if (this._changes.snapshot.touched) {
+      this._store.patchState((state) => {
+        state.dataPoints = clone(state.originalDataPoints);
+      });
+    }
+
+    if (this.dataSourceService.touched) {
+      this.dataSourceService.revert();
+    }
 
     this.resetState();
 
@@ -81,12 +93,18 @@ export class SourceDataPointService
         state.status = Status.Loading;
       });
 
-      await this.httpService.post(
-        `/datasources/${datasourceProtocol}/dataPoints/bulk`,
-        this.getPayload()
-      );
+      if (this.dataSourceService.touched) {
+        await this.dataSourceService.apply(datasourceProtocol);
+      }
 
-      this.resetState();
+      if (this._changes.snapshot.touched) {
+        await this.httpService.post(
+          `/datasources/${datasourceProtocol}/dataPoints/bulk`,
+          this.getPayload()
+        );
+
+        this.resetState();
+      }
 
       this._store.patchState((state) => {
         state.status = Status.Ready;

@@ -6,6 +6,7 @@ import {
 import { MTConnectAdapter } from '../../Adapter/MTConnectAdapter';
 import { DataSink } from '../DataSink';
 import {
+  DataSinkProtocols,
   DataSourceLifecycleEventTypes,
   ILifecycleEvent,
   LifecycleEventStatus,
@@ -36,7 +37,7 @@ export class MTConnectDataSink extends DataSink {
   private static scheduler: SynchronousIntervalScheduler;
   private static schedulerListenerId: number;
   private dataItems: DataItemDict = {};
-  protected _protocol = 'mtconnect';
+  protected _protocol = DataSinkProtocols.MTCONNECT;
   private static className = MTConnectDataSink.name;
 
   private avail: DataItem;
@@ -135,22 +136,25 @@ export class MTConnectDataSink extends DataSink {
    * Shutdown data sink
    */
   public shutdown(): Promise<void> {
-      const logPrefix = `${MTConnectDataSink.name}::shutdown`;
-      winston.debug(`${logPrefix} triggered.`);
-      const shutdownFunctions = []
-      this.disconnect();
-      MTConnectDataSink.scheduler.removeListener(MTConnectDataSink.schedulerListenerId);
-      Object.getOwnPropertyNames(this).forEach((prop) => {
-        if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
-        if (this[prop].close) shutdownFunctions.push(this[prop].close());
-        delete this[prop];
+    const logPrefix = `${MTConnectDataSink.name}::shutdown`;
+    winston.debug(`${logPrefix} triggered.`);
+    const shutdownFunctions = [];
+    this.disconnect();
+    MTConnectDataSink.scheduler.removeListener(
+      MTConnectDataSink.schedulerListenerId
+    );
+    Object.getOwnPropertyNames(this).forEach((prop) => {
+      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
+      if (this[prop].close) shutdownFunctions.push(this[prop].close());
+      delete this[prop];
+    });
+    return Promise.all(shutdownFunctions)
+      .then(() => {
+        winston.info(`${logPrefix} successfully.`);
       })
-      return Promise.all(
-        shutdownFunctions).then(() => {
-          winston.info(`${logPrefix} successfully.`);
-        }).catch((err) => {
-          winston.error(`${logPrefix} error due to ${err.message}.`);
-        });
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}.`);
+      });
   }
 
   /**

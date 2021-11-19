@@ -62,11 +62,15 @@ export class SystemInformationService {
   }
 
   async getServerTime(): Promise<number> {
-    const response = await this.httpService.get<{ timestamp: number }>(
-      `/systemInfo/time`
-    );
+    try {
+      const response = await this.httpService.get<{ timestamp: number }>(
+        `/systemInfo/time`
+      );
 
-    return response.timestamp;
+      return response.timestamp;
+    } catch {
+      return 0;
+    }
   }
 
   async getServerTimeOffset(): Promise<number> {

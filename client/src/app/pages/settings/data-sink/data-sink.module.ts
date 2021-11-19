@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { MatTableModule } from '@angular/material/table';
 
 import { SharedModule } from 'app/shared/shared.module';
 import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
@@ -28,7 +29,12 @@ const COMPONENTS = [
 ];
 
 @NgModule({
-  imports: [SharedModule, ConfirmDialogModule, RouterModule.forRoot(routes)],
+  imports: [
+    SharedModule,
+    ConfirmDialogModule,
+    MatTableModule,
+    RouterModule.forRoot(routes)
+  ],
   declarations: COMPONENTS,
   exports: [RouterModule, ...COMPONENTS],
   providers: [DataSinkGuard]

@@ -10,7 +10,6 @@ export interface IAuthConfig {
 
 export interface IAuthRuntimeConfig {
   expiresIn: number;
-  defaultPassword: string;
 }
 
 export interface IRuntimeConfig {
@@ -113,7 +112,11 @@ export interface IDataSinkConfig {
   datahub?: IDataHubSettings;
 }
 
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
 
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
@@ -121,21 +124,6 @@ export interface IOpcuaAuth {
   password: string;
 }
 
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
-}
-
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
-}
-
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
-}
 export interface IDataHubConfig {
   groupDevice: boolean;
   serialNumber: string;
@@ -163,16 +151,10 @@ export interface IProxyConfig {
   enabled: boolean;
 }
 
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
-
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
   userName: string;
   password: string;
-}
-
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
 }
 
 interface IDataHubDataPointTypesData {
@@ -233,6 +215,8 @@ export interface IDefaultTemplates {
 }
 
 export interface QuickStartConfig {
+  currentTemplate?: string;
+  currentTemplateName?: string;
   completed: boolean;
 }
 
@@ -262,9 +246,7 @@ export interface ISystemInfo {
 
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: Array<
-    IDataSinkConfig | IDataHubDataSinkConfig | IOpcuaDataSinkConfig
-  >;
+  dataSinks: Array<IDataSinkConfig>;
   virtualDataPoints: IVirtualDataPointConfig[];
   mapping: IDataPointMapping[];
   general: IGeneralConfig;

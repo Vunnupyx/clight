@@ -109,7 +109,7 @@ export class SelectMapModalComponent {
     this.dialogRef.close();
   }
 
-  isDuplicatingField(field: 'from', idx: number) {
+  isDuplicatingField(field: 'from' | 'to', idx: number) {
     if (!this.unsavedRow || !this.unsavedRow[field]) {
       return false;
     }

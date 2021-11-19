@@ -76,9 +76,14 @@ export class AuthManager {
       userName: serializedUsername
     } as UserTokenPayload;
 
-    const accessToken = jwt.sign(userTokenPayload, authConfig.secret, {
-      expiresIn: this.configManager.runtimeConfig.auth.expiresIn
-    });
+    const accessToken = jwt.sign(
+      userTokenPayload,
+      { key: authConfig.secret, passphrase: '' },
+      {
+        expiresIn: this.configManager.runtimeConfig.auth.expiresIn,
+        algorithm: 'RS256'
+      }
+    );
 
     const passwordChangeRequired = loggedUser.passwordChangeRequired;
 
@@ -94,6 +99,8 @@ export class AuthManager {
   }: {
     withPasswordChangeDetection: boolean;
   }) {
+    const logPrefix = `${AuthManager.className}::verifyJWTAuth`;
+
     return (request: Request, response: Response, next: NextFunction) => {
       const header = request.headers['authorization'];
 
@@ -107,10 +114,9 @@ export class AuthManager {
       try {
         const token = header.substring('Bearer '.length);
 
-        const user = jwt.verify(
-          token,
-          this.configManager.authConfig.secret
-        ) as UserTokenPayload;
+        const user = jwt.verify(token, this.configManager.authConfig.public, {
+          algorithms: ['RS256']
+        }) as UserTokenPayload;
 
         const loggedUser = this.configManager.authUsers.find(
           (auth) => auth.userName === user.userName
@@ -127,6 +133,9 @@ export class AuthManager {
 
         next();
       } catch (err) {
+        winston.error(
+          `${logPrefix} jwt vaidation failed. ${JSON.stringify(err)}`
+        );
         response.status(401).json({ message: 'Unauthorized!' });
       }
     };

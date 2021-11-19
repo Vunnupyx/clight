@@ -36,16 +36,16 @@ function livedataVirtualDataPointsGetHandler(
 
   const payload = dataPoints
     .map(({ id }) => {
-      const event = dataPointCache.getLastEvent(id);
+      const value = dataPointCache.getLastestValue(id);
 
-      if (!event) {
+      if (!value) {
         return undefined;
       }
 
       const obj: any = {
         dataPointId: id,
-        value: event.measurement.value,
-        timestamp: Math.round(Date.now() / 1000)
+        value: value.value,
+        timestamp: Math.round(new Date(value.ts).getTime() / 1000)
       };
 
       if (timeseriesIncluded) {
@@ -68,10 +68,10 @@ function livedataVirtualDataPointGetHandler(
   request: Request,
   response: Response
 ): void {
-  const event = dataPointCache.getLastEvent(request.params.id);
+  const value = dataPointCache.getLastestValue(request.params.id);
   const timeseriesIncluded = request.query.timeseries === 'true';
 
-  if (!event) {
+  if (!value) {
     response.status(404).send();
 
     return;
@@ -79,8 +79,8 @@ function livedataVirtualDataPointGetHandler(
 
   const payload: any = {
     dataPointId: request.params.id,
-    value: event.measurement.value,
-    timestamp: Math.round(Date.now() / 1000)
+    value: value.value,
+    timestamp: Math.round(new Date(value.ts).getTime() / 1000)
   };
 
   if (timeseriesIncluded) {

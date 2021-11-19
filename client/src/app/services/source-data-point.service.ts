@@ -16,6 +16,8 @@ import * as api from 'app/api/models';
 import { from, interval, Observable } from 'rxjs';
 import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
 import { BaseChangesService } from './base-changes.service';
+import { SystemInformationService } from './system-information.service';
+import { filterLiveData } from 'app/shared/utils/filter-livedata';
 import { DataSourceService } from './data-source.service';
 
 export class SourceDataPointsState {
@@ -61,6 +63,7 @@ export class SourceDataPointService
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService,
+    private systemInformationService: SystemInformationService,
     private dataSourceService: DataSourceService
   ) {
     super(changesFactory);
@@ -222,14 +225,26 @@ export class SourceDataPointService
       const liveData = await this.httpService.get<DataPointLiveData[]>(
         `/livedata/datasource/${protocol}?timeseries=${timeseries}`
       );
+      const offset = await this.systemInformationService.getServerTimeOffset();
       this._store.patchState((state) => {
         state.dataPointsLivedata = array2map(
-          liveData,
+          Object.values(liveData).filter(filterLiveData(offset)),
           (item) => item.dataPointId
         );
       });
     } catch (err) {
       errorHandler(err);
+      const offset = await this.systemInformationService.getServerTimeOffset();
+      this._store.patchState((state) => {
+        state.dataPointsLivedata = {
+          ...array2map(
+            Object.values(state.dataPointsLivedata).filter(
+              filterLiveData(offset)
+            ),
+            (item) => item.dataPointId
+          )
+        };
+      });
     }
   }
 
@@ -243,30 +258,6 @@ export class SourceDataPointService
       state.dataPoints = [...state.dataPoints, obj];
       state.dataPointsSourceMap[obj.id] = datasourceProtocol;
     });
-
-    // this._store.patchState((state) => {
-    //   state.status = Status.Creating;
-    // });
-
-    // try {
-    //   const response = await this.httpService.post<
-    //     CreateEntityResponse<SourceDataPoint>
-    //   >(`/datasources/${datasourceProtocol}/datapoints`, obj);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //     obj.id = response.created.id;
-    //     state.dataPoints = [...state.dataPoints, obj];
-    //     state.dataPointsSourceMap[obj.id] = datasourceProtocol;
-    //   });
-    // } catch (err) {
-    //   this.toastr.error(
-    //     this.translate.instant('settings-data-source-point.CreateError')
-    //   );
-    //   errorHandler(err);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //   });
-    // }
   }
 
   async updateDataPoint(
@@ -284,26 +275,6 @@ export class SourceDataPointService
         x.id != obj.id ? x : obj
       );
     });
-
-    // this._store.patchState((state) => {
-    //   state.status = Status.Updating;
-    // });
-
-    // try {
-    //   await this.httpService.patch(
-    //     `/datasources/${datasourceProtocol}/datapoints/${obj.id}`,
-    //     obj
-    //   );
-
-    // } catch (err) {
-    //   this.toastr.error(
-    //     this.translate.instant('settings-data-source-point.UpdateError')
-    //   );
-    //   errorHandler(err);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //   });
-    // }
   }
 
   async deleteDataPoint(
@@ -315,28 +286,6 @@ export class SourceDataPointService
     this._store.patchState((state) => {
       state.dataPoints = state.dataPoints.filter((x) => x.id != obj.id);
     });
-
-    // this._store.patchState((state) => {
-    //   state.status = Status.Deleting;
-    // });
-
-    // try {
-    //   await this.httpService.delete(
-    //     `/datasources/${datasourceProtocol}/datapoints/${obj.id}`
-    //   );
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //     state.dataPoints = state.dataPoints.filter((x) => x != obj);
-    //   });
-    // } catch (err) {
-    //   this.toastr.error(
-    //     this.translate.instant('settings-data-source-point.DeleteError')
-    //   );
-    //   errorHandler(err);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //   });
-    // }
   }
 
   getProtocol(id: string) {

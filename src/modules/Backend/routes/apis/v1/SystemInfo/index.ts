@@ -41,10 +41,8 @@ async function systemTimeGetHandler(request: Request, response: Response) {
  */
 async function restartPostHandler(request: Request, response: Response) {
   const system = new System();
-  const success = await system.restartDevice();
-
-  if (success) response.status(204);
-  else response.status(400).json({ error: 'Failed to restart device' });
+  await system.restartDevice();
+  response.status(204);
 }
 
 export const systemInfoHandlers = {

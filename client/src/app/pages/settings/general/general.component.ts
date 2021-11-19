@@ -86,7 +86,7 @@ export class GeneralComponent implements OnInit {
           );
 
           this.showLoadingRestart = false;
-        }, 60 * 1000);
+        }, 2.5 * 60 * 1000); // Show loading indicator for 2.5 minutes
       }
     });
   }

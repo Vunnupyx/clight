@@ -56,13 +56,10 @@ export class System {
   public async restartDevice() {
     const logPrefix = `${System.className}::restartDevice`;
     try {
+      winston.info(`${logPrefix} restarting device`);
       await SshService.sendCommand('reboot');
-      return true;
-    } catch (err) {
-      winston.error(
-        `${logPrefix} failed to restart device. ${JSON.stringify(err)}`
-      );
-      return false;
-    }
+    } catch (err) {}
+
+    process.exit(0);
   }
 }

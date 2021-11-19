@@ -225,9 +225,10 @@ export class SourceDataPointService
       const liveData = await this.httpService.get<DataPointLiveData[]>(
         `/livedata/datasource/${protocol}?timeseries=${timeseries}`
       );
+      const offset = await this.systemInformationService.getServerTimeOffset();
       this._store.patchState((state) => {
         state.dataPointsLivedata = array2map(
-          liveData,
+          Object.values(liveData).filter(filterLiveData(offset)),
           (item) => item.dataPointId
         );
       });

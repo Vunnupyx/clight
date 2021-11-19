@@ -57,6 +57,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   liveDataSub!: Subscription;
 
   ipRegex = IP_REGEX;
+  dsFormValid = true;
 
   filterDigitalInputAddressStr = '';
 
@@ -122,6 +123,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
     if (!this.dataSource) {
       this.switchDataSource(arr[0]);
+    } else {
+      const newDs = arr.find((x) => x.protocol === this.dataSource?.protocol);
+
+      if (newDs) {
+        this.dataSource = newDs;
+      }
     }
   }
 
@@ -168,6 +175,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   updateIpAddress(valid: boolean | null, val: string) {
+    this.dsFormValid = !!valid;
+
     if (!valid) {
       return;
     }

@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { BackupService, TemplateService } from 'app/services';
+import {
+  BackupService,
+  SystemInformationService,
+  TemplateService
+} from 'app/services';
 import { LocalStorageService } from 'app/shared';
 
 @Component({
@@ -13,6 +17,7 @@ import { LocalStorageService } from 'app/shared';
 export class GeneralComponent implements OnInit {
   constructor(
     private backupService: BackupService,
+    private systemInformationService: SystemInformationService,
     private translate: TranslateService,
     private localStorageService: LocalStorageService,
     private templatesService: TemplateService,
@@ -42,6 +47,10 @@ export class GeneralComponent implements OnInit {
 
   async download() {
     await this.backupService.download();
+  }
+
+  async restart() {
+    await this.systemInformationService.restartDevice();
   }
 
   async onRestoreFileChange(event: any) {

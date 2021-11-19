@@ -73,6 +73,15 @@ export class SystemInformationService {
     }
   }
 
+  async restartDevice(): Promise<boolean> {
+    try {
+      await this.httpService.post(`/systemInfo/restart`, null);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async getServerTimeOffset(): Promise<number> {
     if (this._store.snapshot.serverOffset === undefined) {
       const time = await this.getServerTime();

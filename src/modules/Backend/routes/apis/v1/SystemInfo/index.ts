@@ -33,6 +33,15 @@ async function systemTimeGetHandler(request: Request, response: Response) {
   });
 }
 
+/**
+ * Restart system
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function restartPostHandler(request: Request, response: Response) {
+  response.status(204).send();
+}
+
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
   systemTimeGet: systemTimeGetHandler

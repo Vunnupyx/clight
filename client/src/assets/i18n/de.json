@@ -90,7 +90,11 @@
     "BackupDownloadError": "Could not download backup. Please try again!",
     "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
     "RestartDevice": "Restart device",
-    "RestartNow": "Restart now"
+    "RestartNow": "Restart now",
+    "RestartDeviceTitle": "Restart device",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
+    "RestartDeviceSuccess": "Device has been restarted successfully!",
+    "RestartDeviceError": "Failed to restart device."
   },
   "settings-device-info": {
     "Manufacturer": "",

@@ -8,6 +8,11 @@ import {
   TemplateService
 } from 'app/services';
 import { LocalStorageService } from 'app/shared';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel
+} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-general',
@@ -15,13 +20,16 @@ import { LocalStorageService } from 'app/shared';
   styleUrls: ['./general.component.scss']
 })
 export class GeneralComponent implements OnInit {
+  public showLoadingRestart = false;
+
   constructor(
     private backupService: BackupService,
     private systemInformationService: SystemInformationService,
     private translate: TranslateService,
     private localStorageService: LocalStorageService,
     private templatesService: TemplateService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {}
 
   get availableLangs() {
@@ -50,7 +58,37 @@ export class GeneralComponent implements OnInit {
   }
 
   async restart() {
-    await this.systemInformationService.restartDevice();
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: new ConfirmDialogModel(
+        this.translate.instant('settings-general.RestartDeviceTitle'),
+        this.translate.instant('settings-general.RestartDeviceText')
+      )
+    });
+
+    dialogRef.afterClosed().subscribe(async (dialogResult) => {
+      if (!dialogResult) {
+        return;
+      }
+
+      this.showLoadingRestart = true;
+
+      const success = await this.systemInformationService.restartDevice();
+
+      if (!success) {
+        this.toastr.error(
+          this.translate.instant('settings-general.RestartDeviceError')
+        );
+        this.showLoadingRestart = false;
+      } else {
+        setTimeout(() => {
+          this.toastr.success(
+            this.translate.instant('settings-general.RestartDeviceSuccess')
+          );
+
+          this.showLoadingRestart = false;
+        }, 60 * 1000);
+      }
+    });
   }
 
   async onRestoreFileChange(event: any) {

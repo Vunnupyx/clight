@@ -114,6 +114,10 @@ export class SelectMapModalComponent {
       return false;
     }
 
+    if (this.unsavedRow[field] === undefined) {
+      return false;
+    }
+
     // check whether other VDPs do not have such name
     const newFieldValue = (this.unsavedRow[field] as string)
       .toLowerCase()

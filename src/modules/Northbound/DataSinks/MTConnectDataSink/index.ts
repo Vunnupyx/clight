@@ -96,7 +96,7 @@ export class MTConnectDataSink extends DataSink {
       MTConnectDataSink.schedulerListenerId =
         MTConnectDataSink.scheduler.addListener([1000], () => {
           this.runTime.value = (this.runTime.value as number) + 1;
-          this.mtcAdapter.sendChanged.bind(this.mtcAdapter);
+          this.mtcAdapter.sendChanged();
         });
     }
     winston.info(`${logPrefix} initialized.`);

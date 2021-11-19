@@ -88,7 +88,9 @@
     "BackupConfiguration": "Backup Configuration",
     "RestoreConfiguration": "Restore Configuration",
     "BackupDownloadError": "Could not download backup. Please try again!",
-    "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
+    "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
+    "RestartDevice": "Restart device",
+    "RestartNow": "Restart now"
   },
   "settings-device-info": {
     "Manufacturer": "",

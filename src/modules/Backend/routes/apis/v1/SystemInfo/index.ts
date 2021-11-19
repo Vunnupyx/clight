@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { ConfigManager } from '../../../../../ConfigManager';
+import { System } from '../../../../../System';
 
 let configManager: ConfigManager;
 
@@ -39,10 +40,15 @@ async function systemTimeGetHandler(request: Request, response: Response) {
  * @param  {Response} response
  */
 async function restartPostHandler(request: Request, response: Response) {
-  response.status(204).send();
+  const system = new System();
+  const success = await system.restartDevice();
+
+  if (success) response.status(204);
+  else response.status(400).json({ error: 'Failed to restart device' });
 }
 
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
-  systemTimeGet: systemTimeGetHandler
+  systemTimeGet: systemTimeGetHandler,
+  restartPost: restartPostHandler
 };

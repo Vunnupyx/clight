@@ -19,7 +19,7 @@ export function setConfigManager(config: ConfigManager) {
  */
 function mappingGetHandler(request: Request, response: Response): void {
   response.status(200).json({
-    mapping: configManager.config.mapping
+    mapping: configManager.getFilteredMapping()
   });
 }
 

@@ -59,7 +59,11 @@
 }
 
 .login-form {
-  margin-top: 50px;
+  margin-top: 150px;
+
+  ::ng-deep .mat-placeholder-required {
+    display: none;
+  }
 }
 
 .password-block {

@@ -44,6 +44,12 @@ export class DataSinkComponent implements OnInit {
 
     if (!this.dataSink) {
       this.switchDataSink(arr[0]);
+    } else {
+      const newDs = arr.find((x) => x.protocol === this.dataSink?.protocol);
+
+      if (newDs) {
+        this.dataSink = newDs;
+      }
     }
   }
 

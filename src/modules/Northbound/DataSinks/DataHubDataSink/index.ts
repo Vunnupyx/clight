@@ -1,5 +1,8 @@
 import { DataSink } from '../DataSink';
-import { ILifecycleEvent } from '../../../../common/interfaces';
+import {
+  DataSinkProtocols,
+  ILifecycleEvent
+} from '../../../../common/interfaces';
 import { DataHubAdapter, IDesiredProps } from '../../Adapter/DataHubAdapter';
 import winston from 'winston';
 import {
@@ -28,6 +31,7 @@ export interface IMeasurement {
  */
 export class DataHubDataSink extends DataSink {
   static readonly #className = DataHubDataSink.name;
+  protected _protocol = DataSinkProtocols.DATAHUB;
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
   #connected = false;
@@ -168,11 +172,11 @@ export class DataHubDataSink extends DataSink {
     return !!this.#datahubAdapter?.running;
   }
 
-  /** 
+  /**
    * Return desired properties from device twin.
    */
   public getDesiredPropertiesServices(): IDesiredProps {
-    if(!this.#datahubAdapter) return {services: {}};
+    if (!this.#datahubAdapter) return { services: {} };
     return this.#datahubAdapter.getDesiredProps();
   }
 }

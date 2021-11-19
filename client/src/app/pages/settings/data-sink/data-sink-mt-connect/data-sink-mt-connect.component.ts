@@ -63,7 +63,25 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   unsavedRow?: DataPoint;
   unsavedRowIndex: number | undefined;
 
+  displayedColumns = ['name', 'enabled'];
+  desiredServices: Array<{ name: string; enabled: boolean }> = [];
+
   sub = new Subscription();
+
+  filterAddressStr = '';
+
+  get addressesOrDataItems() {
+    const array =
+      this.dataSink?.protocol !== DataSinkProtocol.OPC
+        ? this.MTConnectItems
+        : this.OPCUAAddresses;
+
+    return array.filter((x) =>
+      (x.address! + x.name!)
+        .toLowerCase()
+        .includes(this.filterAddressStr.toLowerCase())
+    );
+  }
 
   get isTouchedTable() {
     return this.dataPointService.isTouched;
@@ -103,7 +121,12 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const dataSink = changes.dataSink?.currentValue;
-    if (dataSink) {
+    if (!dataSink) return;
+
+    if (
+      !changes.dataSink?.previousValue ||
+      dataSink.protocol !== changes.dataSink?.previousValue.protocol
+    ) {
       this.onDataSink(dataSink);
     }
   }
@@ -124,6 +147,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     if (dataSink.protocol !== DataSinkProtocol.DH) {
       this.dataPointService.getDataPoints(dataSink.protocol);
       this.dataSinkService.getStatus(dataSink.protocol);
+    } else {
+      if (dataSink.desired?.services) {
+        this.desiredServices = Object.entries(dataSink.desired?.services).map(
+          ([name, { enabled }]) => ({
+            name,
+            enabled
+          })
+        );
+      } else {
+        this.desiredServices = [];
+      }
     }
   }
 
@@ -284,6 +318,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   saveDatahubConfig(form: NgForm) {
     this.dataSinkService
       .updateDataSink(this.dataSink?.protocol!, { datahub: form.value })
+      .then(() => this.dataSinkService.apply(this.dataSink?.protocol!))
       .then(() =>
         this.toastr.success(
           this.translate.instant('settings-data-sink.DataHubConfigSaveSuccess')

@@ -9,6 +9,7 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+@import 'assets/fonts/fonts.scss';
 @import 'styles/index';
 
 @import '~ngx-toastr/toastr';

@@ -155,12 +155,22 @@
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = $event)"
                 multiple
               >
-                <mat-option *ngFor="let s of dataSources" [value]="s.id"
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Search..."
+                    noEntriesFoundLabel="No results found"
+                    [(ngModel)]="filterSourceStr"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let s of dataSourcesFiltered" [value]="s.id"
                   >{{ getDataSourceDataPointPrefix(s.id) }}
                   {{ s.name }}</mat-option
                 >
                 <mat-option
-                  *ngFor="let s of previousVirtualPoints; let idx = index"
+                  *ngFor="
+                    let s of previousVirtualPointsFiltered;
+                    let idx = index
+                  "
                   [value]="s.id"
                   [disabled]="getRowIndex(s.id) > idx"
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
@@ -173,12 +183,22 @@
                 [ngModel]="value[0]"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = [$event])"
               >
-                <mat-option *ngFor="let s of dataSources" [value]="s.id"
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Search..."
+                    noEntriesFoundLabel="No results found"
+                    [(ngModel)]="filterSourceStr"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let s of dataSourcesFiltered" [value]="s.id"
                   >{{ getDataSourceDataPointPrefix(s.id) }}
                   {{ s.name }}</mat-option
                 >
                 <mat-option
-                  *ngFor="let s of previousVirtualPoints; let idx = index"
+                  *ngFor="
+                    let s of previousVirtualPointsFiltered;
+                    let idx = index
+                  "
                   [value]="s.id"
                   [disabled]="getRowIndex(s.id) > idx"
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option

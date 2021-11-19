@@ -36,9 +36,7 @@ export class AuthManager {
    */
   async login(username: string, password: string): Promise<LoginDto> {
     const logPrefix = `${AuthManager.className}::login`;
-    const regex = /[^A-Za-z0-9]/g;
-    const serializedUsername =
-      username.substring(0, 2) + username.substring(2).replace(regex, '');
+    const serializedUsername = username.trim();
 
     winston.debug(`${logPrefix} User ${username} attempting to login`);
 
@@ -46,7 +44,7 @@ export class AuthManager {
       (user) => user.userName === serializedUsername
     );
 
-    if (!loggedUser && !username.startsWith('DM')) {
+    if (!loggedUser && !username.startsWith('User')) {
       winston.warn(`${logPrefix} User ${username} could not be found!`);
       throw new Error('User with these credentials could not be found!');
     }
@@ -55,15 +53,7 @@ export class AuthManager {
       .split(':')
       .join('');
 
-    if (macAddress !== serializedUsername.substring(2)) {
-      winston.warn(
-        `${logPrefix} Mac address ${macAddress} is not matching the username ${username}!`
-      );
-      throw new Error('User with these credentials could not be found!');
-    }
-
-    const defaultPassword =
-      this.configManager.runtimeConfig.auth.defaultPassword;
+    const defaultPassword = macAddress;
 
     if (!loggedUser) {
       if (defaultPassword === password) {

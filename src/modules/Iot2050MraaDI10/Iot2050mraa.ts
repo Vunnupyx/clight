@@ -40,9 +40,15 @@ export class Iot2050MraaDI10 {
   // Maximum time (ms) between the last three edges for detecting the state as blinking
   private BLINKING_MAX_TIME_BETWEEN_EDGES = 2250; // 0,5Hz + tolerance
   private childProcesses: Array<number> = [];
-  private currentState: Array<PinState> = [];
-  private timesBetweenEdges: Array<Array<number>> = [];
-  private lastEdge: Array<number> = [];
+  private rawCurrentState: Array<boolean> = [];
+  private rawOldState: Array<boolean> = [];
+  private processedCurrentState: Array<PinState> = new Array(
+    Math.max(...this.MONITOR_PINS) + 1
+  ).fill(PinState.OFF, 0, Math.max(...this.MONITOR_PINS) + 1);
+  private edgeTimestamps: Array<Array<number>> = new Array(
+    Math.max(...this.MONITOR_PINS) + 1
+  ).fill([0, 0, 0], 0, Math.max(...this.MONITOR_PINS) + 1);
+  private offset = Math.min(...this.MONITOR_PINS);
 
   /**
    * Initializes the driver and sets up necessary mraa-gpio instances
@@ -65,6 +71,7 @@ export class Iot2050MraaDI10 {
       mraaGpio.stdout.on('data', this.monitorCallback.bind(this));
       this.childProcesses[pin] = mraaGpio;
     }
+    setInterval(this.monitorBlinkingState.bind(this), 500);
   }
 
   /**
@@ -75,7 +82,7 @@ export class Iot2050MraaDI10 {
     let labeledValues = {};
     for (let i = 0; i < this.DIGITAL_PIN_LABELS.length; i++) {
       const label = this.DIGITAL_PIN_LABELS[i];
-      const value = this.currentState[this.MONITOR_PINS[i]];
+      const value = this.processedCurrentState[this.MONITOR_PINS[i]];
       labeledValues[label] = value;
     }
     return labeledValues;
@@ -120,40 +127,31 @@ export class Iot2050MraaDI10 {
    * @param data output (buffer) of mraa-gpio
    */
   private monitorCallback(data: object) {
-    let newState = null;
+    let newState: PinStatus | null = null;
     try {
       newState = this.parseOutput(data.toString());
     } catch (e) {
       return;
     }
 
-    if (!Array.isArray(this.timesBetweenEdges[newState.pin]))
-      this.timesBetweenEdges[newState.pin] = [];
-    if (this.lastEdge[newState.pin] === undefined)
-      this.lastEdge[newState.pin] = 0;
-    this.timesBetweenEdges[newState.pin].push(
-      Date.now() - this.lastEdge[newState.pin]
-    );
+    this.rawCurrentState[newState.pin] = newState.state;
+  }
 
-    // Keep only the three latest values
-    this.timesBetweenEdges[newState.pin] = this.timesBetweenEdges[
-      newState.pin
-    ].slice(Math.max(this.timesBetweenEdges[newState.pin].length - 3, 0));
-
-    this.currentState[newState.pin] = newState.state
-      ? PinState.ON
-      : PinState.OFF;
-
-    const lastThreeBlinking =
-      Math.max(...this.timesBetweenEdges[newState.pin]) <=
-      this.BLINKING_MAX_TIME_BETWEEN_EDGES;
-    const lastEdgeBlinking = Date.now() - this.lastEdge[newState.pin];
-
-    if (lastThreeBlinking && lastEdgeBlinking) {
-      this.currentState[newState.pin] = PinState.BLINKING;
+  private monitorBlinkingState() {
+    let edgeDetection = [];
+    for (let i = this.offset; i < this.rawOldState.length; i++) {
+      edgeDetection[i] = this.rawCurrentState[i] !== this.rawOldState[i];
     }
 
-    this.lastEdge[newState.pin] = Date.now();
+    for (let i = this.offset; i < edgeDetection.length; i++) {
+      if (edgeDetection[i]) {
+        this.edgeTimestamps[i].shift();
+        this.edgeTimestamps[i].push(Date.now());
+      }
+      console.log(`${edgeDetection[i]}: ${this.edgeTimestamps[i]}`);
+    }
+
+    this.rawOldState = this.rawCurrentState.slice();
   }
 
   /**
@@ -177,10 +175,10 @@ export class Iot2050MraaDI10 {
   }
 }
 
-// const io = new Iot2050MraaDI10();
-// io.init();
+const io = new Iot2050MraaDI10();
+io.init();
 
-// setInterval(async () => {
-//   console.log(io.getDigitalValues());
-//   console.log(await io.getAnalogValues());
-// }, 3000);
+setInterval(async () => {
+  console.log(await io.getDigitalValues());
+  // console.log(await io.getAnalogValues());
+}, 3000);

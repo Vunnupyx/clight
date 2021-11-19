@@ -6,10 +6,10 @@
 
 <mat-divider></mat-divider>
 
-<div class="m-25">
+<div class="mr-25 ml-25 mb-25">
   <div class="row">
     <div class="col-12 col-lg-5">
-      <mat-expansion-panel [expanded]="true" class="">
+      <mat-expansion-panel [expanded]="true" class="mt-25">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{ 'settings-general.Language' | translate }}
@@ -33,39 +33,7 @@
           </mat-select>
         </mat-form-field>
       </mat-expansion-panel>
-    </div>
-    <div class="col-12 col-lg-7 quick-start">
-      <div class="mb-10">
-        <button
-          mat-raised-button
-          color="primary"
-          [routerLink]="['/quick-start']"
-        >
-          {{ 'settings-general.OpenConfigurationWizard' | translate }}
-        </button>
-      </div>
-      <div class="mb-10">
-        <button mat-raised-button color="primary" (click)="download()">
-          {{ 'settings-general.BackupConfiguration' | translate }}
-        </button>
-      </div>
-      <div>
-        <button mat-raised-button color="primary" (click)="fileInput.click()">
-          {{ 'settings-general.RestoreConfiguration' | translate }}
-        </button>
-        <input
-          style="display: none !important"
-          type="file"
-          accept="application/JSON"
-          #fileInput
-          (change)="onRestoreFileChange($event)"
-        />
-      </div>
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-12 col-lg-5">
       <mat-expansion-panel [expanded]="true" class="mt-25">
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -76,5 +44,82 @@
         <app-device-info></app-device-info>
       </mat-expansion-panel>
     </div>
+    <div class="col-12 col-lg-5">
+      <mat-expansion-panel [expanded]="true" class="mt-25">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'settings-general.RestartDevice' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>
+          <button mat-raised-button color="primary" (click)="restart()">
+            {{ 'settings-general.RestartNow' | translate }}
+          </button>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" class="mt-25">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'settings-general.Templates' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div>
+          <p class="template-label">
+            {{ 'settings-general.CurrentTemplate' | translate }}:
+            {{ currentTemplate | async }}
+          </p>
+          <button
+            mat-raised-button
+            color="primary"
+            [routerLink]="['/quick-start']"
+          >
+            {{ 'settings-general.OpenConfigurationWizard' | translate }}
+          </button>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" class="mt-25">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'settings-general.BackupAndRestore' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div>
+          <div class="mb-10">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="download()"
+              class="d-block mb-20"
+            >
+              {{ 'settings-general.BackupConfiguration' | translate }}
+            </button>
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="d-block"
+              (click)="fileInput.click()"
+            >
+              {{ 'settings-general.RestoreConfiguration' | translate }}
+            </button>
+            <input
+              style="display: none !important"
+              type="file"
+              accept="application/JSON"
+              #fileInput
+              (change)="onRestoreFileChange($event)"
+            />
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </div>
   </div>
+</div>
+
+<div class="loading-block" *ngIf="showLoadingRestart">
+  <mat-spinner></mat-spinner>
 </div>

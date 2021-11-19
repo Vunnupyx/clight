@@ -1,7 +1,6 @@
 {
   "auth": {
-    "expiresIn": 3600,
-    "defaultPassword": "iotconnectorlight"
+    "expiresIn": 3600
   },
   "systemInfo": [
     {

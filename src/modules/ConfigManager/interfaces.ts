@@ -5,12 +5,12 @@ import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 
 export interface IAuthConfig {
-  secret: any;
+  secret: string;
+  public: string;
 }
 
 export interface IAuthRuntimeConfig {
   expiresIn: number;
-  defaultPassword: string;
 }
 
 export interface IRuntimeConfig {
@@ -216,6 +216,8 @@ export interface IDefaultTemplates {
 }
 
 export interface QuickStartConfig {
+  currentTemplate?: string;
+  currentTemplateName?: string;
   completed: boolean;
 }
 

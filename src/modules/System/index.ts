@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { promisify } from 'util';
 import winston from 'winston';
+import SshService from '../SshService';
 const child_process = require('child_process');
 const exec = promisify(child_process.exec);
 
@@ -47,5 +48,18 @@ export class System {
       );
       return '';
     }
+  }
+
+  /**
+   * Restarts device
+   */
+  public async restartDevice() {
+    const logPrefix = `${System.className}::restartDevice`;
+    try {
+      winston.info(`${logPrefix} restarting device`);
+      await SshService.sendCommand('reboot');
+    } catch (err) {}
+
+    process.exit(0);
   }
 }

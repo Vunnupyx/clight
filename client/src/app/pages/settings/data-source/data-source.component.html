@@ -78,47 +78,79 @@
         </div>
       </div>
     </div>
-    <div
-      class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6"
-      *ngIf="connection && dataSource?.protocol !== Protocol.IOShield"
-    >
-      <div class="mt-25">
-        {{ 'settings-data-source.Connection' | translate }}
+    <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">
+      <div class="d-flex align-items-center justify-content-end">
+        <button
+          mat-button
+          type="button"
+          class="btn-sm mr-10"
+          *ngIf="isTouchedTable && !isLoading"
+          (click)="onDiscard()"
+        >
+          {{ 'settings-data-source.DiscardChanges' | translate }}
+        </button>
+
+        <mat-spinner
+          diameter="20"
+          *ngIf="isLoading"
+          class="mr-10"
+        ></mat-spinner>
+
+        <button
+          mat-raised-button
+          type="button"
+          class="btn-sm"
+          [disabled]="!isTouchedTable || isLoading || !dsFormValid"
+          (click)="onApply()"
+        >
+          {{ 'settings-data-source.ApplyChanges' | translate }}
+        </button>
       </div>
       <div
-        class="mt-10 d-flex align-items-center justify-content-between"
-        style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+        class="connection-block"
+        *ngIf="connection && dataSource?.protocol !== Protocol.IOShield"
       >
-        <div>
-          <div style="font-weight: 600">
+        <div class="mt-25">
+          {{ 'settings-data-source.Connection' | translate }}
+        </div>
+
+        <div
+          class="mt-10 d-flex align-items-center justify-content-between"
+          style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+        >
+          <div>
+            <div style="font-weight: 600">
+              <ng-container [ngSwitch]="connection.status">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Connected"
+                >
+                  {{ 'settings-data-source.Running' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
+                >
+                  {{ 'settings-data-source.Disconnected' | translate }}
+                </ng-container>
+              </ng-container>
+            </div>
+            <small style="color: #999">{{
+              'settings-data-source.ServiceState' | translate
+            }}</small>
+          </div>
+          <div class="mr-10">
             <ng-container [ngSwitch]="connection.status">
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Connected"
               >
-                {{ 'settings-data-source.Running' | translate }}
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
               >
-                {{ 'settings-data-source.Disconnected' | translate }}
+                <mat-icon class="color-danger">highlight_off</mat-icon>
               </ng-container>
             </ng-container>
           </div>
-          <small style="color: #999">{{
-            'settings-data-source.ServiceState' | translate
-          }}</small>
-        </div>
-        <div class="mr-10">
-          <ng-container [ngSwitch]="connection.status">
-            <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connected">
-              <mat-icon class="color-success">check_circle_outline</mat-icon>
-            </ng-container>
-            <ng-container
-              *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
-            >
-              <mat-icon class="color-danger">highlight_off</mat-icon>
-            </ng-container>
-          </ng-container>
         </div>
       </div>
     </div>
@@ -141,37 +173,6 @@
               matTooltipPosition="above"
             >
               <mat-icon style="margin-top: -10px">add</mat-icon>
-            </button>
-          </div>
-        </div>
-        <div
-          class="col-12 col-md-6 d-flex align-items-center justify-content-end"
-        >
-          <div class="d-flex align-items-center">
-            <button
-              mat-button
-              type="button"
-              class="btn-sm mr-10"
-              *ngIf="isTouchedTable && !isLoading"
-              (click)="onDiscard()"
-            >
-              {{ 'settings-data-source.DiscardChanges' | translate }}
-            </button>
-
-            <mat-spinner
-              diameter="20"
-              *ngIf="isLoading"
-              class="mr-10"
-            ></mat-spinner>
-
-            <button
-              mat-raised-button
-              type="button"
-              class="btn-sm"
-              [disabled]="!isTouchedTable || isLoading"
-              (click)="onApply()"
-            >
-              {{ 'settings-data-source.ApplyChanges' | translate }}
             </button>
           </div>
         </div>

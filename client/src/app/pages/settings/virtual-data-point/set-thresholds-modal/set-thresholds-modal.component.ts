@@ -80,7 +80,10 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         },
         axisLabel: {
           formatter: (value) => {
-            return `${(value / 60).toFixed(1)}m`;
+            const mints = Math.round(-value / 60);
+            const secs = -value % 60;
+
+            return `-${this.parseNum(mints)}:${this.parseNum(secs)}`;
           }
         },
         axisPointer: {

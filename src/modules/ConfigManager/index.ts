@@ -1,7 +1,11 @@
-import { promises as fs } from 'fs';
+import { promises as promisefs } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
+import { promisify } from 'util';
+import { generateKeyPair } from 'crypto';
+
 import {
   DataSinkProtocols,
   DataSourceProtocols,
@@ -29,6 +33,8 @@ import winston from 'winston';
 import { System } from '../System';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
+
+const promisifiedGenerateKeyPair = promisify(generateKeyPair);
 
 interface IConfigManagerEvents {
   newConfig: (config: IConfig) => void;
@@ -115,10 +121,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
     'mdclight/config'
   );
-  private configName = 'config.json';
+  private keyFolder = path.join(this.configFolder, 'keys');
 
+  private configName = 'config.json';
   private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
+  private privateKeyName = 'jwtRS256.key';
+  private publicKeyName = 'jwtRS256.key.pub';
+
   private _runtimeConfig: IRuntimeConfig;
   private _config: IConfig;
   private _defaultTemplates: IDefaultTemplates;
@@ -214,7 +224,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     };
 
     this._authConfig = {
-      secret: null
+      secret: null,
+      public: null
     };
 
     this._config = emptyDefaultConfig;
@@ -250,19 +261,29 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         this.authUsersConfigName,
         this._authUsers
       ).catch(() => this._authUsers),
-      this.loadTemplates()
+      this.loadTemplates(),
+      this.checkJwtKeyPair()
     ])
-      .then(([runTime, config, authUsers]) => {
-        this._runtimeConfig = runTime;
-        this._config = config;
+      .then(
+        ([
+          runTime,
+          config,
+          authUsers,
+          loadTemplatesResult,
+          checkJwtKeyPairResult
+        ]) => {
+          this._runtimeConfig = runTime;
+          this._config = config;
 
-        this._authUsers = authUsers;
+          this._authUsers = authUsers;
 
-        return this.loadJwtPrivateKey();
-      })
-      .then((secret) => {
+          return this.loadJwtKeyPair();
+        }
+      )
+      .then((keys) => {
         this._authConfig = {
-          secret
+          secret: keys.privateKey,
+          public: keys.publicKey
         };
         this.setupDefaultDataSources();
         this.setupDefaultDataSinks();
@@ -421,7 +442,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const logPrefix = `${ConfigManager.className}::loadConfig`;
     const configPath = path.join(this.configFolder, configName);
 
-    return Promise.all([fs.readFile(configPath, { encoding: 'utf-8' })])
+    return Promise.all([promisefs.readFile(configPath, { encoding: 'utf-8' })])
       .catch(() => {
         this.lifecycleEventsBus.push({
           id: 'device',
@@ -456,10 +477,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       });
   }
 
-  private loadJwtPrivateKey(): Promise<string> {
+  private async loadJwtKeyPair(): Promise<{
+    privateKey: string;
+    publicKey: string;
+  }> {
+    const logPrefix = `${ConfigManager.className}::loadJwtPrivateKey`;
+    winston.info(`${logPrefix} laoding jwt key pair.`);
+
     try {
-      const configPath = path.join(this.configFolder, 'keys', 'jwtRS256.key');
-      return fs.readFile(configPath, 'utf8');
+      const privateKeyPath = path.join(this.keyFolder, this.privateKeyName);
+      const publicKeyPath = path.join(this.keyFolder, this.publicKeyName);
+      const privateKey = await promisefs.readFile(privateKeyPath, 'utf8');
+      const publicKey = await promisefs.readFile(publicKeyPath, 'utf8');
+
+      return {
+        privateKey,
+        publicKey
+      };
     } catch (err) {
       return null;
     }
@@ -475,7 +509,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         'templates',
         templateName
       );
-      return JSON.parse(await fs.readFile(configPath, { encoding: 'utf-8' }));
+      return JSON.parse(
+        await promisefs.readFile(configPath, { encoding: 'utf-8' })
+      );
     } catch (err) {
       return null;
     }
@@ -483,7 +519,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   private async loadTemplates() {
     try {
-      const templateNames = await fs.readdir(
+      const templateNames = await promisefs.readdir(
         path.join(this.configFolder, 'templates'),
         { encoding: 'utf-8' }
       );
@@ -757,7 +793,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       `${logPrefix} Saving ${content.length} bytes to config ${file}`
     );
 
-    return fs
+    return promisefs
       .writeFile(file, content, { encoding: 'utf-8' })
       .then(() => {
         winston.info(
@@ -793,7 +829,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   saveAuthConfig(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveAuthConfig`;
 
-    return fs
+    return promisefs
       .writeFile(
         path.join(this.configFolder, this.authUsersConfigName),
         JSON.stringify(this._authUsers, null, 2),
@@ -960,5 +996,55 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     ]);
 
     return this.#configChangeCompletedPromise;
+  }
+
+  async checkJwtKeyPair() {
+    const logPrefix = `${ConfigManager.className}::checkJwtKeyPair`;
+
+    if (fs.existsSync(this.keyFolder)) {
+      const files = (await fs.readdirSync(this.keyFolder)) as string[];
+      if (
+        files.includes(this.publicKeyName) &&
+        files.includes(this.privateKeyName)
+      ) {
+        winston.info(`${logPrefix} valid jwt key pair found.`);
+        return;
+      }
+    }
+
+    winston.info(`${logPrefix} no valid jwt key pair found.`);
+
+    await this.generateJwtKeyPair();
+  }
+
+  async generateJwtKeyPair() {
+    const logPrefix = `${ConfigManager.className}::generateJwtKeyPair`;
+    winston.info(`${logPrefix} generating jwt key pair.`);
+
+    if (!fs.existsSync(this.keyFolder)) fs.mkdirSync(this.keyFolder);
+
+    const modulusLength = 4096;
+    const publicKeyEncoding: any = {
+      type: 'spki',
+      format: 'pem'
+    };
+    const privateKeyEncoding: any = {
+      type: 'pkcs8',
+      format: 'pem',
+      cipher: 'aes-256-cbc',
+      passphrase: ''
+    };
+
+    const { publicKey, privateKey } = await promisifiedGenerateKeyPair('rsa', {
+      modulusLength,
+      privateKeyEncoding,
+      publicKeyEncoding
+    });
+
+    const publicKeyPath = path.join(this.keyFolder, this.publicKeyName);
+    const privateKeyPath = path.join(this.keyFolder, this.privateKeyName);
+
+    await promisefs.writeFile(publicKeyPath, publicKey);
+    await promisefs.writeFile(privateKeyPath, privateKey);
   }
 }

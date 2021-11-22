@@ -65,7 +65,7 @@ async function dataSourcePatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const allowed = ['connection', 'enabled', 'softwareVersion'];
+  const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
 
   const dataSource = configManager.config.dataSources.find(

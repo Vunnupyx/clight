@@ -125,6 +125,7 @@
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
+    "ControllerType": "Controller Type",
     "Name": "Name",
     "Type": "Type",
     "Address": "Address",
@@ -140,7 +141,7 @@
     "LoadStatusError": "Failed to load status. Try again later",
     "UpdateError": "Failed to update a data source. Try again later",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
+      "s7": "SIEMENS",
       "ioshield": "Digital Inputs"
     },
     "Livedata": {

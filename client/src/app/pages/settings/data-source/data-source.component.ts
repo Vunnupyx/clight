@@ -8,6 +8,7 @@ import {
   DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
+  S7Types,
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
@@ -32,6 +33,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   SourceDataPointType = SourceDataPointType;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
+  S7Types = S7Types;
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;
@@ -310,6 +312,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   updateSoftwareVersion(version: string) {
     this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
       softwareVersion: version
+    });
+  }
+
+  updateControllerType(type: S7Types) {
+    this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
+      type
     });
   }
 

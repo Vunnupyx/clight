@@ -32,11 +32,11 @@
       </div>
 
       <div *ngIf="dataSource?.protocol === Protocol.S7">
-        <div class="mt-20 d-flex align-items-center">
-          <div class="mt-0 mr-25 text-nowrap">
+        <div class="mt-20 row d-flex align-items-center">
+          <div class="text-nowrap col-12 col-md-5">
             {{ 'settings-data-source.IPAddress' | translate }}
           </div>
-          <form #form="ngForm">
+          <form #form="ngForm" class="col-12 col-md-7">
             <div>
               <mat-form-field>
                 <input
@@ -51,6 +51,32 @@
               </mat-form-field>
             </div>
           </form>
+        </div>
+
+        <div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{
+                'settings-data-source.ControllerType' | translate
+              }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <mat-select
+                  [ngModel]="dataSource?.type"
+                  (ngModelChange)="updateControllerType($event)"
+                >
+                  <mat-option [value]="S7Types.Sinumerik">Sinumerik</mat-option>
+                  <mat-option [value]="S7Types.S7_300_400"
+                    >S7-300/400</mat-option
+                  >
+                  <mat-option [value]="S7Types.S7_1200_1500"
+                    >S7-1200/1500</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
 
         <div *ngIf="false">

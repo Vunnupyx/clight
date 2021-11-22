@@ -137,6 +137,10 @@ export class DataSourceService {
       payload.softwareVersion = ds.softwareVersion;
     }
 
+    if (ds.type && protocol === DataSourceProtocol.S7) {
+      payload.type = ds.type;
+    }
+
     await this.httpService.patch(`/datasources/${protocol}`, payload);
 
     this._store.patchState((state) => {

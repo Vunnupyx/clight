@@ -32,8 +32,14 @@ export enum S7Types {
   S7_1200_1500 = 's7-1200/1500'
 }
 
+export enum IOShieldTypes {
+  DI_10 = '10di',
+  AI_100_5di = 'ai-100+5di',
+  AI_150_5di = 'ai-150+5di'
+}
+
 export class DataSource {
-  type?: S7Types;
+  type?: S7Types | IOShieldTypes;
   connection?: Connection;
   dataPoints?: SourceDataPoint[];
   enabled?: boolean;

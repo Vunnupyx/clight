@@ -8,6 +8,7 @@ import {
   DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
+  IOShieldTypes,
   S7Types,
   SourceDataPoint,
   SourceDataPointType
@@ -34,6 +35,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;
+  IOShieldTypes = IOShieldTypes;
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;
@@ -64,9 +66,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   filterDigitalInputAddressStr = '';
 
   get ioshieldAddresses() {
-    return this.DigitalInputAddresses.filter((x) =>
-      x.toLowerCase().includes(this.filterDigitalInputAddressStr.toLowerCase())
-    );
+    return this.DigitalInputAddresses.filter((x) => {
+      const searchCond = x
+        .toLowerCase()
+        .includes(this.filterDigitalInputAddressStr.toLowerCase());
+
+      return searchCond && this.filterIOShieldAddress(x);
+    });
   }
 
   get isTouchedTable() {
@@ -76,6 +82,14 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   get isLoading() {
     return this.sourceDataPointService.status === Status.Loading;
   }
+
+  private mapIOShieldsAIAddresses = {
+    DI8: 'DI0',
+    DI7: 'DI1',
+    DI6: 'DI2',
+    DI5: 'DI3',
+    DI0: 'DI4'
+  };
 
   constructor(
     private sourceDataPointService: SourceDataPointService,
@@ -115,6 +129,40 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   toString(x: any): string {
     return String(x);
+  }
+
+  filterIOShieldAddress(address: string): boolean {
+    const type = this.dataSource?.type;
+
+    if (!type) {
+      return true;
+    }
+
+    switch (type) {
+      case IOShieldTypes.DI_10: {
+        return !['AI0', 'AI1'].includes(address);
+      }
+      case IOShieldTypes.AI_100_5di: {
+        return !['DI5', 'DI6', 'DI7', 'DI8', 'DI9'].includes(address);
+      }
+      case IOShieldTypes.AI_150_5di: {
+        return !['DI5', 'DI6', 'DI7', 'DI8', 'DI9'].includes(address);
+      }
+      default: {
+        return true;
+      }
+    }
+  }
+
+  mapAddressLabel(address: string) {
+    if (
+      this.dataSource?.protocol === this.Protocol.IOShield &&
+      this.dataSource.type === IOShieldTypes.AI_150_5di
+    ) {
+      return this.mapIOShieldsAIAddresses[address] || address;
+    }
+
+    return address;
   }
 
   onDataSources(arr: DataSource[]) {
@@ -315,7 +363,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateControllerType(type: S7Types) {
+  updateControllerType(type: S7Types | IOShieldTypes) {
     this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
       type
     });

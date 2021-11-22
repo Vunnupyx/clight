@@ -137,7 +137,7 @@ export class DataSourceService {
       payload.softwareVersion = ds.softwareVersion;
     }
 
-    if (ds.type && protocol === DataSourceProtocol.S7) {
+    if (ds.type) {
       payload.type = ds.type;
     }
 

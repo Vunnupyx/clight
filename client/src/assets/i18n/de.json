@@ -138,7 +138,7 @@
     "UpdateError": "",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Digital Inputs"
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {

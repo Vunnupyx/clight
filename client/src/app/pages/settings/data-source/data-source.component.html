@@ -103,6 +103,36 @@
           </div>
         </div>
       </div>
+
+      <div *ngIf="dataSource?.protocol === Protocol.IOShield">
+        <div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{
+                'settings-data-source.ControllerType' | translate
+              }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <mat-select
+                  [ngModel]="dataSource?.type"
+                  (ngModelChange)="updateControllerType($event)"
+                >
+                  <mat-option [value]="IOShieldTypes.DI_10"
+                    >10 Digital Inputs</mat-option
+                  >
+                  <mat-option [value]="IOShieldTypes.AI_100_5di"
+                    >Sensor 100A + 5 Digital Input</mat-option
+                  >
+                  <mat-option [value]="IOShieldTypes.AI_150_5di"
+                    >Sensor 150A + 5 Digital Input</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">
       <div class="d-flex align-items-center justify-content-end">
@@ -318,7 +348,7 @@
           >
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
               <div class="text-ellipsis" [title]="value">
-                {{ value }}
+                {{ mapAddressLabel(value) }}
               </div>
             </ng-container>
             <div
@@ -366,7 +396,7 @@
                     <mat-option
                       *ngFor="let address of ioshieldAddresses"
                       [value]="address"
-                      >{{ address }}</mat-option
+                      >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
                   <ng-template #s7InputAddress>

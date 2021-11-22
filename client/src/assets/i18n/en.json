@@ -142,7 +142,7 @@
     "UpdateError": "Failed to update a data source. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Digital Inputs"
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {

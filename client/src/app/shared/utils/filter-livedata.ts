@@ -8,6 +8,6 @@ export function filterLiveData(serverOffsetTime) {
 
     const ldTime = liveData.timestamp * 1000 - serverOffsetTime * 1000;
 
-    return Math.abs(nowTime - ldTime) > diff;
+    return Math.abs(nowTime - ldTime) < diff;
   };
 }

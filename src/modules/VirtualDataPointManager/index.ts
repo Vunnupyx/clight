@@ -250,7 +250,7 @@ export class VirtualDataPointManager {
       let sourceEvents = vdpConfig.sources.map((sourceId) => {
         let event = _events.find((e) => e.measurement.id === sourceId);
         if (!event) {
-          event = this.cache.getLastEvent(sourceId);
+          event = this.cache.getCurrentEvent(sourceId);
         }
         if (!event) {
           winston.warn(

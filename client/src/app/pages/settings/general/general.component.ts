@@ -2,8 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { BackupService, TemplateService } from 'app/services';
+import {
+  BackupService,
+  SystemInformationService,
+  TemplateService
+} from 'app/services';
 import { LocalStorageService } from 'app/shared';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel
+} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-general',
@@ -11,12 +20,16 @@ import { LocalStorageService } from 'app/shared';
   styleUrls: ['./general.component.scss']
 })
 export class GeneralComponent implements OnInit {
+  public showLoadingRestart = false;
+
   constructor(
     private backupService: BackupService,
+    private systemInformationService: SystemInformationService,
     private translate: TranslateService,
     private localStorageService: LocalStorageService,
     private templatesService: TemplateService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {}
 
   get availableLangs() {
@@ -42,6 +55,40 @@ export class GeneralComponent implements OnInit {
 
   async download() {
     await this.backupService.download();
+  }
+
+  async restart() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: new ConfirmDialogModel(
+        this.translate.instant('settings-general.RestartDeviceTitle'),
+        this.translate.instant('settings-general.RestartDeviceText')
+      )
+    });
+
+    dialogRef.afterClosed().subscribe(async (dialogResult) => {
+      if (!dialogResult) {
+        return;
+      }
+
+      this.showLoadingRestart = true;
+
+      const success = await this.systemInformationService.restartDevice();
+
+      if (!success) {
+        this.toastr.error(
+          this.translate.instant('settings-general.RestartDeviceError')
+        );
+        this.showLoadingRestart = false;
+      } else {
+        setTimeout(() => {
+          this.toastr.success(
+            this.translate.instant('settings-general.RestartDeviceSuccess')
+          );
+
+          this.showLoadingRestart = false;
+        }, 2.5 * 60 * 1000); // Show loading indicator for 2.5 minutes
+      }
+    });
   }
 
   async onRestoreFileChange(event: any) {

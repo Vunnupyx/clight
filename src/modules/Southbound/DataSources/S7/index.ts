@@ -39,7 +39,18 @@ export class S7DataSource extends DataSource {
    */
   public async init(): Promise<void> {
     const logPrefix = `${S7DataSource.name}::init`;
-    const { name, protocol, connection } = this.config;
+    winston.info(`${logPrefix} initializing.`);
+
+    const { name, protocol, connection, enabled } = this.config;
+
+    if (!enabled) {
+      winston.info(
+        `${logPrefix} S7 data source is disabled. Skipping initialization.`
+      );
+      this.currentStatus = LifecycleEventStatus.Disabled;
+      return;
+    }
+
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,

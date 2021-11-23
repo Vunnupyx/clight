@@ -1,5 +1,8 @@
 import winston from 'winston';
-import { ILifecycleEvent } from '../../../common/interfaces';
+import {
+  ILifecycleEvent,
+  LifecycleEventStatus
+} from '../../../common/interfaces';
 import {
   IDataSinkConfig,
   ITargetDataMap
@@ -14,6 +17,8 @@ export abstract class DataSink {
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;
   protected readonly _protocol: string;
+  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
+  protected enabled = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -33,6 +38,8 @@ export abstract class DataSink {
    * @param params The user configuration object for this data source
    */
   public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
+    if (!this.enabled) return;
+
     // No datapoints no event handling :)
     if (this.config.dataPoints.length < 1) return;
     interface IEvent {
@@ -129,9 +136,9 @@ export abstract class DataSink {
   }
 
   protected processDataPointValues(obj) {
-      Object.keys(obj).forEach((key) => {
-        this.processDataPointValue(key, obj[key])
-      })
+    Object.keys(obj).forEach((key) => {
+      this.processDataPointValue(key, obj[key]);
+    });
   }
 
   protected abstract processDataPointValue(dataPointId, value): void;
@@ -156,5 +163,11 @@ export abstract class DataSink {
    */
   public abstract disconnect();
 
-  public abstract currentStatus(): boolean;
+  /**
+   * Returns the current status of the data sink
+   * @returns
+   */
+  public getCurrentStatus(): LifecycleEventStatus {
+    return this.currentStatus;
+  }
 }

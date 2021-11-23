@@ -249,10 +249,7 @@ describe('DataHubDataSink', () => {
             event: [],
             telemetry: []
           });
-          expect(dataHubAdapterMock.setReportedProps).toBeCalledWith([
-            'group1',
-            'group3'
-          ]);
+          expect(dataHubAdapterMock.setReportedProps).toBeCalled();
         });
     });
   });

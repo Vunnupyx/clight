@@ -88,8 +88,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     DI7: 'DI1',
     DI6: 'DI2',
     DI5: 'DI3',
-    DI0: 'DI4'
+    DI0: 'DI4',
+    AI0: 'AI0',
+    AI1: 'AI1'
   };
+
+  private mapIOShieldsKeys = Object.keys(this.mapIOShieldsAIAddresses);
 
   constructor(
     private sourceDataPointService: SourceDataPointService,
@@ -142,11 +146,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       case IOShieldTypes.DI_10: {
         return !['AI0', 'AI1'].includes(address);
       }
-      case IOShieldTypes.AI_100_5di: {
-        return !['DI5', 'DI6', 'DI7', 'DI8', 'DI9'].includes(address);
-      }
+      case IOShieldTypes.AI_100_5di:
       case IOShieldTypes.AI_150_5di: {
-        return !['DI5', 'DI6', 'DI7', 'DI8', 'DI9'].includes(address);
+        return this.mapIOShieldsKeys.includes(address);
       }
       default: {
         return true;
@@ -157,7 +159,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   mapAddressLabel(address: string) {
     if (
       this.dataSource?.protocol === this.Protocol.IOShield &&
-      this.dataSource.type === IOShieldTypes.AI_150_5di
+      [IOShieldTypes.AI_100_5di, IOShieldTypes.AI_150_5di].includes(
+        this.dataSource?.type as IOShieldTypes
+      )
     ) {
       return this.mapIOShieldsAIAddresses[address] || address;
     }

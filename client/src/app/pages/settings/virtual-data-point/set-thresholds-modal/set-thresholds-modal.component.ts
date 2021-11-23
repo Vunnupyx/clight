@@ -4,8 +4,13 @@ import { Subscription } from 'rxjs';
 import { ECharts } from 'echarts';
 
 import { ObjectMap } from '../../../../shared/utils';
-import { DataPointLiveData, TimeSeriesValue } from '../../../../models';
 import {
+  DataPointLiveData,
+  IOShieldTypes,
+  TimeSeriesValue
+} from '../../../../models';
+import {
+  DataSourceService,
   SourceDataPointService,
   SystemInformationService
 } from '../../../../services';
@@ -29,6 +34,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   sub = new Subscription();
   liveDataSub!: Subscription;
+  IOShieldTypes = IOShieldTypes;
 
   chart!: ECharts;
 
@@ -38,10 +44,11 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<SetThresholdsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SetThresholdsModalData,
     private sourceDataPointsService: SourceDataPointService,
+    private dataSourceService: DataSourceService,
     private systemInfoService: SystemInformationService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.systemInfoService
       .getServerTimeOffset()
       .then((offset) => (this.serverOffsetTime = offset));
@@ -51,6 +58,10 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     );
 
     this.sub.add(sub);
+
+    const dataSourceType = await this.dataSourceService.getDataSourceType(
+      this.sourceDataPointsService.getProtocol(this.data.source)
+    );
 
     this.liveDataSub = this.sourceDataPointsService
       .setLivedataTimer(
@@ -101,6 +112,19 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         boundaryGap: [0, '100%'],
         splitLine: {
           show: false
+        },
+        axisLabel: {
+          formatter: (value) => {
+            if (
+              [IOShieldTypes.AI_100_5di, IOShieldTypes.AI_150_5di].includes(
+                dataSourceType as IOShieldTypes
+              )
+            ) {
+              return `${value} A`;
+            }
+
+            return value;
+          }
         }
       },
       series: [...this.getThresholdsSeries(), this.getMainLineSeries()]
@@ -210,7 +234,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   private getThresholdsSeries() {
     return this.rows.map(({ threshold }) => ({
-      name: `Threshold val: ${threshold}`,
+      name: `Threshold`,
       type: 'line',
       showSymbol: false,
       hoverAnimation: false,

@@ -6,7 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   DataSource,
   DataSourceConnection,
-  DataSourceProtocol
+  DataSourceProtocol,
+  IOShieldTypes,
+  S7Types
 } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -162,6 +164,20 @@ export class DataSourceService {
 
   getNckAddresses() {
     return NCK_ADDRESSES;
+  }
+
+  async getDataSourceType(
+    protocol: DataSourceProtocol
+  ): Promise<S7Types | IOShieldTypes | null> {
+    try {
+      const ds = await this.httpService.get<DataSource>(
+        `/datasources/${protocol}`
+      );
+
+      return ds.type;
+    } catch {
+      return null;
+    }
   }
 
   private _orderByProtocol(objs: DataSource[]): DataSource[] {

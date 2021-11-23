@@ -48,8 +48,10 @@ export class DataPointCache {
             value: event.measurement.value
           }
         ].filter((time) => {
+          const PERIOD = 5 * 60 * 1000; // 5 min
+
           const ts = new Date(time.ts);
-          const pastDate = new Date(Date.now() - 30000);
+          const pastDate = new Date(Date.now() - PERIOD);
 
           return ts >= pastDate;
         })

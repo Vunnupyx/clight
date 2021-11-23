@@ -16,9 +16,9 @@ import * as api from 'app/api/models';
 import { from, interval, Observable } from 'rxjs';
 import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
 import { BaseChangesService } from './base-changes.service';
+import { DataSourceService } from './data-source.service';
 import { SystemInformationService } from './system-information.service';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
-import { DataSourceService } from './data-source.service';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -63,8 +63,8 @@ export class SourceDataPointService
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService,
-    private systemInformationService: SystemInformationService,
-    private dataSourceService: DataSourceService
+    private dataSourceService: DataSourceService,
+    private systemInformationService: SystemInformationService
   ) {
     super(changesFactory);
 

@@ -27,27 +27,8 @@ const dataHubAdapterOptionsMock = {
 const twinMock = {
   on: jest.fn(),
   properties: {
-    desired: {
-      services: {
-        reported1: {
-          enabled: true
-        },
-        reported2: {
-          enabled: true
-        },
-        reported3: {
-          enabled: true
-        },
-        reported4: {
-          enabled: true
-        },
-        reported5: {
-          enabled: true
-        }
-      }
-    },
     reported: {
-      update: jest.fn()
+      update: jest.fn((payload, callback) => callback())
     }
   }
 };
@@ -70,8 +51,21 @@ const dataHubClientMock = {
   getTwin: jest.fn().mockReturnValue(twinMock)
 };
 
+const logFunc = (msg) => {
+  console.log(msg);
+};
+const winstonMock = {
+  winston: jest.fn(), // Constructor
+  debug: jest.fn(logFunc),
+  info: jest.fn(logFunc),
+  warn: jest.fn(logFunc),
+  error: jest.fn(logFunc)
+};
+jest.doMock('winston', () => {
+  return winstonMock;
+});
+
 jest.doMock('url');
-jest.doMock('winston');
 jest.doMock('crypto');
 jest.doMock('azure-iot-device');
 jest.doMock('https-proxy-agent');
@@ -113,8 +107,24 @@ describe('DataHubAdapter', () => {
     UUT = new DataHubAdapter(dataHubAdapterOptionsMock, dataHubSettingsMock);
     await UUT.init().then((adapter) => adapter.start());
   });
-  it('reported properties are reported', () => {
-    UUT.setReportedProps();
+  it('reported properties are reported', async () => {
+    await UUT.setReportedProps({
+      reported1: {
+        enabled: true
+      },
+      reported2: {
+        enabled: true
+      },
+      reported3: {
+        enabled: true
+      },
+      reported4: {
+        enabled: true
+      },
+      reported5: {
+        enabled: true
+      }
+    });
     expect(twinMock.properties.reported.update).toHaveBeenCalled();
     expect(twinMock.properties.reported.update.mock.calls[0][0]).toStrictEqual({
       services: {
@@ -135,11 +145,5 @@ describe('DataHubAdapter', () => {
         }
       }
     });
-  });
-
-  it('already reported properties are not updated again', () => {
-    UUT.setReportedProps();
-    UUT.setReportedProps();
-    expect(twinMock.properties.reported.update).not.toHaveBeenCalledTimes(1);
   });
 });

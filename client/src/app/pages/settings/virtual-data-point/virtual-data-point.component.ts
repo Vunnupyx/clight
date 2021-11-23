@@ -273,7 +273,8 @@ export class VirtualDataPointComponent implements OnInit {
         source: virtualPoint.sources![0],
         sourceName: this.getSourceNames(virtualPoint.sources!)
       },
-      width: '850px'
+      width: '1400px',
+      maxWidth: '100%'
     });
 
     dialogRef.afterClosed().subscribe((result) => {

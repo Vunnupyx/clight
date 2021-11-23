@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { ConfigManager } from '../../../../../ConfigManager';
+import { System } from '../../../../../System';
 
 let configManager: ConfigManager;
 
@@ -33,7 +34,19 @@ async function systemTimeGetHandler(request: Request, response: Response) {
   });
 }
 
+/**
+ * Restart system
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function restartPostHandler(request: Request, response: Response) {
+  const system = new System();
+  await system.restartDevice();
+  response.status(204);
+}
+
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
-  systemTimeGet: systemTimeGetHandler
+  systemTimeGet: systemTimeGetHandler,
+  restartPost: restartPostHandler
 };

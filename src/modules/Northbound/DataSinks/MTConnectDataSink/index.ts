@@ -41,6 +41,7 @@ export class MTConnectDataSink extends DataSink {
   private static className = MTConnectDataSink.name;
 
   private avail: DataItem;
+  private runTime: DataItem;
 
   // private system: Condition;
   // private logic1: Condition;
@@ -63,7 +64,11 @@ export class MTConnectDataSink extends DataSink {
     winston.info(`${logPrefix} initializing.`);
 
     this.avail = new Event('avail');
+    this.runTime = new Event('runTime');
+    this.runTime.value = 0;
+
     this.mtcAdapter.addDataItem(this.avail);
+    this.mtcAdapter.addDataItem(this.runTime);
 
     this.config.dataPoints.forEach((dp) => {
       let dataItem: DataItem;
@@ -89,10 +94,10 @@ export class MTConnectDataSink extends DataSink {
     this.mtcAdapter.start();
     if (!MTConnectDataSink.schedulerListenerId) {
       MTConnectDataSink.schedulerListenerId =
-        MTConnectDataSink.scheduler.addListener(
-          [1000],
-          this.mtcAdapter.sendChanged.bind(this.mtcAdapter)
-        );
+        MTConnectDataSink.scheduler.addListener([1000], () => {
+          this.runTime.value = (this.runTime.value as number) + 1;
+          this.mtcAdapter.sendChanged();
+        });
     }
     winston.info(`${logPrefix} initialized.`);
     return Promise.resolve(this);

@@ -23,5 +23,10 @@ export default [
   { name: 'reqParts', address: '/Channel/State/reqParts' },
   { name: 'actParts', address: '/Channel/State/actParts' },
   { name: 'actTNumber', address: '/Channel/State/actTNumber' },
-  { name: 'numAlarms', address: '/Nck/State/numAlarms' }
+  { name: 'numAlarms', address: '/Nck/State/numAlarms' },
+  { name: 'maxnumAlarms', address: '/Nck/Configuration/maxnumAlarms' },
+  { name: 'sequencedAlarmAlarmNo', address: '/Nck/SequencedAlarms/alarmNo' },
+  { name: 'alarmEventAlarmNo', address: '/Nck/AlarmEvent/alarmNo' },
+  { name: 'lastAlarmNo', address: '/Nck/LastAlarm/alarmNo' },
+  { name: 'topPrioAlarmNo', address: '/Nck/TopPrioAlarm/alarmNo' }
 ];

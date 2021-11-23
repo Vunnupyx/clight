@@ -23,6 +23,7 @@ import {
   TGroupedMeasurements,
   IMeasurement
 } from '../../DataSinks/DataHubDataSink';
+import { LifecycleEventStatus } from '../../../../common/interfaces';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
@@ -46,6 +47,9 @@ function isDesiredProps(obj: any): obj is IDesiredProps {
 export class DataHubAdapter {
   static readonly #className: string = DataHubAdapter.name;
   private isRunning: boolean = false;
+  private deviceTwinChanged = true;
+  private onStateChange: (state: LifecycleEventStatus) => void;
+
   #initialized: boolean = false;
   #proxyConfig: DataHubAdapterOptions['proxy'];
   #proxy: HttpsProxyAgent | SocksProxyAgent;
@@ -74,7 +78,6 @@ export class DataHubAdapter {
   #probeSendInterval: number;
   #telemetrySendInterval: number;
   #runningTimers: Array<NodeJS.Timer> = [];
-  #alreadyReportedServices: Array<string> = [];
 
   /**
    *
@@ -83,7 +86,8 @@ export class DataHubAdapter {
    */
   public constructor(
     staticOptions: DataHubAdapterOptions,
-    dynamicOptions: IDataHubSettings
+    dynamicOptions: IDataHubSettings,
+    onStateChange: (state: LifecycleEventStatus) => void = (state) => {}
   ) {
     if (
       !staticOptions.dataPointTypesData.probe.intervalHours ||
@@ -108,6 +112,8 @@ export class DataHubAdapter {
     this.#isGroupRegistration = staticOptions.groupDevice || false;
     this.#proxyConfig = staticOptions.proxy || null;
     this.#serialNumber = staticOptions.serialNumber;
+
+    this.onStateChange = onStateChange;
   }
 
   public get running(): boolean {
@@ -134,38 +140,23 @@ export class DataHubAdapter {
   /**
    * Set reported properties on device twin.
    */
-  public setReportedProps(reportedServices: string[]): void {
+  public setReportedProps(): void {
     const logPrefix = `${DataHubAdapter.#className}::getDesiredProps`;
     if (!this.#deviceTwin) {
       winston.warn(`${logPrefix} no device twin available.`);
       return;
     }
-    const removedServices = this.#alreadyReportedServices.filter(
-      (s) => !reportedServices.includes(s)
-    );
-    const newServices = reportedServices.filter(
-      (s) => !this.#alreadyReportedServices.includes(s)
-    );
 
-    // Nothing to update
-    if (!(removedServices.length > 0) && !(newServices.length > 0)) return;
-    const patch = {};
-    //enable new services
-    newServices.forEach((serviceName) => {
-      patch[serviceName] = {
-        enabled: true
-      };
-    });
-    //disable new services
-    removedServices.forEach((serviceName) => {
-      patch[serviceName] = {
-        enabled: false
-      };
-    });
-    this.#deviceTwin.properties.reported.update({ services: patch }, (err) => {
-      if (err) winston.error(`${logPrefix} error due to ${err.message}`);
-    });
-    this.#alreadyReportedServices = reportedServices.concat(removedServices);
+    if (this.deviceTwinChanged) {
+      winston.info('Updating reported properties');
+      this.#deviceTwin.properties.reported.update(
+        { services: this.#deviceTwin.properties.desired?.services },
+        (err) => {
+          if (err) winston.error(`${logPrefix} error due to ${err.message}`);
+          else this.deviceTwinChanged = false;
+        }
+      );
+    }
   }
 
   /**
@@ -259,8 +250,9 @@ export class DataHubAdapter {
       })
       .then((twin) => {
         this.#deviceTwin = twin;
-        twin.on('properties.desired.services', () => {
-          winston.debug(`${logPrefix} got services update.`);
+        twin.on('properties.desired.services', (data) => {
+          this.deviceTwinChanged = true;
+          winston.info(`${logPrefix} received desired services update.`);
         });
         this.#runningTimers.push(
           setInterval(() => {

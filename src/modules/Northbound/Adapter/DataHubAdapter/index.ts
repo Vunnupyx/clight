@@ -32,13 +32,15 @@ interface DataHubAdapterOptions extends IDataHubConfig {
   proxy?: IProxyConfig;
 }
 
-export interface IDesiredProps {
-  services: {
-    [serviceName: string]: {
-      enabled: boolean;
-      [additionalParameter: string]: any;
-    };
+interface IDesiredServices {
+  [serviceName: string]: {
+    enabled: boolean;
+    [additionalParameter: string]: any;
   };
+}
+
+export interface IDesiredProps {
+  services: IDesiredServices;
 }
 
 function isDesiredProps(obj: any): obj is IDesiredProps {
@@ -51,6 +53,7 @@ export class DataHubAdapter {
   private onStateChange: (state: LifecycleEventStatus) => void;
 
   #initialized: boolean = false;
+  #successfullyProvisioned: boolean = false;
   #proxyConfig: DataHubAdapterOptions['proxy'];
   #proxy: HttpsProxyAgent | SocksProxyAgent;
 
@@ -140,23 +143,21 @@ export class DataHubAdapter {
   /**
    * Set reported properties on device twin.
    */
-  public setReportedProps(): void {
-    const logPrefix = `${DataHubAdapter.#className}::getDesiredProps`;
-    if (!this.#deviceTwin) {
-      winston.warn(`${logPrefix} no device twin available.`);
-      return;
-    }
+  public async setReportedProps(data: IDesiredServices): Promise<void> {
+    return new Promise((res, rej) => {
+      const logPrefix = `${DataHubAdapter.#className}::setDesiredProps`;
+      if (!this.#deviceTwin) {
+        winston.warn(`${logPrefix} no device twin available.`);
+        return;
+      }
 
-    if (this.deviceTwinChanged) {
       winston.info('Updating reported properties');
-      this.#deviceTwin.properties.reported.update(
-        { services: this.#deviceTwin.properties.desired?.services },
-        (err) => {
-          if (err) winston.error(`${logPrefix} error due to ${err.message}`);
-          else this.deviceTwinChanged = false;
-        }
-      );
-    }
+      this.#deviceTwin.properties.reported.update({ services: data }, (err) => {
+        if (err) winston.error(`${logPrefix} error due to ${err.message}`);
+        else this.deviceTwinChanged = false;
+        res();
+      });
+    });
   }
 
   /**
@@ -181,8 +182,9 @@ export class DataHubAdapter {
         }
       })
       .then(() => this.startProvisioning())
-      .then(() => {
+      .then((success) => {
         this.#initialized = true;
+        this.#successfullyProvisioned = success;
         winston.debug(`${logPrefix} initialized. Registered to DPS`);
         return this;
       })
@@ -196,9 +198,11 @@ export class DataHubAdapter {
   /**
    * Start the provisioning process for this device
    */
-  private startProvisioning(): Promise<void> {
+  private startProvisioning(): Promise<boolean> {
     const logPrefix = `${DataHubAdapter.#className}::startProvisioning`;
     winston.debug(`${logPrefix} Starting provisioning...`);
+
+    this.onStateChange(LifecycleEventStatus.Provisioning);
 
     this.#provSecClient = new SymmetricKeySecurityClient(
       this.#registrationId,
@@ -226,13 +230,20 @@ export class DataHubAdapter {
   public start(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::start`;
     winston.debug(`${logPrefix} starting...`);
-    if (!this.#initialized || !this.#connectionSting)
+    if (!this.#initialized)
       return Promise.reject(
         new NorthBoundError(`${logPrefix} try to start uninitialized adapter.`)
       );
     if (this.isRunning) {
       winston.debug(
         `${logPrefix} try to start a already started adapter. Please remove unnecessary invoke of start().`
+      );
+      return Promise.resolve();
+    }
+
+    if (!this.#successfullyProvisioned) {
+      winston.warn(
+        `${logPrefix} data hub adapter isn't provisioned successful. Skipping start`
       );
       return Promise.resolve();
     }
@@ -250,9 +261,11 @@ export class DataHubAdapter {
       })
       .then((twin) => {
         this.#deviceTwin = twin;
-        twin.on('properties.desired.services', (data) => {
-          this.deviceTwinChanged = true;
+        twin.on('properties.desired.services', async (data) => {
           winston.info(`${logPrefix} received desired services update.`);
+          winston.debug(`${logPrefix} ${JSON.stringify(data)}`);
+
+          await this.setReportedProps(data);
         });
         this.#runningTimers.push(
           setInterval(() => {
@@ -264,9 +277,11 @@ export class DataHubAdapter {
             this.sendMessage('telemetry');
           }, this.#telemetrySendInterval)
         );
+        this.onStateChange(LifecycleEventStatus.Connected);
         winston.info(`${logPrefix} successful. Adapter ready to send data.`);
       })
       .catch((err) => {
+        this.onStateChange(LifecycleEventStatus.ConnectionError);
         return Promise.reject(
           new NorthBoundError(
             `${logPrefix} error due to ${JSON.stringify(err)}`
@@ -309,6 +324,7 @@ export class DataHubAdapter {
           delete this[key];
         });
         winston.info(`${logPrefix} successfully stopped adapter.`);
+        this.onStateChange(LifecycleEventStatus.Disconnected);
       })
       .catch((err) => {
         return Promise.reject(
@@ -329,7 +345,7 @@ export class DataHubAdapter {
   /**
    * Send provisioning request to device provisioning service.
    */
-  private getProvisioning(): Promise<void> {
+  private getProvisioning(): Promise<boolean> {
     const logPrefix = `${DataHubAdapter.#className}::getProvisioning`;
 
     return new Promise((res, rej) => {
@@ -337,8 +353,8 @@ export class DataHubAdapter {
       this.#killProv = rej;
       this.#provClient.register((err, response) => {
         try {
-          this.registrationHandler(err, response);
-          res();
+          const success = this.registrationHandler(err, response);
+          res(success);
         } catch (err) {
           rej(
             new NorthBoundError(
@@ -383,24 +399,29 @@ export class DataHubAdapter {
   /**
    * Handler for registration requests.
    */
-  private registrationHandler(error: Error, res: RegistrationResult): void {
+  private registrationHandler(error: Error, res: RegistrationResult): boolean {
     const logPrefix = `${DataHubAdapter.#className}::registrationHandler`;
-    if (error)
-      throw new NorthBoundError(
-        `${logPrefix} error due to ${JSON.stringify(error)}`
+    if (error) {
+      if (error.name === 'NotConnectedError')
+        this.onStateChange(LifecycleEventStatus.NoNetwork);
+      else this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+
+      return false;
+    } else {
+      winston.debug(
+        `${logPrefix} successfully got provisioning information: \n ${JSON.stringify(
+          res,
+          null,
+          2
+        )}`
       );
-    winston.debug(
-      `${logPrefix} successfully got provisioning information: \n ${JSON.stringify(
-        res,
-        null,
-        2
-      )}`
-    );
-    this.#connectionSting = this.generateConnectionString(
-      res.assignedHub,
-      res.deviceId,
-      this.#groupDeviceKey || this.#symKey
-    );
+      this.#connectionSting = this.generateConnectionString(
+        res.assignedHub,
+        res.deviceId,
+        this.#groupDeviceKey || this.#symKey
+      );
+      return true;
+    }
   }
 
   /**

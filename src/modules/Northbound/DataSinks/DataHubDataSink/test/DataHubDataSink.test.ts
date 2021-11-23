@@ -2,6 +2,7 @@ import { DataPointMapper } from '../../../../DataPointMapper';
 
 const dataHubAdapterMock = {
   isRunning: true,
+  running: true,
   getDesiredProps: jest.fn(),
   init: jest.fn().mockImplementation(() => Promise.resolve(dataHubAdapterMock)),
   start: jest.fn(),
@@ -22,7 +23,9 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
 
 const winstonMock = {
   winston: jest.fn(), // Constructor
-  debug: jest.fn() // static method
+  debug: jest.fn((msg) => {
+    console.log(msg);
+  })
 };
 jest.doMock('winston', () => {
   return winstonMock;
@@ -249,7 +252,6 @@ describe('DataHubDataSink', () => {
             event: [],
             telemetry: []
           });
-          expect(dataHubAdapterMock.setReportedProps).toBeCalled();
         });
     });
   });

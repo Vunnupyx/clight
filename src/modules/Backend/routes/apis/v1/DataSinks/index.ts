@@ -54,7 +54,6 @@ function dataSinksGetHandler(request: Request, response: Response): void {
         DataSinkProtocols.DATAHUB
       ) as DataHubDataSink;
 
-      console.log(sink?.getDesiredPropertiesServices());
       dataSink.desired = sink?.getDesiredPropertiesServices();
     }
   });

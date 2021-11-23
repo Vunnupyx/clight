@@ -44,13 +44,17 @@ export class DataHubDataSink extends DataSink {
     this.#datahubAdapter = new DataHubAdapter(
       options.runTimeConfig,
       options.config.datahub,
-      this.handleAdapterStateChange
+      this.handleAdapterStateChange.bind(this)
     );
     this.enabled = this.options.config.enabled;
   }
 
-  private handleAdapterStateChange(state: LifecycleEventStatus) {
-    this.currentStatus = state;
+  private handleAdapterStateChange(newState: LifecycleEventStatus) {
+    const logPrefix = `${DataHubDataSink.name}::handleAdapterStateChange`;
+    winston.info(
+      `${logPrefix} data hub data sink state updated from ${this.currentStatus} to ${newState}.`
+    );
+    this.currentStatus = newState;
   }
 
   /**
@@ -60,8 +64,12 @@ export class DataHubDataSink extends DataSink {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
     winston.debug(`${logPrefix} receive measurements.`);
 
-    const services = this.#datahubAdapter.getDesiredProps()?.services;
+    if (!this.#datahubAdapter.running) {
+      winston.debug(`${logPrefix} adapter not running. Skipping data points.`);
+      return;
+    }
 
+    const services = this.#datahubAdapter.getDesiredProps()?.services;
     if (!services) return;
 
     winston.debug(`${logPrefix} known services: ${Object.keys(services)}`);
@@ -99,7 +107,7 @@ export class DataHubDataSink extends DataSink {
     }
 
     winston.debug(`${logPrefix} transfer grouped data to adapter.`);
-    this.#datahubAdapter.setReportedProps();
+
     this.#datahubAdapter.sendData(data);
   }
 

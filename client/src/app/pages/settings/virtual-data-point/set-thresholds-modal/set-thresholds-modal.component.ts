@@ -82,6 +82,28 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         trigger: 'axis',
         axisPointer: {
           animation: false
+        },
+        formatter: (params) => {
+          console.log(params[0].marker);
+          const seriesTemplate = params
+            .map(
+              (param) => `
+                <div style="margin: 10px 0 5px;line-height:1;">${
+                  param.marker
+                }<span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">${
+                param.seriesName
+              }</span><span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${this.formatChartLabel(
+                param.value[1],
+                dataSourceType
+              )}</span><div style="clear:both"></div></div>
+              `
+            )
+            .join('');
+
+          const html = `
+            <div style="margin: 0px 0 0;line-height:1;"><div style="font-size:14px;color:#666;font-weight:400;line-height:1;">${params[0].axisValueLabel}</div><div>${seriesTemplate}</div></div>`;
+
+          return html;
         }
       },
       xAxis: {
@@ -133,6 +155,18 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   onChartInit(event) {
     this.chart = event;
+  }
+
+  formatChartLabel(value, dataSourceType) {
+    if (
+      [IOShieldTypes.AI_100_5di, IOShieldTypes.AI_150_5di].includes(
+        dataSourceType as IOShieldTypes
+      )
+    ) {
+      return `${value} A (ampere)`;
+    }
+
+    return value;
   }
 
   getMainLineSeries() {
@@ -233,8 +267,8 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   }
 
   private getThresholdsSeries() {
-    return this.rows.map(({ threshold }) => ({
-      name: `Threshold`,
+    return this.rows.map(({ threshold }, idx) => ({
+      name: `Threshold #${idx + 1}`,
       type: 'line',
       showSymbol: false,
       hoverAnimation: false,

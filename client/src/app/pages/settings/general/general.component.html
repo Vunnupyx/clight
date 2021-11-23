@@ -48,8 +48,21 @@
       <mat-expansion-panel [expanded]="true" class="mt-25">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{ 'settings-general.Templates' | translate
-            }}<span
+            {{ 'settings-general.RestartDevice' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>
+          <button mat-raised-button color="primary" (click)="restart()">
+            {{ 'settings-general.RestartNow' | translate }}
+          </button>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true" class="mt-25">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'settings-general.Templates' | translate }}
+            <span
               ><app-doc-btn
                 link="http://localhost:3000/help/docs/#login"
                 tooltip="What is a template?"
@@ -111,4 +124,8 @@
       </mat-expansion-panel>
     </div>
   </div>
+</div>
+
+<div class="loading-block" *ngIf="showLoadingRestart">
+  <mat-spinner></mat-spinner>
 </div>

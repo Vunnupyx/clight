@@ -1277,6 +1277,18 @@ export default {
         }
       }
     },
+    '/systemInfo/restart': {
+      post: {
+        tags: ['systemInfo'],
+        description: 'Restart device',
+        operationId: 'restartPost',
+        responses: {
+          '204': {
+            description: 'OK'
+          }
+        }
+      }
+    },
     '/templates': {
       get: {
         tags: ['templates'],

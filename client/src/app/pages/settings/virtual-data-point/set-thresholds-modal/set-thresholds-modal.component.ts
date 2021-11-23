@@ -5,7 +5,10 @@ import { ECharts } from 'echarts';
 
 import { ObjectMap } from '../../../../shared/utils';
 import { DataPointLiveData, TimeSeriesValue } from '../../../../models';
-import { SourceDataPointService } from '../../../../services';
+import {
+  SourceDataPointService,
+  SystemInformationService
+} from '../../../../services';
 
 export interface SetThresholdsModalData {
   thresholds: ObjectMap<number>;
@@ -29,13 +32,20 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   chart!: ECharts;
 
+  private serverOffsetTime = 0;
+
   constructor(
     private dialogRef: MatDialogRef<SetThresholdsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SetThresholdsModalData,
-    private sourceDataPointsService: SourceDataPointService
+    private sourceDataPointsService: SourceDataPointService,
+    private systemInfoService: SystemInformationService
   ) {}
 
   ngOnInit() {
+    this.systemInfoService
+      .getServerTimeOffset()
+      .then((offset) => (this.serverOffsetTime = offset));
+
     const sub = this.sourceDataPointsService.dataPointsLivedata.subscribe((x) =>
       this.onLiveData(x)
     );
@@ -70,7 +80,10 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         },
         axisLabel: {
           formatter: (value) => {
-            return `${value}s`;
+            const mints = Math.round(-value / 60);
+            const secs = -value % 60;
+
+            return `-${this.parseNum(mints)}:${this.parseNum(secs)}`;
           }
         },
         axisPointer: {
@@ -159,17 +172,28 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   }
 
   private prepareTimeseries() {
-    return this.timeseries.map((el) => {
-      const now = new Date();
-      const ts = new Date(el.ts);
+    return this.timeseries
+      .filter((time) => {
+        const ts = new Date(time.ts).valueOf() - this.serverOffsetTime * 1000;
+        const PERIOD = 5 * 60 * 1000;
 
-      return {
-        value: [
-          Math.round((ts.getTime() - now.getTime()) / 1000),
-          Number(el.value)
-        ]
-      };
-    });
+        const pastDate = new Date(
+          Date.now() - this.serverOffsetTime * 1000 - PERIOD
+        ).valueOf();
+
+        return ts >= pastDate;
+      })
+      .map((el) => {
+        const now = new Date();
+        const ts = new Date(el.ts);
+
+        return {
+          value: [
+            Math.round((ts.getTime() - now.getTime()) / 1000),
+            Number(el.value)
+          ]
+        };
+      });
   }
 
   private prepareThresholds() {
@@ -186,7 +210,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   }
 
   private getChartXAxisValues() {
-    return new Array(31).fill(0).map((el, i) => -i);
+    return new Array(5 * 60 + 1).fill(0).map((el, i) => -i);
   }
 
   private getThresholdsSeries() {

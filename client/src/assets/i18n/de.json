@@ -41,6 +41,8 @@
     "ChangePasswordSuccess": "Password has been changed successfully!"
   },
   "quick-start": {
+    "TermsAndConditions": "Terms and Conditions",
+    "Accept": "Accept",
     "Language": "Language",
     "SelectLanguage": "Select Language",
     "SelectTemplate": "Select Template",
@@ -81,6 +83,7 @@
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch",
+    "Japanese": "Japanese",
     "Templates": "Templates",
     "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",

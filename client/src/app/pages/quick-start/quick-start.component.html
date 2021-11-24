@@ -17,9 +17,32 @@
             <mat-option value="de">
               {{ 'settings-general.Deutsch' | translate }}
             </mat-option>
+            <mat-option value="ja">
+              {{ 'settings-general.Japanese' | translate }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
-        <div class="d-flex justify-content-end">
+        <mat-expansion-panel [expanded]="shouldOpenTerms" class="mt-25">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ 'quick-start.TermsAndConditions' | translate }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div *ngIf="termsText$ | async as terms">
+            <pre *ngIf="!!terms" [innerText]="terms" class="white-space"></pre>
+          </div>
+
+          <div>
+            <mat-checkbox
+              [checked]="!!(termsAccepted$ | async)"
+              (change)="onAcceptChange($event)"
+              >{{ 'quick-start.Accept' | translate }}</mat-checkbox
+            >
+          </div>
+        </mat-expansion-panel>
+
+        <div class="d-flex justify-content-end pt-20">
           <button mat-button class="mr-25" (click)="continueWithoutTemplate()">
             {{ 'quick-start.ContinueWithoutTemplate' | translate }}
           </button>

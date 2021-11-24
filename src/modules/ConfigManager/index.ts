@@ -109,6 +109,9 @@ export const emptyDefaultConfig: IConfig = {
     currentTemplate: null,
     currentTemplateName: null,
     completed: false
+  },
+  termsAndConditions: {
+    accepted: false
   }
 };
 
@@ -821,6 +824,19 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     winston.debug(`${logPrefix}`);
 
     this.saveConfigToFile();
+  }
+
+  // reads terms and conditions
+  async getTermsAndConditions(lang: string) {
+    const terms = await promisefs
+      .readFile(
+        path.join(this.configFolder, 'terms', 'eula', `eula_${lang}.txt`),
+        { encoding: 'utf-8' }
+      )
+      .then((data) => data)
+      .catch(() => '');
+
+    return terms;
   }
 
   /**

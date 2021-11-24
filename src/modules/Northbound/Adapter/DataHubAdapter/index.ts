@@ -12,7 +12,7 @@ import { createHmac } from 'crypto';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import winston from 'winston';
-import { NorthBoundError } from '../../../../common/errors';
+import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import {
   IDataHubConfig,
   IDataHubSettings,
@@ -68,7 +68,6 @@ export class DataHubAdapter {
   #provGroupClient: RegistrationClient;
   #provSecClient: SymmetricKeySecurityClient;
   #symKeyProvTransport: ProvTransport;
-  #killProv: Function;
 
   // Datahub and Twin
   #connectionSting: TConnectionString = null;
@@ -189,6 +188,9 @@ export class DataHubAdapter {
         return this;
       })
       .catch((err) => {
+        if(err instanceof AdapterError && err.type === 'NO_INTERNET_CONNECTION') {
+          this.
+        }
         return Promise.reject(
           new NorthBoundError(`${logPrefix} error due to ${err.message}`)
         );
@@ -350,16 +352,19 @@ export class DataHubAdapter {
 
     return new Promise((res, rej) => {
       winston.debug(`${logPrefix} Registering...`);
-      this.#killProv = rej;
+      const timeOut = 10*1000;
+      const timer = setTimeout(() => {
+        this.#provClient.cancel();
+        rej(new NorthBoundError(`${logPrefix} hit timeout of ${timeOut} ms. Abort.`));
+      }, timeOut)
       this.#provClient.register((err, response) => {
         try {
           const success = this.registrationHandler(err, response);
+          clearTimeout(timer);
           res(success);
         } catch (err) {
           rej(
-            new NorthBoundError(
-              `${logPrefix} error due to ${JSON.stringify(err)}`
-            )
+            new AdapterError(`${logPrefix} registration failed due to ${err?.message}.`, null, err.name === 'NotConnectedError' ? 'NO_INTERNET_CONNECTION' : undefined)
           );
         }
       });
@@ -518,7 +523,6 @@ export class DataHubAdapter {
       this.#provClient?.cancel(),
       this.#provGroupClient?.cancel()
     ];
-
     [
       this.#proxy,
       this.#provSecClient,

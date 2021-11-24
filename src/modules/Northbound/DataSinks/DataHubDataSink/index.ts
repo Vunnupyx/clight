@@ -1,10 +1,10 @@
-import { DataSink } from '../DataSink';
 import {
   DataSinkProtocols,
   ILifecycleEvent,
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataHubAdapter, IDesiredProps } from '../../Adapter/DataHubAdapter';
+import { DataSink, DataSinkStatus, TDataSinkStatus } from '../DataSink';
 import winston from 'winston';
 import {
   IDataHubConfig,
@@ -27,6 +27,8 @@ export interface IMeasurement {
   [address: string]: any;
 }
 
+
+
 /**
  * Representation of the data sink for Azure iot hub.
  */
@@ -35,6 +37,8 @@ export class DataHubDataSink extends DataSink {
   protected _protocol = DataSinkProtocols.DATAHUB;
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
+  #connected = false;
+  #currentStatus: TDataSinkStatus = DataSinkStatus.DISCONNECTED;
   options: DataHubDataSinkOptions;
 
   public constructor(options: DataHubDataSinkOptions) {
@@ -150,15 +154,21 @@ export class DataHubDataSink extends DataSink {
       winston.warn(
         `${logPrefix} aborting data hub adapter initializing due to missing configuration.`
       );
-      return null;
+      this.#currentStatus = DataSinkStatus.INVALID_CONFIGURATION;
+      return Promise.reject();
     }
-
+    this.#currentStatus = DataSinkStatus.CONNECTING;
     return this.#datahubAdapter
       .init()
       .then((adapter) => adapter.start())
       .then(() => {
+        this.#connected = true;
+        this.#currentStatus = DataSinkStatus.CONNECTED;
         winston.debug(`${logPrefix} initialized`);
         return this;
+      }).catch((error) => {
+        error.
+        return Promise.resolve(this);
       });
   }
 
@@ -192,5 +202,9 @@ export class DataHubDataSink extends DataSink {
   public getDesiredPropertiesServices(): IDesiredProps {
     if (!this.#datahubAdapter) return { services: {} };
     return this.#datahubAdapter.getDesiredProps();
+  }
+  
+  public currentStatus(): TDataSinkStatus {
+    this.#currentStatus;
   }
 }

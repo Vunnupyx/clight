@@ -94,7 +94,7 @@ async function vdpDeleteHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpPatchHandler(
+ async function vdpPatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -106,15 +106,13 @@ async function vdpPatchHandler(
       return (vdp.id = request.body.id);
     }
   );
-  //TODO: MAKE CHANGE AND DELETE IN ONE CALL!!!!
-  configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-  const newData = { ...request.body, ...{ id: uuidv4() } };
-  configManager.changeConfig('insert', 'virtualDataPoints', newData);
+  await configManager.configChangeCompleted();
   response.status(200).json({
     changed: request.body,
     href: `/vdps/${request.body.id}`
   });
 }
+
 
 export const virtualDatapointHandlers = {
   vdpsGet: vdpsGetHandler,

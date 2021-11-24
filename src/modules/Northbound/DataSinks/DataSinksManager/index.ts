@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TypedEventEmitter from 'typed-emitter';
 import winston from 'winston';
-import { NorthBoundError } from '../../../../common/errors';
+import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import {
   DataSinkProtocols,
   IErrorEvent,
@@ -11,6 +11,7 @@ import { ConfigManager } from '../../../ConfigManager';
 import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
 import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
+import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
 import { DataHubDataSink, DataHubDataSinkOptions } from '../DataHubDataSink';
 import { DataSink } from '../DataSink';
 import {
@@ -43,6 +44,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private dataSinks: Array<DataSink> = [];
   private dataSinksRestartPending = false;
   private dataAddedDuringRestart = false;
+  private dataSinkConnectRetryTimer: NodeJS.Timer;
+  private sinksRetryCount: number = 0;
 
   constructor(params: IDataSinkManagerParams) {
     super();
@@ -60,9 +63,19 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
-    return Promise.all(initMethods)
-      .then(() => {
-        // TODO: Handle rejected init
+    return Promise.allSettled(initMethods)
+      .then((results) => {
+        results.forEach((result) => {
+          if (result.status === 'rejected') {
+            winston.warn(
+              `${logPrefix} datasink failed to initialize due to ${result.reason}.`
+            );
+            this.dataSinkConnectRetryTimer = setTimeout(
+              this.dataSinkRetryInit.bind(this),
+              1000 * 10
+            );
+          }
+        });
         winston.info(`${logPrefix} initialized.`);
       })
       .then(() => this)
@@ -71,6 +84,26 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           new NorthBoundError(`${logPrefix} error due to ${err.message}`)
         )
       );
+  }
+
+  private dataSinkRetryInit() {
+    const logPrefix = `${DataSinksManager.name}::dataSinkRetryInit`;
+    winston.debug(`${logPrefix} start retry.`);
+    this.sinksRetryCount++;
+    const initPromises = this.dataSinks.map((sink) => {
+      if (!sink.currentStatus) return sink.init();
+      return Promise.resolve();
+    });
+    Promise.allSettled(initPromises).then((results) => {
+      for (const result of results) {
+        if (result?.status === 'rejected' && this.sinksRetryCount <= 2) {
+          this.dataSinkConnectRetryTimer = setTimeout(
+            this.dataSinkRetryInit.bind(this),
+            1000 * 20
+          );
+        }
+      }
+    });
   }
 
   /**
@@ -112,19 +145,20 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         case DataSinkProtocols.DATAHUB: {
           this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
           break;
-        };
+        }
         case DataSinkProtocols.MTCONNECT: {
           this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
           break;
-        };
+        }
         case DataSinkProtocols.OPCUA: {
           this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
           break;
-        };
+        }
 
-        default: break;
+        default:
+          break;
       }
-    })
+    });
 
     this.connectDataSinksToBus();
     winston.info(`${logPrefix} created.`);

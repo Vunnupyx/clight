@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { from, interval, Observable } from 'rxjs';
 
 import {
   DataSource,
@@ -86,24 +87,23 @@ export class DataSourceService {
     }
   }
 
-  async getStatus(datasourceProtocol: string) {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-    });
+  setStatusTimer(protocol: DataSourceProtocol): Observable<void> {
+    // made first call
+    this.getStatus(protocol);
 
+    return interval(5000).pipe(mergeMap(() => from(this.getStatus(protocol))));
+  }
+
+  async getStatus(datasourceProtocol: string) {
     try {
       const obj = await this.httpService.get<DataSourceConnection>(
         `/datasources/${datasourceProtocol}/status`
       );
 
       this._store.patchState((state) => {
-        state.status = Status.Ready;
         state.connection = obj;
       });
     } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source.LoadStatusError')
-      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;

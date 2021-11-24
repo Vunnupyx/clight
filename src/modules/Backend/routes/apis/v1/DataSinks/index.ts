@@ -54,7 +54,6 @@ function dataSinksGetHandler(request: Request, response: Response): void {
         DataSinkProtocols.DATAHUB
       ) as DataHubDataSink;
 
-      console.log(sink?.getDesiredPropertiesServices());
       dataSink.desired = sink?.getDesiredPropertiesServices();
     }
   });
@@ -351,7 +350,7 @@ function dataSinkGetStatusHandler(request: Request, response: Response) {
 
   const boolStatus = dataSinksManager
     .getDataSinkByProto(request.params.datasinkProtocol)
-    .currentStatus();
+    .getCurrentStatus();
   let status: LifecycleEventStatus = LifecycleEventStatus.Connected;
   if (!boolStatus) {
     status = LifecycleEventStatus.Disconnected;

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { from, interval, Observable } from 'rxjs';
 
 import {
   DataPoint,
@@ -61,6 +62,13 @@ export class DataSinkService {
     return this._store.state
       .pipe(filter((x) => x.status != Status.NotInitialized))
       .pipe(map((x) => x.connection));
+  }
+
+  setStatusTimer(protocol: DataSinkProtocol): Observable<void> {
+    // made first call
+    this.getStatus(protocol);
+
+    return interval(5000).pipe(mergeMap(() => from(this.getStatus(protocol))));
   }
 
   revert() {

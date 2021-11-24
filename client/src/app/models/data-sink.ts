@@ -18,8 +18,16 @@ export class DataSinkAuth {
 }
 
 export enum DataSinkConnectionStatus {
+  Disabled = 'disabled',
+  NotConfigured = 'notconfigured',
+  Provisioning = 'provisioning',
+  ProvisioningFailed = 'provisioningfailed',
+  NoNetwork = 'nonetwork',
+  Connecting = 'connecting',
   Connected = 'connected',
-  Disconnected = 'disconnected'
+  Disconnected = 'disconnected',
+  Reconnecting = 'reconnecting',
+  ConnectionError = 'failed to connect'
 }
 
 export class DataSinkConnection {

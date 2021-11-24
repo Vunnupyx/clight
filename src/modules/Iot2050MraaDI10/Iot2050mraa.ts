@@ -6,11 +6,17 @@ interface PinStatus {
   pin: number;
   state: boolean;
 }
-
 export enum PinState {
   OFF = 0,
   ON = 1,
   BLINKING = 2
+}
+interface PinData {
+  raw: boolean;
+  oldRaw: boolean;
+  lastRisingEdges: number[];
+  processedState: PinState;
+  label: string;
 }
 
 /**
@@ -19,20 +25,7 @@ export enum PinState {
  * Order-No: 6ES7647-0KA02-0AA2
  */
 export class Iot2050MraaDI10 {
-  private DIGITAL_PIN_LABELS = [
-    'DI0',
-    'DI1',
-    'DI2',
-    'DI3',
-    'DI4',
-    'DI5',
-    'DI6',
-    'DI7',
-    'DI8',
-    'DI9'
-  ];
   private ANALOG_PIN_LABELS = ['AI0', 'AI1'];
-  private MONITOR_PINS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
   private ANALOG_READ_ADDRESSES = [
     '/sys/bus/iio/devices/iio:device0/in_voltage0_raw',
     '/sys/bus/iio/devices/iio:device0/in_voltage2_raw'
@@ -40,21 +33,85 @@ export class Iot2050MraaDI10 {
   // Maximum time (ms) between the last three edges for detecting the state as blinking
   private BLINKING_MAX_TIME_BETWEEN_EDGES = 2250; // 0,5Hz + tolerance
   private childProcesses: Array<number> = [];
-  private rawCurrentState: Array<boolean> = [];
-  private rawOldState: Array<boolean> = [];
-  private processedCurrentState: Array<PinState> = new Array(
-    Math.max(...this.MONITOR_PINS) + 1
-  ).fill(PinState.OFF, 0, Math.max(...this.MONITOR_PINS) + 1);
-  private edgeTimestamps: Array<Array<number>> = new Array(
-    Math.max(...this.MONITOR_PINS) + 1
-  ).fill([0, 0, 0], 0, Math.max(...this.MONITOR_PINS) + 1);
-  private offset = Math.min(...this.MONITOR_PINS);
+
+  private pinData: { [key: string]: PinData } = {
+    4: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI0'
+    },
+    5: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI1'
+    },
+    6: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI2'
+    },
+    7: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI3'
+    },
+    8: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI4'
+    },
+    9: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI5'
+    },
+    10: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI6'
+    },
+    11: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI7'
+    },
+    12: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI8'
+    },
+    13: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI9'
+    }
+  };
 
   /**
    * Initializes the driver and sets up necessary mraa-gpio instances
    */
   public init(): void {
-    for (const pin of this.MONITOR_PINS) {
+    for (const pin of Object.keys(this.pinData)) {
       // stdbuf is used because mraa does not flush stdout after reported pin state change
       const initialValues = child.spawn(
         'stdbuf',
@@ -80,9 +137,9 @@ export class Iot2050MraaDI10 {
    */
   public async getDigitalValues(): Promise<{ [label: string]: PinState }> {
     let labeledValues = {};
-    for (let i = 0; i < this.DIGITAL_PIN_LABELS.length; i++) {
-      const label = this.DIGITAL_PIN_LABELS[i];
-      const value = this.processedCurrentState[this.MONITOR_PINS[i]];
+    for (const key of Object.keys(this.pinData)) {
+      const label = this.pinData[key].label;
+      const value = this.pinData[key].processedState;
       labeledValues[label] = value;
     }
     return labeledValues;
@@ -134,24 +191,24 @@ export class Iot2050MraaDI10 {
       return;
     }
 
-    this.rawCurrentState[newState.pin] = newState.state;
+    // Detect rising edge
+    if (!this.pinData[newState.pin].raw && newState.state) {
+      this.pinData[newState.pin].lastRisingEdges.unshift(Date.now());
+      this.pinData[newState.pin].lastRisingEdges.pop();
+    }
+    this.pinData[newState.pin].raw = newState.state;
   }
 
   private monitorBlinkingState() {
-    let edgeDetection = [];
-    for (let i = this.offset; i < this.rawOldState.length; i++) {
-      edgeDetection[i] = this.rawCurrentState[i] !== this.rawOldState[i];
-    }
-
-    for (let i = this.offset; i < edgeDetection.length; i++) {
-      if (edgeDetection[i]) {
-        this.edgeTimestamps[i].shift();
-        this.edgeTimestamps[i].push(Date.now());
+    for (const key of Object.keys(this.pinData)) {
+      if (Math.min(...this.pinData[key].lastRisingEdges) > Date.now() - 10000) {
+        this.pinData[key].processedState = PinState.BLINKING;
+      } else if (this.pinData[key].raw) {
+        this.pinData[key].processedState = PinState.ON;
+      } else {
+        this.pinData[key].processedState = PinState.OFF;
       }
-      console.log(`${edgeDetection[i]}: ${this.edgeTimestamps[i]}`);
     }
-
-    this.rawOldState = this.rawCurrentState.slice();
   }
 
   /**

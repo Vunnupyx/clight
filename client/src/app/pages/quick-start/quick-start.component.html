@@ -55,7 +55,11 @@
             {{ 'quick-start.ContinueWithoutTemplate' | translate }}
           </button>
 
-          <button mat-raised-button matStepperNext>
+          <button
+            mat-raised-button
+            matStepperNext
+            [disabled]="!(termsAccepted$ | async)"
+          >
             {{ 'quick-start.Next' | translate }}
           </button>
         </div>

@@ -1,4 +1,3 @@
-import NodeS7 from 'nodes7';
 import winston from 'winston';
 import { DataSource } from '../DataSource';
 import {
@@ -70,6 +69,20 @@ export class IoshieldDataSource extends DataSource {
       winston.debug(`${logPrefix} reading io shield values`);
       const digitalInputValues = await this.mraaClient.getDigitalValues();
       const analogInputValues = await this.mraaClient.getAnalogValues();
+
+      const formattedAnalogInputValues: {
+        [label: string]: number;
+      } = {};
+      Object.keys(analogInputValues).forEach((key) => {
+        switch (this.config.type) {
+          case 'ai-150+5di':
+            formattedAnalogInputValues[key] = analogInputValues[key] * 1.5; // Converting to 150A output
+          case 'ai-100+5di':
+          case '10di':
+          default:
+            formattedAnalogInputValues[key] = analogInputValues[key];
+        }
+      });
 
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {

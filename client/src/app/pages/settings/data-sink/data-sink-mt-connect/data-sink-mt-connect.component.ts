@@ -67,6 +67,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   desiredServices: Array<{ name: string; enabled: boolean }> = [];
 
   sub = new Subscription();
+  statusSub!: Subscription;
 
   filterAddressStr = '';
 
@@ -144,9 +145,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       this.auth = clone(dataSink.auth);
     }
 
+    console.log(1);
+
+    if (this.statusSub) {
+      this.statusSub.unsubscribe();
+    }
+
     if (dataSink.protocol !== DataSinkProtocol.DH) {
       this.dataPointService.getDataPoints(dataSink.protocol);
-      this.dataSinkService.getStatus(dataSink.protocol);
+      this.statusSub = this.dataSinkService
+        .setStatusTimer(dataSink.protocol)
+        .subscribe();
     } else {
       if (dataSink.desired?.services) {
         this.desiredServices = Object.entries(dataSink.desired?.services).map(
@@ -159,6 +168,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
         this.desiredServices = [];
       }
     }
+    console.log(this.statusSub);
   }
 
   updateEnabled(val: boolean) {
@@ -289,6 +299,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
+    this.statusSub && this.statusSub.unsubscribe();
   }
 
   onSaveAuth() {

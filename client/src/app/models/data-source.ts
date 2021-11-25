@@ -7,12 +7,20 @@ export enum DataSourceProtocol {
 
 export enum DataSourceSoftwareVersion {
   v4_5 = '4.5',
-  v4_7 = '4.7',
+  v4_7 = '4.7'
 }
 
 export enum DataSourceConnectionStatus {
+  Disabled = 'disabled',
+  NotConfigured = 'notconfigured',
+  Provisioning = 'provisioning',
+  ProvisioningFailed = 'provisioningfailed',
+  NoNetwork = 'nonetwork',
+  Connecting = 'connecting',
   Connected = 'connected',
   Disconnected = 'disconnected',
+  Reconnecting = 'reconnecting',
+  ConnectionError = 'failed to connect'
 }
 
 export class DataSourceConnection {

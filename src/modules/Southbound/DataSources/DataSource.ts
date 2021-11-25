@@ -35,7 +35,7 @@ export abstract class DataSource extends EventEmitter {
   public protocol: string;
   protected scheduler: SynchronousIntervalScheduler;
   protected schedulerListenerId: number;
-  protected currentStatus: LifecycleEventStatus;
+  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -167,7 +167,11 @@ export abstract class DataSource extends EventEmitter {
     this.emit(DataPointEventTypes.Lifecycle, dataPointLifecycle);
   }
 
-  public getCurrentStatus() {
+  /**
+   * Returns the current status of the data source
+   * @returns
+   */
+  public getCurrentStatus(): LifecycleEventStatus {
     return this.currentStatus;
   }
 }

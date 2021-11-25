@@ -22,7 +22,19 @@ export class IoshieldDataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const { name, protocol } = this.config;
+    const logPrefix = `${IoshieldDataSource.className}::init`;
+    winston.info(`${logPrefix} initializing.`);
+
+    const { name, protocol, enabled } = this.config;
+
+    if (!enabled) {
+      winston.info(
+        `${logPrefix} io shield data source is disabled. Skipping initialization.`
+      );
+      this.currentStatus = LifecycleEventStatus.Disabled;
+      return;
+    }
+
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,

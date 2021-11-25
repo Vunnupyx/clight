@@ -279,10 +279,6 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
   let status = dataSourcesManager
     .getDataSourceByProto(request.params.datasourceProtocol)
     .getCurrentStatus();
-  status =
-    status !== LifecycleEventStatus.Connected
-      ? LifecycleEventStatus.Disconnected
-      : status;
 
   response.status(200).json({ status });
 }

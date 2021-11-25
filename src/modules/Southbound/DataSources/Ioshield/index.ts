@@ -77,12 +77,17 @@ export class IoshieldDataSource extends DataSource {
         switch (this.config.type) {
           case 'ai-150+5di':
             formattedAnalogInputValues[key] = analogInputValues[key] * 1.5; // Converting to 150A output
+            break;
           case 'ai-100+5di':
           case '10di':
           default:
             formattedAnalogInputValues[key] = analogInputValues[key];
+            break;
         }
       });
+
+      console.log(this.config.type);
+      console.log(formattedAnalogInputValues);
 
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {

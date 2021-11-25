@@ -43,8 +43,7 @@
   "quick-start": {
     "TermsAndConditions": "Terms and Conditions",
     "Accept": "Accept",
-    "Language": "Language",
-    "SelectLanguage": "Select Language",
+    "Language": "Select your language",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
@@ -76,11 +75,11 @@
       }
     },
     "Descriptions": {
-      "ReadMore": "Mehr Information findest du innerhalb der Dokumentation",
-      "Step1": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!",
-      "Step2": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!",
-      "Step3": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!",
-      "Step4": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!"
+      "ReadMore": "Weitere Information finden Sie innerhalb der Dokumentation",
+      "Step1": "Mit Hilfe der Templates können Sie eine für Sie passende Vorkonfiguration ins Gerät laden. Später bleibt Ihnen trotzdem noch die Möglichkeit Änderungen in der Konfiguration vorzunehmen. Aktzeptieren Sie zuerst die AGB's um fortzufahren.",
+      "Step2": "Hier können Sie das passende Template auswählen.",
+      "Step3": "Wählen Sie hier die gewünschten Datenquellen an oder ab. Angewählte Datenquellen werden nach erfolgreichen Abschließen des Setup's automatisch gestartet. Diese Einstellung lässt sich später ändern.",
+      "Step4": "Wählen Sie hier die gewünschten Applikations Schnittstellen, die vom System bereitgestellt und aktiviert werden sollen. Diese Einstellung lässt sich später ändern."
     }
   },
   "settings-general": {

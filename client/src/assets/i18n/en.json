@@ -43,8 +43,7 @@
   "quick-start": {
     "TermsAndConditions": "Terms and Conditions",
     "Accept": "Accept",
-    "Language": "Language",
-    "SelectLanguage": "Select Language",
+    "Language": "Select your Language",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
@@ -81,10 +80,10 @@
     },
     "Descriptions": {
       "ReadMore": "More information can be found in the documentation",
-      "Step1": "1Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!",
-      "Step2": "2Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!",
-      "Step3": "3Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!",
-      "Step4": "4Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus corrupti asperiores numquam mollitia. Voluptatibus temporibus quia inventore enim recusandae facilis libero porromollitia quas hic, esse ipsum nisi aspernatur repellendus, neque quisest iusto omnis, explicabo laboriosam id ad vel. Iusto nesciuntasperiores ipsam. Possimus placeat sapiente, est praesentium liberolaboriosam, magnam voluptates molestiae doloribus aut in, at velbeatae sit ipsam dicta. Corrupti sapiente ab eos aspernatur evenietautem eum pariatur fugiat, aut libero saepe, ullam deserunt facereimpedit, odit optio? Adipisci consectetur quia culpa sit, mollitianumquam corrupti cupiditate? Optio quis architecto dolore vero. Harum,neque doloribus!"
+      "Step1": "With the help of the templates, you can load a suitable pre-configuration into the device. Later, you still have the option of making changes to the configuration. Please first accept the terms and conditions in order to continue.",
+      "Step2": "Here you can select the appropriate template.",
+      "Step3": "Select or deselect the desired data sources here. Selected data sources are started automatically after successful completion of the setup. This setting can be changed later.",
+      "Step4": "Select the desired application interfaces that are to be provided and activated by the system. This setting can be changed later."
     }
   },
   "settings-general": {

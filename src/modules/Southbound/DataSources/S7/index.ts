@@ -7,9 +7,13 @@ import {
   DataPointLifecycleEventTypes,
   EventLevels
 } from '../../../../common/interfaces';
-import { IDataPointConfig } from '../../../ConfigManager/interfaces';
+import {
+  IDataPointConfig,
+  IS7DataSourceConnection
+} from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
 import SinumerikNCK from './SinumerikNCK/NCDriver';
+
 interface S7DataPointsWithError {
   datapoints: Array<any>;
   error: boolean;
@@ -19,6 +23,27 @@ interface NCDataPointWithStatus {
   value?: any;
   error?: string;
 }
+
+const defaultS7300Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2
+};
+
+const defaultS71500Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 1
+};
+
+const defaultNckConnection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2 // That's only the plc (300) slot. For the nck, the slot 4 is set inside that driver
+};
 
 /**
  * Implementation of s7 data source
@@ -39,7 +64,18 @@ export class S7DataSource extends DataSource {
    */
   public async init(): Promise<void> {
     const logPrefix = `${S7DataSource.name}::init`;
-    const { name, protocol, connection } = this.config;
+    winston.info(`${logPrefix} initializing.`);
+
+    const { name, protocol, connection, enabled } = this.config;
+
+    if (!enabled) {
+      winston.info(
+        `${logPrefix} S7 data source is disabled. Skipping initialization.`
+      );
+      this.currentStatus = LifecycleEventStatus.Disabled;
+      return;
+    }
+
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,
@@ -58,10 +94,10 @@ export class S7DataSource extends DataSource {
     try {
       if (nckDataPointsConfigured)
         await Promise.all([
-          this.connectPLC(connection),
+          this.connectPLC(),
           this.nckClient.connect(connection.ipAddr)
         ]);
-      else await this.connectPLC(connection);
+      else await this.connectPLC();
     } catch (error) {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.submitLifecycleEvent({
@@ -255,7 +291,24 @@ export class S7DataSource extends DataSource {
    * Handles connection result from connecting to device
    * @param  {} err
    */
-  private connectPLC(connection): Promise<void> {
+  private connectPLC(): Promise<void> {
+    let connection: IS7DataSourceConnection;
+
+    switch (this.config.type) {
+      case 's7-1200/1500':
+        connection = defaultS71500Connection;
+        break;
+      case 's7-300/400':
+        connection = defaultS7300Connection;
+        break;
+      case 'nck':
+        connection = defaultNckConnection;
+        break;
+      case 'custom':
+      default:
+        connection = this.config.connection;
+    }
+
     return new Promise((resolve, reject) => {
       this.client.initiateConnection(
         {

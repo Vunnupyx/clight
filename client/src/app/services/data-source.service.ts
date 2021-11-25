@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { from, interval, Observable } from 'rxjs';
 
 import {
   DataSource,
   DataSourceConnection,
-  DataSourceProtocol
+  DataSourceProtocol,
+  IOShieldTypes,
+  S7Types
 } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -86,24 +89,23 @@ export class DataSourceService {
     }
   }
 
-  async getStatus(datasourceProtocol: string) {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-    });
+  setStatusTimer(protocol: DataSourceProtocol): Observable<void> {
+    // made first call
+    this.getStatus(protocol);
 
+    return interval(5000).pipe(mergeMap(() => from(this.getStatus(protocol))));
+  }
+
+  async getStatus(datasourceProtocol: string) {
     try {
       const obj = await this.httpService.get<DataSourceConnection>(
         `/datasources/${datasourceProtocol}/status`
       );
 
       this._store.patchState((state) => {
-        state.status = Status.Ready;
         state.connection = obj;
       });
     } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source.LoadStatusError')
-      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -137,6 +139,10 @@ export class DataSourceService {
       payload.softwareVersion = ds.softwareVersion;
     }
 
+    if (ds.type) {
+      payload.type = ds.type;
+    }
+
     await this.httpService.patch(`/datasources/${protocol}`, payload);
 
     this._store.patchState((state) => {
@@ -158,6 +164,20 @@ export class DataSourceService {
 
   getNckAddresses() {
     return NCK_ADDRESSES;
+  }
+
+  async getDataSourceType(
+    protocol: DataSourceProtocol
+  ): Promise<S7Types | IOShieldTypes | null> {
+    try {
+      const ds = await this.httpService.get<DataSource>(
+        `/datasources/${protocol}`
+      );
+
+      return ds.type;
+    } catch {
+      return null;
+    }
   }
 
   private _orderByProtocol(objs: DataSource[]): DataSource[] {

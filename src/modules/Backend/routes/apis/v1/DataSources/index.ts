@@ -7,10 +7,7 @@ import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
-import {
-  DataSourceProtocols,
-  LifecycleEventStatus
-} from '../../../../../../common/interfaces';
+import { DataSourceProtocols } from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -65,7 +62,7 @@ async function dataSourcePatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const allowed = ['connection', 'enabled', 'softwareVersion'];
+  const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
 
   const dataSource = configManager.config.dataSources.find(
@@ -86,7 +83,8 @@ async function dataSourcePatchHandler(
     }
   });
 
-  const changedDatasource = { ...dataSource, ...request.body };
+  let changedDatasource = { ...dataSource, ...request.body };
+
   const config = configManager.config;
   config.dataSources = [
     ...config.dataSources.filter(
@@ -279,10 +277,6 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
   let status = dataSourcesManager
     .getDataSourceByProto(request.params.datasourceProtocol)
     .getCurrentStatus();
-  status =
-    status !== LifecycleEventStatus.Connected
-      ? LifecycleEventStatus.Disconnected
-      : status;
 
   response.status(200).json({ status });
 }

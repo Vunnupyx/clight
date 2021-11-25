@@ -118,9 +118,17 @@
     "Connection": "",
     "Running": "",
     "Disconnected": "",
+    "NotConfigured": "NotConfigured",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "ProvisioningFailed",
+    "NoNetwork": "NoNetwork",
+    "Connecting": "Connecting",
+    "Reconnecting": "Reconnecting",
+    "ConnectionError": "Failed to connect",
     "ServiceState": "",
     "DataPoints": "",
     "SelectAVariable": "",
+    "ControllerType": "",
     "Name": "",
     "Type": "",
     "Address": "",
@@ -136,8 +144,8 @@
     "LoadStatusError": "",
     "UpdateError": "",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
-      "ioshield": "Digital Inputs"
+      "s7": "SIEMENS",
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {
@@ -192,6 +200,13 @@
     "Connection": "",
     "Running": "",
     "Disconnected": "",
+    "NotConfigured": "NotConfigured",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "ProvisioningFailed",
+    "NoNetwork": "NoNetwork",
+    "Connecting": "Connecting",
+    "Reconnecting": "Reconnecting",
+    "ConnectionError": "Failed to connect",
     "ServiceState": "",
     "DataPoints": "",
     "AddDataPoint": "",

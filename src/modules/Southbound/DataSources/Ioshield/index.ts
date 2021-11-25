@@ -1,4 +1,3 @@
-import NodeS7 from 'nodes7';
 import winston from 'winston';
 import { DataSource } from '../DataSource';
 import {
@@ -22,7 +21,19 @@ export class IoshieldDataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const { name, protocol } = this.config;
+    const logPrefix = `${IoshieldDataSource.className}::init`;
+    winston.info(`${logPrefix} initializing.`);
+
+    const { name, protocol, enabled } = this.config;
+
+    if (!enabled) {
+      winston.info(
+        `${logPrefix} io shield data source is disabled. Skipping initialization.`
+      );
+      this.currentStatus = LifecycleEventStatus.Disabled;
+      return;
+    }
+
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,
@@ -59,10 +70,28 @@ export class IoshieldDataSource extends DataSource {
       const digitalInputValues = await this.mraaClient.getDigitalValues();
       const analogInputValues = await this.mraaClient.getAnalogValues();
 
+      const formattedAnalogInputValues: {
+        [label: string]: number;
+      } = {};
+      Object.keys(analogInputValues).forEach((key) => {
+        switch (this.config.type) {
+          case 'ai-150+5di':
+            formattedAnalogInputValues[key] = analogInputValues[key] * 1.5; // Converting to 150A output
+            break;
+          case 'ai-100+5di':
+          case '10di':
+          default:
+            formattedAnalogInputValues[key] = analogInputValues[key];
+            break;
+        }
+      });
+
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
         const value =
-          digitalInputValues[dp.address] || analogInputValues[dp.address] || 0;
+          digitalInputValues[dp.address] ||
+          formattedAnalogInputValues[dp.address] ||
+          0;
 
         if (typeof value === 'undefined') continue;
 

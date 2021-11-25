@@ -122,9 +122,17 @@
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
+    "NotConfigured": "NotConfigured",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "ProvisioningFailed",
+    "NoNetwork": "NoNetwork",
+    "Connecting": "Connecting",
+    "Reconnecting": "Reconnecting",
+    "ConnectionError": "Failed to connect",
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
+    "ControllerType": "Controller Type",
     "Name": "Name",
     "Type": "Type",
     "Address": "Address",
@@ -140,8 +148,8 @@
     "LoadStatusError": "Failed to load status. Try again later",
     "UpdateError": "Failed to update a data source. Try again later",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
-      "ioshield": "Digital Inputs"
+      "s7": "SIEMENS",
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {
@@ -196,6 +204,13 @@
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
+    "NotConfigured": "NotConfigured",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "ProvisioningFailed",
+    "NoNetwork": "NoNetwork",
+    "Connecting": "Connecting",
+    "Reconnecting": "Reconnecting",
+    "ConnectionError": "Failed to connect",
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "AddDataPoint": "Add data point",

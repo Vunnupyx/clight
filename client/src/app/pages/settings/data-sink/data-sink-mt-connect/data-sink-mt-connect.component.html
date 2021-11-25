@@ -574,11 +574,41 @@
       <div>
         <div style="font-weight: 600">
           <ng-container [ngSwitch]="connection.status">
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disabled">
+              {{ 'settings-data-sink.Disabled' | translate }}
+            </ng-container>
+            <ng-container
+              *ngSwitchCase="DataSinkConnectionStatus.NotConfigured"
+            >
+              {{ 'settings-data-sink.NotConfigured' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
+              {{ 'settings-data-sink.Provisioning' | translate }}
+            </ng-container>
+            <ng-container
+              *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
+            >
+              {{ 'settings-data-sink.ProvisioningFailed' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
+              {{ 'settings-data-sink.NoNetwork' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connecting">
+              {{ 'settings-data-sink.Connecting' | translate }}
+            </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
               {{ 'settings-data-sink.Running' | translate }}
             </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
               {{ 'settings-data-sink.Disconnected' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Reconnecting">
+              {{ 'settings-data-sink.Reconnecting' | translate }}
+            </ng-container>
+            <ng-container
+              *ngSwitchCase="DataSinkConnectionStatus.ConnectionError"
+            >
+              {{ 'settings-data-sink.ConnectionError' | translate }}
             </ng-container>
           </ng-container>
         </div>
@@ -588,10 +618,38 @@
       </div>
       <div class="mr-10">
         <ng-container [ngSwitch]="connection.status">
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disabled">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.NotConfigured">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container
+            *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
+          >
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connecting">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
           <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
             <mat-icon class="color-success">check_circle_outline</mat-icon>
           </ng-container>
           <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Reconnecting">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container
+            *ngSwitchCase="DataSinkConnectionStatus.ConnectionError"
+          >
             <mat-icon class="color-danger">highlight_off</mat-icon>
           </ng-container>
         </ng-container>

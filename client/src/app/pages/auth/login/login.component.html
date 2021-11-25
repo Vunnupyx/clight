@@ -48,15 +48,21 @@
             </mat-form-field>
 
             <div class="password-block">
+              <span class="forgot-password">
+                <a href="#" (click)="openForgotPassword()">{{
+                  'auth-login.ForgotPassword' | translate
+                }}</a>
+              </span>
               <mat-form-field>
-                <mat-label
-                  >{{ 'auth-login.Password' | translate
-                  }}<span
-                    ><app-doc-btn
+                <mat-label class="d-flex">
+                  <span>{{ 'auth-login.Password' | translate }}</span>
+                  <span>
+                    <app-doc-btn
                       link="http://localhost:3000/help/docs/#login"
                       tooltip="Where do I find my login password?"
-                    ></app-doc-btn></span
-                ></mat-label>
+                    ></app-doc-btn>
+                  </span>
+                </mat-label>
 
                 <input
                   matInput

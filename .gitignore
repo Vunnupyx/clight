@@ -4,6 +4,7 @@ dist
 runtime
 mdclight
 coverage 
+tmp
 .DS_Store
 .env
 yarn-error.log

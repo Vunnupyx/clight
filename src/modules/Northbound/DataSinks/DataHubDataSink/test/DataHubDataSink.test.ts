@@ -54,7 +54,6 @@ const configMock: IDataSinkConfig = {
 };
 
 const runTimeConfigMock: IDataHubConfig = {
-  serialNumber: 'UTSerialNumber',
   groupDevice: false,
   signalGroups: {
     group1: ['address/1', 'address/2', 'address/3'],

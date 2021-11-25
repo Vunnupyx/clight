@@ -209,7 +209,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         expiresIn: 60 * 60
       },
       datahub: {
-        serialNumber: 'No serial number found', // TODO Use mac address?
         groupDevice: false,
         signalGroups: undefined,
         dataPointTypesData: {

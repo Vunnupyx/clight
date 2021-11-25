@@ -20,7 +20,7 @@ export enum DataSourceConnectionStatus {
   Connected = 'connected',
   Disconnected = 'disconnected',
   Reconnecting = 'reconnecting',
-  ConnectionError = 'failed to connect'
+  ConnectionError = 'failedtoconnect'
 }
 
 export class DataSourceConnection {
@@ -34,7 +34,20 @@ export class Connection {
   slot?: number;
 }
 
+export enum S7Types {
+  Sinumerik = 'nck',
+  S7_300_400 = 's7-300/400',
+  S7_1200_1500 = 's7-1200/1500'
+}
+
+export enum IOShieldTypes {
+  DI_10 = '10di',
+  AI_100_5di = 'ai-100+5di',
+  AI_150_5di = 'ai-150+5di'
+}
+
 export class DataSource {
+  type?: S7Types | IOShieldTypes;
   connection?: Connection;
   dataPoints?: SourceDataPoint[];
   enabled?: boolean;

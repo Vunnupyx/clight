@@ -137,6 +137,7 @@
     "ServiceState": "",
     "DataPoints": "",
     "SelectAVariable": "",
+    "ControllerType": "",
     "Name": "",
     "Type": "",
     "Address": "",
@@ -152,8 +153,8 @@
     "LoadStatusError": "",
     "UpdateError": "",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
-      "ioshield": "Digital Inputs"
+      "s7": "SIEMENS",
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {

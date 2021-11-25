@@ -49,19 +49,21 @@ const defaultS7DataSource: IDataSourceConfig = {
   name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.S7,
+  enabled: true,
+  type: 'nck',
   connection: {
     ipAddr: '192.168.214.1',
     port: 102,
     rack: 0,
     slot: 2
-  },
-  enabled: false
+  }
 };
 const defaultIoShieldDataSource: IDataSourceConfig = {
   name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.IOSHIELD,
-  enabled: false
+  enabled: false,
+  type: 'ai-100+5di'
 };
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',
@@ -212,7 +214,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         expiresIn: 60 * 60
       },
       datahub: {
-        serialNumber: 'No serial number found', // TODO Use mac address?
         groupDevice: false,
         signalGroups: undefined,
         dataPointTypesData: {

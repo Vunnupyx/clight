@@ -59,7 +59,7 @@ export enum LifecycleEventStatus {
   Connected = 'connected',
   Disconnected = 'disconnected',
   Reconnecting = 'reconnecting',
-  ConnectionError = 'failed to connect'
+  ConnectionError = 'failedtoconnect'
 }
 
 export interface IBaseAppEvent {

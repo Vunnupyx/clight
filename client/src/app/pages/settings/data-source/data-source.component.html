@@ -32,11 +32,11 @@
       </div>
 
       <div *ngIf="dataSource?.protocol === Protocol.S7">
-        <div class="mt-20 d-flex align-items-center">
-          <div class="mt-0 mr-25 text-nowrap">
+        <div class="mt-20 row d-flex align-items-center">
+          <div class="text-nowrap col-12 col-md-5">
             {{ 'settings-data-source.IPAddress' | translate }}
           </div>
-          <form #form="ngForm">
+          <form #form="ngForm" class="col-12 col-md-7">
             <div>
               <mat-form-field>
                 <input
@@ -51,6 +51,32 @@
               </mat-form-field>
             </div>
           </form>
+        </div>
+
+        <div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{
+                'settings-data-source.ControllerType' | translate
+              }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <mat-select
+                  [ngModel]="dataSource?.type"
+                  (ngModelChange)="updateControllerType($event)"
+                >
+                  <mat-option [value]="S7Types.Sinumerik">Sinumerik</mat-option>
+                  <mat-option [value]="S7Types.S7_300_400"
+                    >S7-300/400</mat-option
+                  >
+                  <mat-option [value]="S7Types.S7_1200_1500"
+                    >S7-1200/1500</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
 
         <div *ngIf="false">
@@ -70,6 +96,36 @@
                     *ngFor="let version of SoftwareVersions"
                     [value]="version"
                     >{{ version }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="dataSource?.protocol === Protocol.IOShield">
+        <div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{
+                'settings-data-source.ControllerType' | translate
+              }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <mat-select
+                  [ngModel]="dataSource?.type"
+                  (ngModelChange)="updateControllerType($event)"
+                >
+                  <mat-option [value]="IOShieldTypes.DI_10"
+                    >10 Digital Inputs</mat-option
+                  >
+                  <mat-option [value]="IOShieldTypes.AI_100_5di"
+                    >Sensor 100A + 5 Digital Input</mat-option
+                  >
+                  <mat-option [value]="IOShieldTypes.AI_150_5di"
+                    >Sensor 150A + 5 Digital Input</mat-option
                   >
                 </mat-select>
               </mat-form-field>
@@ -370,7 +426,7 @@
           >
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
               <div class="text-ellipsis" [title]="value">
-                {{ value }}
+                {{ mapAddressLabel(value) }}
               </div>
             </ng-container>
             <div
@@ -418,7 +474,7 @@
                     <mat-option
                       *ngFor="let address of ioshieldAddresses"
                       [value]="address"
-                      >{{ address }}</mat-option
+                      >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
                   <ng-template #s7InputAddress>

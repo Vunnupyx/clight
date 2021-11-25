@@ -11,8 +11,16 @@ export enum DataSourceSoftwareVersion {
 }
 
 export enum DataSourceConnectionStatus {
+  Disabled = 'disabled',
+  NotConfigured = 'notconfigured',
+  Provisioning = 'provisioning',
+  ProvisioningFailed = 'provisioningfailed',
+  NoNetwork = 'nonetwork',
+  Connecting = 'connecting',
   Connected = 'connected',
-  Disconnected = 'disconnected'
+  Disconnected = 'disconnected',
+  Reconnecting = 'reconnecting',
+  ConnectionError = 'failedtoconnect'
 }
 
 export class DataSourceConnection {

@@ -178,6 +178,36 @@
             <div style="font-weight: 600">
               <ng-container [ngSwitch]="connection.status">
                 <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Disabled"
+                >
+                  {{ 'settings-data-source.Disabled' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.NotConfigured"
+                >
+                  {{ 'settings-data-source.NotConfigured' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Provisioning"
+                >
+                  {{ 'settings-data-source.Provisioning' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed"
+                >
+                  {{ 'settings-data-source.ProvisioningFailed' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.NoNetwork"
+                >
+                  {{ 'settings-data-source.NoNetwork' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Connecting"
+                >
+                  {{ 'settings-data-source.Connecting' | translate }}
+                </ng-container>
+                <ng-container
                   *ngSwitchCase="DataSourceConnectionStatus.Connected"
                 >
                   {{ 'settings-data-source.Running' | translate }}
@@ -187,6 +217,16 @@
                 >
                   {{ 'settings-data-source.Disconnected' | translate }}
                 </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Reconnecting"
+                >
+                  {{ 'settings-data-source.Reconnecting' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
+                >
+                  {{ 'settings-data-source.ConnectionError' | translate }}
+                </ng-container>
               </ng-container>
             </div>
             <small style="color: #999">{{
@@ -195,6 +235,34 @@
           </div>
           <div class="mr-10">
             <ng-container [ngSwitch]="connection.status">
+              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disabled">
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NotConfigured"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Provisioning"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NoNetwork"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Connecting"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Connected"
               >
@@ -202,6 +270,16 @@
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Reconnecting"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
               >
                 <mat-icon class="color-danger">highlight_off</mat-icon>
               </ng-container>

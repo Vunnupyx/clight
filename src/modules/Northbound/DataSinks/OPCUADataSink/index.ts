@@ -2,7 +2,8 @@ import winston from 'winston';
 import {
   DataSinkProtocols,
   DataSourceLifecycleEventTypes,
-  ILifecycleEvent
+  ILifecycleEvent,
+  LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataSink } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
@@ -39,11 +40,20 @@ export class OPCUADataSink extends DataSink {
       generalConfig: options.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
+    this.enabled = options.dataSinkConfig.enabled;
   }
 
-  public init(): Promise<OPCUADataSink> {
+  public async init(): Promise<OPCUADataSink> {
     const logPrefix = `${OPCUADataSink.className}::init`;
     winston.info(`${logPrefix} initializing.`);
+
+    if (!this.enabled) {
+      winston.info(
+        `${logPrefix} OPC UA data sink is disabled. Skipping initialization.`
+      );
+      this.currentStatus = LifecycleEventStatus.Disabled;
+      return this;
+    }
 
     return this.opcuaAdapter
       .init()
@@ -133,14 +143,6 @@ export class OPCUADataSink extends DataSink {
   public async disconnect() {
     const logPrefix = `${OPCUADataSink.className}::disconnect`;
     this.opcuaAdapter.stop();
-  }
-  /**
-   * Current status of opcua sink
-   * true -> running
-   * false -> not running
-   */
-  public currentStatus(): boolean {
-    return !!this.opcuaAdapter?.isRunning;
   }
 
   /**

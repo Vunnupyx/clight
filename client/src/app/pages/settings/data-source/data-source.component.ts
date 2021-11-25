@@ -59,6 +59,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   sub = new Subscription();
   liveDataSub!: Subscription;
+  statusSub!: Subscription;
 
   ipRegex = IP_REGEX;
   dsFormValid = true;
@@ -199,8 +200,14 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.dataSource = obj;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
 
+    if (this.statusSub) {
+      this.statusSub.unsubscribe();
+    }
+
     if (this.dataSource.protocol !== DataSourceProtocol.IOShield) {
-      this.dataSourceService.getStatus(obj.protocol!);
+      this.statusSub = this.dataSourceService
+        .setStatusTimer(this.dataSource.protocol!)
+        .subscribe();
     }
 
     this.sourceDataPointService.getLiveDataForDataPoints(
@@ -358,6 +365,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.sub.unsubscribe();
     this.liveDataSub && this.liveDataSub.unsubscribe();
+    this.statusSub && this.statusSub.unsubscribe();
     this.promptService.destroyWarnBeforePageUnload();
   }
 

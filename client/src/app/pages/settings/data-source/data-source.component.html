@@ -333,6 +333,12 @@
                     (ngModelChange)="
                       unsavedRow && (unsavedRow.address = $event)
                     "
+                    [matTooltip]="
+                      'settings-data-source.DuplicatedAddress' | translate
+                    "
+                    matTooltipPosition="above"
+                    [matTooltipDisabled]="!isDuplicatingField('address')"
+                    [class.border-danger]="isDuplicatingField('address')"
                   >
                     <mat-option>
                       <ngx-mat-select-search

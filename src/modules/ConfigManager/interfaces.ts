@@ -82,7 +82,7 @@ export interface IDataSourceConfig {
   protocol: string;
   connection?: IS7DataSourceConnection;
   enabled: boolean;
-  type: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
+  type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
 }
 
 type IMTConnectDataPointTypes = 'event' | 'condition';

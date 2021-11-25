@@ -71,6 +71,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   filterAddressStr = '';
 
+  dsFormValid: boolean = false;
+
   get addressesOrDataItems() {
     const array =
       this.dataSink?.protocol !== DataSinkProtocol.OPC
@@ -327,15 +329,11 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   saveDatahubConfig(form: NgForm) {
-    this.dataSinkService
-      .updateDataSink(this.dataSink?.protocol!, { datahub: form.value })
-      .then(() => this.dataSinkService.apply(this.dataSink?.protocol!))
-      .then(() =>
-        this.toastr.success(
-          this.translate.instant('settings-data-sink.DataHubConfigSaveSuccess')
-        )
-      )
-      .then(() => form.resetForm(form.value));
+    this.dsFormValid = form.valid!;
+
+    this.dataSinkService.updateDataSink(this.dataSink?.protocol!, {
+      datahub: form.value
+    });
   }
 
   goToMtConnectStream() {

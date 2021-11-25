@@ -87,7 +87,9 @@ export class IoshieldDataSource extends DataSource {
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
         const value =
-          digitalInputValues[dp.address] || analogInputValues[dp.address] || 0;
+          digitalInputValues[dp.address] ||
+          formattedAnalogInputValues[dp.address] ||
+          0;
 
         if (typeof value === 'undefined') continue;
 

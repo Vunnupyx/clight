@@ -25,7 +25,6 @@ import {
 } from '../../DataSinks/DataHubDataSink';
 import { LifecycleEventStatus } from '../../../../common/interfaces';
 import { System } from '../../../System';
-import { MdnsDiscoveryConfiguration } from 'node-opcua-types';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;

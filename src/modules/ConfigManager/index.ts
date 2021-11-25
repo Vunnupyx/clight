@@ -49,8 +49,14 @@ const defaultS7DataSource: IDataSourceConfig = {
   name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.S7,
-  enabled: false,
-  type: 'nck'
+  enabled: true,
+  type: 'nck',
+  connection: {
+    ipAddr: '192.168.214.1',
+    port: 102,
+    rack: 0,
+    slot: 2
+  }
 };
 const defaultIoShieldDataSource: IDataSourceConfig = {
   name: '',

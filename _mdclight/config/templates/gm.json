@@ -142,6 +142,12 @@
         }
       ],
       "protocol": "s7",
+      "connection": {
+        "ipAddr": "192.168.214.1",
+        "port": 102,
+        "rack": 0,
+        "slot": 2
+      },
       "enabled": true
     },
     {

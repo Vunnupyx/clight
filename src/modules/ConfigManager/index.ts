@@ -49,19 +49,15 @@ const defaultS7DataSource: IDataSourceConfig = {
   name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.S7,
-  connection: {
-    ipAddr: '192.168.214.1',
-    port: 102,
-    rack: 0,
-    slot: 2
-  },
-  enabled: false
+  enabled: false,
+  type: 'nck'
 };
 const defaultIoShieldDataSource: IDataSourceConfig = {
   name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.IOSHIELD,
-  enabled: false
+  enabled: false,
+  type: 'ai-100+5di'
 };
 const defaultOpcuaDataSink: IDataSinkConfig = {
   name: '',

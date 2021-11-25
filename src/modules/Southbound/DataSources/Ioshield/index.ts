@@ -86,9 +86,6 @@ export class IoshieldDataSource extends DataSource {
         }
       });
 
-      console.log(this.config.type);
-      console.log(formattedAnalogInputValues);
-
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
         const value =

@@ -5,6 +5,15 @@
         {{ 'quick-start.SelectLanguage' | translate }}
       </ng-template>
       <div class="pt-20">
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step1' | translate }}
+          </p>
+          <a href="#" target="_blank">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+
         <mat-form-field appearance="legacy">
           <mat-label>{{ 'quick-start.Language' | translate }}</mat-label>
           <mat-select
@@ -58,6 +67,15 @@
         {{ 'quick-start.SelectTemplate' | translate }}
       </ng-template>
       <form [formGroup]="templateForm" class="pt-20">
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step2' | translate }}
+          </p>
+          <a href="#" target="_blank">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+
         <div>
           <mat-radio-group
             formControlName="templateId"
@@ -90,6 +108,15 @@
         {{ 'quick-start.SelectSource' | translate }}
       </ng-template>
       <form [formGroup]="sourceForm" class="pt-20">
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step3' | translate }}
+          </p>
+          <a href="#" target="_blank">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+
         <div class="source-radio-group">
           <mat-checkbox
             class="source-radio-button source-checkbox"
@@ -128,6 +155,15 @@
         class="pt-20"
         (submit)="onSubmit()"
       >
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step4' | translate }}
+          </p>
+          <a href="#" target="_blank">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+
         <div class="source-radio-group">
           <mat-checkbox
             class="source-radio-button source-checkbox"

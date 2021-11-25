@@ -61,8 +61,6 @@ export class DataHubDataSink extends DataSink {
    * Send data to data hub via data hub adapter object.
    */
   protected processDataPointValues(dataPointsObj): void {
-    console.log(dataPointsObj);
-
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
     winston.debug(`${logPrefix} receive measurements.`);
 

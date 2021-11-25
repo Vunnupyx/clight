@@ -127,7 +127,6 @@ export interface IOpcuaAuth {
 
 export interface IDataHubConfig {
   groupDevice: boolean;
-  serialNumber: string;
   signalGroups: ISignalGroups;
   dataPointTypesData: {
     probe: IDataHubDataPointTypesData;

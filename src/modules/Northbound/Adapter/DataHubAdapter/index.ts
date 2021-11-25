@@ -24,6 +24,8 @@ import {
   IMeasurement
 } from '../../DataSinks/DataHubDataSink';
 import { LifecycleEventStatus } from '../../../../common/interfaces';
+import { System } from '../../../System';
+import { MdnsDiscoveryConfiguration } from 'node-opcua-types';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
@@ -82,6 +84,8 @@ export class DataHubAdapter {
   #telemetrySendInterval: number;
   #runningTimers: Array<NodeJS.Timer> = [];
 
+  lastSentEventValues: { [key: string]: boolean | number | string } = {};
+
   /**
    *
    * @param options Static options defined inside the runtime config
@@ -114,7 +118,6 @@ export class DataHubAdapter {
     this.#scopeId = dynamicOptions?.scopeId || '';
     this.#isGroupRegistration = staticOptions.groupDevice || false;
     this.#proxyConfig = staticOptions.proxy || null;
-    this.#serialNumber = staticOptions.serialNumber;
 
     this.onStateChange = onStateChange;
   }
@@ -163,8 +166,14 @@ export class DataHubAdapter {
   /**
    * Initialize the DataHubAdapter and get provisioning for the device.
    */
-  public init(): Promise<DataHubAdapter> {
+  public async init(): Promise<DataHubAdapter> {
     const logPrefix = `${DataHubAdapter.#className}::init`;
+
+    this.#serialNumber = (
+      (await new System().readMacAddress('eth1')) || '000000000000'
+    )
+      .split(':')
+      .join('');
 
     return Promise.resolve()
       .then(() => {
@@ -448,14 +457,35 @@ export class DataHubAdapter {
       //why object.entries infer string instead real strings?
       switch (group as TDataHubDataPointType) {
         case 'event': {
+          // Remove not changed data
+          const filteredMeasurementArray: IMeasurement[] = [];
+          measurementArray.forEach((measurement) => {
+            const filteredMeasurements: IMeasurement = {};
+            for (const [key, value] of Object.entries(measurement)) {
+              if (this.lastSentEventValues[key] !== value)
+                filteredMeasurements[key] = value;
+            }
+            if (Object.keys(filteredMeasurements).length > 0)
+              filteredMeasurementArray.push(filteredMeasurements);
+          });
+
+          if (filteredMeasurementArray.length === 0) continue;
+
+          // Storing last sent value
+          filteredMeasurementArray.forEach((measurement) => {
+            for (const [key, value] of Object.entries(measurement)) {
+              this.lastSentEventValues[key] = value;
+            }
+          });
+
           const eventBuffer = new MessageBuffer(this.#serialNumber);
-          eventBuffer.addAssetList(measurementArray);
+          eventBuffer.addAssetList(filteredMeasurementArray);
           const msg = this.addMsgType('event', eventBuffer.getMessage());
-          console.log(msg);
-          console.log(msg.properties);
+
           this.#dataHubClient.sendEvent(msg, () => {
             winston.debug(`${logPrefix} send event data`);
           });
+
           continue;
         }
         case 'telemetry': {
@@ -484,7 +514,6 @@ export class DataHubAdapter {
   }
 
   private sendMessage(msgType: Exclude<TDataHubDataPointType, 'event'>): void {
-    console.log('data hub send msg');
     const logPrefix = `${DataHubAdapter.#className}::sendMessage`;
     if (!this.#dataHubClient || !this.isRunning) {
       winston.error(
@@ -502,7 +531,6 @@ export class DataHubAdapter {
     }
     const msg = this.addMsgType(msgType, buffer.getMessage());
 
-    console.log(msg);
     this.#dataHubClient.sendEvent(msg, () => {
       winston.debug(`${logPrefix} send ${msgType} message`);
     });
@@ -609,7 +637,7 @@ class MessageBuffer {
    */
   private getCurrentMsg(): IMessageFormat {
     return {
-      serialNumber: '01234567890',
+      serialNumber: this.serialNumber,
       startDate: this.#startDate,
       endDate: new Date().toISOString(),
       assetData: this.#assetBuffer

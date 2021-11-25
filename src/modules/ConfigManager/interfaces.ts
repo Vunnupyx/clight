@@ -55,6 +55,19 @@ export interface IOPCUAConfig extends OPCUAServerOptions {
   nodesetDir: string;
 }
 
+export type IS7DataSourceConnection = {
+  ipAddr: string;
+  port: number;
+  rack: number;
+  slot: number;
+};
+export type IS7DataSourceTypes =
+  | 's7-300/400'
+  | 's7-1200/1500'
+  | 'nck'
+  | 'custom';
+export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
+
 export interface IDataPointConfig {
   id: string;
   name: string;
@@ -67,13 +80,9 @@ export interface IDataSourceConfig {
   name: string;
   dataPoints: IDataPointConfig[];
   protocol: string;
-  connection?: {
-    ipAddr: string;
-    port: number;
-    rack: number;
-    slot: number;
-  };
+  connection?: IS7DataSourceConnection;
   enabled: boolean;
+  type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
 }
 
 type IMTConnectDataPointTypes = 'event' | 'condition';

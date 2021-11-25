@@ -212,7 +212,6 @@
         }
       ],
       "protocol": "ioshield",
-      "connection": null,
       "enabled": true
     }
   ],

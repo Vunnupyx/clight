@@ -3,6 +3,7 @@ build
 dist
 runtime
 mdclight
+tmp
 coverage 
 tmp
 .DS_Store

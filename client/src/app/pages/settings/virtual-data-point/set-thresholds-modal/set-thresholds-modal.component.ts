@@ -4,8 +4,13 @@ import { Subscription } from 'rxjs';
 import { ECharts } from 'echarts';
 
 import { ObjectMap } from '../../../../shared/utils';
-import { DataPointLiveData, TimeSeriesValue } from '../../../../models';
 import {
+  DataPointLiveData,
+  IOShieldTypes,
+  TimeSeriesValue
+} from '../../../../models';
+import {
+  DataSourceService,
   SourceDataPointService,
   SystemInformationService
 } from '../../../../services';
@@ -29,6 +34,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   sub = new Subscription();
   liveDataSub!: Subscription;
+  IOShieldTypes = IOShieldTypes;
 
   chart!: ECharts;
 
@@ -38,10 +44,11 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<SetThresholdsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SetThresholdsModalData,
     private sourceDataPointsService: SourceDataPointService,
+    private dataSourceService: DataSourceService,
     private systemInfoService: SystemInformationService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.systemInfoService
       .getServerTimeOffset()
       .then((offset) => (this.serverOffsetTime = offset));
@@ -51,6 +58,10 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
     );
 
     this.sub.add(sub);
+
+    const dataSourceType = await this.dataSourceService.getDataSourceType(
+      this.sourceDataPointsService.getProtocol(this.data.source)
+    );
 
     this.liveDataSub = this.sourceDataPointsService
       .setLivedataTimer(
@@ -71,6 +82,28 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         trigger: 'axis',
         axisPointer: {
           animation: false
+        },
+        formatter: (params) => {
+          console.log(params[0].marker);
+          const seriesTemplate = params
+            .map(
+              (param) => `
+                <div style="margin: 10px 0 5px;line-height:1;">${
+                  param.marker
+                }<span style="font-size:14px;color:#666;font-weight:400;margin-left:2px">${
+                param.seriesName
+              }</span><span style="float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900">${this.formatChartLabel(
+                param.value[1],
+                dataSourceType
+              )}</span><div style="clear:both"></div></div>
+              `
+            )
+            .join('');
+
+          const html = `
+            <div style="margin: 0px 0 0;line-height:1;"><div style="font-size:14px;color:#666;font-weight:400;line-height:1;">${params[0].axisValueLabel}</div><div>${seriesTemplate}</div></div>`;
+
+          return html;
         }
       },
       xAxis: {
@@ -104,6 +137,19 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         boundaryGap: [0, '100%'],
         splitLine: {
           show: false
+        },
+        axisLabel: {
+          formatter: (value) => {
+            if (
+              [IOShieldTypes.AI_100_5di, IOShieldTypes.AI_150_5di].includes(
+                dataSourceType as IOShieldTypes
+              )
+            ) {
+              return `${value} A`;
+            }
+
+            return value;
+          }
         }
       },
       series: [...this.getThresholdsSeries(), this.getMainLineSeries()]
@@ -112,6 +158,18 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
 
   onChartInit(event) {
     this.chart = event;
+  }
+
+  formatChartLabel(value, dataSourceType) {
+    if (
+      [IOShieldTypes.AI_100_5di, IOShieldTypes.AI_150_5di].includes(
+        dataSourceType as IOShieldTypes
+      )
+    ) {
+      return `${value} A`;
+    }
+
+    return value;
   }
 
   getMainLineSeries() {
@@ -214,8 +272,8 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   }
 
   private getThresholdsSeries() {
-    return this.rows.map(({ threshold }) => ({
-      name: `Threshold val: ${threshold}`,
+    return this.rows.map(({ threshold }, idx) => ({
+      name: `Threshold #${idx + 1}`,
       type: 'line',
       showSymbol: false,
       hoverAnimation: false,

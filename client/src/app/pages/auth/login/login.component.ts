@@ -72,4 +72,8 @@ export class LoginComponent implements OnInit {
       })
       .catch((error) => this.toastr.error(error.error.message));
   }
+
+  openForgotPassword() {
+    window.open('DUMMY URL', '_blank');
+  }
 }

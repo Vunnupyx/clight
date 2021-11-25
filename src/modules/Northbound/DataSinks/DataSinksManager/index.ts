@@ -70,10 +70,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
             winston.warn(
               `${logPrefix} datasink failed to initialize due to ${result.reason}.`
             );
-            this.dataSinkConnectRetryTimer = setTimeout(
-              this.dataSinkRetryInit.bind(this),
-              1000 * 10
-            );
           }
         });
         winston.info(`${logPrefix} initialized.`);
@@ -84,26 +80,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           new NorthBoundError(`${logPrefix} error due to ${err.message}`)
         )
       );
-  }
-
-  private dataSinkRetryInit() {
-    const logPrefix = `${DataSinksManager.name}::dataSinkRetryInit`;
-    winston.debug(`${logPrefix} start retry.`);
-    this.sinksRetryCount++;
-    const initPromises = this.dataSinks.map((sink) => {
-      if (!sink.currentStatus) return sink.init();
-      return Promise.resolve();
-    });
-    Promise.allSettled(initPromises).then((results) => {
-      for (const result of results) {
-        if (result?.status === 'rejected' && this.sinksRetryCount <= 2) {
-          this.dataSinkConnectRetryTimer = setTimeout(
-            this.dataSinkRetryInit.bind(this),
-            1000 * 20
-          );
-        }
-      }
-    });
   }
 
   /**

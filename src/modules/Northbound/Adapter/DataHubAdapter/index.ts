@@ -451,6 +451,8 @@ export class DataHubAdapter {
           const eventBuffer = new MessageBuffer(this.#serialNumber);
           eventBuffer.addAssetList(measurementArray);
           const msg = this.addMsgType('event', eventBuffer.getMessage());
+          console.log(msg);
+          console.log(msg.properties);
           this.#dataHubClient.sendEvent(msg, () => {
             winston.debug(`${logPrefix} send event data`);
           });
@@ -482,6 +484,7 @@ export class DataHubAdapter {
   }
 
   private sendMessage(msgType: Exclude<TDataHubDataPointType, 'event'>): void {
+    console.log('data hub send msg');
     const logPrefix = `${DataHubAdapter.#className}::sendMessage`;
     if (!this.#dataHubClient || !this.isRunning) {
       winston.error(
@@ -498,6 +501,8 @@ export class DataHubAdapter {
       return;
     }
     const msg = this.addMsgType(msgType, buffer.getMessage());
+
+    console.log(msg);
     this.#dataHubClient.sendEvent(msg, () => {
       winston.debug(`${logPrefix} send ${msgType} message`);
     });
@@ -604,7 +609,7 @@ class MessageBuffer {
    */
   private getCurrentMsg(): IMessageFormat {
     return {
-      serialNumber: this.serialNumber,
+      serialNumber: '01234567890',
       startDate: this.#startDate,
       endDate: new Date().toISOString(),
       assetData: this.#assetBuffer

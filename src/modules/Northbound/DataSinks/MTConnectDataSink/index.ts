@@ -52,6 +52,7 @@ export class MTConnectDataSink extends DataSink {
    */
   constructor(options: IMTConnectDataSinkOptions) {
     super(options.dataSinkConfig);
+    this.enabled = options.dataSinkConfig.enabled;
     this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig);
     MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
@@ -59,9 +60,17 @@ export class MTConnectDataSink extends DataSink {
   /**
    * Sets up data items and adds them to the mtc adapter
    */
-  public init(): Promise<MTConnectDataSink> {
+  public async init(): Promise<MTConnectDataSink> {
     const logPrefix = `${MTConnectDataSink.className}::init`;
     winston.info(`${logPrefix} initializing.`);
+
+    if (!this.enabled) {
+      winston.info(
+        `${logPrefix} MTConnect data sink is disabled. Skipping initialization.`
+      );
+      this.currentStatus = LifecycleEventStatus.Disabled;
+      return this;
+    }
 
     this.avail = new Event('avail');
     this.runTime = new Event('runTime');
@@ -169,14 +178,5 @@ export class MTConnectDataSink extends DataSink {
     Object.keys(this.dataItems).forEach((key) => {
       this.dataItems[key].unavailable();
     });
-  }
-
-  /**
-   * Return current adapter status.
-   * true -> active
-   * false -> inactive
-   */
-  public currentStatus(): boolean {
-    return !!this.mtcAdapter?.isRunning;
   }
 }

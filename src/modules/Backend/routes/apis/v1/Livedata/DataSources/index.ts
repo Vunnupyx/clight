@@ -53,10 +53,6 @@ function livedataDataSourceDataPointsGetHandler(
         return undefined;
       }
 
-      console.log(value.ts);
-      console.log(new Date(value.ts));
-      console.log(new Date(value.ts).getTime());
-
       const obj: any = {
         dataPointId,
         value: value.value,

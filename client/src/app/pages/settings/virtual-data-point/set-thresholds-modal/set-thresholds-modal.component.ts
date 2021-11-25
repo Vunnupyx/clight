@@ -166,7 +166,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
         dataSourceType as IOShieldTypes
       )
     ) {
-      return `${value} A (ampere)`;
+      return `${value} A`;
     }
 
     return value;

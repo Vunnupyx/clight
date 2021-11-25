@@ -7,10 +7,7 @@ import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
-import {
-  DataSourceProtocols,
-  LifecycleEventStatus
-} from '../../../../../../common/interfaces';
+import { DataSourceProtocols } from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -86,7 +83,8 @@ async function dataSourcePatchHandler(
     }
   });
 
-  const changedDatasource = { ...dataSource, ...request.body };
+  let changedDatasource = { ...dataSource, ...request.body };
+
   const config = configManager.config;
   config.dataSources = [
     ...config.dataSources.filter(

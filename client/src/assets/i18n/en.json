@@ -73,8 +73,8 @@
         "description": "OPCUA Description"
       },
       "datahub": {
-        "name": "Data Hub",
-        "description": "Data Hub description"
+        "name": "CELOS Xchange",
+        "description": "CELOS Xchange description"
       }
     }
   },
@@ -250,7 +250,7 @@
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
-      "datahub": "Data Hub"
+      "datahub": "CELOS Xchange"
     },
     "AuthenticationLevels": {
       "anonymous": "Anonymous",

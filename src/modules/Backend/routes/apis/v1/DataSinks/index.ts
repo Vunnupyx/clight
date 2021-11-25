@@ -337,7 +337,7 @@ async function dataPointDeleteHandler(
  */
 function dataSinkGetStatusHandler(request: Request, response: Response) {
   const proto = request.params?.datasinkProtocol;
-  if (!proto || !['mtconnect', 'opcua'].includes(proto)) {
+  if (!proto || !['mtconnect', 'opcua', 'datahub'].includes(proto)) {
     response.status(404).json({ error: 'Protocol not valid.' });
     winston.warn('dataSinkGetStatusHandler error due to no valid protocol!');
     return;

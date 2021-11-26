@@ -193,7 +193,9 @@ export class DataHubAdapter {
       .then((success) => {
         this.#initialized = true;
         this.#successfullyProvisioned = success;
-        winston.debug(`${logPrefix} initialized. ${success ? 'R' : 'Not r'}egistered to DPS`);
+        winston.debug(
+          `${logPrefix} initialized. ${success ? 'R' : 'Not r'}egistered to DPS`
+        );
         return this;
       })
       .catch((err) => {
@@ -231,7 +233,7 @@ export class DataHubAdapter {
 
     const success = this.getProvisioning();
     if (!success) {
-      this.onStateChange(LifecycleEventStatus.ProvisioningFailed)
+      this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
     }
     return success;
   }
@@ -362,20 +364,22 @@ export class DataHubAdapter {
 
     return new Promise((res, rej) => {
       winston.debug(`${logPrefix} Registering...`);
-      const timeOut = 10*1000;
+      const timeOut = 10 * 1000;
       this.provTimer = setTimeout(() => {
         this.#provClient.cancel();
         winston.error(`${logPrefix} hit timeout of ${timeOut} ms. Abort.`);
         this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
         res(false);
-      }, timeOut)
+      }, timeOut);
       this.#provClient.register((err, response) => {
         try {
           clearTimeout(this.provTimer);
           const success = this.registrationHandler(err, response);
           res(success);
         } catch (err) {
-          winston.error(`${logPrefix} registration failed due to ${err?.message}`);
+          winston.error(
+            `${logPrefix} registration failed due to ${err?.message}`
+          );
           res(false);
         }
       });
@@ -588,7 +592,10 @@ export class DataHubAdapter {
   }
 
   private killProv() {
-    this.#provClient.cancel();
+    if (this.#provClient) {
+      // In case of previous state was "Missing Config", this is undefined
+      this.#provClient.cancel();
+    }
     clearTimeout(this.provTimer);
   }
 }

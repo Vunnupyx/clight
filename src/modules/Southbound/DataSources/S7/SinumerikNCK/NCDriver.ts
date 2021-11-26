@@ -162,7 +162,7 @@ export default class SinumerikNCKProtocolDriver {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         try {
-          this.tcpClient.removeAllListeners('connect');
+          if (this.tcpClient) this.tcpClient.removeAllListeners('connect');
         } catch (e) {
           winston.error(`Could not remove listeners from TCP client: ${e}`);
         }
@@ -595,15 +595,22 @@ export default class SinumerikNCKProtocolDriver {
   public async disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
       let shutdownTimeoutId;
+
+      if (!this.tcpClient) {
+        resolve();
+        return;
+      }
       this.tcpClient.removeAllListeners('close');
       this.tcpClient.once('close', () => {
-        winston.debug('NCK Driver: Successfully closed socket on disconnect');
-        this.tcpClient.destroy();
-        winston.debug(
-          'NCK Driver: Successfully destroyed socket on disconnect'
-        );
-        delete this.tcpClient;
-        clearTimeout(shutdownTimeoutId);
+        if (this.tcpClient) {
+          winston.debug('NCK Driver: Successfully closed socket on disconnect');
+          this.tcpClient.destroy();
+          winston.debug(
+            'NCK Driver: Successfully destroyed socket on disconnect'
+          );
+          delete this.tcpClient;
+          clearTimeout(shutdownTimeoutId);
+        }
         resolve();
         return;
       });
@@ -614,11 +621,13 @@ export default class SinumerikNCKProtocolDriver {
       this.connectionState = ConnectionState.NOT_CONNECTED;
 
       shutdownTimeoutId = setTimeout(() => {
-        this.tcpClient.destroy();
-        winston.debug(
-          'NCK Driver: Timeout while waiting for socket disconnect.'
-        );
-        delete this.tcpClient;
+        if (this.tcpClient) {
+          this.tcpClient.destroy();
+          winston.debug(
+            'NCK Driver: Timeout while waiting for socket disconnect.'
+          );
+          delete this.tcpClient;
+        }
         resolve();
         return;
       }, 10000);

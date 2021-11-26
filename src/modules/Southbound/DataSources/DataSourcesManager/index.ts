@@ -22,10 +22,6 @@ interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
 }
 
-interface IDataSourceManagerEvents {
-  dataSourcesRestarted: (error: Error | null) => void;
-}
-
 /**
  * Creates and manages all data sources
  */
@@ -89,11 +85,15 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
    */
   public spawnDataSources(): void {
     const s7DataSourceParams: IDataSourceParams = {
-      config: this.findDataSourceConfig(DataSourceProtocols.S7)
+      config: this.findDataSourceConfig(DataSourceProtocols.S7),
+      termsAndConditionsAccepted:
+        this.configManager.config.termsAndConditions.accepted
     };
 
     const ioshieldDataSourceParams: IDataSourceParams = {
-      config: this.findDataSourceConfig(DataSourceProtocols.IOSHIELD)
+      config: this.findDataSourceConfig(DataSourceProtocols.IOSHIELD),
+      termsAndConditionsAccepted:
+        this.configManager.config.termsAndConditions.accepted
     };
 
     this.dataSources.push(new S7DataSource(s7DataSourceParams));
@@ -154,7 +154,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     return this.dataSources.find((src) => src.protocol === protocol);
   }
 
-  private configChangeHandler(forced: boolean = false): Promise<void> {
+  private configChangeHandler(): Promise<void> {
     if (this.dataSinksRestartPending) {
       this.dataAddedDuringRestart = true;
       return;
@@ -165,11 +165,12 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     winston.info(`${logPrefix} reloading datasources.`);
 
     const shutdownFns = [];
-    let error = false;
     this.dataSources.forEach((source) => {
       shutdownFns.push(source.shutdown());
     });
     this.dataSources = [];
+
+    let err: Error = null;
     Promise.allSettled(shutdownFns)
       .then((results) => {
         winston.debug(`${logPrefix} datasources disconnected.`);
@@ -179,23 +180,24 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
         });
       })
       .then(() => {
-        winston.info(`${logPrefix} reinitializing datasources.`);
+        winston.info(`${logPrefix} reinitializing data sources.`);
         return this.init();
       })
       .then(() => {
-        winston.info(`${logPrefix} datasources restarted successfully.`);
+        winston.info(`${logPrefix} data sources restarted successfully.`);
       })
-      .catch((err) => {
-        winston.error(
-          `${logPrefix} datasources restart error due to ${err.message}`
-        );
-        error = true;
+      .catch((error: Error) => {
+        winston.error(`${logPrefix} error due to ${error.message}`);
+        err = error;
       })
       .finally(() => {
         this.dataSinksRestartPending = false;
-        if (this.dataAddedDuringRestart || error) {
+        if (this.dataAddedDuringRestart) {
           this.dataAddedDuringRestart = false;
-          this.configChangeHandler(error);
+          this.configChangeHandler();
+        } else {
+          // emit event
+          this.emit('dataSourcesRestarted', err);
         }
       });
   }

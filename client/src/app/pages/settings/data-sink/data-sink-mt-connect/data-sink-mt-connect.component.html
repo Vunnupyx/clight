@@ -613,6 +613,15 @@
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Unavailable">
               {{ 'settings-data-sink.Unavailable' | translate }}
             </ng-container>
+            <ng-container
+              *ngSwitchCase="
+                DataSinkConnectionStatus.TermsAndConditionsNotAccepted
+              "
+            >
+              {{
+                'settings-data-sink.TermsAndConditionsNotAccepted' | translate
+              }}
+            </ng-container>
           </ng-container>
         </div>
         <small style="color: #999">{{
@@ -628,7 +637,7 @@
             <mat-icon class="color-danger">highlight_off</mat-icon>
           </ng-container>
           <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
-            <mat-icon class="color-danger">check_circle_outline</mat-icon>
+            <mat-icon class="color-success">check_circle_outline</mat-icon>
           </ng-container>
           <ng-container
             *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
@@ -656,6 +665,13 @@
             <mat-icon class="color-danger">highlight_off</mat-icon>
           </ng-container>
           <ng-container *ngSwitchCase="DataSinkConnectionStatus.Unavailable">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container
+            *ngSwitchCase="
+              DataSinkConnectionStatus.TermsAndConditionsNotAccepted
+            "
+          >
             <mat-icon class="color-danger">highlight_off</mat-icon>
           </ng-container>
         </ng-container>

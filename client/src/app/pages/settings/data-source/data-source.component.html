@@ -232,6 +232,16 @@
                 >
                   {{ 'settings-data-source.Unavailable' | translate }}
                 </ng-container>
+                <ng-container
+                  *ngSwitchCase="
+                    DataSourceConnectionStatus.TermsAndConditionsNotAccepted
+                  "
+                >
+                  {{
+                    'settings-data-source.TermsAndConditionsNotAccepted'
+                      | translate
+                  }}
+                </ng-container>
               </ng-container>
             </div>
             <small style="color: #999">{{
@@ -290,6 +300,13 @@
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Unavailable"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="
+                  DataSourceConnectionStatus.TermsAndConditionsNotAccepted
+                "
               >
                 <mat-icon class="color-danger">highlight_off</mat-icon>
               </ng-container>

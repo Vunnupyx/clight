@@ -77,6 +77,16 @@ export class S7DataSource extends DataSource {
       return;
     }
 
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of S7 data source due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
+      return;
+    }
+
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,
@@ -344,9 +354,23 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Disconnected,
       dataSource: { name, protocol }
     });
-    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
+
     clearTimeout(this.reconnectTimeoutId);
-    this.client.dropConnection();
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        winston.warn(`${logPrefix} closing s7 connection timed out after 5s`);
+        resolve();
+      }, 5000);
+      this.client.dropConnection(() => {
+        winston.info(`${logPrefix} successfully closed s7 connection`);
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
+
+    winston.info(`${logPrefix} shutdown nck client`);
     await this.nckClient.disconnect();
+
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 }

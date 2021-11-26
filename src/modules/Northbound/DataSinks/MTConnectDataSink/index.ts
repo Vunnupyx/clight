@@ -53,6 +53,8 @@ export class MTConnectDataSink extends DataSink {
   constructor(options: IMTConnectDataSinkOptions) {
     super(options.dataSinkConfig);
     this.enabled = options.dataSinkConfig.enabled;
+
+    console.log('create mtc adapter');
     this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig);
     MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
@@ -73,6 +75,24 @@ export class MTConnectDataSink extends DataSink {
     }
 
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
+    this.setupDataItems();
+
+    this.mtcAdapter.start();
+    if (!MTConnectDataSink.schedulerListenerId) {
+      console.log('Setup mtc listener');
+      MTConnectDataSink.schedulerListenerId =
+        MTConnectDataSink.scheduler.addListener([1000], () => {
+          this.runTime.value = (this.runTime.value as number) + 1;
+          this.mtcAdapter.sendChanged();
+        });
+    }
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
+    winston.info(`${logPrefix} initialized.`);
+    return Promise.resolve(this);
+  }
+
+  private setupDataItems() {
+    console.log('Setup data items');
 
     this.avail = new Event('avail');
     this.runTime = new Event('runTime');
@@ -102,17 +122,6 @@ export class MTConnectDataSink extends DataSink {
         dataItem.value = dp.initialValue;
       }
     });
-    this.mtcAdapter.start();
-    if (!MTConnectDataSink.schedulerListenerId) {
-      MTConnectDataSink.schedulerListenerId =
-        MTConnectDataSink.scheduler.addListener([1000], () => {
-          this.runTime.value = (this.runTime.value as number) + 1;
-          this.mtcAdapter.sendChanged();
-        });
-    }
-    this.updateCurrentStatus(LifecycleEventStatus.Connected);
-    winston.info(`${logPrefix} initialized.`);
-    return Promise.resolve(this);
   }
 
   protected processDataPointValue(dataPointId, value) {
@@ -179,6 +188,8 @@ export class MTConnectDataSink extends DataSink {
    * Disconnects all data items
    */
   public disconnect() {
+    console.log('Make all data item unavailable');
+
     Object.keys(this.dataItems).forEach((key) => {
       this.dataItems[key].unavailable();
     });

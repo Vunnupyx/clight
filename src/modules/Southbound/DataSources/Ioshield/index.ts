@@ -46,7 +46,7 @@ export class IoshieldDataSource extends DataSource {
     this.mraaClient.init();
 
     this.validateDataPointConfiguration();
-    this.setupDataPoints();
+    this.setupDataPoints(500);
     this.updateCurrentStatus(LifecycleEventStatus.Connected);
   }
 
@@ -61,7 +61,7 @@ export class IoshieldDataSource extends DataSource {
     const logPrefix = `${this.name}::dataSourceCycle`;
     const currentCycleDataPoints: Array<IDataPointConfig> =
       this.config.dataPoints.filter((dp: IDataPointConfig) => {
-        const rf = Math.max(dp.readFrequency || 1000, 1000);
+        const rf = Math.max(dp.readFrequency || 500, 500);
         return currentIntervals.includes(rf);
       });
 

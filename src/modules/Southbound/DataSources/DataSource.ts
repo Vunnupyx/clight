@@ -77,15 +77,15 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Setup all datapoints by creating a listener for each configured interval
    */
-  protected setupDataPoints(): void {
+  protected setupDataPoints(defaultFrequency: number = 1000): void {
     if (this.schedulerListenerId) return;
 
     const logPrefix = `${this.name}::setupDataPoints`;
     winston.debug(`${logPrefix} setup data points`);
     const datapointIntervals: Array<number> = this.config.dataPoints.map(
       (dataPointConfig) => {
-        // Limit read frequency to 1/s
-        return Math.max(dataPointConfig.readFrequency || 1000, 1000);
+        // Limit read frequency to 2/s
+        return Math.max(dataPointConfig.readFrequency || defaultFrequency, 500);
       }
     );
     const intervals = Array.from(new Set(datapointIntervals));

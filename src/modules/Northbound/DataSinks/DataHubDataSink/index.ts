@@ -4,7 +4,7 @@ import {
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataHubAdapter, IDesiredProps } from '../../Adapter/DataHubAdapter';
-import { DataSink, DataSinkStatus, TDataSinkStatus } from '../DataSink';
+import { DataSink } from '../DataSink';
 import winston from 'winston';
 import {
   IDataHubConfig,
@@ -189,5 +189,5 @@ export class DataHubDataSink extends DataSink {
   public getDesiredPropertiesServices(): IDesiredProps {
     if (!this.#datahubAdapter) return { services: {} };
     return this.#datahubAdapter.getDesiredProps();
-  }  
+  }
 }

@@ -68,7 +68,7 @@ export class DataSinkService {
     // made first call
     this.getStatus(protocol);
 
-    return interval(5000).pipe(mergeMap(() => from(this.getStatus(protocol))));
+    return interval(2000).pipe(mergeMap(() => from(this.getStatus(protocol))));
   }
 
   revert() {
@@ -154,9 +154,6 @@ export class DataSinkService {
       });
     } catch (err) {
       errorHandler(err);
-      this.toastr.error(
-        this.translate.instant('settings-data-sink.LoadStatusError')
-      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.connection = undefined;

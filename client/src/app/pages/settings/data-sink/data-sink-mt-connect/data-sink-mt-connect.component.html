@@ -610,6 +610,9 @@
             >
               {{ 'settings-data-sink.ConnectionError' | translate }}
             </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Unavailable">
+              {{ 'settings-data-sink.Unavailable' | translate }}
+            </ng-container>
           </ng-container>
         </div>
         <small style="color: #999">{{
@@ -650,6 +653,9 @@
           <ng-container
             *ngSwitchCase="DataSinkConnectionStatus.ConnectionError"
           >
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Unavailable">
             <mat-icon class="color-danger">highlight_off</mat-icon>
           </ng-container>
         </ng-container>

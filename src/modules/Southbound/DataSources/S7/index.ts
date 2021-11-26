@@ -72,7 +72,7 @@ export class S7DataSource extends DataSource {
       winston.info(
         `${logPrefix} S7 data source is disabled. Skipping initialization.`
       );
-      this.currentStatus = LifecycleEventStatus.Disabled;
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return;
     }
 
@@ -83,7 +83,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connecting,
       dataSource: { protocol, name }
     });
-    this.currentStatus = LifecycleEventStatus.Connecting;
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     const nckDataPointsConfigured = this.config.dataPoints.find(
       (dp: IDataPointConfig) => {
@@ -108,7 +108,7 @@ export class S7DataSource extends DataSource {
         dataSource: { name, protocol },
         payload: error
       });
-      this.currentStatus = LifecycleEventStatus.ConnectionError;
+      this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
         if (this.isDisconnected) {
           return;
@@ -120,7 +120,7 @@ export class S7DataSource extends DataSource {
           status: LifecycleEventStatus.Reconnecting,
           dataSource: { name, protocol }
         });
-        this.currentStatus = LifecycleEventStatus.Reconnecting;
+        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
         this.init();
       }, this.RECONNECT_TIMEOUT);
       return;
@@ -133,7 +133,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connected,
       dataSource: { name, protocol }
     });
-    this.currentStatus = LifecycleEventStatus.Connected;
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
     this.isDisconnected = false;
     this.setupDataPoints();
   }
@@ -331,7 +331,7 @@ export class S7DataSource extends DataSource {
    * @returns Promise
    */
   public async disconnect(): Promise<void> {
-    const logPrefix = `${S7DataSource.className}::disconnect`;
+    const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
     const { name, protocol } = this.config;
@@ -343,7 +343,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Disconnected,
       dataSource: { name, protocol }
     });
-    this.currentStatus = LifecycleEventStatus.Disconnected;
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
     clearTimeout(this.reconnectTimeoutId);
     this.client.dropConnection();
     await this.nckClient.disconnect();

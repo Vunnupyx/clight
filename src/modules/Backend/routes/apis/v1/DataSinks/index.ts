@@ -348,12 +348,14 @@ function dataSinkGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  const boolStatus = dataSinksManager
-    .getDataSinkByProto(request.params.datasinkProtocol)
-    .getCurrentStatus();
-  let status: LifecycleEventStatus = LifecycleEventStatus.Connected;
-  if (!boolStatus) {
-    status = LifecycleEventStatus.Disconnected;
+  let status;
+
+  try {
+    status = dataSinksManager
+      .getDataSinkByProto(request.params.datasinkProtocol)
+      .getCurrentStatus();
+  } catch (e) {
+    status = LifecycleEventStatus.Unavailable;
   }
   response.status(200).json({ status });
 }

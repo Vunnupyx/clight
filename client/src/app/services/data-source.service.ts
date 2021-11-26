@@ -93,7 +93,7 @@ export class DataSourceService {
     // made first call
     this.getStatus(protocol);
 
-    return interval(5000).pipe(mergeMap(() => from(this.getStatus(protocol))));
+    return interval(2000).pipe(mergeMap(() => from(this.getStatus(protocol))));
   }
 
   async getStatus(datasourceProtocol: string) {

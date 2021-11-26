@@ -20,7 +20,8 @@ export enum DataSourceConnectionStatus {
   Connected = 'connected',
   Disconnected = 'disconnected',
   Reconnecting = 'reconnecting',
-  ConnectionError = 'failedtoconnect'
+  ConnectionError = 'failedtoconnect',
+  Unavailable = 'unavailable' // in case of status can't be loaded
 }
 
 export class DataSourceConnection {

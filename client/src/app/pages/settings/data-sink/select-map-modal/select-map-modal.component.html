@@ -48,12 +48,10 @@
           [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
           matTooltipPosition="above"
           [matTooltipDisabled]="
-            !isDuplicatingField('from', unsavedRowIndex!) ||
-            !isDuplicatingField('to', unsavedRowIndex!)
+            !isDuplicatingField('from', unsavedRowIndex!)
           "
           [class.border-danger]="
-            isDuplicatingField('from', unsavedRowIndex!) &&
-            isDuplicatingField('to', unsavedRowIndex!)
+            isDuplicatingField('from', unsavedRowIndex!)
           "
           autofocus
         />
@@ -84,16 +82,6 @@
           class="w-100"
           [ngModel]="value"
           (ngModelChange)="unsavedRow.to = $event"
-          [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
-          matTooltipPosition="above"
-          [matTooltipDisabled]="
-            !isDuplicatingField('from', unsavedRowIndex!) ||
-            !isDuplicatingField('to', unsavedRowIndex!)
-          "
-          [class.border-danger]="
-            isDuplicatingField('from', unsavedRowIndex!) &&
-            isDuplicatingField('to', unsavedRowIndex!)
-          "
           autofocus
         />
       </ng-template>
@@ -133,8 +121,7 @@
         >
           <mat-button-toggle
             (click)="
-              (!isDuplicatingField('from', unsavedRowIndex!) ||
-                !isDuplicatingField('to', unsavedRowIndex!)) &&
+              !isDuplicatingField('from', unsavedRowIndex!) &&
                 onEditEnd();
               group.value = null
             "

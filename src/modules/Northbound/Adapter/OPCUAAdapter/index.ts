@@ -4,7 +4,9 @@ import {
   OPCUAServer,
   NodeIdLike,
   UserManagerOptions,
-  OPCUACertificateManager
+  OPCUACertificateManager,
+  SecurityPolicy,
+  MessageSecurityMode
 } from 'node-opcua';
 import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
@@ -205,7 +207,7 @@ export class OPCUAAdapter {
         subject: '/CN=MDClightOPCUAServer',
         startDate: new Date(),
         dns: [],
-        validity: 365 * 100,
+        validity: 365 * 5,
         outputFile: certificateFile
       });
       winston.info(`Certificate ${certificateFile} created`);
@@ -244,7 +246,18 @@ export class OPCUAAdapter {
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,
       certificateFile,
-      nodeset_filename: nodeSets
+      nodeset_filename: nodeSets,
+      securityPolicies: [
+        SecurityPolicy.None,
+        SecurityPolicy.Basic128Rsa15,
+        SecurityPolicy.Basic256,
+        SecurityPolicy.Basic256Sha256
+      ],
+      securityModes: [
+        MessageSecurityMode.None,
+        MessageSecurityMode.Sign,
+        MessageSecurityMode.SignAndEncrypt
+      ]
     });
 
     return this.server

@@ -253,6 +253,10 @@ export interface ISystemInfo {
   items: ISystemInfoItem[];
 }
 
+export interface TermsAndConditionsConfig {
+  accepted: boolean;
+}
+
 export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: Array<IDataSinkConfig>;
@@ -261,6 +265,7 @@ export interface IConfig {
   general: IGeneralConfig;
   networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
+  termsAndConditions: TermsAndConditionsConfig;
 }
 
 export interface IConfigManagerParams {

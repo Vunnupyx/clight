@@ -4,7 +4,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateService } from '@ngx-translate/core';
 
-export const AVAILABLE_LANGS = ['de', 'en'];
+export const AVAILABLE_LANGS = ['de', 'en', 'ja'];
 export const DEFAULT_LANG = 'en';
 
 export function createTranslateLoader(http: HttpClient) {

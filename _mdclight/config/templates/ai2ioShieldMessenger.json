@@ -1,6 +1,6 @@
 {
-  "name": "Input board sl to Messenger",
-  "description": "Input board with sensors to messanger",
+  "name": "Input board to Messenger",
+  "description": "Current sensors + 5 digital input board to messenger",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",

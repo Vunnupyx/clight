@@ -116,7 +116,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       runTimeConfig: this.configManager.runtimeConfig.datahub
     };
     this.configManager.config.dataSinks.forEach((sink) => {
-      if (!sink.enabled) return;
       switch (sink.protocol) {
         case DataSinkProtocols.DATAHUB: {
           this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));

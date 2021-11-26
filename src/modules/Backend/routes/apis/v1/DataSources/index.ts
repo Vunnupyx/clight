@@ -7,7 +7,10 @@ import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
-import { DataSourceProtocols } from '../../../../../../common/interfaces';
+import {
+  DataSourceProtocols,
+  LifecycleEventStatus
+} from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -274,9 +277,15 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  let status = dataSourcesManager
-    .getDataSourceByProto(request.params.datasourceProtocol)
-    .getCurrentStatus();
+  let status;
+
+  try {
+    status = dataSourcesManager
+      .getDataSourceByProto(request.params.datasourceProtocol)
+      .getCurrentStatus();
+  } catch (e) {
+    status = LifecycleEventStatus.Unavailable;
+  }
 
   response.status(200).json({ status });
 }

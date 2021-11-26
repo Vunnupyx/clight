@@ -12,7 +12,7 @@ import { Iot2050MraaDI10 } from '../../../Iot2050MraaDI10/Iot2050mraa';
  * Implementation of io shield data source
  */
 export class IoshieldDataSource extends DataSource {
-  protected static className = IoshieldDataSource.name;
+  protected name = IoshieldDataSource.name;
 
   mraaClient: Iot2050MraaDI10;
 
@@ -21,7 +21,7 @@ export class IoshieldDataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const logPrefix = `${IoshieldDataSource.className}::init`;
+    const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
     const { name, protocol, enabled } = this.config;
@@ -30,7 +30,7 @@ export class IoshieldDataSource extends DataSource {
       winston.info(
         `${logPrefix} io shield data source is disabled. Skipping initialization.`
       );
-      this.currentStatus = LifecycleEventStatus.Disabled;
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return;
     }
 
@@ -47,7 +47,7 @@ export class IoshieldDataSource extends DataSource {
 
     this.validateDataPointConfiguration();
     this.setupDataPoints();
-    this.currentStatus = LifecycleEventStatus.Connected;
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
   }
 
   /**
@@ -58,7 +58,7 @@ export class IoshieldDataSource extends DataSource {
   protected async dataSourceCycle(
     currentIntervals: Array<number>
   ): Promise<void> {
-    const logPrefix = `${IoshieldDataSource.className}::dataSourceCycle`;
+    const logPrefix = `${this.name}::dataSourceCycle`;
     const currentCycleDataPoints: Array<IDataPointConfig> =
       this.config.dataPoints.filter((dp: IDataPointConfig) => {
         const rf = Math.max(dp.readFrequency || 1000, 1000);
@@ -119,10 +119,10 @@ export class IoshieldDataSource extends DataSource {
    * @returns Promise<void>
    */
   public async disconnect(): Promise<void> {
-    const logPrefix = `${IoshieldDataSource.className}::disconnect`;
+    const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
-    this.currentStatus = LifecycleEventStatus.Disconnected;
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
   /**

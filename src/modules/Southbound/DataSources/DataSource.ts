@@ -24,7 +24,7 @@ import winston from 'winston';
  * Implements data source
  */
 export abstract class DataSource extends EventEmitter {
-  protected static className = DataSource.name;
+  protected name = DataSource.name;
 
   protected config: IDataSourceConfig;
   protected level = EventLevels.DataSource;
@@ -49,6 +49,21 @@ export abstract class DataSource extends EventEmitter {
   }
 
   /**
+   * Updates the current status of the data source
+   * @param newState
+   * @returns
+   */
+  protected updateCurrentStatus(newState: LifecycleEventStatus) {
+    if (newState === this.currentStatus) return;
+
+    const logPrefix = `${this.name}::updateCurrentStatus`;
+    winston.info(
+      `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
+    );
+    this.currentStatus = newState;
+  }
+
+  /**
    * Implements the data source main loop
    * @param currentCycle
    */
@@ -65,7 +80,7 @@ export abstract class DataSource extends EventEmitter {
   protected setupDataPoints(): void {
     if (this.schedulerListenerId) return;
 
-    const logPrefix = `${DataSource.className}::setupDataPoints`;
+    const logPrefix = `${this.name}::setupDataPoints`;
     winston.debug(`${logPrefix} setup data points`);
     const datapointIntervals: Array<number> = this.config.dataPoints.map(
       (dataPointConfig) => {

@@ -153,11 +153,12 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       this.statusSub.unsubscribe();
     }
 
+    this.statusSub = this.dataSinkService
+      .setStatusTimer(dataSink.protocol)
+      .subscribe();
+
     if (dataSink.protocol !== DataSinkProtocol.DH) {
       this.dataPointService.getDataPoints(dataSink.protocol);
-      this.statusSub = this.dataSinkService
-        .setStatusTimer(dataSink.protocol)
-        .subscribe();
     } else {
       if (dataSink.desired?.services) {
         this.desiredServices = Object.entries(dataSink.desired?.services).map(

@@ -38,7 +38,7 @@ export class MTConnectDataSink extends DataSink {
   private static schedulerListenerId: number;
   private dataItems: DataItemDict = {};
   protected _protocol = DataSinkProtocols.MTCONNECT;
-  private static className = MTConnectDataSink.name;
+  protected name = MTConnectDataSink.name;
 
   private avail: DataItem;
   private runTime: DataItem;
@@ -61,16 +61,18 @@ export class MTConnectDataSink extends DataSink {
    * Sets up data items and adds them to the mtc adapter
    */
   public async init(): Promise<MTConnectDataSink> {
-    const logPrefix = `${MTConnectDataSink.className}::init`;
+    const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
     if (!this.enabled) {
       winston.info(
         `${logPrefix} MTConnect data sink is disabled. Skipping initialization.`
       );
-      this.currentStatus = LifecycleEventStatus.Disabled;
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return this;
     }
+
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     this.avail = new Event('avail');
     this.runTime = new Event('runTime');
@@ -108,6 +110,7 @@ export class MTConnectDataSink extends DataSink {
           this.mtcAdapter.sendChanged();
         });
     }
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
     winston.info(`${logPrefix} initialized.`);
     return Promise.resolve(this);
   }
@@ -165,6 +168,7 @@ export class MTConnectDataSink extends DataSink {
     return Promise.all(shutdownFunctions)
       .then(() => {
         winston.info(`${logPrefix} successfully.`);
+        this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
       })
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${err.message}.`);

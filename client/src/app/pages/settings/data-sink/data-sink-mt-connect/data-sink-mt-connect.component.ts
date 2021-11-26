@@ -147,8 +147,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       this.auth = clone(dataSink.auth);
     }
 
-    console.log(1);
-
     if (this.statusSub) {
       this.statusSub.unsubscribe();
     }
@@ -171,7 +169,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
         this.desiredServices = [];
       }
     }
-    console.log(this.statusSub);
   }
 
   updateEnabled(val: boolean) {

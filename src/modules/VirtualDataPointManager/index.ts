@@ -170,6 +170,8 @@ export class VirtualDataPointManager {
       return null;
     }
 
+    if (!config.thresholds) return null;
+
     const thresholds = (Object.keys(config.thresholds) || [])
       .map((key) => config.thresholds?.[key])
       .sort((a, b) => a - b)

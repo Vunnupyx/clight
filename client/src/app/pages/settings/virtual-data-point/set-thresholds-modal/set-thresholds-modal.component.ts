@@ -84,7 +84,6 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
           animation: false
         },
         formatter: (params) => {
-          console.log(params[0].marker);
           const seriesTemplate = params
             .map(
               (param) => `

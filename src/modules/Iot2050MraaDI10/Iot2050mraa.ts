@@ -232,10 +232,10 @@ export class Iot2050MraaDI10 {
   }
 }
 
-const io = new Iot2050MraaDI10();
-io.init();
+// const io = new Iot2050MraaDI10();
+// io.init();
 
-setInterval(async () => {
-  console.log(await io.getDigitalValues());
-  // console.log(await io.getAnalogValues());
-}, 3000);
+// setInterval(async () => {
+//   console.log(await io.getDigitalValues());
+//   // console.log(await io.getAnalogValues());
+// }, 3000);

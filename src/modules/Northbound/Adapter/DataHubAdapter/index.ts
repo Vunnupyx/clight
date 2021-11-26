@@ -146,14 +146,15 @@ export class DataHubAdapter {
    * Set reported properties on device twin.
    */
   public async setReportedProps(data: IDesiredServices): Promise<void> {
+    const logPrefix = `${DataHubAdapter.#className}::setReportedProps`;
+
     return new Promise((res, rej) => {
-      const logPrefix = `${DataHubAdapter.#className}::setDesiredProps`;
       if (!this.#deviceTwin) {
         winston.warn(`${logPrefix} no device twin available.`);
         return;
       }
 
-      winston.info('Updating reported properties');
+      winston.info(`${logPrefix} updating reported properties`);
       this.#deviceTwin.properties.reported.update({ services: data }, (err) => {
         if (err) winston.error(`${logPrefix} error due to ${err.message}`);
         else this.deviceTwinChanged = false;

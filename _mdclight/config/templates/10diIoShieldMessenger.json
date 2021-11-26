@@ -1,4 +1,6 @@
 {
+  "name": "Input board sl to Messenger",
+  "description": "Input board with sensors to messanger",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",
@@ -31,7 +33,121 @@
   },
   "dataSources": [
     {
-      "dataPoints": [],
+      "name": "",
+      "dataPoints": [
+        {
+          "type": "nck",
+          "name": "selectedWorkPProg",
+          "address": "/Channel/Programinfo/selectedWorkPProg",
+          "id": "55455192-9e2b-4423-b6e9-8466089cd299",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "progName",
+          "address": "/Channel/ProgramPointer/progName",
+          "id": "66e44f24-8638-401d-8fcd-fdd1f197ae6d",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "numSpindles",
+          "address": "/Channel/Configuration/numSpindles",
+          "id": "0da733b0-6036-4aff-a6dc-d602711d10e8",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "SpindleType",
+          "address": "/Channel/Spindle/SpindleType",
+          "id": "ebd2c9c5-9dcc-4f30-996e-57ecb702ca5d",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "feedRateOvr",
+          "address": "/Nck/MachineAxis/feedRateOvr",
+          "id": "34ad0f9b-7ce6-49f1-a3c2-27d29fb19343",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "OpMode",
+          "address": "/Bag/State/OpMode",
+          "id": "3622de59-8ddf-457a-b816-9088102385d4",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "singleBlockActive",
+          "address": "/Channel/ProgramModification/singleBlockActive",
+          "id": "234b2dbe-ab2a-4afb-a903-b3349d18de5b",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "speedOvr",
+          "address": "/Channel/Spindle/speedOvr",
+          "id": "e2ebdead-5484-4bd7-b757-f0c3af3fadfe",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "rapFeedRateOvr",
+          "address": "/Channel/State/rapFeedRateOvr",
+          "id": "5f443465-8e52-4f60-9032-1fe09c45cb08",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "totalParts",
+          "address": "/Channel/State/totalParts",
+          "id": "2e23f057-09d5-4744-ba94-da38f3210e88",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "actParts",
+          "address": "/Channel/State/actParts",
+          "id": "9b0aba24-a662-40fb-b7ea-90a2662a3907",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "reqParts",
+          "address": "/Channel/State/reqParts",
+          "id": "d2e3ac9b-f7e3-4251-8e79-52ab364fba63",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "actTNumber",
+          "address": "/Channel/State/actTNumber",
+          "id": "2ef0135f-4d06-4cda-be46-58898c47cb50",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "numAlarms",
+          "address": "/Nck/State/numAlarms",
+          "id": "21e40920-15fc-4e2e-b9b1-70e53a0e5cfe",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "actProgNetTime",
+          "address": "/Channel/State/actProgNetTime",
+          "id": "49200590-2046-4c3d-ad02-535c4af0d0ac",
+          "readFrequency": 1000
+        },
+        {
+          "type": "nck",
+          "name": "feedRateIpoOvr",
+          "address": "/Channel/State/feedRateIpoOvr",
+          "id": "06acbeba-969f-4f36-9da5-bea4a4e2fe95",
+          "readFrequency": 1000
+        }
+      ],
       "protocol": "s7",
       "connection": {
         "ipAddr": "192.168.214.1",
@@ -39,18 +155,57 @@
         "rack": 0,
         "slot": 2
       },
-      "enabled": true,
-      "type": "nck"
+      "enabled": false
     },
     {
-      "dataPoints": [],
+      "id": "",
+      "name": "",
+      "dataPoints": [
+        {
+          "type": null,
+          "address": "DI0",
+          "name": "Emergency Stop",
+          "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b"
+        },
+        {
+          "type": null,
+          "address": "DI1",
+          "name": "Red Light",
+          "id": "86ea22fc-1091-46e5-9a1a-275c8f7768ec"
+        },
+        {
+          "type": null,
+          "address": "DI2",
+          "name": "Yellow Light",
+          "id": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7"
+        },
+        {
+          "type": null,
+          "address": "DI3",
+          "name": "Green Light",
+          "id": "831268a3-6088-4bca-b099-27f745a84637"
+        },
+        {
+          "type": null,
+          "address": "DI4",
+          "name": "Blue Light",
+          "id": "73fba6ee-ca3b-43bd-af46-b31fba381ab7"
+        },
+        {
+          "type": null,
+          "address": "DI5",
+          "name": "Availability",
+          "id": "604d583a-ce3a-4d19-a930-a8ba0579d8b2"
+        }
+      ],
       "protocol": "ioshield",
       "enabled": true,
-      "type": "ai-150+5di"
+      "type": "di10"
     }
   ],
   "dataSinks": [
     {
+      "name": "",
       "dataPoints": [
         {
           "id": "0c24235c-f56d-435b-a560-6874079effb4",
@@ -229,15 +384,10 @@
         }
       ],
       "enabled": true,
-      "protocol": "datahub",
-      "datahub": {
-        "provisioningHost": "celosnext-dps.azure-devices-provisioning.net",
-        "scopeId": "",
-        "regId": "",
-        "symKey": ""
-      }
+      "protocol": "datahub"
     },
     {
+      "name": "",
       "dataPoints": [
         {
           "name": "Operation Duration",
@@ -307,6 +457,8 @@
       }
     },
     {
+      "id": "mtconnect",
+      "name": "My MTConnect Machine",
       "dataPoints": [
         {
           "name": "Operation Time",
@@ -431,16 +583,6 @@
       "operationType": "not",
       "name": "Emergency Stop Triggered",
       "id": "dd88cdb9-994c-40ce-be60-1d37f3aa755a"
-    },
-    {
-      "id": "9d62359b-c48b-4084-825f-1ce56c93e202",
-      "sources": ["fda5000e-0942-4605-a995-9c49bd1e99d6"],
-      "operationType": "thresholds",
-      "name": "Virtual Execution Mode",
-      "thresholds": {
-        "0": 0,
-        "1": 40
-      }
     }
   ],
   "mapping": [
@@ -502,47 +644,11 @@
     {
       "source": "49200590-2046-4c3d-ad02-535c4af0d0ac",
       "target": "67f44404-9eb6-45dc-afc3-c61e2a61cdcd",
-      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a21"
-    },
-    {
-      "source": "9b0aba24-a662-40fb-b7ea-90a2662a3907",
-      "target": "14171496-239e-406b-b300-437bfde86798",
       "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a22"
-    },
-    {
-      "source": "66e44f24-8638-401d-8fcd-fdd1f197ae6d",
-      "target": "7944466f-c49f-4d75-a65d-b6fe5d18b77c",
-      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a23"
-    },
-    {
-      "source": "34ad0f9b-7ce6-49f1-a3c2-27d29fb19343",
-      "target": "ecaa79f4-3b7b-487d-b9a2-2571ce2df700",
-      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a24"
-    },
-    {
-      "source": "3622de59-8ddf-457a-b816-9088102385d4",
-      "target": "631f18d0-734b-44a7-aeb7-065b5c9b3c36",
-      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a25"
-    },
-    {
-      "source": "2e23f057-09d5-4744-ba94-da38f3210e88",
-      "target": "04f941f3-dc23-42ea-a48c-fc4a4c317e1d",
-      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a26"
-    },
-    {
-      "source": "d2e3ac9b-f7e3-4251-8e79-52ab364fba63",
-      "target": "54c2a7aa-8f1c-4ed1-8d22-b8444592d032",
-      "id": "95fcf495-0a5d-49c7-9e6e-e2b2c32a2a27"
-    },
-    {
-      "source": "9d62359b-c48b-4084-825f-1ce56c93e202",
-      "target": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
-      "id": "e199f4d8-3a6c-4e46-999d-a0ef1a0c30ea"
     }
   ],
-  "quickStart": {
-    "completed": false,
-    "currentTemplate": null,
-    "currentTemplateName": null
+  "systemInfo": [],
+  "templates": {
+    "completed": true
   }
 }

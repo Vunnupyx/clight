@@ -152,7 +152,8 @@
         "rack": 0,
         "slot": 2
       },
-      "enabled": true
+      "enabled": true,
+      "type": "nck"
     },
     {
       "dataPoints": [
@@ -206,7 +207,8 @@
         }
       ],
       "protocol": "ioshield",
-      "enabled": true
+      "enabled": true,
+      "type": "ai-150+5di"
     }
   ],
   "dataSinks": [

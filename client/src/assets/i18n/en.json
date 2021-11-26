@@ -223,6 +223,7 @@
     "Reconnecting": "Reconnecting",
     "Disabled": "Disabled",
     "ConnectionError": "Failed to Connect",
+    "Unavailable": "Unavailable",
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "AddDataPoint": "Add data point",

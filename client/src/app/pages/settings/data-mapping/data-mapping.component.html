@@ -83,6 +83,10 @@
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
+              [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingMapping()"
+              [class.border-danger]="isDuplicatingMapping()"
             >
               <mat-option>
                 <ngx-mat-select-search
@@ -122,6 +126,10 @@
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
+              [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingMapping()"
+              [class.border-danger]="isDuplicatingMapping()"
             >
               <mat-option>
                 <ngx-mat-select-search
@@ -193,7 +201,9 @@
               #group="matButtonToggleGroup"
             >
               <mat-button-toggle
-                (click)="onEditEnd(); group.value = null"
+                (click)="
+                  !isDuplicatingMapping() && onEditEnd(); group.value = null
+                "
                 [matTooltip]="'settings-data-mapping.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"

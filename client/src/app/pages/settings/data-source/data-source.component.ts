@@ -255,6 +255,28 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.datapointRows = arr;
   }
 
+  isDuplicatingField(field: 'name' | 'address') {
+    if (!this.datapointRows || !this.unsavedRow) {
+      return false;
+    }
+
+    if (this.unsavedRow[field] === undefined) {
+      return false;
+    }
+
+    // check whether other DPs do not have such name
+    const newFieldValue = (this.unsavedRow[field] as string)
+      .toLowerCase()
+      .trim();
+    const editableId = this.unsavedRow?.id;
+
+    return this.datapointRows.some((dp) => {
+      return (
+        dp[field].toLowerCase().trim() === newFieldValue && dp.id !== editableId
+      );
+    });
+  }
+
   onAdd() {
     if (!this.datapointRows) {
       return;
@@ -321,7 +343,11 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onAddressSelect(obj: SourceDataPoint) {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
-      data: { selection: obj.address, protocol: this.dataSource?.protocol },
+      data: {
+        selection: obj.address,
+        protocol: this.dataSource?.protocol,
+        existedAddresses: this.datapointRows?.map((x) => x.address) || []
+      },
       width: '650px'
     });
 

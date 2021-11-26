@@ -91,8 +91,14 @@
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               type="text"
               class="w-100"
+              [matTooltip]="
+                'settings-virtual-data-point.DuplicatedName' | translate
+              "
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingName()"
               [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
+              [class.border-danger]="isDuplicatingName()"
               autofocus
             />
           </ng-template>
@@ -289,7 +295,9 @@
                 ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditEnd(); group.value = null"
+                (click)="
+                  !isDuplicatingName() && onEditEnd(); group.value = null
+                "
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"

@@ -212,10 +212,44 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     return this.dataMappingService.apply();
   }
 
+  isDuplicatingMapping() {
+    if (!this.mappingRows || !this.unsavedRow) {
+      return false;
+    }
+
+    if (
+      this.unsavedRow.source === undefined ||
+      this.unsavedRow.target === undefined
+    ) {
+      return false;
+    }
+
+    // check whether other DPs do not have such name
+    const newFieldValueSource = (this.unsavedRow.source as string)
+      .toLowerCase()
+      .trim();
+
+    const newFieldValueTarget = (this.unsavedRow.target as string)
+      .toLowerCase()
+      .trim();
+
+    const editableId = this.unsavedRow?.id;
+
+    return this.mappingRows.some((dp) => {
+      return (
+        dp.source.toLowerCase().trim() === newFieldValueSource &&
+        dp.target.toLowerCase().trim() === newFieldValueTarget &&
+        dp.id !== editableId
+      );
+    });
+  }
+
   private clearUnsavedRow() {
+    this.mappingRows = this.mappingRows!.filter((_, idx) =>
+      !this.unsavedRow?.id ? idx !== this.unsavedRowIndex : true
+    );
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.mappingRows = this.mappingRows!.filter((x) => x.source);
   }
 
   onDelete(obj: DataMapping) {

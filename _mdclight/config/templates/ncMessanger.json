@@ -165,43 +165,37 @@
           "type": null,
           "address": "DI0",
           "name": "Emergency Stop",
-          "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b",
-          "readFrequency": 1000
+          "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b"
         },
         {
           "type": null,
           "address": "DI1",
           "name": "Red Light",
-          "id": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
-          "readFrequency": 1000
+          "id": "86ea22fc-1091-46e5-9a1a-275c8f7768ec"
         },
         {
           "type": null,
           "address": "DI2",
           "name": "Yellow Light",
-          "id": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7",
-          "readFrequency": 1000
+          "id": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7"
         },
         {
           "type": null,
           "address": "DI3",
           "name": "Green Light",
-          "id": "831268a3-6088-4bca-b099-27f745a84637",
-          "readFrequency": 1000
+          "id": "831268a3-6088-4bca-b099-27f745a84637"
         },
         {
           "type": null,
           "address": "DI4",
           "name": "Blue Light",
-          "id": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
-          "readFrequency": 1000
+          "id": "73fba6ee-ca3b-43bd-af46-b31fba381ab7"
         },
         {
           "type": null,
           "address": "DI5",
           "name": "Availability",
-          "id": "604d583a-ce3a-4d19-a930-a8ba0579d8b2",
-          "readFrequency": 1000
+          "id": "604d583a-ce3a-4d19-a930-a8ba0579d8b2"
         }
       ],
       "protocol": "ioshield",

@@ -272,7 +272,5 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     this.sub && this.sub.unsubscribe();
   }
 
-  filterTargets(event) {
-    console.log(event);
-  }
+  filterTargets(event) {}
 }

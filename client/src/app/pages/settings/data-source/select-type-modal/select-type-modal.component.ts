@@ -32,8 +32,6 @@ export class SelectTypeModalComponent implements OnInit {
   }
 
   isExisted({ address }) {
-    console.log(address);
-
     return this.data.existedAddresses.includes(address);
   }
 

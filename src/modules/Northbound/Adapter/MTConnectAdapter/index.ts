@@ -116,7 +116,7 @@ export class MTConnectAdapter {
   }
 
   /**
-   * Sends all data items to an agent
+   * Sends all data items to an agent. That is initially required if an agent connects to the adapter
    * @returns void
    */
   private sendAllTo(client: Socket) {

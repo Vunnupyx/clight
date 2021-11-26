@@ -50,6 +50,7 @@ const defaultNckConnection: IS7DataSourceConnection = {
  * @returns void
  */
 export class S7DataSource extends DataSource {
+  protected name = S7DataSource.name;
   private isDisconnected = false;
   private cycleActive = false;
 

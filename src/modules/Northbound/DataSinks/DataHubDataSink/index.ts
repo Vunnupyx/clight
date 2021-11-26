@@ -1,10 +1,10 @@
-import { DataSink } from '../DataSink';
 import {
   DataSinkProtocols,
   ILifecycleEvent,
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataHubAdapter, IDesiredProps } from '../../Adapter/DataHubAdapter';
+import { DataSink } from '../DataSink';
 import winston from 'winston';
 import {
   IDataHubConfig,
@@ -149,7 +149,6 @@ export class DataHubDataSink extends DataSink {
       this.updateCurrentStatus(LifecycleEventStatus.NotConfigured);
       return null;
     }
-
     return this.#datahubAdapter
       .init()
       .then((adapter) => adapter.start())

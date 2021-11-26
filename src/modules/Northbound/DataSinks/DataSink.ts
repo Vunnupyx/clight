@@ -10,6 +10,19 @@ import {
 import { DataPointMapper } from '../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
+export enum DataSinkStatus {
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED',
+  DISCONNECTED = 'DISCONNECTED',
+  RECONNECTING = 'RECONNECTING',
+  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
+  NO_NETWORK_AVAILABLE = 'NO_NETWORK_AVAILABLE',
+  INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
+  INVALID_STATE = 'INVALID_STATE'
+}
+
+export type TDataSinkStatus = keyof typeof DataSinkStatus;
+
 /**
  * Base class of northbound data sinks
  */

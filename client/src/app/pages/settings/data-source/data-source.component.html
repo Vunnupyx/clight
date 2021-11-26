@@ -251,7 +251,7 @@
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Provisioning"
               >
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed"
@@ -266,7 +266,7 @@
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Connecting"
               >
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Connected"
@@ -281,7 +281,7 @@
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Reconnecting"
               >
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"

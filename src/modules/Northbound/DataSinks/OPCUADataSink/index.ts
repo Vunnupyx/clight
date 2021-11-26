@@ -145,7 +145,6 @@ export class OPCUADataSink extends DataSink {
   }
 
   public async disconnect() {
-    const logPrefix = `${this.name}::disconnect`;
     this.opcuaAdapter.stop();
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }

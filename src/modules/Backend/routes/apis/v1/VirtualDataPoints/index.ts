@@ -94,7 +94,7 @@ async function vdpDeleteHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpPatchHandler(
+ async function vdpPatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -112,6 +112,7 @@ async function vdpPatchHandler(
     href: `/vdps/${request.body.id}`
   });
 }
+
 
 export const virtualDatapointHandlers = {
   vdpsGet: vdpsGetHandler,

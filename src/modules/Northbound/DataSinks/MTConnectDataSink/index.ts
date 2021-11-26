@@ -35,7 +35,7 @@ export interface IMTConnectDataSinkOptions {
 export class MTConnectDataSink extends DataSink {
   private mtcAdapter: MTConnectAdapter;
   private static scheduler: SynchronousIntervalScheduler;
-  private static schedulerListenerId: number;
+  private static schedulerListenerId: number = null;
   private dataItems: DataItemDict = {};
   protected _protocol = DataSinkProtocols.MTCONNECT;
   protected name = MTConnectDataSink.name;
@@ -73,7 +73,22 @@ export class MTConnectDataSink extends DataSink {
     }
 
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
+    this.setupDataItems();
 
+    this.mtcAdapter.start();
+    if (!MTConnectDataSink.schedulerListenerId) {
+      MTConnectDataSink.schedulerListenerId =
+        MTConnectDataSink.scheduler.addListener([1000], () => {
+          this.runTime.value = (this.runTime.value as number) + 1;
+          this.mtcAdapter.sendChanged();
+        });
+    }
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
+    winston.info(`${logPrefix} initialized.`);
+    return Promise.resolve(this);
+  }
+
+  private setupDataItems() {
     this.avail = new Event('avail');
     this.runTime = new Event('runTime');
     this.runTime.value = 0;
@@ -102,17 +117,6 @@ export class MTConnectDataSink extends DataSink {
         dataItem.value = dp.initialValue;
       }
     });
-    this.mtcAdapter.start();
-    if (!MTConnectDataSink.schedulerListenerId) {
-      MTConnectDataSink.schedulerListenerId =
-        MTConnectDataSink.scheduler.addListener([1000], () => {
-          this.runTime.value = (this.runTime.value as number) + 1;
-          this.mtcAdapter.sendChanged();
-        });
-    }
-    this.updateCurrentStatus(LifecycleEventStatus.Connected);
-    winston.info(`${logPrefix} initialized.`);
-    return Promise.resolve(this);
   }
 
   protected processDataPointValue(dataPointId, value) {
@@ -157,9 +161,12 @@ export class MTConnectDataSink extends DataSink {
     winston.debug(`${logPrefix} triggered.`);
     const shutdownFunctions = [];
     this.disconnect();
+
     MTConnectDataSink.scheduler.removeListener(
       MTConnectDataSink.schedulerListenerId
     );
+    MTConnectDataSink.schedulerListenerId = null;
+
     Object.getOwnPropertyNames(this).forEach((prop) => {
       if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
       if (this[prop].close) shutdownFunctions.push(this[prop].close());

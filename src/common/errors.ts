@@ -21,4 +21,10 @@ export class NorthBoundError extends Error {
   }
 }
 
-export class AdapterError extends NorthBoundError {} // TODO:
+export type TAdapterErrorTypes = 'NO_INTERNET_CONNECTION' | 'INVALID_CREDENTIALS'
+
+export class AdapterError extends NorthBoundError {
+  constructor(msg, code?, public type: TAdapterErrorTypes = undefined) {
+    super(msg, code)
+  }
+}

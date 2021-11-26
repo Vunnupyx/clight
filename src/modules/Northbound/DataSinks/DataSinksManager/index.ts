@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TypedEventEmitter from 'typed-emitter';
 import winston from 'winston';
-import { NorthBoundError } from '../../../../common/errors';
+import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import {
   DataSinkProtocols,
   IErrorEvent,
@@ -11,6 +11,7 @@ import { ConfigManager } from '../../../ConfigManager';
 import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
 import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
+import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
 import { DataHubDataSink, DataHubDataSinkOptions } from '../DataHubDataSink';
 import { DataSink } from '../DataSink';
 import {
@@ -43,6 +44,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private dataSinks: Array<DataSink> = [];
   private dataSinksRestartPending = false;
   private dataAddedDuringRestart = false;
+  private dataSinkConnectRetryTimer: NodeJS.Timer;
+  private sinksRetryCount: number = 0;
 
   constructor(params: IDataSinkManagerParams) {
     super();
@@ -60,9 +63,15 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
-    return Promise.all(initMethods)
-      .then(() => {
-        // TODO: Handle rejected init
+    return Promise.allSettled(initMethods)
+      .then((results) => {
+        results.forEach((result) => {
+          if (result.status === 'rejected') {
+            winston.warn(
+              `${logPrefix} datasink failed to initialize due to ${result.reason}.`
+            );
+          }
+        });
         winston.info(`${logPrefix} initialized.`);
       })
       .then(() => this)
@@ -106,10 +115,25 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       config: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
       runTimeConfig: this.configManager.runtimeConfig.datahub
     };
+    this.configManager.config.dataSinks.forEach((sink) => {
+      switch (sink.protocol) {
+        case DataSinkProtocols.DATAHUB: {
+          this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
+          break;
+        }
+        case DataSinkProtocols.MTCONNECT: {
+          this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
+          break;
+        }
+        case DataSinkProtocols.OPCUA: {
+          this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
+          break;
+        }
 
-    this.dataSinks.push(new DataHubDataSink(dataHubDataSinkOptions));
-    this.dataSinks.push(new MTConnectDataSink(mtConnectDataSinkOptions));
-    this.dataSinks.push(new OPCUADataSink(opcuaDataSinkOptions));
+        default:
+          break;
+      }
+    });
 
     this.connectDataSinksToBus();
     winston.info(`${logPrefix} created.`);

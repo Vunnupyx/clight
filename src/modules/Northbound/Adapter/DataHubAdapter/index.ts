@@ -12,7 +12,7 @@ import { createHmac } from 'crypto';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import winston from 'winston';
-import { NorthBoundError } from '../../../../common/errors';
+import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import {
   IDataHubConfig,
   IDataHubSettings,
@@ -69,7 +69,6 @@ export class DataHubAdapter {
   #provGroupClient: RegistrationClient;
   #provSecClient: SymmetricKeySecurityClient;
   #symKeyProvTransport: ProvTransport;
-  #killProv: Function;
 
   // Datahub and Twin
   #connectionSting: TConnectionString = null;
@@ -82,6 +81,7 @@ export class DataHubAdapter {
   #probeSendInterval: number;
   #telemetrySendInterval: number;
   #runningTimers: Array<NodeJS.Timer> = [];
+  private provTimer: NodeJS.Timer = null;
 
   lastSentEventValues: { [key: string]: boolean | number | string } = {};
 
@@ -193,7 +193,9 @@ export class DataHubAdapter {
       .then((success) => {
         this.#initialized = true;
         this.#successfullyProvisioned = success;
-        winston.debug(`${logPrefix} initialized. Registered to DPS`);
+        winston.debug(
+          `${logPrefix} initialized. ${success ? 'R' : 'Not r'}egistered to DPS`
+        );
         return this;
       })
       .catch((err) => {
@@ -229,7 +231,11 @@ export class DataHubAdapter {
       this.#provSecClient
     );
 
-    return this.getProvisioning();
+    const success = this.getProvisioning();
+    if (!success) {
+      this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+    }
+    return success;
   }
 
   /**
@@ -358,17 +364,23 @@ export class DataHubAdapter {
 
     return new Promise((res, rej) => {
       winston.debug(`${logPrefix} Registering...`);
-      this.#killProv = rej;
+      const timeOut = 10 * 1000;
+      this.provTimer = setTimeout(() => {
+        this.#provClient.cancel();
+        winston.error(`${logPrefix} hit timeout of ${timeOut} ms. Abort.`);
+        this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+        res(false);
+      }, timeOut);
       this.#provClient.register((err, response) => {
         try {
+          clearTimeout(this.provTimer);
           const success = this.registrationHandler(err, response);
           res(success);
         } catch (err) {
-          rej(
-            new NorthBoundError(
-              `${logPrefix} error due to ${JSON.stringify(err)}`
-            )
+          winston.error(
+            `${logPrefix} registration failed due to ${err?.message}`
           );
+          res(false);
         }
       });
     });
@@ -545,12 +557,11 @@ export class DataHubAdapter {
 
   public shutdown(): Promise<void> {
     const logPrefix = `${DataHubAdapter.name}::shutdown`;
-    this.#killProv();
+    this.killProv();
     const shutdownFunctions = [
       this.#provClient?.cancel(),
       this.#provGroupClient?.cancel()
     ];
-
     [
       this.#proxy,
       this.#provSecClient,
@@ -578,6 +589,14 @@ export class DataHubAdapter {
       .catch((err) => {
         winston.error(`${logPrefix} error due to ${err.message}.`);
       });
+  }
+
+  private killProv() {
+    if (this.#provClient) {
+      // In case of previous state was "Missing Config", this is undefined
+      this.#provClient.cancel();
+    }
+    clearTimeout(this.provTimer);
   }
 }
 

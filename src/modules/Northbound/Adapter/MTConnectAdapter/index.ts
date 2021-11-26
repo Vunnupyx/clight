@@ -128,7 +128,6 @@ export class MTConnectAdapter {
       for (const item of together) line += '|' + item.toString();
       line += '\n';
 
-      console.log(`Sending message: ${line}`);
       winston.debug(`Sending message: ${line}`);
       client.write(line);
     }
@@ -139,7 +138,6 @@ export class MTConnectAdapter {
       for (const item of separate) {
         const line = timestamp + '|' + item.toString() + '\n';
 
-        console.log(`Sending message: ${line.replace(/\n+$/, '')}`);
         winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
         client.write(line);
@@ -178,7 +176,6 @@ export class MTConnectAdapter {
    * @returns void
    */
   public sendChanged(): void {
-    console.log('mtc adapter send changed');
     const { together, separate } = this.getItemLists();
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
@@ -187,8 +184,7 @@ export class MTConnectAdapter {
       line += '\n';
 
       if (this.clients.length > 0)
-        console.log(`Sending message: ${line.replace(/\n+$/, '')}`);
-      winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
+        winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
       for (const client of this.clients) {
         client.write(line);
@@ -202,8 +198,7 @@ export class MTConnectAdapter {
         const line = timestamp + '|' + item.toString() + '\n';
 
         if (this.clients.length > 0)
-          console.log(`Sending message: ${line.replace(/\n+$/, '')}`);
-        winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
+          winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
         for (const client of this.clients) {
           client.write(line);

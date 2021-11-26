@@ -35,7 +35,7 @@ export interface IMTConnectDataSinkOptions {
 export class MTConnectDataSink extends DataSink {
   private mtcAdapter: MTConnectAdapter;
   private static scheduler: SynchronousIntervalScheduler;
-  private static schedulerListenerId: number;
+  private static schedulerListenerId: number = null;
   private dataItems: DataItemDict = {};
   protected _protocol = DataSinkProtocols.MTCONNECT;
   protected name = MTConnectDataSink.name;
@@ -53,8 +53,6 @@ export class MTConnectDataSink extends DataSink {
   constructor(options: IMTConnectDataSinkOptions) {
     super(options.dataSinkConfig);
     this.enabled = options.dataSinkConfig.enabled;
-
-    console.log('create mtc adapter');
     this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig);
     MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
@@ -79,7 +77,6 @@ export class MTConnectDataSink extends DataSink {
 
     this.mtcAdapter.start();
     if (!MTConnectDataSink.schedulerListenerId) {
-      console.log('Setup mtc listener');
       MTConnectDataSink.schedulerListenerId =
         MTConnectDataSink.scheduler.addListener([1000], () => {
           this.runTime.value = (this.runTime.value as number) + 1;
@@ -92,8 +89,6 @@ export class MTConnectDataSink extends DataSink {
   }
 
   private setupDataItems() {
-    console.log('Setup data items');
-
     this.avail = new Event('avail');
     this.runTime = new Event('runTime');
     this.runTime.value = 0;
@@ -166,9 +161,12 @@ export class MTConnectDataSink extends DataSink {
     winston.debug(`${logPrefix} triggered.`);
     const shutdownFunctions = [];
     this.disconnect();
+
     MTConnectDataSink.scheduler.removeListener(
       MTConnectDataSink.schedulerListenerId
     );
+    MTConnectDataSink.schedulerListenerId = null;
+
     Object.getOwnPropertyNames(this).forEach((prop) => {
       if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
       if (this[prop].close) shutdownFunctions.push(this[prop].close());
@@ -188,8 +186,6 @@ export class MTConnectDataSink extends DataSink {
    * Disconnects all data items
    */
   public disconnect() {
-    console.log('Make all data item unavailable');
-
     Object.keys(this.dataItems).forEach((key) => {
       this.dataItems[key].unavailable();
     });

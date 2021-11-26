@@ -65,7 +65,7 @@ async function dataSourcePatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const allowed = ['connection', 'enabled', 'softwareVersion'];
+  const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
 
   const dataSource = configManager.config.dataSources.find(
@@ -86,7 +86,8 @@ async function dataSourcePatchHandler(
     }
   });
 
-  const changedDatasource = { ...dataSource, ...request.body };
+  let changedDatasource = { ...dataSource, ...request.body };
+
   const config = configManager.config;
   config.dataSources = [
     ...config.dataSources.filter(
@@ -276,9 +277,15 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  let status = dataSourcesManager
-    .getDataSourceByProto(request.params.datasourceProtocol)
-    .getCurrentStatus();
+  let status;
+
+  try {
+    status = dataSourcesManager
+      .getDataSourceByProto(request.params.datasourceProtocol)
+      .getCurrentStatus();
+  } catch (e) {
+    status = LifecycleEventStatus.Unavailable;
+  }
 
   response.status(200).json({ status });
 }

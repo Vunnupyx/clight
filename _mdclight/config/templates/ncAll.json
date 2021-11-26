@@ -1,6 +1,6 @@
 {
   "name": "SINUMERIK 840d sl",
-  "description": "SINUMERIK 840D sl to Messenger, OPC UA and Data hub",
+  "description": "SINUMERIK 840D sl to Messenger, OPC UA and CELOS Xchange",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",
@@ -205,7 +205,6 @@
         }
       ],
       "protocol": "ioshield",
-      "connection": null,
       "enabled": true
     }
   ],

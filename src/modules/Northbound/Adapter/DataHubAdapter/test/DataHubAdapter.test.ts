@@ -10,7 +10,6 @@ const dataHubSettingsMock = {
   symKey: 'dummy key'
 };
 const dataHubAdapterOptionsMock = {
-  serialNumber: 'dummy serialnumber',
   groupDevice: false,
   signalGroups: signalGroupsMock,
   dataPointTypesData: {

@@ -1,4 +1,3 @@
-import NodeS7 from 'nodes7';
 import winston from 'winston';
 import { DataSource } from '../DataSource';
 import {
@@ -13,7 +12,7 @@ import { Iot2050MraaDI10 } from '../../../Iot2050MraaDI10/Iot2050mraa';
  * Implementation of io shield data source
  */
 export class IoshieldDataSource extends DataSource {
-  protected static className = IoshieldDataSource.name;
+  protected name = IoshieldDataSource.name;
 
   mraaClient: Iot2050MraaDI10;
 
@@ -22,7 +21,7 @@ export class IoshieldDataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const logPrefix = `${IoshieldDataSource.className}::init`;
+    const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
     const { name, protocol, enabled } = this.config;
@@ -31,7 +30,7 @@ export class IoshieldDataSource extends DataSource {
       winston.info(
         `${logPrefix} io shield data source is disabled. Skipping initialization.`
       );
-      this.currentStatus = LifecycleEventStatus.Disabled;
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return;
     }
 
@@ -48,7 +47,7 @@ export class IoshieldDataSource extends DataSource {
 
     this.validateDataPointConfiguration();
     this.setupDataPoints();
-    this.currentStatus = LifecycleEventStatus.Connected;
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
   }
 
   /**
@@ -59,7 +58,7 @@ export class IoshieldDataSource extends DataSource {
   protected async dataSourceCycle(
     currentIntervals: Array<number>
   ): Promise<void> {
-    const logPrefix = `${IoshieldDataSource.className}::dataSourceCycle`;
+    const logPrefix = `${this.name}::dataSourceCycle`;
     const currentCycleDataPoints: Array<IDataPointConfig> =
       this.config.dataPoints.filter((dp: IDataPointConfig) => {
         const rf = Math.max(dp.readFrequency || 1000, 1000);
@@ -71,10 +70,28 @@ export class IoshieldDataSource extends DataSource {
       const digitalInputValues = await this.mraaClient.getDigitalValues();
       const analogInputValues = await this.mraaClient.getAnalogValues();
 
+      const formattedAnalogInputValues: {
+        [label: string]: number;
+      } = {};
+      Object.keys(analogInputValues).forEach((key) => {
+        switch (this.config.type) {
+          case 'ai-150+5di':
+            formattedAnalogInputValues[key] = analogInputValues[key] * 1.5; // Converting to 150A output
+            break;
+          case 'ai-100+5di':
+          case '10di':
+          default:
+            formattedAnalogInputValues[key] = analogInputValues[key];
+            break;
+        }
+      });
+
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
         const value =
-          digitalInputValues[dp.address] || analogInputValues[dp.address] || 0;
+          digitalInputValues[dp.address] ||
+          formattedAnalogInputValues[dp.address] ||
+          0;
 
         if (typeof value === 'undefined') continue;
 
@@ -102,10 +119,10 @@ export class IoshieldDataSource extends DataSource {
    * @returns Promise<void>
    */
   public async disconnect(): Promise<void> {
-    const logPrefix = `${IoshieldDataSource.className}::disconnect`;
+    const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
-    this.currentStatus = LifecycleEventStatus.Disconnected;
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
   /**

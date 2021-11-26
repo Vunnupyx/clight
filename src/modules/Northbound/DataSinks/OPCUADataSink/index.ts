@@ -31,7 +31,7 @@ export class OPCUADataSink extends DataSink {
   private opcuaAdapter: OPCUAAdapter;
   private opcuaNodes: OPCUANodeDict = {};
   protected _protocol = DataSinkProtocols.OPCUA;
-  private static className = OPCUADataSink.name;
+  protected name = OPCUADataSink.name;
 
   constructor(options: IOPCUADataSinkOptions) {
     super(options.dataSinkConfig);
@@ -44,27 +44,31 @@ export class OPCUADataSink extends DataSink {
   }
 
   public async init(): Promise<OPCUADataSink> {
-    const logPrefix = `${OPCUADataSink.className}::init`;
+    const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
     if (!this.enabled) {
       winston.info(
         `${logPrefix} OPC UA data sink is disabled. Skipping initialization.`
       );
-      this.currentStatus = LifecycleEventStatus.Disabled;
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return this;
     }
 
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
     return this.opcuaAdapter
       .init()
       .then((adapter) => adapter.start())
       .then(() => this.setupDataPoints())
-      .then(() => winston.info(`${logPrefix} initialized.`))
-      .then(() => this);
+      .then(() => {
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        winston.info(`${logPrefix} initialized.`);
+        return this;
+      });
   }
 
   private setupDataPoints() {
-    const logPrefix = `${OPCUADataSink.className}::setupDataPoints`;
+    const logPrefix = `${this.name}::setupDataPoints`;
     this.config.dataPoints.forEach((dp) => {
       winston.debug(`${logPrefix} Setting up node ${dp.address}`);
       try {
@@ -80,7 +84,7 @@ export class OPCUADataSink extends DataSink {
   }
 
   protected processDataPointValue(dataPointId, value) {
-    const logPrefix = `${OPCUADataSink.className}::onProcessDataPointValue`;
+    const logPrefix = `${this.name}::onProcessDataPointValue`;
 
     const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
 
@@ -136,13 +140,14 @@ export class OPCUADataSink extends DataSink {
   }
 
   public shutdown(): Promise<void> {
-    const logPrefix = `${OPCUADataSink.className}::shutdown`;
+    const logPrefix = `${this.name}::shutdown`;
     return this.opcuaAdapter.shutdown();
   }
 
   public async disconnect() {
-    const logPrefix = `${OPCUADataSink.className}::disconnect`;
+    const logPrefix = `${this.name}::disconnect`;
     this.opcuaAdapter.stop();
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
   /**

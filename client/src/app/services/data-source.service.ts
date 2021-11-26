@@ -7,7 +7,9 @@ import { from, interval, Observable } from 'rxjs';
 import {
   DataSource,
   DataSourceConnection,
-  DataSourceProtocol
+  DataSourceProtocol,
+  IOShieldTypes,
+  S7Types
 } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -91,7 +93,7 @@ export class DataSourceService {
     // made first call
     this.getStatus(protocol);
 
-    return interval(5000).pipe(mergeMap(() => from(this.getStatus(protocol))));
+    return interval(2000).pipe(mergeMap(() => from(this.getStatus(protocol))));
   }
 
   async getStatus(datasourceProtocol: string) {
@@ -137,6 +139,10 @@ export class DataSourceService {
       payload.softwareVersion = ds.softwareVersion;
     }
 
+    if (ds.type) {
+      payload.type = ds.type;
+    }
+
     await this.httpService.patch(`/datasources/${protocol}`, payload);
 
     this._store.patchState((state) => {
@@ -158,6 +164,20 @@ export class DataSourceService {
 
   getNckAddresses() {
     return NCK_ADDRESSES;
+  }
+
+  async getDataSourceType(
+    protocol: DataSourceProtocol
+  ): Promise<S7Types | IOShieldTypes | null> {
+    try {
+      const ds = await this.httpService.get<DataSource>(
+        `/datasources/${protocol}`
+      );
+
+      return ds.type;
+    } catch {
+      return null;
+    }
   }
 
   private _orderByProtocol(objs: DataSource[]): DataSource[] {

@@ -41,8 +41,9 @@
     "ChangePasswordSuccess": "Password has been changed successfully!"
   },
   "quick-start": {
-    "Language": "Language",
-    "SelectLanguage": "Select Language",
+    "TermsAndConditions": "Terms and Conditions",
+    "Accept": "Accept",
+    "Language": "Select your language",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
@@ -72,6 +73,13 @@
         "name": "OPCUA",
         "description": "OPCUA Description"
       }
+    },
+    "Descriptions": {
+      "ReadMore": "Weitere Information finden Sie innerhalb der Dokumentation",
+      "Step1": "Mit Hilfe der Templates können Sie eine für Sie passende Vorkonfiguration ins Gerät laden. Später bleibt Ihnen trotzdem noch die Möglichkeit Änderungen in der Konfiguration vorzunehmen. Aktzeptieren Sie zuerst die AGB's um fortzufahren.",
+      "Step2": "Hier können Sie das passende Template auswählen.",
+      "Step3": "Wählen Sie hier die gewünschten Datenquellen an oder ab. Angewählte Datenquellen werden nach erfolgreichen Abschließen des Setup's automatisch gestartet. Diese Einstellung lässt sich später ändern.",
+      "Step4": "Wählen Sie hier die gewünschten Applikations Schnittstellen, die vom System bereitgestellt und aktiviert werden sollen. Diese Einstellung lässt sich später ändern."
     }
   },
   "settings-general": {
@@ -81,6 +89,7 @@
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch",
+    "Japanese": "Japanese",
     "Templates": "Templates",
     "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",
@@ -125,9 +134,12 @@
     "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",
     "ConnectionError": "Failed to connect",
+    "Disabled": "Disabled",
+    "Unavailable": "Unavailable",
     "ServiceState": "",
     "DataPoints": "",
     "SelectAVariable": "",
+    "ControllerType": "",
     "Name": "",
     "Type": "",
     "Address": "",
@@ -143,8 +155,8 @@
     "LoadStatusError": "",
     "UpdateError": "",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
-      "ioshield": "Digital Inputs"
+      "s7": "SIEMENS",
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {
@@ -198,14 +210,16 @@
     "Enabled": "",
     "Connection": "",
     "Running": "",
-    "Disconnected": "",
-    "NotConfigured": "NotConfigured",
+    "Disconnected": "Disconnected",
+    "NotConfigured": "Configuration Missing",
     "Provisioning": "Provisioning",
-    "ProvisioningFailed": "ProvisioningFailed",
-    "NoNetwork": "NoNetwork",
+    "ProvisioningFailed": "Provisioning Failed",
+    "NoNetwork": "No Network",
     "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",
-    "ConnectionError": "Failed to connect",
+    "Disabled": "Disabled",
+    "ConnectionError": "Failed to Connect",
+    "Unavailable": "Unavailable",
     "ServiceState": "",
     "DataPoints": "",
     "AddDataPoint": "",
@@ -247,7 +261,7 @@
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
-      "datahub": "Data Hub"
+      "datahub": "CELOS Xchange"
     },
     "LoadError": "",
     "LoadStatusError": "",

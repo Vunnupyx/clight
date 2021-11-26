@@ -74,8 +74,8 @@
         "description": "OPCUA Description"
       },
       "datahub": {
-        "name": "CELOS Xchange",
-        "description": "CELOS Xchange description"
+        "name": "Data Hub",
+        "description": "Data Hub description"
       }
     },
     "Descriptions": {
@@ -83,7 +83,7 @@
       "Step1": "With the help of the templates, you can load a suitable pre-configuration into the device. Later, you still have the option of making changes to the configuration. Please first accept the terms and conditions in order to continue.",
       "Step2": "Here you can select the appropriate template.",
       "Step3": "Select or deselect the desired data sources here. Selected data sources are started automatically after successful completion of the setup. This setting can be changed later.",
-      "Step4": "Select the desired application interfaces that are to be provided and activated by the system. This setting can be changed later."
+      "Step4": "Select the desired application interfaces that are to be provided and activated by the system. This setting can be changed later.."
     }
   },
   "settings-general": {
@@ -131,19 +131,11 @@
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
-    "NotConfigured": "NotConfigured",
-    "Provisioning": "Provisioning",
-    "ProvisioningFailed": "ProvisioningFailed",
-    "NoNetwork": "NoNetwork",
-    "Connecting": "Connecting",
-    "Reconnecting": "Reconnecting",
-    "ConnectionError": "Failed to connect",
     "Disabled": "Disabled",
     "Unavailable": "Unavailable",
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
-    "ControllerType": "Controller Type",
     "Name": "Name",
     "Type": "Type",
     "Address": "Address",
@@ -159,8 +151,8 @@
     "LoadStatusError": "Failed to load status. Try again later",
     "UpdateError": "Failed to update a data source. Try again later",
     "Tabs": {
-      "s7": "SIEMENS",
-      "ioshield": "Input Board"
+      "s7": "SINUMERIK 840D sl",
+      "ioshield": "Digital Inputs"
     },
     "Livedata": {
       "ioshield": {
@@ -212,14 +204,12 @@
   "settings-data-sink": {
     "DataSink": "Data Sink",
     "Enabled": "Enabled",
-    "Connection": "Connection",
-    "Running": "Running",
     "Disconnected": "Disconnected",
     "NotConfigured": "Configuration Missing",
     "Provisioning": "Provisioning",
     "ProvisioningFailed": "Provisioning Failed",
     "NoNetwork": "No Network",
-    "Connecting": "Starting",
+    "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",
     "Disabled": "Disabled",
     "ConnectionError": "Failed to Connect",
@@ -262,7 +252,7 @@
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
-      "datahub": "CELOS Xchange"
+      "datahub": "Data Hub"
     },
     "AuthenticationLevels": {
       "anonymous": "Anonymous",

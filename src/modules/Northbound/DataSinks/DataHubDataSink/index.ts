@@ -31,7 +31,7 @@ export interface IMeasurement {
  * Representation of the data sink for Azure iot hub.
  */
 export class DataHubDataSink extends DataSink {
-  static readonly #className = DataHubDataSink.name;
+  protected name = DataHubDataSink.name;
   protected _protocol = DataSinkProtocols.DATAHUB;
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
@@ -50,11 +50,7 @@ export class DataHubDataSink extends DataSink {
   }
 
   private handleAdapterStateChange(newState: LifecycleEventStatus) {
-    const logPrefix = `${DataHubDataSink.name}::handleAdapterStateChange`;
-    winston.info(
-      `${logPrefix} data hub data sink state updated from ${this.currentStatus} to ${newState}.`
-    );
-    this.currentStatus = newState;
+    this.updateCurrentStatus(newState);
   }
 
   /**
@@ -129,14 +125,14 @@ export class DataHubDataSink extends DataSink {
    * Initialize datahub data sink and all it´s dependencies.
    */
   public async init(): Promise<DataHubDataSink> {
-    const logPrefix = `${DataHubDataSink.#className}::init`;
+    const logPrefix = `${this.name}::init`;
     winston.debug(`${logPrefix} initializing.`);
 
     if (!this.enabled) {
       winston.info(
         `${logPrefix} datahub data sink is disabled. Skipping initialization.`
       );
-      this.currentStatus = LifecycleEventStatus.Disabled;
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return this;
     }
 
@@ -150,6 +146,7 @@ export class DataHubDataSink extends DataSink {
       winston.warn(
         `${logPrefix} aborting data hub adapter initializing due to missing configuration.`
       );
+      this.updateCurrentStatus(LifecycleEventStatus.NotConfigured);
       return null;
     }
     return this.#datahubAdapter
@@ -165,7 +162,7 @@ export class DataHubDataSink extends DataSink {
    * Shutdown datasink
    */
   public shutdown(): Promise<void> {
-    const logPrefix = `${DataHubDataSink.#className}::shutdown`;
+    const logPrefix = `${this.name}::shutdown`;
     return this.#datahubAdapter
       .shutdown()
       .then(() => (this.#datahubAdapter = null))
@@ -182,7 +179,8 @@ export class DataHubDataSink extends DataSink {
    */
   public async disconnect() {
     await this.#datahubAdapter.stop();
-    winston.info(`${DataHubDataSink.#className}::shutdown successful.`);
+    winston.info(`${this.name}::shutdown successful.`);
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
   /**

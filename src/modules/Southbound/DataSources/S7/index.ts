@@ -7,9 +7,13 @@ import {
   DataPointLifecycleEventTypes,
   EventLevels
 } from '../../../../common/interfaces';
-import { IDataPointConfig } from '../../../ConfigManager/interfaces';
+import {
+  IDataPointConfig,
+  IS7DataSourceConnection
+} from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
 import SinumerikNCK from './SinumerikNCK/NCDriver';
+
 interface S7DataPointsWithError {
   datapoints: Array<any>;
   error: boolean;
@@ -19,6 +23,27 @@ interface NCDataPointWithStatus {
   value?: any;
   error?: string;
 }
+
+const defaultS7300Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2
+};
+
+const defaultS71500Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 1
+};
+
+const defaultNckConnection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2 // That's only the plc (300) slot. For the nck, the slot 4 is set inside that driver
+};
 
 /**
  * Implementation of s7 data source
@@ -47,7 +72,7 @@ export class S7DataSource extends DataSource {
       winston.info(
         `${logPrefix} S7 data source is disabled. Skipping initialization.`
       );
-      this.currentStatus = LifecycleEventStatus.Disabled;
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return;
     }
 
@@ -58,7 +83,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connecting,
       dataSource: { protocol, name }
     });
-    this.currentStatus = LifecycleEventStatus.Connecting;
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     const nckDataPointsConfigured = this.config.dataPoints.find(
       (dp: IDataPointConfig) => {
@@ -69,10 +94,10 @@ export class S7DataSource extends DataSource {
     try {
       if (nckDataPointsConfigured)
         await Promise.all([
-          this.connectPLC(connection),
+          this.connectPLC(),
           this.nckClient.connect(connection.ipAddr)
         ]);
-      else await this.connectPLC(connection);
+      else await this.connectPLC();
     } catch (error) {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.submitLifecycleEvent({
@@ -83,7 +108,7 @@ export class S7DataSource extends DataSource {
         dataSource: { name, protocol },
         payload: error
       });
-      this.currentStatus = LifecycleEventStatus.ConnectionError;
+      this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
         if (this.isDisconnected) {
           return;
@@ -95,7 +120,7 @@ export class S7DataSource extends DataSource {
           status: LifecycleEventStatus.Reconnecting,
           dataSource: { name, protocol }
         });
-        this.currentStatus = LifecycleEventStatus.Reconnecting;
+        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
         this.init();
       }, this.RECONNECT_TIMEOUT);
       return;
@@ -108,7 +133,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connected,
       dataSource: { name, protocol }
     });
-    this.currentStatus = LifecycleEventStatus.Connected;
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
     this.isDisconnected = false;
     this.setupDataPoints();
   }
@@ -266,7 +291,24 @@ export class S7DataSource extends DataSource {
    * Handles connection result from connecting to device
    * @param  {} err
    */
-  private connectPLC(connection): Promise<void> {
+  private connectPLC(): Promise<void> {
+    let connection: IS7DataSourceConnection;
+
+    switch (this.config.type) {
+      case 's7-1200/1500':
+        connection = defaultS71500Connection;
+        break;
+      case 's7-300/400':
+        connection = defaultS7300Connection;
+        break;
+      case 'nck':
+        connection = defaultNckConnection;
+        break;
+      case 'custom':
+      default:
+        connection = this.config.connection;
+    }
+
     return new Promise((resolve, reject) => {
       this.client.initiateConnection(
         {
@@ -289,7 +331,7 @@ export class S7DataSource extends DataSource {
    * @returns Promise
    */
   public async disconnect(): Promise<void> {
-    const logPrefix = `${S7DataSource.className}::disconnect`;
+    const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
     const { name, protocol } = this.config;
@@ -301,7 +343,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Disconnected,
       dataSource: { name, protocol }
     });
-    this.currentStatus = LifecycleEventStatus.Disconnected;
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
     clearTimeout(this.reconnectTimeoutId);
     this.client.dropConnection();
     await this.nckClient.disconnect();

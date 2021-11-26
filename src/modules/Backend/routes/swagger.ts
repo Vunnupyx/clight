@@ -1289,6 +1289,57 @@ export default {
         }
       }
     },
+    '/terms-and-conditions': {
+      get: {
+        parameters: [
+          {
+            in: 'query',
+            name: 'lang',
+            description: 'Language',
+            schema: {
+              type: 'string'
+            }
+          }
+        ],
+        tags: ['terms-and-conditions'],
+        description: 'Get terms-and-conditions by lang',
+        operationId: 'termsAndConditionsGet',
+        responses: {
+          '200': {
+            description: 'Returns all information about the templates',
+            schema: {
+              example: {
+                text: 'Terms and Conditions...'
+              }
+            }
+          }
+        }
+      }
+    },
+    '/terms-and-conditions/accept': {
+      post: {
+        parameters: [
+          {
+            in: 'body',
+            name: 'accepted',
+            description: 'Accepted flag',
+            schema: {
+              example: {
+                accepted: true
+              }
+            }
+          }
+        ],
+        tags: ['terms-and-conditions'],
+        description: 'Accept terms-and-conditions',
+        operationId: 'termsAndConditionsPost',
+        responses: {
+          '200': {
+            description: 'Returns all information about the templates'
+          }
+        }
+      }
+    },
     '/templates': {
       get: {
         tags: ['templates'],

@@ -1,0 +1,127 @@
+﻿Allgemeine Nutzungsbedingungen
+für den Kauf der Software für die Nutzung der MDC-Software
+(Endkundenlizenzvertrag)
+
+Bitte lesen Sie den nachfolgenden Endkundenlizenzvertrag vor Ingebrauchnahme des Softwareprodukts und der Ausführung der Installationsroutine sorgfältig durch: Dieser Endkundenlizenzvertrag ist ein Vertrag zwischen der von Ihnen vertretenen juristischen Person - nachfolgend als „Anwender“ bezeichnet - und Ihrem Vertragspartner aus der DMG MORI -Gruppe entsprechend der Bezeichnung in der Auftragsbestätigung - nachfolgend als „Lieferant“ bezeichnet -, der die Verwendung der im Liefervertrag über die dort spezifizierte Werkzeugmaschine („Liefervertrag“) mit erworbenen Software regelt, soweit die Software nicht Bestandteil eines separaten Lizenzvertrages zwischen Ihnen und dem Lieferanten bzw. einer Schwestergesellschaft des Lieferanten, beispielsweise der DMG MORI Software Solutions GmbH, ist.
+Die Software gemäß nachfolgendem § 1 wird Ihnen nur zur Nutzung überlassen, wenn Sie allen Bestimmungen dieses Vertrages zustimmen. Durch die Installation, das Kopieren, Herunterladen oder die sonstige Nutzung der Software erklären Sie Ihr Einverständnis mit den Bestimmungen dieses Endkundenlizenzvertrages. 
+
+
+§ 1
+Kaufgegenstand und Gegenstand der Lizenzgewährung
+
+1.	Gegenstand dieses Vertrags ist die dauerhafte Überlassung des Computerprogramms „Machine Data Conector“ inklusive der zugehörigen Benutzerdokumentation („Vertragssoftware“) und die Einräumung der in § 2 - § 4 beschriebenen Nutzungsrechte. Die Hardware- und Softwareumgebung, innerhalb derer die Vertragssoftware einzusetzen ist, ist in der Benutzerdokumentation festgelegt. Die Vertragssoftware ermöglicht dem Anwender Zugriff auf maschinenspezifische Zustandsdaten per MQTT, OPC-UA und/oder MTConnect. Die Einzelheiten sind in der Benutzerdokumentation beschrieben. 
+
+2.	Die Nutzung der Vertragssoftware nach Maßgabe dieser Bedingungen ist im Preis des Liefervertrages inbegriffen. Sofern die Vertragssoftware auf Basis eines einzelnen Liefervertrages überlassen wird, gilt der insoweit vereinbarte Preis.
+
+3.	Die Vertragssoftware ist Bestandteil der mit der Werkzeugmaschine mitgelieferten Hardware und zur auschliesslichen Nutzung auf der jeweiligen Werkzeugmaschine freigeschaltet.
+
+4.	Die Beschaffenheit und Funktionalität der Vertragssoftware ergibt sich aus der Benutzerdokumentation. Die darin enthaltenen Angaben sind als Leistungsbeschreibungen zu verstehen und nicht als Garantien. Eine Garantie wird nur gewährt, wenn sie als solche ausdrücklich bezeichnet worden ist.
+
+5.	Installations- und Konfigurationsleistungen sind nicht Gegenstand dieses Vertrags, sondern des Liefervertrages. 
+
+6.	Die Erstellung und Nutzung der Vertragssoftware erfolgte bzw. erfolgt teilweise unter Verwendung frei verfügbarer Vertragssoftware („Open Source Software“) auf Basis der für die Open Source Software geltenden Lizenzvereinbarungen („Open Source Regelungen“) zwischen Lieferant und entsprechendem Lizenzgeber. Lieferant gestattet die Nutzung dieser Open Source Software ohne Berechnung einer Lizenzgebühr. Die entsprechenden Open Source Regelungen sind in der mitgelieferten Dokumentation als Anlage zu diesem Endkundenlizenzvertrag in elektronischer Form hinterlegt und einsehbar. Die Nutzung der Open Source Software erfolgt auf Basis der hinterlegten Open Source Regelungen und wird durch diese Endkundenlizenzvereinbarung in keinster Weise zu Lasten des Anwenders eingeschränkt. Bei den insoweit verwendeten Bibliotheken und Programmen und der darauf basierenden Open Source Regelungen handelt es sich um 
+
+• Zlib (zlib Version 1.2.11, January 15th, 2017)
+• AFL-2.1 (Academic Free License v2.1, 2003-2004)
+• Apache 2.0 (Apache License Version 2.0., January 2004)
+• BSD-3-Clause 
+• BSD-2-Clause 
+• MIT 
+• MIT/X11
+• CC0-1.0 (Creative Commons 0 v1.0) 
+• CC-BY-3.0 (Creative Commons - BY v3.0)
+• ISC
+• WTFPL (DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE v2, December 2004)
+• The Unlicense
+• Public Domain
+
+
+7.	Der Anwender erklärt sich mit der Geltung dieser Open Source Regelungen einverstanden sowie damit, dass, soweit die Open Source Regelungen dies erfordern, der Lieferant jegliche Haftung für Mängel und sonstige Haftung sowie jegliche Freistellung im Hinblick auf die Nutzung der Open Source Software ausschließt. Auf Anforderung des Anwenders und soweit nach den jeweiligen Open Source Regelungen erforderlich, wird der Lieferant dem Anwender eine Kopie des Quellcode der jeweiligen Open Source Software übergeben oder auf geeignete elektronische Weise zur Verfügung stellen. Insoweit die Bestimmungen dieses Endkundenlizenzvertrages den Open Source Regelungen widersprechen, gehen die Open Source Regelungen den Regelungen dieses Endnutzervertrages hinsichtlich der Open Source Software vor. 
+
+9.	Die Bedingungen dieses Endkundenlizenzvertrages finden auch auf Erweiterungen der Vertragssoftware („Updates“) Anwendung, deren Installation nach Lieferung der Werkzeugmaschine erfolgt, auch wenn im Rahmen der Installation dieser Updates nicht erneut auf die Geltung der Bedingungen dieses Endkundenlizenzvertrages verwiesen wird. Sofern im Rahmen der Installation von Updates weitere Open Source Software installiert wird, deren Nutzung durch den Lieferanten seitens des Lizenzgebers unter Geltung eigener Open Source Regelungen eingeräumt wird, gelten die Regelungen in vorstehenden Ziffern 6 und 7 dieses § 1 entsprechend. 
+
+
+§ 2
+Vervielfältigungsrechte und Zugriffsschutz
+
+1.	Der Anwender darf das gelieferte Programm vervielfältigen, soweit die jeweilige Vervielfältigung für die bestimmungsgemäße Benutzung der Vertragssoftware, einschließlich der Fehlerberichtigung, notwendig ist. 
+
+2.	Darüber hinaus kann der Anwender eine Vervielfältigung zu Sicherungszwecken vornehmen. Es darf jedoch grundsätzlich nur eine einzige Sicherungskopie angefertigt und aufbewahrt werden. Der Anwender wird auf der erstellten Sicherungskopie den Vermerk „Sicherungskopie“ sowie einen Urheberrechtsvermerk des Lieferanten sichtbar anbringen.
+
+3.	Der Anwender ist verpflichtet, den unbefugten Zugriff Dritter auf die Vertragssoftware und den Lizenzcode sowie die Benutzerdokumentation durch geeignete Vorkehrungen zu verhindern. 
+
+
+§ 3 
+Dekompilierung und Programmänderungen
+
+1.	Die Rückübersetzung des überlassenen Programmcodes in andere Codeformen (Dekompilierung) sowie sonstige Arten der Rückerschließung der verschiedenen Herstellungsstufen der Vertragssoftware (Reverse-Engineering) einschließlich einer Programmänderung ist ausschliesslich  im Hinblick auf die gemäß § 1 Ziffer 6 verwendete Open Source Software zulässig.
+
+2.	Urhebervermerke, Seriennummern sowie sonstige der Programmidentifikation dienende Merkmale dürfen auf keinen Fall entfernt oder verändert werden. Gleiches gilt für eine Unterdrückung der Bildschirmanzeige entsprechender Merkmale.
+
+
+§ 4
+Weiterveräußerung und Weitervermietung
+
+1.	Der Anwender darf die Vertragssoftware auf Dauer einem Dritten dauerhaft oder auf Zeit überlassen, wenn sich der Dritte mit der Weitergeltung der vorliegenden Vertragsbedingungen auch ihm gegenüber einverstanden erklärt. Infolge der Weitergabe erlischt das Recht des alten Anwenders zur Nutzung der Vertragssoftware.
+
+
+2.	Der Anwender darf die Vertragssoftware Dritten nicht überlassen, wenn der begründete Verdacht besteht, der Dritte werde die Vertragsbedingungen verletzen, insbesondere unerlaubte Vervielfältigungen herstellen. 
+
+
+§ 5
+Mängelansprüche
+
+1.	Lieferant leistet Gewähr für die vereinbarte Beschaffenheit sowie dafür, dass der Anwender die Vertragssoftware ohne Verstoß gegen Rechte Dritter nutzen kann. 
+
+2.	Der Anwender hat die Vertragssoftware unverzüglich nach Erhalt auf offensichtliche Mängel zu überprüfen und diese bei Vorliegen Lieferant unverzüglich mitzuteilen, ansonsten ist eine Gewährleistung für diese Mängel ausgeschlossen. Entsprechendes gilt, wenn sich später ein solcher Mangel zeigt. § 377 HGB findet Anwendung.
+
+3.	Lieferant ist im Falle eines Sachmangels zunächst zur Nacherfüllung berechtigt, d.h. nach eigener Wahl zur Beseitigung des Mangels („Nachbesserung“) oder Ersatzlieferung. Im Rahmen der Ersatzlieferung wird der Anwender gegebenenfalls einen neuen Stand der Vertragssoftware übernehmen, es sei denn dies führt zu unzumutbaren Beeinträchtigungen. Bei Rechtsmängeln wird Lieferant dem Anwender nach eigener Wahl eine rechtlich einwandfreie Nutzungsmöglichkeit an der Vertragssoftware verschaffen oder diese so abändern, dass keine Rechte Dritter mehr verletzt werden. 
+
+4.	Lieferant ist berechtigt, die Gewährleistung in den Räumlichkeiten des Anwenders zu erbringen. Lieferant genügt seiner Pflicht zur Nachbesserung auch, indem er mit einer automatischen Installationsroutine versehene Updates auf seiner Homepage zum Download bereitstellt und dem Anwender telefonischen Support oder Support im Wege der Fernwartung („Remote Support“) zur Lösung etwa auftretender Installationsprobleme anbietet. 
+
+5.	Das Recht des Anwenders, im Falle des zweimaligen Fehlschlagens der Nachbesserung oder Ersatzlieferung nach seiner Wahl den Kaufpreis zu mindern oder vom Vertrag zurückzutreten, bleibt unberührt. Ein Rücktrittsrecht besteht nicht bei unerheblichen Mängeln. Macht der Anwender Schadens- oder Aufwendungsersatz geltend, so haftet Lieferant nach § 6.
+
+6.	Mit Ausnahme von Schadensersatzansprüchen verjähren Gewährleistungsansprüche aufgrund von Sachmängeln in einem Jahr; haftet Lieferant gemäß § 6 auf Schadenersatz, gilt die gesetzliche Verjährungsfrist. Die Verjährung beginnt Im Zeitpunkt der Inbetriebnahme der Werkzeugmaschine durch den Anwender.
+
+7.	Besteht zwischen dem Lieferanten oder einem Dritten und Anwender ein Software-Pflegevertrag, richtet sich die Beseitigungsfrist für Mängel nach den in diesem Pflegevertrag vorgesehenen Zeiten.
+
+
+§ 6
+Haftung
+
+1.	Lieferant haftet unbeschränkt
+
+* bei Vorsatz oder grober Fahrlässigkeit,
+* für die Verletzung von Leben, Leib oder Gesundheit,
+* nach den Vorschriften des Produkthaftungsgesetzes sowie
+* im Umfang einer von Lieferant übernommenen Garantie.
+
+2.	Bei leicht fahrlässiger Verletzung einer Pflicht, die wesentlich für die Erreichung des Vertragszwecks ist (Kardinalpflicht), ist die Haftung von Lieferant der Höhe nach begrenzt auf den Schaden, der nach der Art des fraglichen Geschäfts vorhersehbar und typisch ist.
+
+3.	Eine weitergehende Haftung des Lieferanten besteht nicht.
+
+4.	Die vorstehende Haftungsbeschränkung gilt auch für die persönliche Haftung der Mitarbeiter, Vertreter und Organe des Lieferanten.
+
+5.	Lieferant haftet für den Verlust von Daten nur bis zu dem Betrag, der bei ordnungsgemäßer und regelmäßiger Sicherung der Daten zu deren Wiederherstellung angefallen wäre.
+
+
+§ 7 Sonstiges
+
+1.	Der Anwender darf nur mit unbestrittenen oder rechtskräftig festgestellten Forderungen aufrechnen.
+
+2.	Änderungen und Ergänzungen dieses Vertrags bedürfen der Schriftform. Dies gilt auch für die Änderung oder Aufhebung dieser Klausel. Elektronische Dokumente in Textform erfüllen das Schriftformerfordernis nicht.
+
+3.	Allgemeine Geschäftsbedingungen des Anwenders finden keine Anwendung.
+
+4.	Die Vertragssoftware kann (Re-)Exportrestriktionen unterliegen, z.B. der Vereinigten Staaten von Amerika oder der Europäischen Union. Der Anwender hat diese Bestimmungen bei einer Weiterveräußerung oder sonstigen Ausfuhr zu beachten.
+
+5.	Auf diesen Vertrag ist das deutsche Recht unter Ausschluss des Übereinkommens der Vereinten Nationen über Verträge über den internationalen Warenverkauf vom 11.04.1980 (UN-Kaufrecht) anzuwenden.
+
+6.	Erfüllungsort ist der Sitz des Anwenders. Ausschließlicher Gerichtsstand ist München, sofern jede Partei Kaufmann oder juristische Person des öffentlichen Rechts ist oder keinen allgemeinen Gerichtsstand in Deutschland hat.
+
+7.	Sollten einzelne Bestimmungen dieses Vertrags unwirksam sein, berührt dies die Gültigkeit der übrigen Bestimmungen nicht. Die Vertragsparteien werden sich bemühen, anstelle der unwirksamen Bestimmung eine wirksame zu finden, die dem wirtschaftlichen Bedeutungsgehalt der unwirksamen Bestimmung am ehesten nahe kommt.
+
+8.	Die in diesem Vertrag genannten Open Source Regelungen gemäß § 1 Ziffer 6 sind verpflichtender Vertragsbestandteil.
+
+
+

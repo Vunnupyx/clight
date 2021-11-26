@@ -27,6 +27,7 @@ export type TDataSinkStatus = keyof typeof DataSinkStatus;
  * Base class of northbound data sinks
  */
 export abstract class DataSink {
+  protected name = DataSink.name;
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;
   protected readonly _protocol: string;
@@ -40,6 +41,21 @@ export abstract class DataSink {
   constructor(params: IDataSinkConfig) {
     this.config = params;
     this.dataPointMapper = DataPointMapper.getInstance();
+  }
+
+  /**
+   * Updates the current status of the data sink
+   * @param newState
+   * @returns
+   */
+  protected updateCurrentStatus(newState: LifecycleEventStatus) {
+    if (newState === this.currentStatus) return;
+
+    const logPrefix = `${this.name}::updateCurrentStatus`;
+    winston.info(
+      `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
+    );
+    this.currentStatus = newState;
   }
 
   public get protocol() {

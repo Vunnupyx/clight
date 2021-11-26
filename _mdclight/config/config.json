@@ -228,7 +228,12 @@
           "id": "10456f7b-6d0c-4488-8d19-71de07754305",
           "address": "auxiliaries.stacklight.colorBlue",
           "name": "Stacklight Blue",
-          "type": "event"
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
         },
         {
           "id": "7944466f-c49f-4d75-a65d-b6fe5d18b77c",
@@ -276,25 +281,46 @@
           "id": "ad0afa42-4120-485b-a1f4-07282e731fd4",
           "address": "auxiliaries.stacklight.colorGreen",
           "name": "Green Stack Light",
-          "type": "event"
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
         },
         {
           "id": "e8691adc-e1ab-4271-a0b3-897b9ead0b7e",
           "address": "auxiliaries.stacklight.colorRed",
           "name": "Red Stack Light",
-          "type": "event"
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
         },
         {
           "id": "9a972f4c-45ef-4477-840c-d4fc141c8694",
           "address": "auxiliaries.stacklight.colorYellow",
           "name": "Yellow Stack Light",
-          "type": "event"
+          "type": "event",
+          "map": {
+            "0": "OFF",
+            "1": "ON",
+            "2": "BLINKING"
+          }
         },
         {
           "id": "218e217d-2288-4007-a8f8-2ce4c371de14",
           "address": "channels.channel[0].controllerMode",
           "name": "Controller Mode",
-          "type": "event"
+          "type": "event",
+          "map": {
+            "0": "Automatic",
+            "1": "MdaMdi",
+            "2": "JogManual",
+            "3": "Other"
+          }
         },
         {
           "id": "14171496-239e-406b-b300-437bfde86798",
@@ -355,9 +381,20 @@
           "address": "spindles.spindle[0].operationTime",
           "name": "Spindle Operation Time",
           "type": "event"
+        },
+        {
+          "id": "40052ee5-41a8-4bca-a783-6c200ce401e7",
+          "address": "channels.channel[0].state",
+          "name": "Channel State",
+          "type": "event",
+          "map": {
+            "0": "idle",
+            "1": "interrupted",
+            "2": "active"
+          }
         }
       ],
-      "enabled": false,
+      "enabled": true,
       "protocol": "datahub",
       "datahub": {
         "provisioningHost": "celosnext-dps.azure-devices-provisioning.net",

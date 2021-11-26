@@ -23,6 +23,11 @@ export enum DataSinkStatus {
 
 export type TDataSinkStatus = keyof typeof DataSinkStatus;
 
+export interface IDataSinkOptions {
+  dataSinkConfig: IDataSinkConfig;
+  termsAndConditionsAccepted: boolean;
+}
+
 /**
  * Base class of northbound data sinks
  */
@@ -33,14 +38,17 @@ export abstract class DataSink {
   protected readonly _protocol: string;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected enabled = false;
+  protected termsAndConditionsAccepted = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
    * @param params The user configuration object for this data source
    */
-  constructor(params: IDataSinkConfig) {
-    this.config = params;
+  constructor(options: IDataSinkOptions) {
+    this.config = options.dataSinkConfig;
     this.dataPointMapper = DataPointMapper.getInstance();
+    this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
+    this.enabled = options.dataSinkConfig.enabled;
   }
 
   /**

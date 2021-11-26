@@ -140,6 +140,7 @@ async function dataSourcesPostDatapointBulkHandler(
       request.params.datasourceProtocol as DataSourceProtocols,
       request.body || {}
     );
+    await configManager.configChangeCompleted();
     response.status(200).send();
   } catch {
     winston.warn(

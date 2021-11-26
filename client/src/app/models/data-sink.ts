@@ -28,7 +28,8 @@ export enum DataSinkConnectionStatus {
   Disconnected = 'disconnected',
   Reconnecting = 'reconnecting',
   ConnectionError = 'failedtoconnect',
-  Unavailable = 'unavailable' // in case of status can't be loaded
+  Unavailable = 'unavailable', // in case of status can't be loaded,
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
 }
 
 export class DataSinkConnection {

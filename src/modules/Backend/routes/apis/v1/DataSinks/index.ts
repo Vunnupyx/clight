@@ -182,6 +182,7 @@ async function dataSinksPostDatapointBulkHandler(
       proto as DataSinkProtocols,
       request.body || {}
     );
+    await configManager.configChangeCompleted();
     response.status(200).send();
   } catch (err) {
     winston.warn(

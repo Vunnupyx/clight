@@ -85,8 +85,9 @@ const DataPointMapperGetInstanceSpy = jest
 describe('DataHubDataSink', () => {
   let datasinkUUT: DataHubDataSink;
   let dataHubDataSinkOptions: DataHubDataSinkOptions = {
-    config: configMock,
-    runTimeConfig: runTimeConfigMock
+    dataSinkConfig: configMock,
+    runTimeConfig: runTimeConfigMock,
+    termsAndConditionsAccepted: true
   };
 
   describe(`instantiation successfully`, () => {

@@ -5,7 +5,7 @@ import {
   ILifecycleEvent,
   LifecycleEventStatus
 } from '../../../../common/interfaces';
-import { DataSink } from '../DataSink';
+import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
 import { Variant, UAVariable } from 'node-opcua';
 import {
@@ -18,10 +18,9 @@ type OPCUANodeDict = {
   [key: string]: UAVariable;
 };
 
-export interface IOPCUADataSinkOptions {
+export interface IOPCUADataSinkOptions extends IDataSinkOptions {
   runtimeConfig: IOPCUAConfig;
   generalConfig: IGeneralConfig;
-  dataSinkConfig: IDataSinkConfig;
 }
 /**
  * Implementation of the OPCDataSink.
@@ -34,13 +33,12 @@ export class OPCUADataSink extends DataSink {
   protected name = OPCUADataSink.name;
 
   constructor(options: IOPCUADataSinkOptions) {
-    super(options.dataSinkConfig);
+    super(options);
     this.opcuaAdapter = new OPCUAAdapter({
       config: options.dataSinkConfig,
       generalConfig: options.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
-    this.enabled = options.dataSinkConfig.enabled;
   }
 
   public async init(): Promise<OPCUADataSink> {
@@ -52,6 +50,16 @@ export class OPCUADataSink extends DataSink {
         `${logPrefix} OPC UA data sink is disabled. Skipping initialization.`
       );
       this.updateCurrentStatus(LifecycleEventStatus.Disabled);
+      return this;
+    }
+
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of OPC UA data sink due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
       return this;
     }
 

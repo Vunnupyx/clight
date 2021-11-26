@@ -34,6 +34,16 @@ export class IoshieldDataSource extends DataSource {
       return;
     }
 
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of ioshield data source due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
+      return;
+    }
+
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,

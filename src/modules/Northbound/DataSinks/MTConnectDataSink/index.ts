@@ -1,10 +1,7 @@
-import {
-  IDataSinkConfig,
-  IMTConnectConfig
-} from '../../../ConfigManager/interfaces';
+import { IMTConnectConfig } from '../../../ConfigManager/interfaces';
 
 import { MTConnectAdapter } from '../../Adapter/MTConnectAdapter';
-import { DataSink } from '../DataSink';
+import { DataSink, IDataSinkOptions } from '../DataSink';
 import {
   DataSinkProtocols,
   DataSourceLifecycleEventTypes,
@@ -24,8 +21,7 @@ type DataItemDict = {
   [key: string]: DataItem;
 };
 
-export interface IMTConnectDataSinkOptions {
-  dataSinkConfig: IDataSinkConfig;
+export interface IMTConnectDataSinkOptions extends IDataSinkOptions {
   mtConnectConfig: IMTConnectConfig;
 }
 
@@ -51,8 +47,7 @@ export class MTConnectDataSink extends DataSink {
    * Create a new instance
    */
   constructor(options: IMTConnectDataSinkOptions) {
-    super(options.dataSinkConfig);
-    this.enabled = options.dataSinkConfig.enabled;
+    super(options);
     this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig);
     MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
@@ -69,6 +64,16 @@ export class MTConnectDataSink extends DataSink {
         `${logPrefix} MTConnect data sink is disabled. Skipping initialization.`
       );
       this.updateCurrentStatus(LifecycleEventStatus.Disabled);
+      return this;
+    }
+
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of MTConnect data sink due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
       return this;
     }
 
@@ -170,8 +175,10 @@ export class MTConnectDataSink extends DataSink {
     Object.getOwnPropertyNames(this).forEach((prop) => {
       if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
       if (this[prop].close) shutdownFunctions.push(this[prop].close());
-      delete this[prop];
+
+      // delete this[prop]; // TODO Why was this required?
     });
+
     return Promise.all(shutdownFunctions)
       .then(() => {
         winston.info(`${logPrefix} successfully.`);

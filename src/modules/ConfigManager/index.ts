@@ -140,7 +140,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private _authConfig: IAuthConfig;
   private _authUsers: IAuthUsersConfig;
   #resolveConfigChanged = null;
-  #rejectConfigChanged = null;
   #configChangeCompletedPromise = null;
   private pendingEvents: string[] = [];
 
@@ -917,7 +916,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Adds all required pending events to the list
    */
   private addPendingConfigChangedEvents() {
-    // this.addPendingEvent('dataSourcesRestarted'); // TODO Enable if datasources are also reinitialising
+    this.addPendingEvent('dataSourcesRestarted');
     this.addPendingEvent('dataSinksRestarted');
   }
 
@@ -926,8 +925,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * @param error
    */
   private onDataSourcesRestarted(error: Error | null) {
-    const logPrefix = `${ConfigManager.className}::onDataSinksRestarted`;
-    winston.warn(`${logPrefix} data sources restarted!`);
+    const logPrefix = `${ConfigManager.className}::onDataSourcesRestarted`;
+    winston.info(`${logPrefix} data sources restarted!`);
     this.removePendingEvent('dataSourcesRestarted');
     this.resolveConfigChanged(error);
   }
@@ -938,7 +937,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private onDataSinksRestarted(error: Error | null) {
     const logPrefix = `${ConfigManager.className}::onDataSinksRestarted`;
-    winston.warn(`${logPrefix} data sinks restarted!`);
+    winston.info(`${logPrefix} data sinks restarted!`);
     this.removePendingEvent('dataSinksRestarted');
     this.resolveConfigChanged(error);
   }
@@ -969,17 +968,22 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * @param error
    */
   private resolveConfigChanged(error: Error | null) {
+    const logPrefix = `${ConfigManager.className}::resolveConfigChanged`;
+
     if (error) {
-      if (this.#rejectConfigChanged) this.#rejectConfigChanged(error);
-      this.#resolveConfigChanged = null;
-      this.#rejectConfigChanged = null;
-      this.pendingEvents = [];
+      winston.warn(
+        `${logPrefix} rejecting configuration change with error: ${JSON.stringify(
+          error
+        )}`
+      );
+      if (this.#resolveConfigChanged) this.#resolveConfigChanged();
     }
 
     if (this.pendingEvents.length === 0) {
-      if (this.#resolveConfigChanged) this.#resolveConfigChanged(error);
+      winston.info(`${logPrefix} resolving configuration change!`);
+      if (this.#resolveConfigChanged) this.#resolveConfigChanged();
       this.#resolveConfigChanged = null;
-      this.#rejectConfigChanged = null;
+      this.#configChangeCompletedPromise = null;
       this.pendingEvents = [];
     }
   }
@@ -991,7 +995,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public configChangeCompleted(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::configChangeCompleted`;
 
-    if (!this.#configChangeCompletedPromise)
+    if (this.#configChangeCompletedPromise)
       return this.#configChangeCompletedPromise;
 
     if (this.pendingEvents.length === 0) return;
@@ -1003,13 +1007,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             `${logPrefix} timed out while waiting for config change.`
           );
           this.#resolveConfigChanged = null;
-          this.#rejectConfigChanged = null;
-          reject(new Error('Timeout while waiting for config change.'));
+          this.#configChangeCompletedPromise = null;
+          resolve();
         }, 60000);
       }),
       new Promise((resolve, reject) => {
         this.#resolveConfigChanged = resolve;
-        this.#rejectConfigChanged = reject;
       })
     ]);
 

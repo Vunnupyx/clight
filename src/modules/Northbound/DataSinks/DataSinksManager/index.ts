@@ -103,17 +103,23 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT),
-      mtConnectConfig: this.configManager.runtimeConfig.mtconnect
+      mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
+      termsAndConditionsAccepted:
+        this.configManager.config.termsAndConditions.accepted
     };
 
     const opcuaDataSinkOptions: IOPCUADataSinkOptions = {
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.OPCUA),
       generalConfig: this.configManager.config.general,
-      runtimeConfig: this.configManager.runtimeConfig.opcua
+      runtimeConfig: this.configManager.runtimeConfig.opcua,
+      termsAndConditionsAccepted:
+        this.configManager.config.termsAndConditions.accepted
     };
     const dataHubDataSinkOptions: DataHubDataSinkOptions = {
-      config: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
-      runTimeConfig: this.configManager.runtimeConfig.datahub
+      dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
+      runTimeConfig: this.configManager.runtimeConfig.datahub,
+      termsAndConditionsAccepted:
+        this.configManager.config.termsAndConditions.accepted
     };
     this.configManager.config.dataSinks.forEach((sink) => {
       switch (sink.protocol) {
@@ -198,10 +204,20 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.dataSinks = [];
 
     let err: Error = null;
-    await Promise.all(shutdownFunctions)
-      .then(() => this.init())
+    await Promise.allSettled(shutdownFunctions)
+      .then((results) => {
+        winston.info(`${logPrefix} datasinks disconnected.`);
+        results.forEach((result) => {
+          if (result.status === 'rejected')
+            winston.error(`${logPrefix} error due to ${result.reason}`);
+        });
+      })
       .then(() => {
-        winston.info(`${logPrefix} reload datasinks successfully.`);
+        winston.info(`${logPrefix} reinitializing data sinks.`);
+        this.init();
+      })
+      .then(() => {
+        winston.info(`${logPrefix} data sinks restarted successfully.`);
       })
       .catch((error: Error) => {
         winston.error(`${logPrefix} error due to ${error.message}`);

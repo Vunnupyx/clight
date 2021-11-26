@@ -4,17 +4,15 @@ import {
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataHubAdapter, IDesiredProps } from '../../Adapter/DataHubAdapter';
-import { DataSink } from '../DataSink';
+import { DataSink, IDataSinkOptions } from '../DataSink';
 import winston from 'winston';
 import {
   IDataHubConfig,
-  IDataSinkConfig,
   ISignalGroups,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
 
-export interface DataHubDataSinkOptions {
-  config: IDataSinkConfig;
+export interface DataHubDataSinkOptions extends IDataSinkOptions {
   runTimeConfig: IDataHubConfig;
 }
 
@@ -38,15 +36,14 @@ export class DataHubDataSink extends DataSink {
   options: DataHubDataSinkOptions;
 
   public constructor(options: DataHubDataSinkOptions) {
-    super(options.config);
+    super(options);
     this.options = options;
     this.#signalGroups = options.runTimeConfig.signalGroups;
     this.#datahubAdapter = new DataHubAdapter(
       options.runTimeConfig,
-      options.config.datahub,
+      options.dataSinkConfig.datahub,
       this.handleAdapterStateChange.bind(this)
     );
-    this.enabled = this.options.config.enabled;
   }
 
   private handleAdapterStateChange(newState: LifecycleEventStatus) {
@@ -136,12 +133,22 @@ export class DataHubDataSink extends DataSink {
       return this;
     }
 
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of Data Hub data sink due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
+      return this;
+    }
+
     if (
-      !this.options.config.datahub ||
-      !this.options.config.datahub.provisioningHost ||
-      !this.options.config.datahub.regId ||
-      !this.options.config.datahub.scopeId ||
-      !this.options.config.datahub.symKey
+      !this.options.dataSinkConfig.datahub ||
+      !this.options.dataSinkConfig.datahub.provisioningHost ||
+      !this.options.dataSinkConfig.datahub.regId ||
+      !this.options.dataSinkConfig.datahub.scopeId ||
+      !this.options.dataSinkConfig.datahub.symKey
     ) {
       winston.warn(
         `${logPrefix} aborting data hub adapter initializing due to missing configuration.`

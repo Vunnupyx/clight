@@ -36,6 +36,7 @@ export abstract class DataSource extends EventEmitter {
   protected scheduler: SynchronousIntervalScheduler;
   protected schedulerListenerId: number;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
+  protected termsAndConditionsAccepted = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -46,6 +47,7 @@ export abstract class DataSource extends EventEmitter {
     this.config = params.config;
     this.scheduler = SynchronousIntervalScheduler.getInstance();
     this.protocol = params.config.protocol;
+    this.termsAndConditionsAccepted = params.termsAndConditionsAccepted;
   }
 
   /**
@@ -100,6 +102,9 @@ export abstract class DataSource extends EventEmitter {
    * Shuts down the data source
    */
   public async shutdown() {
+    const logPrefix = `${this.name}::shutdown`;
+    winston.info(`${logPrefix} shutdown triggered`);
+
     this.scheduler.removeListener(this.schedulerListenerId);
     await this.disconnect();
   }

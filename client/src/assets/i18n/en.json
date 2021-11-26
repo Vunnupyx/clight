@@ -41,8 +41,9 @@
     "ChangePasswordSuccess": "Password has been changed successfully!"
   },
   "quick-start": {
-    "Language": "Language",
-    "SelectLanguage": "Select Language",
+    "TermsAndConditions": "Terms and Conditions",
+    "Accept": "Accept",
+    "Language": "Select your Language",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
@@ -73,9 +74,16 @@
         "description": "OPCUA Description"
       },
       "datahub": {
-        "name": "Data Hub",
-        "description": "Data Hub description"
+        "name": "CELOS Xchange",
+        "description": "CELOS Xchange description"
       }
+    },
+    "Descriptions": {
+      "ReadMore": "More information can be found in the documentation",
+      "Step1": "With the help of the templates, you can load a suitable pre-configuration into the device. Later, you still have the option of making changes to the configuration. Please first accept the terms and conditions in order to continue.",
+      "Step2": "Here you can select the appropriate template.",
+      "Step3": "Select or deselect the desired data sources here. Selected data sources are started automatically after successful completion of the setup. This setting can be changed later.",
+      "Step4": "Select the desired application interfaces that are to be provided and activated by the system. This setting can be changed later."
     }
   },
   "settings-general": {
@@ -85,6 +93,7 @@
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
+    "Japanese": "Japanese",
     "Templates": "Templates",
     "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",
@@ -250,7 +259,7 @@
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
-      "datahub": "Data Hub"
+      "datahub": "CELOS Xchange"
     },
     "AuthenticationLevels": {
       "anonymous": "Anonymous",

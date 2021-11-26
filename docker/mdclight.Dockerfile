@@ -19,7 +19,7 @@ RUN mv build/main app
 
 WORKDIR /app
 
-ENV LOG_LEVEL=debug
+ENV LOG_LEVEL=info
 ENV MDC_LIGHT_FOLDER=/
 
 CMD ["node", "index.js"]

@@ -5,14 +5,13 @@ slug: /
 
 ## Login
 
-If you login for the first time, you have to use a standard password and username. The default user is in the following format:
-`DM` + `<MAC-Address without separators>`
+If you login for the first time, you have to use a standard password and username. The default user is "User"
 
-The MAC-Address can be found on the label on the right side of the IoT2050 (on the gray heat sink).
+The default password is the MAC-Address, that can be found on the label on the right side of the IoT2050 (on the gray heat sink).
 
 ![IOT2050 Label](/content/IoT2050Label.png)
 
-In this example the default user would be `DM8CF31929BA4A`. The default password is `iotconnectorlight`.
+In this example the default password would be `8CF31929BA4A`.
 
 After you sign in for the first time, you need to change the default password. The device will only be usable, after you changed your password.
 

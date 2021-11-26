@@ -4,23 +4,44 @@
  * Minimal mock implementation of mraa-gpio
  * Pins:
  * 4,5,6 = Always 0
- * 7,8,9 = Blinking 1Hz
+ * 7,8 = Blinking 1Hz
+ * 9 = Switches every 30s between: Blinking 1Hz, Always 0, Blinking 1Hz, Always 1
  * 10,11,12,13 = Always 1
  */
 
 if (process.argv[2] === 'get') {
   const pin = parseInt(process.argv[3], 10);
   const state = pin > 8 ? '1' : '0';
+  console.log(`Pin ${pin} = ${state}`);
 } else if (process.argv[2] === 'monitor') {
+  // Pin 9, only blink sometimes
+  let blinkPins = [7, 8, 9];
+  let onAfterBlink = false;
+  setInterval(() => {
+    if (blinkPins.includes(9)) {
+      blinkPins = [7, 8];
+      onAfterBlink = !onAfterBlink;
+    } else {
+      blinkPins = [7, 8, 9];
+    }
+  }, 30000);
+
   const pin = parseInt(process.argv[3], 10);
-  let lastState = false;
-  if ([7, 8, 9].includes(pin)) {
+  let lastState = '0';
+  let lastPrintedState = false;
+  if (blinkPins.includes(pin)) {
     setInterval(() => {
-      const state = lastState ? '1' : '0';
+
+      let state;
+      if (onAfterBlink) {
+        state =  lastState && blinkPins.includes(pin) ? '1' : '0';
+      } else 
+        state = lastState && blinkPins.includes(pin) ? '0' : '1';
+      if (lastPrintedState !== state)
+        console.log(`Pin ${pin} = ${state}`);
       lastState = !lastState;
+      lastPrintedState = state;
     }, 1000);
-  } else {
-    setInterval(() => {}, 1000);
   }
 } else {
   console.log(

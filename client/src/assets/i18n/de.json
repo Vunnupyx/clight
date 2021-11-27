@@ -288,6 +288,7 @@
     "Source": "",
     "Target": "",
     "Value": "",
+    "ValueTooltip": "Value tooltip",
     "Actions": "",
     "Edit": "",
     "Delete": "",

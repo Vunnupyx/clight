@@ -19,6 +19,7 @@ import {
   VirtualDataPointService
 } from '../../../services';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
+import { Status } from 'app/shared/state';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -42,6 +43,8 @@ export class VirtualDataPointComponent implements OnInit {
   unsavedRowIndex: number | undefined;
   liveData: ObjectMap<DataPointLiveData> = {};
 
+  filterSourceStr: string = '';
+
   sub = new Subscription();
 
   private sourceDataPoints: SourceDataPoint[] = [];
@@ -60,6 +63,18 @@ export class VirtualDataPointComponent implements OnInit {
     ) as { id: string; name: string }[];
   }
 
+  get previousVirtualPointsFiltered() {
+    return this.previousVirtualPoints.filter((x) =>
+      x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+    );
+  }
+
+  get dataSourcesFiltered() {
+    return this.dataSources.filter((x) =>
+      x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+    );
+  }
+
   get sources() {
     return [
       ...((this.sourceDataPoints || []) as { id: string; name: string }[]),
@@ -67,6 +82,14 @@ export class VirtualDataPointComponent implements OnInit {
         (x) => x.id !== this.unsavedRow?.id
       ) as { id: string; name: string }[])
     ];
+  }
+
+  get isTouchedTable() {
+    return this.virtualDataPointService.isTouched;
+  }
+
+  get isLoading() {
+    return this.virtualDataPointService.status === Status.Loading;
   }
 
   constructor(
@@ -102,8 +125,15 @@ export class VirtualDataPointComponent implements OnInit {
     this.sourceDataPointService.getSourceDataPointsAll();
   }
 
+  onDiscard() {
+    return this.virtualDataPointService.revert();
+  }
+
+  onApply() {
+    return this.virtualDataPointService.apply();
+  }
+
   onDataPoints(arr: VirtualDataPoint[]) {
-    console.log(arr);
     this.datapointRows = arr;
   }
 
@@ -121,6 +151,7 @@ export class VirtualDataPointComponent implements OnInit {
     }
 
     const obj = {
+      id: '',
       sources: [],
       operationType: VirtualDataPointOperationType.AND
     } as VirtualDataPoint;
@@ -158,6 +189,20 @@ export class VirtualDataPointComponent implements OnInit {
         .then(() => this.virtualDataPointService.getLiveDataForDataPoints());
     }
     this.clearUnsavedRow();
+  }
+
+  isDuplicatingName() {
+    if (!this.datapointRows) {
+      return false;
+    }
+
+    // check whether other VDPs do not have such name
+    const newName = this.unsavedRow?.name?.toLowerCase().trim();
+    const editableId = this.unsavedRow?.id;
+
+    return this.datapointRows.some((dp) => {
+      return dp.name?.toLowerCase().trim() === newName && dp.id !== editableId;
+    });
   }
 
   onEditCancel() {
@@ -220,14 +265,16 @@ export class VirtualDataPointComponent implements OnInit {
       virtualPoint.sources![0]
     );
 
-    this.sourceDataPointService.getLiveDataForDataPoints(protocol);
+    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
 
     const dialogRef = this.dialog.open(SetThresholdsModalComponent, {
       data: {
         thresholds: { ...virtualPoint.thresholds },
-        source: virtualPoint.sources![0]
+        source: virtualPoint.sources![0],
+        sourceName: this.getSourceNames(virtualPoint.sources!)
       },
-      width: '850px'
+      width: '1400px',
+      maxWidth: '100%'
     });
 
     dialogRef.afterClosed().subscribe((result) => {

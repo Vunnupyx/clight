@@ -1,60 +1,203 @@
 <div class="container">
   <mat-stepper class="pt-20" [linear]="true" #stepper>
     <mat-step>
-      <ng-template matStepLabel>{{ 'quick-start.SelectLanguage' | translate }}</ng-template>
+      <ng-template matStepLabel>
+        {{ 'quick-start.TermsAndConditions' | translate }}
+      </ng-template>
       <div class="pt-20">
         <mat-form-field appearance="legacy">
-          <mat-label>{{
-            'quick-start.Language' | translate
-            }}</mat-label>
+          <mat-label>{{ 'quick-start.Language' | translate }}</mat-label>
           <mat-select
             [value]="currentLang"
             (valueChange)="onLanguageChange($event)"
           >
-            <mat-option value="en">{{
-              'settings-general.English' | translate
-              }}</mat-option>
-            <mat-option value="de">{{
-              'settings-general.Deutsch' | translate
-              }}</mat-option>
+            <mat-option value="en">
+              {{ 'settings-general.English' | translate }}
+            </mat-option>
+            <mat-option value="de">
+              {{ 'settings-general.Deutsch' | translate }}
+            </mat-option>
+            <mat-option value="ja">
+              {{ 'settings-general.Japanese' | translate }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
-        <div>
-          <button mat-raised-button matStepperNext>{{ 'quick-start.Next' | translate }}</button>
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step1' | translate }}
+          </p>
+          <a href="#" target="/help/docs/">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+        <mat-expansion-panel [expanded]="shouldOpenTerms" class="mt-25">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ 'quick-start.TermsAndConditions' | translate }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div *ngIf="termsText$ | async as terms">
+            <pre *ngIf="!!terms" [innerText]="terms" class="white-space"></pre>
+          </div>
+
+          <div>
+            <mat-checkbox
+              [checked]="!!(termsAccepted$ | async)"
+              (change)="onAcceptChange($event)"
+              >{{ 'quick-start.Accept' | translate }}</mat-checkbox
+            >
+          </div>
+        </mat-expansion-panel>
+
+        <div class="d-flex justify-content-end pt-20">
+          <button mat-button class="mr-25" (click)="continueWithoutTemplate()">
+            {{ 'quick-start.ContinueWithoutTemplate' | translate }}
+          </button>
+
+          <button
+            mat-raised-button
+            matStepperNext
+            [disabled]="!(termsAccepted$ | async)"
+          >
+            {{ 'quick-start.Next' | translate }}
+          </button>
         </div>
       </div>
     </mat-step>
-    <mat-step [stepControl]="sourceForm">
-      <ng-template matStepLabel>{{ 'quick-start.SelectSource' | translate }}</ng-template>
-      <form [formGroup]="sourceForm" class="pt-20">
+    <mat-step [stepControl]="templateForm">
+      <ng-template matStepLabel>
+        {{ 'quick-start.SelectTemplate' | translate }}
+      </ng-template>
+      <form [formGroup]="templateForm" class="pt-20">
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step2' | translate }}
+          </p>
+          <a href="#" target="_blank" style="display: none">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+
         <div>
-          <mat-radio-group formControlName="source" class="source-radio-group">
-            <mat-radio-button class="source-radio-button" *ngFor="let source of sources" [value]="source">
-              <h3 class="mt-0 mb-0">{{ 'quick-start.DataSources.' + source + '.name' | translate }}</h3>
-              <p class="mt-0">{{ 'quick-start.DataSources.' + source + '.description' | translate }}</p>
+          <mat-radio-group
+            formControlName="templateId"
+            class="source-radio-group"
+            (change)="onTemplateChange()"
+          >
+            <mat-radio-button
+              class="source-radio-button"
+              *ngFor="let template of templates"
+              [value]="template.id"
+            >
+              <h3 class="mt-0 mb-0">{{ template.name }}</h3>
+              <p class="mt-0">{{ template.description }}</p>
             </mat-radio-button>
           </mat-radio-group>
         </div>
-        <button mat-raised-button matStepperNext>{{ 'quick-start.Next' | translate }}</button>
+        <div class="d-flex justify-content-end">
+          <button mat-button class="mr-25" (click)="continueWithoutTemplate()">
+            {{ 'quick-start.ContinueWithoutTemplate' | translate }}
+          </button>
+
+          <button mat-raised-button matStepperNext>
+            {{ 'quick-start.Next' | translate }}
+          </button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="sourceForm">
+      <ng-template matStepLabel>
+        {{ 'quick-start.SelectSource' | translate }}
+      </ng-template>
+      <form [formGroup]="sourceForm" class="pt-20">
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step3' | translate }}
+          </p>
+          <a href="#" target="_blank" style="display: none">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+
+        <div class="source-radio-group">
+          <mat-checkbox
+            class="source-radio-button source-checkbox"
+            *ngFor="let source of filteredSources"
+            [(ngModel)]="checkedSources[source]"
+            (ngModelChange)="onSourcesChange()"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            <h3 class="mt-0 mb-0">
+              {{ 'quick-start.DataSources.' + source + '.name' | translate }}
+            </h3>
+            <p class="mt-0">
+              {{
+                'quick-start.DataSources.' + source + '.description' | translate
+              }}
+            </p>
+          </mat-checkbox>
+        </div>
+        <div class="d-flex justify-content-end">
+          <button mat-button class="mr-25" (click)="continueWithoutTemplate()">
+            {{ 'quick-start.ContinueWithoutTemplate' | translate }}
+          </button>
+
+          <button mat-raised-button matStepperNext>
+            {{ 'quick-start.Next' | translate }}
+          </button>
+        </div>
       </form>
     </mat-step>
     <mat-step [stepControl]="applicationInterfacesForm">
-      <ng-template matStepLabel>{{ 'quick-start.SelectApplicationInterfaces' | translate }}</ng-template>
-      <form [formGroup]="applicationInterfacesForm" class="pt-20" (submit)="onSubmit()">
+      <ng-template matStepLabel>
+        {{ 'quick-start.SelectApplicationInterfaces' | translate }}
+      </ng-template>
+      <form
+        [formGroup]="applicationInterfacesForm"
+        class="pt-20"
+        (submit)="onSubmit()"
+      >
+        <div class="step-description">
+          <p>
+            {{ 'quick-start.Descriptions.Step4' | translate }}
+          </p>
+          <a href="#" target="_blank" style="display: none">
+            {{ 'quick-start.Descriptions.ReadMore' | translate }}
+          </a>
+        </div>
+
         <div class="source-radio-group">
           <mat-checkbox
             class="source-radio-button source-checkbox"
             *ngFor="let sink of filteredSinks"
             [(ngModel)]="checkedSinks[sink]"
             (ngModelChange)="onInterfacesChange()"
-            [ngModelOptions]="{standalone: true}"
+            [ngModelOptions]="{ standalone: true }"
           >
-            <h3 class="mt-0 mb-0">{{ 'quick-start.DataSinks.' + sink + '.name' | translate }}</h3>
-            <p class="mt-0">{{ 'quick-start.DataSinks.' + sink + '.description' | translate }}</p>
+            <h3 class="mt-0 mb-0">
+              {{ 'quick-start.DataSinks.' + sink + '.name' | translate }}
+            </h3>
+            <p class="mt-0">
+              {{ 'quick-start.DataSinks.' + sink + '.description' | translate }}
+            </p>
           </mat-checkbox>
         </div>
 
-        <button mat-raised-button matStepperNext>{{ 'quick-start.Save' | translate }}</button>
+        <div class="d-flex justify-content-end">
+          <button
+            type="button"
+            mat-button
+            class="mr-25"
+            (click)="continueWithoutTemplate()"
+          >
+            {{ 'quick-start.ContinueWithoutTemplate' | translate }}
+          </button>
+
+          <button mat-raised-button matStepperNext>
+            {{ 'quick-start.Save' | translate }}
+          </button>
+        </div>
       </form>
     </mat-step>
   </mat-stepper>

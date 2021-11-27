@@ -9,20 +9,58 @@
 <div class="d-block m-20">
   <div class="row">
     <div class="col-12">
-      <div class="d-flex align-items-center">
-        <h3>{{ 'settings-virtual-data-point.DataPoints' | translate }}</h3>
-        <button
-          type="button"
-          [disabled]="isEditing"
-          mat-mini-fab
-          color="primary"
-          class="wh-32 border-round ml-15"
-          (click)="onAdd()"
-          [matTooltip]="'settings-virtual-data-point.AddDataPoint' | translate"
-          matTooltipPosition="above"
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="d-flex align-items-center">
+            <h3>{{ 'settings-virtual-data-point.DataPoints' | translate }}</h3>
+            <button
+              type="button"
+              [disabled]="isEditing"
+              mat-mini-fab
+              color="primary"
+              class="wh-32 border-round ml-15"
+              (click)="onAdd()"
+              [matTooltip]="
+                'settings-virtual-data-point.AddDataPoint' | translate
+              "
+              matTooltipPosition="above"
+            >
+              <mat-icon style="margin-top: -10px">add</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="col-12 col-md-6 d-flex align-items-center justify-content-end"
         >
-          <mat-icon style="margin-top: -10px">add</mat-icon>
-        </button>
+          <div class="d-flex align-items-center">
+            <button
+              mat-button
+              type="button"
+              class="btn-sm mr-10"
+              *ngIf="isTouchedTable && !isLoading"
+              (click)="onDiscard()"
+            >
+              {{ 'settings-virtual-data-point.DiscardChanges' | translate }}
+            </button>
+
+            <mat-spinner
+              diameter="20"
+              *ngIf="isLoading"
+              class="mr-10"
+            ></mat-spinner>
+
+            <button
+              mat-raised-button
+              type="button"
+              class="btn-sm"
+              [disabled]="!isTouchedTable || isLoading"
+              (click)="onApply()"
+            >
+              {{ 'settings-virtual-data-point.ApplyChanges' | translate }}
+            </button>
+          </div>
+        </div>
       </div>
       <ngx-datatable
         [headerHeight]="50"
@@ -53,8 +91,14 @@
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               type="text"
               class="w-100"
+              [matTooltip]="
+                'settings-virtual-data-point.DuplicatedName' | translate
+              "
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingName()"
               [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
+              [class.border-danger]="isDuplicatingName()"
               autofocus
             />
           </ng-template>
@@ -111,12 +155,22 @@
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = $event)"
                 multiple
               >
-                <mat-option *ngFor="let s of dataSources" [value]="s.id"
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Search..."
+                    noEntriesFoundLabel="No results found"
+                    [(ngModel)]="filterSourceStr"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let s of dataSourcesFiltered" [value]="s.id"
                   >{{ getDataSourceDataPointPrefix(s.id) }}
                   {{ s.name }}</mat-option
                 >
                 <mat-option
-                  *ngFor="let s of previousVirtualPoints; let idx = index"
+                  *ngFor="
+                    let s of previousVirtualPointsFiltered;
+                    let idx = index
+                  "
                   [value]="s.id"
                   [disabled]="getRowIndex(s.id) > idx"
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
@@ -129,12 +183,22 @@
                 [ngModel]="value[0]"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = [$event])"
               >
-                <mat-option *ngFor="let s of dataSources" [value]="s.id"
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Search..."
+                    noEntriesFoundLabel="No results found"
+                    [(ngModel)]="filterSourceStr"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let s of dataSourcesFiltered" [value]="s.id"
                   >{{ getDataSourceDataPointPrefix(s.id) }}
                   {{ s.name }}</mat-option
                 >
                 <mat-option
-                  *ngFor="let s of previousVirtualPoints; let idx = index"
+                  *ngFor="
+                    let s of previousVirtualPointsFiltered;
+                    let idx = index
+                  "
                   [value]="s.id"
                   [disabled]="getRowIndex(s.id) > idx"
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
@@ -172,13 +236,16 @@
             let-value="value"
             let-row="row"
           >
-            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex !== rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
                 *ngIf="
                   row?.operationType ===
                   VirtualDataPointOperationType.THRESHOLDS
                 "
-                (click)="onSetThreshold(row)"
+                (click)="onSetThreshold(row); group.value = null"
                 [matTooltip]="
                   'settings-virtual-data-point.SetThreshold' | translate
                 "
@@ -186,19 +253,22 @@
                 ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditStart(rowIndex, row)"
+                (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>edit</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onDelete(row)"
+                (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
-            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+            <mat-button-toggle-group
+              #group="matButtonToggleGroup"
+              *ngIf="unsavedRowIndex === rowIndex"
+            >
               <mat-button-toggle
                 *ngIf="
                   unsavedRow?.operationType ===
@@ -208,7 +278,8 @@
                   unsavedRow &&
                     unsavedRow.sources &&
                     unsavedRow.sources.length > 0 &&
-                    onSetThreshold(unsavedRow)
+                    onSetThreshold(unsavedRow);
+                  group.value = null
                 "
                 [matTooltip]="
                   'settings-virtual-data-point.SetThreshold' | translate
@@ -224,7 +295,9 @@
                 ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditEnd()"
+                (click)="
+                  !isDuplicatingName() && onEditEnd(); group.value = null
+                "
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
@@ -232,7 +305,7 @@
                 ></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditCancel()"
+                (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"

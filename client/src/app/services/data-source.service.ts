@@ -1,22 +1,27 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { from, interval, Observable } from 'rxjs';
 
 import {
   DataSource,
   DataSourceConnection,
-  DataSourceProtocol
+  DataSourceProtocol,
+  IOShieldTypes,
+  S7Types
 } from 'app/models';
 import { HttpMockupService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler, mapOrder } from 'app/shared/utils';
+import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
 
 export class DataSourcesState {
   status!: Status;
+  touched!: boolean;
   dataSources!: DataSource[];
+  originalDataSources!: DataSource[];
   connection?: DataSourceConnection;
 }
 
@@ -37,6 +42,10 @@ export class DataSourceService {
 
   get status() {
     return this._store.snapshot.status;
+  }
+
+  get touched() {
+    return this._store.snapshot.touched;
   }
 
   get dataSources() {
@@ -67,6 +76,7 @@ export class DataSourceService {
         state.dataSources = this._orderByProtocol(
           dataSources.map((x) => this._parseDataSource(x))
         );
+        state.originalDataSources = clone(state.dataSources);
       });
     } catch (err) {
       this.toastr.error(
@@ -79,24 +89,23 @@ export class DataSourceService {
     }
   }
 
-  async getStatus(datasourceProtocol: string) {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-    });
+  setStatusTimer(protocol: DataSourceProtocol): Observable<void> {
+    // made first call
+    this.getStatus(protocol);
 
+    return interval(2000).pipe(mergeMap(() => from(this.getStatus(protocol))));
+  }
+
+  async getStatus(datasourceProtocol: string) {
     try {
       const obj = await this.httpService.get<DataSourceConnection>(
         `/datasources/${datasourceProtocol}/status`
       );
 
       this._store.patchState((state) => {
-        state.status = Status.Ready;
         state.connection = obj;
       });
     } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source.LoadStatusError')
-      );
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -105,32 +114,70 @@ export class DataSourceService {
     }
   }
 
+  revert() {
+    this._store.patchState((state) => {
+      state.status = Status.Ready;
+      state.dataSources = clone(state.originalDataSources);
+      state.touched = false;
+    });
+  }
+
+  async apply(protocol: DataSourceProtocol) {
+    const ds = this._store.snapshot.dataSources.find(
+      (x) => x.protocol === protocol
+    )!;
+
+    const payload: any = {};
+
+    payload.enabled = ds.enabled;
+
+    if (ds.connection) {
+      payload.connection = ds.connection;
+    }
+
+    if (ds.softwareVersion) {
+      payload.softwareVersion = ds.softwareVersion;
+    }
+
+    if (ds.type) {
+      payload.type = ds.type;
+    }
+
+    await this.httpService.patch(`/datasources/${protocol}`, payload);
+
+    this._store.patchState((state) => {
+      state.status = Status.Ready;
+      state.originalDataSources = clone(state.dataSources);
+      state.touched = false;
+    });
+  }
+
   async updateDataSource(protocol: string, obj: Partial<DataSource>) {
     this._store.patchState((state) => {
       state.status = Status.Updating;
       state.dataSources = state.dataSources.map((x) =>
-        x.protocol != obj.protocol ? x : obj
+        x.protocol != protocol ? x : { ...x, ...obj }
       );
+      state.touched = true;
     });
-
-    try {
-      await this.httpService.patch(`/datasources/${protocol}`, obj);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source.UpdateError')
-      );
-      errorHandler(err);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    }
   }
 
   getNckAddresses() {
     return NCK_ADDRESSES;
+  }
+
+  async getDataSourceType(
+    protocol: DataSourceProtocol
+  ): Promise<S7Types | IOShieldTypes | null> {
+    try {
+      const ds = await this.httpService.get<DataSource>(
+        `/datasources/${protocol}`
+      );
+
+      return ds.type;
+    } catch {
+      return null;
+    }
   }
 
   private _orderByProtocol(objs: DataSource[]): DataSource[] {
@@ -143,7 +190,8 @@ export class DataSourceService {
 
   private _emptyState() {
     return <DataSourcesState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      touched: false
     };
   }
 }

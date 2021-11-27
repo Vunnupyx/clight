@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+import TypedEmitter from 'typed-emitter';
 import { IDataSourceConfig } from '../../../ConfigManager/interfaces';
 import { DataSourceEventTypes, IDataSourceParams } from '../interfaces';
 import { DataSource } from '../DataSource';
@@ -14,11 +16,16 @@ import winston from 'winston';
 import { ConfigManager } from '../../../ConfigManager';
 import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
+import { promisify } from 'util';
+
+interface IDataSourceManagerEvents {
+  dataSourcesRestarted: (error: Error | null) => void;
+}
 
 /**
  * Creates and manages all data sources
  */
-export class DataSourcesManager {
+export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<IDataSourceManagerEvents>) {
   private static className: string = DataSourcesManager.name;
   private configManager: Readonly<ConfigManager>;
   private measurementsBus: MeasurementEventBus;
@@ -26,11 +33,19 @@ export class DataSourcesManager {
   private dataSources: Array<DataSource> = [];
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
+  private dataAddedDuringRestart = false;
+  private dataSinksRestartPending = false;
 
   constructor(params: IDataSourcesManagerParams) {
+    super();
+
     params.configManager.once('configsLoaded', () => {
       return this.init();
     });
+    params.configManager.on(
+      'configChange',
+      this.configChangeHandler.bind(this)
+    );
 
     this.configManager = params.configManager;
     this.lifecycleBus = params.lifecycleBus;
@@ -70,11 +85,15 @@ export class DataSourcesManager {
    */
   public spawnDataSources(): void {
     const s7DataSourceParams: IDataSourceParams = {
-      config: this.findDataSourceConfig(DataSourceProtocols.S7)
+      config: this.findDataSourceConfig(DataSourceProtocols.S7),
+      termsAndConditionsAccepted:
+        this.configManager.config.termsAndConditions.accepted
     };
 
     const ioshieldDataSourceParams: IDataSourceParams = {
-      config: this.findDataSourceConfig(DataSourceProtocols.IOSHIELD)
+      config: this.findDataSourceConfig(DataSourceProtocols.IOSHIELD),
+      termsAndConditionsAccepted:
+        this.configManager.config.termsAndConditions.accepted
     };
 
     this.dataSources.push(new S7DataSource(s7DataSourceParams));
@@ -133,5 +152,53 @@ export class DataSourcesManager {
    */
   public getDataSourceByProto(protocol: string) {
     return this.dataSources.find((src) => src.protocol === protocol);
+  }
+
+  private configChangeHandler(): Promise<void> {
+    if (this.dataSinksRestartPending) {
+      this.dataAddedDuringRestart = true;
+      return;
+    }
+    this.dataSinksRestartPending = true;
+    const logPrefix = `${DataSourcesManager.name}::configChangeHandler`;
+
+    winston.info(`${logPrefix} reloading datasources.`);
+
+    const shutdownFns = [];
+    this.dataSources.forEach((source) => {
+      shutdownFns.push(source.shutdown());
+    });
+    this.dataSources = [];
+
+    let err: Error = null;
+    Promise.allSettled(shutdownFns)
+      .then((results) => {
+        winston.debug(`${logPrefix} datasources disconnected.`);
+        results.forEach((result) => {
+          if (result.status === 'rejected')
+            winston.error(`${logPrefix} error due to ${result.reason}`);
+        });
+      })
+      .then(() => {
+        winston.info(`${logPrefix} reinitializing data sources.`);
+        return this.init();
+      })
+      .then(() => {
+        winston.info(`${logPrefix} data sources restarted successfully.`);
+      })
+      .catch((error: Error) => {
+        winston.error(`${logPrefix} error due to ${error.message}`);
+        err = error;
+      })
+      .finally(() => {
+        this.dataSinksRestartPending = false;
+        if (this.dataAddedDuringRestart) {
+          this.dataAddedDuringRestart = false;
+          this.configChangeHandler();
+        } else {
+          // emit event
+          this.emit('dataSourcesRestarted', err);
+        }
+      });
   }
 }

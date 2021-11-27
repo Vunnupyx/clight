@@ -3,19 +3,18 @@ import {
   BaseNode,
   OPCUAServer,
   NodeIdLike,
-  UAObject,
   UserManagerOptions,
   OPCUACertificateManager
+  // SecurityPolicy,
+  // MessageSecurityMode
 } from 'node-opcua';
 import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
 
-import { ConfigManager } from '../../../ConfigManager';
 import {
   IGeneralConfig,
   IOPCUAConfig,
   IUser,
-  IConfig,
   IDataSinkConfig
 } from '../../../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../../../common/errors';
@@ -150,9 +149,10 @@ export class OPCUAAdapter {
         );
       })
       .catch((err) => {
-        winston.error(JSON.stringify(err));
+        winston.error('Failed to start opcua adapter');
+        winston.error(err.message);
         winston.error(err);
-        const errorMsg = `${logPrefix} error due to ${JSON.stringify(err)}`;
+        const errorMsg = `${logPrefix} error due to ${err.message}`;
         return Promise.reject(new NorthBoundError(errorMsg));
       });
   }
@@ -247,6 +247,17 @@ export class OPCUAAdapter {
       privateKeyFile,
       certificateFile,
       nodeset_filename: nodeSets
+      // securityPolicies: [
+      //   SecurityPolicy.None,
+      //   SecurityPolicy.Basic128Rsa15,
+      //   SecurityPolicy.Basic256,
+      //   SecurityPolicy.Basic256Sha256
+      // ],
+      // securityModes: [
+      //   MessageSecurityMode.None,
+      //   MessageSecurityMode.Sign,
+      //   MessageSecurityMode.SignAndEncrypt
+      // ]
     });
 
     return this.server
@@ -313,5 +324,25 @@ export class OPCUAAdapter {
         `${logPrefix} error due to adapter not initialized.`
       );
     }
+  }
+
+  public shutdown(): Promise<void> {
+    const logPrefix = `${OPCUAAdapter.name}::shutdown`;
+    const shutdownFunctions = [];
+    winston.debug(`${logPrefix} triggered.`);
+    Object.getOwnPropertyNames(this).forEach((prop) => {
+      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
+      if (this[prop].removeAllListeners)
+        shutdownFunctions.push(this[prop].removeAllListeners());
+      if (this[prop].close) shutdownFunctions.push(this[prop].close());
+      delete this[prop];
+    });
+    return Promise.all(shutdownFunctions)
+      .then(() => {
+        winston.info(`${logPrefix} successfully.`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}.`);
+      });
   }
 }

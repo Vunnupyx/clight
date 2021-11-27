@@ -1,6 +1,7 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
+import fs from 'fs';
 
 let configManager: ConfigManager;
 
@@ -13,6 +14,8 @@ export function setConfigManager(config: ConfigManager) {
 
 /**
  * Handles download requests of the config file.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function backupGetHandle(request: Request, response: Response): void {
   try {
@@ -23,12 +26,11 @@ function backupGetHandle(request: Request, response: Response): void {
       winston.error(`backupGetHandle error due to no config file loaded.`);
       return;
     }
-    response.status(200);
-    response.setHeader(
-      'Content-disposition',
-      'attachment; filename=config.json'
-    );
-    response.send(JSON.stringify(config, null, 2));
+    response.writeHead(200, {
+      'Content-Type': 'application/octet-stream',
+      'Content-Disposition': 'attachment; filename=config.json'
+    });
+    fs.createReadStream(configManager.configPath).pipe(response);
   } catch (err) {
     winston.error(`backupGetHandle error due to ${JSON.stringify(err)}`);
   }
@@ -36,11 +38,31 @@ function backupGetHandle(request: Request, response: Response): void {
 
 /**
  * Handles upload requests of a new config file
+ * @param  {Request} request
+ * @param  {Response} response
  */
-function backupPostHandle(request: Request, response: Response): void {
-  // TODO: Implement -> bodyparser disable for this route for input validation ?
-  configManager.config = request.body;
-  response.status(200).send();
+async function backupPostHandle(
+  request: Request,
+  response: Response
+): Promise<void> {
+  const configFile = (request.files as any)?.config;
+
+  if (!configFile) {
+    winston.error('Backup restore failed. No file provided!');
+
+    response.status(400).json({ message: 'No config file provided!' });
+    return;
+  }
+
+  try {
+    configManager.restoreConfigFile(configFile);
+    await configManager.configChangeCompleted();
+    response.status(200).send();
+  } catch {
+    winston.error('Backup restore failed. Wrong file provided!');
+
+    response.status(400).json({ message: 'Wrong file provided!' });
+  }
 }
 
 export const backupHandlers = {

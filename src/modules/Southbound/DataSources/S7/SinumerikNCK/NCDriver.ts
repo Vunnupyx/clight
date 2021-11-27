@@ -104,11 +104,7 @@ export default class SinumerikNCKProtocolDriver {
   /**
    * Create NCK driver Instance
    */
-  public constructor() {
-    this.tcpClient = new net.Socket();
-    // this.tcpClient.on('data', this.receiveData.bind(this));
-    this.tcpClient.setTimeout(this.timeout);
-  }
+  public constructor() {}
 
   /**
    * Adjust the timeout for TCP client and NCK responses
@@ -133,6 +129,11 @@ export default class SinumerikNCKProtocolDriver {
     slot: number = 4
   ): Promise<void> {
     try {
+      this.tcpClient = new net.Socket();
+      this.tcpClient.setTimeout(this.timeout);
+      this.tcpClient.once('close', () => {
+        winston.info('NC: Unexpected close event on socket!');
+      });
       this.connectionState = ConnectionState.NOT_CONNECTED;
       await this.connectTCP(host, port);
       this.connectionState = ConnectionState.TCP_CONNECTED;
@@ -145,6 +146,9 @@ export default class SinumerikNCKProtocolDriver {
         ConnectionState[this.connectionState]
       }". (${error})`;
       this.connectionState = ConnectionState.NOT_CONNECTED;
+      try {
+        await this.disconnect();
+      } catch (e) {}
       throw new Error(errorMessage);
     }
   }
@@ -157,19 +161,29 @@ export default class SinumerikNCKProtocolDriver {
   private async connectTCP(host: string, port: number): Promise<void> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        this.tcpClient.removeAllListeners('connect');
+        try {
+          if (this.tcpClient) this.tcpClient.removeAllListeners('connect');
+        } catch (e) {
+          winston.error(`Could not remove listeners from TCP client: ${e}`);
+        }
         reject(
           new Error(
             'Sinumerik NCK TCP connection timeout error - check IP address'
           )
         );
+        return;
       }, 5000);
 
-      this.tcpClient.on('error', reject);
+      this.tcpClient.on('error', (e) => {
+        clearTimeout(timeout);
+        reject(e);
+        return;
+      });
       this.tcpClient.on('connect', () => {
         clearTimeout(timeout);
         winston.debug('TCP connected successfully!');
         resolve();
+        return;
       });
       this.tcpClient.connect(port, host);
     });
@@ -189,11 +203,15 @@ export default class SinumerikNCKProtocolDriver {
             'Sinumerik NCK ISO connection timeout error - check rack and slot number'
           )
         );
+        return;
       }, 5000);
-
       let connectRequest = this.ISO_CONNECT_REQUEST.slice();
       connectRequest[21] = rack * 32 + slot;
-      this.tcpClient.on('error', reject);
+      this.tcpClient.on('error', (e) => {
+        clearTimeout(timeout);
+        reject(e);
+        return;
+      });
 
       this.tcpClient.on(
         'data',
@@ -203,8 +221,10 @@ export default class SinumerikNCKProtocolDriver {
           if (this.checkConnectISOResponseOk(data)) {
             winston.debug('ISO connected successfully!');
             resolve();
+            return;
           } else {
             reject();
+            return;
           }
         }).bind(this)
       );
@@ -574,13 +594,71 @@ export default class SinumerikNCKProtocolDriver {
    */
   public async disconnect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.tcpClient.on('close', () => {
-        winston.debug('NCK Driver: Close callback called!');
+      let shutdownTimeoutId;
+
+      if (!this.tcpClient) {
         resolve();
+        return;
+      }
+      this.tcpClient.removeAllListeners('close');
+      this.tcpClient.once('close', () => {
+        if (this.tcpClient) {
+          winston.debug('NCK Driver: Successfully closed socket on disconnect');
+          this.tcpClient.destroy();
+          winston.debug(
+            'NCK Driver: Successfully destroyed socket on disconnect'
+          );
+          delete this.tcpClient;
+          clearTimeout(shutdownTimeoutId);
+        }
+        resolve();
+        return;
       });
-      this.tcpClient.destroy();
-      winston.debug('NCK Driver: Successfully destroyed socket on disconnect');
+
+      this.tcpClient.end();
+
+      winston.debug('NCK Driver: Waiting for destroy of socket');
       this.connectionState = ConnectionState.NOT_CONNECTED;
+
+      shutdownTimeoutId = setTimeout(() => {
+        if (this.tcpClient) {
+          this.tcpClient.destroy();
+          winston.debug(
+            'NCK Driver: Timeout while waiting for socket disconnect.'
+          );
+          delete this.tcpClient;
+        }
+        resolve();
+        return;
+      }, 10000);
     });
   }
 }
+
+// Independent NCK test script:
+// function sleep(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
+
+// (async () => {
+//   const nc = new SinumerikNCKProtocolDriver();
+//   for (let i = 0; i < 10000; i++) {
+//     try {
+//       console.log(`--- Round ${i}---`);
+//       await nc.connect('192.168.214.1');
+//       console.log(
+//         await nc.readVariableBTSS('/Channel/ProgramPointer/progName')
+//       );
+//       await nc.disconnect();
+//       // await sleep(1000);
+//     } catch (e) {
+//       console.log(e);
+//       continue;
+//     }
+//   }
+//   console.log('__ END OF TEST__');
+//   // @ts-ignore
+//   // console.log(process._getActiveHandles());
+//   // // @ts-ignore
+//   // console.log(process._getActiveRequests());
+// })();

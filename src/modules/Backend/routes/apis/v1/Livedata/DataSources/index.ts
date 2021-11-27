@@ -8,15 +8,25 @@ let dataPointCache: DataPointCache;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param {ConfigManager} config
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
 }
 
+/**
+ * Set DataPointCache to make accessible for local function
+ * @param {DataPointCache} cache
+ */
 export function setDataPointCache(cache: DataPointCache) {
   dataPointCache = cache;
 }
 
+/**
+ * Get Livedata for DataSource DataPoints
+ * @param  {Request} request
+ * @param  {Response} response
+ */
 function livedataDataSourceDataPointsGetHandler(
   request: Request,
   response: Response
@@ -37,16 +47,16 @@ function livedataDataSourceDataPointsGetHandler(
 
   const payload = dataPointIds
     .map((dataPointId) => {
-      const event = dataPointCache.getLastEvent(dataPointId);
+      const value = dataPointCache.getLastestValue(dataPointId);
 
-      if (!event) {
+      if (!value) {
         return undefined;
       }
 
       const obj: any = {
         dataPointId,
-        value: event.measurement.value,
-        timestamp: Math.round(Date.now() / 1000)
+        value: value.value,
+        timestamp: Math.round(new Date(value.ts).getTime() / 1000)
       };
 
       if (timeseriesIncluded) {
@@ -60,13 +70,18 @@ function livedataDataSourceDataPointsGetHandler(
   response.status(200).json(payload);
 }
 
+/**
+ * Get Livedata for DataSource DataPoint by dataPointId
+ * @param  {Request} request
+ * @param  {Response} response
+ */
 function livedataDataSourceDataPointGetHandler(
   request: Request,
   response: Response
 ): void {
-  const event = dataPointCache.getLastEvent(request.params.dataPointId);
+  const value = dataPointCache.getLastestValue(request.params.dataPointId);
 
-  if (!event) {
+  if (!value) {
     response.status(404).send();
 
     return;
@@ -76,8 +91,8 @@ function livedataDataSourceDataPointGetHandler(
 
   const payload: any = {
     dataPointId: request.params.dataPointId,
-    value: event.measurement.value,
-    timestamp: Math.round(Date.now() / 1000)
+    value: value.value,
+    timestamp: Math.round(new Date(value.ts).getTime() / 1000)
   };
 
   if (timeseriesIncluded) {

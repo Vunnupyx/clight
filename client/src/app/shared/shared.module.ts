@@ -22,17 +22,20 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxIpModule } from 'ngx-ip';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 import { SharedServicesModule } from './services/shared-services.module';
 import { StateModule } from './state/state.module';
 import { AppTranslationModule } from 'app/app.translation';
+import { DocBtnComponent } from './components/doc-btn/doc-btn.component';
 
 @NgModule({
-  declarations: [],
-  imports: [],
+  declarations: [DocBtnComponent],
+  imports: [MatIconModule, MatButtonModule, MatTooltipModule],
   providers: [],
   exports: [
     CommonModule,
@@ -60,12 +63,15 @@ import { AppTranslationModule } from 'app/app.translation';
     MatTabsModule,
     MatSlideToggleModule,
     MatStepperModule,
+    MatProgressSpinnerModule,
     NgxDatatableModule,
     NgxIpModule,
+    NgxMatSelectSearchModule,
 
     AppTranslationModule,
     SharedServicesModule,
-    StateModule
+    StateModule,
+    DocBtnComponent
   ]
 })
 export class SharedModule {}

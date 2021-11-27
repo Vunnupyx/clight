@@ -7,6 +7,7 @@ import { DataSourceService } from '../../../../services';
 export interface SelectTypeModalData {
   selection: string;
   protocol: DataSourceProtocol;
+  existedAddresses: string[];
 }
 
 @Component({
@@ -14,7 +15,6 @@ export interface SelectTypeModalData {
   templateUrl: 'select-type-modal.component.html'
 })
 export class SelectTypeModalComponent implements OnInit {
-
   rows: any[] = [];
 
   constructor(
@@ -27,8 +27,12 @@ export class SelectTypeModalComponent implements OnInit {
     this.rows = this.dataSourceService.getNckAddresses();
   }
 
-  onSelect({ selected }) {
-    this.dialogRef.close(selected[0]);
+  onSelect(row) {
+    this.dialogRef.close(row);
+  }
+
+  isExisted({ address }) {
+    return this.data.existedAddresses.includes(address);
   }
 
   onClose() {

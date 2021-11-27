@@ -170,6 +170,8 @@ export class VirtualDataPointManager {
       return null;
     }
 
+    if (!config.thresholds) return null;
+
     const thresholds = (Object.keys(config.thresholds) || [])
       .map((key) => config.thresholds?.[key])
       .sort((a, b) => a - b)
@@ -250,7 +252,7 @@ export class VirtualDataPointManager {
       let sourceEvents = vdpConfig.sources.map((sourceId) => {
         let event = _events.find((e) => e.measurement.id === sourceId);
         if (!event) {
-          event = this.cache.getLastEvent(sourceId);
+          event = this.cache.getCurrentEvent(sourceId);
         }
         if (!event) {
           winston.warn(

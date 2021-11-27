@@ -24,12 +24,32 @@ const OPCUAServerMock = {
     OPCUAServerMock.initialized = true;
     return Promise.resolve();
   }),
-  initialized: false
+  initialized: false,
+  endpoints: [
+    {
+      endpointDescriptions: jest
+        .fn()
+        .mockReturnValue([{ endpointUrl: 'DummeTestUrl' }])
+    }
+  ]
 };
 
 const OPCUACertManagerMock = {
   initialize: jest.fn()
 };
+
+enum SecurityPolicies {
+  None = '',
+  Basic128Rsa15 = '',
+  Basic256 = '',
+  Basic256Sha256 = ''
+}
+
+enum SecurityModes {
+  None = '',
+  Sign = '',
+  SignAndEncrypt = ''
+}
 
 jest.mock('node-opcua', () => {
   return {
@@ -38,7 +58,9 @@ jest.mock('node-opcua', () => {
     }),
     OPCUACertificateManager: jest.fn(() => {
       return OPCUACertManagerMock;
-    })
+    }),
+    SecurityPolicy: SecurityPolicies,
+    MessageSecurityMode: SecurityModes
   };
 });
 
@@ -114,8 +136,11 @@ describe(`OPCUAAdapter Test`, () => {
             jest.clearAllMocks();
           });
 
-          it(`starting adapter`, async () => {
-            await testAdapter.start();
+          it(`starting adapter`, (done) => {
+            testAdapter
+              .start()
+              .then(() => done())
+              .catch(() => done.fail());
           });
           // TODO BUG: FIXME!
           //   it(`starting already running adapter`, async (done) => {

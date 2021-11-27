@@ -7,7 +7,7 @@ export enum DataPointType {
 
 export class DataPoint {
   enabled?: boolean;
-  id?: string;
+  id!: string;
   initialValue?: string;
   map?: ObjectMap<string>;
   name?: string;

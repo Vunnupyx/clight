@@ -14,7 +14,9 @@
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span routerLink="settings" class="cursor-pointer"><img src="/assets/logo.svg" width="100" /></span>
+      <span routerLink="settings" class="cursor-pointer"
+        ><img src="/assets/logo.svg" width="100"
+      /></span>
     </div>
     <span class="spacer"></span>
     <div class="white-section">
@@ -33,11 +35,7 @@
     </div>
     <span class="spacer"></span>
     <span class="help-wrapper">
-      <a
-        mat-icon-button
-        [href]="supportHref"
-        target="_blank"
-      >
+      <a mat-icon-button [href]="supportHref" target="_blank">
         <mat-icon>help_outline</mat-icon>
       </a>
     </span>
@@ -62,39 +60,57 @@
       <mat-nav-list>
         <a mat-list-item routerLink="settings/general">
           <mat-icon>tune</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.General' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.General' | translate
+          }}</span>
         </a>
-        <a mat-list-item routerLink="update-manager">
+        <a mat-list-item routerLink="update-manager" *ngIf="false">
           <mat-icon>update</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.UpdateManager' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.UpdateManager' | translate
+          }}</span>
         </a>
         <a mat-list-item routerLink="settings/data-source">
           <mat-icon>source</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.DataSource' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.DataSource' | translate
+          }}</span>
         </a>
         <a mat-list-item routerLink="settings/virtual-data-point">
           <mat-icon>folder_open</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.VirtualDataPoints' | translate}}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.VirtualDataPoints' | translate
+          }}</span>
         </a>
         <a mat-list-item routerLink="settings/data-mapping">
           <mat-icon>link</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.DataMapping' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.DataMapping' | translate
+          }}</span>
         </a>
         <a mat-list-item routerLink="settings/data-sink">
           <mat-icon>topic</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.DataSinks' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.DataSinks' | translate
+          }}</span>
         </a>
         <a mat-list-item routerLink="settings/network">
           <mat-icon>settings_ethernet</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.Network' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.Network' | translate
+          }}</span>
         </a>
-        <a mat-list-item routerLink="system-information" *ngIf="false">
+        <a mat-list-item routerLink="system-information">
           <mat-icon>info</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.SystemInformation' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.SystemInformation' | translate
+          }}</span>
         </a>
         <a mat-list-item (click)="logout()">
           <mat-icon>logout</mat-icon>
-          <span routerLinkActive="active" class="menu-text">{{ 'layout.Logout' | translate }}</span>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.Logout' | translate
+          }}</span>
         </a>
       </mat-nav-list>
     </mat-sidenav>

@@ -3,7 +3,9 @@ build
 dist
 runtime
 mdclight
+tmp
 coverage 
+tmp
 .DS_Store
 .env
 yarn-error.log
@@ -12,3 +14,6 @@ yarn-error.log
 
 yarn.lock
 package-lock.json
+
+src/modules/Iot2050MraaDI10/sys
+src/modules/Iot2050MraaDI10/sys/*

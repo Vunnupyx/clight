@@ -43,6 +43,8 @@ A single data source supports the following configuration items:
       // Reading a real value: "DB93,REAL100"
       // Reading a string value with an length of 10: "DB100,S0.10"
       // Reading a string value with an length of 255: "DB100,S0.255"
+      // Reading a DWORD: "DB25,DWORD4"
+      // Reading a Byte: "DB340,BYTE60"
       // Some examples for protocol "ioshield"
       // Reading inputs: "DI0" - "DI9"
       "address": "DB93,X0.0",

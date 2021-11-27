@@ -1,9 +1,11 @@
 import winston from 'winston';
 import {
+  DataSinkProtocols,
   DataSourceLifecycleEventTypes,
-  ILifecycleEvent
+  ILifecycleEvent,
+  LifecycleEventStatus
 } from '../../../../common/interfaces';
-import { DataSink } from '../DataSink';
+import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
 import { Variant, UAVariable } from 'node-opcua';
 import {
@@ -16,10 +18,9 @@ type OPCUANodeDict = {
   [key: string]: UAVariable;
 };
 
-export interface IOPCUADataSinkOptions {
+export interface IOPCUADataSinkOptions extends IDataSinkOptions {
   runtimeConfig: IOPCUAConfig;
   generalConfig: IGeneralConfig;
-  dataSinkConfig: IDataSinkConfig;
 }
 /**
  * Implementation of the OPCDataSink.
@@ -28,11 +29,11 @@ export interface IOPCUADataSinkOptions {
 export class OPCUADataSink extends DataSink {
   private opcuaAdapter: OPCUAAdapter;
   private opcuaNodes: OPCUANodeDict = {};
-  protected _protocol = 'opcua';
-  private static className = OPCUADataSink.name;
+  protected _protocol = DataSinkProtocols.OPCUA;
+  protected name = OPCUADataSink.name;
 
   constructor(options: IOPCUADataSinkOptions) {
-    super(options.dataSinkConfig);
+    super(options);
     this.opcuaAdapter = new OPCUAAdapter({
       config: options.dataSinkConfig,
       generalConfig: options.generalConfig,
@@ -40,20 +41,42 @@ export class OPCUADataSink extends DataSink {
     });
   }
 
-  public init(): Promise<OPCUADataSink> {
-    const logPrefix = `${OPCUADataSink.className}::init`;
+  public async init(): Promise<OPCUADataSink> {
+    const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
+    if (!this.enabled) {
+      winston.info(
+        `${logPrefix} OPC UA data sink is disabled. Skipping initialization.`
+      );
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
+      return this;
+    }
+
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of OPC UA data sink due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
+      return this;
+    }
+
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
     return this.opcuaAdapter
       .init()
       .then((adapter) => adapter.start())
       .then(() => this.setupDataPoints())
-      .then(() => winston.info(`${logPrefix} initialized.`))
-      .then(() => this);
+      .then(() => {
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        winston.info(`${logPrefix} initialized.`);
+        return this;
+      });
   }
 
   private setupDataPoints() {
-    const logPrefix = `${OPCUADataSink.className}::setupDataPoints`;
+    const logPrefix = `${this.name}::setupDataPoints`;
     this.config.dataPoints.forEach((dp) => {
       winston.debug(`${logPrefix} Setting up node ${dp.address}`);
       try {
@@ -69,7 +92,7 @@ export class OPCUADataSink extends DataSink {
   }
 
   protected processDataPointValue(dataPointId, value) {
-    const logPrefix = `${OPCUADataSink.className}::onProcessDataPointValue`;
+    const logPrefix = `${this.name}::onProcessDataPointValue`;
 
     const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
 
@@ -124,22 +147,14 @@ export class OPCUADataSink extends DataSink {
     return Promise.resolve();
   }
 
-  public shutdown() {
-    const logPrefix = `${OPCUADataSink.className}::shutdown`;
-    throw new Error('Method not implemented.');
+  public shutdown(): Promise<void> {
+    const logPrefix = `${this.name}::shutdown`;
+    return this.opcuaAdapter.shutdown();
   }
 
   public async disconnect() {
-    const logPrefix = `${OPCUADataSink.className}::disconnect`;
     this.opcuaAdapter.stop();
-  }
-  /**
-   * Current status of opcua sink
-   * true -> running
-   * false -> not running
-   */
-  public currentStatus(): boolean {
-    return !!this.opcuaAdapter?.isRunning;
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
   /**

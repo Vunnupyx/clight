@@ -13,6 +13,7 @@ let dataSinksManager: DataSinksManager;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param  {ConfigManager} manager
  */
 export function setConfigManager(manager: ConfigManager) {
   configManager = manager;
@@ -20,6 +21,7 @@ export function setConfigManager(manager: ConfigManager) {
 
 /**
  * Set dataSourcesManager to make accessible for local function
+ * @param  {DataSourcesManager} manager
  */
 export function setDataSourcesManager(manager: DataSourcesManager) {
   dataSourcesManager = manager;
@@ -27,6 +29,7 @@ export function setDataSourcesManager(manager: DataSourcesManager) {
 
 /**
  * Set dataSinksManager to make accessible for local function
+ * @param  {DataSinksManager} manager
  */
 export function setDataSinksManager(manager: DataSinksManager) {
   dataSinksManager = manager;
@@ -34,11 +37,20 @@ export function setDataSinksManager(manager: DataSinksManager) {
 
 /**
  * Handle all requests for the list of templates.
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function templatesGetHandler(request: Request, response: Response): void {
+  const templates = configManager.defaultTemplates.templates.map((x) => ({
+    ...x,
+    dataSources: x.dataSources.map((y) => y.protocol),
+    dataSinks: x.dataSinks.map((y) => y.protocol)
+  }));
+
   const payload = {
-    availableDataSources: configManager.defaultTemplates.availableDataSources.map(x => x.protocol),
-    availableDataSinks: configManager.defaultTemplates.availableDataSinks.map(x => x.protocol),
+    templates,
+    currentTemplate: configManager.config.quickStart.currentTemplate,
+    currentTemplateName: configManager.config.quickStart.currentTemplateName
   };
 
   response.status(200).json(payload);
@@ -46,21 +58,59 @@ function templatesGetHandler(request: Request, response: Response): void {
 
 /**
  * Returns the current status of the templates completion
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function templatesGetStatusHandler(request: Request, response: Response) {
-  const completed = configManager.config.templates.completed;
+  const { completed, currentTemplate, currentTemplateName } =
+    configManager.config.quickStart;
 
-  response.status(200).json({ completed });
+  response
+    .status(200)
+    .json({ completed, currentTemplate, currentTemplateName });
 }
 
 /**
  * Handle POST apply templates request
+ * @param  {Request} request
+ * @param  {Response} response
  */
-function templatesApplyPostHandler(request: Request, response: Response): void {
-  // TODO Dont set default data sinks and sources here
-  // configManager.setDataSources([request.body.dataSource]);
-  // configManager.setDataSinks(request.body.dataSinks);
-  configManager.saveConfig({ templates: { completed: true } });
+async function templatesApplyPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  if (
+    !request.body.templateId ||
+    !request.body.dataSources?.length ||
+    !request.body.dataSinks?.length
+  ) {
+    response.status(400).json({ message: 'Invalid Body' });
+    return;
+  }
+
+  configManager.applyTemplate(
+    request.body.templateId,
+    request.body.dataSources,
+    request.body.dataSinks
+  );
+  await configManager.configChangeCompleted();
+
+  response.status(200).json(null);
+}
+
+/**
+ * Handle POST skip templates request
+ */
+function templatesSkipPostHandler(request: Request, response: Response): void {
+  configManager.config = {
+    ...configManager.config,
+    quickStart: {
+      completed: true,
+      currentTemplate: configManager.config.quickStart.currentTemplate || null,
+      currentTemplateName:
+        configManager.config.quickStart.currentTemplateName || null
+    }
+  };
 
   response.status(200).json(null);
 }
@@ -68,5 +118,6 @@ function templatesApplyPostHandler(request: Request, response: Response): void {
 export const templatesHandlers = {
   templatesGetHandler,
   templatesGetStatusHandler,
-  templatesApplyPostHandler
+  templatesApplyPostHandler,
+  templatesSkipPostHandler
 };

@@ -34,7 +34,11 @@ xdescribe('Test MTConnectDataSink', () => {
       ]
     };
 
-    const dataSink = new MTConnectDataSink({ dataSinkConfig, mtConnectConfig });
+    const dataSink = new MTConnectDataSink({
+      dataSinkConfig,
+      mtConnectConfig,
+      termsAndConditionsAccepted: true
+    });
 
     dataSink.init();
 
@@ -91,7 +95,11 @@ xdescribe('Test MTConnectDataSink', () => {
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
     getDpMapper.mockReturnValue(mapper);
 
-    const dataSink = new MTConnectDataSink({ dataSinkConfig, mtConnectConfig });
+    const dataSink = new MTConnectDataSink({
+      dataSinkConfig,
+      mtConnectConfig,
+      termsAndConditionsAccepted: true
+    });
 
     dataSink.init();
 
@@ -172,7 +180,11 @@ xdescribe('Test MTConnectDataSink', () => {
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
     getDpMapper.mockReturnValue(mapper);
 
-    const dataSink = new MTConnectDataSink({ dataSinkConfig, mtConnectConfig });
+    const dataSink = new MTConnectDataSink({
+      dataSinkConfig,
+      mtConnectConfig,
+      termsAndConditionsAccepted: true
+    });
 
     dataSink.init();
 
@@ -269,7 +281,11 @@ xdescribe('Test MTConnectDataSink', () => {
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
     getDpMapper.mockReturnValue(mapper);
 
-    const dataSink = new MTConnectDataSink({ dataSinkConfig, mtConnectConfig });
+    const dataSink = new MTConnectDataSink({
+      dataSinkConfig,
+      mtConnectConfig,
+      termsAndConditionsAccepted: true
+    });
 
     dataSink.init();
 
@@ -322,7 +338,11 @@ xdescribe('Test MTConnectDataSink', () => {
 
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
 
-    const dataSink = new MTConnectDataSink({ dataSinkConfig, mtConnectConfig });
+    const dataSink = new MTConnectDataSink({
+      dataSinkConfig,
+      mtConnectConfig,
+      termsAndConditionsAccepted: true
+    });
 
     dataSink.init();
 

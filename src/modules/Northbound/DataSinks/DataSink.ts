@@ -1,5 +1,8 @@
 import winston from 'winston';
-import { ILifecycleEvent } from '../../../common/interfaces';
+import {
+  ILifecycleEvent,
+  LifecycleEventStatus
+} from '../../../common/interfaces';
 import {
   IDataSinkConfig,
   ITargetDataMap
@@ -7,21 +10,60 @@ import {
 import { DataPointMapper } from '../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
+export enum DataSinkStatus {
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED',
+  DISCONNECTED = 'DISCONNECTED',
+  RECONNECTING = 'RECONNECTING',
+  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
+  NO_NETWORK_AVAILABLE = 'NO_NETWORK_AVAILABLE',
+  INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
+  INVALID_STATE = 'INVALID_STATE'
+}
+
+export type TDataSinkStatus = keyof typeof DataSinkStatus;
+
+export interface IDataSinkOptions {
+  dataSinkConfig: IDataSinkConfig;
+  termsAndConditionsAccepted: boolean;
+}
+
 /**
  * Base class of northbound data sinks
  */
 export abstract class DataSink {
+  protected name = DataSink.name;
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;
   protected readonly _protocol: string;
+  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
+  protected enabled = false;
+  protected termsAndConditionsAccepted = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
    * @param params The user configuration object for this data source
    */
-  constructor(params: IDataSinkConfig) {
-    this.config = params;
+  constructor(options: IDataSinkOptions) {
+    this.config = options.dataSinkConfig;
     this.dataPointMapper = DataPointMapper.getInstance();
+    this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
+    this.enabled = options.dataSinkConfig.enabled;
+  }
+
+  /**
+   * Updates the current status of the data sink
+   * @param newState
+   * @returns
+   */
+  protected updateCurrentStatus(newState: LifecycleEventStatus) {
+    if (newState === this.currentStatus) return;
+
+    const logPrefix = `${this.name}::updateCurrentStatus`;
+    winston.info(
+      `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
+    );
+    this.currentStatus = newState;
   }
 
   public get protocol() {
@@ -33,6 +75,8 @@ export abstract class DataSink {
    * @param params The user configuration object for this data source
    */
   public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
+    if (!this.enabled) return;
+
     // No datapoints no event handling :)
     if (this.config.dataPoints.length < 1) return;
     interface IEvent {
@@ -69,6 +113,7 @@ export abstract class DataSink {
       });
     });
 
+    let dataPoints = {};
     Object.keys(eventsByTarget).forEach((target) => {
       const events = eventsByTarget[target];
 
@@ -80,7 +125,7 @@ export abstract class DataSink {
           );
         }
         if (events.some((event) => typeof event.mapValue === 'undefined')) {
-          winston.warn(`Map value for enum taget: ${target} not provided!`);
+          winston.warn(`Map value for enum target: ${target} not provided!`);
           return;
         }
 
@@ -122,7 +167,14 @@ export abstract class DataSink {
         value = setEvent.value;
       }
 
-      this.processDataPointValue(target, value);
+      dataPoints[target] = value;
+    });
+    this.processDataPointValues(dataPoints);
+  }
+
+  protected processDataPointValues(obj) {
+    Object.keys(obj).forEach((key) => {
+      this.processDataPointValue(key, obj[key]);
     });
   }
 
@@ -148,5 +200,11 @@ export abstract class DataSink {
    */
   public abstract disconnect();
 
-  public abstract currentStatus(): boolean;
+  /**
+   * Returns the current status of the data sink
+   * @returns
+   */
+  public getCurrentStatus(): LifecycleEventStatus {
+    return this.currentStatus;
+  }
 }

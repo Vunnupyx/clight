@@ -6,6 +6,7 @@ import { promises as fs } from 'fs';
 import { ConfigManager } from '../../ConfigManager';
 import { IAuthUser } from '../../ConfigManager/interfaces';
 import winston from 'winston';
+import { System } from '../../System';
 
 interface LoginDto {
   accessToken: string;
@@ -23,15 +24,19 @@ declare module 'express' {
 
 export class AuthManager {
   private static className: string = AuthManager.name;
-  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00\n';
+  private readonly EMPTY_MAC_ADDRESS = '00:00:00:00:00:00';
 
   constructor(private configManager: ConfigManager) {}
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<LoginDto>} Promise<LoginDto>
+   */
   async login(username: string, password: string): Promise<LoginDto> {
     const logPrefix = `${AuthManager.className}::login`;
-    const regex = /[^A-Za-z0-9]/g;
-    const serializedUsername =
-      username.substring(0, 2) + username.substring(2).replace(regex, '');
+    const serializedUsername = username.trim();
 
     winston.debug(`${logPrefix} User ${username} attempting to login`);
 
@@ -39,22 +44,16 @@ export class AuthManager {
       (user) => user.userName === serializedUsername
     );
 
-    if (!loggedUser && !username.startsWith('DM')) {
+    if (!loggedUser && !username.startsWith('User')) {
       winston.warn(`${logPrefix} User ${username} could not be found!`);
       throw new Error('User with these credentials could not be found!');
     }
 
-    const macAddress = await this.readMacAddress();
+    const macAddress = (await this.readDeviceLabelMacAddress())
+      .split(':')
+      .join('');
 
-    if (macAddress !== serializedUsername.substring(2)) {
-      winston.warn(
-        `${logPrefix} Mac address ${macAddress} is not matching the username ${username}!`
-      );
-      throw new Error('User with these credentials could not be found!');
-    }
-
-    const defaultPassword =
-      this.configManager.runtimeConfig.auth.defaultPassword;
+    const defaultPassword = macAddress;
 
     if (!loggedUser) {
       if (defaultPassword === password) {
@@ -77,20 +76,31 @@ export class AuthManager {
       userName: serializedUsername
     } as UserTokenPayload;
 
-    const accessToken = jwt.sign(userTokenPayload, authConfig.secret, {
-      expiresIn: this.configManager.runtimeConfig.auth.expiresIn
-    });
+    const accessToken = jwt.sign(
+      userTokenPayload,
+      { key: authConfig.secret, passphrase: '' },
+      {
+        expiresIn: this.configManager.runtimeConfig.auth.expiresIn,
+        algorithm: 'RS256'
+      }
+    );
 
     const passwordChangeRequired = loggedUser.passwordChangeRequired;
 
     return Promise.resolve({ accessToken, passwordChangeRequired });
   }
 
+  /**
+   * @param  {{withPasswordChangeDetection:boolean}} options
+   * @returns {Function} callback
+   */
   verifyJWTAuth({
     withPasswordChangeDetection
   }: {
     withPasswordChangeDetection: boolean;
   }) {
+    const logPrefix = `${AuthManager.className}::verifyJWTAuth`;
+
     return (request: Request, response: Response, next: NextFunction) => {
       const header = request.headers['authorization'];
 
@@ -104,10 +114,9 @@ export class AuthManager {
       try {
         const token = header.substring('Bearer '.length);
 
-        const user = jwt.verify(
-          token,
-          this.configManager.authConfig.secret
-        ) as UserTokenPayload;
+        const user = jwt.verify(token, this.configManager.authConfig.public, {
+          algorithms: ['RS256']
+        }) as UserTokenPayload;
 
         const loggedUser = this.configManager.authUsers.find(
           (auth) => auth.userName === user.userName
@@ -124,11 +133,21 @@ export class AuthManager {
 
         next();
       } catch (err) {
+        winston.error(
+          `${logPrefix} jwt vaidation failed. ${JSON.stringify(err)}`
+        );
         response.status(401).json({ message: 'Unauthorized!' });
       }
     };
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} oldPassword
+   * @param  {string} newPassword
+   * @returns {Promise<boolean>} boolean
+   */
   async changePassword(
     username: string,
     oldPassword: string,
@@ -166,6 +185,12 @@ export class AuthManager {
     return true;
   }
 
+  /**
+   * @async
+   * @param  {string} username
+   * @param  {string} password
+   * @returns {Promise<IAuthUser>} Promise<IAuthUser>
+   */
   private async createUser(
     username: string,
     password: string
@@ -182,17 +207,12 @@ export class AuthManager {
     return user;
   }
 
-  private async readMacAddress() {
-    let address;
-
-    try {
-      address = await fs.readFile('/sys/class/net/eth0/address', {
-        encoding: 'utf-8'
-      });
-    } catch (err) {
-      address = this.EMPTY_MAC_ADDRESS;
-    }
-
-    return address.split(':').join('').split('\n').join('');
+  /**
+   * @async
+   * @returns {Promise<string>} Mac Address
+   */
+  private async readDeviceLabelMacAddress(): Promise<string> {
+    const address = await new System().readMacAddress('eth1');
+    return address === null ? this.EMPTY_MAC_ADDRESS : address;
   }
 }

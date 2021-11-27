@@ -7,9 +7,13 @@ import {
   DataPointLifecycleEventTypes,
   EventLevels
 } from '../../../../common/interfaces';
-import { IDataPointConfig } from '../../../ConfigManager/interfaces';
+import {
+  IDataPointConfig,
+  IS7DataSourceConnection
+} from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
 import SinumerikNCK from './SinumerikNCK/NCDriver';
+
 interface S7DataPointsWithError {
   datapoints: Array<any>;
   error: boolean;
@@ -20,11 +24,33 @@ interface NCDataPointWithStatus {
   error?: string;
 }
 
+const defaultS7300Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2
+};
+
+const defaultS71500Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 1
+};
+
+const defaultNckConnection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2 // That's only the plc (300) slot. For the nck, the slot 4 is set inside that driver
+};
+
 /**
  * Implementation of s7 data source
  * @returns void
  */
 export class S7DataSource extends DataSource {
+  protected name = S7DataSource.name;
   private isDisconnected = false;
   private cycleActive = false;
 
@@ -32,12 +58,35 @@ export class S7DataSource extends DataSource {
     silent: true
   });
   private nckClient = new SinumerikNCK();
+
   /**
    * Initializes s7 data source and connects to device
    * @returns void
    */
   public async init(): Promise<void> {
-    const { name, protocol, connection } = this.config;
+    const logPrefix = `${S7DataSource.name}::init`;
+    winston.info(`${logPrefix} initializing.`);
+
+    const { name, protocol, connection, enabled } = this.config;
+
+    if (!enabled) {
+      winston.info(
+        `${logPrefix} S7 data source is disabled. Skipping initialization.`
+      );
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
+      return;
+    }
+
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of S7 data source due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
+      return;
+    }
+
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,
@@ -45,7 +94,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connecting,
       dataSource: { protocol, name }
     });
-    this.currentStatus = LifecycleEventStatus.Connecting;
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     const nckDataPointsConfigured = this.config.dataPoints.find(
       (dp: IDataPointConfig) => {
@@ -56,11 +105,12 @@ export class S7DataSource extends DataSource {
     try {
       if (nckDataPointsConfigured)
         await Promise.all([
-          this.connectPLC(connection),
+          this.connectPLC(),
           this.nckClient.connect(connection.ipAddr)
         ]);
-      else await this.connectPLC(connection);
+      else await this.connectPLC();
     } catch (error) {
+      winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.submitLifecycleEvent({
         id: protocol,
         level: this.level,
@@ -69,7 +119,7 @@ export class S7DataSource extends DataSource {
         dataSource: { name, protocol },
         payload: error
       });
-      this.currentStatus = LifecycleEventStatus.ConnectionError;
+      this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
         if (this.isDisconnected) {
           return;
@@ -81,7 +131,7 @@ export class S7DataSource extends DataSource {
           status: LifecycleEventStatus.Reconnecting,
           dataSource: { name, protocol }
         });
-        this.currentStatus = LifecycleEventStatus.Reconnecting;
+        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
         this.init();
       }, this.RECONNECT_TIMEOUT);
       return;
@@ -94,7 +144,7 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Connected,
       dataSource: { name, protocol }
     });
-    this.currentStatus = LifecycleEventStatus.Connected;
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
     this.isDisconnected = false;
     this.setupDataPoints();
   }
@@ -252,7 +302,24 @@ export class S7DataSource extends DataSource {
    * Handles connection result from connecting to device
    * @param  {} err
    */
-  private connectPLC(connection): Promise<void> {
+  private connectPLC(): Promise<void> {
+    let connection: IS7DataSourceConnection;
+
+    switch (this.config.type) {
+      case 's7-1200/1500':
+        connection = defaultS71500Connection;
+        break;
+      case 's7-300/400':
+        connection = defaultS7300Connection;
+        break;
+      case 'nck':
+        connection = defaultNckConnection;
+        break;
+      case 'custom':
+      default:
+        connection = this.config.connection;
+    }
+
     return new Promise((resolve, reject) => {
       this.client.initiateConnection(
         {
@@ -275,6 +342,9 @@ export class S7DataSource extends DataSource {
    * @returns Promise
    */
   public async disconnect(): Promise<void> {
+    const logPrefix = `${this.name}::disconnect`;
+    winston.debug(`${logPrefix} triggered.`);
+
     const { name, protocol } = this.config;
     this.isDisconnected = true;
     this.submitLifecycleEvent({
@@ -284,8 +354,23 @@ export class S7DataSource extends DataSource {
       status: LifecycleEventStatus.Disconnected,
       dataSource: { name, protocol }
     });
-    this.currentStatus = LifecycleEventStatus.Disconnected;
+
     clearTimeout(this.reconnectTimeoutId);
-    this.client.dropConnection();
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        winston.warn(`${logPrefix} closing s7 connection timed out after 5s`);
+        resolve();
+      }, 5000);
+      this.client.dropConnection(() => {
+        winston.info(`${logPrefix} successfully closed s7 connection`);
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
+
+    winston.info(`${logPrefix} shutdown nck client`);
+    await this.nckClient.disconnect();
+
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 }

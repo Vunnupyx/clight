@@ -98,7 +98,7 @@ export class HttpService {
       return EMPTY;
     }
 
-    if (err.status === 403) {
+    if (err.status === 403 && this.authService.token) {
       this.router.navigate(['/settings', 'change-password']);
       return EMPTY;
     }

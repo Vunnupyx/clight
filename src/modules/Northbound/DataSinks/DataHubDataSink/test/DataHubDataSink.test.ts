@@ -2,6 +2,7 @@ import { DataPointMapper } from '../../../../DataPointMapper';
 
 const dataHubAdapterMock = {
   isRunning: true,
+  running: true,
   getDesiredProps: jest.fn(),
   init: jest.fn().mockImplementation(() => Promise.resolve(dataHubAdapterMock)),
   start: jest.fn(),
@@ -22,7 +23,9 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
 
 const winstonMock = {
   winston: jest.fn(), // Constructor
-  debug: jest.fn() // static method
+  debug: jest.fn((msg) => {
+    console.log(msg);
+  })
 };
 jest.doMock('winston', () => {
   return winstonMock;
@@ -30,8 +33,8 @@ jest.doMock('winston', () => {
 
 import {
   IDataHubConfig,
-  IDataSinkConfig,
-  } from '../../../../ConfigManager/interfaces';
+  IDataSinkConfig
+} from '../../../../ConfigManager/interfaces';
 import { DataHubDataSink, DataHubDataSinkOptions } from '..';
 
 /**
@@ -41,16 +44,17 @@ const configMock: IDataSinkConfig = {
   name: 'UnitTestDataHubDataSink',
   protocol: 'datahub',
   enabled: true,
-  dataPoints: []
+  dataPoints: [],
+  datahub: {
+    regId: 'UTregId',
+    symKey: 'UTKey',
+    scopeId: 'UTScopeId',
+    provisioningHost: 'UTHost.test'
+  }
 };
 
 const runTimeConfigMock: IDataHubConfig = {
-  serialNumber: 'UTSerialNumber',
-  regId: 'UTregId',
-  symKey: 'UTKey',
-  scopeId: 'UTScopeId',
   groupDevice: false,
-  provisioningHost: 'UTHost.test',
   signalGroups: {
     group1: ['address/1', 'address/2', 'address/3'],
     group2: ['address/4', 'address/5', 'address/6'],
@@ -81,8 +85,9 @@ const DataPointMapperGetInstanceSpy = jest
 describe('DataHubDataSink', () => {
   let datasinkUUT: DataHubDataSink;
   let dataHubDataSinkOptions: DataHubDataSinkOptions = {
-    config: configMock,
-    runTimeConfig: runTimeConfigMock
+    dataSinkConfig: configMock,
+    runTimeConfig: runTimeConfigMock,
+    termsAndConditionsAccepted: true
   };
 
   describe(`instantiation successfully`, () => {
@@ -247,10 +252,6 @@ describe('DataHubDataSink', () => {
             event: [],
             telemetry: []
           });
-          expect(dataHubAdapterMock.setReportedProps).toBeCalledWith([
-            'group1',
-            'group3'
-          ]);
         });
     });
   });

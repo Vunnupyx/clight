@@ -18,11 +18,14 @@ import {
 } from '../../../common/interfaces';
 import Timeout = NodeJS.Timeout;
 import { SynchronousIntervalScheduler } from '../../SyncScheduler';
+import winston from 'winston';
 
 /**
  * Implements data source
  */
 export abstract class DataSource extends EventEmitter {
+  protected name = DataSource.name;
+
   protected config: IDataSourceConfig;
   protected level = EventLevels.DataSource;
   protected reconnectTimeoutId: Timeout = null;
@@ -32,7 +35,8 @@ export abstract class DataSource extends EventEmitter {
   public protocol: string;
   protected scheduler: SynchronousIntervalScheduler;
   protected schedulerListenerId: number;
-  protected currentStatus: LifecycleEventStatus;
+  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
+  protected termsAndConditionsAccepted = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -43,6 +47,22 @@ export abstract class DataSource extends EventEmitter {
     this.config = params.config;
     this.scheduler = SynchronousIntervalScheduler.getInstance();
     this.protocol = params.config.protocol;
+    this.termsAndConditionsAccepted = params.termsAndConditionsAccepted;
+  }
+
+  /**
+   * Updates the current status of the data source
+   * @param newState
+   * @returns
+   */
+  protected updateCurrentStatus(newState: LifecycleEventStatus) {
+    if (newState === this.currentStatus) return;
+
+    const logPrefix = `${this.name}::updateCurrentStatus`;
+    winston.info(
+      `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
+    );
+    this.currentStatus = newState;
   }
 
   /**
@@ -59,15 +79,19 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Setup all datapoints by creating a listener for each configured interval
    */
-  protected setupDataPoints(): void {
+  protected setupDataPoints(defaultFrequency: number = 1000): void {
     if (this.schedulerListenerId) return;
+
+    const logPrefix = `${this.name}::setupDataPoints`;
+    winston.debug(`${logPrefix} setup data points`);
     const datapointIntervals: Array<number> = this.config.dataPoints.map(
       (dataPointConfig) => {
-        // Limit read frequency to 1/s
-        return Math.max(dataPointConfig.readFrequency, 1000);
+        // Limit read frequency to 2/s
+        return Math.max(dataPointConfig.readFrequency || defaultFrequency, 500);
       }
     );
     const intervals = Array.from(new Set(datapointIntervals));
+
     this.schedulerListenerId = this.scheduler.addListener(
       intervals,
       this.dataSourceCycle.bind(this)
@@ -77,9 +101,12 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Shuts down the data source
    */
-  public shutdown() {
+  public async shutdown() {
+    const logPrefix = `${this.name}::shutdown`;
+    winston.info(`${logPrefix} shutdown triggered`);
+
     this.scheduler.removeListener(this.schedulerListenerId);
-    this.disconnect();
+    await this.disconnect();
   }
 
   /**
@@ -92,7 +119,7 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Should disconnect the data source and clean up all connection resources
    */
-  public abstract disconnect();
+  public abstract disconnect(): Promise<void>;
 
   /**
    * Maps process data from each data point to the data source
@@ -160,7 +187,11 @@ export abstract class DataSource extends EventEmitter {
     this.emit(DataPointEventTypes.Lifecycle, dataPointLifecycle);
   }
 
-  public getCurrentStatus() {
+  /**
+   * Returns the current status of the data source
+   * @returns
+   */
+  public getCurrentStatus(): LifecycleEventStatus {
     return this.currentStatus;
   }
 }

@@ -1,5 +1,7 @@
 <div class="layout-header">
-  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-data-mapping.DataMapping' | translate }}</h2>
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
+    {{ 'settings-data-mapping.DataMapping' | translate }}
+  </h2>
 </div>
 
 <mat-divider></mat-divider>
@@ -7,20 +9,55 @@
 <div class="d-block m-20">
   <div class="row">
     <div class="col-12">
-      <div class="d-flex align-items-center mb-15">
-        <h3>{{ 'settings-data-mapping.Mappings' | translate }}</h3>
-        <button
-          type="button"
-          [disabled]="isEditing"
-          mat-mini-fab
-          color="primary"
-          class="wh-32 border-round ml-15"
-          (click)="onAdd()"
-          matTooltipPosition="above"
-          [matTooltip]="'settings-data-mapping.AddMapping' | translate"
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="d-flex align-items-center mb-15">
+            <h3>{{ 'settings-data-mapping.Mappings' | translate }}</h3>
+            <button
+              type="button"
+              [disabled]="isEditing"
+              mat-mini-fab
+              color="primary"
+              class="wh-32 border-round ml-15"
+              (click)="onAdd()"
+              matTooltipPosition="above"
+              [matTooltip]="'settings-data-mapping.AddMapping' | translate"
+            >
+              <mat-icon style="margin-top: -10px">add</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div
+          class="col-12 col-md-6 d-flex align-items-center justify-content-end"
         >
-          <mat-icon style="margin-top: -10px">add</mat-icon>
-        </button>
+          <div class="d-flex align-items-center">
+            <button
+              mat-button
+              type="button"
+              class="btn-sm mr-10"
+              *ngIf="isTouchedTable && !isLoading"
+              (click)="onDiscard()"
+            >
+              {{ 'settings-data-mapping.DiscardChanges' | translate }}
+            </button>
+
+            <mat-spinner
+              diameter="20"
+              *ngIf="isLoading"
+              class="mr-10"
+            ></mat-spinner>
+
+            <button
+              mat-raised-button
+              type="button"
+              class="btn-sm"
+              [disabled]="!isTouchedTable || isLoading"
+              (click)="onApply()"
+            >
+              {{ 'settings-data-mapping.ApplyChanges' | translate }}
+            </button>
+          </div>
+        </div>
       </div>
       <ngx-datatable
         [headerHeight]="50"
@@ -46,16 +83,27 @@
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
+              [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingMapping()"
+              [class.border-danger]="isDuplicatingMapping()"
             >
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="filterSourceStr"
+                ></ngx-mat-select-search>
+              </mat-option>
               <mat-option
                 [value]="item.id"
-                *ngFor="let item of sourcesPoints"
+                *ngFor="let item of sourcesPointsFiltered"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
               <mat-option
                 [value]="item.id"
-                *ngFor="let item of sourcesVirtualPoints"
-              >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
+                *ngFor="let item of sourcesVirtualPointsFiltered"
+                >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
             </mat-select>
           </ng-template>
@@ -78,8 +126,19 @@
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
+              [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingMapping()"
+              [class.border-danger]="isDuplicatingMapping()"
             >
-              <mat-option [value]="item.id" *ngFor="let item of dataPoints">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="filterTargetStr"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option [value]="item.id" *ngFor="let item of targets">
                 {{ getTargetPrefix(item.id) }} {{ item.name }}
               </mat-option>
             </mat-select>
@@ -120,23 +179,31 @@
             let-value="value"
             let-row="row"
           >
-            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex !== rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditStart(rowIndex, row)"
+                (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Edit' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>edit</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onDelete(row)"
+                (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
-            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex === rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditEnd()"
+                (click)="
+                  !isDuplicatingMapping() && onEditEnd(); group.value = null
+                "
                 [matTooltip]="'settings-data-mapping.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
@@ -144,7 +211,7 @@
                 ></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditCancel()"
+                (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-data-mapping.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"

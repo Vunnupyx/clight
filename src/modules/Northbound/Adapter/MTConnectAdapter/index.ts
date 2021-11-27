@@ -116,7 +116,7 @@ export class MTConnectAdapter {
   }
 
   /**
-   * Sends all data items to an agent
+   * Sends all data items to an agent. That is initially required if an agent connects to the adapter
    * @returns void
    */
   private sendAllTo(client: Socket) {
@@ -242,5 +242,32 @@ export class MTConnectAdapter {
     }
     this._running = false;
     return;
+  }
+
+  public shutdown(): Promise<void> {
+    const logPrefix = `${MTConnectAdapter.name}::shutdown`;
+    winston.debug(`${logPrefix} triggered.`);
+    const shutdownFunctions = [];
+    this.clients.forEach((sock) => {
+      sock.removeAllListeners();
+      shutdownFunctions.push(sock.end());
+    });
+
+    Object.getOwnPropertyNames(this).forEach((prop) => {
+      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
+      if (this[prop].removeAllListeners)
+        shutdownFunctions.push(this[prop].removeAllListeners());
+      if (this[prop].close) shutdownFunctions.push(this[prop].close());
+      delete this[prop];
+    });
+
+    return Promise.all(shutdownFunctions)
+      .then(() => {
+        winston.info(`${logPrefix} successfully.`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}`);
+        winston.error(err.stack);
+      });
   }
 }

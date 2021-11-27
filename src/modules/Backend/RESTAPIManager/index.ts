@@ -40,6 +40,9 @@ export class RestApiManager {
     });
   }
 
+  /**
+   * Init all REST Api dependencies
+   */
   private init() {
     const logPrefix = `${RestApiManager.className}::init`;
     winston.info(`${logPrefix} Initializing rest api`);
@@ -73,6 +76,7 @@ export class RestApiManager {
 
   /**
    * Start RestApiManager and all dependencies.
+   * @returns RestApiManager
    */
   private start(): RestApiManager {
     const logPrefix = `${RestApiManager.className}::start`;

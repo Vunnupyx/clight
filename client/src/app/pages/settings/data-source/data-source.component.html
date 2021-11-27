@@ -32,35 +32,51 @@
       </div>
 
       <div *ngIf="dataSource?.protocol === Protocol.S7">
-        <div class="mt-20 d-flex align-items-center">
-          <div class="mt-0 mr-25 text-nowrap">
+        <div class="mt-20 row d-flex align-items-center">
+          <div class="text-nowrap col-12 col-md-5">
             {{ 'settings-data-source.IPAddress' | translate }}
           </div>
-          <form #form="ngForm">
-            <div class="d-flex align-items-center">
-              <ngx-ip
-                [ngModel]="dataSource?.connection?.ipAddr"
-                name="ipAddress"
-                inputValidation="block"
-                separator="."
-                [required]="true"
-                [highlightInvalidBlocks]="true"
-                theme="ngx-ip-theme-material"
-                (ngModelChange)="updateIpAddress(form.valid, $event)"
-              ></ngx-ip>
-              <ng-container *ngIf="!form.dirty">
-                <div class="p-10"></div>
-              </ng-container>
-              <ng-container *ngIf="form.dirty">
-                <mat-icon *ngIf="form.valid" class="color-success"
-                  >check</mat-icon
-                >
-                <mat-icon *ngIf="!form.valid" class="color-error"
-                  >error_outline</mat-icon
-                >
-              </ng-container>
+          <form #form="ngForm" class="col-12 col-md-7">
+            <div>
+              <mat-form-field>
+                <input
+                  matInput
+                  name="ipAddress"
+                  #ipAddr="ngModel"
+                  [ngModel]="dataSource?.connection?.ipAddr"
+                  [pattern]="ipRegex"
+                  [required]="true"
+                  (ngModelChange)="updateIpAddress(form.valid, $event)"
+                />
+              </mat-form-field>
             </div>
           </form>
+        </div>
+
+        <div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{
+                'settings-data-source.ControllerType' | translate
+              }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <mat-select
+                  [ngModel]="dataSource?.type"
+                  (ngModelChange)="updateControllerType($event)"
+                >
+                  <mat-option [value]="S7Types.Sinumerik">Sinumerik</mat-option>
+                  <mat-option [value]="S7Types.S7_300_400"
+                    >S7-300/400</mat-option
+                  >
+                  <mat-option [value]="S7Types.S7_1200_1500"
+                    >S7-1200/1500</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
 
         <div *ngIf="false">
@@ -87,48 +103,215 @@
           </div>
         </div>
       </div>
+
+      <div *ngIf="dataSource?.protocol === Protocol.IOShield">
+        <div>
+          <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-5">
+              <label>{{
+                'settings-data-source.ControllerType' | translate
+              }}</label>
+            </div>
+            <div class="col-12 col-md-7">
+              <mat-form-field>
+                <mat-select
+                  [ngModel]="dataSource?.type"
+                  (ngModelChange)="updateControllerType($event)"
+                >
+                  <mat-option [value]="IOShieldTypes.DI_10"
+                    >10 Digital Inputs</mat-option
+                  >
+                  <mat-option [value]="IOShieldTypes.AI_100_5di"
+                    >Sensor 100A + 5 Digital Input</mat-option
+                  >
+                  <mat-option [value]="IOShieldTypes.AI_150_5di"
+                    >Sensor 150A + 5 Digital Input</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div
-      class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6"
-      *ngIf="connection"
-    >
-      <div class="mt-25">
-        {{ 'settings-data-source.Connection' | translate }}
+    <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">
+      <div class="d-flex align-items-center justify-content-end">
+        <button
+          mat-button
+          type="button"
+          class="btn-sm mr-10"
+          *ngIf="isTouchedTable && !isLoading"
+          (click)="onDiscard()"
+        >
+          {{ 'settings-data-source.DiscardChanges' | translate }}
+        </button>
+
+        <mat-spinner
+          diameter="20"
+          *ngIf="isLoading"
+          class="mr-10"
+        ></mat-spinner>
+
+        <button
+          mat-raised-button
+          type="button"
+          class="btn-sm"
+          [disabled]="!isTouchedTable || isLoading || !dsFormValid"
+          (click)="onApply()"
+        >
+          {{ 'settings-data-source.ApplyChanges' | translate }}
+        </button>
       </div>
       <div
-        class="mt-10 d-flex align-items-center justify-content-between"
-        style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+        class="connection-block"
+        *ngIf="connection && dataSource?.protocol !== Protocol.IOShield"
       >
-        <div>
-          <div style="font-weight: 600">
+        <div class="mt-25">
+          {{ 'settings-data-source.Connection' | translate }}
+        </div>
+
+        <div
+          class="mt-10 d-flex align-items-center justify-content-between"
+          style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+        >
+          <div>
+            <div style="font-weight: 600">
+              <ng-container [ngSwitch]="connection.status">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Disabled"
+                >
+                  {{ 'settings-data-source.Disabled' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.NotConfigured"
+                >
+                  {{ 'settings-data-source.NotConfigured' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Provisioning"
+                >
+                  {{ 'settings-data-source.Provisioning' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed"
+                >
+                  {{ 'settings-data-source.ProvisioningFailed' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.NoNetwork"
+                >
+                  {{ 'settings-data-source.NoNetwork' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Connecting"
+                >
+                  {{ 'settings-data-source.Connecting' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Connected"
+                >
+                  {{ 'settings-data-source.Running' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
+                >
+                  {{ 'settings-data-source.Disconnected' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Reconnecting"
+                >
+                  {{ 'settings-data-source.Reconnecting' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
+                >
+                  {{ 'settings-data-source.ConnectionError' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Unavailable"
+                >
+                  {{ 'settings-data-source.Unavailable' | translate }}
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="
+                    DataSourceConnectionStatus.TermsAndConditionsNotAccepted
+                  "
+                >
+                  {{
+                    'settings-data-source.TermsAndConditionsNotAccepted'
+                      | translate
+                  }}
+                </ng-container>
+              </ng-container>
+            </div>
+            <small style="color: #999">{{
+              'settings-data-source.ServiceState' | translate
+            }}</small>
+          </div>
+          <div class="mr-10">
             <ng-container [ngSwitch]="connection.status">
+              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disabled">
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NotConfigured"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Provisioning"
+              >
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NoNetwork"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Connecting"
+              >
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
+              </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Connected"
               >
-                {{ 'settings-data-source.Running' | translate }}
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
               >
-                {{ 'settings-data-source.Disconnected' | translate }}
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Reconnecting"
+              >
+                <mat-icon class="color-success">check_circle_outline</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Unavailable"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="
+                  DataSourceConnectionStatus.TermsAndConditionsNotAccepted
+                "
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
               </ng-container>
             </ng-container>
           </div>
-          <small style="color: #999">{{
-            'settings-data-source.ServiceState' | translate
-          }}</small>
-        </div>
-        <div class="mr-10">
-          <ng-container [ngSwitch]="connection.status">
-            <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connected">
-              <mat-icon class="color-success">check_circle_outline</mat-icon>
-            </ng-container>
-            <ng-container
-              *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
-            >
-              <mat-icon class="color-danger">highlight_off</mat-icon>
-            </ng-container>
-          </ng-container>
         </div>
       </div>
     </div>
@@ -136,21 +319,26 @@
 
   <div class="row">
     <div class="col-12">
-      <div class="d-flex align-items-center">
-        <h3>{{ 'settings-data-source.DataPoints' | translate }}</h3>
-        <button
-          type="button"
-          [disabled]="isEditing"
-          mat-mini-fab
-          color="primary"
-          class="wh-32 border-round ml-15"
-          (click)="onAdd()"
-          [matTooltip]="'settings-data-source.AddDataPoint' | translate"
-          matTooltipPosition="above"
-        >
-          <mat-icon style="margin-top: -10px">add</mat-icon>
-        </button>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="d-flex align-items-center">
+            <h3>{{ 'settings-data-source.DataPoints' | translate }}</h3>
+            <button
+              type="button"
+              [disabled]="isEditing"
+              mat-mini-fab
+              color="primary"
+              class="wh-32 border-round ml-15"
+              (click)="onAdd()"
+              [matTooltip]="'settings-data-source.AddDataPoint' | translate"
+              matTooltipPosition="above"
+            >
+              <mat-icon style="margin-top: -10px">add</mat-icon>
+            </button>
+          </div>
+        </div>
       </div>
+
       <ngx-datatable
         [headerHeight]="50"
         [rows]="datapointRows"
@@ -182,6 +370,10 @@
               class="w-100"
               [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
+              [matTooltip]="'settings-data-source.DuplicatedName' | translate"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingField('name')"
+              [class.border-danger]="isDuplicatingField('name')"
               autofocus
             />
           </ng-template>
@@ -230,13 +422,20 @@
             let-value="value"
             let-row="row"
           >
-            <span *ngIf="liveData[row.id]; else noLiveData">
+            <span *ngIf="liveData && liveData[row.id]; else noLiveData">
               <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
-                {{
-                  'settings-data-source.Livedata.ioshield.' +
-                    liveData[row.id].value | translate
-                }}
+                <ng-container
+                  *ngIf="row.address?.startsWith('DI'); else noTranslate"
+                  >{{
+                    'settings-data-source.Livedata.ioshield.' +
+                      liveData[row.id].value | translate
+                  }}
+                </ng-container>
+                <ng-template #noTranslate>{{
+                  liveData[row.id].value
+                }}</ng-template>
               </ng-container>
+
               <ng-container *ngIf="dataSource?.protocol != Protocol.IOShield">
                 {{ liveData[row.id].value }}
               </ng-container>
@@ -258,7 +457,7 @@
           >
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
               <div class="text-ellipsis" [title]="value">
-                {{ value }}
+                {{ mapAddressLabel(value) }}
               </div>
             </ng-container>
             <div
@@ -269,10 +468,16 @@
               <ng-container [ngSwitch]="unsavedRow!.type">
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK">
                   <div>{{ unsavedRow?.address }}</div>
-                  <mat-button-toggle-group class="mt-0 ml-10">
+                  <mat-button-toggle-group
+                    class="mt-0 ml-10"
+                    #group="matButtonToggleGroup"
+                  >
                     <mat-button-toggle
                       class="small-button"
-                      (click)="unsavedRow && onAddressSelect(unsavedRow)"
+                      (click)="
+                        unsavedRow && onAddressSelect(unsavedRow);
+                        group.value = null
+                      "
                       [matTooltip]="'settings-data-source.Select' | translate"
                       matTooltipPosition="above"
                       ><mat-icon>open_in_new</mat-icon></mat-button-toggle
@@ -289,11 +494,24 @@
                     (ngModelChange)="
                       unsavedRow && (unsavedRow.address = $event)
                     "
+                    [matTooltip]="
+                      'settings-data-source.DuplicatedAddress' | translate
+                    "
+                    matTooltipPosition="above"
+                    [matTooltipDisabled]="!isDuplicatingField('address')"
+                    [class.border-danger]="isDuplicatingField('address')"
                   >
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search..."
+                        noEntriesFoundLabel="No results found"
+                        [(ngModel)]="filterDigitalInputAddressStr"
+                      ></ngx-mat-select-search>
+                    </mat-option>
                     <mat-option
-                      *ngFor="let address of DigitalInputAddresses"
+                      *ngFor="let address of ioshieldAddresses"
                       [value]="address"
-                      >{{ address }}</mat-option
+                      >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
                   <ng-template #s7InputAddress>
@@ -303,6 +521,12 @@
                       class="w-100"
                       [ngModel]="value"
                       (ngModelChange)="unsavedRow.address = $event"
+                      [matTooltip]="
+                        'settings-data-source.DuplicatedAddress' | translate
+                      "
+                      matTooltipPosition="above"
+                      [matTooltipDisabled]="!isDuplicatingField('address')"
+                      [class.border-danger]="isDuplicatingField('address')"
                     />
                   </ng-template>
                 </ng-container>
@@ -322,23 +546,34 @@
             let-value="value"
             let-row="row"
           >
-            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex !== rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditStart(rowIndex, row)"
+                (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-data-source.Edit' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>edit</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onDelete(row)"
+                (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-source.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
-            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex === rowIndex"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
-                (click)="onEditEnd()"
+                (click)="
+                  !isDuplicatingField('name') &&
+                    !isDuplicatingField('address') &&
+                    onEditEnd();
+                  group.value = null
+                "
                 [matTooltip]="'settings-data-source.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
@@ -346,7 +581,7 @@
                 ></mat-button-toggle
               >
               <mat-button-toggle
-                (click)="onEditCancel()"
+                (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-data-source.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"

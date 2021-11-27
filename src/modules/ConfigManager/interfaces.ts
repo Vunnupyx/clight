@@ -3,12 +3,12 @@ import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
 
 export interface IAuthConfig {
-  secret: any;
+  secret: string;
+  public: string;
 }
 
 export interface IAuthRuntimeConfig {
   expiresIn: number;
-  defaultPassword: string;
 }
 
 export interface IRuntimeConfig {
@@ -18,6 +18,7 @@ export interface IRuntimeConfig {
   restApi: IRestApiConfig;
   auth: IAuthRuntimeConfig;
   datahub: IDataHubConfig;
+  systemInfo: ISystemInfo[];
 }
 
 export interface IGeneralConfig {
@@ -52,6 +53,19 @@ export interface IOPCUAConfig extends OPCUAServerOptions {
   nodesetDir: string;
 }
 
+export type IS7DataSourceConnection = {
+  ipAddr: string;
+  port: number;
+  rack: number;
+  slot: number;
+};
+export type IS7DataSourceTypes =
+  | 's7-300/400'
+  | 's7-1200/1500'
+  | 'nck'
+  | 'custom';
+export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
+
 export interface IDataPointConfig {
   id: string;
   name: string;
@@ -64,13 +78,9 @@ export interface IDataSourceConfig {
   name: string;
   dataPoints: IDataPointConfig[];
   protocol: string;
-  connection?: {
-    ipAddr: string;
-    port: number;
-    rack: number;
-    slot: number;
-  };
+  connection?: IS7DataSourceConnection;
   enabled: boolean;
+  type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
 }
 
 type IMTConnectDataPointTypes = 'event' | 'condition';
@@ -88,15 +98,27 @@ export interface IDataSinkDataPointConfig {
   map?: ITargetDataMap;
   initialValue?: string | number;
 }
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+export interface IDataHubSettings {
+  provisioningHost: string;
+  scopeId: string;
+  regId: string;
+  symKey: string;
+}
+
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
+  datahub?: IDataHubSettings;
 }
-
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
 
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
@@ -104,36 +126,13 @@ export interface IOpcuaAuth {
   password: string;
 }
 
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
-}
-
-export interface IDataHubConfig {
-  provisioningHost: string;
-  scopeId: string;
-  regId: string;
-  symKey: string;
-  groupDevice: boolean;
-}
-
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
-
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
   userName: string;
   password: string;
 }
 
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
-}
-
 export interface IDataHubConfig {
-  provisioningHost: string;
-  serialNumber: string;
-  scopeId: string;
-  regId: string;
-  symKey: string;
   groupDevice: boolean;
   signalGroups: ISignalGroups;
   dataPointTypesData: {
@@ -148,6 +147,25 @@ interface IDataHubDataPointTypesData {
 
 export interface ISignalGroups {
   [key: string]: Array<string>;
+}
+
+export interface IProxyConfig {
+  ip: string;
+  port: number;
+  type: 'socks5' | 'http';
+  username?: string;
+  password?: string;
+  enabled: boolean;
+}
+
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
+
+interface IDataHubDataPointTypesData {
+  intervalHours: number | null;
 }
 
 export type TDataHubDataPointType = 'event' | 'probe' | 'telemetry';
@@ -197,12 +215,23 @@ export type NetworkConfig = {
   time?: ITimeConfig;
 };
 
-export interface IDefaultTemplates {
-  availableDataSources: IDataSourceConfig[];
-  availableDataSinks: IDataSinkConfig[];
+export interface IDefaultTemplate {
+  id?: string;
+  name: string;
+  description: string;
+  dataSources: IDataSourceConfig[];
+  dataSinks: IDataSinkConfig[];
+  mapping: IDataPointMapping[];
+  virtualDataPoints: IVirtualDataPointConfig[];
 }
 
-export interface TemplatesConfig {
+export interface IDefaultTemplates {
+  templates: IDefaultTemplate[];
+}
+
+export interface QuickStartConfig {
+  currentTemplate?: string;
+  currentTemplateName?: string;
   completed: boolean;
 }
 
@@ -230,18 +259,19 @@ export interface ISystemInfo {
   items: ISystemInfoItem[];
 }
 
+export interface TermsAndConditionsConfig {
+  accepted: boolean;
+}
+
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: Array<
-    IDataSinkConfig | IDataHubDataSinkConfig | IOpcuaDataSinkConfig
-  >;
+  dataSinks: Array<IDataSinkConfig>;
   virtualDataPoints: IVirtualDataPointConfig[];
-  // dataPoints: IDataSinkDataPointConfig[]; // TODO ??
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
   networkConfig: NetworkConfig;
-  templates: TemplatesConfig;
-  systemInfo: ISystemInfo[];
+  quickStart: QuickStartConfig;
+  termsAndConditions: TermsAndConditionsConfig;
 }
 
 export interface IConfigManagerParams {

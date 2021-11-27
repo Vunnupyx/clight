@@ -18,6 +18,7 @@ export interface IMeasurement {
 
 export interface IDataSourceParams {
   readonly config: IDataSourceConfig;
+  readonly termsAndConditionsAccepted: boolean;
 }
 
 export interface IDataSourceEvent {

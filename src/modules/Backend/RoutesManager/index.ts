@@ -55,6 +55,10 @@ import {
   setDataSourcesManager as setTemplateDataSourcesManager,
   setDataSinksManager as setTemplateDataSinksManager
 } from '../routes/apis/v1/Templates';
+import {
+  termsAndConditionsHandlers,
+  setConfigManager as termsAndConditionsSetConfigManager
+} from '../routes/apis/v1/TermsAndConditions';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
@@ -71,6 +75,10 @@ interface RoutesManagerOptions {
   dataPointCache: DataPointCache;
   authManager: AuthManager;
 }
+
+/**
+ * Controls all REST Routes
+ */
 export class RoutesManager {
   private inputValidator;
   private app: Application;
@@ -86,7 +94,8 @@ export class RoutesManager {
     ...mappingHandlers,
     ...networkConfigHandlers,
     ...systemInfoHandlers,
-    ...templatesHandlers
+    ...templatesHandlers,
+    ...termsAndConditionsHandlers
   };
 
   constructor(options: RoutesManagerOptions) {
@@ -111,7 +120,8 @@ export class RoutesManager {
       mappingSetConfigManager,
       networkConfigSetConfigManager,
       systemInfoSetConfigManager,
-      templatesConfigSetConfigManager
+      templatesConfigSetConfigManager,
+      termsAndConditionsSetConfigManager
     ].forEach((func) => func(options.configManager));
     authSetAuthManager(options.authManager);
     setDataSinksManager(options.dataSinksManager);

@@ -12,9 +12,10 @@ import { createHmac } from 'crypto';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import winston from 'winston';
-import { NorthBoundError } from '../../../../common/errors';
+import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import {
   IDataHubConfig,
+  IDataHubSettings,
   IProxyConfig,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
@@ -22,6 +23,8 @@ import {
   TGroupedMeasurements,
   IMeasurement
 } from '../../DataSinks/DataHubDataSink';
+import { LifecycleEventStatus } from '../../../../common/interfaces';
+import { System } from '../../../System';
 
 type TConnectionString =
   `HostName=${string};DeviceId=${string};SharedAccessKey=${string}`;
@@ -30,13 +33,15 @@ interface DataHubAdapterOptions extends IDataHubConfig {
   proxy?: IProxyConfig;
 }
 
-interface IDesiredProps {
-  services: {
-    [serviceName: string]: {
-      enabled: boolean;
-      [additionalParameter: string]: any;
-    };
+interface IDesiredServices {
+  [serviceName: string]: {
+    enabled: boolean;
+    [additionalParameter: string]: any;
   };
+}
+
+export interface IDesiredProps {
+  services: IDesiredServices;
 }
 
 function isDesiredProps(obj: any): obj is IDesiredProps {
@@ -45,7 +50,11 @@ function isDesiredProps(obj: any): obj is IDesiredProps {
 export class DataHubAdapter {
   static readonly #className: string = DataHubAdapter.name;
   private isRunning: boolean = false;
+  private deviceTwinChanged = true;
+  private onStateChange: (state: LifecycleEventStatus) => void;
+
   #initialized: boolean = false;
+  #successfullyProvisioned: boolean = false;
   #proxyConfig: DataHubAdapterOptions['proxy'];
   #proxy: HttpsProxyAgent | SocksProxyAgent;
 
@@ -72,12 +81,23 @@ export class DataHubAdapter {
   #probeSendInterval: number;
   #telemetrySendInterval: number;
   #runningTimers: Array<NodeJS.Timer> = [];
-  #alreadyReportedServices: Array<string> = [];
+  private provTimer: NodeJS.Timer = null;
 
-  public constructor(options: DataHubAdapterOptions) {
+  lastSentEventValues: { [key: string]: boolean | number | string } = {};
+
+  /**
+   *
+   * @param options Static options defined inside the runtime config
+   * @param settings Dynamic options defined inside the config and editable via the ui
+   */
+  public constructor(
+    staticOptions: DataHubAdapterOptions,
+    dynamicOptions: IDataHubSettings,
+    onStateChange: (state: LifecycleEventStatus) => void = (state) => {}
+  ) {
     if (
-      !options.dataPointTypesData.probe.intervalHours ||
-      !options.dataPointTypesData.telemetry.intervalHours
+      !staticOptions.dataPointTypesData.probe.intervalHours ||
+      !staticOptions.dataPointTypesData.telemetry.intervalHours
     ) {
       throw new NorthBoundError(
         `${
@@ -86,18 +106,19 @@ export class DataHubAdapter {
       );
     }
     this.#probeSendInterval = this.hoursToMs(
-      options.dataPointTypesData.probe.intervalHours
+      staticOptions.dataPointTypesData.probe.intervalHours
     );
     this.#telemetrySendInterval = this.hoursToMs(
-      options.dataPointTypesData.telemetry.intervalHours
+      staticOptions.dataPointTypesData.telemetry.intervalHours
     );
-    this.#dpsServiceAddress = options.provisioningHost;
-    this.#registrationId = options.regId;
-    this.#symKey = options.symKey;
-    this.#scopeId = options.scopeId;
-    this.#isGroupRegistration = options.groupDevice || false;
-    this.#proxyConfig = options.proxy || null;
-    this.#serialNumber = options.serialNumber;
+    this.#dpsServiceAddress = dynamicOptions?.provisioningHost || '';
+    this.#registrationId = dynamicOptions?.regId || '';
+    this.#symKey = dynamicOptions?.symKey || '';
+    this.#scopeId = dynamicOptions?.scopeId || '';
+    this.#isGroupRegistration = staticOptions.groupDevice || false;
+    this.#proxyConfig = staticOptions.proxy || null;
+
+    this.onStateChange = onStateChange;
   }
 
   public get running(): boolean {
@@ -124,45 +145,36 @@ export class DataHubAdapter {
   /**
    * Set reported properties on device twin.
    */
-  public setReportedProps(reportedServices: string[]): void {
-    const logPrefix = `${DataHubAdapter.#className}::getDesiredProps`;
-    if (!this.#deviceTwin) {
-      winston.warn(`${logPrefix} no device twin available.`);
-      return;
-    }
-    const removedServices = this.#alreadyReportedServices.filter(
-      (s) => !reportedServices.includes(s)
-    );
-    const newServices = reportedServices.filter(
-      (s) => !this.#alreadyReportedServices.includes(s)
-    );
+  public async setReportedProps(data: IDesiredServices): Promise<void> {
+    const logPrefix = `${DataHubAdapter.#className}::setReportedProps`;
 
-    // Nothing to update
-    if (!(removedServices.length > 0) && !(newServices.length > 0)) return;
-    const patch = {};
-    //enable new services
-    newServices.forEach((serviceName) => {
-      patch[serviceName] = {
-        enabled: true
-      };
+    return new Promise((res, rej) => {
+      if (!this.#deviceTwin) {
+        winston.warn(`${logPrefix} no device twin available.`);
+        return;
+      }
+
+      winston.info(`${logPrefix} updating reported properties`);
+      this.#deviceTwin.properties.reported.update({ services: data }, (err) => {
+        if (err) winston.error(`${logPrefix} error due to ${err.message}`);
+        else this.deviceTwinChanged = false;
+        res();
+      });
     });
-    //disable new services
-    removedServices.forEach((serviceName) => {
-      patch[serviceName] = {
-        enabled: false
-      };
-    });
-    this.#deviceTwin.properties.reported.update({ services: patch }, (err) => {
-      if (err) winston.error(`${logPrefix} error due to ${err.message}`);
-    });
-    this.#alreadyReportedServices = reportedServices.concat(removedServices);
   }
 
   /**
    * Initialize the DataHubAdapter and get provisioning for the device.
    */
-  public init(): Promise<DataHubAdapter> {
+  public async init(): Promise<DataHubAdapter> {
     const logPrefix = `${DataHubAdapter.#className}::init`;
+
+    this.#serialNumber = (
+      (await new System().readMacAddress('eth1')) || '000000000000'
+    )
+      .split(':')
+      .join('');
+
     return Promise.resolve()
       .then(() => {
         winston.debug(`${logPrefix} initializing.`);
@@ -179,9 +191,12 @@ export class DataHubAdapter {
         }
       })
       .then(() => this.startProvisioning())
-      .then(() => {
+      .then((success) => {
         this.#initialized = true;
-        winston.debug(`${logPrefix} initialized. Registered to DPS`);
+        this.#successfullyProvisioned = success;
+        winston.debug(
+          `${logPrefix} initialized. ${success ? 'R' : 'Not r'}egistered to DPS`
+        );
         return this;
       })
       .catch((err) => {
@@ -194,7 +209,12 @@ export class DataHubAdapter {
   /**
    * Start the provisioning process for this device
    */
-  private startProvisioning(): Promise<void> {
+  private startProvisioning(): Promise<boolean> {
+    const logPrefix = `${DataHubAdapter.#className}::startProvisioning`;
+    winston.debug(`${logPrefix} Starting provisioning...`);
+
+    this.onStateChange(LifecycleEventStatus.Provisioning);
+
     this.#provSecClient = new SymmetricKeySecurityClient(
       this.#registrationId,
       this.#groupDeviceKey || this.#symKey
@@ -212,7 +232,11 @@ export class DataHubAdapter {
       this.#provSecClient
     );
 
-    return this.getProvisioning();
+    const success = this.getProvisioning();
+    if (!success) {
+      this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+    }
+    return success;
   }
 
   /**
@@ -221,13 +245,20 @@ export class DataHubAdapter {
   public start(): Promise<void> {
     const logPrefix = `${DataHubAdapter.#className}::start`;
     winston.debug(`${logPrefix} starting...`);
-    if (!this.#initialized || !this.#connectionSting)
+    if (!this.#initialized)
       return Promise.reject(
         new NorthBoundError(`${logPrefix} try to start uninitialized adapter.`)
       );
     if (this.isRunning) {
       winston.debug(
         `${logPrefix} try to start a already started adapter. Please remove unnecessary invoke of start().`
+      );
+      return Promise.resolve();
+    }
+
+    if (!this.#successfullyProvisioned) {
+      winston.warn(
+        `${logPrefix} data hub adapter isn't provisioned successful. Skipping start`
       );
       return Promise.resolve();
     }
@@ -245,8 +276,11 @@ export class DataHubAdapter {
       })
       .then((twin) => {
         this.#deviceTwin = twin;
-        twin.on('properties.desired.services', () => {
-          winston.debug(`${logPrefix} got services update.`);
+        twin.on('properties.desired.services', async (data) => {
+          winston.info(`${logPrefix} received desired services update.`);
+          winston.debug(`${logPrefix} ${JSON.stringify(data)}`);
+
+          await this.setReportedProps(data);
         });
         this.#runningTimers.push(
           setInterval(() => {
@@ -258,9 +292,11 @@ export class DataHubAdapter {
             this.sendMessage('telemetry');
           }, this.#telemetrySendInterval)
         );
+        this.onStateChange(LifecycleEventStatus.Connected);
         winston.info(`${logPrefix} successful. Adapter ready to send data.`);
       })
       .catch((err) => {
+        this.onStateChange(LifecycleEventStatus.ConnectionError);
         return Promise.reject(
           new NorthBoundError(
             `${logPrefix} error due to ${JSON.stringify(err)}`
@@ -303,6 +339,7 @@ export class DataHubAdapter {
           delete this[key];
         });
         winston.info(`${logPrefix} successfully stopped adapter.`);
+        this.onStateChange(LifecycleEventStatus.Disconnected);
       })
       .catch((err) => {
         return Promise.reject(
@@ -323,19 +360,28 @@ export class DataHubAdapter {
   /**
    * Send provisioning request to device provisioning service.
    */
-  private getProvisioning(): Promise<void> {
+  private getProvisioning(): Promise<boolean> {
     const logPrefix = `${DataHubAdapter.#className}::getProvisioning`;
+
     return new Promise((res, rej) => {
-      this.#provClient.register(async (err, response) => {
+      winston.debug(`${logPrefix} Registering...`);
+      const timeOut = 10 * 1000;
+      this.provTimer = setTimeout(() => {
+        this.#provClient.cancel();
+        winston.error(`${logPrefix} hit timeout of ${timeOut} ms. Abort.`);
+        this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+        res(false);
+      }, timeOut);
+      this.#provClient.register((err, response) => {
         try {
-          this.registrationHandler(err, response);
-          res();
+          clearTimeout(this.provTimer);
+          const success = this.registrationHandler(err, response);
+          res(success);
         } catch (err) {
-          rej(
-            new NorthBoundError(
-              `${logPrefix} error due to ${JSON.stringify(err)}`
-            )
+          winston.error(
+            `${logPrefix} registration failed due to ${err?.message}`
           );
+          res(false);
         }
       });
     });
@@ -374,24 +420,29 @@ export class DataHubAdapter {
   /**
    * Handler for registration requests.
    */
-  private registrationHandler(error: Error, res: RegistrationResult): void {
+  private registrationHandler(error: Error, res: RegistrationResult): boolean {
     const logPrefix = `${DataHubAdapter.#className}::registrationHandler`;
-    if (error)
-      throw new NorthBoundError(
-        `${logPrefix} error due to ${JSON.stringify(error)}`
+    if (error) {
+      if (error.name === 'NotConnectedError')
+        this.onStateChange(LifecycleEventStatus.NoNetwork);
+      else this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+
+      return false;
+    } else {
+      winston.debug(
+        `${logPrefix} successfully got provisioning information: \n ${JSON.stringify(
+          res,
+          null,
+          2
+        )}`
       );
-    winston.debug(
-      `${logPrefix} successfully got provisioning information: \n ${JSON.stringify(
-        res,
-        null,
-        2
-      )}`
-    );
-    this.#connectionSting = this.generateConnectionString(
-      res.assignedHub,
-      res.deviceId,
-      this.#groupDeviceKey || this.#symKey
-    );
+      this.#connectionSting = this.generateConnectionString(
+        res.assignedHub,
+        res.deviceId,
+        this.#groupDeviceKey || this.#symKey
+      );
+      return true;
+    }
   }
 
   /**
@@ -418,12 +469,35 @@ export class DataHubAdapter {
       //why object.entries infer string instead real strings?
       switch (group as TDataHubDataPointType) {
         case 'event': {
+          // Remove not changed data
+          const filteredMeasurementArray: IMeasurement[] = [];
+          measurementArray.forEach((measurement) => {
+            const filteredMeasurements: IMeasurement = {};
+            for (const [key, value] of Object.entries(measurement)) {
+              if (this.lastSentEventValues[key] !== value)
+                filteredMeasurements[key] = value;
+            }
+            if (Object.keys(filteredMeasurements).length > 0)
+              filteredMeasurementArray.push(filteredMeasurements);
+          });
+
+          if (filteredMeasurementArray.length === 0) continue;
+
+          // Storing last sent value
+          filteredMeasurementArray.forEach((measurement) => {
+            for (const [key, value] of Object.entries(measurement)) {
+              this.lastSentEventValues[key] = value;
+            }
+          });
+
           const eventBuffer = new MessageBuffer(this.#serialNumber);
-          eventBuffer.addAssetList(measurementArray);
+          eventBuffer.addAssetList(filteredMeasurementArray);
           const msg = this.addMsgType('event', eventBuffer.getMessage());
+
           this.#dataHubClient.sendEvent(msg, () => {
             winston.debug(`${logPrefix} send event data`);
           });
+
           continue;
         }
         case 'telemetry': {
@@ -468,6 +542,7 @@ export class DataHubAdapter {
       return;
     }
     const msg = this.addMsgType(msgType, buffer.getMessage());
+
     this.#dataHubClient.sendEvent(msg, () => {
       winston.debug(`${logPrefix} send ${msgType} message`);
     });
@@ -479,6 +554,50 @@ export class DataHubAdapter {
   private addMsgType(type: TDataHubDataPointType, msg: Message): Message {
     msg.properties.add('messageType', type);
     return msg;
+  }
+
+  public shutdown(): Promise<void> {
+    const logPrefix = `${DataHubAdapter.name}::shutdown`;
+    this.killProv();
+    const shutdownFunctions = [
+      this.#provClient?.cancel(),
+      this.#provGroupClient?.cancel()
+    ];
+    [
+      this.#proxy,
+      this.#provSecClient,
+      this.#symKeyProvTransport,
+      this.#dataHubClient,
+      this.#deviceTwin
+    ].forEach((prop) => {
+      // @ts-ignore
+      if (prop?.shutdown) shutdownFunctions.push(prop.shutdown());
+      // @ts-ignore
+      if (prop?.close) shutdownFunctions.push(prop.close());
+      // @ts-ignore
+      if (prop?.removeAllListeners)
+        // @ts-ignore
+        shutdownFunctions.push(prop.removeAllListeners());
+      prop = undefined;
+    });
+    this.#runningTimers.forEach((timer) => {
+      clearTimeout(timer);
+    });
+    return Promise.all(shutdownFunctions)
+      .then(() => {
+        winston.info(`${logPrefix} successfully.`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}.`);
+      });
+  }
+
+  private killProv() {
+    if (this.#provClient) {
+      // In case of previous state was "Missing Config", this is undefined
+      this.#provClient.cancel();
+    }
+    clearTimeout(this.provTimer);
   }
 }
 

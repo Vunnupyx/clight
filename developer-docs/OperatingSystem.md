@@ -47,9 +47,16 @@ apt purge python3-setuptools python3.7-dev
 10. Remove device specific configuration
 
 ```
+rm -rf /etc/MDCLight/config/auth.json
+rm -rf /etc/MDCLight/config/ssl.crt
+rm -rf /etc/MDCLight/config/ssl_private.key
 rm -rf /etc/ssh/ssh_host_*
 rm -rf  rm -rf /etc/MDCLight/logs/*.log
 cat /dev/null > ~/.bash_history && history -c && exit
+nmcli con mod eth0-default ipv4.method auto
+nmcli con up eth0-default
+nmcli con mod eth1-default ipv4.addresses 192.168.214.230/24 ipv4.gateway 0.0.0.0.0 ipv4.dns 0.0.0.0 ipv4.method manual
+nmcli con up eth1-default
 ```
 
 11. And shutdown: `shutdown -h now`
@@ -59,4 +66,23 @@ cat /dev/null > ~/.bash_history && history -c && exit
 ## Update containers
 
 1. Pull newer containers: `docker-compose pull`
-2. Restart `docker-compose down && docker-compose up -d)`
+2. Restart `docker-compose down && docker-compose up -d`
+
+## V2
+
+## SSL Cert generation
+
+```
+[Unit]
+Description=Generate SSL certificate & private key if they don't exist already
+WantedBy=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=bash -c 'test ! -e /etc/MDCLight/config/ssl_private.key && openssl req -x509 -nodes -days 10950 -newkey rsa:2048 -keyout /etc/MDCLight/config/ssl_private.key -out /etc/MDCLight/config/ssl.crt -subj "/C=DE/L=Munich/O=codestryke GmbH/CN=IOT2050/emailAddress=info@codestryke.com" || true'
+RemainAfterExit=true
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
+```

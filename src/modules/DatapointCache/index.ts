@@ -1,9 +1,9 @@
 import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
 
 type TimeSeriesValue = {
-  ts: string,
-  value: boolean | number | string
-}
+  ts: string;
+  value: boolean | number | string;
+};
 
 type EventsById = {
   [id: string]: {
@@ -35,7 +35,7 @@ export class DataPointCache {
     }
 
     _events.forEach((event) => {
-      const lastEvent = this.getLastEvent(event.measurement.id);
+      const lastEvent = this.getCurrentEvent(event.measurement.id);
       this.dataPoints[event.measurement.id] = {
         changed: lastEvent
           ? lastEvent.measurement.value !== event.measurement.value
@@ -45,11 +45,13 @@ export class DataPointCache {
           ...(this.dataPoints[event.measurement.id]?.timeseries || []),
           {
             ts: new Date().toISOString(),
-            value: event.measurement.value,
-          },
+            value: event.measurement.value
+          }
         ].filter((time) => {
+          const PERIOD = 5 * 60 * 1000; // 5 min
+
           const ts = new Date(time.ts);
-          const pastDate = new Date(Date.now() - 30000);
+          const pastDate = new Date(Date.now() - PERIOD);
 
           return ts >= pastDate;
         })
@@ -58,12 +60,25 @@ export class DataPointCache {
   }
 
   /**
-   * Returns last event of a data point and null if the data point doesnt exist
+   * Returns the current event of a data point and null if the data point doesnt exist
    * @param  {string} id
    * @returns IMeasurementEvent
    */
-  public getLastEvent(id: string): IDataSourceMeasurementEvent | null {
+  public getCurrentEvent(id: string): IDataSourceMeasurementEvent | null {
     return this.dataPoints[id] ? this.dataPoints[id].event : undefined;
+  }
+
+  /**
+   * Returns latest value of a data point and null if the data point doesnt exist
+   * @param  {string} id
+   * @returns IMeasurementEvent
+   */
+  public getLastestValue(id: string): TimeSeriesValue | null {
+    return this.dataPoints[id]
+      ? this.dataPoints[id].timeseries[
+          this.dataPoints[id].timeseries.length - 1
+        ]
+      : null;
   }
 
   /**

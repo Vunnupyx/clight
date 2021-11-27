@@ -1,22 +1,36 @@
 <main class="login-layout">
-  <div class="split-screen"></div>
+  <div
+    class="
+      split-screen
+      d-flex
+      align-items-start
+      justify-content-center
+      flex-column
+    "
+  >
+    <img class="brand" src="/assets/images/logo-login.png" alt="logotype" />
+    <img
+      class="connectivity"
+      src="/assets/images/logo-connectivity.png"
+      alt="logotype"
+    />
+  </div>
   <div class="login-screen">
-    <div class="login-logo">
-      <img src="/assets/images/logo-login.png" alt="logotype" />
-    </div>
-    <div class="login-texts">
-      <ng-container [ngSwitch]="mode">
-        <ng-container *ngSwitchCase="LoginPageMode.Login">
-          <p>{{ 'auth-login.ForCustomers' | translate }}</p>
-          <p>{{ 'auth-login.ForCustomersDescription' | translate }}</p>
-        </ng-container>
-        <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
-          <p>{{ 'auth-login.ForgotPasswordForCustomers' | translate }}</p>
-          <p>
-            {{ 'auth-login.ForgotPasswordForCustomersDescription' | translate }}
-          </p>
-        </ng-container>
-      </ng-container>
+    <div class="login-logo" style="display: flex; width: 100%">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          font-size: 50px;
+          margin: 0 auto;
+        "
+      >
+        <p style="margin: 0 auto">
+          <span style="font-weight: 800">IoT</span
+          ><span style="font-style: italic">connector</span>
+        </p>
+        <p style="margin: 0 0 0 auto">light</p>
+      </div>
     </div>
     <div class="login-form">
       <ng-container [ngSwitch]="mode">
@@ -34,8 +48,22 @@
             </mat-form-field>
 
             <div class="password-block">
+              <span class="forgot-password">
+                <a href="#" (click)="openForgotPassword()">{{
+                  'auth-login.ForgotPassword' | translate
+                }}</a>
+              </span>
               <mat-form-field>
-                <mat-label>{{ 'auth-login.Password' | translate }}</mat-label>
+                <mat-label class="d-flex">
+                  <span>{{ 'auth-login.Password' | translate }}</span>
+                  <span>
+                    <app-doc-btn
+                      link="/help/docs/"
+                      tooltip="Where do I find my login password?"
+                    ></app-doc-btn>
+                  </span>
+                </mat-label>
+
                 <input
                   matInput
                   type="password"

@@ -17,7 +17,7 @@
 
 <mat-divider></mat-divider>
 
-<ng-container [ngSwitch]="dataSource?.protocol">
+<!-- <ng-container [ngSwitch]="dataSource?.protocol">
   <app-data-source-mtconnect
     *ngSwitchCase="'mtconnect'"
     [dataSource]="dataSource!"
@@ -30,9 +30,9 @@
     *ngSwitchCase="Protocol.S7"
     [dataSource]="dataSource!"
   ></app-data-source-ioshield>
-</ng-container>
+</ng-container> -->
 
-<!-- <div class="d-block m-20">
+<div class="d-block m-20">
   <div class="row">
     <div class="col-12 col-md-6 col-lg-4">
       <div class="row mt-20 mb-25">
@@ -609,4 +609,4 @@
       </ngx-datatable>
     </div>
   </div>
-</div> -->
+</div>

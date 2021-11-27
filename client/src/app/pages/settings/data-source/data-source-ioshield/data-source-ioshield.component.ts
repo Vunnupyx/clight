@@ -17,6 +17,8 @@ import {
   DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
+  IOShieldTypes,
+  S7Types,
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
@@ -27,6 +29,9 @@ import {
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { clone, ObjectMap } from 'app/shared/utils';
 import { SelectTypeModalComponent } from '../select-type-modal/select-type-modal.component';
+import { PromptService } from 'app/shared/services/prompt.service';
+import { IP_REGEX } from 'app/shared/utils/regex';
+import { Status } from 'app/shared/state';
 
 @Component({
   selector: 'app-data-source-ioshield',
@@ -41,7 +46,10 @@ export class DataSourceIoshieldComponent
   SourceDataPointType = SourceDataPointType;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
+  S7Types = S7Types;
+  IOShieldTypes = IOShieldTypes;
 
+  dataSourceList?: DataSource[];
   datapointRows?: SourceDataPoint[];
   connection?: DataSourceConnection;
 
@@ -62,18 +70,62 @@ export class DataSourceIoshieldComponent
 
   sub = new Subscription();
   liveDataSub!: Subscription;
+  statusSub!: Subscription;
+
+  ipRegex = IP_REGEX;
+  dsFormValid = true;
+
+  filterDigitalInputAddressStr = '';
+
+  get ioshieldAddresses() {
+    return this.DigitalInputAddresses.filter((x) => {
+      const searchCond = x
+        .toLowerCase()
+        .includes(this.filterDigitalInputAddressStr.toLowerCase());
+
+      return searchCond && this.filterIOShieldAddress(x);
+    });
+  }
+
+  get isTouchedTable() {
+    return this.sourceDataPointService.isTouched;
+  }
+
+  get isLoading() {
+    return this.sourceDataPointService.status === Status.Loading;
+  }
+
+  private mapIOShieldsAIAddresses = {
+    DI8: 'DI0',
+    DI7: 'DI1',
+    DI6: 'DI2',
+    DI5: 'DI3',
+    DI0: 'DI4',
+    AI0: 'AI0',
+    AI1: 'AI1'
+  };
+
+  private mapIOShieldsKeys = Object.keys(this.mapIOShieldsAIAddresses);
 
   constructor(
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private promptService: PromptService
+  ) {
+    this.promptService.initWarnBeforePageUnload(
+      () => this.sourceDataPointService.isTouched
+    );
+  }
 
   get isEditing() {
     return !!this.unsavedRow;
   }
 
   ngOnInit() {
+    this.sub.add(
+      this.dataSourceService.dataSources.subscribe((x) => this.onDataSources(x))
+    );
     this.sub.add(
       this.dataSourceService.connection.subscribe((x) => this.onConnection(x))
     );
@@ -89,15 +141,94 @@ export class DataSourceIoshieldComponent
     );
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.dataSource.currentValue) {
-      this.onDataSource(changes.dataSource.currentValue);
+  toString(x: any): string {
+    return String(x);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.dataSource) {
+      const prev = changes.dataSource.previousValue;
+      const curr = changes.dataSource.currentValue;
+
+      if ((!prev && curr) || curr.protocol !== prev.protocol) {
+        this.switchDataSource(curr);
+      }
     }
   }
 
-  onDataSource(obj: DataSource) {
+  filterIOShieldAddress(address: string): boolean {
+    const type = this.dataSource?.type;
+
+    if (!type) {
+      return true;
+    }
+
+    switch (type) {
+      case IOShieldTypes.DI_10: {
+        return !['AI0', 'AI1'].includes(address);
+      }
+      case IOShieldTypes.AI_100_5di:
+      case IOShieldTypes.AI_150_5di: {
+        return this.mapIOShieldsKeys.includes(address);
+      }
+      default: {
+        return true;
+      }
+    }
+  }
+
+  mapAddressLabel(address: string) {
+    if (
+      this.dataSource?.protocol === this.Protocol.IOShield &&
+      [IOShieldTypes.AI_100_5di, IOShieldTypes.AI_150_5di].includes(
+        this.dataSource?.type as IOShieldTypes
+      )
+    ) {
+      return this.mapIOShieldsAIAddresses[address] || address;
+    }
+
+    return address;
+  }
+
+  onDataSources(arr: DataSource[]) {
+    if (!arr || !arr.length) {
+      return;
+    }
+    this.dataSourceList = arr;
+
+    if (!this.dataSource) {
+      this.switchDataSource(arr[0]);
+    } else {
+      const newDs = arr.find((x) => x.protocol === this.dataSource?.protocol);
+
+      if (newDs) {
+        this.dataSource = newDs;
+      }
+    }
+  }
+
+  async switchDataSource(obj: DataSource) {
+    if (this.isTouchedTable) {
+      try {
+        await this.promptService.warn();
+        await this.sourceDataPointService.revert();
+      } catch {
+        return;
+      }
+    }
+
+    this.dataSource = obj;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
-    this.dataSourceService.getStatus(obj.protocol!);
+
+    if (this.statusSub) {
+      this.statusSub.unsubscribe();
+    }
+
+    if (this.dataSource.protocol !== DataSourceProtocol.IOShield) {
+      this.statusSub = this.dataSourceService
+        .setStatusTimer(this.dataSource.protocol!)
+        .subscribe();
+    }
 
     this.sourceDataPointService.getLiveDataForDataPoints(
       this.dataSource?.protocol!
@@ -125,6 +256,8 @@ export class DataSourceIoshieldComponent
   }
 
   updateIpAddress(valid: boolean | null, val: string) {
+    this.dsFormValid = !!valid;
+
     if (!valid) {
       return;
     }
@@ -140,6 +273,28 @@ export class DataSourceIoshieldComponent
 
   onDataPoints(arr: SourceDataPoint[]) {
     this.datapointRows = arr;
+  }
+
+  isDuplicatingField(field: 'name' | 'address') {
+    if (!this.datapointRows || !this.unsavedRow) {
+      return false;
+    }
+
+    if (this.unsavedRow[field] === undefined) {
+      return false;
+    }
+
+    // check whether other DPs do not have such name
+    const newFieldValue = (this.unsavedRow[field] as string)
+      .toLowerCase()
+      .trim();
+    const editableId = this.unsavedRow?.id;
+
+    return this.datapointRows.some((dp) => {
+      return (
+        dp[field].toLowerCase().trim() === newFieldValue && dp.id !== editableId
+      );
+    });
   }
 
   onAdd() {
@@ -208,7 +363,11 @@ export class DataSourceIoshieldComponent
 
   onAddressSelect(obj: SourceDataPoint) {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
-      data: { selection: obj.address, protocol: this.dataSource?.protocol },
+      data: {
+        selection: obj.address,
+        protocol: this.dataSource?.protocol,
+        existedAddresses: this.datapointRows?.map((x) => x.address) || []
+      },
       width: '650px'
     });
 
@@ -252,12 +411,28 @@ export class DataSourceIoshieldComponent
   ngOnDestroy() {
     this.sub.unsubscribe();
     this.liveDataSub && this.liveDataSub.unsubscribe();
+    this.statusSub && this.statusSub.unsubscribe();
+    this.promptService.destroyWarnBeforePageUnload();
   }
 
   updateSoftwareVersion(version: string) {
     this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
       softwareVersion: version
     });
+  }
+
+  updateControllerType(type: S7Types | IOShieldTypes) {
+    this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
+      type
+    });
+  }
+
+  onDiscard() {
+    return this.sourceDataPointService.revert();
+  }
+
+  onApply() {
+    return this.sourceDataPointService.apply(this.dataSource?.protocol!);
   }
 
   private onConnection(x: DataSourceConnection | undefined) {

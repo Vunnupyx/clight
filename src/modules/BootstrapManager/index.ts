@@ -16,6 +16,8 @@ import { RestApiManager } from '../Backend/RESTAPIManager';
 import { DataPointMapper } from '../DataPointMapper';
 import NetworkManagerCliController from '../NetworkManager';
 import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
+import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
+import { System } from '../System';
 
 /**
  * Launches agent and handles module life cycles
@@ -30,6 +32,7 @@ export class BootstrapManager {
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
   private backend: RestApiManager;
+  private hwEvents: IoT2050HardwareEvents;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -75,6 +78,8 @@ export class BootstrapManager {
       dataSinksManager: this.dataSinksManager,
       dataPointCache: this.dataPointCache
     });
+
+    this.hwEvents = new IoT2050HardwareEvents();
   }
 
   /**
@@ -104,7 +109,18 @@ export class BootstrapManager {
             winston.error(`${log} Failed due to ${err.message}`);
           });
       });
+
       await this.configManager.init();
+
+      this.hwEvents.subscribeLongPress(async () => {
+        try {
+          await this.configManager.factoryResetConfiguration();
+          const system = new System();
+          await system.restartDevice();
+        } catch (e) {
+          winston.error(`Device factory reset error: ${e}`);
+        }
+      });
 
       this.lifecycleEventsBus.push({
         id: 'device',

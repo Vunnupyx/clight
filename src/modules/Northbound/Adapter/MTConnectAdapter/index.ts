@@ -13,6 +13,7 @@ export interface Socket extends net.Socket {
  * Creates MTConnect adapter that accepts agents and send data items to them
  */
 export class MTConnectAdapter {
+  protected name = MTConnectAdapter.name;
   private TIMEOUT = 10000;
   private server: net.Server;
   private clients: Socket[] = [];
@@ -30,12 +31,13 @@ export class MTConnectAdapter {
    * @returns string
    */
   private listenForClients(_client: net.Socket) {
+    const logPrefix = `${this.name}::listenForClients`;
     const client: Socket = _client;
     client.id = uuidv1();
 
-    winston.debug(`Client ${client.remoteAddress} connected`);
+    winston.info(`${logPrefix} client ${client.remoteAddress} connected`);
     this.clients.push(client);
-    winston.debug(`Connected clients: ${this.clients.length}`);
+    winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
     this.heartbeatClient(client);
 
     this.sendAllTo(client);
@@ -45,17 +47,19 @@ export class MTConnectAdapter {
    * @param  {Socket} client
    */
   private heartbeatClient(client: Socket) {
+    const logPrefix = `${this.name}::heartbeatClient`;
+
     client.setEncoding('utf8');
     client.on('end', () => {
-      winston.debug(`Client disconnected`);
+      winston.info(`${logPrefix} client disconnected`);
       this.clients = this.clients.filter((c) => c.id !== client.id);
-      winston.debug(`Connected clients: ${this.clients.length}`);
+      winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
     });
     client.setTimeout(this.TIMEOUT * 2, () => {
-      winston.debug(`Client timed out`);
+      winston.info(`${logPrefix} client timed out`);
       client.destroy();
       this.clients = this.clients.filter((c) => c.id !== client.id);
-      winston.debug(`Connected clients: ${this.clients.length}`);
+      winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
     });
     client.on('data', (data: string) => {
       this.receive(client, data);
@@ -70,7 +74,8 @@ export class MTConnectAdapter {
     winston.debug(`Received data: ${data}`);
 
     if (data.startsWith('* PING\n')) {
-      client.write(`* PONG ${this.TIMEOUT}\n`);
+      const line = `* PONG ${this.TIMEOUT}\n`;
+      this.writeToClient(client, line);
       winston.debug(`Received ping, sending pong, timeout: ${this.TIMEOUT}`);
     }
   }
@@ -129,7 +134,7 @@ export class MTConnectAdapter {
       line += '\n';
 
       winston.debug(`Sending message: ${line}`);
-      client.write(line);
+      this.writeToClient(client, line);
     }
 
     if (separate.length > 0) {
@@ -140,8 +145,22 @@ export class MTConnectAdapter {
 
         winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
-        client.write(line);
+        this.writeToClient(client, line);
       }
+    }
+  }
+
+  /**
+   * Writes data to client (Usually mtc adapters)
+   * @param client
+   * @param line
+   */
+  private writeToClient(client: Socket, line: string) {
+    const logPrefix = `${this.name}::listenForClients`;
+    try {
+      client.write(line);
+    } catch {
+      winston.warn(`${logPrefix} failed to write to client`);
     }
   }
 
@@ -187,7 +206,7 @@ export class MTConnectAdapter {
         winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
       for (const client of this.clients) {
-        client.write(line);
+        this.writeToClient(client, line);
       }
     }
 
@@ -201,7 +220,7 @@ export class MTConnectAdapter {
           winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
         for (const client of this.clients) {
-          client.write(line);
+          this.writeToClient(client, line);
         }
       }
     }
@@ -220,7 +239,7 @@ export class MTConnectAdapter {
 
       this.server.on('connection', this.listenForClients.bind(this));
 
-      winston.debug(
+      winston.info(
         `MTConnect Adapter listing on port ${this.mtConfig.listenerPort}`
       );
     }

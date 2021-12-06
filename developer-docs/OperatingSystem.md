@@ -61,7 +61,7 @@ nmcli con up eth1-default
 
 11. And shutdown: `shutdown -h now`
 12. Remove the sd card & insert it into an SD Card reader
-13. `dd if=/dev/rdisk2 of=mdc-light-os-v1.0.5.img bs=8m`
+13. `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.0.img bs=8m`
 
 ## Update containers
 

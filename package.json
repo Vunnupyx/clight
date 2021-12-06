@@ -47,7 +47,7 @@
     "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
     "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect_amd64.Dockerfile .",
     "docker:push:mtc": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect",
-    "docker:run:mtc": "docker run -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/schemas:/schemas -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/agent.cfg:/agent.cfg -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/MDCLight.xml:/MDCLight.xml -p 5000:5000 registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest agent debug",
+    "docker:run:mtc": "docker run -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/schemas:/schemas -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/agent.cfg:/agent.cfg -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/MDCLight.xml:/MDCLight.xml -p 15404:5000 registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest agent debug",
     "docker:build:mdclight-base": "docker buildx build --platform linux/arm64,linux/amd64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-base:latest -f docker/mdclight-base.Dockerfile --push .",
     "docker:build:mdclight": "docker buildx build --platform linux/arm64,linux/amd64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest -f docker/mdclight.Dockerfile --push .",
     "docker:build:mdclight:arm": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest -f docker/mdclight.Dockerfile --push .",

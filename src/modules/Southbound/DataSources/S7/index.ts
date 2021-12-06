@@ -102,15 +102,28 @@ export class S7DataSource extends DataSource {
       }
     );
 
+    const plcDataPointsConfigured = this.config.dataPoints.find(
+      (dp: IDataPointConfig) => {
+        return dp.type === 's7';
+      }
+    );
+
     try {
-      if (nckDataPointsConfigured)
+      if (nckDataPointsConfigured && plcDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to NCK & PLC`);
         await Promise.all([
           this.connectPLC(),
           this.nckClient.connect(connection.ipAddr)
         ]);
-      else await this.connectPLC();
+      } else if (nckDataPointsConfigured && !plcDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to NCK only`);
+        await this.nckClient.connect(connection.ipAddr);
+      } else if (plcDataPointsConfigured && !nckDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to PLC only`);
+        await this.connectPLC();
+      }
     } catch (error) {
-      winston.error(`${logPrefix} ${JSON.stringify(error)}`);
+      winston.error(`${logPrefix} ${error}`);
       this.submitLifecycleEvent({
         id: protocol,
         level: this.level,
@@ -220,14 +233,15 @@ export class S7DataSource extends DataSource {
       winston.warn('S7: Skipping read cycle');
       return;
     }
-    this.cycleActive = true;
-    const currentCycleDataPoints: Array<IDataPointConfig> =
-      this.config.dataPoints.filter((dp: IDataPointConfig) => {
-        const rf = Math.max(dp.readFrequency, 1000);
-        return currentIntervals.includes(rf);
-      });
 
     try {
+      this.cycleActive = true;
+      const currentCycleDataPoints: Array<IDataPointConfig> =
+        this.config.dataPoints.filter((dp: IDataPointConfig) => {
+          const rf = Math.max(dp.readFrequency || 1000, 1000);
+          return currentIntervals.includes(rf);
+        });
+
       const plcAddressesToRead = [];
       for (const dp of currentCycleDataPoints) {
         if (dp.type === 's7') plcAddressesToRead.push(dp.address);
@@ -238,7 +252,9 @@ export class S7DataSource extends DataSource {
         if (dp.type === 'nck') nckDataPointsToRead.push(dp.address);
       }
 
-      winston.debug(`Reading PLC data points: ${plcAddressesToRead}`);
+      winston.debug(
+        `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
+      );
       const [plcResults, nckResults] = await Promise.all([
         this.readPlcData(plcAddressesToRead),
         this.readNckData(nckDataPointsToRead)
@@ -339,8 +355,13 @@ export class S7DataSource extends DataSource {
           timeout: 2000
         },
         (error) => {
-          if (error) reject(error);
-          else resolve();
+          if (error) {
+            winston.error(`PLC connection error ${error.message}`);
+            reject(error);
+          } else {
+            winston.debug(`PLC connected successfully`);
+            resolve();
+          }
         }
       );
     });

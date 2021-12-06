@@ -74,6 +74,6 @@ export class LoginComponent implements OnInit {
   }
 
   openForgotPassword() {
-    window.open('DUMMY URL', '_blank');
+    window.open('/help/docs/FactoryReset', '_blank');
   }
 }

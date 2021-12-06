@@ -81,7 +81,7 @@ export class DataHubAdapter {
   #probeSendInterval: number;
   #telemetrySendInterval: number;
   #runningTimers: Array<NodeJS.Timer> = [];
-  private provTimer: NodeJS.Timer = null;
+  // private provTimer: NodeJS.Timer = null;
 
   lastSentEventValues: { [key: string]: boolean | number | string } = {};
 
@@ -365,16 +365,16 @@ export class DataHubAdapter {
 
     return new Promise((res, rej) => {
       winston.debug(`${logPrefix} Registering...`);
-      const timeOut = 10 * 1000;
-      this.provTimer = setTimeout(() => {
-        this.#provClient.cancel();
-        winston.error(`${logPrefix} hit timeout of ${timeOut} ms. Abort.`);
-        this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
-        res(false);
-      }, timeOut);
+      // const timeOut = 10 * 1000;
+      // this.provTimer = setTimeout(() => {
+      //   this.#provClient.cancel();
+      //   winston.error(`${logPrefix} hit timeout of ${timeOut} ms. Abort.`);
+      //   this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+      //   res(false);
+      // }, timeOut);
       this.#provClient.register((err, response) => {
         try {
-          clearTimeout(this.provTimer);
+          // clearTimeout(this.provTimer);
           const success = this.registrationHandler(err, response);
           res(success);
         } catch (err) {
@@ -558,7 +558,7 @@ export class DataHubAdapter {
 
   public shutdown(): Promise<void> {
     const logPrefix = `${DataHubAdapter.name}::shutdown`;
-    this.killProv();
+    // this.killProv();
     const shutdownFunctions = [
       this.#provClient?.cancel(),
       this.#provGroupClient?.cancel()
@@ -597,7 +597,7 @@ export class DataHubAdapter {
       // In case of previous state was "Missing Config", this is undefined
       this.#provClient.cancel();
     }
-    clearTimeout(this.provTimer);
+    // clearTimeout(this.provTimer);
   }
 }
 

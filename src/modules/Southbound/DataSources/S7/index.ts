@@ -24,6 +24,27 @@ interface NCDataPointWithStatus {
   error?: string;
 }
 
+const defaultS7300Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2
+};
+
+const defaultS71500Connection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 1
+};
+
+const defaultNckConnection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2 // That's only the plc (300) slot. For the nck, the slot 4 is set inside that driver
+};
+
 /**
  * Implementation of s7 data source
  * @returns void
@@ -88,18 +109,21 @@ export class S7DataSource extends DataSource {
     );
 
     try {
-      if (nckDataPointsConfigured && plcDataPointsConfigured)
+      if (nckDataPointsConfigured && plcDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to NCK & PLC`);
         await Promise.all([
           this.connectPLC(),
           this.nckClient.connect(connection.ipAddr)
         ]);
-      else if (!nckDataPointsConfigured && plcDataPointsConfigured) {
+      } else if (nckDataPointsConfigured && !plcDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to NCK only`);
         await this.nckClient.connect(connection.ipAddr);
       } else if (plcDataPointsConfigured && !nckDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to PLC only`);
         await this.connectPLC();
       }
     } catch (error) {
-      winston.error(`${logPrefix} ${JSON.stringify(error)}`);
+      winston.error(`${logPrefix} ${error}`);
       this.submitLifecycleEvent({
         id: protocol,
         level: this.level,
@@ -209,14 +233,15 @@ export class S7DataSource extends DataSource {
       winston.warn('S7: Skipping read cycle');
       return;
     }
-    this.cycleActive = true;
-    const currentCycleDataPoints: Array<IDataPointConfig> =
-      this.config.dataPoints.filter((dp: IDataPointConfig) => {
-        const rf = Math.max(dp.readFrequency, 1000);
-        return currentIntervals.includes(rf);
-      });
 
     try {
+      this.cycleActive = true;
+      const currentCycleDataPoints: Array<IDataPointConfig> =
+        this.config.dataPoints.filter((dp: IDataPointConfig) => {
+          const rf = Math.max(dp.readFrequency || 1000, 1000);
+          return currentIntervals.includes(rf);
+        });
+
       const plcAddressesToRead = [];
       for (const dp of currentCycleDataPoints) {
         if (dp.type === 's7') plcAddressesToRead.push(dp.address);
@@ -227,7 +252,9 @@ export class S7DataSource extends DataSource {
         if (dp.type === 'nck') nckDataPointsToRead.push(dp.address);
       }
 
-      winston.debug(`Reading PLC data points: ${plcAddressesToRead}`);
+      winston.debug(
+        `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
+      );
       const [plcResults, nckResults] = await Promise.all([
         this.readPlcData(plcAddressesToRead),
         this.readNckData(nckDataPointsToRead)
@@ -297,26 +324,20 @@ export class S7DataSource extends DataSource {
     switch (this.config.type) {
       case 's7-1200/1500':
         connection = {
-          ipAddr: this.config.connection.ipAddr,
-          port: 102,
-          rack: 0,
-          slot: 1
+          ...defaultS71500Connection,
+          ipAddr: this.config.connection.ipAddr
         };
         break;
       case 's7-300/400':
         connection = {
-          ipAddr: this.config.connection.ipAddr,
-          port: 102,
-          rack: 0,
-          slot: 2
+          ...defaultS7300Connection,
+          ipAddr: this.config.connection.ipAddr
         };
         break;
       case 'nck':
         connection = {
-          ipAddr: this.config.connection.ipAddr,
-          port: 102,
-          rack: 0,
-          slot: 2
+          ...defaultNckConnection,
+          ipAddr: this.config.connection.ipAddr
         };
         break;
       case 'custom':
@@ -334,8 +355,13 @@ export class S7DataSource extends DataSource {
           timeout: 2000
         },
         (error) => {
-          if (error) reject(error);
-          else resolve();
+          if (error) {
+            winston.error(`PLC connection error ${error.message}`);
+            reject(error);
+          } else {
+            winston.debug(`PLC connected successfully`);
+            resolve();
+          }
         }
       );
     });

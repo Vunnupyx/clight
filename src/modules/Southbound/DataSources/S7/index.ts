@@ -307,13 +307,22 @@ export class S7DataSource extends DataSource {
 
     switch (this.config.type) {
       case 's7-1200/1500':
-        connection = defaultS71500Connection;
+        connection = {
+          ...defaultS71500Connection,
+          ipAddr: this.config.connection.ipAddr
+        };
         break;
       case 's7-300/400':
-        connection = defaultS7300Connection;
+        connection = {
+          ...defaultS7300Connection,
+          ipAddr: this.config.connection.ipAddr
+        };
         break;
       case 'nck':
-        connection = defaultNckConnection;
+        connection = {
+          ...defaultNckConnection,
+          ipAddr: this.config.connection.ipAddr
+        };
         break;
       case 'custom':
       default:

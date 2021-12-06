@@ -24,27 +24,6 @@ interface NCDataPointWithStatus {
   error?: string;
 }
 
-const defaultS7300Connection: IS7DataSourceConnection = {
-  ipAddr: '',
-  port: 102,
-  rack: 0,
-  slot: 2
-};
-
-const defaultS71500Connection: IS7DataSourceConnection = {
-  ipAddr: '',
-  port: 102,
-  rack: 0,
-  slot: 1
-};
-
-const defaultNckConnection: IS7DataSourceConnection = {
-  ipAddr: '',
-  port: 102,
-  rack: 0,
-  slot: 2 // That's only the plc (300) slot. For the nck, the slot 4 is set inside that driver
-};
-
 /**
  * Implementation of s7 data source
  * @returns void
@@ -102,13 +81,23 @@ export class S7DataSource extends DataSource {
       }
     );
 
+    const plcDataPointsConfigured = this.config.dataPoints.find(
+      (dp: IDataPointConfig) => {
+        return dp.type === 's7';
+      }
+    );
+
     try {
-      if (nckDataPointsConfigured)
+      if (nckDataPointsConfigured && plcDataPointsConfigured)
         await Promise.all([
           this.connectPLC(),
           this.nckClient.connect(connection.ipAddr)
         ]);
-      else await this.connectPLC();
+      else if (!nckDataPointsConfigured && plcDataPointsConfigured) {
+        await this.nckClient.connect(connection.ipAddr);
+      } else if (plcDataPointsConfigured && !nckDataPointsConfigured) {
+        await this.connectPLC();
+      }
     } catch (error) {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.submitLifecycleEvent({
@@ -307,13 +296,28 @@ export class S7DataSource extends DataSource {
 
     switch (this.config.type) {
       case 's7-1200/1500':
-        connection = defaultS71500Connection;
+        connection = {
+          ipAddr: this.config.connection.ipAddr,
+          port: 102,
+          rack: 0,
+          slot: 1
+        };
         break;
       case 's7-300/400':
-        connection = defaultS7300Connection;
+        connection = {
+          ipAddr: this.config.connection.ipAddr,
+          port: 102,
+          rack: 0,
+          slot: 2
+        };
         break;
       case 'nck':
-        connection = defaultNckConnection;
+        connection = {
+          ipAddr: this.config.connection.ipAddr,
+          port: 102,
+          rack: 0,
+          slot: 2
+        };
         break;
       case 'custom':
       default:

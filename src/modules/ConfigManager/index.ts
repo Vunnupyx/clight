@@ -129,6 +129,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private keyFolder = path.join(this.configFolder, 'keys');
 
   private configName = 'config.json';
+  private factoryConfigName = 'config.factory.json';
   private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private privateKeyName = 'jwtRS256.key';
@@ -184,7 +185,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public get configPath(): string {
     return path.join(this.configFolder, this.configName);
   }
-
   /**
    * Creates config and check types
    */
@@ -354,6 +354,18 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         )
       ]
     };
+  }
+
+  /**
+   * Factory reset
+   */
+  public async factoryResetConfiguration() {
+    const configPath = path.join(this.configFolder, this.configName);
+    const factoryConfig = path.join(this.configFolder, this.factoryConfigName);
+    const authConfig = path.join(this.configFolder, this.authUsersConfigName);
+
+    await promisefs.copyFile(factoryConfig, configPath);
+    await promisefs.unlink(authConfig);
   }
 
   /**

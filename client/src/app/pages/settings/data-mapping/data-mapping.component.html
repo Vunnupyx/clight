@@ -149,6 +149,16 @@
           prop="mapValue"
           [flexGrow]="1"
         >
+          <ng-template let-column="column" ngx-datatable-header-template>
+            <span class="d-inline-flex">
+              {{ 'settings-data-mapping.Value' | translate }}
+
+              <app-doc-btn
+                link="/help/docs/"
+                [tooltip]="'settings-data-mapping.ValueTooltip' | translate"
+              ></app-doc-btn>
+            </span>
+          </ng-template>
           <ng-template
             ngx-datatable-cell-template
             let-rowIndex="rowIndex"

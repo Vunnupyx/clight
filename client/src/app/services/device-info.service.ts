@@ -60,10 +60,9 @@ export class DeviceInfoService {
   }
 
   async updateDeviceInfo(obj: DeviceInfo) {
-    this._store.patchState((state) => ({
-      status: Status.Loading,
-      deviceInfo: null
-    }));
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
 
     try {
       await this.httpService.patch<any>(`/deviceInfos`, obj);
@@ -76,9 +75,9 @@ export class DeviceInfoService {
         this.translate.instant('settings-device-info.UpdateError')
       );
       errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Failed
-      }));
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
     }
   }
 

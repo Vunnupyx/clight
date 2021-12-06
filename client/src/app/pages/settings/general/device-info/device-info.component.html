@@ -35,9 +35,12 @@
       [placeholder]="'settings-device-info.SerialNumber' | translate"
     />
   </mat-form-field>
-  <div class="d-flex justify-content-end">
+  <div class="d-flex justify-content-end align-items-center">
+    <mat-spinner diameter="20" *ngIf="isBusy"></mat-spinner>
+
     <button
       type="submit"
+      class="ml-10"
       mat-raised-button
       [disabled]="isBusy || !form.dirty || form.invalid"
     >

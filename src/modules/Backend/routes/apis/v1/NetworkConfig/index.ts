@@ -84,7 +84,9 @@ async function networkConfigPatchHandler(
   let timePromise;
   if(timeConfig) {
     if (!timeConfig.useNtp) {
-      timePromise = TimeManager.setTimeManually(timeConfig.currentTime);
+      // ISO8601 to YYYY-MM-DD hh:mm:ss
+      const [YYYY, MM, DD, hh, mm, ss ] = timeConfig.currentTime.split(/[/:\-T]/)
+      timePromise = TimeManager.setTimeManually(`${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0,2)}`);
     } else {
       timePromise = TimeManager.setNTPServer(timeConfig.ntpHost);
     }

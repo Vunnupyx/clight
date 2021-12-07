@@ -49,8 +49,13 @@ export class TimeManager {
   private static async restartTimesyncdService(): Promise<void> {
     const logPrefix = `TimeManager::restartTimesyncdService`;
     winston.debug(`${logPrefix} restarting...`);
-    const command = `systemctl status systemd-timesyncd`;
-    await SshService.sendCommand(command);
+    const command = `systemctl restart systemd-timesyncd`;
+    const {stdout, stderr} = await SshService.sendCommand(command);
+    if (stderr !== '') {
+      const msg = `${logPrefix} error during restart of timesyncd service.`;
+      winston.error(msg);
+      return Promise.reject(new Error(msg))
+    }
     winston.debug(`${logPrefix} restart successfully.`);
   }
 ​
@@ -60,10 +65,15 @@ export class TimeManager {
   public static async setNTPServer(ntpServerIP: string): Promise<void> {
     const logPrefix = `TimeManager::setNTPServer`;
     const readCommand = `cat ${TimeManager.CONFIG_PATH}`;
-    const currentConfig = await SshService.sendCommand(readCommand);
-    winston.debug(`${logPrefix} read current config from host: ${currentConfig}`);
+    const {stdout: currentConfig, stderr} = await SshService.sendCommand(readCommand);
+    if (stderr !== '') {
+      const msg = `${logPrefix} error during read current configuration due to ${stderr}`;
+      winston.error(msg);
+      return Promise.reject(new Error(msg));
+    }
+    winston.info(`${logPrefix} read current config from host: ${currentConfig}`);
     const newConfig = await this.composeConfig(currentConfig, ntpServerIP);
-    winston.debug(`${logPrefix} generate new config: ${newConfig}`);
+    winston.info(`${logPrefix} generate new config: ${newConfig}`);
     const writeCommand = `echo ${newConfig} > ${this.CONFIG_PATH}`;
     await SshService.sendCommand(writeCommand);
     winston.info(
@@ -77,10 +87,10 @@ export class TimeManager {
    */
   public static async getNTPServer(): Promise<string> {
     const logPrefix = `TimeManager::getNTPServer`;
-    winston.debug(`${logPrefix} reading config from remote host.`);
+    winston.info(`${logPrefix} reading config from remote host.`);
     const readCommand = `cat ${this.CONFIG_PATH}`;
     const currentConfig = await SshService.sendCommand(readCommand);
-    winston.debug(`${logPrefix} read config from remote host successful.`);
+    winston.info(`${logPrefix} read config from remote host successful. ${currentConfig}`);
     return this.parseConfig(currentConfig);
   }
 
@@ -89,16 +99,24 @@ export class TimeManager {
    */
   public static async setTimeManually(time: string): Promise<void> {
     const logPrefix = `TimeManager::setTimeManually`;
-    const timeRegex = new RegExp(`^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01]) (0[1-9]|1[0-9]|2[01234]):([0-5]{1}[0-9]{1}|60):([0-5]{1}[0-9]{1}|60)`);
+    const timeRegex = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01]) (0[1-9]|1[0-9]|2[01234]):([0-5]{1}[0-9]{1}|60):([0-5]{1}[0-9]{1}|60)/;
     if (!timeRegex.test(time)) {
       const errMsg = `${logPrefix} invalid time format: ${time}`;
       winston.error(errMsg)
-      throw new Error(errMsg);
+      return Promise.reject(new Error(errMsg));
     }
     // Disable NTP
-    await this.setNTPServer(`0.0.0.0`);
-    const sshCommand = `timedatectl set-time ${time}`;
-    await SshService.sendCommand(sshCommand);
+    winston.info(`${logPrefix} disabling NTP.`)
+    await SshService.sendCommand(`timedatectl set-ntp 0`);
+    winston.info(`${logPrefix} disabling NTP successfully.`);
+    winston.info(`${logPrefix} setting Time to ${time}`);
+    const sshCommand = `timedatectl set-time "${time}"`;
+    const {stderr } = await SshService.sendCommand(sshCommand);
+    if(stderr !== '') {
+      const errMsg = `${logPrefix} error during set manual time due to ${stderr}`;
+      winston.error(errMsg);
+      return Promise.reject(errMsg);
+    }
     winston.info(`${logPrefix} set time ${time} successfully.`);
   }
 }

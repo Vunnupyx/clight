@@ -298,6 +298,7 @@
     "Source": "Source",
     "Target": "Target",
     "Value": "Value Assignment",
+    "ValueTooltip": "Value tooltip",
     "Actions": "Actions",
     "Edit": "Edit",
     "Delete": "Delete",

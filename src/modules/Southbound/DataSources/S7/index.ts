@@ -96,19 +96,35 @@ export class S7DataSource extends DataSource {
     });
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
-    const nckDataPointsConfigured = this.config.dataPoints.find(
-      (dp: IDataPointConfig) => {
+    const nckDataPointsConfigured =
+      this.config.type === 'nck' &&
+      this.config.dataPoints.find((dp: IDataPointConfig) => {
         return dp.type === 'nck';
+      });
+
+    const plcDataPointsConfigured = this.config.dataPoints.find(
+      (dp: IDataPointConfig) => {
+        return dp.type === 's7';
       }
     );
 
     try {
-      if (nckDataPointsConfigured)
+      if (nckDataPointsConfigured && plcDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to NCK & PLC`);
         await Promise.all([
           this.connectPLC(),
           this.nckClient.connect(connection.ipAddr)
         ]);
-      else await this.connectPLC();
+        clearTimeout(this.reconnectTimeoutId);
+      } else if (nckDataPointsConfigured && !plcDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to NCK only`);
+        await this.nckClient.connect(connection.ipAddr);
+        clearTimeout(this.reconnectTimeoutId);
+      } else if (plcDataPointsConfigured && !nckDataPointsConfigured) {
+        winston.debug(`${logPrefix} Connecting to PLC only`);
+        await this.connectPLC();
+        clearTimeout(this.reconnectTimeoutId);
+      }
     } catch (error) {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.submitLifecycleEvent({
@@ -121,9 +137,9 @@ export class S7DataSource extends DataSource {
       });
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
-        if (this.isDisconnected) {
-          return;
-        }
+        // if (!this.isDisconnected) {
+        //   return;
+        // }
         this.submitLifecycleEvent({
           id: protocol,
           level: this.level,
@@ -220,25 +236,30 @@ export class S7DataSource extends DataSource {
       winston.warn('S7: Skipping read cycle');
       return;
     }
-    this.cycleActive = true;
-    const currentCycleDataPoints: Array<IDataPointConfig> =
-      this.config.dataPoints.filter((dp: IDataPointConfig) => {
-        const rf = Math.max(dp.readFrequency, 1000);
-        return currentIntervals.includes(rf);
-      });
 
     try {
+      this.cycleActive = true;
+      const currentCycleDataPoints: Array<IDataPointConfig> =
+        this.config.dataPoints.filter((dp: IDataPointConfig) => {
+          const rf = Math.max(dp.readFrequency || 1000, 1000);
+          return currentIntervals.includes(rf);
+        });
+
       const plcAddressesToRead = [];
       for (const dp of currentCycleDataPoints) {
         if (dp.type === 's7') plcAddressesToRead.push(dp.address);
       }
 
-      const nckDataPointsToRead = [];
+      let nckDataPointsToRead = [];
       for (const dp of currentCycleDataPoints) {
         if (dp.type === 'nck') nckDataPointsToRead.push(dp.address);
       }
+      nckDataPointsToRead =
+        this.config.type === 'nck' ? nckDataPointsToRead : [];
 
-      winston.debug(`Reading PLC data points: ${plcAddressesToRead}`);
+      winston.debug(
+        `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
+      );
       const [plcResults, nckResults] = await Promise.all([
         this.readPlcData(plcAddressesToRead),
         this.readNckData(nckDataPointsToRead)
@@ -253,11 +274,13 @@ export class S7DataSource extends DataSource {
         if (dp.type === 's7') {
           value = plcResults.datapoints[dp.address];
           error = this.checkError(plcResults.error, value);
-        } else if (dp.type === 'nck') {
+        } else if (dp.type === 'nck' && this.config.type === 'nck') {
           const index = nckDataPointsToRead.indexOf(dp.address);
           const result = nckResults[index];
           value = result.value;
           error = result.error;
+        } else if (dp.type === 'nck' && this.config.type !== 'nck') {
+          error = true;
         }
 
         const measurement: IMeasurement = {
@@ -275,7 +298,9 @@ export class S7DataSource extends DataSource {
             type: DataPointLifecycleEventTypes.ReadSuccess
           });
         } else {
-          winston.error(`Failed to read datapoint ${dp.id} - Error: ${error}`);
+          winston.error(
+            `Failed to read datapoint ${dp.name} - Error: ${error}`
+          );
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,
@@ -288,7 +313,8 @@ export class S7DataSource extends DataSource {
         winston.warn(
           `Failed to read all datapoints for datasource. Disconnecting datasource.`
         );
-        this.disconnect();
+        await this.disconnect();
+        this.init();
       }
 
       this.onDataPointMeasurement(measurements);
@@ -307,13 +333,22 @@ export class S7DataSource extends DataSource {
 
     switch (this.config.type) {
       case 's7-1200/1500':
-        connection = defaultS71500Connection;
+        connection = {
+          ...defaultS71500Connection,
+          ipAddr: this.config.connection.ipAddr
+        };
         break;
       case 's7-300/400':
-        connection = defaultS7300Connection;
+        connection = {
+          ...defaultS7300Connection,
+          ipAddr: this.config.connection.ipAddr
+        };
         break;
       case 'nck':
-        connection = defaultNckConnection;
+        connection = {
+          ...defaultNckConnection,
+          ipAddr: this.config.connection.ipAddr
+        };
         break;
       case 'custom':
       default:
@@ -330,8 +365,13 @@ export class S7DataSource extends DataSource {
           timeout: 2000
         },
         (error) => {
-          if (error) reject(error);
-          else resolve();
+          if (error) {
+            winston.error(`PLC connection error ${error.message}`);
+            reject(error);
+          } else {
+            winston.debug(`PLC connected successfully`);
+            resolve();
+          }
         }
       );
     });
@@ -347,6 +387,7 @@ export class S7DataSource extends DataSource {
 
     const { name, protocol } = this.config;
     this.isDisconnected = true;
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
     this.submitLifecycleEvent({
       id: protocol,
       level: this.level,

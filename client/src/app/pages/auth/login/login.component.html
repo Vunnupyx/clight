@@ -58,7 +58,7 @@
                   <span>{{ 'auth-login.Password' | translate }}</span>
                   <span>
                     <app-doc-btn
-                      link="/help/docs/"
+                      link="/help/docs/#login"
                       tooltip="Where do I find my login password?"
                     ></app-doc-btn>
                   </span>
@@ -86,7 +86,7 @@
             </div>
           </form>
         </ng-container>
-        <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
+        <!-- <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
           <form
             #form="ngForm"
             (ngSubmit)="form.valid && onForgotPasswordSubmit(form)"
@@ -114,7 +114,7 @@
               </button>
             </div>
           </form>
-        </ng-container>
+        </ng-container> -->
       </ng-container>
     </div>
   </div>

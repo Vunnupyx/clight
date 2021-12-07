@@ -17,6 +17,8 @@ import { DataPointMapper } from '../DataPointMapper';
 import NetworkManagerCliController from '../NetworkManager';
 import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 import { TimeManager } from '../NetworkManager/TimeManager';
+import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
+import { System } from '../System';
 
 /**
  * Launches agent and handles module life cycles
@@ -31,6 +33,7 @@ export class BootstrapManager {
   private dataPointCache: DataPointCache;
   private virtualDataPointManager: VirtualDataPointManager;
   private backend: RestApiManager;
+  private hwEvents: IoT2050HardwareEvents;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -76,6 +79,8 @@ export class BootstrapManager {
       dataSinksManager: this.dataSinksManager,
       dataPointCache: this.dataPointCache
     });
+
+    this.hwEvents = new IoT2050HardwareEvents();
   }
 
   /**
@@ -92,10 +97,10 @@ export class BootstrapManager {
         const nx2: NetworkInterfaceInfo =
           NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth1');
 
-          let timePromise = Promise.resolve();
-          if (time && time.useNtp) {
-            timePromise = TimeManager.setNTPServer(time.ntpHost);
-          }
+        let timePromise = Promise.resolve();
+        if (time && time.useNtp) {
+          timePromise = TimeManager.setNTPServer(time.ntpHost);
+        }
 
         Promise.all([
           Object.keys(x1).length !== 0
@@ -104,14 +109,25 @@ export class BootstrapManager {
           Object.keys(x2).length !== 0
             ? NetworkManagerCliController.setConfiguration('eth1', nx2)
             : Promise.resolve(),
-            timePromise
+          timePromise
         ])
           .then(() => winston.info(log + ' Successfully.'))
           .catch((err) => {
             winston.error(`${log} Failed due to ${err.message}`);
           });
       });
+
       await this.configManager.init();
+
+      this.hwEvents.subscribeLongPress(async () => {
+        try {
+          await this.configManager.factoryResetConfiguration();
+          const system = new System();
+          await system.restartDevice();
+        } catch (e) {
+          winston.error(`Device factory reset error: ${e}`);
+        }
+      });
 
       this.lifecycleEventsBus.push({
         id: 'device',

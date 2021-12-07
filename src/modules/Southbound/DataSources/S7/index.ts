@@ -13,7 +13,6 @@ import {
 } from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
 import SinumerikNCK from './SinumerikNCK/NCDriver';
-import { debug } from 'console';
 
 interface S7DataPointsWithError {
   datapoints: Array<any>;

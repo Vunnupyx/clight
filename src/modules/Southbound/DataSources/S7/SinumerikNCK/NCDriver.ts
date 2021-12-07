@@ -197,7 +197,10 @@ export default class SinumerikNCKProtocolDriver {
   private async connectISO(rack: number = 0, slot: number = 4): Promise<void> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        this.tcpClient.removeAllListeners('data');
+        try {
+          this.tcpClient.removeAllListeners('data');
+        } catch {}
+
         reject(
           new Error(
             'Sinumerik NCK ISO connection timeout error - check rack and slot number'

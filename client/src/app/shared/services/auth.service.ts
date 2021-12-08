@@ -5,9 +5,15 @@ import { Router } from '@angular/router';
 import { LocalStorageService } from './local-storage.service';
 import { ForgotPasswordRequest, LoginRequest, LoginResponse, ResetPasswordRequest } from "../../models/auth";
 import { environment } from 'environments/environment';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class AuthService {
+
+  private _token$ = new BehaviorSubject<string>(null as any);
+
+  get token$() { return this._token$.asObservable(); }
+
   constructor(
     private localStorageService: LocalStorageService,
     private http: HttpClient,
@@ -23,7 +29,7 @@ export class AuthService {
       .toPromise()
       .then((response) => {
         this.localStorageService.set('accessToken', response.accessToken);
-
+        this._token$.next(response.accessToken);
         return response;
       });
   }
@@ -45,6 +51,7 @@ export class AuthService {
 
   logout() {
     this.localStorageService.clear('accessToken');
+    this._token$.next(null as any);
     return this.router.navigate(['/login']);
   }
 }

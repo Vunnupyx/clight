@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SystemInformationService } from 'app/services';
+import { AuthService } from 'app/shared';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-clock',
@@ -13,24 +16,31 @@ export class ClockComponent implements OnInit, OnDestroy {
   serverLoading = true;
 
   private serverOffset = 0;
+  private sub!: Subscription;
 
-  constructor(private systemInfoService: SystemInformationService) {}
+  constructor(
+    private authService: AuthService,
+    private systemInfoService: SystemInformationService,
+  ) {}
 
   ngOnInit() {
-    this.systemInfoService.getServerTimeOffset().then((offset) => {
-      this.serverOffset = offset;
+    this.sub = this.authService.token$.pipe(filter(Boolean)).subscribe(() => {
+      this.systemInfoService.getServerTimeOffset().then((offset) => {
+        this.serverOffset = offset;
 
-      this.calculateTime();
-
-      this.intervalId = setInterval(() => {
         this.calculateTime();
-      }, 1000);
 
-      this.serverLoading = false;
+        this.intervalId = setInterval(() => {
+          this.calculateTime();
+        }, 1000);
+
+        this.serverLoading = false;
+      });
     });
   }
 
   ngOnDestroy() {
+    this.sub.unsubscribe();
     clearInterval(this.intervalId);
   }
 

@@ -83,7 +83,7 @@ export interface IDataSourceConfig {
   type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
 }
 
-type IMTConnectDataPointTypes = 'event' | 'condition';
+type IMTConnectDataPointTypes = 'event' | 'condition' | 'sample';
 
 // type MapItem = {
 //   [key: string]: "string";

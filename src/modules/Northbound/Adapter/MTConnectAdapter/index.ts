@@ -71,12 +71,12 @@ export class MTConnectAdapter {
    * @returns string
    */
   private receive(client: net.Socket, data: string) {
-    winston.debug(`Received data: ${data}`);
+    // winston.debug(`Received data: ${data}`);
 
     if (data.startsWith('* PING\n')) {
       const line = `* PONG ${this.TIMEOUT}\n`;
       this.writeToClient(client, line);
-      winston.debug(`Received ping, sending pong, timeout: ${this.TIMEOUT}`);
+      // winston.debug(`Received ping, sending pong, timeout: ${this.TIMEOUT}`);
     }
   }
 
@@ -133,7 +133,7 @@ export class MTConnectAdapter {
       for (const item of together) line += '|' + item.toString();
       line += '\n';
 
-      winston.debug(`Sending message: ${line}`);
+      // winston.debug(`Sending message: ${line}`);
       this.writeToClient(client, line);
     }
 
@@ -143,7 +143,7 @@ export class MTConnectAdapter {
       for (const item of separate) {
         const line = timestamp + '|' + item.toString() + '\n';
 
-        winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
+        // winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
         this.writeToClient(client, line);
       }
@@ -203,11 +203,11 @@ export class MTConnectAdapter {
       line += '\n';
 
       if (this.clients.length > 0)
-        winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
+        // winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
-      for (const client of this.clients) {
-        this.writeToClient(client, line);
-      }
+        for (const client of this.clients) {
+          this.writeToClient(client, line);
+        }
     }
 
     if (separate.length > 0) {
@@ -217,11 +217,11 @@ export class MTConnectAdapter {
         const line = timestamp + '|' + item.toString() + '\n';
 
         if (this.clients.length > 0)
-          winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
+          // winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
-        for (const client of this.clients) {
-          this.writeToClient(client, line);
-        }
+          for (const client of this.clients) {
+            this.writeToClient(client, line);
+          }
       }
     }
 

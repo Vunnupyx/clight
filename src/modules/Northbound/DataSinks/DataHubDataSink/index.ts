@@ -96,7 +96,7 @@ export class DataHubDataSink extends DataSink {
       }
     }
 
-    winston.debug(`${logPrefix} transfer grouped data to adapter.`);
+    // winston.debug(`${logPrefix} transfer grouped data to adapter.`);
 
     this.#datahubAdapter.sendData(data);
   }

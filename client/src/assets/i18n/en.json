@@ -99,14 +99,17 @@
     "BackupAndRestore": "Backup and Restore Configuration",
     "BackupConfiguration": "Backup Configuration",
     "RestoreConfiguration": "Restore Configuration",
-    "BackupDownloadError": "Could not download backup. Please try again!",
+    "LogDownloadError": "Could not download logs. Please try again!",
     "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
     "RestartDevice": "Restart device",
     "RestartNow": "Restart now",
     "RestartDeviceTitle": "Restart device",
     "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
     "RestartDeviceSuccess": "Device has been restarted successfully!",
-    "RestartDeviceError": "Failed to restart device."
+    "RestartDeviceError": "Failed to restart device.",
+    "BackupDownloadError": "Could not download backup. Please try again!",
+    "Logs": "Logs",
+    "ExportLogs": "Export logs"
   },
   "settings-device-info": {
     "Manufacturer": "Manufacturer",

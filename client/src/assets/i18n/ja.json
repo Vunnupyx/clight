@@ -107,7 +107,10 @@
     "RestartDeviceTitle": "Restart device",
     "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
     "RestartDeviceSuccess": "Device has been restarted successfully!",
-    "RestartDeviceError": "Failed to restart device."
+    "RestartDeviceError": "Failed to restart device.",
+    "LogDownloadError": "Could not download logs. Please try again!",
+    "Logs": "Logs",
+    "ExportLogs": "Export logs"
   },
   "settings-device-info": {
     "Manufacturer": "Manufacturer",

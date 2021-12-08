@@ -83,7 +83,7 @@ export class MeasurementEventBus extends EventBus<
       const message = `Level: DataPoint, Type: Measurement${
         measurement ? `, Payload: ${measurement.id}=${measurement.value}` : ''
       }`;
-      winston.log(this.logLevel, message, { source: 'EVENTBUS' });
+      // winston.log(this.logLevel, message, { source: 'EVENTBUS' });
     });
   }
 }

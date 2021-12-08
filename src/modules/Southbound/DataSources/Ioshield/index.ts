@@ -76,7 +76,6 @@ export class IoshieldDataSource extends DataSource {
       });
 
     try {
-      winston.debug(`${logPrefix} reading io shield values`);
       const digitalInputValues = await this.mraaClient.getDigitalValues();
       const analogInputValues = await this.mraaClient.getAnalogValues();
 

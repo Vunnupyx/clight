@@ -106,9 +106,9 @@ export class OPCUADataSink extends DataSink {
           })
         );
 
-        winston.debug(
-          `${logPrefix} TargetDataPointId: ${dataPointId}, Value: ${value}`
-        );
+        // winston.debug(
+        //   `${logPrefix} TargetDataPointId: ${dataPointId}, Value: ${value}`
+        // );
       }
     } catch (e) {
       winston.error(`${logPrefix} Failed to set value for ${dataPointId}. `);

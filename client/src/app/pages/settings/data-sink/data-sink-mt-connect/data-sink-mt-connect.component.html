@@ -341,6 +341,11 @@
             class="text-ellipsis"
             [title]="value"
           >
+            <mat-icon *ngIf="row.dataMapping" class="color-success" 
+              style="font-size: 15px; position: relative; top: 3px;"
+              [matTooltip]="'settings-data-sink.HasDataMapping' | translate"
+              matTooltipPosition="above"
+            >check_circle</mat-icon>
             {{ getDataSinkDataPointPrefix(row.id) }} {{ value }}
           </div>
           <input

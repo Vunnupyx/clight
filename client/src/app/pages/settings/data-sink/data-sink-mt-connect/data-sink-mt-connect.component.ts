@@ -6,12 +6,13 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
 import {
+  DataMapping,
   DataPoint,
   DataPointType,
   DataSink,
@@ -21,7 +22,7 @@ import {
   DataSinkConnectionStatus,
   DataSinkProtocol
 } from 'app/models';
-import { DataPointService, DataSinkService } from 'app/services';
+import { DataMappingService, DataPointService, DataSinkService } from 'app/services';
 import { arrayToMap, clone } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
@@ -101,6 +102,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   constructor(
     private dataPointService: DataPointService,
     private dataSinkService: DataSinkService,
+    private dataMappingService: DataMappingService,
     private dialog: MatDialog,
     private toastr: ToastrService,
     private translate: TranslateService
@@ -115,7 +117,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       this.dataSinkService.getPredefinedMtConnectDataPoints();
     this.OPCUAAddresses = this.dataSinkService.getPredefinedOPCDataPoints();
     this.sub.add(
-      this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
+      combineLatest(
+        this.dataPointService.dataPoints,
+        this.dataMappingService.dataMappings,
+      ).subscribe(([dataPoints, dataMappings]) => this.onDataPoints(dataPoints, dataMappings))
     );
     this.sub.add(
       this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
@@ -157,6 +162,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
     if (dataSink.protocol !== DataSinkProtocol.DH) {
       this.dataPointService.getDataPoints(dataSink.protocol);
+      this.dataMappingService.getDataMappingsAll();
     } else {
       if (dataSink.desired?.services) {
         this.desiredServices = Object.entries(dataSink.desired?.services).map(
@@ -181,8 +187,11 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     });
   }
 
-  onDataPoints(arr: DataPoint[]) {
-    this.datapointRows = arr;
+  onDataPoints(dataPoints: DataPoint[], dataMappings: DataMapping[]) {
+    for (const datapoint of dataPoints) {
+      datapoint['dataMapping'] = dataMappings.find(x => datapoint.id == x.target);
+    }
+    this.datapointRows = dataPoints;
   }
 
   onAdd() {

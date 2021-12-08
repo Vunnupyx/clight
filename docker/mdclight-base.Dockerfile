@@ -33,6 +33,6 @@ RUN rm -rf meta-iot2050
 
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update
-RUN apt-get install -y nodejs
+RUN apt-get install -y nodejs zip
 RUN apt purge -y git build-essential cmake curl
 

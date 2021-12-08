@@ -18,6 +18,7 @@ import NetworkManagerCliController from '../NetworkManager';
 import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { System } from '../System';
+import { LedStatusService } from '../LedStatusService';
 
 /**
  * Launches agent and handles module life cycles
@@ -33,6 +34,7 @@ export class BootstrapManager {
   private virtualDataPointManager: VirtualDataPointManager;
   private backend: RestApiManager;
   private hwEvents: IoT2050HardwareEvents;
+  private ledManager: LedStatusService;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -68,7 +70,8 @@ export class BootstrapManager {
       virtualDataPointManager: this.virtualDataPointManager,
       errorBus: this.errorEventsBus,
       lifecycleBus: this.lifecycleEventsBus,
-      measurementsBus: this.measurementsEventsBus
+      measurementsBus: this.measurementsEventsBus,
+      ledManager: this.ledManager
     });
     this.configManager.dataSourcesManager = this.dataSourcesManager;
 
@@ -80,6 +83,7 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
+    this.ledManager = new LedStatusService();
   }
 
   /**
@@ -87,6 +91,8 @@ export class BootstrapManager {
    */
   public async start() {
     try {
+      this.ledManager.runTimeStatus(false);
+      this.ledManager.southboundStatus(false);
       this.configManager.on('configsLoaded', async () => {
         const log = `${BootstrapManager.name} send network configuration to host.`;
         winston.info(log);
@@ -127,6 +133,7 @@ export class BootstrapManager {
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchSuccess
       });
+      this.ledManager.runTimeStatus(true);
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',

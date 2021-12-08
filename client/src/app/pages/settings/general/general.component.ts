@@ -13,6 +13,7 @@ import {
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { LogsService } from 'app/services/logs.service';
 
 @Component({
   selector: 'app-general',
@@ -24,12 +25,13 @@ export class GeneralComponent implements OnInit {
 
   constructor(
     private backupService: BackupService,
+    private logsService: LogsService,
     private systemInformationService: SystemInformationService,
     private translate: TranslateService,
     private localStorageService: LocalStorageService,
     private templatesService: TemplateService,
     private toastr: ToastrService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   get availableLangs() {
@@ -55,6 +57,10 @@ export class GeneralComponent implements OnInit {
 
   async download() {
     await this.backupService.download();
+  }
+
+  async downloadLogs() {
+    await this.logsService.download();
   }
 
   async restart() {

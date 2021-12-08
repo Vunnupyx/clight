@@ -280,7 +280,8 @@
       "Enabled": "Enabled",
       "Disabled": "Disabled"
     },
-    "DuplicatedKeys": "You are not allowed to duplicate keys"
+    "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "HasDataMapping": "Datapoint is mapped to a source"
   },
   "settings-data-mapping": {
     "DataMapping": "",

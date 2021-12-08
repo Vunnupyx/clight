@@ -33,7 +33,7 @@ export class EventBus<TEventType> {
       const message = `Level: ${level}, Type: ${type}, ${id}${
         payload ? `, Payload: ${payload?.toString()}` : ''
       }`;
-      winston.log(this.logLevel, message, { source: 'EVENTBUS' });
+      // winston.log(this.logLevel, message, { source: 'EVENTBUS' });
     });
   }
 
@@ -50,7 +50,7 @@ export class EventBus<TEventType> {
 
   public offEvent(cb: TSubscriberFn<TEventType>): void {
     const index = this.callbacks.findIndex((_cb) => {
-      _cb === cb
+      _cb === cb;
     });
     if (index) this.callbacks.splice(index, 1);
   }

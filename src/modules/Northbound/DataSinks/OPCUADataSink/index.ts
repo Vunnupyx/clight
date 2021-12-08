@@ -9,7 +9,6 @@ import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
 import { Variant, UAVariable } from 'node-opcua';
 import {
-  IDataSinkConfig,
   IGeneralConfig,
   IOPCUAConfig
 } from '../../../ConfigManager/interfaces';
@@ -94,18 +93,26 @@ export class OPCUADataSink extends DataSink {
   protected processDataPointValue(dataPointId, value) {
     const logPrefix = `${this.name}::onProcessDataPointValue`;
 
-    const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
+    try {
+      const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
 
-    if (node) {
-      //@ts-ignore
-      node.setValueFromSource(
+      if (node) {
         //@ts-ignore
-        new Variant({ value, dataType: node._dataValue.value.dataType })
-      );
+        node.setValueFromSource(
+          new Variant({
+            value,
+            //@ts-ignore
+            dataType: node.dataType.value
+          })
+        );
 
-      winston.debug(
-        `${logPrefix} TargetDataPointId: ${dataPointId}, Value: ${value}`
-      );
+        // winston.debug(
+        //   `${logPrefix} TargetDataPointId: ${dataPointId}, Value: ${value}`
+        // );
+      }
+    } catch (e) {
+      winston.error(`${logPrefix} Failed to set value for ${dataPointId}. `);
+      winston.debug(JSON.stringify(e));
     }
   }
 

@@ -126,17 +126,23 @@ export abstract class DataSource extends EventEmitter {
    * @param measurement A single data point read result
    */
   protected onDataPointMeasurement = (measurements: IMeasurement[]): void => {
+    const logPrefix = `${this.name}::onDataPointMeasurement`;
     const { name, protocol } = this.config;
 
-    this.submitMeasurement(
-      measurements.map((measurement) => ({
-        dataSource: {
-          name,
-          protocol
-        },
-        measurement
-      }))
-    );
+    try {
+      this.submitMeasurement(
+        measurements.map((measurement) => ({
+          dataSource: {
+            name,
+            protocol
+          },
+          measurement
+        }))
+      );
+      winston.debug(
+        `${logPrefix} successfully processed ${measurements.length} data point(s)`
+      );
+    } catch {}
   };
 
   /**

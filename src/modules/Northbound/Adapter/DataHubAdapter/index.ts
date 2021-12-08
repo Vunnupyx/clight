@@ -495,7 +495,9 @@ export class DataHubAdapter {
           const msg = this.addMsgType('event', eventBuffer.getMessage());
 
           this.#dataHubClient.sendEvent(msg, () => {
-            winston.debug(`${logPrefix} send event data`);
+            winston.debug(
+              `${logPrefix} successfully published ${filteredMeasurementArray.length} event data points`
+            );
           });
 
           continue;
@@ -544,7 +546,9 @@ export class DataHubAdapter {
     const msg = this.addMsgType(msgType, buffer.getMessage());
 
     this.#dataHubClient.sendEvent(msg, () => {
-      winston.debug(`${logPrefix} send ${msgType} message`);
+      winston.debug(
+        `${logPrefix} successfully published ${msgType} data points`
+      );
     });
   }
 

@@ -69,7 +69,8 @@ jest.mock('fs-extra', () => {
     readdir: jest.fn(async () => ['filename']),
     existsSync: jest.fn(),
     mkdirSync: jest.fn(),
-    copy: jest.fn()
+    copy: jest.fn(),
+    rm: jest.fn()
   };
 });
 

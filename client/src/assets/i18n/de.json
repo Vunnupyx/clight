@@ -335,11 +335,12 @@
     "TimeSettings": "Time Settings",
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
-    "SetCurrentTime": "Set Current Time"
+    "SetCurrentTime": "Set Current Time",
+    "ChooseTimeZone": "Choose Time Zone"
   },
   "system-information": {
     "SystemInformation": "System Information",
-    "LoadError": ""
+    "LoadError": "Failed to load system information. Try again later"
   },
   "prompt": {
     "warningTitle": "Warning!",

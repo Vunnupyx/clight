@@ -52,7 +52,8 @@ async function networkConfigGetHandler(
       defaultGateway: x2?.gateway || cx2.defaultGateway,
       dnsServer: x2?.dns || cx2.dnsServer
     },
-    proxy: configManager.config.networkConfig.proxy
+    proxy: configManager.config.networkConfig.proxy,
+    time: configManager.config.networkConfig.time
   };
   response.status(200).json(merged);
 }

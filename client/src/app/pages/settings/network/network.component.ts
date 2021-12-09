@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -35,6 +36,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   sub: Subscription = new Subscription();
   selectedTab!: string;
+  timezoneOptions!: string[];
 
   @ViewChild('mainForm') mainForm!: NgForm;
 
@@ -46,6 +48,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onConfig(x))
     );
+
+    this.timezoneOptions = moment.tz.names();
 
     this.sub.add(this.networkService.setNetworkConfigTimer().subscribe());
 

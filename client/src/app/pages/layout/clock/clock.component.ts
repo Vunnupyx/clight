@@ -24,24 +24,32 @@ export class ClockComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.syncTime();
     this.sub = this.authService.token$.pipe(filter(Boolean)).subscribe(() => {
-      this.systemInfoService.getServerTimeOffset().then((offset) => {
-        this.serverOffset = offset;
-
-        this.calculateTime();
-
-        this.intervalId = setInterval(() => {
-          this.calculateTime();
-        }, 1000);
-
-        this.serverLoading = false;
-      });
+      this.syncTime();
     });
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
     clearInterval(this.intervalId);
+  }
+
+  syncTime() {
+    if (!this.authService.token) {
+      return;
+    }
+    this.systemInfoService.getServerTimeOffset().then((offset) => {
+      this.serverOffset = offset;
+
+      this.calculateTime();
+
+      this.intervalId = setInterval(() => {
+        this.calculateTime();
+      }, 1000);
+
+      this.serverLoading = false;
+    });
   }
 
   calculateTime() {

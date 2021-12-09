@@ -163,6 +163,7 @@ export class S7DataSource extends DataSource {
     this.updateCurrentStatus(LifecycleEventStatus.Connected);
     this.isDisconnected = false;
     this.setupDataPoints();
+    this.setupLogCycle();
   }
 
   /**
@@ -236,6 +237,8 @@ export class S7DataSource extends DataSource {
       winston.warn('S7: Skipping read cycle');
       return;
     }
+
+    this.readCycleCount = this.readCycleCount + 1;
 
     try {
       this.cycleActive = true;

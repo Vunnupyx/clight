@@ -58,6 +58,7 @@ export class IoshieldDataSource extends DataSource {
     this.validateDataPointConfiguration();
     this.setupDataPoints(500);
     this.updateCurrentStatus(LifecycleEventStatus.Connected);
+    this.setupLogCycle();
   }
 
   /**
@@ -68,7 +69,8 @@ export class IoshieldDataSource extends DataSource {
   protected async dataSourceCycle(
     currentIntervals: Array<number>
   ): Promise<void> {
-    const logPrefix = `${this.name}::dataSourceCycle`;
+    this.readCycleCount = this.readCycleCount + 1;
+
     const currentCycleDataPoints: Array<IDataPointConfig> =
       this.config.dataPoints.filter((dp: IDataPointConfig) => {
         const rf = Math.max(dp.readFrequency || 500, 500);

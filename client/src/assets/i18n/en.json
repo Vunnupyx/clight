@@ -337,10 +337,15 @@
     "LoadError": "Failed to load network settings. Try again later",
     "UpdateError": "Failed to update network settings. Try again later",
     "Tabs": {
-      "x1": "Ethernet X1 P1",
-      "x2": "Ethernet X1 P2",
-      "proxy": "Proxy"
-    }
+      "x1": "Ethernet X1",
+      "x2": "Ethernet X2",
+      "proxy": "Proxy",
+      "time": "Time"
+    },
+    "TimeSettings": "Time Settings",
+    "UseNTPServer": "Use NTP Server",
+    "SetNTPServer": "Set NTP Server",
+    "SetCurrentTime": "Set Current Time"
   },
   "system-information": {
     "SystemInformation": "System Information",

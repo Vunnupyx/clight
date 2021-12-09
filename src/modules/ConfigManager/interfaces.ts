@@ -179,6 +179,12 @@ export interface IProxyConfig {
   enabled: boolean;
 }
 
+export interface ITimeConfig {
+  useNtp?: boolean;
+  ntpHost?: string;
+  currentTime?: string;
+}
+
 export interface IDataPointMapping {
   id: string;
   source: string;
@@ -205,6 +211,8 @@ export type NetworkConfig = {
   [key in 'x1' | 'x2']: NetworkConfigItem;
 } & {
   proxy?: IProxyConfig;
+} & {
+  time?: ITimeConfig;
 };
 
 export interface IDefaultTemplate {

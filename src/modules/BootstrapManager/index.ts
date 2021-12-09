@@ -83,7 +83,7 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
-    this.ledManager = new LedStatusService();
+    this.ledManager = new LedStatusService(this.configManager);
   }
 
   /**
@@ -133,6 +133,7 @@ export class BootstrapManager {
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchSuccess
       });
+      // WARNING: LED is never disabled because no watch on Kill SIGNALS
       this.ledManager.runTimeStatus(true);
     } catch (error) {
       this.errorEventsBus.push({

@@ -37,7 +37,6 @@ import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager
 const promisifiedGenerateKeyPair = promisify(generateKeyPair);
 
 interface IConfigManagerEvents {
-  newConfig: (config: IConfig) => void;
   newRuntimeConfig: (config: IRuntimeConfig) => void;
   configChange: () => void;
   configsLoaded: () => void;
@@ -158,7 +157,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public set config(config: IConfig) {
     this._config = config;
     this.saveConfigToFile();
-    this.emit('newConfig', this.config);
   }
 
   public get authConfig(): IAuthConfig {

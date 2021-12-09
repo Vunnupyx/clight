@@ -1,6 +1,7 @@
 import { PathLike } from 'fs';
 import { writeFile } from 'fs/promises';
 import winston from 'winston';
+import { ConfigManager } from '../ConfigManager';
 
 enum LED {
   ON = '1',
@@ -15,6 +16,16 @@ type TLedColors = 'red' | 'green' | 'orange';
 export class LedStatusService {
   #led1Blink: NodeJS.Timer = null;
   #led2Blink: NodeJS.Timer = null;
+  #configWatcher: NodeJS.Timer = null;
+
+  constructor(private configManager: ConfigManager) {
+    this.configManager.once('configsLoaded', () => {
+      this.checkConfigTemplateTerms();
+    });
+    this.configManager.on('configChange', () => {
+      this.checkConfigTemplateTerms();
+    });
+  }
 
   /**
    * Start blinking of selected led.
@@ -37,7 +48,10 @@ export class LedStatusService {
         break;
       }
       case 'orange': {
-        paths = [this.getLedPathByNumberAndColor(ledNumber, 'green'),this.getLedPathByNumberAndColor(ledNumber, 'red')];
+        paths = [
+          this.getLedPathByNumberAndColor(ledNumber, 'green'),
+          this.getLedPathByNumberAndColor(ledNumber, 'red')
+        ];
         break;
       }
       default: {
@@ -46,42 +60,42 @@ export class LedStatusService {
         throw new Error(errMSg);
       }
     }
-    
-    if(ledNumber === 1) {
-        const set = () => {
-            this.#led1Blink = setTimeout(() => {
-                this.setLed(paths);
-                unset();
-            }, OffDurationMs);
-        }
 
-        const unset = () => {
-            this.#led1Blink = setTimeout(() => {
-                this.unsetLed(paths);
-                set();
-            }, OnDurationMs);
-        }
-        unset()
+    if (ledNumber === 1) {
+      const set = () => {
+        this.#led1Blink = setTimeout(() => {
+          this.setLed(paths);
+          unset();
+        }, OffDurationMs);
+      };
+
+      const unset = () => {
+        this.#led1Blink = setTimeout(() => {
+          this.unsetLed(paths);
+          set();
+        }, OnDurationMs);
+      };
+      unset();
     } else {
-        const set = () => {
-            this.#led2Blink = setTimeout(() => {
-                this.setLed(paths);
-                unset();
-            }, OffDurationMs);
-        }
+      const set = () => {
+        this.#led2Blink = setTimeout(() => {
+          this.setLed(paths);
+          unset();
+        }, OffDurationMs);
+      };
 
-        const unset = () => {
-            this.#led2Blink = setTimeout(() => {
-                this.unsetLed(paths);
-                set();
-            }, OnDurationMs);
-        }
+      const unset = () => {
+        this.#led2Blink = setTimeout(() => {
+          this.unsetLed(paths);
+          set();
+        }, OnDurationMs);
+      };
     }
     this.setLed(paths);
   }
 
   /**
-   * Stop blinking of selected LED. 
+   * Stop blinking of selected LED.
    */
   private stopBlinking(ledNumber: 1 | 2) {
     const paths = [
@@ -120,7 +134,9 @@ export class LedStatusService {
     ledNumber: 1 | 2,
     color: 'red' | 'green'
   ): PathLike {
-    return `/sys/class/leds/user-led${ledNumber.toString(10)}-${color}/brightness`;
+    return `/sys/class/leds/user-led${ledNumber.toString(
+      10
+    )}-${color}/brightness`;
   }
 
   /**
@@ -144,6 +160,72 @@ export class LedStatusService {
   }
 
   /**
+   * Check if:
+   * - Configuration is valid
+   * - Template is selected
+   * - Terms and Conditions are accepted
+   */
+  private checkConfigTemplateTerms(): void {
+    const template = this.configManager.config.quickStart.currentTemplate;
+    const terms = this.configManager.config.termsAndConditions;
+
+    // Fast way out of check
+    if (!template && !terms) {
+      this.noConfigBlink(true);
+      return;
+    }
+
+    /*
+     * WARNING: Very bad bad performance! In worst case O(n * m * o * p * q)
+     * n = count of mappings
+     * m = count of sources
+     * o = count of datapoints in sources
+     * p = count of sinks
+     * q = count of datapoints in sinks
+     */
+    loop1: for (const mapping of this.configManager.config.mapping) {
+      const sourceDatapoint = mapping.source;
+      const sinkDatapoint = mapping.target;
+
+      loop2: for (const source of this.configManager.config.dataSources) {
+        if (!source.enabled) continue;
+        if (source.dataPoints.some((point) => point.id === sourceDatapoint)) {
+          loop3: for (const sink of this.configManager.config.dataSinks) {
+            if (!sink.enabled) continue;
+            if (sink.dataPoints.some((point) => point.id === sinkDatapoint)) {
+              this.noConfigBlink(false);
+              return;
+            }
+          }
+        }
+      }
+    }
+    this.noConfigBlink(true);
+  }
+
+  /**
+   * Shutdown Service
+   */
+  public shutdown(): void {
+    const logPrefix = `LedStatusService::shutdown`;
+    winston.info(`${logPrefix} running.`);
+    clearTimeout(this.#led1Blink);
+    clearTimeout(this.#led2Blink);
+    clearTimeout(this.#configWatcher);
+    const paths1 = [
+      this.getLedPathByNumberAndColor(1, 'red'),
+      this.getLedPathByNumberAndColor(1, 'green')
+    ];
+    const paths2 = [
+      this.getLedPathByNumberAndColor(2, 'red'),
+      this.getLedPathByNumberAndColor(2, 'green')
+    ];
+    this.unsetLed(paths1);
+    this.unsetLed(paths2);
+    winston.info(`${logPrefix} successfully.`);
+  }
+
+  /**
    * Enable or disable green USER LED 1.
    * Represent the status of southbound connection.
    */
@@ -156,7 +238,7 @@ export class LedStatusService {
   }
 
   /**
-   * Enable or disable orange blinking USER LED 1. 
+   * Enable or disable orange blinking USER LED 1.
    * Represented one of this state:
    *  - No Configuration
    *  - No Template

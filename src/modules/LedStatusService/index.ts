@@ -1,4 +1,5 @@
 import { PathLike } from 'fs';
+import { promises as fs } from 'fs';
 import { writeFile } from 'fs/promises';
 import winston from 'winston';
 import { ConfigManager } from '../ConfigManager';
@@ -17,6 +18,7 @@ export class LedStatusService {
   #led1Blink: NodeJS.Timer = null;
   #led2Blink: NodeJS.Timer = null;
   #configWatcher: NodeJS.Timer = null;
+  #sysfsPrefix = '';
 
   constructor(private configManager: ConfigManager) {
     this.configManager.once('configsLoaded', () => {
@@ -25,6 +27,11 @@ export class LedStatusService {
     this.configManager.on('configChange', () => {
       this.checkConfigTemplateTerms();
     });
+  }
+
+  public async init(): Promise<LedStatusService> {
+    await this.setSysfsPrefix();
+    return this;
   }
 
   /**
@@ -134,7 +141,7 @@ export class LedStatusService {
     ledNumber: 1 | 2,
     color: 'red' | 'green'
   ): PathLike {
-    return `/sys/class/leds/user-led${ledNumber.toString(
+    return `${this.#sysfsPrefix}/sys/class/leds/user-led${ledNumber.toString(
       10
     )}-${color}/brightness`;
   }
@@ -260,5 +267,15 @@ export class LedStatusService {
   public runTimeStatus(status: boolean): void {
     const path = this.getLedPathByNumberAndColor(2, 'green');
     status ? this.setLed([path]) : this.unsetLed([path]);
+  }
+
+  private async setSysfsPrefix() {
+    try {
+      const board = await fs.readFile('/sys/firmware/devicetree/base/model');
+      if (board.indexOf('SIMATIC IOT2050') >= 0) this.#sysfsPrefix = '';
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw e;
+    }
+    this.#sysfsPrefix = 'src/modules/LedStatusService';
   }
 }

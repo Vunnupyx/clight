@@ -93,6 +93,7 @@ export class BootstrapManager {
    */
   public async start() {
     try {
+      await this.ledManager.init();
       this.ledManager.runTimeStatus(false);
       this.ledManager.southboundStatus(false);
       this.configManager.on('configsLoaded', async () => {

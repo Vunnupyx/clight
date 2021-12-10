@@ -27,6 +27,12 @@
       "port": "",
       "ipAddr": "",
       "type": "http"
+    },
+    "time": {
+      "useNtp": true,
+      "ntpHost": "pool.ntp.org",
+      "currentTime": "",
+      "timezone": "Europe/Berlin"
     }
   },
   "dataSources": [

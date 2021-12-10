@@ -1,5 +1,43 @@
 # Changelog
 
+## [Current]
+
+### Added
+
+- [MDCL-152](https://codestryke.atlassian.net/browse/MDCL-152) Setting device hostname to "DM<MAC_ADDRESS>" on startup. Eg: DM8CF3191EBD22
+- A summary of the read data points per data source is logged periodically
+
+## [1.6.2]
+
+### Added
+
+- [MDCL-187](https://codestryke.atlassian.net/browse/MDCL-187) Added log file export
+- [MDCL-185](https://codestryke.atlassian.net/browse/MDCL-185) Added green check mark for data points of data sinks if they are already mapped
+
+### Changed
+
+- Improvement of the stability of the s7 and nck connector
+- Change log level to debug and removed unnecessary logs
+
+### Fixed
+
+- [MDCL-198](https://codestryke.atlassian.net/browse/MDCL-198) Fixed usage of wrong ip address for PLC connections
+- [MDCL-200](https://codestryke.atlassian.net/browse/MDCL-200) Fixed a bug that crashes the runtime when writing data to the mtconnect agent while it is shutting down.
+
+## [1.6.1]
+
+### Added
+
+- [MDCL-154](https://codestryke.atlassian.net/browse/MDCL-154) Added factory reset via "USER" button incl. documentation
+
+### Changed
+
+- Update data hub provisioning timeout behavior and removed timeout after 10 seconds
+
+### Fixed
+
+- [MDCL-197](https://codestryke.atlassian.net/browse/MDCL-197) Fixed bug that made it impossible to update the general device info
+
 ## [1.6.0]
 
 ### Added

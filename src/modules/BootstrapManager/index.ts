@@ -148,6 +148,8 @@ export class BootstrapManager {
       });
       // WARNING: LED is never disabled because no watch on Kill SIGNALS
       this.ledManager.runTimeStatus(true);
+
+      this.setupKillEvents();
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',
@@ -159,5 +161,28 @@ export class BootstrapManager {
       winston.error('Error while launching. Exiting program.');
       process.exit(1);
     }
+  }
+
+  setupKillEvents() {
+    process.stdin.resume(); //so the program will not close instantly
+
+    function exitHandler(exitCode) {
+      this.ledManager.runTimeStatus(false);
+      winston.info(`Exiting program, code:" ${exitCode}`);
+      process.exit();
+    }
+
+    //do something when app is closing
+    process.on('exit', exitHandler.bind(this));
+
+    //catches ctrl+c event
+    process.on('SIGINT', exitHandler.bind(this));
+
+    // catches "kill pid" (for example: nodemon restart)
+    process.on('SIGUSR1', exitHandler.bind(this));
+    process.on('SIGUSR2', exitHandler.bind(this));
+
+    //catches uncaught exceptions
+    process.on('uncaughtException', exitHandler.bind(this));
   }
 }

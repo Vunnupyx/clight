@@ -18,6 +18,10 @@ export class ClockComponent implements OnInit, OnDestroy {
   private serverOffset = 0;
   private sub!: Subscription;
 
+  get isClockVisible() {
+    return !this.serverLoading && new Date(this.time).getFullYear() > 1970;
+  }
+
   constructor(
     private authService: AuthService,
     private systemInfoService: SystemInformationService,
@@ -28,6 +32,9 @@ export class ClockComponent implements OnInit, OnDestroy {
     this.sub = this.authService.token$.pipe(filter(Boolean)).subscribe(() => {
       this.syncTime();
     });
+    this.sub.add(this.authService.oldPassword$.subscribe(() => {
+      this.syncTime(true);
+    }));
   }
 
   ngOnDestroy() {
@@ -35,11 +42,11 @@ export class ClockComponent implements OnInit, OnDestroy {
     clearInterval(this.intervalId);
   }
 
-  syncTime() {
+  syncTime(force = false) {
     if (!this.authService.token) {
       return;
     }
-    this.systemInfoService.getServerTimeOffset().then((offset) => {
+    this.systemInfoService.getServerTimeOffset(force).then((offset) => {
       this.serverOffset = offset;
 
       this.calculateTime();

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 import { ProfileService } from '../../../services/profile.service';
 import { ChangePasswordRequest } from '../../../models/auth';
-import { LocalStorageService } from 'app/shared';
+import { AuthService, LocalStorageService } from 'app/shared';
 
 @Component({
   selector: 'app-change-password',
@@ -25,11 +25,12 @@ export class ChangePasswordComponent implements OnInit {
     private toastr: ToastrService,
     private translate: TranslateService,
     private profileService: ProfileService,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
-    const oldPassword = this.localStorageService.get<string>('old-password');
+    const oldPassword = this.authService.getOldPassword();;
 
     this.changePassword.oldPassword = oldPassword || '';
   }
@@ -68,7 +69,7 @@ export class ChangePasswordComponent implements OnInit {
     return this.profileService
       .changePassword(data)
       .then(() => {
-        this.localStorageService.clear('old-password');
+        this.authService.clearOldPassword();
         this.toastr.success(
           this.translate.instant(
             'settings-change-password.ChangePasswordSuccess'

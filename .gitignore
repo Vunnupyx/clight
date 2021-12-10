@@ -20,3 +20,5 @@ src/modules/Iot2050MraaDI10/sys/*
 
 src/modules/IoT2050HardwareEvents/sys
 src/modules/IoT2050HardwareEvents/sys/*
+
+CHANGELOG.pdf

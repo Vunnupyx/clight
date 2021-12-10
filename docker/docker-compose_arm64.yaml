@@ -36,6 +36,7 @@ services:
         target: /root/.ssh/nmcli
     environment:
       - PORT=80
+      - LOG_LEVEL=debug
     ports:
       - '4840:4840'
     extra_hosts:

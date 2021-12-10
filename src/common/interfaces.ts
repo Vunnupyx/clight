@@ -25,6 +25,7 @@ export enum DataSinkProtocols {
 
 export enum MTConnectDataItemTypes {
   EVENT = 'event',
+  SAMPLE = 'sample',
   CONDITION = 'condition'
 }
 

@@ -5,8 +5,6 @@ import {
   NodeIdLike,
   UserManagerOptions,
   OPCUACertificateManager
-  // SecurityPolicy,
-  // MessageSecurityMode
 } from 'node-opcua';
 import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
@@ -97,6 +95,7 @@ export class OPCUAAdapter {
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
       'mdclight/config/tmpnodesets'
     );
+    await fs.rm(this.nodesetDir, { recursive: true, force: true });
     await fs.copy(
       path.join(
         process.env.MDC_LIGHT_FOLDER || process.cwd(),

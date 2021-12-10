@@ -60,6 +60,18 @@
           </button>
         </div>
       </mat-expansion-panel>
+      <mat-expansion-panel [expanded]="true" class="mt-25">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'settings-general.Logs' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>
+          <button mat-raised-button color="primary" (click)="downloadLogs()">
+            {{ 'settings-general.ExportLogs' | translate }}
+          </button>
+        </div>
+      </mat-expansion-panel>
 
       <mat-expansion-panel [expanded]="true" class="mt-25">
         <mat-expansion-panel-header>

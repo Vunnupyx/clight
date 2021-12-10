@@ -12,7 +12,8 @@ import {
 import {
   DataItem,
   Event,
-  Condition
+  Condition,
+  Sample
 } from '../../Adapter/MTConnectAdapter/DataItem';
 import winston from 'winston';
 import { SynchronousIntervalScheduler } from '../../../SyncScheduler';
@@ -108,6 +109,9 @@ export class MTConnectDataSink extends DataSink {
         case MTConnectDataItemTypes.EVENT:
           dataItem = new Event(dp.address);
           break;
+        case MTConnectDataItemTypes.SAMPLE:
+          dataItem = new Event(dp.address);
+          break;
         case MTConnectDataItemTypes.CONDITION:
           dataItem = new Condition(dp.address);
           break;
@@ -131,7 +135,12 @@ export class MTConnectDataSink extends DataSink {
 
     if (dataItem instanceof Event) {
       dataItem.value = value;
-      winston.debug(`Setting MTConnect DataItem ${dataItem} to ${value}`);
+      // winston.debug(`Setting MTConnect DataItem ${dataItem} to ${value}`);
+    }
+
+    if (dataItem instanceof Sample) {
+      dataItem.value = value;
+      // winston.debug(`Setting MTConnect DataItem ${dataItem} to ${value}`);
     }
 
     if (dataItem instanceof Condition) {

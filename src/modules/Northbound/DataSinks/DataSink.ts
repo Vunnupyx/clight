@@ -174,7 +174,9 @@ export abstract class DataSink {
 
   protected processDataPointValues(obj) {
     Object.keys(obj).forEach((key) => {
-      this.processDataPointValue(key, obj[key]);
+      try {
+        this.processDataPointValue(key, obj[key]);
+      } catch {}
     });
   }
 

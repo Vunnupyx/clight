@@ -897,6 +897,22 @@ export default {
         }
       }
     },
+    '/logs': {
+      get: {
+        tags: ['/logs'],
+        operationId: 'logsGet',
+        produce: ['application/x-binary'],
+        responses: {
+          '200': {
+            description: 'Log files as ZIP.',
+            schema: {
+              type: 'file',
+              format: 'binary'
+            }
+          }
+        }
+      }
+    },
     '/mappings': {
       get: {
         tags: ['mappings'],

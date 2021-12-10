@@ -55,17 +55,14 @@ export class DataHubDataSink extends DataSink {
    */
   protected processDataPointValues(dataPointsObj): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
-    winston.debug(`${logPrefix} receive measurements.`);
 
     if (!this.#datahubAdapter.running) {
-      winston.debug(`${logPrefix} adapter not running. Skipping data points.`);
       return;
     }
 
     const services = this.#datahubAdapter.getDesiredProps()?.services;
     if (!services) return;
 
-    winston.debug(`${logPrefix} known services: ${Object.keys(services)}`);
     const data: TGroupedMeasurements = {
       probe: [],
       event: [],
@@ -99,7 +96,7 @@ export class DataHubDataSink extends DataSink {
       }
     }
 
-    winston.debug(`${logPrefix} transfer grouped data to adapter.`);
+    // winston.debug(`${logPrefix} transfer grouped data to adapter.`);
 
     this.#datahubAdapter.sendData(data);
   }

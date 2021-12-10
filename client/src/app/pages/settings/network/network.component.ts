@@ -38,7 +38,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
     if (!this.timezoneOptions || !this.timezoneOptionKeyphrase) {
       return this.timezoneOptions;
     }
-    return this.timezoneOptions.filter(x => x.includes(this.timezoneOptionKeyphrase));
+    return this.timezoneOptions.filter((x) =>
+      x
+        .toLocaleLowerCase()
+        .includes(this.timezoneOptionKeyphrase.toLocaleLowerCase())
+    );
   }
 
   sub: Subscription = new Subscription();
@@ -100,20 +104,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   private _getTimezoneOptions() {
-    return moment.tz.names().filter(
-      name => 
-      [
-        'Universal', 
-        'Africa/',
-        'America/',
-        'Antarctica/',
-        'Arctic/',
-        'Asia/',
-        'Australia/',
-        'Europe/',
-        'Indian/',
-        'Pacific/',
-      ].find(x => name.startsWith(x))
-    );
+    return moment.tz
+      .names()
+      .filter((name) =>
+        [
+          'Universal',
+          'Africa/',
+          'America/',
+          'Antarctica/',
+          'Arctic/',
+          'Asia/',
+          'Australia/',
+          'Europe/',
+          'Indian/',
+          'Pacific/'
+        ].find((x) => name.startsWith(x))
+      );
   }
 }

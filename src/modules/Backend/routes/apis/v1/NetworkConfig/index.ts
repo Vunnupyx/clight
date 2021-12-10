@@ -37,10 +37,9 @@ async function networkConfigGetHandler(
     return [undefined, undefined];
   });
 
-  const { x1: cx1, x2: cx2, time: time } = configManager.config.networkConfig;
+  const { x1: cx1, x2: cx2, time } = configManager.config.networkConfig;
 
   const merged = {
-    time,
     x1: {
       useDhcp: x1?.dhcp || cx1.useDhcp,
       ipAddr: x1?.ipAddress || cx1.ipAddr,
@@ -56,7 +55,7 @@ async function networkConfigGetHandler(
       dnsServer: x2?.dns || cx2.dnsServer
     },
     proxy: configManager.config.networkConfig.proxy,
-    time: configManager.config.networkConfig.time
+    time
   };
   response.status(200).json(merged);
 }
@@ -83,16 +82,19 @@ async function networkConfigPatchHandler(
 
   const timeConfig: ITimeConfig = request.body?.time;
   let timePromise;
-  if(timeConfig) {
+  if (timeConfig) {
     if (!timeConfig.useNtp) {
       // ISO8601 to YYYY-MM-DD hh:mm:ss
-      const [YYYY, MM, DD, hh, mm, ss ] = timeConfig.currentTime.split(/[/:\-T]/)
-      timePromise = TimeManager.setTimeManually(`${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0,2)}`);
+      const [YYYY, MM, DD, hh, mm, ss] =
+        timeConfig.currentTime.split(/[/:\-T]/);
+      timePromise = TimeManager.setTimeManually(
+        `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0, 2)}`,
+        timeConfig.timezone
+      );
     } else {
       timePromise = TimeManager.setNTPServer(timeConfig.ntpHost);
     }
   }
-
 
   await Promise.allSettled([
     NetworkManagerCliController.setConfiguration('eth0', x1Config),

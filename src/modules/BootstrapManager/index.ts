@@ -19,6 +19,7 @@ import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 import { TimeManager } from '../NetworkManager/TimeManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { System } from '../System';
+import HostnameController from '../HostnameController';
 
 /**
  * Launches agent and handles module life cycles
@@ -115,6 +116,10 @@ export class BootstrapManager {
           .catch((err) => {
             winston.error(`${log} Failed due to ${err.message}`);
           });
+
+        HostnameController.setDefaultHostname().catch((e) =>
+          winston.error(`Failed to set hostname: ${e}`)
+        );
       });
 
       await this.configManager.init();

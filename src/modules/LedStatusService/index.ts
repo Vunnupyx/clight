@@ -297,10 +297,14 @@ export class LedStatusService {
   private async setSysfsPrefix() {
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
-      if (board.indexOf('SIMATIC IOT2050') >= 0) this.#sysfsPrefix = '';
+      if (board.indexOf('SIMATIC IOT2050') >= 0) {
+        this.#sysfsPrefix = '';
+        return;
+      }
     } catch (e) {
       if (e.code !== 'ENOENT') throw e;
     }
+
     this.#sysfsPrefix = 'src/modules/LedStatusService';
   }
 }

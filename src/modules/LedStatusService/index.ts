@@ -237,11 +237,20 @@ export class LedStatusService {
    * Represent the status of southbound connection.
    */
   public southboundStatus(status: boolean): void {
+    const logPrefix = `LedStatusService::southboundStatus`;
+
     if (this.#led1Blink) {
       this.stopBlinking(1);
     }
     const path = this.getLedPathByNumberAndColor(1, 'green');
     status ? this.setLed([path]) : this.unsetLed([path]);
+    winston.info(
+      `${logPrefix} set USER LED 1 to ${
+        status ? 'ON' : 'OFF'
+      } (Southbound status: ${
+        status ? 'CONFIGURATED AND CONNECTED' : 'CONFIGURATED BUT NOT CONNECTED'
+      })`
+    );
   }
 
   /**
@@ -252,6 +261,8 @@ export class LedStatusService {
    *  - Not accepted AGB
    */
   public noConfigBlink(status: boolean): void {
+    const logPrefix = `LedStatusService::noConfigBlink`;
+
     if (status) {
       if (this.#led1Blink) return;
       this.blink(1, 500, 500, 'orange');
@@ -259,14 +270,28 @@ export class LedStatusService {
       if (!this.#led1Blink) return;
       this.stopBlinking(1);
     }
+
+    winston.info(
+      `${logPrefix} set USER LED 1 to ${
+        status ? 'BLINKING' : 'OFF'
+      } (Config status: ${status ? 'CONFIGURATED' : 'NOT CONFIGURATED'})`
+    );
   }
 
   /**
    * Set LED for display of runtime status.
    */
   public runTimeStatus(status: boolean): void {
+    const logPrefix = `LedStatusService::runTimeStatus`;
+
     const path = this.getLedPathByNumberAndColor(2, 'green');
     status ? this.setLed([path]) : this.unsetLed([path]);
+
+    winston.info(
+      `${logPrefix} set USER LED 2 to ${
+        status ? 'ON' : 'OFF'
+      } (Runtime status: ${status ? 'RUNNING' : 'NOT RUNNING'})`
+    );
   }
 
   private async setSysfsPrefix() {

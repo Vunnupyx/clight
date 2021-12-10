@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import winston from 'winston';
 import { ConfigManager } from '../../../../../ConfigManager';
+import { ITimeConfig } from '../../../../../ConfigManager/interfaces';
 import NetworkManagerCliController from '../../../../../NetworkManager';
+import { TimeManager } from '../../../../../NetworkManager/TimeManager';
 
 let configManager: ConfigManager;
 
@@ -35,9 +37,10 @@ async function networkConfigGetHandler(
     return [undefined, undefined];
   });
 
-  const { x1: cx1, x2: cx2 } = configManager.config.networkConfig;
+  const { x1: cx1, x2: cx2, time: time } = configManager.config.networkConfig;
 
   const merged = {
+    time,
     x1: {
       useDhcp: x1?.dhcp || cx1.useDhcp,
       ipAddr: x1?.ipAddress || cx1.ipAddr,
@@ -78,9 +81,23 @@ async function networkConfigPatchHandler(
     'eth0'
   );
 
+  const timeConfig: ITimeConfig = request.body?.time;
+  let timePromise;
+  if(timeConfig) {
+    if (!timeConfig.useNtp) {
+      // ISO8601 to YYYY-MM-DD hh:mm:ss
+      const [YYYY, MM, DD, hh, mm, ss ] = timeConfig.currentTime.split(/[/:\-T]/)
+      timePromise = TimeManager.setTimeManually(`${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0,2)}`);
+    } else {
+      timePromise = TimeManager.setNTPServer(timeConfig.ntpHost);
+    }
+  }
+
+
   await Promise.allSettled([
     NetworkManagerCliController.setConfiguration('eth0', x1Config),
-    NetworkManagerCliController.setConfiguration('eth1', x2Config)
+    NetworkManagerCliController.setConfiguration('eth1', x2Config),
+    timePromise
   ]).then((results) => {
     results.forEach((result) => {
       if (result.status === 'rejected')

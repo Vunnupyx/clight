@@ -16,6 +16,7 @@ import { RestApiManager } from '../Backend/RESTAPIManager';
 import { DataPointMapper } from '../DataPointMapper';
 import NetworkManagerCliController from '../NetworkManager';
 import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
+import { TimeManager } from '../NetworkManager/TimeManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { System } from '../System';
 
@@ -90,11 +91,16 @@ export class BootstrapManager {
       this.configManager.on('configsLoaded', async () => {
         const log = `${BootstrapManager.name} send network configuration to host.`;
         winston.info(log);
-        const { x1, x2 } = this.configManager.config.networkConfig;
+        const { x1, x2, time } = this.configManager.config.networkConfig;
         const nx1: NetworkInterfaceInfo =
           NetworkManagerCliController.generateNetworkInterfaceInfo(x1, 'eth0');
         const nx2: NetworkInterfaceInfo =
           NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth1');
+
+        let timePromise = Promise.resolve();
+        if (time && time.useNtp) {
+          timePromise = TimeManager.setNTPServer(time.ntpHost);
+        }
 
         Promise.all([
           Object.keys(x1).length !== 0
@@ -102,7 +108,8 @@ export class BootstrapManager {
             : Promise.resolve(),
           Object.keys(x2).length !== 0
             ? NetworkManagerCliController.setConfiguration('eth1', nx2)
-            : Promise.resolve()
+            : Promise.resolve(),
+          timePromise
         ])
           .then(() => winston.info(log + ' Successfully.'))
           .catch((err) => {

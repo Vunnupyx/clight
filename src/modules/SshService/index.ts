@@ -12,6 +12,6 @@ export default class SshService {
    * Sends ssh command to host
    */
   static async sendCommand(command: string): Promise<any> {
-    return exec(`${this.baseCommand} ${command}`);
+    return exec(`${this.baseCommand} '${command}'`);
   }
 }

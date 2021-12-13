@@ -30,7 +30,7 @@ export class MTConnectAdapter {
    * Listens for incoming client
    * @returns string
    */
-  private listenForClients(_client: net.Socket) {
+  private async listenForClients(_client: net.Socket) {
     const logPrefix = `${this.name}::listenForClients`;
     const client: Socket = _client;
     client.id = uuidv1();
@@ -40,7 +40,7 @@ export class MTConnectAdapter {
     winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
     this.heartbeatClient(client);
 
-    this.sendAllTo(client);
+    await this.sendAllTo(client);
   }
   /**
    * Monitors connected clients and removes them on timeout or disconnect
@@ -61,8 +61,8 @@ export class MTConnectAdapter {
       this.clients = this.clients.filter((c) => c.id !== client.id);
       winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
     });
-    client.on('data', (data: string) => {
-      this.receive(client, data);
+    client.on('data', async (data: string) => {
+      await this.receive(client, data);
     });
   }
 
@@ -70,12 +70,12 @@ export class MTConnectAdapter {
    * Handles all incoming messages from agents. Especially pings.
    * @returns string
    */
-  private receive(client: net.Socket, data: string) {
+  private async receive(client: net.Socket, data: string) {
     // winston.debug(`Received data: ${data}`);
 
     if (data.startsWith('* PING\n')) {
       const line = `* PONG ${this.TIMEOUT}\n`;
-      this.writeToClient(client, line);
+      await this.writeToClient(client, line);
       // winston.debug(`Received ping, sending pong, timeout: ${this.TIMEOUT}`);
     }
   }
@@ -124,7 +124,7 @@ export class MTConnectAdapter {
    * Sends all data items to an agent. That is initially required if an agent connects to the adapter
    * @returns void
    */
-  private sendAllTo(client: Socket) {
+  private async sendAllTo(client: Socket) {
     const { together, separate } = this.getItemLists(true);
 
     if (together.length > 0) {
@@ -134,7 +134,7 @@ export class MTConnectAdapter {
       line += '\n';
 
       // winston.debug(`Sending message: ${line}`);
-      this.writeToClient(client, line);
+      await this.writeToClient(client, line);
     }
 
     if (separate.length > 0) {
@@ -145,7 +145,7 @@ export class MTConnectAdapter {
 
         // winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
-        this.writeToClient(client, line);
+        await this.writeToClient(client, line);
       }
     }
   }
@@ -155,13 +155,19 @@ export class MTConnectAdapter {
    * @param client
    * @param line
    */
-  private writeToClient(client: Socket, line: string) {
-    const logPrefix = `${this.name}::listenForClients`;
-    try {
-      client.write(line);
-    } catch {
+  private async writeToClient(client: Socket, line: string) {
+    const logPrefix = `${this.name}::writeToClient`;
+    await new Promise<void>((resolve, reject) => {
+      client.write(line, (err?: Error) => {
+        if (err) {
+          reject(err.message);
+        }
+        resolve();
+      });
+    }).catch((e) => {
       winston.warn(`${logPrefix} failed to write to client`);
-    }
+      winston.error(JSON.stringify(e));
+    });
   }
 
   /**
@@ -194,7 +200,7 @@ export class MTConnectAdapter {
    * Sends changed data items to all connected agents
    * @returns void
    */
-  public sendChanged(): void {
+  public async sendChanged(): Promise<void> {
     const { together, separate } = this.getItemLists();
     if (together.length > 0) {
       let line = this.getCurrentUtcTimestamp();
@@ -206,7 +212,7 @@ export class MTConnectAdapter {
         // winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
         for (const client of this.clients) {
-          this.writeToClient(client, line);
+          await this.writeToClient(client, line);
         }
     }
 
@@ -220,7 +226,7 @@ export class MTConnectAdapter {
           // winston.debug(`Sending message: ${line.replace(/\n+$/, '')}`);
 
           for (const client of this.clients) {
-            this.writeToClient(client, line);
+            await this.writeToClient(client, line);
           }
       }
     }

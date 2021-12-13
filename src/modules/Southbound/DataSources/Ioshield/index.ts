@@ -44,14 +44,6 @@ export class IoshieldDataSource extends DataSource {
       return;
     }
 
-    this.submitLifecycleEvent({
-      id: protocol,
-      level: this.level,
-      type: DataSourceLifecycleEventTypes.Connected,
-      status: LifecycleEventStatus.Connected,
-      dataSource: { protocol, name }
-    });
-
     this.mraaClient = new Iot2050MraaDI10();
     this.mraaClient.init();
 

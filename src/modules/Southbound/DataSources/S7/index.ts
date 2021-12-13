@@ -86,14 +86,6 @@ export class S7DataSource extends DataSource {
       );
       return;
     }
-
-    this.submitLifecycleEvent({
-      id: protocol,
-      level: this.level,
-      type: DataSourceLifecycleEventTypes.Connecting,
-      status: LifecycleEventStatus.Connecting,
-      dataSource: { protocol, name }
-    });
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     const nckDataPointsConfigured =
@@ -127,39 +119,16 @@ export class S7DataSource extends DataSource {
       }
     } catch (error) {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
-      this.submitLifecycleEvent({
-        id: protocol,
-        level: this.level,
-        type: DataSourceLifecycleEventTypes.ConnectionError,
-        status: LifecycleEventStatus.ConnectionError,
-        dataSource: { name, protocol },
-        payload: error
-      });
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
         // if (!this.isDisconnected) {
         //   return;
         // }
-        this.submitLifecycleEvent({
-          id: protocol,
-          level: this.level,
-          type: DataSourceLifecycleEventTypes.Reconnecting,
-          status: LifecycleEventStatus.Reconnecting,
-          dataSource: { name, protocol }
-        });
         this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
         this.init();
       }, this.RECONNECT_TIMEOUT);
       return;
     }
-
-    this.submitLifecycleEvent({
-      id: protocol,
-      level: this.level,
-      type: DataSourceLifecycleEventTypes.Connected,
-      status: LifecycleEventStatus.Connected,
-      dataSource: { name, protocol }
-    });
     this.updateCurrentStatus(LifecycleEventStatus.Connected);
     this.isDisconnected = false;
     this.setupDataPoints();
@@ -391,13 +360,6 @@ export class S7DataSource extends DataSource {
     const { name, protocol } = this.config;
     this.isDisconnected = true;
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
-    this.submitLifecycleEvent({
-      id: protocol,
-      level: this.level,
-      type: DataSourceLifecycleEventTypes.Disconnected,
-      status: LifecycleEventStatus.Disconnected,
-      dataSource: { name, protocol }
-    });
 
     clearTimeout(this.reconnectTimeoutId);
     await new Promise<void>((resolve, reject) => {

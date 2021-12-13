@@ -54,7 +54,7 @@ export abstract class DataSource extends EventEmitter {
   }
 
   /**
-   * Updates the current status of the data source
+   * Updates the current status of the data source and emit it to listeners.
    * @param newState
    * @returns
    */
@@ -66,6 +66,7 @@ export abstract class DataSource extends EventEmitter {
       `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
     );
     this.currentStatus = newState;
+    this.emit(DataSourceEventTypes.Lifecycle, newState);
   }
 
   /**
@@ -205,16 +206,6 @@ export abstract class DataSource extends EventEmitter {
     dataSourceMeasurementEvents: IDataSourceMeasurementEvent[]
   ): void {
     this.emit(DataSourceEventTypes.Measurement, dataSourceMeasurementEvents);
-  }
-
-  /**
-   * Emits live cycle events as a native {@link Event}
-   * @param lifecycleEvent
-   */
-  protected submitLifecycleEvent(
-    lifecycleEvent: IDataSourceLifecycleEvent
-  ): void {
-    this.emit(DataSourceEventTypes.Lifecycle, lifecycleEvent);
   }
 
   /**

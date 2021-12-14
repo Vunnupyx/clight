@@ -48,10 +48,7 @@ export class LoginComponent implements OnInit {
       .login(this.loginRequest)
       .then((response) => {
         if (response.passwordChangeRequired) {
-          this.localStorageService.set(
-            'old-password',
-            this.loginRequest.password
-          );
+          this.auth.setOldPassword(this.loginRequest.password);
           return this.router.navigate(['/settings', 'change-password']);
         }
 

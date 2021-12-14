@@ -83,8 +83,8 @@ export class SystemInformationService {
     }
   }
 
-  async getServerTimeOffset(): Promise<number> {
-    if (this._store.snapshot.serverOffset === undefined) {
+  async getServerTimeOffset(force = false): Promise<number> {
+    if (force || this._store.snapshot.serverOffset === undefined) {
       const time = await this.getServerTime();
 
       const offset = Math.round(Date.now() / 1000) - time;

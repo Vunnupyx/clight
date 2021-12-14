@@ -4,7 +4,9 @@ import {
   OPCUAServer,
   NodeIdLike,
   UserManagerOptions,
-  OPCUACertificateManager
+  OPCUACertificateManager,
+  SecurityPolicy,
+  MessageSecurityMode
 } from 'node-opcua';
 import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
@@ -215,7 +217,8 @@ export class OPCUAAdapter {
     const privateKeyFile = this.serverCertificateManager.privateKey;
 
     this.serverCertificateManager = new OPCUACertificateManager({
-      rootFolder: certificateFolder
+      rootFolder: certificateFolder,
+      automaticallyAcceptUnknownCertificate: true
     });
 
     this.userManager = {
@@ -245,18 +248,18 @@ export class OPCUAAdapter {
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,
       certificateFile,
-      nodeset_filename: nodeSets
-      // securityPolicies: [
-      //   SecurityPolicy.None,
-      //   SecurityPolicy.Basic128Rsa15,
-      //   SecurityPolicy.Basic256,
-      //   SecurityPolicy.Basic256Sha256
-      // ],
-      // securityModes: [
-      //   MessageSecurityMode.None,
-      //   MessageSecurityMode.Sign,
-      //   MessageSecurityMode.SignAndEncrypt
-      // ]
+      nodeset_filename: nodeSets,
+      securityPolicies: [
+        SecurityPolicy.None,
+        SecurityPolicy.Basic128Rsa15,
+        SecurityPolicy.Basic256,
+        SecurityPolicy.Basic256Sha256
+      ],
+      securityModes: [
+        MessageSecurityMode.None,
+        MessageSecurityMode.Sign,
+        MessageSecurityMode.SignAndEncrypt
+      ]
     });
 
     return this.server

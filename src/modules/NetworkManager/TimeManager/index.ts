@@ -1,3 +1,4 @@
+import { createSocket } from 'dgram';
 import winston from 'winston';
 import SshService from "../../SshService";
 ​
@@ -64,6 +65,10 @@ export class TimeManager {
    */
   public static async setNTPServer(ntpServerIP: string): Promise<void> {
     const logPrefix = `TimeManager::setNTPServer`;
+
+    await this.testNTPServer(ntpServerIP).catch(() => {
+      return Promise.reject(`${ntpServerIP} is not available or is not a valid NTP server.`);
+    })
     const readCommand = `cat ${TimeManager.CONFIG_PATH}`;
     const {stdout: currentConfig, stderr} = await SshService.sendCommand(readCommand);
     if (stderr !== '') {
@@ -118,5 +123,49 @@ export class TimeManager {
       return Promise.reject(errMsg);
     }
     winston.info(`${logPrefix} set time ${time} successfully.`);
+  }
+
+  /**
+   * Test if a server is a valid and available ntp server.
+   */
+   private static async testNTPServer(server: string): Promise<void> {
+    const logPrefix = `TimeManager::testNTPServer`;
+    const client = createSocket('udp4');
+    const bufferData = new Array(48).fill(0);
+    bufferData[0] = 0x1b;
+    const requestData = Buffer.from(bufferData);
+
+    await new Promise<void>((res, rej) => {
+      winston.debug(`${logPrefix} start testing: ${server}`);
+
+      const timeout = setTimeout(() => {
+        client.close();
+        winston.error(`${logPrefix} request timed out.`);
+      }, 1000 * 10);
+
+      client.on('error', (err) => {
+        client.close();
+        clearTimeout(timeout);
+      });
+
+      client.once('message', (msg) => {
+        winston.debug(`${logPrefix} received msg: ${msg}`);
+        client.close();
+        clearTimeout(timeout);
+        res();
+      });
+
+      client.send(requestData, 123, server, (err, bytes) => {
+        winston.info(
+          `${logPrefix} send ${requestData} to ${server}. Size of message is ${bytes} bytes.`
+        );
+        if (err) {
+          winston.error(`${logPrefix} ${server} not available due to ${err}`);
+          client.close();
+          clearTimeout(timeout);
+          rej();
+        }
+      });
+    });
   }
 }

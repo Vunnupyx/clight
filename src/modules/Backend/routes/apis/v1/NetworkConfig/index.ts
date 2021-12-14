@@ -96,6 +96,7 @@ async function networkConfigPatchHandler(
     }
   }
 
+  let errorMsg = '';
   await Promise.allSettled([
     NetworkManagerCliController.setConfiguration('eth0', x1Config),
     NetworkManagerCliController.setConfiguration('eth1', x2Config),
@@ -104,7 +105,7 @@ async function networkConfigPatchHandler(
     results.forEach((result) => {
       if (result.status === 'rejected') {
         if (result.reason && (typeof result.reason === 'string') && result.reason.includes('is not available or is not a valid NTP server.')) {
-          response.status(400).json(result.reason);
+          errorMsg = result.reason;
           return;
         }
         winston.error(
@@ -112,9 +113,12 @@ async function networkConfigPatchHandler(
         );
       }
     });
-  });
-  configManager.saveConfig({ networkConfig: request.body });
-  response.status(200).json(configManager.config.networkConfig);
+  }).then(() => {
+    configManager.saveConfig({ networkConfig: request.body });
+    response.status(errorMsg ? 400 : 200).json(errorMsg ?? configManager.config.networkConfig);
+  }).catch((err) => {
+    winston.error(`${logPrefix} error due to ${err?.msg}`);
+  }); 
 }
 
 export const networkConfigHandlers = {

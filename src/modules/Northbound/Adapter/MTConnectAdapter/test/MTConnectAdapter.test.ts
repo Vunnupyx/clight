@@ -1,9 +1,9 @@
-import { ConfigManager } from '../../../../ConfigManager';
-import { EventBus } from '../../../../EventBus';
 import { DataItem } from '../DataItem';
 
 const mockSocket = {
-  write: jest.fn(),
+  write: jest.fn((line, cb) => {
+    cb();
+  }),
   setEncoding: jest.fn(),
   on: jest.fn(),
   setTimeout: jest.fn()
@@ -30,17 +30,17 @@ import { MTConnectAdapter } from '..';
 
 describe('Test MTCAdapter', () => {
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
-  test('Server should send data items to new clients', () => {
+  test('Server should send data items to new clients', async () => {
     const adapter = new MTConnectAdapter({ listenerPort: 0 });
     adapter.addDataItem(new DataItem('test'));
     adapter.start();
 
     const listenForClients = mockServer.on.mock.calls[0][1];
 
-    listenForClients(mockSocket);
+    await listenForClients(mockSocket);
 
     const data = mockSocket.write.mock.calls[0][0];
 
@@ -55,7 +55,7 @@ describe('Test MTCAdapter', () => {
     expect(dataParts[2]).toBe('UNAVAILABLE\n');
   });
 
-  test('Server should send changes', () => {
+  test('Server should send changes', async () => {
     const adapter = new MTConnectAdapter({ listenerPort: 0 });
     const item = new DataItem('test1');
     adapter.addDataItem(item);
@@ -63,9 +63,11 @@ describe('Test MTCAdapter', () => {
 
     const listenForClients = mockServer.on.mock.calls[0][1];
 
-    listenForClients(mockSocket);
-
-    adapter.sendChanged();
+    console.log(listenForClients);
+    // Mock socket connect
+    await listenForClients(mockSocket);
+    console.log('send changes');
+    await adapter.sendChanged();
 
     let data = mockSocket.write.mock.calls[1][0];
     let dataParts = data.split('|');
@@ -80,7 +82,8 @@ describe('Test MTCAdapter', () => {
     expect(dataParts[2]).toBe('UNAVAILABLE\n');
     item.value = 1;
 
-    adapter.sendChanged();
+    console.log('send changes');
+    await adapter.sendChanged();
 
     data = mockSocket.write.mock.calls[2][0];
     dataParts = data.split('|');

@@ -25,3 +25,4 @@ src/modules/LedStatusService/sys
 src/modules/LedStatusService/sys/*
 
 CHANGELOG.pdf
+logs/

@@ -150,6 +150,15 @@ export class BootstrapManager {
       this.ledManager.runTimeStatus(true);
 
       this.setupKillEvents();
+
+      // // TODO Remove
+      // winston.warn(
+      //   'Shutting down runtime in 5min for debugging purpose. Remove later!'
+      // );
+      // setTimeout(() => {
+      //   winston.warn('Shutting down manually!');
+      //   process.exit(1);
+      // }, 5 * 60 * 1000);
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',
@@ -168,8 +177,14 @@ export class BootstrapManager {
 
     function exitHandler(exitCode) {
       this.ledManager.runTimeStatus(false);
-      winston.info(`Exiting program, code:" ${exitCode}`);
-      process.exit();
+
+      // Flushing logs to not lose any logs before exiting
+      winston.info(
+        `Exiting program, code:" ${exitCode}`,
+        function (err, level, msg, meta) {
+          process.exit(1);
+        }
+      );
     }
 
     //do something when app is closing

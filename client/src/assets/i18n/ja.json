@@ -336,5 +336,8 @@
   "prompt": {
     "warningTitle": "Warning!",
     "warningText": "You have unsaved changes, do you really want to continue?"
+  },
+  "clock": {
+    "WarningSystemTimeVsBrowserTime": "System time differs from your browser time"
   }
 }

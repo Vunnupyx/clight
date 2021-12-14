@@ -1,7 +1,6 @@
 {
   "auth": {
-    "expiresIn": 3600,
-    "defaultPassword": "abcdef"
+    "expiresIn": 3600
   },
   "systemInfo": [
     {
@@ -25,7 +24,7 @@
   ],
   "mtconnect": { "listenerPort": 7878 },
   "restApi": {
-    "port": 8081,
+    "port": 80,
     "maxFileSizeByte": 20000000
   },
   "opcua": {
@@ -36,17 +35,9 @@
       "productName": "MDCLight",
       "softwareVersion": "1.0.0"
     },
-    "serverInfo": {
-      "applicationUri": "urn:MDClightOPCUAServer"
-    },
     "nodesetDir": "mdclight/config/opcua_nodeSet"
   },
   "datahub": {
-    "provisioningHost": "mdclight-provisioning-service.azure-devices-provisioning.net",
-    "scopeId": "0ne003D4872",
-    "regId": "mdclpk01",
-    "symKey": "F6d7yubqvdY0En5Tf7puHxeD/I9zdx1efPcPEKUnIdzYZmRTD9f+bCWCK01yag7BIYEQQp1BWVfK+3tnbcrq7g==",
-    "groupDevice": false,
     "signalGroups": {
       "mdaBasic": [
         "production.activeProgram.currentExecutionState",

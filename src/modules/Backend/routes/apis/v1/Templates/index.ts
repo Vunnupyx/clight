@@ -41,11 +41,17 @@ export function setDataSinksManager(manager: DataSinksManager) {
  * @param  {Response} response
  */
 function templatesGetHandler(request: Request, response: Response): void {
-  const payload = configManager.defaultTemplates.templates.map((x) => ({
+  const templates = configManager.defaultTemplates.templates.map((x) => ({
     ...x,
     dataSources: x.dataSources.map((y) => y.protocol),
     dataSinks: x.dataSinks.map((y) => y.protocol)
   }));
+
+  const payload = {
+    templates,
+    currentTemplate: configManager.config.quickStart.currentTemplate,
+    currentTemplateName: configManager.config.quickStart.currentTemplateName
+  };
 
   response.status(200).json(payload);
 }
@@ -56,9 +62,12 @@ function templatesGetHandler(request: Request, response: Response): void {
  * @param  {Response} response
  */
 function templatesGetStatusHandler(request: Request, response: Response) {
-  const completed = configManager.config.quickStart.completed;
+  const { completed, currentTemplate, currentTemplateName } =
+    configManager.config.quickStart;
 
-  response.status(200).json({ completed });
+  response
+    .status(200)
+    .json({ completed, currentTemplate, currentTemplateName });
 }
 
 /**
@@ -66,7 +75,10 @@ function templatesGetStatusHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function templatesApplyPostHandler(request: Request, response: Response): void {
+async function templatesApplyPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   if (
     !request.body.templateId ||
     !request.body.dataSources?.length ||
@@ -81,6 +93,7 @@ function templatesApplyPostHandler(request: Request, response: Response): void {
     request.body.dataSources,
     request.body.dataSinks
   );
+  await configManager.configChangeCompleted();
 
   response.status(200).json(null);
 }
@@ -92,7 +105,10 @@ function templatesSkipPostHandler(request: Request, response: Response): void {
   configManager.config = {
     ...configManager.config,
     quickStart: {
-      completed: true
+      completed: true,
+      currentTemplate: configManager.config.quickStart.currentTemplate || null,
+      currentTemplateName:
+        configManager.config.quickStart.currentTemplateName || null
     }
   };
 

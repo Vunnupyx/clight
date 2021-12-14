@@ -18,8 +18,6 @@
     "SignIn": "Sign in",
     "SendResetPassword": "Send reset email",
     "ResetEmailSentSuccess": "Reset email has been sent successfully!",
-    "ForCustomers": "For our customers:",
-    "ForCustomersDescription": "Please log in with your current my DMG MORI ID",
     "ForgotPasswordForCustomers": "For our customers:",
     "ForgotPasswordForCustomersDescription": "Please use your email to reset your password!",
     "ForgotPassword": "Forgot your password?"
@@ -41,8 +39,9 @@
     "ChangePasswordSuccess": "Password has been changed successfully!"
   },
   "quick-start": {
-    "Language": "Language",
-    "SelectLanguage": "Select Language",
+    "TermsAndConditions": "Terms and Conditions",
+    "Accept": "Accept",
+    "Language": "Select your language",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
@@ -72,6 +71,13 @@
         "name": "OPCUA",
         "description": "OPCUA Description"
       }
+    },
+    "Descriptions": {
+      "ReadMore": "Weitere Information finden Sie innerhalb der Dokumentation",
+      "Step1": "Mit Hilfe der Templates können Sie eine für Sie passende Vorkonfiguration ins Gerät laden. Später bleibt Ihnen trotzdem noch die Möglichkeit Änderungen in der Konfiguration vorzunehmen. Aktzeptieren Sie zuerst die AGB's um fortzufahren.",
+      "Step2": "Hier können Sie das passende Template auswählen.",
+      "Step3": "Wählen Sie hier die gewünschten Datenquellen an oder ab. Angewählte Datenquellen werden nach erfolgreichen Abschließen des Setup's automatisch gestartet. Diese Einstellung lässt sich später ändern.",
+      "Step4": "Wählen Sie hier die gewünschten Applikations Schnittstellen, die vom System bereitgestellt und aktiviert werden sollen. Diese Einstellung lässt sich später ändern."
     }
   },
   "settings-general": {
@@ -81,11 +87,24 @@
     "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch",
+    "Japanese": "Japanese",
+    "Templates": "Templates",
+    "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",
+    "BackupAndRestore": "Backup and Restore Configuration",
     "BackupConfiguration": "Backup Configuration",
     "RestoreConfiguration": "Restore Configuration",
+    "LogDownloadError": "Could not download logs. Please try again!",
+    "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
+    "RestartDevice": "Restart device",
+    "RestartNow": "Restart now",
+    "RestartDeviceTitle": "Restart device",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
+    "RestartDeviceSuccess": "Device has been restarted successfully!",
+    "RestartDeviceError": "Failed to restart device.",
     "BackupDownloadError": "Could not download backup. Please try again!",
-    "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
+    "Logs": "Logs",
+    "ExportLogs": "Export logs"
   },
   "settings-device-info": {
     "Manufacturer": "",
@@ -109,9 +128,20 @@
     "Connection": "",
     "Running": "",
     "Disconnected": "",
+    "NotConfigured": "NotConfigured",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "ProvisioningFailed",
+    "NoNetwork": "NoNetwork",
+    "Connecting": "Connecting",
+    "Reconnecting": "Reconnecting",
+    "ConnectionError": "Failed to connect",
+    "Disabled": "Disabled",
+    "Unavailable": "Unavailable",
+    "TermsAndConditionsNotAccepted": "Terms and Conditions not Accepted",
     "ServiceState": "",
     "DataPoints": "",
     "SelectAVariable": "",
+    "ControllerType": "",
     "Name": "",
     "Type": "",
     "Address": "",
@@ -127,16 +157,21 @@
     "LoadStatusError": "",
     "UpdateError": "",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
-      "ioshield": "Digital Inputs"
+      "s7": "SIEMENS",
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {
-        "0": "Off",
-        "1": "On",
-        "2": "Blinking"
+        "0": "0 (Off)",
+        "1": "1 (On)",
+        "2": "2 (Blinking)"
       }
-    }
+    },
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes",
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "DuplicatedAddress": "You are not allowed to duplicate addresses",
+    "SelectVariable": "Select Variable"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",
@@ -161,20 +196,37 @@
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",
-    "AddThreshold": "Add Threshold"
+    "AddThreshold": "Add Threshold",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes",
+    "DuplicatedName": "You are not allowed to duplicate names"
   },
   "settings-data-source-point": {
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
-    "DeleteError": ""
+    "DeleteError": "",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!"
   },
   "settings-data-sink": {
     "DataSink": "",
     "Enabled": "",
     "Connection": "",
     "Running": "",
-    "Disconnected": "",
+    "Disconnected": "Disconnected",
+    "NotConfigured": "Configuration Missing",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "Provisioning Failed",
+    "NoNetwork": "No Network",
+    "Connecting": "Connecting",
+    "Reconnecting": "Reconnecting",
+    "Disabled": "Disabled",
+    "ConnectionError": "Failed to Connect",
+    "Unavailable": "Unavailable",
+    "TermsAndConditionsNotAccepted": "Terms and Conditions not Accepted",
     "ServiceState": "",
     "DataPoints": "",
     "AddDataPoint": "",
@@ -216,12 +268,23 @@
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
-      "datahub": "Data Hub"
+      "datahub": "CELOS Xchange"
     },
     "LoadError": "",
     "LoadStatusError": "",
     "UpdateError": "",
-    "OpenMTConnectStream": "Open MTConnect Stream"
+    "OpenMTConnectStream": "Open MTConnect Stream",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes",
+    "Desired": {
+      "Name": "Name",
+      "Enabled": "Enabled",
+      "Disabled": "Disabled"
+    },
+    "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "HasDataMapping": "Datapoint is mapped to a source"
   },
   "settings-data-mapping": {
     "DataMapping": "",
@@ -229,6 +292,7 @@
     "Source": "",
     "Target": "",
     "Value": "",
+    "ValueTooltip": "Value tooltip",
     "Actions": "",
     "Edit": "",
     "Delete": "",
@@ -238,7 +302,11 @@
     "LoadError": "",
     "CreateError": "",
     "UpdateError": "",
-    "DeleteError": ""
+    "DeleteError": "",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-network": {
     "Network": "Network",
@@ -261,11 +329,24 @@
     "Tabs": {
       "x1": "Ethernet X1",
       "x2": "Ethernet X2",
-      "proxy": "Proxy"
-    }
+      "proxy": "Proxy",
+      "time": "Time"
+    },
+    "TimeSettings": "Time Settings",
+    "UseNTPServer": "Use NTP Server",
+    "SetNTPServer": "Set NTP Server",
+    "SetCurrentTime": "Set Current Time",
+    "ChooseTimeZone": "Choose Time Zone"
   },
   "system-information": {
     "SystemInformation": "System Information",
-    "LoadError": ""
+    "LoadError": "Failed to load system information. Try again later"
+  },
+  "prompt": {
+    "warningTitle": "Warning!",
+    "warningText": "You have unsaved changes, do you really want to continue?"
+  },
+  "clock": {
+    "WarningSystemTimeVsBrowserTime": "System time differs from your browser time"
   }
 }

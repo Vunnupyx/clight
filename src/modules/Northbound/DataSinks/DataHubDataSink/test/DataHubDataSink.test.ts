@@ -2,6 +2,7 @@ import { DataPointMapper } from '../../../../DataPointMapper';
 
 const dataHubAdapterMock = {
   isRunning: true,
+  running: true,
   getDesiredProps: jest.fn(),
   init: jest.fn().mockImplementation(() => Promise.resolve(dataHubAdapterMock)),
   start: jest.fn(),
@@ -22,7 +23,9 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
 
 const winstonMock = {
   winston: jest.fn(), // Constructor
-  debug: jest.fn() // static method
+  debug: jest.fn((msg) => {
+    console.log(msg);
+  })
 };
 jest.doMock('winston', () => {
   return winstonMock;
@@ -51,7 +54,6 @@ const configMock: IDataSinkConfig = {
 };
 
 const runTimeConfigMock: IDataHubConfig = {
-  serialNumber: 'UTSerialNumber',
   groupDevice: false,
   signalGroups: {
     group1: ['address/1', 'address/2', 'address/3'],
@@ -83,8 +85,9 @@ const DataPointMapperGetInstanceSpy = jest
 describe('DataHubDataSink', () => {
   let datasinkUUT: DataHubDataSink;
   let dataHubDataSinkOptions: DataHubDataSinkOptions = {
-    config: configMock,
-    runTimeConfig: runTimeConfigMock
+    dataSinkConfig: configMock,
+    runTimeConfig: runTimeConfigMock,
+    termsAndConditionsAccepted: true
   };
 
   describe(`instantiation successfully`, () => {
@@ -249,10 +252,6 @@ describe('DataHubDataSink', () => {
             event: [],
             telemetry: []
           });
-          expect(dataHubAdapterMock.setReportedProps).toBeCalledWith([
-            'group1',
-            'group3'
-          ]);
         });
     });
   });

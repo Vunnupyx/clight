@@ -18,8 +18,7 @@
     "SignIn": "Sign in",
     "SendResetPassword": "Send reset email",
     "ResetEmailSentSuccess": "Reset email has been sent successfully!",
-    "ForCustomers": "For our customers:",
-    "ForCustomersDescription": "Please log in with your current my DMG MORI ID",
+
     "ForgotPasswordForCustomers": "For our customers:",
     "ForgotPasswordForCustomersDescription": "Please use your email to reset your password!",
     "ForgotPassword": "Forgot your password?"
@@ -41,8 +40,9 @@
     "ChangePasswordSuccess": "Password has been changed successfully!"
   },
   "quick-start": {
-    "Language": "Language",
-    "SelectLanguage": "Select Language",
+    "TermsAndConditions": "Terms and Conditions",
+    "Accept": "Accept",
+    "Language": "Select your Language",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
@@ -71,7 +71,18 @@
       "opcua": {
         "name": "OPCUA",
         "description": "OPCUA Description"
+      },
+      "datahub": {
+        "name": "CELOS Xchange",
+        "description": "CELOS Xchange description"
       }
+    },
+    "Descriptions": {
+      "ReadMore": "More information can be found in the documentation",
+      "Step1": "With the help of the templates, you can load a suitable pre-configuration into the device. Later, you still have the option of making changes to the configuration. Please first accept the terms and conditions in order to continue.",
+      "Step2": "Here you can select the appropriate template.",
+      "Step3": "Select or deselect the desired data sources here. Selected data sources are started automatically after successful completion of the setup. This setting can be changed later.",
+      "Step4": "Select the desired application interfaces that are to be provided and activated by the system. This setting can be changed later."
     }
   },
   "settings-general": {
@@ -81,11 +92,24 @@
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
+    "Japanese": "Japanese",
+    "Templates": "Templates",
+    "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",
+    "BackupAndRestore": "Backup and Restore Configuration",
     "BackupConfiguration": "Backup Configuration",
     "RestoreConfiguration": "Restore Configuration",
+    "LogDownloadError": "Could not download logs. Please try again!",
+    "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
+    "RestartDevice": "Restart device",
+    "RestartNow": "Restart now",
+    "RestartDeviceTitle": "Restart device",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
+    "RestartDeviceSuccess": "Device has been restarted successfully!",
+    "RestartDeviceError": "Failed to restart device.",
     "BackupDownloadError": "Could not download backup. Please try again!",
-    "BackupHasBeenUploaded": "Backup has been uploaded successfully!"
+    "Logs": "Logs",
+    "ExportLogs": "Export logs"
   },
   "settings-device-info": {
     "Manufacturer": "Manufacturer",
@@ -109,9 +133,20 @@
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
+    "NotConfigured": "NotConfigured",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "ProvisioningFailed",
+    "NoNetwork": "NoNetwork",
+    "Connecting": "Connecting",
+    "Reconnecting": "Reconnecting",
+    "ConnectionError": "Failed to connect",
+    "Disabled": "Disabled",
+    "Unavailable": "Unavailable",
+    "TermsAndConditionsNotAccepted": "Terms and Conditions not Accepted",
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
+    "ControllerType": "Controller Type",
     "Name": "Name",
     "Type": "Type",
     "Address": "Address",
@@ -127,16 +162,21 @@
     "LoadStatusError": "Failed to load status. Try again later",
     "UpdateError": "Failed to update a data source. Try again later",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
-      "ioshield": "Digital Inputs"
+      "s7": "SIEMENS",
+      "ioshield": "Input Board"
     },
     "Livedata": {
       "ioshield": {
-        "0": "Off",
-        "1": "On",
-        "2": "Blinking"
+        "0": "0 (Off)",
+        "1": "1 (On)",
+        "2": "2 (Blinking)"
       }
-    }
+    },
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes",
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "DuplicatedAddress": "You are not allowed to duplicate addresses",
+    "SelectVariable": "Select Variable"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",
@@ -161,13 +201,20 @@
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",
-    "AddThreshold": "Add Threshold"
+    "AddThreshold": "Add Threshold",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes",
+    "DuplicatedName": "You are not allowed to duplicate names"
   },
   "settings-data-source-point": {
     "LoadError": "Failed to load data points. Try again later",
     "CreateError": "Failed to create a data point. Try again later",
     "UpdateError": "Failed to update a data point. Try again later",
-    "DeleteError": "Failed to delete a data point. Try again later"
+    "DeleteError": "Failed to delete a data point. Try again later",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!"
   },
   "settings-data-sink": {
     "DataSink": "Data Sink",
@@ -175,6 +222,16 @@
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
+    "NotConfigured": "Configuration Missing",
+    "Provisioning": "Provisioning",
+    "ProvisioningFailed": "Provisioning Failed",
+    "NoNetwork": "No Network",
+    "Connecting": "Starting",
+    "Reconnecting": "Reconnecting",
+    "Disabled": "Disabled",
+    "ConnectionError": "Failed to Connect",
+    "Unavailable": "Unavailable",
+    "TermsAndConditionsNotAccepted": "Terms and Conditions not Accepted",
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "AddDataPoint": "Add data point",
@@ -214,7 +271,7 @@
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
-      "datahub": "Data Hub"
+      "datahub": "CELOS Xchange"
     },
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
@@ -226,14 +283,26 @@
     "LoadError": "Failed to load data sinks. Try again later",
     "LoadStatusError": "Failed to load status. Try again later",
     "UpdateError": "Failed to update a data sink. Try again later",
-    "OpenMTConnectStream": "Open MTConnect Stream"
+    "OpenMTConnectStream": "Open MTConnect Stream",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes",
+    "Desired": {
+      "Name": "Name",
+      "Enabled": "Enabled",
+      "Disabled": "Disabled"
+    },
+    "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "HasDataMapping": "Datapoint is mapped to a source"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",
     "Mappings": "Mappings",
     "Source": "Source",
     "Target": "Target",
-    "Value": "Value",
+    "Value": "Value Assignment",
+    "ValueTooltip": "Value tooltip",
     "Actions": "Actions",
     "Edit": "Edit",
     "Delete": "Delete",
@@ -243,7 +312,11 @@
     "LoadError": "Failed to load mappings. Try again later",
     "CreateError": "Failed to create a mapping. Try again later",
     "UpdateError": "Failed to update a mapping. Try again later",
-    "DeleteError": "Failed to delete a mapping. Try again later"
+    "DeleteError": "Failed to delete a mapping. Try again later",
+    "BulkSuccess": "Changes have been applied successfully!",
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "DiscardChanges": "Discard Changes",
+    "ApplyChanges": "Apply Changes"
   },
   "settings-network": {
     "Network": "Network",
@@ -266,11 +339,24 @@
     "Tabs": {
       "x1": "Ethernet X1",
       "x2": "Ethernet X2",
-      "proxy": "Proxy"
-    }
+      "proxy": "Proxy",
+      "time": "Time"
+    },
+    "TimeSettings": "Time Settings",
+    "UseNTPServer": "Use NTP Server",
+    "SetNTPServer": "Set NTP Server",
+    "SetCurrentTime": "Set Current Time",
+    "ChooseTimeZone": "Choose Time Zone"
   },
   "system-information": {
     "SystemInformation": "System Information",
     "LoadError": "Failed to load system information. Try again later"
+  },
+  "prompt": {
+    "warningTitle": "Warning!",
+    "warningText": "You have unsaved changes, do you really want to continue?"
+  },
+  "clock": {
+    "WarningSystemTimeVsBrowserTime": "System time differs from your browser time"
   }
 }

@@ -6,11 +6,12 @@ import { HttpService } from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { SystemInformationSection } from '../models';
 import { errorHandler } from '../shared/utils';
-import {filter, map} from "rxjs/operators";
+import { filter, map } from 'rxjs/operators';
 
 export class SystemInformationState {
   status!: Status;
   sections!: SystemInformationSection[];
+  serverOffset!: number;
 }
 
 @Injectable()
@@ -43,16 +44,16 @@ export class SystemInformationService {
     }));
 
     try {
-      const sections = await this.httpService.get<SystemInformationSection[]>(`/systemInfo`);
+      const sections = await this.httpService.get<SystemInformationSection[]>(
+        `/systemInfo`
+      );
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.sections = sections;
       });
     } catch (err) {
-      this.toastr.error(
-        this.translate.instant('system-information.LoadError')
-      );
+      this.toastr.error(this.translate.instant('system-information.LoadError'));
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Ready
@@ -60,9 +61,48 @@ export class SystemInformationService {
     }
   }
 
+  async getServerTime(): Promise<number> {
+    try {
+      const response = await this.httpService.get<{ timestamp: number }>(
+        `/systemInfo/time`
+      );
+
+      return response.timestamp;
+    } catch {
+      return 0;
+    }
+  }
+
+  async restartDevice(): Promise<boolean> {
+    try {
+      await this.httpService.post(`/systemInfo/restart`, null);
+
+      return true;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  async getServerTimeOffset(force = false): Promise<number> {
+    if (force || this._store.snapshot.serverOffset === undefined) {
+      const time = await this.getServerTime();
+
+      const offset = Math.round(Date.now() / 1000) - time;
+
+      this._store.patchState((state) => {
+        state.serverOffset = offset;
+      });
+
+      return offset;
+    }
+
+    return this._store.snapshot.serverOffset;
+  }
+
   private _emptyState() {
-    return <SystemInformationState> {
-      status: Status.NotInitialized
+    return <SystemInformationState>{
+      status: Status.NotInitialized,
+      serverOffset: 0 // TODO: remove it when backend is ready
     };
   }
 }

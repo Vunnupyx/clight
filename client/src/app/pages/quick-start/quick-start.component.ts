@@ -14,6 +14,8 @@ import {
 import { DataSinkProtocol, DataSourceProtocol } from 'app/models';
 import { ITemplate } from 'app/models/template';
 import { array2map, ObjectMap } from 'app/shared/utils';
+import { distinctUntilChanged, filter, take } from 'rxjs/operators';
+import { TermsAndConditionsService } from 'app/services/terms-and-conditions.service';
 
 @Component({
   selector: 'app-quick-start',
@@ -31,6 +33,8 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   sinks: DataSinkProtocol[] = [];
   checkedSources: { [key: string]: boolean } = {};
   checkedSinks: { [key: string]: boolean } = {};
+
+  shouldOpenTerms = true;
 
   sub = new Subscription();
 
@@ -58,9 +62,17 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     return this.templatesObj[templateId].dataSinks;
   }
 
+  get termsText$() {
+    return this.termsService.termsText.pipe(distinctUntilChanged());
+  }
+
+  get termsAccepted$() {
+    return this.termsService.accepted.pipe(distinctUntilChanged());
+  }
+
   constructor(
     private templateService: TemplateService,
-    private dataSourceService: DataSourceService,
+    private termsService: TermsAndConditionsService,
     private localStorageService: LocalStorageService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
@@ -69,12 +81,6 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.sub.add(
-      this.templateService.templates.subscribe((x) => this.onTemplates(x))
-    );
-
-    this.templateService.getAvailableTemplates();
-
     this.templateForm = this.formBuilder.group({
       templateId: ['', Validators.required]
     });
@@ -86,10 +92,32 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     this.applicationInterfacesForm = this.formBuilder.group({
       interfaces: [[], Validators.required]
     });
+
+    this.sub.add(
+      this.templateService.templates.subscribe((x) => this.onTemplates(x))
+    );
+
+    this.sub.add(
+      this.templateService.currentTemplate
+        .pipe(filter((x) => !!x))
+        .subscribe((templateId) => {
+          this.templateForm.patchValue({ templateId });
+          this.onTemplateChange();
+        })
+    );
+
+    this.templateService.getAvailableTemplates();
+    this.termsService
+      .getTermsAndConditions(this.currentLang)
+      .then((accepted) => (this.shouldOpenTerms = !accepted));
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  onAcceptChange(event) {
+    this.termsService.accept(event.checked);
   }
 
   onTemplateChange() {
@@ -108,6 +136,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   onLanguageChange(value: string) {
     this.translate.use(value);
     this.localStorageService.set('ui-lang', value);
+    this.termsService.getTermsAndConditions(value);
   }
 
   async onSubmit() {

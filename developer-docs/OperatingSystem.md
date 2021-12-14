@@ -53,11 +53,15 @@ rm -rf /etc/MDCLight/config/ssl_private.key
 rm -rf /etc/ssh/ssh_host_*
 rm -rf  rm -rf /etc/MDCLight/logs/*.log
 cat /dev/null > ~/.bash_history && history -c && exit
+nmcli con mod eth0-default ipv4.method auto
+nmcli con up eth0-default
+nmcli con mod eth1-default ipv4.addresses 192.168.214.230/24 ipv4.gateway 0.0.0.0.0 ipv4.dns 0.0.0.0 ipv4.method manual
+nmcli con up eth1-default
 ```
 
 11. And shutdown: `shutdown -h now`
 12. Remove the sd card & insert it into an SD Card reader
-13. `dd if=/dev/rdisk2 of=mdc-light-os-v1.0.5.img bs=8m`
+13. `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.0.img bs=8m`
 
 ## Update containers
 

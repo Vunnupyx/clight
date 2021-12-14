@@ -1,6 +1,5 @@
 ---
 title: Getting Started - Operating System Installation and MDCLight Commissioning
-slug: /
 ---
 
 ## Prepare SD Card

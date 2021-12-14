@@ -14,7 +14,7 @@ export class LocalStorageService {
     this.localStorageService.store(key, stringify(value));
   }
 
-  observe<T>(key: string) {
+  observe<T>(key: string): Observable<T | undefined> {
     return Observable.create((observer: Observer<T | undefined>) => {
       this.localStorageService.observe(key).subscribe((value: string) => {
         observer.next(parse<T>(value));

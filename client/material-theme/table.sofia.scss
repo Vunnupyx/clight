@@ -2,21 +2,22 @@
   width: 100%;
 
   .mat-header-row {
-    height: 80px;
+    height: 50px;
 
     .mat-header-cell {
+      font-size: 14px;
       color: $dark-primary-text;
     }
   }
 
   .mat-row,
   .mat-footer-row {
-    height: 56px;
+    height: 50px;
 
     .mat-cell {
-      color: $dark-focused;
-      font-size: 18px;
-      font-weight: 500;
+      // color: $dark-focused;
+      font-size: 14px;
+      font-weight: 400;
       letter-spacing: 0.56px;
     }
   }

@@ -1,11 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import {SourceDataPoint, DataPoint, DataMapping, VirtualDataPoint} from 'app/models';
+import {
+  SourceDataPoint,
+  DataPoint,
+  DataMapping,
+  VirtualDataPoint
+} from 'app/models';
 import {
   SourceDataPointService,
   DataPointService,
-  DataMappingService, VirtualDataPointService
+  DataMappingService,
+  VirtualDataPointService
 } from 'app/services';
 import { Status } from 'app/shared/state';
 import { array2map, clone, ObjectMap } from 'app/shared/utils';
@@ -31,7 +37,18 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   unsavedRow?: DataMapping;
   unsavedRowIndex: number | undefined;
 
+  filterTargetStr: string = '';
+  filterSourceStr: string = '';
+
   sub = new Subscription();
+
+  get targets() {
+    return (
+      this.dataPoints?.filter((x) =>
+        x.name?.toLowerCase().includes(this.filterTargetStr.toLowerCase())
+      ) || []
+    );
+  }
 
   constructor(
     private sourceDataPointService: SourceDataPointService,
@@ -49,8 +66,32 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     return this.sourceDataPoints || [];
   }
 
+  get sourcesPointsFiltered() {
+    return (
+      this.sourceDataPoints?.filter((x) =>
+        x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+      ) || []
+    );
+  }
+
   get sourcesVirtualPoints() {
     return this.virtualDataPoints || [];
+  }
+
+  get sourcesVirtualPointsFiltered() {
+    return (
+      this.virtualDataPoints?.filter((x) =>
+        x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+      ) || []
+    );
+  }
+
+  get isTouchedTable() {
+    return this.dataMappingService.isTouched;
+  }
+
+  get isLoading() {
+    return this.dataMappingService.status === Status.Loading;
   }
 
   ngOnInit() {
@@ -63,7 +104,9 @@ export class DataMappingComponent implements OnInit, OnDestroy {
       this.dataPointService.dataPoints.subscribe((x) => this.onDataPoints(x))
     );
     this.sub.add(
-      this.virtualDataPointService.dataPoints.subscribe((x) => this.onVirtualDataPoints(x))
+      this.virtualDataPointService.dataPoints.subscribe((x) =>
+        this.onVirtualDataPoints(x)
+      )
     );
     this.sub.add(
       this.dataMappingService.dataMappings.subscribe((x) =>
@@ -161,10 +204,52 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     this.clearUnsavedRow();
   }
 
+  onDiscard() {
+    return this.dataMappingService.revert();
+  }
+
+  onApply() {
+    return this.dataMappingService.apply();
+  }
+
+  isDuplicatingMapping() {
+    if (!this.mappingRows || !this.unsavedRow) {
+      return false;
+    }
+
+    if (
+      this.unsavedRow.source === undefined ||
+      this.unsavedRow.target === undefined
+    ) {
+      return false;
+    }
+
+    // check whether other DPs do not have such name
+    const newFieldValueSource = (this.unsavedRow.source as string)
+      .toLowerCase()
+      .trim();
+
+    const newFieldValueTarget = (this.unsavedRow.target as string)
+      .toLowerCase()
+      .trim();
+
+    const editableId = this.unsavedRow?.id;
+
+    return this.mappingRows.some((dp) => {
+      return (
+        dp.source.toLowerCase().trim() === newFieldValueSource &&
+        dp.target.toLowerCase().trim() === newFieldValueTarget &&
+        dp.id !== editableId
+      );
+    });
+  }
+
   private clearUnsavedRow() {
+    this.mappingRows = this.mappingRows!.filter((_, idx) =>
+      !this.unsavedRow?.id ? idx !== this.unsavedRowIndex : true
+    );
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
-    this.mappingRows = this.mappingRows!.filter((x) => x.source);
   }
 
   onDelete(obj: DataMapping) {
@@ -186,4 +271,6 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
   }
+
+  filterTargets(event) {}
 }

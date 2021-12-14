@@ -3,5 +3,5 @@ Host dockerhost
   User root
   IdentityFile /root/.ssh/nmcli/nmclikey
 
-StrictHostKeyChecking accept-new
+StrictHostKeyChecking no
 

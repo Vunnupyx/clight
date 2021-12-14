@@ -11,20 +11,28 @@ import {
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { array2map, errorHandler, ObjectMap } from 'app/shared/utils';
+import { array2map, clone, errorHandler, ObjectMap } from 'app/shared/utils';
 import * as api from 'app/api/models';
-import { CreateEntityResponse } from 'app/models/responses/create-entity.response';
 import { from, interval, Observable } from 'rxjs';
+import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
+import { BaseChangesService } from './base-changes.service';
+import { DataSourceService } from './data-source.service';
+import { SystemInformationService } from './system-information.service';
+import { filterLiveData } from 'app/shared/utils/filter-livedata';
 
 export class SourceDataPointsState {
   status!: Status;
+  originalDataPoints!: SourceDataPoint[];
   dataPoints!: SourceDataPoint[];
   dataPointsLivedata!: ObjectMap<DataPointLiveData>;
   dataPointsSourceMap!: ObjectMap<DataSourceProtocol>;
 }
 
 @Injectable()
-export class SourceDataPointService {
+export class SourceDataPointService
+  extends BaseChangesService<SourceDataPoint>
+  implements IChangesAppliable
+{
   private _store: Store<SourceDataPointsState>;
 
   get dataPointsLivedata() {
@@ -45,13 +53,76 @@ export class SourceDataPointService {
     );
   }
 
+  get isTouched() {
+    return this._changes.snapshot.touched || this.dataSourceService.touched;
+  }
+
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
+    changesFactory: StoreFactory<IChangesState<string, SourceDataPoint>>,
     private httpService: HttpService,
     private translate: TranslateService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dataSourceService: DataSourceService,
+    private systemInformationService: SystemInformationService
   ) {
+    super(changesFactory);
+
     this._store = storeFactory.startFrom(this._emptyState());
+  }
+
+  async revert(): Promise<boolean> {
+    if (this._changes.snapshot.touched) {
+      this._store.patchState((state) => {
+        state.dataPoints = clone(state.originalDataPoints);
+      });
+    }
+
+    if (this.dataSourceService.touched) {
+      this.dataSourceService.revert();
+    }
+
+    this.resetState();
+
+    return Promise.resolve(true);
+  }
+
+  async apply(datasourceProtocol: DataSourceProtocol): Promise<boolean> {
+    try {
+      this._store.patchState((state) => {
+        state.status = Status.Loading;
+      });
+
+      if (this.dataSourceService.touched) {
+        await this.dataSourceService.apply(datasourceProtocol);
+      }
+
+      if (this._changes.snapshot.touched) {
+        await this.httpService.post(
+          `/datasources/${datasourceProtocol}/dataPoints/bulk`,
+          this.getPayload()
+        );
+
+        this.resetState();
+      }
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+
+      this.toastr.success(
+        this.translate.instant('settings-data-source-point.BulkSuccess')
+      );
+    } catch {
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.BulkError')
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+
+    return true;
   }
 
   async getDataPoints(datasourceProtocol: DataSourceProtocol) {
@@ -67,6 +138,7 @@ export class SourceDataPointService {
 
       this._store.patchState((state) => {
         state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+        state.originalDataPoints = clone(state.dataPoints);
         state.dataPointsSourceMap = array2map(
           state.dataPoints,
           (item) => item.id,
@@ -153,14 +225,26 @@ export class SourceDataPointService {
       const liveData = await this.httpService.get<DataPointLiveData[]>(
         `/livedata/datasource/${protocol}?timeseries=${timeseries}`
       );
+      const offset = await this.systemInformationService.getServerTimeOffset();
       this._store.patchState((state) => {
         state.dataPointsLivedata = array2map(
-          liveData,
+          Object.values(liveData).filter(filterLiveData(offset)),
           (item) => item.dataPointId
         );
       });
     } catch (err) {
       errorHandler(err);
+      const offset = await this.systemInformationService.getServerTimeOffset();
+      this._store.patchState((state) => {
+        state.dataPointsLivedata = {
+          ...array2map(
+            Object.values(state.dataPointsLivedata).filter(
+              filterLiveData(offset)
+            ),
+            (item) => item.dataPointId
+          )
+        };
+      });
     }
   }
 
@@ -168,86 +252,40 @@ export class SourceDataPointService {
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
+    this.create(obj);
     this._store.patchState((state) => {
-      state.status = Status.Creating;
+      state.status = Status.Ready;
+      state.dataPoints = [...state.dataPoints, obj];
+      state.dataPointsSourceMap[obj.id] = datasourceProtocol;
     });
-
-    try {
-      const response = await this.httpService.post<
-        CreateEntityResponse<SourceDataPoint>
-      >(`/datasources/${datasourceProtocol}/datapoints`, obj);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-        obj.id = response.created.id;
-        state.dataPoints = [...state.dataPoints, obj];
-        state.dataPointsSourceMap[obj.id] = datasourceProtocol;
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source-point.CreateError')
-      );
-      errorHandler(err);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    }
   }
 
   async updateDataPoint(
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
-    this._store.patchState((state) => {
-      state.status = Status.Updating;
-    });
+    const oldDp = this._store.snapshot.dataPoints.find(
+      (dp) => dp.id === obj.id
+    );
 
-    try {
-      await this.httpService.patch(
-        `/datasources/${datasourceProtocol}/datapoints/${obj.id}`,
-        obj
+    this.update(obj.id, { ...oldDp, ...obj });
+
+    this._store.patchState((state) => {
+      state.dataPoints = state.dataPoints.map((x) =>
+        x.id != obj.id ? x : obj
       );
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-        state.dataPoints = state.dataPoints.map((x) =>
-          x.id != obj.id ? x : obj
-        );
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source-point.UpdateError')
-      );
-      errorHandler(err);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    }
+    });
   }
 
   async deleteDataPoint(
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
-    this._store.patchState((state) => {
-      state.status = Status.Deleting;
-    });
+    this.delete(obj.id);
 
-    try {
-      await this.httpService.delete(
-        `/datasources/${datasourceProtocol}/datapoints/${obj.id}`
-      );
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-        state.dataPoints = state.dataPoints.filter((x) => x != obj);
-      });
-    } catch (err) {
-      this.toastr.error(
-        this.translate.instant('settings-data-source-point.DeleteError')
-      );
-      errorHandler(err);
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-      });
-    }
+    this._store.patchState((state) => {
+      state.dataPoints = state.dataPoints.filter((x) => x.id != obj.id);
+    });
   }
 
   getProtocol(id: string) {
@@ -269,6 +307,12 @@ export class SourceDataPointService {
         }
         return '[PLC]';
       case DataSourceProtocol.IOShield:
+        const ioDp = this._store.snapshot.dataPoints.find((x) => x.id === id);
+
+        if (ioDp?.address && ioDp.address.startsWith('AI')) {
+          return '[AI]';
+        }
+
         return `[DI]`;
       default:
         return '';
@@ -282,6 +326,8 @@ export class SourceDataPointService {
   private _emptyState() {
     return <SourceDataPointsState>{
       status: Status.NotInitialized,
+      dataPoints: [] as SourceDataPoint[],
+      originalDataPoints: [] as SourceDataPoint[],
       dataPointsSourceMap: {},
       dataPointsLivedata: {}
     };

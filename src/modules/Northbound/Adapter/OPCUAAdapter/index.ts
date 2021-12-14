@@ -3,25 +3,25 @@ import {
   BaseNode,
   OPCUAServer,
   NodeIdLike,
-  UAObject,
   UserManagerOptions,
-  OPCUACertificateManager
+  OPCUACertificateManager,
+  SecurityPolicy,
+  MessageSecurityMode
 } from 'node-opcua';
 import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
 
-import { ConfigManager } from '../../../ConfigManager';
 import {
   IGeneralConfig,
   IOPCUAConfig,
   IUser,
-  IConfig,
-  IDataSinkConfig,
-  IOpcuaDataSinkConfig
+  IDataSinkConfig
 } from '../../../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import path from 'path';
 import { compare } from 'bcrypt';
+import { System } from '../../../System';
+import { hostname } from 'os';
 
 interface IOPCUAAdapterOptions {
   config: IDataSinkConfig;
@@ -99,6 +99,7 @@ export class OPCUAAdapter {
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
       'mdclight/config/tmpnodesets'
     );
+    await fs.rm(this.nodesetDir, { recursive: true, force: true });
     await fs.copy(
       path.join(
         process.env.MDC_LIGHT_FOLDER || process.cwd(),
@@ -123,6 +124,13 @@ export class OPCUAAdapter {
     return fullFiles;
   }
 
+  private async getHostname(): Promise<string> {
+    const macAddress =
+      (await new System().readMacAddress('eth1')) || '000000000000';
+    const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
+    return `DM${formattedMacAddress}`;
+  }
+
   /**
    * Start Adapter
    *
@@ -142,15 +150,17 @@ export class OPCUAAdapter {
     }
     this.server
       .start()
-      .then(() => {
+      .then(() => this.getHostname())
+      .then((hostname) => {
         this._running = true;
         const endpointUrl =
           this.server.endpoints[0].endpointDescriptions()[0].endpointUrl;
         winston.info(
-          `${logPrefix} adapter successfully started. The primary server endpoint url is ${endpointUrl}`
+          `${logPrefix} adapter successfully started. The primary server endpoint url is opc.tcp://${hostname}:${this.opcuaRuntimeConfig.port}`
         );
       })
       .catch((err) => {
+        winston.error('Failed to start opcua adapter');
         winston.error(err.message);
         winston.error(err);
         const errorMsg = `${logPrefix} error due to ${err.message}`;
@@ -175,7 +185,9 @@ export class OPCUAAdapter {
       return this;
     }
 
-    const applicationUri = this.opcuaRuntimeConfig.serverInfo.applicationUri;
+    const hostname = await this.getHostname();
+
+    const applicationUri = `urn:${hostname}`;
     const certificateFolder = path.join(
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
       'mdclight/config/certs'
@@ -205,9 +217,9 @@ export class OPCUAAdapter {
       await pkiM.initialize();
       await pkiM.createSelfSignedCertificate({
         applicationUri,
-        subject: '/CN=MDClightOPCUAServer',
+        subject: { commonName: hostname },
         startDate: new Date(),
-        dns: [],
+        dns: [hostname],
         validity: 365 * 100,
         outputFile: certificateFile
       });
@@ -217,7 +229,8 @@ export class OPCUAAdapter {
     const privateKeyFile = this.serverCertificateManager.privateKey;
 
     this.serverCertificateManager = new OPCUACertificateManager({
-      rootFolder: certificateFolder
+      rootFolder: certificateFolder,
+      automaticallyAcceptUnknownCertificate: true
     });
 
     this.userManager = {
@@ -242,12 +255,29 @@ export class OPCUAAdapter {
 
     // TODO: Inject project logger to OPCUAServer
     this.server = new OPCUAServer({
-      ...{ ...this.opcuaRuntimeConfig, ...{ allowAnonymous: this.auth } },
+      ...{
+        ...this.opcuaRuntimeConfig,
+        ...{ allowAnonymous: this.auth },
+        serverInfo: {
+          applicationUri
+        }
+      },
       userManager: this.userManager,
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,
       certificateFile,
-      nodeset_filename: nodeSets
+      nodeset_filename: nodeSets,
+      securityPolicies: [
+        SecurityPolicy.None,
+        SecurityPolicy.Basic128Rsa15,
+        SecurityPolicy.Basic256,
+        SecurityPolicy.Basic256Sha256
+      ],
+      securityModes: [
+        MessageSecurityMode.None,
+        MessageSecurityMode.Sign,
+        MessageSecurityMode.SignAndEncrypt
+      ]
     });
 
     return this.server
@@ -314,5 +344,25 @@ export class OPCUAAdapter {
         `${logPrefix} error due to adapter not initialized.`
       );
     }
+  }
+
+  public shutdown(): Promise<void> {
+    const logPrefix = `${OPCUAAdapter.name}::shutdown`;
+    const shutdownFunctions = [];
+    winston.debug(`${logPrefix} triggered.`);
+    Object.getOwnPropertyNames(this).forEach((prop) => {
+      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
+      if (this[prop].removeAllListeners)
+        shutdownFunctions.push(this[prop].removeAllListeners());
+      if (this[prop].close) shutdownFunctions.push(this[prop].close());
+      delete this[prop];
+    });
+    return Promise.all(shutdownFunctions)
+      .then(() => {
+        winston.info(`${logPrefix} successfully.`);
+      })
+      .catch((err) => {
+        winston.error(`${logPrefix} error due to ${err.message}.`);
+      });
   }
 }

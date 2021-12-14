@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
 import { SharedModule } from 'app/shared/shared.module';
@@ -7,17 +8,18 @@ import { SharedModule } from 'app/shared/shared.module';
 import { VirtualDataPointComponent } from './virtual-data-point.component';
 import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
-import {NgxEchartsModule} from "ngx-echarts";
+import { VirtualDataPointGuard } from './virtual-data-point.guard';
 
 const routes: Routes = [
   {
     path: 'settings/virtual-data-point',
     component: VirtualDataPointComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [VirtualDataPointGuard]
   }
 ];
 
-const COMPONENTS = [VirtualDataPointComponent, SetThresholdsModalComponent]
+const COMPONENTS = [VirtualDataPointComponent, SetThresholdsModalComponent];
 
 @NgModule({
   declarations: COMPONENTS,
@@ -25,9 +27,10 @@ const COMPONENTS = [VirtualDataPointComponent, SetThresholdsModalComponent]
     SharedModule,
     ConfirmDialogModule,
     RouterModule.forRoot(routes),
-    NgxEchartsModule,
+    NgxEchartsModule
   ],
   exports: [RouterModule, ...COMPONENTS],
   entryComponents: [SetThresholdsModalComponent],
+  providers: [VirtualDataPointGuard]
 })
-export class VirtualDataPointModule { }
+export class VirtualDataPointModule {}

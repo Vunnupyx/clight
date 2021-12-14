@@ -1,13 +1,28 @@
 import { ConfigManager } from '../../../../../ConfigManager';
+import { IDataSinkConfig } from '../../../../../ConfigManager/interfaces';
 import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
 import { hash } from 'bcrypt';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
-import { LifecycleEventStatus } from '../../../../../../common/interfaces';
+import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
+import {
+  DataSinkProtocols,
+  LifecycleEventStatus
+} from '../../../../../../common/interfaces';
 
 let configManager: ConfigManager;
 let dataSinksManager: DataSinksManager;
+
+interface IDataSinkConfigResponse extends IDataSinkConfig {
+  desired?: {
+    services?: {
+      [key: string]: {
+        enabled: boolean;
+      };
+    };
+  };
+}
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -31,6 +46,18 @@ export function setDataSinksManager(manager: DataSinksManager) {
  * @param  {Response} response
  */
 function dataSinksGetHandler(request: Request, response: Response): void {
+  const dataSinks: IDataSinkConfigResponse[] = configManager.config.dataSinks;
+
+  dataSinks.forEach((dataSink) => {
+    if (dataSink.protocol === DataSinkProtocols.DATAHUB) {
+      const sink = dataSinksManager.getDataSinkByProto(
+        DataSinkProtocols.DATAHUB
+      ) as DataHubDataSink;
+
+      dataSink.desired = sink?.getDesiredPropertiesServices();
+    }
+  });
+
   response.status(200).json({
     dataSinks: configManager.config.dataSinks
   });
@@ -41,9 +68,17 @@ function dataSinksGetHandler(request: Request, response: Response): void {
  * @param  {Response} response
  */
 function dataSinkGetHandler(request, response): void {
-  const dataSink = configManager.config.dataSinks.find(
+  const dataSink: IDataSinkConfigResponse = configManager.config.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
+
+  if (dataSink.protocol === DataSinkProtocols.DATAHUB) {
+    const sink = dataSinksManager.getDataSinkByProto(
+      DataSinkProtocols.DATAHUB
+    ) as DataHubDataSink;
+    dataSink.desired = sink?.getDesiredPropertiesServices();
+  }
+
   response.status(dataSink ? 200 : 404).json(dataSink);
 }
 
@@ -119,7 +154,44 @@ async function dataSinkPatchHandler(
     dataSink,
     (item) => item.protocol
   );
+  await configManager.configChangeCompleted();
   response.status(200).json(dataSink);
+}
+
+/**
+ * @async
+ * Bulk dataPoint changes
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function dataSinksPostDatapointBulkHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  try {
+    const proto = request.params?.datasinkProtocol;
+    if (!proto || !['mtconnect', 'opcua', 'datahub'].includes(proto)) {
+      response.status(404).json({ error: 'Protocol not valid.' });
+      winston.warn(
+        'dataSinksPostDatapointBulkHandler error due to no valid protocol!'
+      );
+      return;
+    }
+
+    await configManager.bulkChangeDataSinkDataPoints(
+      proto as DataSinkProtocols,
+      request.body || {}
+    );
+    await configManager.configChangeCompleted();
+    response.status(200).send();
+  } catch (err) {
+    winston.warn(
+      `dataSinksPostDatapointBulkHandler tried to change bulk dataSink.dataPoints`
+    );
+    response
+      .status(400)
+      .json({ error: 'Cannot change datapoints. Try again!' });
+  }
 }
 
 /**
@@ -157,7 +229,10 @@ function dataPointGetHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointsPostHandler(request: Request, response: Response) {
+async function dataPointsPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   // TODO: Input validation, maybe id is already taken
   const config = configManager.config;
   const changedSinkObject = config.dataSinks.find(
@@ -178,18 +253,22 @@ function dataPointsPostHandler(request: Request, response: Response) {
   const newData = { ...request.body, ...{ id: uuidv4() } };
   changedSinkObject.dataPoints.push(newData);
   configManager.config = config;
-
+  await configManager.configChangeCompleted();
   response.status(200).json({
     created: newData,
     href: `${request.originalUrl}/datapoints/${newData.id}`
   });
 }
+
 /**
  * Change datapoint resource for datasink with selected id
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointPatchHandler(request: Request, response: Response) {
+async function dataPointPatchHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   //TODO: INPUT VALIDATION
   const config = configManager.config;
   const sink = config?.dataSinks.find(
@@ -219,7 +298,7 @@ function dataPointPatchHandler(request: Request, response: Response) {
   const newData = { ...dataPoint, ...request.body };
   sink.dataPoints.push(newData);
   configManager.config = config;
-
+  await configManager.configChangeCompleted();
   response.status(200).json({
     changed: newData,
     href: `${request.originalUrl}/${newData.id}`
@@ -231,7 +310,10 @@ function dataPointPatchHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointDeleteHandler(request: Request, response: Response) {
+async function dataPointDeleteHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   // TODO: INPUT VALIDATION
   const config = configManager?.config;
   const sink = config?.dataSinks.find(
@@ -243,6 +325,7 @@ function dataPointDeleteHandler(request: Request, response: Response) {
   const point = sink.dataPoints[index];
   sink.dataPoints.splice(index, 1);
   configManager.config = config;
+  await configManager.configChangeCompleted();
   response.status(200).json({
     deleted: point
   });
@@ -255,7 +338,7 @@ function dataPointDeleteHandler(request: Request, response: Response) {
  */
 function dataSinkGetStatusHandler(request: Request, response: Response) {
   const proto = request.params?.datasinkProtocol;
-  if (!proto || !['mtconnect', 'opcua'].includes(proto)) {
+  if (!proto || !['mtconnect', 'opcua', 'datahub'].includes(proto)) {
     response.status(404).json({ error: 'Protocol not valid.' });
     winston.warn('dataSinkGetStatusHandler error due to no valid protocol!');
     return;
@@ -266,12 +349,14 @@ function dataSinkGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  const boolStatus = dataSinksManager
-    .getDataSinkByProto(request.params.datasinkProtocol)
-    .currentStatus();
-  let status: LifecycleEventStatus = LifecycleEventStatus.Connected;
-  if (!boolStatus) {
-    status = LifecycleEventStatus.Disconnected;
+  let status;
+
+  try {
+    status = dataSinksManager
+      .getDataSinkByProto(request.params.datasinkProtocol)
+      .getCurrentStatus();
+  } catch (e) {
+    status = LifecycleEventStatus.Unavailable;
   }
   response.status(200).json({ status });
 }
@@ -280,6 +365,7 @@ export const dataSinksHandlers = {
   dataSinksGet: dataSinksGetHandler,
   dataSinkGet: dataSinkGetHandler,
   dataSinkPatch: dataSinkPatchHandler,
+  dataSinksPostDatapointBulk: dataSinksPostDatapointBulkHandler,
   dataSinksDataPointsGet: dataPointsGetHandler,
   dataSinksDataPointsPost: dataPointsPostHandler,
   dataSinksDataPointPatch: dataPointPatchHandler,

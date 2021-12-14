@@ -25,11 +25,14 @@ function deviceInfosGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function deviceInfosPatchHandler(request: Request, response: Response): void {
+async function deviceInfosPatchHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const newData = { ...configManager.config.general, ...request.body };
 
   configManager.saveConfig({ general: request.body });
-
+  await configManager.configChangeCompleted();
   response.status(200).json(newData);
 }
 

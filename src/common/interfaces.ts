@@ -25,6 +25,7 @@ export enum DataSinkProtocols {
 
 export enum MTConnectDataItemTypes {
   EVENT = 'event',
+  SAMPLE = 'sample',
   CONDITION = 'condition'
 }
 
@@ -50,11 +51,18 @@ export enum DataPointLifecycleEventTypes {
 }
 
 export enum LifecycleEventStatus {
+  Disabled = 'disabled',
+  NotConfigured = 'notconfigured',
+  Provisioning = 'provisioning',
+  ProvisioningFailed = 'provisioningfailed',
+  NoNetwork = 'nonetwork',
   Connecting = 'connecting',
   Connected = 'connected',
   Disconnected = 'disconnected',
   Reconnecting = 'reconnecting',
-  ConnectionError = 'failed to connect'
+  ConnectionError = 'failedtoconnect',
+  Unavailable = 'unavailable',
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
 }
 
 export interface IBaseAppEvent {

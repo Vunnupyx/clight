@@ -3,12 +3,12 @@ import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
 
 export interface IAuthConfig {
-  secret: any;
+  secret: string;
+  public: string;
 }
 
 export interface IAuthRuntimeConfig {
   expiresIn: number;
-  defaultPassword: string;
 }
 
 export interface IRuntimeConfig {
@@ -53,6 +53,19 @@ export interface IOPCUAConfig extends OPCUAServerOptions {
   nodesetDir: string;
 }
 
+export type IS7DataSourceConnection = {
+  ipAddr: string;
+  port: number;
+  rack: number;
+  slot: number;
+};
+export type IS7DataSourceTypes =
+  | 's7-300/400'
+  | 's7-1200/1500'
+  | 'nck'
+  | 'custom';
+export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
+
 export interface IDataPointConfig {
   id: string;
   name: string;
@@ -65,16 +78,12 @@ export interface IDataSourceConfig {
   name: string;
   dataPoints: IDataPointConfig[];
   protocol: string;
-  connection?: {
-    ipAddr: string;
-    port: number;
-    rack: number;
-    slot: number;
-  };
+  connection?: IS7DataSourceConnection;
   enabled: boolean;
+  type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
 }
 
-type IMTConnectDataPointTypes = 'event' | 'condition';
+type IMTConnectDataPointTypes = 'event' | 'condition' | 'sample';
 
 // type MapItem = {
 //   [key: string]: "string";
@@ -111,7 +120,11 @@ export interface IDataSinkConfig {
   datahub?: IDataHubSettings;
 }
 
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
+export interface IOpcuaAuth {
+  type: 'none' | 'userpassword';
+  userName: string;
+  password: string;
+}
 
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
@@ -119,24 +132,8 @@ export interface IOpcuaAuth {
   password: string;
 }
 
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
-}
-
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
-}
-
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
-}
 export interface IDataHubConfig {
   groupDevice: boolean;
-  serialNumber: string;
   signalGroups: ISignalGroups;
   dataPointTypesData: {
     probe: IDataHubDataPointTypesData;
@@ -161,16 +158,10 @@ export interface IProxyConfig {
   enabled: boolean;
 }
 
-export interface IDataHubDataSinkConfig extends IDataSinkConfig {}
-
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
   userName: string;
   password: string;
-}
-
-export interface IOpcuaDataSinkConfig extends IDataSinkConfig {
-  auth?: IOpcuaAuth;
 }
 
 interface IDataHubDataPointTypesData {
@@ -186,6 +177,13 @@ export interface IProxyConfig {
   username?: string;
   password?: string;
   enabled: boolean;
+}
+
+export interface ITimeConfig {
+  useNtp?: boolean;
+  ntpHost?: string;
+  currentTime?: string;
+  timezone?: string;
 }
 
 export interface IDataPointMapping {
@@ -214,6 +212,8 @@ export type NetworkConfig = {
   [key in 'x1' | 'x2']: NetworkConfigItem;
 } & {
   proxy?: IProxyConfig;
+} & {
+  time?: ITimeConfig;
 };
 
 export interface IDefaultTemplate {
@@ -222,6 +222,8 @@ export interface IDefaultTemplate {
   description: string;
   dataSources: IDataSourceConfig[];
   dataSinks: IDataSinkConfig[];
+  mapping: IDataPointMapping[];
+  virtualDataPoints: IVirtualDataPointConfig[];
 }
 
 export interface IDefaultTemplates {
@@ -229,6 +231,8 @@ export interface IDefaultTemplates {
 }
 
 export interface QuickStartConfig {
+  currentTemplate?: string;
+  currentTemplateName?: string;
   completed: boolean;
 }
 
@@ -256,16 +260,19 @@ export interface ISystemInfo {
   items: ISystemInfoItem[];
 }
 
+export interface TermsAndConditionsConfig {
+  accepted: boolean;
+}
+
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: Array<
-    IDataSinkConfig | IDataHubDataSinkConfig | IOpcuaDataSinkConfig
-  >;
+  dataSinks: Array<IDataSinkConfig>;
   virtualDataPoints: IVirtualDataPointConfig[];
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
   networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
+  termsAndConditions: TermsAndConditionsConfig;
 }
 
 export interface IConfigManagerParams {

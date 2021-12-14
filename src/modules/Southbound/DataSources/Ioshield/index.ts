@@ -1,4 +1,3 @@
-import NodeS7 from 'nodes7';
 import winston from 'winston';
 import { DataSource } from '../DataSource';
 import {
@@ -13,6 +12,8 @@ import { Iot2050MraaDI10 } from '../../../Iot2050MraaDI10/Iot2050mraa';
  * Implementation of io shield data source
  */
 export class IoshieldDataSource extends DataSource {
+  protected name = IoshieldDataSource.name;
+
   mraaClient: Iot2050MraaDI10;
 
   /**
@@ -20,21 +21,36 @@ export class IoshieldDataSource extends DataSource {
    * @returns void
    */
   public init(): void {
-    const { name, protocol } = this.config;
-    this.submitLifecycleEvent({
-      id: protocol,
-      level: this.level,
-      type: DataSourceLifecycleEventTypes.Connected,
-      status: LifecycleEventStatus.Connected,
-      dataSource: { protocol, name }
-    });
+    const logPrefix = `${this.name}::init`;
+    winston.info(`${logPrefix} initializing.`);
+
+    const { name, protocol, enabled } = this.config;
+
+    if (!enabled) {
+      winston.info(
+        `${logPrefix} io shield data source is disabled. Skipping initialization.`
+      );
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
+      return;
+    }
+
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of ioshield data source due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
+      return;
+    }
 
     this.mraaClient = new Iot2050MraaDI10();
     this.mraaClient.init();
 
     this.validateDataPointConfiguration();
-    this.setupDataPoints();
-    this.currentStatus = LifecycleEventStatus.Connected;
+    this.setupDataPoints(500);
+    this.updateCurrentStatus(LifecycleEventStatus.Connected);
+    this.setupLogCycle();
   }
 
   /**
@@ -45,18 +61,40 @@ export class IoshieldDataSource extends DataSource {
   protected async dataSourceCycle(
     currentIntervals: Array<number>
   ): Promise<void> {
+    this.readCycleCount = this.readCycleCount + 1;
+
     const currentCycleDataPoints: Array<IDataPointConfig> =
       this.config.dataPoints.filter((dp: IDataPointConfig) => {
-        const rf = Math.max(dp.readFrequency, 1000);
+        const rf = Math.max(dp.readFrequency || 500, 500);
         return currentIntervals.includes(rf);
       });
 
     try {
-      const results = await this.mraaClient.getValues();
+      const digitalInputValues = await this.mraaClient.getDigitalValues();
+      const analogInputValues = await this.mraaClient.getAnalogValues();
+
+      const formattedAnalogInputValues: {
+        [label: string]: number;
+      } = {};
+      Object.keys(analogInputValues).forEach((key) => {
+        switch (this.config.type) {
+          case 'ai-150+5di':
+            formattedAnalogInputValues[key] = analogInputValues[key] * 1.5; // Converting to 150A output
+            break;
+          case 'ai-100+5di':
+          case '10di':
+          default:
+            formattedAnalogInputValues[key] = analogInputValues[key];
+            break;
+        }
+      });
 
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
-        const value = results[dp.address];
+        const value =
+          digitalInputValues[dp.address] ||
+          formattedAnalogInputValues[dp.address] ||
+          0;
 
         if (typeof value === 'undefined') continue;
 
@@ -68,10 +106,13 @@ export class IoshieldDataSource extends DataSource {
 
         measurements.push(measurement);
       }
-
-      if (measurements.length > 0) this.onDataPointMeasurement(measurements);
+      if (measurements.length > 0) {
+        this.onDataPointMeasurement(measurements);
+      }
     } catch (e) {
-      // TODO: Markus welcher status ist hier? Die Messungen sind fehlgeschlagen? Disconnected? Reconnection?
+      // TODO: Define status here. Disconnected?
+      winston.error('Failed to read ioshield data');
+      winston.error(JSON.stringify(e));
       winston.error(e);
     }
   }
@@ -81,7 +122,10 @@ export class IoshieldDataSource extends DataSource {
    * @returns Promise<void>
    */
   public async disconnect(): Promise<void> {
-    this.currentStatus = LifecycleEventStatus.Disconnected;
+    const logPrefix = `${this.name}::disconnect`;
+    winston.debug(`${logPrefix} triggered.`);
+
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
   /**
@@ -89,7 +133,7 @@ export class IoshieldDataSource extends DataSource {
    */
   private validateDataPointConfiguration() {
     this.config.dataPoints.forEach((dp) => {
-      if (!/\bDI[0-9]\b/.test(dp.address))
+      if (!/\b(DI|AI)[0-9]\b/.test(dp.address))
         throw new Error(`Invalid data point address: ${dp.address}`);
     });
   }

@@ -1,5 +1,5 @@
 .sidenav-container {
-  height: 100%;
+  height: calc(100% - 130px);
 }
 
 .sidenav {
@@ -44,7 +44,7 @@
   height: 130px;
   .white-section {
     position: relative;
-    align-self: end;
+    margin-top: auto;
     height: 60px;
     padding: 6px 100px 0px 100px;
     .white-section-tab {

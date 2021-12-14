@@ -49,11 +49,29 @@ export default {
     {
       name: 'livedata',
       description: 'Everything about the livedata.'
+    },
+    {
+      name: 'health',
+      description: 'Healthcheck endpoint'
     }
   ],
   produces: ['application/json'],
   schemes: ['http', 'https'],
   paths: {
+    '/healthcheck': {
+      get: {
+        security: [],
+        tags: ['health'],
+        operationId: 'healthCheckGet',
+        description: '',
+        parameters: [],
+        responses: {
+          '204': {
+            description: 'OK'
+          }
+        }
+      }
+    },
     '/auth/login': {
       post: {
         security: [],
@@ -181,6 +199,38 @@ export default {
             schema: {
               $ref: '#/definitions/dataSourceType'
             }
+          }
+        }
+      }
+    },
+    '/datasources/{datasourceProtocol}/dataPoints/bulk': {
+      parameters: [
+        {
+          name: 'datasourceProtocol',
+          in: 'path',
+          description: 'id of the datasource',
+          required: true,
+          type: 'string'
+        }
+      ],
+      post: {
+        tags: ['datasource'],
+        summary: 'change bulk datasource datapoints',
+        description: '',
+        operationId: 'dataSourcesPostDatapointBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed datasource'
           }
         }
       }
@@ -456,6 +506,38 @@ export default {
         }
       }
     },
+    '/datasinks/{datasinkProtocol}/dataPoints/bulk': {
+      parameters: [
+        {
+          name: 'datasinkProtocol',
+          in: 'path',
+          description: 'id of the datasink',
+          required: true,
+          type: 'string'
+        }
+      ],
+      post: {
+        tags: ['datasinks'],
+        summary: 'change bulk datasink datapoints',
+        description: '',
+        operationId: 'dataSinksPostDatapointBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed datasink'
+          }
+        }
+      }
+    },
     '/datasinks/{datasinkProtocol}/status': {
       parameters: [
         {
@@ -687,6 +769,29 @@ export default {
         }
       }
     },
+    '/vdps/bulk': {
+      post: {
+        tags: ['virtual datapoints'],
+        summary: 'change bulk vdps',
+        description: '',
+        operationId: 'vdpsPostBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed vdps'
+          }
+        }
+      }
+    },
     '/vdps/{id}': {
       parameters: [
         {
@@ -810,6 +915,22 @@ export default {
         }
       }
     },
+    '/logs': {
+      get: {
+        tags: ['/logs'],
+        operationId: 'logsGet',
+        produce: ['application/x-binary'],
+        responses: {
+          '200': {
+            description: 'Log files as ZIP.',
+            schema: {
+              type: 'file',
+              format: 'binary'
+            }
+          }
+        }
+      }
+    },
     '/mappings': {
       get: {
         tags: ['mappings'],
@@ -846,6 +967,29 @@ export default {
                 { $ref: '#/definitions/uuid' }
               ]
             }
+          }
+        }
+      }
+    },
+    '/mappings/bulk': {
+      post: {
+        tags: ['mappings'],
+        summary: 'change bulk mappings',
+        description: '',
+        operationId: 'mapPostBulk',
+        parameters: [
+          {
+            name: 'changeObject',
+            in: 'body',
+            required: true,
+            schema: {
+              $ref: '#/definitions/changeBulk'
+            }
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Successfully changed mappings'
           }
         }
       }
@@ -1148,6 +1292,84 @@ export default {
                 allOf: [{ $ref: '#/definitions/systemInfoItem' }]
               }
             }
+          }
+        }
+      }
+    },
+    '/systemInfo/time': {
+      get: {
+        tags: ['systemInfo'],
+        description: 'Get system time',
+        operationId: 'systemTimeGet',
+        responses: {
+          '200': {
+            description: 'Returns all information about the system',
+            schema: {
+              $ref: '#/definitions/timeResponse'
+            }
+          }
+        }
+      }
+    },
+    '/systemInfo/restart': {
+      post: {
+        tags: ['systemInfo'],
+        description: 'Restart device',
+        operationId: 'restartPost',
+        responses: {
+          '204': {
+            description: 'OK'
+          }
+        }
+      }
+    },
+    '/terms-and-conditions': {
+      get: {
+        parameters: [
+          {
+            in: 'query',
+            name: 'lang',
+            description: 'Language',
+            schema: {
+              type: 'string'
+            }
+          }
+        ],
+        tags: ['terms-and-conditions'],
+        description: 'Get terms-and-conditions by lang',
+        operationId: 'termsAndConditionsGet',
+        responses: {
+          '200': {
+            description: 'Returns all information about the templates',
+            schema: {
+              example: {
+                text: 'Terms and Conditions...'
+              }
+            }
+          }
+        }
+      }
+    },
+    '/terms-and-conditions/accept': {
+      post: {
+        parameters: [
+          {
+            in: 'body',
+            name: 'accepted',
+            description: 'Accepted flag',
+            schema: {
+              example: {
+                accepted: true
+              }
+            }
+          }
+        ],
+        tags: ['terms-and-conditions'],
+        description: 'Accept terms-and-conditions',
+        operationId: 'termsAndConditionsPost',
+        responses: {
+          '200': {
+            description: 'Returns all information about the templates'
           }
         }
       }
@@ -1923,6 +2145,48 @@ export default {
               }
             ]
           }
+        }
+      }
+    },
+    changeBulk: {
+      type: 'object',
+      properties: {
+        created: {
+          type: 'object'
+        },
+        updated: {
+          type: 'object'
+        },
+        deleted: {
+          type: 'array',
+          items: {
+            allOf: [
+              {
+                type: 'string'
+              }
+            ]
+          }
+        }
+      },
+      example: {
+        created: {
+          entityId: {
+            entityProp: 'entityValue'
+          }
+        },
+        updated: {
+          entityId: {
+            entityProp: 'entityValue'
+          }
+        },
+        deleted: ['entityId']
+      }
+    },
+    timeResponse: {
+      type: 'object',
+      properties: {
+        timestamp: {
+          type: 'number'
         }
       }
     }

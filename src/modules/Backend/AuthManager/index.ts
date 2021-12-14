@@ -36,9 +36,7 @@ export class AuthManager {
    */
   async login(username: string, password: string): Promise<LoginDto> {
     const logPrefix = `${AuthManager.className}::login`;
-    const regex = /[^A-Za-z0-9]/g;
-    const serializedUsername =
-      username.substring(0, 2) + username.substring(2).replace(regex, '');
+    const serializedUsername = username.trim();
 
     winston.debug(`${logPrefix} User ${username} attempting to login`);
 
@@ -46,7 +44,7 @@ export class AuthManager {
       (user) => user.userName === serializedUsername
     );
 
-    if (!loggedUser && !username.startsWith('DM')) {
+    if (!loggedUser && !username.startsWith('User')) {
       winston.warn(`${logPrefix} User ${username} could not be found!`);
       throw new Error('User with these credentials could not be found!');
     }
@@ -55,15 +53,7 @@ export class AuthManager {
       .split(':')
       .join('');
 
-    if (macAddress !== serializedUsername.substring(2)) {
-      winston.warn(
-        `${logPrefix} Mac address ${macAddress} is not matching the username ${username}!`
-      );
-      throw new Error('User with these credentials could not be found!');
-    }
-
-    const defaultPassword =
-      this.configManager.runtimeConfig.auth.defaultPassword;
+    const defaultPassword = macAddress;
 
     if (!loggedUser) {
       if (defaultPassword === password) {
@@ -86,9 +76,14 @@ export class AuthManager {
       userName: serializedUsername
     } as UserTokenPayload;
 
-    const accessToken = jwt.sign(userTokenPayload, authConfig.secret, {
-      expiresIn: this.configManager.runtimeConfig.auth.expiresIn
-    });
+    const accessToken = jwt.sign(
+      userTokenPayload,
+      { key: authConfig.secret, passphrase: '' },
+      {
+        expiresIn: this.configManager.runtimeConfig.auth.expiresIn,
+        algorithm: 'RS256'
+      }
+    );
 
     const passwordChangeRequired = loggedUser.passwordChangeRequired;
 
@@ -104,6 +99,8 @@ export class AuthManager {
   }: {
     withPasswordChangeDetection: boolean;
   }) {
+    const logPrefix = `${AuthManager.className}::verifyJWTAuth`;
+
     return (request: Request, response: Response, next: NextFunction) => {
       const header = request.headers['authorization'];
 
@@ -117,10 +114,9 @@ export class AuthManager {
       try {
         const token = header.substring('Bearer '.length);
 
-        const user = jwt.verify(
-          token,
-          this.configManager.authConfig.secret
-        ) as UserTokenPayload;
+        const user = jwt.verify(token, this.configManager.authConfig.public, {
+          algorithms: ['RS256']
+        }) as UserTokenPayload;
 
         const loggedUser = this.configManager.authUsers.find(
           (auth) => auth.userName === user.userName
@@ -137,6 +133,9 @@ export class AuthManager {
 
         next();
       } catch (err) {
+        winston.error(
+          `${logPrefix} jwt vaidation failed. ${JSON.stringify(err)}`
+        );
         response.status(401).json({ message: 'Unauthorized!' });
       }
     };

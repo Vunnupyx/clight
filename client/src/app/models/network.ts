@@ -1,7 +1,8 @@
 export enum NetworkType {
   ETHERNET_X1 = 'x1',
   ETHERNET_X2 = 'x2',
-  PROXY = 'proxy'
+  PROXY = 'proxy',
+  TIME = 'time'
 }
 
 export enum ProxyType {
@@ -22,4 +23,10 @@ export class NetworkConfig {
   password?: string;
   configurationState?: boolean;
   serviceState?: boolean;
+
+  // TIME:
+  useNtp?: boolean;
+  ntpHost?: string;
+  currentTime?: string;
+  timezone?: string;
 }

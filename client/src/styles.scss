@@ -9,6 +9,18 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+.ngx-mat-timepicker
+  form
+  .ngx-mat-timepicker-table
+  .ngx-mat-timepicker-tbody
+  tr
+  td
+  .mat-form-field {
+  width: 70px !important;
+  max-width: 70px !important;
+}
+
+@import 'assets/fonts/fonts.scss';
 @import 'styles/index';
 
 @import '~ngx-toastr/toastr';

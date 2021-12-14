@@ -18,11 +18,14 @@ import {
 } from '../../../common/interfaces';
 import Timeout = NodeJS.Timeout;
 import { SynchronousIntervalScheduler } from '../../SyncScheduler';
+import winston from 'winston';
 
 /**
  * Implements data source
  */
 export abstract class DataSource extends EventEmitter {
+  protected name = DataSource.name;
+
   protected config: IDataSourceConfig;
   protected level = EventLevels.DataSource;
   protected reconnectTimeoutId: Timeout = null;
@@ -31,8 +34,12 @@ export abstract class DataSource extends EventEmitter {
   public timestamp: number;
   public protocol: string;
   protected scheduler: SynchronousIntervalScheduler;
-  protected schedulerListenerId: number;
-  protected currentStatus: LifecycleEventStatus;
+  protected readSchedulerListenerId: number;
+  protected logSchedulerListenerId: number;
+  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
+  protected termsAndConditionsAccepted = false;
+  protected processedDataPointCount = 0;
+  protected readCycleCount = 0;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -43,6 +50,23 @@ export abstract class DataSource extends EventEmitter {
     this.config = params.config;
     this.scheduler = SynchronousIntervalScheduler.getInstance();
     this.protocol = params.config.protocol;
+    this.termsAndConditionsAccepted = params.termsAndConditionsAccepted;
+  }
+
+  /**
+   * Updates the current status of the data source and emit it to listeners.
+   * @param newState
+   * @returns
+   */
+  protected updateCurrentStatus(newState: LifecycleEventStatus) {
+    if (newState === this.currentStatus) return;
+
+    const logPrefix = `${this.name}::updateCurrentStatus`;
+    winston.info(
+      `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
+    );
+    this.currentStatus = newState;
+    this.emit(DataSourceEventTypes.Lifecycle, newState);
   }
 
   /**
@@ -59,27 +83,64 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Setup all datapoints by creating a listener for each configured interval
    */
-  protected setupDataPoints(): void {
-    if (this.schedulerListenerId) return;
+  protected setupDataPoints(defaultFrequency: number = 1000): void {
+    if (this.readSchedulerListenerId) return;
+
+    const logPrefix = `${this.name}::setupDataPoints`;
+    winston.debug(`${logPrefix} setup data points`);
     const datapointIntervals: Array<number> = this.config.dataPoints.map(
       (dataPointConfig) => {
-        // Limit read frequency to 1/s
-        return Math.max(dataPointConfig.readFrequency, 1000);
+        // Limit read frequency to 2/s
+        return Math.max(dataPointConfig.readFrequency || defaultFrequency, 500);
       }
     );
     const intervals = Array.from(new Set(datapointIntervals));
-    this.schedulerListenerId = this.scheduler.addListener(
+
+    this.readSchedulerListenerId = this.scheduler.addListener(
       intervals,
       this.dataSourceCycle.bind(this)
     );
   }
 
   /**
+   * Setup log cycle for summary logging
+   */
+  protected setupLogCycle(defaultFrequency: number = 60 * 1000): void {
+    if (this.logSchedulerListenerId) return;
+
+    const logPrefix = `${this.name}::setupLogCycle`;
+    winston.debug(`${logPrefix} setup log cycle`);
+
+    this.logSchedulerListenerId = this.scheduler.addListener(
+      [defaultFrequency],
+      this.logSummary.bind(this)
+    );
+  }
+
+  /**
+   * Logs data point summary
+   */
+  protected logSummary(): void {
+    const logPrefix = `${this.name}::logSummary`;
+
+    winston.info(
+      `${logPrefix} processed ${this.processedDataPointCount} data points in ${this.readCycleCount} read cycles. Current state: ${this.currentStatus}`
+    );
+
+    this.processedDataPointCount = 0;
+    this.readCycleCount = 0;
+  }
+
+  /**
    * Shuts down the data source
    */
-  public shutdown() {
-    this.scheduler.removeListener(this.schedulerListenerId);
-    this.disconnect();
+  public async shutdown() {
+    const logPrefix = `${this.name}::shutdown`;
+    winston.info(`${logPrefix} shutdown triggered`);
+
+    this.scheduler.removeListener(this.readSchedulerListenerId);
+    this.scheduler.removeListener(this.logSchedulerListenerId);
+    await this.disconnect();
   }
 
   /**
@@ -92,24 +153,31 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Should disconnect the data source and clean up all connection resources
    */
-  public abstract disconnect();
+  public abstract disconnect(): Promise<void>;
 
   /**
    * Maps process data from each data point to the data source
    * @param measurement A single data point read result
    */
   protected onDataPointMeasurement = (measurements: IMeasurement[]): void => {
+    const logPrefix = `${this.name}::onDataPointMeasurement`;
+
     const { name, protocol } = this.config;
 
-    this.submitMeasurement(
-      measurements.map((measurement) => ({
-        dataSource: {
-          name,
-          protocol
-        },
-        measurement
-      }))
-    );
+    try {
+      this.submitMeasurement(
+        measurements.map((measurement) => ({
+          dataSource: {
+            name,
+            protocol
+          },
+          measurement
+        }))
+      );
+
+      this.processedDataPointCount =
+        this.processedDataPointCount + measurements.length;
+    } catch {}
   };
 
   /**
@@ -141,16 +209,6 @@ export abstract class DataSource extends EventEmitter {
   }
 
   /**
-   * Emits live cycle events as a native {@link Event}
-   * @param lifecycleEvent
-   */
-  protected submitLifecycleEvent(
-    lifecycleEvent: IDataSourceLifecycleEvent
-  ): void {
-    this.emit(DataSourceEventTypes.Lifecycle, lifecycleEvent);
-  }
-
-  /**
    * Emits data poitn live cycle events as a native {@link Event}
    * @param lifecycleEvent
    */
@@ -160,7 +218,11 @@ export abstract class DataSource extends EventEmitter {
     this.emit(DataPointEventTypes.Lifecycle, dataPointLifecycle);
   }
 
-  public getCurrentStatus() {
+  /**
+   * Returns the current status of the data source
+   * @returns
+   */
+  public getCurrentStatus(): LifecycleEventStatus {
     return this.currentStatus;
   }
 }

@@ -93,41 +93,7 @@
       </div>
 
       <div *ngSwitchCase="Protocol.DH">
-        <div class="row" *ngIf="false">
-          <div class="col-12">
-            <div class="row mt-20 mb-25">
-              <div class="col-6 col-lg-5">
-                {{ 'settings-data-sink.UserDataState' | translate }}
-              </div>
-              <mat-slide-toggle
-                class="col-6 col-lg-4"
-                [checked]="dataSink?.enabled"
-                [disabled]="true"
-              ></mat-slide-toggle>
-            </div>
-          </div>
-        </div>
-
-        <div class="row" *ngIf="false">
-          <div class="col-12">
-            <div class="row">
-              <div class="col-6 col-lg-5 mt-20">
-                {{ 'settings-data-sink.AlarmState' | translate }}
-              </div>
-              <mat-slide-toggle
-                class="col-6 col-lg-4 mt-20"
-                [checked]="dataSink?.enabled"
-                [disabled]="true"
-              ></mat-slide-toggle>
-            </div>
-          </div>
-        </div>
-
-        <form
-          #form="ngForm"
-          class="mt-25"
-          (ngSubmit)="form.valid && saveDatahubConfig(form)"
-        >
+        <form #form="ngForm" class="mt-25">
           <div class="row d-flex align-items-center">
             <div class="col-12 col-md-5">
               <label>
@@ -141,6 +107,7 @@
                   name="provisioningHost"
                   autocomplete="off"
                   [ngModel]="dataSink?.datahub?.provisioningHost"
+                  (ngModelChange)="saveDatahubConfig(form)"
                 />
               </mat-form-field>
             </div>
@@ -159,6 +126,7 @@
                   name="scopeId"
                   autocomplete="off"
                   [ngModel]="dataSink?.datahub?.scopeId"
+                  (ngModelChange)="saveDatahubConfig(form)"
                 />
               </mat-form-field>
             </div>
@@ -177,6 +145,7 @@
                   name="regId"
                   autocomplete="off"
                   [ngModel]="dataSink?.datahub?.regId"
+                  (ngModelChange)="saveDatahubConfig(form)"
                 />
               </mat-form-field>
             </div>
@@ -195,60 +164,131 @@
                   name="symKey"
                   autocomplete="off"
                   [ngModel]="dataSink?.datahub?.symKey"
+                  (ngModelChange)="saveDatahubConfig(form)"
                 />
               </mat-form-field>
             </div>
-          </div>
-
-          <div class="d-flex justify-content-end mt-25">
-            <button mat-raised-button [disabled]="form.invalid || !form.dirty">
-              {{ 'settings-data-sink.Apply' | translate }}
-            </button>
           </div>
         </form>
       </div>
     </ng-container>
   </div>
 
-  <div class="col-12 col-sm-4 offset-sm-4 col-lg-2 offset-lg-6">
-    <div class="mt-25" *ngIf="connection">
-      {{ 'settings-data-sink.Connection' | translate }}
+  <div
+    *ngIf="dataSink?.protocol === Protocol.DH"
+    class="col-12 col-md-6 col-lg-7 offset-lg-1"
+  >
+    <div class="d-flex align-items-center justify-content-end">
+      <button
+        mat-button
+        type="button"
+        class="btn-sm mr-10"
+        *ngIf="isTouchedTable && !isLoading"
+        (click)="onDiscard()"
+      >
+        {{ 'settings-data-sink.DiscardChanges' | translate }}
+      </button>
+
+      <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
+
+      <button
+        mat-raised-button
+        type="button"
+        class="btn-sm"
+        [disabled]="!isTouchedTable || isLoading || !dsFormValid"
+        (click)="onApply()"
+      >
+        {{ 'settings-data-sink.ApplyChanges' | translate }}
+      </button>
     </div>
-    <div
-      class="mt-10 d-flex align-items-center justify-content-between"
-      style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
-      *ngIf="connection"
-    >
-      <div>
-        <div style="font-weight: 600">
-          <ng-container [ngSwitch]="connection.status">
-            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
-              {{ 'settings-data-sink.Running' | translate }}
-            </ng-container>
-            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
-              {{ 'settings-data-sink.Disconnected' | translate }}
-            </ng-container>
-          </ng-container>
-        </div>
-        <small style="color: #999">{{
-          'settings-data-sink.ServiceState' | translate
-        }}</small>
-      </div>
-      <div class="mr-10">
-        <ng-container [ngSwitch]="connection.status">
-          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
-            <mat-icon class="color-success">check_circle_outline</mat-icon>
-          </ng-container>
-          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
-            <mat-icon class="color-danger">highlight_off</mat-icon>
-          </ng-container>
-        </ng-container>
-      </div>
+    <div>
+      <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
     </div>
 
+    <table mat-table [dataSource]="desiredServices" class="mt-15">
+      <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+
+      <!-- Enabled Column -->
+      <ng-container matColumnDef="enabled">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'settings-data-sink.Desired.Enabled' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <div
+            class="d-flex align-items-center"
+            [class.color-success]="element.enabled"
+            [class.color-danger]="!element.enabled"
+          >
+            <mat-icon class="mr-5" *ngIf="element.enabled"
+              >check_circle_outline</mat-icon
+            >
+            <mat-icon class="mr-5" *ngIf="!element.enabled"
+              >highlight_off</mat-icon
+            >
+            <label>{{
+              (element.enabled
+                ? 'settings-data-sink.Desired.Enabled'
+                : 'settings-data-sink.Desired.Disabled'
+              ) | translate
+            }}</label>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="2">No data</td>
+      </tr>
+    </table>
+  </div>
+
+  <div
+    class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4"
+    *ngIf="dataSink?.protocol !== Protocol.DH"
+  >
+    <div class="d-flex align-items-center justify-content-end">
+      <button
+        mat-button
+        type="button"
+        class="btn-sm mr-10"
+        *ngIf="isTouchedTable && !isLoading"
+        (click)="onDiscard()"
+      >
+        {{ 'settings-data-sink.DiscardChanges' | translate }}
+      </button>
+
+      <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
+
+      <button
+        mat-raised-button
+        type="button"
+        class="btn-sm"
+        [disabled]="!isTouchedTable || isLoading"
+        (click)="onApply()"
+      >
+        {{ 'settings-data-sink.ApplyChanges' | translate }}
+      </button>
+    </div>
+    <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
+
     <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
-      <div>
-        <button mat-raised-button type="button" (click)="goToMtConnectStream()">
+      <div style="display: flex; width: 100%">
+        <button
+          mat-raised-button
+          type="button"
+          class="btn-sm"
+          style="margin-left: auto"
+          (click)="goToMtConnectStream()"
+        >
           {{ 'settings-data-sink.OpenMTConnectStream' | translate }}
         </button>
       </div>
@@ -258,20 +298,24 @@
 
 <div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
   <div class="col-12">
-    <div class="d-flex align-items-center">
-      <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
-      <button
-        type="button"
-        [disabled]="isEditing"
-        mat-mini-fab
-        color="primary"
-        class="wh-32 border-round ml-15"
-        (click)="onAdd()"
-        [matTooltip]="'settings-data-sink.AddDataPoint' | translate"
-        matTooltipPosition="above"
-      >
-        <mat-icon style="margin-top: -10px">add</mat-icon>
-      </button>
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="d-flex align-items-center">
+          <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
+          <button
+            type="button"
+            [disabled]="isEditing"
+            mat-mini-fab
+            color="primary"
+            class="wh-32 border-round ml-15"
+            (click)="onAdd()"
+            [matTooltip]="'settings-data-sink.AddDataPoint' | translate"
+            matTooltipPosition="above"
+          >
+            <mat-icon style="margin-top: -10px">add</mat-icon>
+          </button>
+        </div>
+      </div>
     </div>
 
     <ngx-datatable
@@ -297,6 +341,11 @@
             class="text-ellipsis"
             [title]="value"
           >
+            <mat-icon *ngIf="row.dataMapping" class="color-success" 
+              style="font-size: 15px; position: relative; top: 3px;"
+              [matTooltip]="'settings-data-sink.HasDataMapping' | translate"
+              matTooltipPosition="above"
+            >check_circle</mat-icon>
             {{ getDataSinkDataPointPrefix(row.id) }} {{ value }}
           </div>
           <input
@@ -337,22 +386,20 @@
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.address = $event)"
           >
-            <ng-container *ngIf="dataSink?.protocol === Protocol.MTConnect">
-              <mat-option
-                *ngFor="let item of MTConnectItems"
-                [value]="item.address"
-                [disabled]="isExistingDataPointAddress(item.address!)"
-                >{{ item.name }}</mat-option
-              >
-            </ng-container>
-            <ng-container *ngIf="dataSink?.protocol === Protocol.OPC">
-              <mat-option
-                *ngFor="let item of OPCUAAddresses"
-                [value]="item.address"
-                [disabled]="isExistingDataPointAddress(item.address!)"
-                >{{ item.name }}</mat-option
-              >
-            </ng-container>
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search..."
+                noEntriesFoundLabel="No results found"
+                [(ngModel)]="filterAddressStr"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option
+              *ngFor="let item of addressesOrDataItems"
+              [value]="item.address"
+              [disabled]="isExistingDataPointAddress(item.address!)"
+            >
+              {{ item.name }}
+            </mat-option>
           </mat-select>
         </ng-template>
       </ngx-datatable-column>
@@ -449,10 +496,15 @@
                 >{{ item[0] }} -> {{ item[1] }}
               </span>
             </div>
-            <mat-button-toggle-group class="ml-10">
+            <mat-button-toggle-group
+              class="ml-10"
+              #group="matButtonToggleGroup"
+            >
               <mat-button-toggle
                 class="small-button"
-                (click)="unsavedRow && onMapEdit(unsavedRow)"
+                (click)="
+                  unsavedRow && onMapEdit(unsavedRow); group.value = null
+                "
                 [matTooltip]="'settings-data-sink.Select' | translate"
                 matTooltipPosition="above"
                 ><mat-icon>open_in_new</mat-icon></mat-button-toggle
@@ -473,23 +525,29 @@
           let-value="value"
           let-row="row"
         >
-          <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex">
+          <mat-button-toggle-group
+            *ngIf="unsavedRowIndex !== rowIndex"
+            #group="matButtonToggleGroup"
+          >
             <mat-button-toggle
-              (click)="onEditStart(rowIndex, row)"
+              (click)="onEditStart(rowIndex, row); group.value = null"
               [matTooltip]="'settings-data-sink.Edit' | translate"
               matTooltipPosition="above"
               ><mat-icon>edit</mat-icon></mat-button-toggle
             >
             <mat-button-toggle
-              (click)="onDelete(row)"
+              (click)="onDelete(row); group.value = null"
               [matTooltip]="'settings-data-sink.Delete' | translate"
               matTooltipPosition="above"
               ><mat-icon>delete_outline</mat-icon></mat-button-toggle
             >
           </mat-button-toggle-group>
-          <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex">
+          <mat-button-toggle-group
+            *ngIf="unsavedRowIndex === rowIndex"
+            #group="matButtonToggleGroup"
+          >
             <mat-button-toggle
-              (click)="onEditEnd()"
+              (click)="onEditEnd(); group.value = null"
               [matTooltip]="'settings-data-sink.Save' | translate"
               matTooltipPosition="above"
               ><mat-icon class="color-success"
@@ -497,7 +555,7 @@
               ></mat-button-toggle
             >
             <mat-button-toggle
-              (click)="onEditCancel()"
+              (click)="onEditCancel(); group.value = null"
               [matTooltip]="'settings-data-sink.Cancel' | translate"
               matTooltipPosition="above"
               ><mat-icon class="color-error">close</mat-icon></mat-button-toggle
@@ -508,3 +566,121 @@
     </ngx-datatable>
   </div>
 </div>
+
+<ng-template #connectionBlock>
+  <div class="connection-block" *ngIf="connection">
+    <div class="mt-25">
+      {{ 'settings-data-sink.Connection' | translate }}
+    </div>
+    <div
+      class="mt-10 d-flex align-items-center justify-content-between"
+      style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+    >
+      <div>
+        <div style="font-weight: 600">
+          <ng-container [ngSwitch]="connection.status">
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disabled">
+              {{ 'settings-data-sink.Disabled' | translate }}
+            </ng-container>
+            <ng-container
+              *ngSwitchCase="DataSinkConnectionStatus.NotConfigured"
+            >
+              {{ 'settings-data-sink.NotConfigured' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
+              {{ 'settings-data-sink.Provisioning' | translate }}
+            </ng-container>
+            <ng-container
+              *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
+            >
+              {{ 'settings-data-sink.ProvisioningFailed' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
+              {{ 'settings-data-sink.NoNetwork' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connecting">
+              {{ 'settings-data-sink.Connecting' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
+              {{ 'settings-data-sink.Running' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
+              {{ 'settings-data-sink.Disconnected' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Reconnecting">
+              {{ 'settings-data-sink.Reconnecting' | translate }}
+            </ng-container>
+            <ng-container
+              *ngSwitchCase="DataSinkConnectionStatus.ConnectionError"
+            >
+              {{ 'settings-data-sink.ConnectionError' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.Unavailable">
+              {{ 'settings-data-sink.Unavailable' | translate }}
+            </ng-container>
+            <ng-container
+              *ngSwitchCase="
+                DataSinkConnectionStatus.TermsAndConditionsNotAccepted
+              "
+            >
+              {{
+                'settings-data-sink.TermsAndConditionsNotAccepted' | translate
+              }}
+            </ng-container>
+          </ng-container>
+        </div>
+        <small style="color: #999">{{
+          'settings-data-sink.ServiceState' | translate
+        }}</small>
+      </div>
+      <div class="mr-10">
+        <ng-container [ngSwitch]="connection.status">
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disabled">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.NotConfigured">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
+            <mat-icon class="color-success">check_circle_outline</mat-icon>
+          </ng-container>
+          <ng-container
+            *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
+          >
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connecting">
+            <mat-icon class="color-success">check_circle_outline</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connected">
+            <mat-icon class="color-success">check_circle_outline</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Disconnected">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Reconnecting">
+            <mat-icon class="color-success">check_circle_outline</mat-icon>
+          </ng-container>
+          <ng-container
+            *ngSwitchCase="DataSinkConnectionStatus.ConnectionError"
+          >
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.Unavailable">
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container
+            *ngSwitchCase="
+              DataSinkConnectionStatus.TermsAndConditionsNotAccepted
+            "
+          >
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>

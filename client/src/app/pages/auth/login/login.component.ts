@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
-import { ToastrService}  from "ngx-toastr";
-import { TranslateService } from "@ngx-translate/core";
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { NgForm } from '@angular/forms';
 
 import { AuthService, LocalStorageService } from '../../../shared';
-import { ForgotPasswordRequest, LoginRequest } from "../../../models/auth";
-import { EMAIL_REGEX } from "../../../shared/utils/regex";
+import { ForgotPasswordRequest, LoginRequest } from '../../../models/auth';
+import { EMAIL_REGEX } from '../../../shared/utils/regex';
 
 enum LoginPageMode {
   Login = 'Login',
@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   EMAIL_REGEX = EMAIL_REGEX;
 
   loginRequest: LoginRequest = {
-    userName: '',
+    userName: 'User',
     password: ''
   };
 
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
     private translate: TranslateService,
     private auth: AuthService,
     private localStorageService: LocalStorageService
-  ) { }
+  ) {}
 
   ngOnInit(): void {}
 
@@ -48,10 +48,7 @@ export class LoginComponent implements OnInit {
       .login(this.loginRequest)
       .then((response) => {
         if (response.passwordChangeRequired) {
-          this.localStorageService.set(
-            'old-password',
-            this.loginRequest.password
-          );
+          this.auth.setOldPassword(this.loginRequest.password);
           return this.router.navigate(['/settings', 'change-password']);
         }
 
@@ -71,5 +68,9 @@ export class LoginComponent implements OnInit {
         );
       })
       .catch((error) => this.toastr.error(error.error.message));
+  }
+
+  openForgotPassword() {
+    window.open('/help/docs/FactoryReset', '_blank');
   }
 }

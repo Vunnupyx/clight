@@ -18,8 +18,18 @@ export class DataSinkAuth {
 }
 
 export enum DataSinkConnectionStatus {
+  Disabled = 'disabled',
+  NotConfigured = 'notconfigured',
+  Provisioning = 'provisioning',
+  ProvisioningFailed = 'provisioningfailed',
+  NoNetwork = 'nonetwork',
+  Connecting = 'connecting',
   Connected = 'connected',
-  Disconnected = 'disconnected'
+  Disconnected = 'disconnected',
+  Reconnecting = 'reconnecting',
+  ConnectionError = 'failedtoconnect',
+  Unavailable = 'unavailable', // in case of status can't be loaded,
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
 }
 
 export class DataSinkConnection {
@@ -41,4 +51,11 @@ export class DataSink {
   protocol!: DataSinkProtocol;
   auth?: DataSinkAuth;
   datahub?: DataHubConfig;
+  desired?: {
+    services?: {
+      [key: string]: {
+        enabled: boolean;
+      };
+    };
+  };
 }

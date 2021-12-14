@@ -1,19 +1,12 @@
 import { isNil, isUndefined } from 'lodash';
-import { promisify } from 'util';
 import winston from 'winston';
+import SshService from '../SshService';
 import { NetworkInterfaceInfo } from './interfaces';
-const child_process = require('child_process');
-const exec = promisify(child_process.exec);
 
 /**
  * Set network configuration for MDCL host.
  */
 export default class NetworkManagerCliController {
-  private static readonly hostName = 'host.docker.internal';
-  private static readonly sshCommand = `ssh dockerhost`; //TODO
-  private static lastConfigEth0: NetworkInterfaceInfo = null;
-  private static lastConfigEth1: NetworkInterfaceInfo = null;
-
   /**
    * Load configuration from host.
    */
@@ -21,9 +14,10 @@ export default class NetworkManagerCliController {
     networkInterface: 'eth0' | 'eth1'
   ): Promise<NetworkInterfaceInfo> {
     const configName = `lastConfig${networkInterface.replace('e', 'E')}`;
-    if(NetworkManagerCliController[configName]) return NetworkManagerCliController[configName];
-    const nmcliCommand = `${NetworkManagerCliController.sshCommand} nmcli -t -f IP4,IPV4,CONNECTION,GENERAL con show ${networkInterface}-default`;
-    const result = await exec(nmcliCommand);
+    if (NetworkManagerCliController[configName])
+      return NetworkManagerCliController[configName];
+    const nmcliCommand = `nmcli -t -f IP4,IPV4,CONNECTION,GENERAL con show ${networkInterface}-default`;
+    const result = await SshService.sendCommand(nmcliCommand);
     const parsedResult = NetworkManagerCliController.parseNmCliOutput(
       result.stdout
     );
@@ -44,8 +38,16 @@ export default class NetworkManagerCliController {
     networkInterface: 'eth0' | 'eth1',
     config: NetworkInterfaceInfo
   ): Promise<void> {
+    const logPrefix = `${NetworkManagerCliController.name}::setConfiguration`;
     let ipAddress = '';
-    if (!(isNil(config.ipAddress) || isNil(config.subnetMask))) {
+    if (
+      !(
+        isNil(config.ipAddress) ||
+        isNil(config.subnetMask) ||
+        config.ipAddress.length === 0 ||
+        config.subnetMask.length === 0
+      )
+    ) {
       ipAddress = `${
         config.ipAddress
       }/${NetworkManagerCliController.netmaskToCidr(config.subnetMask)}`;
@@ -59,11 +61,12 @@ export default class NetworkManagerCliController {
     const dnsCommand = dns ? `ipv4.dns ${dns}` : '';
     const dhcpCommand = dhcp ? `ipv4.method ${dhcp}` : '';
 
-    const nmcliCommand = `${NetworkManagerCliController.sshCommand} nmcli con mod ${networkInterface}-default ${addressCommand} ${gatewayCommand} ${dnsCommand} ${dhcpCommand}`;
-    await exec(nmcliCommand);
+    const nmcliCommand = `nmcli con mod ${networkInterface}-default ${addressCommand} ${gatewayCommand} ${dnsCommand} ${dhcpCommand}`;
+    winston.debug(`${logPrefix} sending command to host: ${nmcliCommand}`);
     try {
-      const resultApply = await exec(
-        `${NetworkManagerCliController.sshCommand} nmcli con up ${networkInterface}-default`
+      await SshService.sendCommand(nmcliCommand);
+      const resultApply = await SshService.sendCommand(
+        `nmcli con up ${networkInterface}-default`
       );
       winston.info(resultApply);
     } catch (e) {
@@ -72,14 +75,16 @@ export default class NetworkManagerCliController {
           `Could not activate on ${networkInterface} - error ignored because DHCP server might not be available`
         );
       } else {
+        winston.error('Failed to set network configuration');
         winston.error(e);
         return Promise.reject(e);
       }
     }
     // Update cached configuration
-    const configName = `lastConfig${networkInterface.replace('e', 'E')}`
+    const configName = `lastConfig${networkInterface.replace('e', 'E')}`;
     NetworkManagerCliController[configName] = null;
-    NetworkManagerCliController[configName] = await NetworkManagerCliController.getConfiguration(networkInterface)
+    NetworkManagerCliController[configName] =
+      await NetworkManagerCliController.getConfiguration(networkInterface);
   }
 
   /**
@@ -92,9 +97,9 @@ export default class NetworkManagerCliController {
     const dhcpConfig = {
       name,
       activated: true,
-      dhcp: true,
+      dhcp: true
     };
-    return body.userDhcp
+    return body.useDhcp
       ? dhcpConfig
       : {
           ...dhcpConfig,
@@ -108,9 +113,9 @@ export default class NetworkManagerCliController {
         };
   }
 
-/**
- * Parse output of the cli
- */
+  /**
+   * Parse output of the cli
+   */
   private static parseNmCliOutput(output: string) {
     const lines = output.split('\n');
     const rawOutput = {};

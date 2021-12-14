@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -33,8 +34,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
     return Object.keys(this.config);
   }
 
+  get timezoneOptionsSearchResults() {
+    if (!this.timezoneOptions || !this.timezoneOptionKeyphrase) {
+      return this.timezoneOptions;
+    }
+    return this.timezoneOptions.filter((x) =>
+      x
+        .toLocaleLowerCase()
+        .includes(this.timezoneOptionKeyphrase.toLocaleLowerCase())
+    );
+  }
+
   sub: Subscription = new Subscription();
   selectedTab!: string;
+  timezoneOptions!: string[];
+  timezoneOptionKeyphrase = '';
 
   @ViewChild('mainForm') mainForm!: NgForm;
 
@@ -46,6 +60,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onConfig(x))
     );
+
+    this.timezoneOptions = this._getTimezoneOptions();
 
     this.sub.add(this.networkService.setNetworkConfigTimer().subscribe());
 
@@ -85,5 +101,24 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  private _getTimezoneOptions() {
+    return moment.tz
+      .names()
+      .filter((name) =>
+        [
+          'Universal',
+          'Africa/',
+          'America/',
+          'Antarctica/',
+          'Arctic/',
+          'Asia/',
+          'Australia/',
+          'Europe/',
+          'Indian/',
+          'Pacific/'
+        ].find((x) => name.startsWith(x))
+      );
   }
 }

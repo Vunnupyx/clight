@@ -23,14 +23,14 @@
     "express-fileupload": "^1.2.1",
     "express-openapi-validator": "^4.13.1",
     "fs-extra": "^10.0.0",
-    "jsonwebtoken": "^8.5.1",
     "https-proxy-agent": "^5.0.0",
+    "jsonwebtoken": "^8.5.1",
     "node-opcua": "^2.50.0",
     "node-opcua-pki": "^2.12.0",
     "nodes7": "^0.3.12",
     "socks-proxy-agent": "^6.1.0",
     "swagger-routes-express": "^3.3.1",
-    "swagger-ui-express": "^4.1.6",
+    "swagger-ui-express": "^4.2.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
@@ -42,7 +42,7 @@
     "build:mdclight": "yarn docker:build:mdclight",
     "build:webserver": "cd client && yarn && yarn build && cd .. && cd user-docs && yarn && yarn build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",
     "docker:build:webserver": "docker buildx build --platform linux/arm64,linux/amd64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile --push client",
-    "docker:build:webserver:arm": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile --push client",
+    "docker:build:webserver:arm": "yarn build:webserver && docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server -f docker/mdcwebserver_arm64.Dockerfile --push client",
     "docker:build:ci": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci -f ci.Dockerfile .",
     "docker:push:ci": "docker push registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/gitlab-ci",
     "docker:build:mtc": "docker build -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect -f docker/mtconnect_amd64.Dockerfile .",
@@ -61,7 +61,7 @@
     "copy_containerkeys_service": "scp services/ContainerKeys/containerkeys.service root@$IP:/etc/systemd/system/containerkeys.service",
     "format": "prettier --write .",
     "loglevel:debug": "export LOG_LEVEL=debug",
-    "setup_mock_sysfs": "mkdir -p src/modules/Iot2050MraaDI10/sys/bus/iio/devices/iio:device0 && echo 333 > src/modules/Iot2050MraaDI10/sys/bus/iio/devices/iio:device0/in_voltage0_raw && echo 555 > src/modules/Iot2050MraaDI10/sys/bus/iio/devices/iio:device0/in_voltage2_raw && mkdir -p src/modules/IoT2050HardwareEvents/sys/class/gpio/gpio211 && echo 1 > src/modules/IoT2050HardwareEvents/sys/class/gpio/gpio211/value && echo '' > src/modules/IoT2050HardwareEvents/sys/class/gpio/export"
+    "setup_mock_sysfs": "./scripts/setupSysfsMock.sh"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

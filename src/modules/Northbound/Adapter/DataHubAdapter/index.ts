@@ -494,9 +494,14 @@ export class DataHubAdapter {
           eventBuffer.addAssetList(filteredMeasurementArray);
           const msg = this.addMsgType('event', eventBuffer.getMessage());
 
-          this.#dataHubClient.sendEvent(msg, () => {
+          const sendTime = new Date().toISOString();
+          winston.debug(
+            `${logPrefix} publishing ${filteredMeasurementArray.length} event data points (${sendTime})`
+          );
+          this.#dataHubClient.sendEvent(msg, (result) => {
+            console.log(result);
             winston.debug(
-              `${logPrefix} successfully published ${filteredMeasurementArray.length} event data points`
+              `${logPrefix} successfully published ${filteredMeasurementArray.length} event data points (${sendTime})`
             );
           });
 

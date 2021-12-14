@@ -394,30 +394,57 @@
             </div>
           </div>
 
-          <div
-            *ngIf="!config[NetworkType.TIME].useNtp"
-            class="d-flex align-items-center justify-content-between"
-          >
-            <div class="mr-30">
-              {{ 'settings-network.SetCurrentTime' | translate }}
-            </div>
+          <ng-container *ngIf="!config[NetworkType.TIME].useNtp">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="mr-30">
+                {{ 'settings-network.SetCurrentTime' | translate }}
+              </div>
 
-            <div>
-              <mat-form-field>
-                <input
-                  name="currentTime"
-                  matInput
-                  [ngxMatDatetimePicker]="picker"
-                  [(ngModel)]="config[NetworkType.TIME].currentTime"
-                />
-                <mat-datepicker-toggle
-                  matSuffix
-                  [for]="$any(picker)"
-                ></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
-              </mat-form-field>
+              <div>
+                <mat-form-field>
+                  <input
+                    name="currentTime"
+                    matInput
+                    [ngxMatDatetimePicker]="picker"
+                    [(ngModel)]="config[NetworkType.TIME].currentTime"
+                    required
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="$any(picker)"
+                  ></mat-datepicker-toggle>
+                  <ngx-mat-datetime-picker #picker></ngx-mat-datetime-picker>
+                </mat-form-field>
+              </div>
             </div>
-          </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="mr-30">
+                {{ 'settings-network.ChooseTimeZone' | translate }}
+              </div>
+
+              <div>
+                <mat-form-field>
+                  <mat-select
+                      name="timezone"
+                      [(ngModel)]="config[NetworkType.TIME].timezone"
+                      required
+                    >
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search..."
+                        noEntriesFoundLabel="No results found"
+                        [(ngModel)]="timezoneOptionKeyphrase"
+                        [ngModelOptions]="{standalone: true}"
+                      ></ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option *ngFor="let opt of timezoneOptionsSearchResults" [value]="opt">
+                      {{ opt }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </ng-container>
 
           <div class="d-flex justify-content-end mt-25">
             <button

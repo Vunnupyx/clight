@@ -49,11 +49,29 @@ export default {
     {
       name: 'livedata',
       description: 'Everything about the livedata.'
+    },
+    {
+      name: 'health',
+      description: 'Healthcheck endpoint'
     }
   ],
   produces: ['application/json'],
   schemes: ['http', 'https'],
   paths: {
+    '/healthcheck': {
+      get: {
+        security: [],
+        tags: ['health'],
+        operationId: 'healthCheckGet',
+        description: '',
+        parameters: [],
+        responses: {
+          '204': {
+            description: 'OK'
+          }
+        }
+      }
+    },
     '/auth/login': {
       post: {
         security: [],

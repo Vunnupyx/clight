@@ -163,6 +163,7 @@ export class S7DataSource extends DataSource {
     this.updateCurrentStatus(LifecycleEventStatus.Connected);
     this.isDisconnected = false;
     this.setupDataPoints();
+    this.setupLogCycle();
   }
 
   /**
@@ -237,6 +238,8 @@ export class S7DataSource extends DataSource {
       return;
     }
 
+    this.readCycleCount = this.readCycleCount + 1;
+
     try {
       this.cycleActive = true;
       const currentCycleDataPoints: Array<IDataPointConfig> =
@@ -257,9 +260,9 @@ export class S7DataSource extends DataSource {
       nckDataPointsToRead =
         this.config.type === 'nck' ? nckDataPointsToRead : [];
 
-      winston.debug(
-        `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
-      );
+      // winston.debug(
+      //   `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
+      // );
       const [plcResults, nckResults] = await Promise.all([
         this.readPlcData(plcAddressesToRead),
         this.readNckData(nckDataPointsToRead)

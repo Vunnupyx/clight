@@ -84,9 +84,9 @@ export class MTConnectDataSink extends DataSink {
     this.mtcAdapter.start();
     if (!MTConnectDataSink.schedulerListenerId) {
       MTConnectDataSink.schedulerListenerId =
-        MTConnectDataSink.scheduler.addListener([1000], () => {
+        MTConnectDataSink.scheduler.addListener([1000], async () => {
           this.runTime.value = (this.runTime.value as number) + 1;
-          this.mtcAdapter.sendChanged();
+          await this.mtcAdapter.sendChanged();
         });
     }
     this.updateCurrentStatus(LifecycleEventStatus.Connected);

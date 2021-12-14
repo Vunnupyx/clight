@@ -34,9 +34,12 @@ export abstract class DataSource extends EventEmitter {
   public timestamp: number;
   public protocol: string;
   protected scheduler: SynchronousIntervalScheduler;
-  protected schedulerListenerId: number;
+  protected readSchedulerListenerId: number;
+  protected logSchedulerListenerId: number;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected termsAndConditionsAccepted = false;
+  protected processedDataPointCount = 0;
+  protected readCycleCount = 0;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -80,7 +83,7 @@ export abstract class DataSource extends EventEmitter {
    * Setup all datapoints by creating a listener for each configured interval
    */
   protected setupDataPoints(defaultFrequency: number = 1000): void {
-    if (this.schedulerListenerId) return;
+    if (this.readSchedulerListenerId) return;
 
     const logPrefix = `${this.name}::setupDataPoints`;
     winston.debug(`${logPrefix} setup data points`);
@@ -92,10 +95,39 @@ export abstract class DataSource extends EventEmitter {
     );
     const intervals = Array.from(new Set(datapointIntervals));
 
-    this.schedulerListenerId = this.scheduler.addListener(
+    this.readSchedulerListenerId = this.scheduler.addListener(
       intervals,
       this.dataSourceCycle.bind(this)
     );
+  }
+
+  /**
+   * Setup log cycle for summary logging
+   */
+  protected setupLogCycle(defaultFrequency: number = 60 * 1000): void {
+    if (this.logSchedulerListenerId) return;
+
+    const logPrefix = `${this.name}::setupLogCycle`;
+    winston.debug(`${logPrefix} setup log cycle`);
+
+    this.logSchedulerListenerId = this.scheduler.addListener(
+      [defaultFrequency],
+      this.logSummary.bind(this)
+    );
+  }
+
+  /**
+   * Logs data point summary
+   */
+  protected logSummary(): void {
+    const logPrefix = `${this.name}::logSummary`;
+
+    winston.info(
+      `${logPrefix} processed ${this.processedDataPointCount} data points in ${this.readCycleCount} read cycles. Current state: ${this.currentStatus}`
+    );
+
+    this.processedDataPointCount = 0;
+    this.readCycleCount = 0;
   }
 
   /**
@@ -105,7 +137,8 @@ export abstract class DataSource extends EventEmitter {
     const logPrefix = `${this.name}::shutdown`;
     winston.info(`${logPrefix} shutdown triggered`);
 
-    this.scheduler.removeListener(this.schedulerListenerId);
+    this.scheduler.removeListener(this.readSchedulerListenerId);
+    this.scheduler.removeListener(this.logSchedulerListenerId);
     await this.disconnect();
   }
 
@@ -127,6 +160,7 @@ export abstract class DataSource extends EventEmitter {
    */
   protected onDataPointMeasurement = (measurements: IMeasurement[]): void => {
     const logPrefix = `${this.name}::onDataPointMeasurement`;
+
     const { name, protocol } = this.config;
 
     try {
@@ -139,9 +173,9 @@ export abstract class DataSource extends EventEmitter {
           measurement
         }))
       );
-      winston.debug(
-        `${logPrefix} successfully processed ${measurements.length} data point(s)`
-      );
+
+      this.processedDataPointCount =
+        this.processedDataPointCount + measurements.length;
     } catch {}
   };
 

@@ -28,4 +28,5 @@ export class NetworkConfig {
   useNtp?: boolean;
   ntpHost?: string;
   currentTime?: string;
+  timezone?: string;
 }

@@ -17,6 +17,7 @@ import { ConfigManager } from '../../../ConfigManager';
 import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
 import { promisify } from 'util';
+import { LedStatusService } from '../../../LedStatusService';
 
 interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
@@ -35,6 +36,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private virtualDataPointManager: VirtualDataPointManager;
   private dataAddedDuringRestart = false;
   private dataSinksRestartPending = false;
+  private ledManager: LedStatusService;
 
   constructor(params: IDataSourcesManagerParams) {
     super();
@@ -52,6 +54,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     this.measurementsBus = params.measurementsBus;
     this.dataPointCache = params.dataPointCache;
     this.virtualDataPointManager = params.virtualDataPointManager;
+    this.ledManager = params.ledManager;
   }
 
   private init() {
@@ -112,6 +115,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
 
       dataSource.init();
     });
+    //? TODO: LED AN HIER?
   }
 
   private findDataSourceConfig(

@@ -183,6 +183,7 @@ export interface ITimeConfig {
   useNtp?: boolean;
   ntpHost?: string;
   currentTime?: string;
+  timezone?: string;
 }
 
 export interface IDataPointMapping {

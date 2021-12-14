@@ -37,10 +37,9 @@ async function networkConfigGetHandler(
     return [undefined, undefined];
   });
 
-  const { x1: cx1, x2: cx2, time: time } = configManager.config.networkConfig;
+  const { x1: cx1, x2: cx2, time } = configManager.config.networkConfig;
 
   const merged = {
-    time,
     x1: {
       useDhcp: x1?.dhcp || cx1.useDhcp,
       ipAddr: x1?.ipAddress || cx1.ipAddr,
@@ -55,7 +54,8 @@ async function networkConfigGetHandler(
       defaultGateway: x2?.gateway || cx2.defaultGateway,
       dnsServer: x2?.dns || cx2.dnsServer
     },
-    proxy: configManager.config.networkConfig.proxy
+    proxy: configManager.config.networkConfig.proxy,
+    time
   };
   response.status(200).json(merged);
 }
@@ -88,7 +88,8 @@ async function networkConfigPatchHandler(
       const [YYYY, MM, DD, hh, mm, ss] =
         timeConfig.currentTime.split(/[/:\-T]/);
       timePromise = TimeManager.setTimeManually(
-        `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0, 2)}`
+        `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0, 2)}`,
+        timeConfig.timezone
       );
     } else {
       timePromise = TimeManager.setNTPServer(timeConfig.ntpHost);

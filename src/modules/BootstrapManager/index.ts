@@ -19,6 +19,8 @@ import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 import { TimeManager } from '../NetworkManager/TimeManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { System } from '../System';
+import HostnameController from '../HostnameController';
+import { LedStatusService } from '../LedStatusService';
 
 /**
  * Launches agent and handles module life cycles
@@ -34,6 +36,7 @@ export class BootstrapManager {
   private virtualDataPointManager: VirtualDataPointManager;
   private backend: RestApiManager;
   private hwEvents: IoT2050HardwareEvents;
+  private ledManager: LedStatusService;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -69,7 +72,8 @@ export class BootstrapManager {
       virtualDataPointManager: this.virtualDataPointManager,
       errorBus: this.errorEventsBus,
       lifecycleBus: this.lifecycleEventsBus,
-      measurementsBus: this.measurementsEventsBus
+      measurementsBus: this.measurementsEventsBus,
+      ledManager: this.ledManager
     });
     this.configManager.dataSourcesManager = this.dataSourcesManager;
 
@@ -81,6 +85,7 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
+    this.ledManager = new LedStatusService(this.configManager);
   }
 
   /**
@@ -88,6 +93,9 @@ export class BootstrapManager {
    */
   public async start() {
     try {
+      await this.ledManager.init();
+      this.ledManager.runTimeStatus(false);
+      this.ledManager.southboundStatus(false);
       this.configManager.on('configsLoaded', async () => {
         const log = `${BootstrapManager.name} send network configuration to host.`;
         winston.info(log);
@@ -115,6 +123,10 @@ export class BootstrapManager {
           .catch((err) => {
             winston.error(`${log} Failed due to ${err.message}`);
           });
+
+        HostnameController.setDefaultHostname().catch((e) =>
+          winston.error(`Failed to set hostname: ${e}`)
+        );
       });
 
       await this.configManager.init();
@@ -134,6 +146,19 @@ export class BootstrapManager {
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchSuccess
       });
+      // WARNING: LED is never disabled because no watch on Kill SIGNALS
+      this.ledManager.runTimeStatus(true);
+
+      this.setupKillEvents();
+
+      // // TODO Remove
+      // winston.warn(
+      //   'Shutting down runtime in 5min for debugging purpose. Remove later!'
+      // );
+      // setTimeout(() => {
+      //   winston.warn('Shutting down manually!');
+      //   process.exit(1);
+      // }, 5 * 60 * 1000);
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',
@@ -145,5 +170,34 @@ export class BootstrapManager {
       winston.error('Error while launching. Exiting program.');
       process.exit(1);
     }
+  }
+
+  setupKillEvents() {
+    process.stdin.resume(); //so the program will not close instantly
+
+    function exitHandler(exitCode) {
+      this.ledManager.runTimeStatus(false);
+
+      // Flushing logs to not lose any logs before exiting
+      winston.info(
+        `Exiting program, code:" ${exitCode}`,
+        function (err, level, msg, meta) {
+          process.exit(1);
+        }
+      );
+    }
+
+    //do something when app is closing
+    process.on('exit', exitHandler.bind(this));
+
+    //catches ctrl+c event
+    process.on('SIGINT', exitHandler.bind(this));
+
+    // catches "kill pid" (for example: nodemon restart)
+    process.on('SIGUSR1', exitHandler.bind(this));
+    process.on('SIGUSR2', exitHandler.bind(this));
+
+    //catches uncaught exceptions
+    process.on('uncaughtException', exitHandler.bind(this));
   }
 }

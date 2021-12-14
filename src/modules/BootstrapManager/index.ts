@@ -85,7 +85,10 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
-    this.ledManager = new LedStatusService(this.configManager, this.dataSourcesManager);
+    this.ledManager = new LedStatusService(
+      this.configManager,
+      this.dataSourcesManager
+    );
   }
 
   /**
@@ -93,7 +96,6 @@ export class BootstrapManager {
    */
   public async start() {
     try {
-      
       this.configManager.on('configsLoaded', async () => {
         const log = `${BootstrapManager.name} send network configuration to host.`;
         winston.info(log);
@@ -144,11 +146,19 @@ export class BootstrapManager {
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchSuccess
       });
-    
 
       this.setupKillEvents();
       await this.ledManager.init();
       this.ledManager.runTimeStatus(true);
+
+      // // TODO Remove
+      // winston.warn(
+      //   'Shutting down runtime in 5min for debugging purpose. Remove later!'
+      // );
+      // setTimeout(() => {
+      //   winston.warn('Shutting down manually!');
+      //   process.exit(1);
+      // }, 5 * 60 * 1000);
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',
@@ -167,8 +177,14 @@ export class BootstrapManager {
 
     function exitHandler(exitCode) {
       this.ledManager.runTimeStatus(false);
-      winston.info(`Exiting program, code:" ${exitCode}`);
-      process.exit();
+
+      // Flushing logs to not lose any logs before exiting
+      winston.info(
+        `Exiting program, code:" ${exitCode}`,
+        function (err, level, msg, meta) {
+          process.exit(1);
+        }
+      );
     }
 
     //do something when app is closing

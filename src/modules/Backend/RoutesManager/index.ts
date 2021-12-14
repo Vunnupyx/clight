@@ -59,6 +59,7 @@ import {
   termsAndConditionsHandlers,
   setConfigManager as termsAndConditionsSetConfigManager
 } from '../routes/apis/v1/TermsAndConditions';
+import { healthCheckHandlers } from '../routes/apis/v1/Healthcheck';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
@@ -95,7 +96,8 @@ export class RoutesManager {
     ...networkConfigHandlers,
     ...systemInfoHandlers,
     ...templatesHandlers,
-    ...termsAndConditionsHandlers
+    ...termsAndConditionsHandlers,
+    ...healthCheckHandlers
   };
 
   constructor(options: RoutesManagerOptions) {

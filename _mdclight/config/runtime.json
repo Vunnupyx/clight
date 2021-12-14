@@ -35,9 +35,6 @@
       "productName": "MDCLight",
       "softwareVersion": "1.0.0"
     },
-    "serverInfo": {
-      "applicationUri": "urn:MDClightOPCUAServer"
-    },
     "nodesetDir": "mdclight/config/opcua_nodeSet"
   },
   "datahub": {

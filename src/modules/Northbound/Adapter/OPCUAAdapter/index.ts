@@ -226,11 +226,6 @@ export class OPCUAAdapter {
 
     const privateKeyFile = this.serverCertificateManager.privateKey;
 
-    this.serverCertificateManager = new OPCUACertificateManager({
-      rootFolder: certificateFolder,
-      automaticallyAcceptUnknownCertificate: true
-    });
-
     this.userManager = {
       isValidUserAsync: async (
         userName: string,

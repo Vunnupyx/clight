@@ -115,7 +115,6 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
 
       dataSource.init();
     });
-    //? TODO: LED AN HIER?
   }
 
   private findDataSourceConfig(
@@ -156,6 +155,13 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
    */
   public getDataSourceByProto(protocol: string) {
     return this.dataSources.find((src) => src.protocol === protocol);
+  }
+
+  /**
+   * Return all available datasources
+   */
+  public getDataSources(): DataSource[] {
+    return this.dataSources;
   }
 
   private configChangeHandler(): Promise<void> {

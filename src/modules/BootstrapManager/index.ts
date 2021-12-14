@@ -85,7 +85,7 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
-    this.ledManager = new LedStatusService(this.configManager);
+    this.ledManager = new LedStatusService(this.configManager, this.dataSourcesManager);
   }
 
   /**
@@ -93,9 +93,7 @@ export class BootstrapManager {
    */
   public async start() {
     try {
-      await this.ledManager.init();
-      this.ledManager.runTimeStatus(false);
-      this.ledManager.southboundStatus(false);
+      
       this.configManager.on('configsLoaded', async () => {
         const log = `${BootstrapManager.name} send network configuration to host.`;
         winston.info(log);
@@ -146,10 +144,11 @@ export class BootstrapManager {
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchSuccess
       });
-      // WARNING: LED is never disabled because no watch on Kill SIGNALS
-      this.ledManager.runTimeStatus(true);
+    
 
       this.setupKillEvents();
+      await this.ledManager.init();
+      this.ledManager.runTimeStatus(true);
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',

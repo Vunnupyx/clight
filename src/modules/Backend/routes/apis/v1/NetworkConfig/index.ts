@@ -82,16 +82,18 @@ async function networkConfigPatchHandler(
 
   const timeConfig: ITimeConfig = request.body?.time;
   let timePromise;
-  if(timeConfig) {
+  if (timeConfig) {
     if (!timeConfig.useNtp) {
       // ISO8601 to YYYY-MM-DD hh:mm:ss
-      const [YYYY, MM, DD, hh, mm, ss ] = timeConfig.currentTime.split(/[/:\-T]/)
-      timePromise = TimeManager.setTimeManually(`${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0,2)}`);
+      const [YYYY, MM, DD, hh, mm, ss] =
+        timeConfig.currentTime.split(/[/:\-T]/);
+      timePromise = TimeManager.setTimeManually(
+        `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0, 2)}`
+      );
     } else {
       timePromise = TimeManager.setNTPServer(timeConfig.ntpHost);
     }
   }
-
 
   await Promise.allSettled([
     NetworkManagerCliController.setConfiguration('eth0', x1Config),
@@ -99,10 +101,15 @@ async function networkConfigPatchHandler(
     timePromise
   ]).then((results) => {
     results.forEach((result) => {
-      if (result.status === 'rejected')
+      if (result.status === 'rejected') {
+        if (result.reason && (typeof result.reason === 'string') && result.reason.includes('is not available or is not a valid NTP server.')) {
+          response.status(400).json(result.reason);
+          return;
+        }
         winston.error(
           `networkConfigPatchHandler error due to ${result.reason}. Only writing configuration to config file.`
         );
+      }
     });
   });
   configManager.saveConfig({ networkConfig: request.body });

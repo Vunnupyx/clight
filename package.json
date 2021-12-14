@@ -61,7 +61,7 @@
     "copy_containerkeys_service": "scp services/ContainerKeys/containerkeys.service root@$IP:/etc/systemd/system/containerkeys.service",
     "format": "prettier --write .",
     "loglevel:debug": "export LOG_LEVEL=debug",
-    "setup_mock_sysfs": "mkdir -p src/modules/Iot2050MraaDI10/sys/bus/iio/devices/iio:device0 && echo 333 > src/modules/Iot2050MraaDI10/sys/bus/iio/devices/iio:device0/in_voltage0_raw && echo 555 > src/modules/Iot2050MraaDI10/sys/bus/iio/devices/iio:device0/in_voltage2_raw && mkdir -p src/modules/IoT2050HardwareEvents/sys/class/gpio/gpio211 && echo 1 > src/modules/IoT2050HardwareEvents/sys/class/gpio/gpio211/value && echo '' > src/modules/IoT2050HardwareEvents/sys/class/gpio/export && mkdir -p src/modules/LedStatusService/sys/class/leds/user-led1-green && echo '' > src/modules/LedStatusService/sys/class/leds/user-led1-green/brightness && mkdir -p src/modules/LedStatusService/sys/class/leds/user-led2-green && echo '' > src/modules/LedStatusService/sys/class/leds/user-led2-green/brightness"
+    "setup_mock_sysfs": "./scripts/setupSysfsMock.sh"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

@@ -2,7 +2,11 @@ import { PathLike } from 'fs';
 import { promises as fs } from 'fs';
 import { writeFile } from 'fs/promises';
 import winston from 'winston';
+import { LifecycleEventStatus } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
+import { DataSource } from '../Southbound/DataSources/DataSource';
+import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
+import { DataSourceEventTypes } from '../Southbound/DataSources/interfaces';
 
 enum LED {
   ON = '1',
@@ -18,14 +22,46 @@ export class LedStatusService {
   #led1Blink: NodeJS.Timer = null;
   #led2Blink: NodeJS.Timer = null;
   #configWatcher: NodeJS.Timer = null;
+  #configured = false;
+  #configuredAndConnected = false;
   #sysfsPrefix = '';
 
-  constructor(private configManager: ConfigManager) {
+  constructor(
+    private configManager: ConfigManager,
+    private datasourceManager: DataSourcesManager
+  ) {
     this.configManager.once('configsLoaded', () => {
       this.checkConfigTemplateTerms();
     });
     this.configManager.on('configChange', () => {
       this.checkConfigTemplateTerms();
+    });
+    this.datasourceManager.getDataSources().forEach((source) => {
+      source.on(DataSourceEventTypes.Lifecycle, (status) => {
+        if(this.#configuredAndConnected) return;
+        switch (status) {
+          case LifecycleEventStatus.Connected: {
+            if (this.#configured) {
+              this.stopBlinking(1);
+              this.unsetLed([this.getLedPathByNumberAndColor(1, 'red'), this.getLedPathByNumberAndColor(1, 'green')]);
+              this.setLed([this.getLedPathByNumberAndColor(1, 'green')]);
+            }
+            this.#configuredAndConnected = true;
+            return;
+          }
+          case LifecycleEventStatus.Disconnected: {
+            this.stopBlinking(1)
+            this.unsetLed([this.getLedPathByNumberAndColor(1, 'red'), this.getLedPathByNumberAndColor(1, 'green')]);
+            this.setLed([this.getLedPathByNumberAndColor(1, 'red'), this.getLedPathByNumberAndColor(1, 'green')]);
+            this.#configuredAndConnected = false;
+            return;
+          }
+          default: {
+            // Ignore all other events!
+            return;
+          }
+        }
+      });
     });
   }
 
@@ -173,11 +209,10 @@ export class LedStatusService {
    * - Terms and Conditions are accepted
    */
   private checkConfigTemplateTerms(): void {
-    const template = this.configManager.config.quickStart.currentTemplate;
     const terms = this.configManager.config.termsAndConditions;
 
     // Fast way out of check
-    if (!template && !terms) {
+    if (!terms) {
       this.noConfigBlink(true);
       return;
     }
@@ -200,7 +235,15 @@ export class LedStatusService {
           loop3: for (const sink of this.configManager.config.dataSinks) {
             if (!sink.enabled) continue;
             if (sink.dataPoints.some((point) => point.id === sinkDatapoint)) {
+              // disable blinking
               this.noConfigBlink(false);
+              // led orange
+              this.setLed([
+                this.getLedPathByNumberAndColor(1, 'red'),
+                this.getLedPathByNumberAndColor(1, 'green')
+              ]);
+
+              this.#configured = true;
               return;
             }
           }
@@ -208,6 +251,7 @@ export class LedStatusService {
       }
     }
     this.noConfigBlink(true);
+    this.#configured = false;
   }
 
   /**

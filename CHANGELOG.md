@@ -8,6 +8,8 @@
 - A summary of the read data points per data source is logged periodically
 - [MDCL-163](https://codestryke.atlassian.net/browse/MDCL-163) Added status led's
 - [MDCL-133](https://codestryke.atlassian.net/browse/MDCL-133) Added time configuration
+- Added healthchecks and an autoheal mechanism to restart unhealthy containers
+- [MDCL-149](https://codestryke.atlassian.net/browse/MDCL-149) Added support for opcua encryption
 
 ## [1.6.2]
 

@@ -96,6 +96,8 @@ export class BootstrapManager {
    */
   public async start() {
     try {
+      await this.ledManager.init();
+
       this.configManager.on('configsLoaded', async () => {
         const log = `${BootstrapManager.name} send network configuration to host.`;
         winston.info(log);
@@ -148,7 +150,6 @@ export class BootstrapManager {
       });
 
       this.setupKillEvents();
-      await this.ledManager.init();
       this.ledManager.runTimeStatus(true);
 
       // // TODO Remove

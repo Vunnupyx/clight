@@ -153,8 +153,6 @@ export class OPCUAAdapter {
       .then(() => this.getHostname())
       .then((hostname) => {
         this._running = true;
-        const endpointUrl =
-          this.server.endpoints[0].endpointDescriptions()[0].endpointUrl;
         winston.info(
           `${logPrefix} adapter successfully started. The primary server endpoint url is opc.tcp://${hostname}:${this.opcuaRuntimeConfig.port}`
         );
@@ -227,11 +225,6 @@ export class OPCUAAdapter {
     }
 
     const privateKeyFile = this.serverCertificateManager.privateKey;
-
-    this.serverCertificateManager = new OPCUACertificateManager({
-      rootFolder: certificateFolder,
-      automaticallyAcceptUnknownCertificate: true
-    });
 
     this.userManager = {
       isValidUserAsync: async (

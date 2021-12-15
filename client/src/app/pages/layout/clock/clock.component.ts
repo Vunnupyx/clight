@@ -31,7 +31,7 @@ export class ClockComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private systemInfoService: SystemInformationService,
     private toastr: ToastrService,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -39,9 +39,11 @@ export class ClockComponent implements OnInit, OnDestroy {
     this.sub = this.authService.token$.pipe(filter(Boolean)).subscribe(() => {
       this.syncTime();
     });
-    this.sub.add(this.authService.oldPassword$.subscribe(() => {
-      this.syncTime(true);
-    }));
+    this.sub.add(
+      this.authService.oldPassword$.subscribe(() => {
+        this.syncTime(true);
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -69,15 +71,16 @@ export class ClockComponent implements OnInit, OnDestroy {
     if (this.warnBrowserTimeVsSystemTimeShown) {
       return;
     }
-    if (this.serverOffset && Math.abs(this.serverOffset) < MAX_BROWSER_TIME_VS_SYSTEM_TIME_SEC) {
+    if (
+      typeof this.serverOffset !== 'undefined' &&
+      Math.abs(this.serverOffset) < MAX_BROWSER_TIME_VS_SYSTEM_TIME_SEC
+    ) {
       return;
     }
     this.toastr.warning(
-      this.translate.instant(
-        'clock.WarningSystemTimeVsBrowserTime'
-      ),
+      this.translate.instant('clock.WarningSystemTimeVsBrowserTime'),
       undefined,
-      {disableTimeOut: true},
+      { disableTimeOut: true }
     );
     this.warnBrowserTimeVsSystemTimeShown = true;
   }

@@ -110,7 +110,7 @@ describe(`OPCUAAdapter Test`, () => {
           testAdapter = new OPCUAAdapter(configManagerMock as any);
         });
 
-        it(`init returns same object`, async () => {
+        xit(`init returns same object`, async () => {
           testAdapter.init().then((returned) => {
             expect(returned).toBe(testAdapter);
           });

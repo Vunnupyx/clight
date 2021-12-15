@@ -344,6 +344,6 @@
     "warningText": "You have unsaved changes, do you really want to continue?"
   },
   "clock": {
-    "WarningSystemTimeVsBrowserTime": "System time differs from your browser time"
+    "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
   }
 }

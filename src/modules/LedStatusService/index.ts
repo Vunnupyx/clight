@@ -38,21 +38,30 @@ export class LedStatusService {
     });
     this.datasourceManager.getDataSources().forEach((source) => {
       source.on(DataSourceEventTypes.Lifecycle, (status) => {
-        if(this.#configuredAndConnected) return;
+        if (this.#configuredAndConnected) return;
         switch (status) {
           case LifecycleEventStatus.Connected: {
             if (this.#configured) {
               this.stopBlinking(1);
-              this.unsetLed([this.getLedPathByNumberAndColor(1, 'red'), this.getLedPathByNumberAndColor(1, 'green')]);
+              this.unsetLed([
+                this.getLedPathByNumberAndColor(1, 'red'),
+                this.getLedPathByNumberAndColor(1, 'green')
+              ]);
               this.setLed([this.getLedPathByNumberAndColor(1, 'green')]);
             }
             this.#configuredAndConnected = true;
             return;
           }
           case LifecycleEventStatus.Disconnected: {
-            this.stopBlinking(1)
-            this.unsetLed([this.getLedPathByNumberAndColor(1, 'red'), this.getLedPathByNumberAndColor(1, 'green')]);
-            this.setLed([this.getLedPathByNumberAndColor(1, 'red'), this.getLedPathByNumberAndColor(1, 'green')]);
+            this.stopBlinking(1);
+            this.unsetLed([
+              this.getLedPathByNumberAndColor(1, 'red'),
+              this.getLedPathByNumberAndColor(1, 'green')
+            ]);
+            this.setLed([
+              this.getLedPathByNumberAndColor(1, 'red'),
+              this.getLedPathByNumberAndColor(1, 'green')
+            ]);
             this.#configuredAndConnected = false;
             return;
           }
@@ -338,6 +347,11 @@ export class LedStatusService {
     );
   }
 
+  /**
+   * Sets directory prefix to mocked sys folder for dev environments.
+   * Setup mock with "yarn setup_mock_sysfs"
+   * @returns
+   */
   private async setSysfsPrefix() {
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');

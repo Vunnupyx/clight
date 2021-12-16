@@ -78,7 +78,12 @@ export class DataHubDataSink extends DataSink {
     );
 
     const allDatapoints = [];
+    console.log(activeServices);
     activeServices.forEach((service) => {
+      if(!this.#signalGroups[service]) {
+        winston.error(`${logPrefix} received service '${service}' does not match any available service group.`);
+        return;
+      }
       this.#signalGroups[service].forEach((datapoint) => {
         allDatapoints.push(datapoint);
       });

@@ -1,7 +1,7 @@
 { 
   "name": "mdclflash",
   "version": "1.0.0",
-  "description": "Watch the user button and if event is triggert copy usb stick data to internal eMMC",
+  "description": "Watch the user button and if event is triggered copy usb stick data to internal eMMC",
   "main": "mdclflash.js",
   "scripts": {
     "build": "tsc",
@@ -9,6 +9,9 @@
     "install": "npm run bundle && npm run copy:service && npm run copy:script && npm run enable:service",
     "copy:service": "scp mdclflash.service $INSTALL_HOST:/etc/systemd/system",
     "copy:script": "scp ./build/flashService.js $INSTALL_HOST:/root",
+    "copy:flashImage": "scp ./iot-connector-light-os-*.img.gz $INSTALL_HOST:/root",
+    "dump:remote:external": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk0 | gzip -9 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
+    "dump:remote:internal": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk1 | gzip -1 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
     "enable:service": "ssh $INSTALL_HOST systemctl enable mdclflash.service"
   },
   "author": "Markus Leitz",

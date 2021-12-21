@@ -590,13 +590,14 @@
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
               {{ 'settings-data-sink.Provisioning' | translate }}
             </ng-container>
-            <ng-container
-              *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
-            >
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed">
               {{ 'settings-data-sink.ProvisioningFailed' | translate }}
             </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
               {{ 'settings-data-sink.NoNetwork' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
+              {{ 'settings-data-sink.TimeError' | translate }}
             </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connecting">
               {{ 'settings-data-sink.Connecting' | translate }}

@@ -136,6 +136,7 @@
     "NotConfigured": "NotConfigured",
     "Provisioning": "Provisioning",
     "ProvisioningFailed": "ProvisioningFailed",
+    "TimeError": "Connection error due to time mismatch",
     "NoNetwork": "NoNetwork",
     "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",

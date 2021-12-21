@@ -130,6 +130,7 @@
     "Disconnected": "",
     "NotConfigured": "NotConfigured",
     "Provisioning": "Provisioning",
+    "TimeError": "Verbindungsfehler wegen Zeitabweichung",
     "ProvisioningFailed": "ProvisioningFailed",
     "NoNetwork": "NoNetwork",
     "Connecting": "Connecting",

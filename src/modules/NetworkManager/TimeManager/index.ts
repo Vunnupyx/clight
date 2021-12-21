@@ -109,9 +109,10 @@ export class TimeManager {
     time: string,
     timezone: string
   ): Promise<void> {
-    console.log('Set time manually:', time, timezone);
+    
 
     const logPrefix = `TimeManager::setTimeManually`;
+    winston.info(`${logPrefix} ${time} in timezone ${timezone}`);
     const timeRegex =
       /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01]) (0[1-9]|1[0-9]|2[01234]):([0-5]{1}[0-9]{1}|60):([0-5]{1}[0-9]{1}|60)/;
     if (!timeRegex.test(time)) {

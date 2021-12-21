@@ -55,6 +55,7 @@ export enum LifecycleEventStatus {
   NotConfigured = 'notconfigured',
   Provisioning = 'provisioning',
   ProvisioningFailed = 'provisioningfailed',
+  TimeError = 'clienttimedeviation',
   NoNetwork = 'nonetwork',
   Connecting = 'connecting',
   Connected = 'connected',

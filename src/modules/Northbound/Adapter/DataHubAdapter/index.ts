@@ -233,9 +233,6 @@ export class DataHubAdapter {
     );
 
     const success = await this.getProvisioning();
-    if (!success) {
-      this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
-    }
     return Promise.resolve(success);
   }
 

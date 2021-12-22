@@ -9,6 +9,7 @@ import {
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
+import {isEmpty} from 'lodash';
 
 export enum DataSinkStatus {
   CONNECTING = 'CONNECTING',
@@ -75,6 +76,7 @@ export abstract class DataSink {
    * @param params The user configuration object for this data source
    */
   public async onMeasurements(events: IDataSourceMeasurementEvent[]) {
+    const logPrefix = `Datasink::onMeasurements`;
     if (!this.enabled) return;
 
     // No datapoints no event handling :)
@@ -169,6 +171,8 @@ export abstract class DataSink {
 
       dataPoints[target] = value;
     });
+
+    if(isEmpty(dataPoints)) return;
     this.processDataPointValues(dataPoints);
   }
 

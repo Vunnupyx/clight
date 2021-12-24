@@ -1,4 +1,4 @@
-{ 
+{
   "name": "mdclflash",
   "version": "1.0.0",
   "description": "Watch the user button and if event is triggered copy usb stick data to internal eMMC",
@@ -16,8 +16,7 @@
   },
   "author": "Markus Leitz",
   "license": "UNLICENCED",
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "esbuild": "^0.13.8",
     "typescript": "^4.4.4"

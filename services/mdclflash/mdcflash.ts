@@ -65,10 +65,9 @@ class MDCLFlasher {
    * Implements logic for button trigger and handle.
    */
   private initUserButtonWatcher(): void {
+    console.log('Starting mdcflash service. Watching user button...');
     this.#userButtonWatcher = setInterval(() => {
-      const value = readFileSync(this.#userButtonPath)
-        .toString('utf8')
-        .trim();
+      const value = readFileSync(this.#userButtonPath).toString('utf8').trim();
       if (value === '0') {
         this.#lastButtonCount++;
         if (this.#lastButtonCount >= this.#durationPollRatio) {
@@ -161,6 +160,8 @@ class MDCLFlasher {
    * Restart device after success or exit with status code 1 on any error.
    */
   private transferData() {
+    console.log('Transferring data to /dev/mmcblk*boot1');
+
     this.blink(1000, 'orange');
     // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
     const imagePath = '/root/iot-connector-light-os-*.img.gz';
@@ -178,7 +179,10 @@ class MDCLFlasher {
       exit(1);
     }
     const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
+
+    const startDate = new Date();
     exec(command, (err, _stdout, stderr) => {
+      const finishDate = new Date();
       this.stopBlink();
       if (err) {
         console.error(err);
@@ -187,9 +191,18 @@ class MDCLFlasher {
         setTimeout(() => {
           exit(1);
         }, 10000);
+        return;
       }
+      console.log(
+        `Data successfully transferred to internal MCC. Shutting down. Finished after: ${
+          (finishDate.getTime() - startDate.getTime()) / 1000
+        }s`
+      );
+      console.log(_stdout);
+
       execSync(`partx -a ${target}`);
       this.glow(10000, 'green');
+
       setTimeout(() => {
         execSync('sudo /sbin/shutdown now');
       }, 10000);

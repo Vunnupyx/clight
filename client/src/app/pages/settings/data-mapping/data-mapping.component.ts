@@ -208,8 +208,9 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     return this.dataMappingService.revert();
   }
 
-  onApply() {
-    return this.dataMappingService.apply();
+  async onApply() {
+    await this.dataMappingService.apply();
+    await this.dataMappingService.getDataMappingsAll();
   }
 
   isDuplicatingMapping() {

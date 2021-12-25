@@ -27,7 +27,7 @@ export class BaseChangesService<TEntity extends ITrackable>
 
   create(entity: TEntity) {
     // creates temporary ID:
-    entity.id = Date.now().toString();
+    entity.id = `unsaved:${Date.now().toString()}`;
 
     this._changes.patchState((state) => {
       state.created[entity.id] = entity;

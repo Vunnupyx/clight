@@ -26,3 +26,7 @@ src/modules/LedStatusService/sys/*
 
 CHANGELOG.pdf
 logs/
+
+*.img
+*.img.gz
+*.img.zip

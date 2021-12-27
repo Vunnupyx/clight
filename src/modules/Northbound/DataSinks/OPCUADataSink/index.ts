@@ -30,6 +30,7 @@ export class OPCUADataSink extends DataSink {
   private opcuaNodes: OPCUANodeDict = {};
   protected _protocol = DataSinkProtocols.OPCUA;
   protected name = OPCUADataSink.name;
+  private generalConfig: IGeneralConfig;
 
   constructor(options: IOPCUADataSinkOptions) {
     super(options);
@@ -38,6 +39,7 @@ export class OPCUADataSink extends DataSink {
       generalConfig: options.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
+    this.generalConfig = options.generalConfig;
   }
 
   public async init(): Promise<OPCUADataSink> {
@@ -88,14 +90,36 @@ export class OPCUADataSink extends DataSink {
         );
       }
     });
+
+    this.setStaticNodes();
   }
 
-  protected processDataPointValue(dataPointId, value) {
-    const logPrefix = `${this.name}::onProcessDataPointValue`;
+  /**
+   * Sets values for static nodes like serial number, model or manufacturer
+   */
+  private setStaticNodes() {
+    const serialNumberNode = this.opcuaAdapter.findNode(
+      'ns=7;s=SerialNumber'
+    ) as UAVariable;
+    this.setNodeValue(serialNumberNode, this.generalConfig.serialNumber || '');
 
+    const manufacturerNode = this.opcuaAdapter.findNode(
+      'ns=7;s=Manufacturer'
+    ) as UAVariable;
+    this.setNodeValue(manufacturerNode, this.generalConfig.manufacturer || '');
+
+    const modelNode = this.opcuaAdapter.findNode('ns=7;s=Model') as UAVariable;
+    this.setNodeValue(modelNode, this.generalConfig.model || '');
+  }
+
+  /**
+   * Sets value for a specific node
+   * @param node
+   * @param value
+   */
+  private setNodeValue(node: UAVariable, value: any) {
+    const logPrefix = `${this.name}::setNodeValue`;
     try {
-      const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
-
       if (node) {
         //@ts-ignore
         node.setValueFromSource(
@@ -105,15 +129,18 @@ export class OPCUADataSink extends DataSink {
             dataType: node.dataType.value
           })
         );
-
-        // winston.debug(
-        //   `${logPrefix} TargetDataPointId: ${dataPointId}, Value: ${value}`
-        // );
       }
     } catch (e) {
-      winston.error(`${logPrefix} Failed to set value for ${dataPointId}. `);
+      winston.error(
+        `${logPrefix} Failed to set value for ${node.nodeId?.toString()}. `
+      );
       winston.debug(JSON.stringify(e));
     }
+  }
+
+  protected processDataPointValue(dataPointId, value) {
+    const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
+    this.setNodeValue(node, value);
   }
 
   public onLifecycleEvent(event: ILifecycleEvent): Promise<void> {

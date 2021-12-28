@@ -1,18 +1,25 @@
 export default [
   {
-    address: 'estop',
-    type: 'event',
-    initialValue: 'TRIGGERED',
     name: 'Emergency Stop',
+    address: 'estop',
+    initialValue: 'ARMED',
+    type: 'event',
     map: {
-      true: 'ARMED',
-      false: 'TRIGGERED'
-    }
+      '0': 'TRIGGERT',
+      '1': 'ARMED'
+    },
+    mandatory: true
   },
   {
+    name: 'Availability',
     address: 'avail',
+    initialValue: 'AVAILABLE',
     type: 'event',
-    name: 'Available'
+    map: {
+      '0': 'UNAVAILABLE',
+      '1': 'AVAILABLE'
+    },
+    mandatory: true
   },
   {
     address: 'system',
@@ -141,14 +148,30 @@ export default [
     name: 'Desired Part Count 1'
   },
   {
+    name: 'Controller Mode 1',
     address: 'mode1',
     type: 'event',
-    name: 'Controller Mode 1'
+    initialValue: 'AUTOMATIC',
+    map: {
+      '0': 'MANUAL',
+      '1': 'MANUAL_DATA_INPUT',
+      '2': 'AUTOMATIC'
+    },
+    mandatory: true
   },
   {
+    name: 'Execution 1',
     address: 'execution1',
     type: 'event',
-    name: 'Execution 1'
+    initialValue: 'ACTIVE',
+    map: {
+      '0': 'READY',
+      '1': 'ACTIVE',
+      '2': 'INTERRUPTED',
+      '3': 'FEED_HOLD',
+      '4': 'STOPPED'
+    },
+    mandatory: true
   },
   {
     address: 'program1',
@@ -196,14 +219,30 @@ export default [
     name: 'Desired Part Count 2'
   },
   {
+    name: 'Controller Mode 2',
     address: 'mode2',
     type: 'event',
-    name: 'Controller Mode 2'
+    initialValue: 'AUTOMATIC',
+    map: {
+      '0': 'MANUAL',
+      '1': 'MANUAL_DATA_INPUT',
+      '2': 'AUTOMATIC'
+    },
+    mandatory: true
   },
   {
+    name: 'Execution 2',
     address: 'execution2',
     type: 'event',
-    name: 'Execution 2'
+    initialValue: 'ACTIVE',
+    map: {
+      '0': 'READY',
+      '1': 'ACTIVE',
+      '2': 'INTERRUPTED',
+      '3': 'FEED_HOLD',
+      '4': 'STOPPED'
+    },
+    mandatory: true
   },
   {
     address: 'program2',
@@ -256,14 +295,30 @@ export default [
     name: 'Desired Part Count 3'
   },
   {
+    name: 'Controller Mode 3',
     address: 'mode3',
     type: 'event',
-    name: 'Controller Mode 3'
+    initialValue: 'AUTOMATIC',
+    map: {
+      '0': 'MANUAL',
+      '1': 'MANUAL_DATA_INPUT',
+      '2': 'AUTOMATIC'
+    },
+    mandatory: true
   },
   {
+    name: 'Execution 3',
     address: 'execution3',
     type: 'event',
-    name: 'Execution 3'
+    initialValue: 'ACTIVE',
+    map: {
+      '0': 'READY',
+      '1': 'ACTIVE',
+      '2': 'INTERRUPTED',
+      '3': 'FEED_HOLD',
+      '4': 'STOPPED'
+    },
+    mandatory: true
   },
   {
     address: 'program3',
@@ -316,14 +371,30 @@ export default [
     name: 'Desired Part Count 4'
   },
   {
+    name: 'Controller Mode 4',
     address: 'mode4',
     type: 'event',
-    name: 'Controller Mode 4'
+    initialValue: 'AUTOMATIC',
+    map: {
+      '0': 'MANUAL',
+      '1': 'MANUAL_DATA_INPUT',
+      '2': 'AUTOMATIC'
+    },
+    mandatory: true
   },
   {
+    name: 'Execution 4',
     address: 'execution4',
     type: 'event',
-    name: 'Execution 4'
+    initialValue: 'ACTIVE',
+    map: {
+      '0': 'READY',
+      '1': 'ACTIVE',
+      '2': 'INTERRUPTED',
+      '3': 'FEED_HOLD',
+      '4': 'STOPPED'
+    },
+    mandatory: true
   },
   {
     address: 'program4',

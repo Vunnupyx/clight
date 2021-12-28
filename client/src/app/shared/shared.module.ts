@@ -42,7 +42,6 @@ import { DocBtnComponent } from './components/doc-btn/doc-btn.component';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-
     MatAutocompleteModule,
     MatButtonModule,
     MatExpansionModule,
@@ -67,7 +66,6 @@ import { DocBtnComponent } from './components/doc-btn/doc-btn.component';
     NgxDatatableModule,
     NgxIpModule,
     NgxMatSelectSearchModule,
-
     AppTranslationModule,
     SharedServicesModule,
     StateModule,

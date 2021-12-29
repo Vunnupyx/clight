@@ -418,7 +418,7 @@ export class DataHubAdapter {
     const logPrefix = `${DataHubAdapter.#className}::registrationHandler`;
     if (error) {
       winston.error(`${logPrefix} error due to ${error}`);
-      switch(error.name) {
+      switch (error.name) {
         case 'NotConnectedError': {
           this.onStateChange(LifecycleEventStatus.TimeError);
           break;
@@ -467,13 +467,15 @@ export class DataHubAdapter {
   public sendData(groupedMeasurements: TGroupedMeasurements): void {
     const logPrefix = `${DataHubAdapter.#className}::sendData`;
 
-    winston.debug(`${logPrefix} start: ${JSON.stringify(groupedMeasurements)}`);
+    // winston.debug(`${logPrefix} start: ${JSON.stringify(groupedMeasurements)}`);
+
     for (const [group, measurementArray] of Object.entries(
       groupedMeasurements
     )) {
       if (measurementArray.length < 1) continue;
-      winston.debug(`${logPrefix} ${group}`);
-      //why object.entries infer string instead real strings?
+      // winston.debug(`${logPrefix} ${group}`);
+
+      // why object.entries infer string instead real strings?
       switch (group as TDataHubDataPointType) {
         case 'event': {
           // Remove not changed data

@@ -4,12 +4,13 @@ import {
   LifecycleEventStatus
 } from '../../../common/interfaces';
 import {
+  IDataPointMapping,
   IDataSinkConfig,
   ITargetDataMap
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
-import {isEmpty} from 'lodash';
+import { isEmpty } from 'lodash';
 
 export enum DataSinkStatus {
   CONNECTING = 'CONNECTING',
@@ -25,6 +26,7 @@ export enum DataSinkStatus {
 export type TDataSinkStatus = keyof typeof DataSinkStatus;
 
 export interface IDataSinkOptions {
+  mapping: IDataPointMapping[];
   dataSinkConfig: IDataSinkConfig;
   termsAndConditionsAccepted: boolean;
 }
@@ -47,7 +49,7 @@ export abstract class DataSink {
    */
   constructor(options: IDataSinkOptions) {
     this.config = options.dataSinkConfig;
-    this.dataPointMapper = DataPointMapper.getInstance();
+    this.dataPointMapper = new DataPointMapper(options.mapping);
     this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
     this.enabled = options.dataSinkConfig.enabled;
   }
@@ -172,7 +174,7 @@ export abstract class DataSink {
       dataPoints[target] = value;
     });
 
-    if(isEmpty(dataPoints)) return;
+    if (isEmpty(dataPoints)) return;
     this.processDataPointValues(dataPoints);
   }
 

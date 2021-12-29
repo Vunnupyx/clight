@@ -55,8 +55,6 @@ export class BootstrapManager {
       cache: this.dataPointCache
     });
 
-    DataPointMapper.createInstance(this.configManager);
-
     this.dataSinksManager = new DataSinksManager({
       configManager: this.configManager,
       dataPointCache: this.dataPointCache,

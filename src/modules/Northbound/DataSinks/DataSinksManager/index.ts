@@ -102,6 +102,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     winston.info(`${logPrefix} creating.`);
 
     const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
+      mapping: this.configManager.config.mapping,
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT),
       mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
       termsAndConditionsAccepted:
@@ -109,6 +110,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     };
 
     const opcuaDataSinkOptions: IOPCUADataSinkOptions = {
+      mapping: this.configManager.config.mapping,
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.OPCUA),
       generalConfig: this.configManager.config.general,
       runtimeConfig: this.configManager.runtimeConfig.opcua,
@@ -116,11 +118,13 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         this.configManager.config.termsAndConditions.accepted
     };
     const dataHubDataSinkOptions: DataHubDataSinkOptions = {
+      mapping: this.configManager.config.mapping,
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
       runTimeConfig: this.configManager.runtimeConfig.datahub,
       termsAndConditionsAccepted:
         this.configManager.config.termsAndConditions.accepted
     };
+
     this.configManager.config.dataSinks.forEach((sink) => {
       switch (sink.protocol) {
         case DataSinkProtocols.DATAHUB: {

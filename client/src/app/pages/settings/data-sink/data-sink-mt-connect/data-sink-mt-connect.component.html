@@ -594,7 +594,9 @@
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
               {{ 'settings-data-sink.Provisioning' | translate }}
             </ng-container>
-            <ng-container *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed">
+            <ng-container
+              *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
+            >
               {{ 'settings-data-sink.ProvisioningFailed' | translate }}
             </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
@@ -682,6 +684,9 @@
               DataSinkConnectionStatus.TermsAndConditionsNotAccepted
             "
           >
+            <mat-icon class="color-danger">highlight_off</mat-icon>
+          </ng-container>
+          <ng-container *ngSwitchCase="DataSinkConnectionStatus.TimeError">
             <mat-icon class="color-danger">highlight_off</mat-icon>
           </ng-container>
         </ng-container>

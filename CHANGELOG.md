@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.7.1]
+
+- Fixed bug where deleting a mapping doesn't delete the mapping inside the runtime until the next restart
+
 ## [1.7.0]
 
 ### Added

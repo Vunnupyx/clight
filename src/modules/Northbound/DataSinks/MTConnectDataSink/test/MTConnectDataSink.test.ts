@@ -35,6 +35,7 @@ xdescribe('Test MTConnectDataSink', () => {
     };
 
     const dataSink = new MTConnectDataSink({
+      mapping: [],
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true
@@ -89,13 +90,11 @@ xdescribe('Test MTConnectDataSink', () => {
     };
 
     const adapter = new MTConnectAdapter(mtConnectConfig);
-    const mapper = new DataPointMapper(config);
 
-    const getDpMapper = jest.spyOn(DataPointMapper, 'getInstance');
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
-    getDpMapper.mockReturnValue(mapper);
 
     const dataSink = new MTConnectDataSink({
+      mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true
@@ -174,13 +173,11 @@ xdescribe('Test MTConnectDataSink', () => {
     };
 
     const adapter = new MTConnectAdapter(mtConnectConfig);
-    const mapper = new DataPointMapper(config);
 
-    const getDpMapper = jest.spyOn(DataPointMapper, 'getInstance');
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
-    getDpMapper.mockReturnValue(mapper);
 
     const dataSink = new MTConnectDataSink({
+      mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true
@@ -275,13 +272,10 @@ xdescribe('Test MTConnectDataSink', () => {
     };
 
     const adapter = new MTConnectAdapter(mtConnectConfig);
-    const mapper = new DataPointMapper(config);
-
-    const getDpMapper = jest.spyOn(DataPointMapper, 'getInstance');
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
-    getDpMapper.mockReturnValue(mapper);
 
     const dataSink = new MTConnectDataSink({
+      mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true
@@ -339,6 +333,7 @@ xdescribe('Test MTConnectDataSink', () => {
     const addDataItemMock = jest.spyOn(adapter, 'addDataItem');
 
     const dataSink = new MTConnectDataSink({
+      mapping: [],
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true

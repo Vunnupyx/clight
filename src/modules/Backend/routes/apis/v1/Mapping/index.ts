@@ -55,6 +55,7 @@ async function mapPostBulkHandler(
 ): Promise<void> {
   try {
     await configManager.bulkChangeMapings(request.body || {});
+    await configManager.configChangeCompleted();
 
     response.status(200).send();
   } catch {

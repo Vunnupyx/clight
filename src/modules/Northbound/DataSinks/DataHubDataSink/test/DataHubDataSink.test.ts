@@ -1,5 +1,3 @@
-import { DataPointMapper } from '../../../../DataPointMapper';
-
 const dataHubAdapterMock = {
   isRunning: true,
   running: true,
@@ -29,6 +27,21 @@ const winstonMock = {
 };
 jest.doMock('winston', () => {
   return winstonMock;
+});
+
+const dataPointMapperMock = {
+  getTargets: jest.fn(),
+  mapping: [],
+  newConfigHandler: jest.fn()
+};
+const dataPointMapperMockConstructor = jest
+  .fn()
+  .mockImplementation(() => dataPointMapperMock);
+
+jest.doMock('../../../../DataPointMapper', () => {
+  return {
+    DataPointMapper: dataPointMapperMockConstructor
+  };
 });
 
 import {
@@ -70,21 +83,13 @@ const runTimeConfigMock: IDataHubConfig = {
   }
 };
 
-const dataPointMapperMock = {
-  getTargets: jest.fn(),
-  mapping: [],
-  newConfigHandler: jest.fn()
-};
-const DataPointMapperGetInstanceSpy = jest
-  .spyOn(DataPointMapper, 'getInstance')
-  .mockImplementation(() => dataPointMapperMock as any);
-
 /**
  * TESTS
  */
 describe('DataHubDataSink', () => {
   let datasinkUUT: DataHubDataSink;
   let dataHubDataSinkOptions: DataHubDataSinkOptions = {
+    mapping: [],
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
     termsAndConditionsAccepted: true

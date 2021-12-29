@@ -58,7 +58,7 @@ describe('Test DataPointMapper', () => {
       ]
     };
 
-    const mapper = new DataPointMapper(config);
+    const mapper = new DataPointMapper(config.config.mapping);
     config.emit('configsLoaded');
     const mapping = mapper.getTargets(dataSource.dataPoints[0].id);
 

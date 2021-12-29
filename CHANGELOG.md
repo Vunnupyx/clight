@@ -2,6 +2,14 @@
 
 ## [1.7.1]
 
+### Added
+
+- Added "Time Error" connection status
+- [MDCL-186](https://codestryke.atlassian.net/browse/MDCL-186) Added default MTConnect item, that can't be deleted
+- Provided general device info inside OPC UA server
+
+### Fixed
+
 - Fixed bug where deleting a mapping doesn't delete the mapping inside the runtime until the next restart
 
 ## [1.7.0]

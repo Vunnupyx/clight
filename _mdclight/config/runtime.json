@@ -8,12 +8,6 @@
       "description": "2 in total installed",
       "items": [
         {
-          "key": "MDCLight software version",
-          "keyDescription": "Software component",
-          "value": "1.7.0",
-          "valueDescription": "Version number"
-        },
-        {
           "key": "MTConnect agent version",
           "keyDescription": "Software component",
           "value": "1.7.0.7",

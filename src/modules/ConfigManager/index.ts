@@ -887,6 +887,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   public async getSystemInformation() {
     const system = new System();
+    winston.warn(`INFO: ${JSON.stringify(this.runtimeConfig.systemInfo)}`);
     return [
       {
         title: 'General system information',
@@ -911,7 +912,20 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           }
         ]
       },
-      ...this.runtimeConfig.systemInfo
+      {
+        title: 'Installed software components',
+        description: '2 in total installed',
+        items: [
+          {
+            key: 'MDC light version',
+            keyDescription: 'Software component',
+            value: process.env.MDC_LIGHT_RUNTIME_VERSION || 'unknown',
+            valueDescription: null
+          },
+          { ...this.runtimeConfig.systemInfo[0].items[0] }
+        ]
+      }
+      // ...this.runtimeConfig.systemInfo
     ];
   }
 

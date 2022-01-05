@@ -200,6 +200,7 @@
     "NotConfigured": "Configuration Missing",
     "Provisioning": "Provisioning",
     "ProvisioningFailed": "Provisioning Failed",
+    "TimeError": "Connection error due to time mismatch",
     "NoNetwork": "No Network",
     "Connecting": "Starting",
     "Reconnecting": "Reconnecting",

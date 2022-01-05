@@ -200,6 +200,7 @@
     "NotConfigured": "Unvollständige Konfiguration",
     "Provisioning": "Provisionierung wird geladen",
     "ProvisioningFailed": "Provisionierung fehlgeschlagen",
+    "TimeError": "Verbindungsfehler wegen Zeitabweichung",
     "NoNetwork": "Kein Netzwerk",
     "Connecting": "Verbindung wird aufgebaut",
     "Reconnecting": "Neu verbinden",

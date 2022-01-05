@@ -12,24 +12,10 @@
     "Logout": "Logout"
   },
   "auth-login": {
-    "Email": "Email",
     "Username": "Username",
     "Password": "Password",
     "SignIn": "Sign in",
-    "SendResetPassword": "Send reset email",
-    "ResetEmailSentSuccess": "Reset email has been sent successfully!",
-
-    "ForgotPasswordForCustomers": "For our customers:",
-    "ForgotPasswordForCustomersDescription": "Please use your email to reset your password!",
     "ForgotPassword": "Forgot your password?"
-  },
-  "auth-reset-password": {
-    "ForCustomers": "For our customers:",
-    "ForCustomersDescription": "Description",
-    "NewPassword": "New Password",
-    "ConfirmPassword": "Confirm Password",
-    "ResetPassword": "Reset Password",
-    "ResetPasswordSuccess": "Password has been reset successfully!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",
@@ -49,6 +35,8 @@
     "LoadError": "Failed to load info. Try again later",
     "Next": "Next",
     "Save": "Save",
+    "Yes": "Yes",
+    "No": "No",
     "ContinueWithoutTemplate": "Continue without template",
     "Attention": "Attention",
     "AttentionMessage": "When saving, your current configuration will be overwritten. Do you still want to continue?",
@@ -146,21 +134,15 @@
     "ServiceState": "Service state",
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
-    "ControllerType": "Controller Type",
+    "ControllerType": "Type",
     "Name": "Name",
     "Type": "Type",
     "Address": "Address",
     "LiveData": "Live Data",
     "Actions": "Actions",
-    "Area": "Area",
-    "Component": "Component",
-    "VariableName": "Variable name",
-    "Status": "Status",
     "SoftwareVersion": "Software Version",
     "BTTSString": "BTTS String",
     "LoadError": "Failed to load data sources. Try again later",
-    "LoadStatusError": "Failed to load status. Try again later",
-    "UpdateError": "Failed to update a data source. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
       "ioshield": "Input Board"
@@ -180,7 +162,7 @@
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",
-    "AddDataPoint": "Add Virtual Data Point",
+    "AddDataPoint": "Add Data Point",
     "Name": "Name",
     "Operation": "Operation",
     "Sources": "Sources",
@@ -192,9 +174,6 @@
     "SetThreshold": "Set Threshold",
     "LiveData": "Live Data",
     "LoadError": "Failed to load data points. Try again later",
-    "CreateError": "Failed to create a data point. Try again later",
-    "UpdateError": "Failed to update a data point. Try again later",
-    "DeleteError": "Failed to delete a data point. Try again later",
     "DeleteTitle": "Delete",
     "DeleteMessage": "Are you sure you want to delete data point?",
     "SetThresholds": "Set Thresholds",
@@ -209,10 +188,6 @@
     "DuplicatedName": "You are not allowed to duplicate names"
   },
   "settings-data-source-point": {
-    "LoadError": "Failed to load data points. Try again later",
-    "CreateError": "Failed to create a data point. Try again later",
-    "UpdateError": "Failed to update a data point. Try again later",
-    "DeleteError": "Failed to delete a data point. Try again later",
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!"
   },
@@ -225,6 +200,7 @@
     "NotConfigured": "Configuration Missing",
     "Provisioning": "Provisioning",
     "ProvisioningFailed": "Provisioning Failed",
+    "TimeError": "Connection error due to time mismatch",
     "NoNetwork": "No Network",
     "Connecting": "Starting",
     "Reconnecting": "Reconnecting",
@@ -251,9 +227,6 @@
     "Condition": "Condition",
     "SelectAVariable": "Select a variable",
     "CreateDataPoint": "Create data item",
-    "Area": "Area",
-    "Component": "Component",
-    "VariableName": "VariableName",
     "SelectVariable": "SelectVariable",
     "Mapping": "Mapping",
     "From": "From",
@@ -263,26 +236,20 @@
     "ScopeId": "Scope Id",
     "RegId": "Reg Id",
     "SymKey": "Sym Key",
-    "Apply": "Apply",
-    "DataHubConfigSaveSuccess": "Datahub config has been saved successfully!",
-    "UserDataState": "User Data State",
-    "AlarmState": "Alarm State",
     "AlreadyExistDataPoint": "This item is already added!",
+    "AuthenticationLevels": {
+      "anonymous": "Anonymous",
+      "user/pass": "User/Password"
+    },
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
       "datahub": "CELOS Xchange"
     },
-    "AuthenticationLevels": {
-      "anonymous": "Anonymous",
-      "user/pass": "User/Password"
-    },
     "OPCUAAuthenticationLevel": "OPC UA Authentication Level",
     "OPCUAServerUsername": "OPC UA Server Username",
     "OPCUAServerPassword": "OPC UA Server Password",
     "LoadError": "Failed to load data sinks. Try again later",
-    "LoadStatusError": "Failed to load status. Try again later",
-    "UpdateError": "Failed to update a data sink. Try again later",
     "OpenMTConnectStream": "Open MTConnect Stream",
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
@@ -310,9 +277,6 @@
     "Cancel": "Cancel",
     "AddMapping": "Add Mapping",
     "LoadError": "Failed to load mappings. Try again later",
-    "CreateError": "Failed to create a mapping. Try again later",
-    "UpdateError": "Failed to update a mapping. Try again later",
-    "DeleteError": "Failed to delete a mapping. Try again later",
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
     "DiscardChanges": "Discard Changes",
@@ -353,10 +317,9 @@
     "LoadError": "Failed to load system information. Try again later"
   },
   "prompt": {
-    "warningTitle": "Warning!",
     "warningText": "You have unsaved changes, do you really want to continue?"
   },
   "clock": {
-    "WarningSystemTimeVsBrowserTime": "System time differs from your browser time"
+    "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
   }
 }

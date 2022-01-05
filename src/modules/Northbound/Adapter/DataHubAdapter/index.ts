@@ -209,7 +209,7 @@ export class DataHubAdapter {
   /**
    * Start the provisioning process for this device
    */
-  private startProvisioning(): Promise<boolean> {
+  private async startProvisioning(): Promise<boolean> {
     const logPrefix = `${DataHubAdapter.#className}::startProvisioning`;
     winston.debug(`${logPrefix} Starting provisioning...`);
 
@@ -232,11 +232,8 @@ export class DataHubAdapter {
       this.#provSecClient
     );
 
-    const success = this.getProvisioning();
-    if (!success) {
-      this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
-    }
-    return success;
+    const success = await this.getProvisioning();
+    return Promise.resolve(success);
   }
 
   /**
@@ -372,18 +369,15 @@ export class DataHubAdapter {
       //   this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
       //   res(false);
       // }, timeOut);
-      this.#provClient.register((err, response) => {
-        try {
+      try {
+        this.#provClient.register((err, response) => {
           // clearTimeout(this.provTimer);
           const success = this.registrationHandler(err, response);
           res(success);
-        } catch (err) {
-          winston.error(
-            `${logPrefix} registration failed due to ${err?.message}`
-          );
-          res(false);
-        }
-      });
+        });
+      } catch (err) {
+        rej(false);
+      }
     });
   }
 
@@ -423,10 +417,21 @@ export class DataHubAdapter {
   private registrationHandler(error: Error, res: RegistrationResult): boolean {
     const logPrefix = `${DataHubAdapter.#className}::registrationHandler`;
     if (error) {
-      if (error.name === 'NotConnectedError')
-        this.onStateChange(LifecycleEventStatus.NoNetwork);
-      else this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
-
+      winston.error(`${logPrefix} error due to ${error}`);
+      switch(error.name) {
+        case 'NotConnectedError': {
+          this.onStateChange(LifecycleEventStatus.TimeError);
+          break;
+        }
+        case 'TimeoutError': {
+          this.onStateChange(LifecycleEventStatus.NoNetwork);
+          break;
+        }
+        default: {
+          this.onStateChange(LifecycleEventStatus.ProvisioningFailed);
+          break;
+        }
+      }
       return false;
     } else {
       winston.debug(
@@ -462,10 +467,12 @@ export class DataHubAdapter {
   public sendData(groupedMeasurements: TGroupedMeasurements): void {
     const logPrefix = `${DataHubAdapter.#className}::sendData`;
 
+    winston.debug(`${logPrefix} start: ${JSON.stringify(groupedMeasurements)}`);
     for (const [group, measurementArray] of Object.entries(
       groupedMeasurements
     )) {
       if (measurementArray.length < 1) continue;
+      winston.debug(`${logPrefix} ${group}`);
       //why object.entries infer string instead real strings?
       switch (group as TDataHubDataPointType) {
         case 'event': {
@@ -499,7 +506,6 @@ export class DataHubAdapter {
             `${logPrefix} publishing ${filteredMeasurementArray.length} event data points (${sendTime})`
           );
           this.#dataHubClient.sendEvent(msg, (result) => {
-            console.log(result);
             winston.debug(
               `${logPrefix} successfully published ${filteredMeasurementArray.length} event data points (${sendTime})`
             );
@@ -550,7 +556,11 @@ export class DataHubAdapter {
     }
     const msg = this.addMsgType(msgType, buffer.getMessage());
 
-    this.#dataHubClient.sendEvent(msg, () => {
+    this.#dataHubClient.sendEvent(msg, (err, result) => {
+      if (err) {
+        winston.error(`${logPrefix} error sending due to ${err}`);
+        return;
+      }
       winston.debug(
         `${logPrefix} successfully published ${msgType} data points`
       );

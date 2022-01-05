@@ -37,7 +37,6 @@ export class MTConnectDataSink extends DataSink {
   protected _protocol = DataSinkProtocols.MTCONNECT;
   protected name = MTConnectDataSink.name;
 
-  private avail: DataItem;
   private runTime: DataItem;
 
   // private system: Condition;
@@ -95,11 +94,9 @@ export class MTConnectDataSink extends DataSink {
   }
 
   private setupDataItems() {
-    this.avail = new Event('avail');
     this.runTime = new Event('runTime');
     this.runTime.value = 0;
 
-    this.mtcAdapter.addDataItem(this.avail);
     this.mtcAdapter.addDataItem(this.runTime);
 
     this.config.dataPoints.forEach((dp) => {
@@ -152,20 +149,7 @@ export class MTConnectDataSink extends DataSink {
    * Handles live cycle events
    * @param params The user configuration object for this data source
    */
-  public async onLifecycleEvent(event: ILifecycleEvent) {
-    if (event.type === DataSourceLifecycleEventTypes.Connected) {
-      this.avail.value = 'AVAILABLE';
-      winston.info(
-        `Data source for data sink ${this.config.protocol} is available`
-      );
-    }
-    if (event.type === DataSourceLifecycleEventTypes.Disconnected) {
-      this.avail.unavailable();
-      winston.info(
-        `Data source for data sink ${this.config.protocol} is unavailable`
-      );
-    }
-  }
+  public async onLifecycleEvent(event: ILifecycleEvent) {}
 
   /**
    * Shutdown data sink

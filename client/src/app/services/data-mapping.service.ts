@@ -114,27 +114,6 @@ export class DataMappingService
       state.status = Status.Ready;
       state.dataMappings = [...state.dataMappings, obj];
     });
-
-    // this._store.patchState((state) => {
-    //   state.status = Status.Creating;
-    // });
-
-    // try {
-    //   const response = await this.httpService.post(`/mappings`, obj);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //     obj.id = response.id;
-    //     state.dataMappings.push(obj);
-    //   });
-    // } catch (err) {
-    //   this.toastr.error(
-    //     this.translate.instant('settings-data-mapping.CreateError')
-    //   );
-    //   errorHandler(err);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //   });
-    // }
   }
 
   async updateDataMapping(obj: DataMapping) {
@@ -149,28 +128,6 @@ export class DataMappingService
         x.id != obj.id ? x : obj
       );
     });
-
-    // this._store.patchState((state) => {
-    //   state.status = Status.Updating;
-    // });
-
-    // try {
-    //   await this.httpService.patch(`/mappings/${obj.id}`, obj);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //     state.dataMappings = state.dataMappings.map((x) =>
-    //       x.id != obj.id ? x : obj
-    //     );
-    //   });
-    // } catch (err) {
-    //   this.toastr.error(
-    //     this.translate.instant('settings-data-mapping.UpdateError')
-    //   );
-    //   errorHandler(err);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //   });
-    // }
   }
 
   async deleteDataMapping(obj: DataMapping) {
@@ -179,26 +136,6 @@ export class DataMappingService
     this._store.patchState((state) => {
       state.dataMappings = state.dataMappings.filter((x) => x.id != obj.id);
     });
-
-    // this._store.patchState((state) => {
-    //   state.status = Status.Deleting;
-    // });
-
-    // try {
-    //   await this.httpService.delete(`/mappings/${obj.id}`);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //     state.dataMappings = state.dataMappings.filter((x) => x != obj);
-    //   });
-    // } catch (err) {
-    //   this.toastr.error(
-    //     this.translate.instant('settings-data-mapping.DeleteError')
-    //   );
-    //   errorHandler(err);
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //   });
-    // }
   }
 
   private _parseDataMapping(obj: any) {

@@ -39,7 +39,6 @@
   },
   "dataSources": [
     {
-      "name": "",
       "dataPoints": [
         {
           "type": "nck",
@@ -164,8 +163,6 @@
       "enabled": false
     },
     {
-      "id": "",
-      "name": "",
       "dataPoints": [
         {
           "type": null,
@@ -211,7 +208,6 @@
   ],
   "dataSinks": [
     {
-      "name": "",
       "dataPoints": [
         {
           "id": "0c24235c-f56d-435b-a560-6874079effb4",
@@ -393,66 +389,55 @@
       "protocol": "datahub"
     },
     {
-      "name": "",
       "dataPoints": [
         {
           "name": "Operation Duration",
           "address": "NodeId\tns=7;s=OperationDuration",
-          "enabled": true,
           "id": "7a79047b-6e79-41ff-9ce5-729d11b3b4e8"
         },
         {
           "name": "Power On Duration",
           "address": "NodeId\tns=7;s=PowerOnDuration",
-          "enabled": true,
           "id": "873bb4df-d4c8-4aeb-b29f-e23ad5f1bec3"
         },
         {
           "name": "Emergency Stop Triggered",
           "address": "ns=7;s=EmergencyStopTriggered",
-          "enabled": true,
           "id": "93456cf7-249d-4edd-9025-f0c822f9b081"
         },
         {
           "name": "Program Path",
           "address": "ns=7;s=ActiveProgram-ProgramPath",
-          "enabled": true,
           "id": "ca6af0a9-68f7-4585-8699-a5ded85bc95e"
         },
         {
           "name": "Current State",
           "address": "ns=7;s=ActiveProgram-State-CurrentState",
-          "enabled": true,
           "id": "f40e3289-7d64-4d0d-b752-55ba09a26de4"
         },
         {
           "name": "Current Run Time",
           "address": "ns=7;s=ActiveProgram-CurrentRunTime",
-          "enabled": true,
           "id": "67f44404-9eb6-45dc-afc3-c61e2a61cdcd"
         },
         {
           "name": "Part Count",
           "address": "ns=7;s=ActiveProgram-PartCounter",
-          "enabled": true,
           "id": "9582b8e8-3bc2-4161-bc20-333fb9943134"
         },
         {
           "name": "Operation Mode",
           "address": "NodeId\tns=7;s=OperationMode",
-          "enabled": true,
           "id": "a5912bf4-770a-4c79-8a42-f43da2ed881f"
         },
         {
           "name": "Desired Parts",
           "address": "ns=7;s=ActiveProgram-DesiredParts",
-          "enabled": true,
           "id": "f9978c9a-ea04-4f1f-b3c7-7972bb481ae1"
         },
         {
           "name": "Program Name",
           "address": "ns=7;s=ActiveProgram-Name",
-          "enabled": true,
           "id": "1a468843-e2e2-4831-a111-a6844887586d"
         }
       ],
@@ -463,119 +448,123 @@
       }
     },
     {
-      "id": "mtconnect",
-      "name": "My MTConnect Machine",
       "dataPoints": [
+        {
+          "name": "Emergency Stop",
+          "address": "estop",
+          "initialValue": "ARMED",
+          "type": "event",
+          "map": {
+            "0": "TRIGGERT",
+            "1": "ARMED"
+          },
+          "id": "0e739177-8709-45c4-83d0-82197b345bbd",
+          "mandatory": true
+        },
+        {
+          "name": "Availability",
+          "address": "avail",
+          "initialValue": "AVAILABLE",
+          "type": "event",
+          "map": {
+            "0": "UNAVAILABLE",
+            "1": "AVAILABLE"
+          },
+          "id": "0e739177-8709-45c4-83d0-82197b345bbd",
+          "mandatory": true
+        },
+        {
+          "name": "Controller Mode 1",
+          "address": "mode1",
+          "type": "event",
+          "id": "ab72a983-0dbb-45bd-9cb0-b99288823004",
+          "initialValue": "AUTOMATIC",
+          "map": {
+            "0": "MANUAL",
+            "1": "MANUAL_DATA_INPUT",
+            "2": "AUTOMATIC"
+          },
+          "mandatory": true
+        },
+        {
+          "name": "Execution 1",
+          "address": "execution1",
+          "type": "event",
+          "id": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+          "initialValue": "ACTIVE",
+          "map": {
+            "0": "READY",
+            "1": "ACTIVE",
+            "2": "INTERRUPTED",
+            "3": "FEED_HOLD",
+            "4": "STOPPED"
+          },
+          "mandatory": true
+        },
         {
           "name": "Operation Time",
           "address": "operationTime",
           "type": "event",
-          "enabled": true,
           "id": "7403fe9c-de42-4740-bc04-5e5e9f823b6f"
         },
         {
           "name": "Power On Time",
           "address": "powerOnTime",
           "type": "event",
-          "enabled": true,
           "id": "8cf5bcf4-dc7d-426d-982f-508a0905e888"
         },
         {
           "name": "Current Run Time",
           "address": "currentRunTime",
           "type": "event",
-          "enabled": true,
           "id": "b40d4b73-a1c1-4b4a-8194-ebafcfcd3cb8"
         },
         {
           "name": "Tool Number 1",
           "address": "toolnumber1",
           "type": "event",
-          "enabled": true,
           "id": "4ffdb613-7a07-4392-bcc7-f657395f2fd6"
         },
         {
           "name": "Overall Part Count 1",
           "address": "part_count_overall1",
           "type": "event",
-          "enabled": true,
           "id": "48116416-af2c-42d4-b699-7b18f1565278"
         },
         {
           "name": "Program 1",
           "address": "program1",
           "type": "event",
-          "enabled": true,
           "id": "e4314c9d-7268-43b0-a906-151c07c48c85"
         },
         {
           "name": "Part Count 1",
           "address": "part_count1",
           "type": "event",
-          "enabled": true,
           "id": "a94d30cc-a5fe-4021-be86-d719049561a0"
-        },
-        {
-          "name": "Execution 1",
-          "address": "execution1",
-          "type": "event",
-          "enabled": true,
-          "id": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
-          "map": {
-            "0": "READY",
-            "1": "ACTIVE"
-          }
         },
         {
           "name": "Rapid Override 1",
           "address": "rapidoverride1",
           "type": "event",
-          "enabled": true,
           "id": "1ba142fc-ebb1-4e2f-a491-df5e7ded6c01"
-        },
-        {
-          "name": "Emergency Stop",
-          "address": "estop",
-          "initialValue": "TRIGGERED",
-          "type": "event",
-          "enabled": true,
-          "map": {
-            "0": "TRIGGERED",
-            "1": "ARMED"
-          },
-          "id": "0e739177-8709-45c4-83d0-82197b345bbd"
-        },
-        {
-          "name": "Controller Mode 1",
-          "address": "mode1",
-          "type": "event",
-          "enabled": true,
-          "id": "ab72a983-0dbb-45bd-9cb0-b99288823004",
-          "map": {
-            "0": "MANUAL",
-            "1": "MANUAL_DATA_INPUT",
-            "2": "AUTOMATIC"
-          }
         },
         {
           "name": "Desired Part Count 1",
           "address": "part_count_desired1",
           "type": "event",
-          "enabled": true,
           "id": "30c15e3d-ec08-47d4-a108-fdbb8c7d7983"
         },
         {
           "name": "Number of active Alarms",
           "address": "numberOfActiveAlarms",
           "type": "event",
-          "enabled": true,
           "id": "8e9f5af9-0cb8-4168-ac15-42bf8271d4aa"
         },
         {
           "name": "Jog Override 1",
           "address": "jogoverride1",
           "type": "event",
-          "enabled": true,
           "id": "4d3aacc2-f8cd-421b-a96f-5ff4b29b9b9c"
         }
       ],

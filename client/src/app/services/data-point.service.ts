@@ -8,7 +8,6 @@ import {
   array2map,
   clone,
   errorHandler,
-  flatArray,
   ObjectMap
 } from 'app/shared/utils';
 import * as api from 'app/api/models';
@@ -140,29 +139,6 @@ export class DataPointService
       state.dataPoints = [...state.dataPoints, obj];
       state.dataPointsSinkMap[obj.id] = protocol;
     });
-
-    // this._store.patchState((state) => {
-    //   state.status = Status.Creating;
-    // });
-
-    // try {
-    //   const response = await this.httpService.post(
-    //     `/datasinks/${protocol}/dataPoints`,
-    //     obj
-    //   );
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //     obj.id = response.created.id;
-    //     state.dataPoints.push(obj);
-    //     state.dataPointsSinkMap[obj.id!] = protocol;
-    //   });
-    // } catch (err) {
-    //   errorHandler(err);
-    //   // TODO: Show error message (toast notification?)
-    //   this._store.patchState((state) => {
-    //     state.status = Status.Ready;
-    //   });
-    // }
   }
 
   async updateDataPoint(protocol: DataSinkProtocol, obj: DataPoint) {

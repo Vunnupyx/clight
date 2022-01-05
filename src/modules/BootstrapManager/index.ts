@@ -97,6 +97,7 @@ export class BootstrapManager {
   public async start() {
     try {
       await this.ledManager.init();
+      this.setupKillEvents();
 
       this.configManager.on('configsLoaded', async () => {
         const log = `${BootstrapManager.name} send network configuration to host.`;
@@ -149,7 +150,6 @@ export class BootstrapManager {
         type: DeviceLifecycleEventTypes.LaunchSuccess
       });
 
-      this.setupKillEvents();
       this.ledManager.runTimeStatus(true);
 
       // // TODO Remove
@@ -174,31 +174,62 @@ export class BootstrapManager {
   }
 
   setupKillEvents() {
-    process.stdin.resume(); //so the program will not close instantly
-
-    function exitHandler(exitCode) {
-      this.ledManager.runTimeStatus(false);
-
-      // Flushing logs to not lose any logs before exiting
-      winston.info(
-        `Exiting program, code:" ${exitCode}`,
-        function (err, level, msg, meta) {
-          process.exit(1);
-        }
-      );
-    }
+    //so the program will not close instantly
+    process.stdin.resume();
 
     //do something when app is closing
-    process.on('exit', exitHandler.bind(this));
+    process.on('exit', (exitCode) => {
+      winston.info(`Exited program, code:" ${exitCode}`);
+    });
 
     //catches ctrl+c event
-    process.on('SIGINT', exitHandler.bind(this));
+    process.on('SIGINT', this.signalHandler.bind(this, 'SIGINT'));
+
+    process.on('SIGHUP', this.signalHandler.bind(this, 'SIGHUP'));
+    process.on('SIGQUIT', this.signalHandler.bind(this, 'SIGQUIT'));
+    process.on('SIGTERM', this.signalHandler.bind(this, 'SIGTERM'));
 
     // catches "kill pid" (for example: nodemon restart)
-    process.on('SIGUSR1', exitHandler.bind(this));
-    process.on('SIGUSR2', exitHandler.bind(this));
+    process.on('SIGUSR1', this.signalHandler.bind(this, 'SIGUSR1'));
+    process.on('SIGUSR2', this.signalHandler.bind(this, 'SIGUSR2'));
 
     //catches uncaught exceptions
-    process.on('uncaughtException', exitHandler.bind(this));
+    process.on('uncaughtException', this.exceptionHandler.bind(this));
+    //catches unhandled rejection
+    process.on('unhandledRejection', this.rejectionHandler.bind(this));
+  }
+
+  private exceptionHandler(e) {
+    winston.error(`Exiting due unhandled exception.`);
+    winston.error(e.stack);
+    this.ledManager.runTimeStatus(false);
+    process.exit(1);
+  }
+
+  private rejectionHandler(reason, promise) {
+    winston.error(
+      `Exiting due unhandled rejection at: ${JSON.stringify(
+        promise
+      )} reason: ${reason}`
+    );
+    this.ledManager.runTimeStatus(false);
+    process.exit(1);
+  }
+
+  private signalHandler(signal) {
+    winston.error(`Received signal ${signal}.`);
+    this.ledManager.runTimeStatus(false);
+
+    process.removeAllListeners('SIGINT');
+    process.removeAllListeners('SIGHUP');
+    process.removeAllListeners('SIGQUIT');
+    process.removeAllListeners('SIGTERM');
+
+    // necessary to communicate the signal to the parent process
+    process.kill(process.pid, signal);
+
+    setTimeout(() => {
+      process.exit(0);
+    }, 100);
   }
 }

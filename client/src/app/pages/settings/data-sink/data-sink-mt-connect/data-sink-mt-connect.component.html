@@ -341,11 +341,14 @@
             class="text-ellipsis"
             [title]="value"
           >
-            <mat-icon *ngIf="row.dataMapping" class="color-success" 
-              style="font-size: 15px; position: relative; top: 3px;"
+            <mat-icon
+              *ngIf="row.dataMapping"
+              class="color-success"
+              style="font-size: 15px; position: relative; top: 3px"
               [matTooltip]="'settings-data-sink.HasDataMapping' | translate"
               matTooltipPosition="above"
-            >check_circle</mat-icon>
+              >check_circle</mat-icon
+            >
             {{ getDataSinkDataPointPrefix(row.id) }} {{ value }}
           </div>
           <input
@@ -536,6 +539,7 @@
               ><mat-icon>edit</mat-icon></mat-button-toggle
             >
             <mat-button-toggle
+              *ngIf="!row.mandatory"
               (click)="onDelete(row); group.value = null"
               [matTooltip]="'settings-data-sink.Delete' | translate"
               matTooltipPosition="above"
@@ -590,13 +594,14 @@
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Provisioning">
               {{ 'settings-data-sink.Provisioning' | translate }}
             </ng-container>
-            <ng-container
-              *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed"
-            >
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.ProvisioningFailed">
               {{ 'settings-data-sink.ProvisioningFailed' | translate }}
             </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.NoNetwork">
               {{ 'settings-data-sink.NoNetwork' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="DataSinkConnectionStatus.TimeError">
+              {{ 'settings-data-sink.TimeError' | translate }}
             </ng-container>
             <ng-container *ngSwitchCase="DataSinkConnectionStatus.Connecting">
               {{ 'settings-data-sink.Connecting' | translate }}

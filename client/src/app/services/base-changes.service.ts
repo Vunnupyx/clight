@@ -1,12 +1,10 @@
 import {
-  IChangesAccumulatable,
   IChangesState,
   ITrackable
 } from 'app/models/core/data-changes';
 import { Store, StoreFactory } from 'app/shared/state';
 
 export class BaseChangesService<TEntity extends ITrackable>
-  implements IChangesAccumulatable<string, TEntity>
 {
   protected _changes: Store<IChangesState<string, TEntity>>;
 
@@ -29,7 +27,7 @@ export class BaseChangesService<TEntity extends ITrackable>
 
   create(entity: TEntity) {
     // creates temporary ID:
-    entity.id = Date.now().toString();
+    entity.id = `unsaved:${Date.now().toString()}`;
 
     this._changes.patchState((state) => {
       state.created[entity.id] = entity;

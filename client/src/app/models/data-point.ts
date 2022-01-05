@@ -13,4 +13,5 @@ export class DataPoint {
   name?: string;
   type?: DataPointType;
   address?: string;
+  mandatory?: boolean;
 }

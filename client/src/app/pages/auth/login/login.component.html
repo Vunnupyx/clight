@@ -1,12 +1,6 @@
 <main class="login-layout">
   <div
-    class="
-      split-screen
-      d-flex
-      align-items-start
-      justify-content-center
-      flex-column
-    "
+    class="split-screen d-flex align-items-start justify-content-center flex-column"
   >
     <img class="brand" src="/assets/images/logo-login.png" alt="logotype" />
     <img
@@ -86,35 +80,6 @@
             </div>
           </form>
         </ng-container>
-        <!-- <ng-container *ngSwitchCase="LoginPageMode.ForgotPassword">
-          <form
-            #form="ngForm"
-            (ngSubmit)="form.valid && onForgotPasswordSubmit(form)"
-          >
-            <mat-form-field>
-              <mat-label>{{ 'auth-login.Email' | translate }}</mat-label>
-              <input
-                matInput
-                type="email"
-                name="email"
-                [required]="true"
-                [pattern]="EMAIL_REGEX"
-                [(ngModel)]="forgotPasswordRequest.email"
-              />
-            </mat-form-field>
-
-            <div class="text-center">
-              <button
-                mat-raised-button
-                color="primary"
-                type="submit"
-                [disabled]="form.invalid"
-              >
-                {{ 'auth-login.SendResetPassword' | translate }}
-              </button>
-            </div>
-          </form>
-        </ng-container> -->
       </ng-container>
     </div>
   </div>

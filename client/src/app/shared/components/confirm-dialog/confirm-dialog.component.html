@@ -7,8 +7,10 @@
 </div>
 
 <div mat-dialog-actions class="d-flex justify-content-end">
-  <button type="submit" mat-raised-button color="primary" (click)="onConfirm()">
-    Yes
+  <button type="button" mat-button (click)="onConfirm()">
+    {{ 'quick-start.Yes' | translate }}
   </button>
-  <button type="button" mat-button (click)="onDismiss()">No</button>
+  <button type="submit" mat-raised-button color="primary" (click)="onDismiss()">
+    {{ 'quick-start.No' | translate }}
+  </button>
 </div>

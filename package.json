@@ -57,11 +57,10 @@
     "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight",
     "copy_mtc_conf": "scp -r _mdclight/mtc_config/MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
     "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
-    "copy_containerkeys_sh": "scp services/ContainerKeys/containerkeys.sh root@$IP:/root/containerkeys.sh",
-    "copy_containerkeys_service": "scp services/ContainerKeys/containerkeys.service root@$IP:/etc/systemd/system/containerkeys.service",
     "format": "prettier --write .",
     "loglevel:debug": "export LOG_LEVEL=debug",
-    "setup_mock_sysfs": "./scripts/setupSysfsMock.sh"
+    "setup_mock_sysfs": "./scripts/setupSysfsMock.sh",
+    "install:containerKeysService": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp services/ContainerKeys/containerkeys.service $INSTALL_HOST:/etc/systemd/system && scp services/ContainerKeys/containerkeys.sh $INSTALL_HOST:/root && ssh $INSTALL_HOST systemctl enable containerkeys.service"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

@@ -50,7 +50,7 @@
     "docker:run:mtc": "docker run -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/schemas:/schemas -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/agent.cfg:/agent.cfg -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/MDCLight.xml:/MDCLight.xml -p 15404:5000 registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest agent debug",
     "docker:build:mdclight-base": "docker buildx build --platform linux/arm64,linux/amd64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-base:latest -f docker/mdclight-base.Dockerfile --push .",
     "docker:build:mdclight": "docker buildx build --build-arg MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags --abbrev=0) --platform linux/arm64,linux/amd64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest -f docker/mdclight.Dockerfile . --push",
-    "docker:build:mdclight:arm": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest -f docker/mdclight.Dockerfile --push .",
+    "docker:build:mdclight:arm": "docker buildx build --build-arg MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags --abbrev=0) --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest -f docker/mdclight.Dockerfile --push .",
     "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
     "docker:build:mtc-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest -f docker/mtconnect_arm64.Dockerfile --push .",
     "test": "jest",

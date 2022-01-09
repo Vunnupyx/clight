@@ -121,7 +121,7 @@ export class OPCUADataSink extends DataSink {
     ) as UAVariable;
     this.setNodeValue(
       mdclightSoftwareVersion,
-      process.env.MDC_LIGHT_RUNTIME_VERSION || ''
+      process.env.MDC_LIGHT_RUNTIME_VERSION || 'unknown'
     );
   }
 

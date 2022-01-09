@@ -110,6 +110,19 @@ export class OPCUADataSink extends DataSink {
 
     const modelNode = this.opcuaAdapter.findNode('ns=7;s=Model') as UAVariable;
     this.setNodeValue(modelNode, this.generalConfig.model || '');
+
+    const mdclightId = this.opcuaAdapter.findNode(
+      'ns=7;s=SoftwareIdentification-MDClight-Identifier'
+    ) as UAVariable;
+    this.setNodeValue(mdclightId, 'MDCLight');
+
+    const mdclightSoftwareVersion = this.opcuaAdapter.findNode(
+      'ns=7;s=SoftwareIdentification-MDC-SoftwareRevision'
+    ) as UAVariable;
+    this.setNodeValue(
+      mdclightSoftwareVersion,
+      process.env.MDC_LIGHT_RUNTIME_VERSION || ''
+    );
   }
 
   /**

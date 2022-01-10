@@ -62,15 +62,11 @@ export class SystemInformationService {
   }
 
   async getServerTime(): Promise<number> {
-    try {
-      const response = await this.httpService.get<{ timestamp: number }>(
-        `/systemInfo/time`
-      );
+    const response = await this.httpService.get<{ timestamp: number }>(
+      `/systemInfo/time`
+    );
 
-      return response.timestamp;
-    } catch {
-      return 0;
-    }
+    return response.timestamp;
   }
 
   async restartDevice(): Promise<boolean> {

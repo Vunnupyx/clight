@@ -11,6 +11,7 @@
 ### Fixed
 
 - Fixed bug where deleting a mapping doesn't delete the mapping inside the runtime until the next restart
+- Improved error handling, that fix a bug where data sinks doesn't start after applying a new configuration
 
 ## [1.7.0]
 

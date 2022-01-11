@@ -301,8 +301,8 @@
     "LoadError": "Die Netzwerkeinstellungen konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "UpdateError": "Die Netzwerkeinstellungen konnten nicht aktualisiert werden. Versuchen Sie es später erneut.",
     "Tabs": {
-      "x1": "Ethernet X1",
-      "x2": "Ethernet X2",
+      "x1": "Ethernet X1 P1",
+      "x2": "Ethernet X1 P2",
       "proxy": "Proxy",
       "time": "Systemzeit"
     },

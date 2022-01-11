@@ -1,4 +1,20 @@
+---
+title: Changelog
+---
+
 # Changelog
+
+## [1.7.2]
+
+### Added
+
+- Automatically including the current version inside the runtime (displayed in UI or OPC UA)
+- Updated user facing documentation
+- Included changelog in docusaurus
+
+### Fixed
+
+- Removed "time difference" warning, in case of an unsuccessful request
 
 ## [1.7.1]
 

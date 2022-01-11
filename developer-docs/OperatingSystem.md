@@ -68,8 +68,6 @@ nmcli con up eth1-default
 1. Pull newer containers: `docker-compose pull`
 2. Restart `docker-compose down && docker-compose up -d`
 
-## V2
-
 ## SSL Cert generation
 
 ```

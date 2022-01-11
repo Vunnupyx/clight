@@ -21,9 +21,8 @@ There are two different usecases:
 
 1.  Download your image of IoT-Connector light into the root directory of this project
 2.  Open your favorite shell. (Bash, ZSH ... )
-3.  set environment variable for ssh connection to IoT2050 via `export INSTALL_HOST=USERNAME@IOT2050NETWORKADDRESS`
+3.  Set environment variable for ssh connection to IoT2050 via `export INSTALL_HOST=USERNAME@IOT2050NETWORKADDRESS`
     and replace `USERNAME` with your ssh username and `IOT2050NETWORKADDRESS` with the IP of your IoT2050 device
-
 4.  Switch from project root directory into the service directory via `cd services/mdcflash ` and run the installation script via ` npm install && npm run install`;
 5.  Copy the flash image to the Iot2050 device: `npm run copy:flashImage`
 6.  Download the generated image from your Iot2050:  
@@ -41,3 +40,8 @@ There are two different usecases:
 6.  Use the device path to copy the image via `dd if=./dump*.gz of=DEVICE_PATH bs=4m` and replase `DEVICE_PATH` with the real path detected by step 5.
 7.  Remove the usb drive and plug into the Iot2050 usb port.
 8.  Restart the Iot2050. If the User led is blinking you can press the usb button 1 for 3 seconds an the flashing is starting. The device is rebooting after successfully flash process. During shutdown please remove usb drive.
+
+## 3. Get a reusable usb flash drive image
+
+1. Plugin the usb flash drive from the 2. usecase into your computer
+2. Create an image from the usb device with `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.0_flash.img bs=1m count=16384`

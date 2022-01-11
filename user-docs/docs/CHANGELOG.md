@@ -33,7 +33,7 @@ title: Changelog
 
 ### Added
 
-- [MDCL-152](https://codestryke.atlassian.net/browse/MDCL-152) Setting device hostname to "DM<MAC_ADDRESS>" on startup. Eg: DM8CF3191EBD22
+- [MDCL-152](https://codestryke.atlassian.net/browse/MDCL-152) Setting device hostname to "DM{MAC_ADDRESS}" on startup. Eg: DM8CF3191EBD22
 - A summary of the read data points per data source is logged periodically
 - [MDCL-163](https://codestryke.atlassian.net/browse/MDCL-163) Added status led's
 - [MDCL-133](https://codestryke.atlassian.net/browse/MDCL-133) Added time configuration
@@ -98,7 +98,7 @@ title: Changelog
 - [MDCL-179](https://codestryke.atlassian.net/browse/MDCL-179) Increased default sampling rate of io shield data points to have a threshold chart with higher resolution
 - [MDCL-180](https://codestryke.atlassian.net/browse/MDCL-180) Increased chart data series from 30 seconds to 5 minutes
 - Changed production log level from debug to info
-- Updated login documentation the new user and password format (username: User, password: <Mac Address>)
+- Updated login documentation the new user and password format (username: User, password: {Mac Address})
 
 ### Fixed
 

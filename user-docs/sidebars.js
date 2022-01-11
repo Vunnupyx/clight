@@ -7,7 +7,7 @@ module.exports = {
       label: 'Introduction',
       collapsed: false,
       items: [
-        'GettingStarted',
+        'tutorial/GettingStarted',
       ],
     },
     {

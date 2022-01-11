@@ -15,4 +15,4 @@ The factory reset does not reset:
 
 - Log files
 
-After the reset, you can login using the default password (See: [Login](GettingStarted.md#Login)) and you will be asked to set a new password and complete the configuration wizard again.
+After the reset, you can login using the default password (See: [Login](tutorial/GettingStarted.md#Login)) and you will be asked to set a new password and complete the configuration wizard again.

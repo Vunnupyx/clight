@@ -11,6 +11,7 @@ title: Changelog
 - Automatically including the current version inside the runtime (displayed in UI or OPC UA)
 - Updated user facing documentation
 - Included changelog in docusaurus
+- Added first version of japanese translation (some texts ares till english)
 
 ### Fixed
 

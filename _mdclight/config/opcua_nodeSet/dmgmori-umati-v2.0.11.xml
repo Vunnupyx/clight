@@ -209,34 +209,34 @@
         <DisplayName>SoftwareIdentification</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=SoftwareIdentification-MDC</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=SoftwareIdentification-MDClight</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Identification</Reference>
         </References>
     </UAObject>
-    <UAObject NodeId="ns=1;s=SoftwareIdentification-MDC" BrowseName="1:MDC">
-        <DisplayName>MDC</DisplayName>
+    <UAObject NodeId="ns=1;s=SoftwareIdentification-MDClight" BrowseName="1:MDClight">
+        <DisplayName>MDClight</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=SoftwareIdentification-MDC-Identifier</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=SoftwareIdentification-MDClight-Identifier</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=SoftwareIdentification</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=4;i=43</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=SoftwareIdentification-MDC-SoftwareRevision</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=SoftwareIdentification-MDClight-SoftwareRevision</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=SoftwareIdentification-MDC" NodeId="ns=1;s=SoftwareIdentification-MDC-Identifier" BrowseName="4:Identifier">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=SoftwareIdentification-MDClight" NodeId="ns=1;s=SoftwareIdentification-MDClight-Identifier" BrowseName="4:Identifier">
         <DisplayName>Identifier</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SoftwareIdentification-MDC</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SoftwareIdentification-MDClight</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
             <uax:String>0</uax:String>
         </Value>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=SoftwareIdentification-MDC" NodeId="ns=1;s=SoftwareIdentification-MDC-SoftwareRevision" BrowseName="5:SoftwareRevision">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=SoftwareIdentification-MDClight" NodeId="ns=1;s=SoftwareIdentification-MDClight-SoftwareRevision" BrowseName="5:SoftwareRevision">
         <DisplayName>SoftwareRevision</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SoftwareIdentification-MDC</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SoftwareIdentification-MDClight</Reference>
         </References>
         <Value>
             <uax:String>0</uax:String>

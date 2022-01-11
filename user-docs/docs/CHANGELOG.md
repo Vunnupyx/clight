@@ -1,4 +1,21 @@
+---
+title: Changelog
+---
+
 # Changelog
+
+## [1.7.2]
+
+### Added
+
+- Automatically including the current version inside the runtime (displayed in UI or OPC UA)
+- Updated user facing documentation
+- Included changelog in docusaurus
+- Added first version of japanese translation (some texts ares still english)
+
+### Fixed
+
+- Removed "time difference" warning, in case of an unsuccessful request
 
 ## [1.7.1]
 
@@ -11,12 +28,13 @@
 ### Fixed
 
 - Fixed bug where deleting a mapping doesn't delete the mapping inside the runtime until the next restart
+- Improved error handling, that fix a bug where data sinks doesn't start after applying a new configuration
 
 ## [1.7.0]
 
 ### Added
 
-- [MDCL-152](https://codestryke.atlassian.net/browse/MDCL-152) Setting device hostname to "DM<MAC_ADDRESS>" on startup. Eg: DM8CF3191EBD22
+- [MDCL-152](https://codestryke.atlassian.net/browse/MDCL-152) Setting device hostname to "DM{MAC_ADDRESS}" on startup. Eg: DM8CF3191EBD22
 - A summary of the read data points per data source is logged periodically
 - [MDCL-163](https://codestryke.atlassian.net/browse/MDCL-163) Added status led's
 - [MDCL-133](https://codestryke.atlassian.net/browse/MDCL-133) Added time configuration
@@ -81,7 +99,7 @@
 - [MDCL-179](https://codestryke.atlassian.net/browse/MDCL-179) Increased default sampling rate of io shield data points to have a threshold chart with higher resolution
 - [MDCL-180](https://codestryke.atlassian.net/browse/MDCL-180) Increased chart data series from 30 seconds to 5 minutes
 - Changed production log level from debug to info
-- Updated login documentation the new user and password format (username: User, password: <Mac Address>)
+- Updated login documentation the new user and password format (username: User, password: {Mac Address})
 
 ### Fixed
 

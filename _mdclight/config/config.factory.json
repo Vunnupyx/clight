@@ -30,7 +30,7 @@
     },
     "time": {
       "useNtp": true,
-      "ntpHost": "pool.ntp.org",
+      "ntpHost": "time.dmgmori.net",
       "currentTime": "",
       "timezone": "Europe/Berlin"
     }

@@ -24,7 +24,7 @@ module.exports = {
       type: 'category',
       label: 'Other',
       collapsed: false,
-      items: ['Changelog']
+      items: ['CHANGELOG']
     }
   ]
 };

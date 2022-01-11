@@ -269,7 +269,7 @@
     "Source": "Source",
     "Target": "Target",
     "Value": "Value Assignment",
-    "ValueTooltip": "Value tooltip",
+    "ValueTooltip": "This value will be assigned in any truthy case for further use",
     "Actions": "Actions",
     "Edit": "Edit",
     "Delete": "Delete",

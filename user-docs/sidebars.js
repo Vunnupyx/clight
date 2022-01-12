@@ -10,21 +10,41 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Data Sources',
+      label: 'Components',
       collapsed: false,
-      items: ['Sinumerik840DSL', 'IO-Shield']
+      items: [
+        'Sinumerik840DSL',
+        'IO-Shield',
+        'VirtualDataPoints',
+        'Mapping',
+        'DataSinks'
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Use cases',
+      collapsed: false,
+      items: [
+        'tutorial/DMGMessenger'
+        // "UseCaseIoShield"
+      ]
     },
     {
       type: 'category',
       label: 'Advanced',
       collapsed: false,
-      items: ['DataFlow', 'FactoryReset']
+      items: [
+        'DataFlow',
+        // 'DataFlowConfiguration',
+        'FactoryReset',
+        'MdcLightConfiguration'
+      ]
     },
     {
       type: 'category',
       label: 'Other',
       collapsed: false,
-      items: ['CHANGELOG']
+      items: ['CHANGELOG', 'OSSAttribution']
     }
   ]
 };

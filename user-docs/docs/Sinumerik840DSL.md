@@ -1,5 +1,5 @@
 ---
-title: Sinumerik 840D SL
+title: 'Data source: Sinumerik 840D SL'
 ---
 
 ## Introduction

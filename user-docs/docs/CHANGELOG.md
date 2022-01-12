@@ -4,12 +4,17 @@ title: Changelog
 
 # Changelog
 
+## [1.7.3]
+
+### Added
+
+- Updated user facing documentation
+
 ## [1.7.2]
 
 ### Added
 
 - Automatically including the current version inside the runtime (displayed in UI or OPC UA)
-- Updated user facing documentation
 - Included changelog in docusaurus
 - Added first version of japanese translation (some texts ares still english)
 

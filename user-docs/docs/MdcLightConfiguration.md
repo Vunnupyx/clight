@@ -1,6 +1,10 @@
+---
+title: Configuration File
+---
+
 # Configure data sources
 
-The data source configuration consists of 4 components
+The data point configuration consists of 4 components
 
 - dataSources: A list of southbound data sources (currently supported: s7, ioshield)
 - dataSinks: A list of northbound data "sinks" (currently supported: MTConnect)

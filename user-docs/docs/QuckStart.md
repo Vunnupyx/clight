@@ -42,7 +42,7 @@ cat <<EOT >> /etc/fw_env.config
 EOT
 ```
 
-Then run `fw_setenv boot_targets mmc0 mmc1 usb0 usb1` to set the sd card to first boot priority
+Then run `fw_setenv boot_targets usb0 usb1 usb2 mmc0 mmc1` to set the sd card to first boot priority
 
 ## Setup OS & Config
 

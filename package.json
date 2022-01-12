@@ -59,6 +59,8 @@
     "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/root/docker-compose.yaml",
     "format": "prettier --write .",
     "loglevel:debug": "export LOG_LEVEL=debug",
+    "dump:remote:external": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk0 | gzip -9 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
+    "dump:remote:internal": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk1 | gzip -1 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
     "setup_mock_sysfs": "./scripts/setupSysfsMock.sh",
     "install:containerKeysService": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp services/ContainerKeys/containerkeys.service $INSTALL_HOST:/etc/systemd/system && scp services/ContainerKeys/containerkeys.sh $INSTALL_HOST:/root && ssh $INSTALL_HOST systemctl enable containerkeys.service"
   },

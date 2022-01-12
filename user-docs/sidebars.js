@@ -6,13 +6,7 @@ module.exports = {
       type: 'category',
       label: 'Introduction',
       collapsed: false,
-<<<<<<< HEAD
-      items: [
-        'tutorial/GettingStarted',
-      ],
-=======
-      items: ['GettingStarted']
->>>>>>> feabf56ff68316e1801042430824d7206dddf62a
+      items: ['tutorial/GettingStarted']
     },
     {
       type: 'category',

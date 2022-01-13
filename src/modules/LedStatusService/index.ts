@@ -23,7 +23,7 @@ export class LedStatusService {
   #led2Blink: NodeJS.Timer = null;
   #configWatcher: NodeJS.Timer = null;
   #configured = false;
-  #configuredAndConnected = false;
+  #southboundConnected = false;
   #sysfsPrefix = '';
 
   constructor(
@@ -32,37 +32,40 @@ export class LedStatusService {
   ) {
     this.configManager.once('configsLoaded', () => {
       this.checkConfigTemplateTerms();
+      this.registerDataSourceEvents();
     });
     this.configManager.on('configChange', () => {
       this.checkConfigTemplateTerms();
     });
-    this.datasourceManager.getDataSources().forEach((source) => {
-      source.on(DataSourceEventTypes.Lifecycle, (status) => {
-        if (this.#configuredAndConnected) return;
+  }
+
+  private registerDataSourceEvents(): void {
+    const logPrefix = `$LedStatusService::registerDataSourceEvents`;
+    const sources = this.datasourceManager.getDataSources();
+    if (!sources || sources.length < 1)
+      winston.error(`${logPrefix} no datasources available`);
+    sources.forEach((source) => {
+      source.on(DataSourceEventTypes.Lifecycle, async (status) => {
+        if (this.#southboundConnected) return;
         switch (status) {
           case LifecycleEventStatus.Connected: {
             if (this.#configured) {
-              this.stopBlinking(1);
-              this.unsetLed([
-                this.getLedPathByNumberAndColor(1, 'red'),
-                this.getLedPathByNumberAndColor(1, 'green')
-              ]);
-              this.setLed([this.getLedPathByNumberAndColor(1, 'green')]);
+              await this.clearLed(1);
+              await this.setLed([this.getLedPathByNumberAndColor(1, 'green')]);
             }
-            this.#configuredAndConnected = true;
+            this.#southboundConnected = true;
+            winston.debug(`${logPrefix} successfully configured and connected to NC. Set USER 1 LED to green light.`);
             return;
           }
           case LifecycleEventStatus.Disconnected: {
-            this.stopBlinking(1);
-            this.unsetLed([
+            await this.clearLed(1);
+            // Orange light
+            await this.setLed([
               this.getLedPathByNumberAndColor(1, 'red'),
               this.getLedPathByNumberAndColor(1, 'green')
             ]);
-            this.setLed([
-              this.getLedPathByNumberAndColor(1, 'red'),
-              this.getLedPathByNumberAndColor(1, 'green')
-            ]);
-            this.#configuredAndConnected = false;
+            this.#southboundConnected = false;
+            winston.debug(`${logPrefix} successfully configured and but not connected to NC. Set USER 1 LED to orange light.`);
             return;
           }
           default: {
@@ -149,7 +152,8 @@ export class LedStatusService {
   /**
    * Stop blinking of selected LED.
    */
-  private stopBlinking(ledNumber: 1 | 2) {
+  private async clearLed(ledNumber: 1 | 2) {
+    const logPrefix = `$LedStatusService::clearLed`;
     const paths = [
       this.getLedPathByNumberAndColor(ledNumber, 'red'),
       this.getLedPathByNumberAndColor(ledNumber, 'green')
@@ -158,25 +162,27 @@ export class LedStatusService {
       case 1: {
         if (this.#led1Blink) {
           clearTimeout(this.#led1Blink);
-          this.unsetLed(paths);
+          winston.debug(`${logPrefix} USER ${ledNumber} disable blinking.`);
         }
         this.#led1Blink = null;
         break;
       }
       case 2: {
-        if (this.#led1Blink) {
+        if (this.#led2Blink) {
           clearTimeout(this.#led2Blink);
-          this.unsetLed(paths);
+          winston.debug(`${logPrefix} USER ${ledNumber} disable blinking.`);
         }
         this.#led2Blink = null;
         break;
       }
       default: {
-        const errMsg = ``; // TODO:
+        const errMsg = `${logPrefix} error due to invalid LED number ${ledNumber}`;
         winston.error(errMsg);
         throw new Error(errMsg);
       }
     }
+    await this.unsetLed(paths);
+    winston.debug(`${logPrefix} successfully cleared USER ${ledNumber} LED.`)
   }
 
   /**
@@ -217,12 +223,14 @@ export class LedStatusService {
    * - Template is selected
    * - Terms and Conditions are accepted
    */
-  private checkConfigTemplateTerms(): void {
+  private async checkConfigTemplateTerms(): Promise<void> {
     const terms = this.configManager.config.termsAndConditions;
+    const logPrefix = `LedStatusService::checkConfigTemplateTerms`;
 
     // Fast way out of check
     if (!terms) {
-      this.noConfigBlink(true);
+      winston.debug(`${logPrefix} set mode`)
+      this.noConfigBlink();
       return;
     }
 
@@ -245,13 +253,12 @@ export class LedStatusService {
             if (!sink.enabled) continue;
             if (sink.dataPoints.some((point) => point.id === sinkDatapoint)) {
               // disable blinking
-              this.noConfigBlink(false);
+              await this.clearLed(1);
               // led orange
-              this.setLed([
+              await this.setLed([
                 this.getLedPathByNumberAndColor(1, 'red'),
                 this.getLedPathByNumberAndColor(1, 'green')
               ]);
-
               this.#configured = true;
               return;
             }
@@ -259,7 +266,7 @@ export class LedStatusService {
         }
       }
     }
-    this.noConfigBlink(true);
+    this.noConfigBlink();
     this.#configured = false;
   }
 
@@ -286,48 +293,19 @@ export class LedStatusService {
   }
 
   /**
-   * Enable or disable green USER LED 1.
-   * Represent the status of southbound connection.
-   */
-  public southboundStatus(status: boolean): void {
-    const logPrefix = `LedStatusService::southboundStatus`;
-
-    if (this.#led1Blink) {
-      this.stopBlinking(1);
-    }
-    const path = this.getLedPathByNumberAndColor(1, 'green');
-    status ? this.setLed([path]) : this.unsetLed([path]);
-    winston.info(
-      `${logPrefix} set USER LED 1 to ${
-        status ? 'ON' : 'OFF'
-      } (Southbound status: ${
-        status ? 'CONFIGURATED AND CONNECTED' : 'CONFIGURATED BUT NOT CONNECTED'
-      })`
-    );
-  }
-
-  /**
    * Enable or disable orange blinking USER LED 1.
    * Represented one of this state:
    *  - No Configuration
    *  - No Template
    *  - Not accepted AGB
    */
-  public noConfigBlink(status: boolean): void {
+  private noConfigBlink(): void {
     const logPrefix = `LedStatusService::noConfigBlink`;
-
-    if (status) {
       if (this.#led1Blink) return;
       this.blink(1, 500, 500, 'orange');
-    } else {
-      if (!this.#led1Blink) return;
-      this.stopBlinking(1);
-    }
 
     winston.info(
-      `${logPrefix} set USER LED 1 to ${
-        status ? 'BLINKING' : 'OFF'
-      } (Config status: ${status ? 'CONFIGURATED' : 'NOT CONFIGURATED'})`
+      `${logPrefix} set USER LED 1 to 'orange blinking' because not not completely configured.`
     );
   }
 

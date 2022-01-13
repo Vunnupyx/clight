@@ -102,6 +102,7 @@ async function logsGetHandler(
   } catch (err) {
     winston.error(`${logPrefix} error during zip log file due to ${err}`);
     response.status(500).send('Internal server error. Please try again later.');
+    saveDelete();
     return;
   }
   response.writeHead(200, {

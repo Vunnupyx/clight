@@ -16,6 +16,7 @@ title: Changelog
 - Fixed bug where old log archives weren't deleted after failures
 - Fixed flash service and improved documentation
 - MDClight software version is now correctly shown in opc ua
+- Invalid NTP-Server configuration only returns error once which prevents error if saving on other network tabs when a wrong ntp server is set
 
 ## [1.7.2]
 
@@ -28,6 +29,7 @@ title: Changelog
 ### Fixed
 
 - Removed "time difference" warning, in case of an unsuccessful request
+- Invalid NTP-Server configuration only returns error once.
 
 ## [1.7.1]
 

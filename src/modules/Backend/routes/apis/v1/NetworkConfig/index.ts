@@ -92,7 +92,9 @@ async function networkConfigPatchHandler(
         timeConfig.timezone
       );
     } else {
-      timePromise = TimeManager.setNTPServer(timeConfig.ntpHost);
+      const allReadyConfigured = (timeConfig.ntpHost === configManager.config.networkConfig.time?.ntpHost );
+      if (allReadyConfigured) winston.debug(`${logPrefix} received ntp-config again, ignore data.`);
+      timePromise =  allReadyConfigured ? Promise.resolve() : TimeManager.setNTPServer(timeConfig.ntpHost);
     }
   }
 

@@ -17,11 +17,12 @@
    1.1 Make sure, the latest docker-compose file is located inside `/root/docker-compose.yml`. Use `yarn copy_compose` (inside project root folder) to update
    1.2 Make sure, the latest mdclight configuration is installed inside `/etc/MDClight/config/*`. Use `yarn copy_mdc_conf` (inside project root folder) to update
    1.3 Make sure, the latest MTConnect configuration is installed inside `/etc/MDCLight/mtc_config/*`. Use `yarn copy_mtc_conf` (inside project root folder) to update
-   1.4 Pull latest docker images `docker-compose pull`
-   1.5 Remove unused docker images `docker system prune`
-   1.6 Start latest docker images `docker-compose up -d --force-recreate`
-   1.7 Cleanup and shutdown `./cleanup.sh && shutdown now`
-   1.8 Wait until device has shut down (Red STAT LED flashing)
+   1.4 Stop containers `docker-compose down`
+   1.5 Pull latest docker images `docker-compose pull`
+   1.6 Start latest docker images `docker-compose up -d`
+   1.7 Remove unused docker images `docker system prune`
+   1.8 Cleanup and shutdown `./cleanup.sh && shutdown now`
+   1.9 Wait until device has shut down (Red STAT LED flashing)
 2. Remove sd kart and insert it into your computer
 3. Create the image from the SD card `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.3.img bs=1m count=13517`. Make sure that you use the correct disk!
 4. Create archive of the image `gzip -9 iot-connector-light-os-v1.7.3.img`

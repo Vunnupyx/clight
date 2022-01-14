@@ -167,7 +167,7 @@ export class TimeManager {
       });
 
       client.once('message', (msg) => {
-        winston.debug(`${logPrefix} received msg: ${msg}`);
+        winston.debug(`${logPrefix} received message. NTP server available`);
         client.close();
         clearTimeout(timeout);
         res();

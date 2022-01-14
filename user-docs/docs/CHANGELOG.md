@@ -10,6 +10,12 @@ title: Changelog
 
 - Updated user facing documentation
 
+## Fixed
+
+- Fixed USER1 & USER2 LED statuses and added documentation
+- Fixed bug where old log archives weren't deleted after failures
+- Fixed flash service and improved documentation
+
 ## [1.7.2]
 
 ### Added

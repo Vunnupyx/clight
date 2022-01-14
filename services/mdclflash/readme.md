@@ -29,9 +29,11 @@
 ### Step 3: Prepare flash usb device
 
 1. Boot your iot2050 from the usb device (This only works, if the correct boot order is set on the device `fw_setenv boot_targets usb0 usb1 usb2 mmc0 mmc1`)
-2. Copy the image archiv to the devices root folder `export INSTALL_HOST=USERNAME@IOT2050NETWORKADDRESS && yarn copy:flashImage` (This must be executed from the flash service directory `services/mdclflash`. Replace `USERNAME` with your ssh username and `IOT2050NETWORKADDRESS` with the IP of your IoT2050 device)
-3. Shutdown device `shutdown now`
-4. Congratulation you have created your own bootable usb stick
+2. Create checksum value of archive `sha1sum iot-connector-light-os-v1.7.3.img.gz`
+3. Copy the image archiv to the devices root folder `export INSTALL_HOST=USERNAME@IOT2050NETWORKADDRESS && yarn copy:flashImage` (This must be executed from the flash service directory `services/mdclflash`. Replace `USERNAME` with your ssh username and `IOT2050NETWORKADDRESS` with the IP of your IoT2050 device)
+4. Ssh into device and check if checksum is still the same `sha1sum iot-connector-light-os-v1.7.3.img.gz`. The output must be equal!
+5. Shutdown device `shutdown now`
+6. Congratulation you have created your own bootable usb stick
 
 ### Step 4: (optional) Create Image from usb device
 

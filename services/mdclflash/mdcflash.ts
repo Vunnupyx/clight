@@ -178,6 +178,7 @@ class MDCLFlasher {
       console.log(`Error due to detect target device. Abort`);
       exit(1);
     }
+
     const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
 
     const startDate = new Date();
@@ -200,7 +201,6 @@ class MDCLFlasher {
       );
       console.log(_stdout);
 
-      execSync(`partx -a ${target}`);
       this.glow(10000, 'green');
 
       setTimeout(() => {

@@ -10,6 +10,10 @@ title: Changelog
 
 - Updated user facing documentation
 
+### Fixed
+
+- Invalid NTP-Server configuration only returns error once.
+
 ## [1.7.2]
 
 ### Added
@@ -21,6 +25,7 @@ title: Changelog
 ### Fixed
 
 - Removed "time difference" warning, in case of an unsuccessful request
+- Invalid NTP-Server configuration only returns error once.
 
 ## [1.7.1]
 

@@ -38,7 +38,7 @@ USER 2 LED has only 2 states:
 
 The status `configured` is defined as:
 
-- One enabled connected data source
+- One enabled data source
 - Minimum one active data point at this active source
 - One enabled Application Interface (data sink) with minimum one data point
 - One active mapping between the enabled connected data sink data point and the enabled Application Interface data point

@@ -117,7 +117,7 @@ export class OPCUADataSink extends DataSink {
     this.setNodeValue(mdclightId, 'MDCLight');
 
     const mdclightSoftwareVersion = this.opcuaAdapter.findNode(
-      'ns=7;s=SoftwareIdentification-MDC-SoftwareRevision'
+      'ns=7;s=SoftwareIdentification-MDClight-SoftwareRevision'
     ) as UAVariable;
     this.setNodeValue(
       mdclightSoftwareVersion,

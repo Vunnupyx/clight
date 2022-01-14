@@ -15,6 +15,7 @@ title: Changelog
 - Fixed USER1 & USER2 LED statuses and added documentation
 - Fixed bug where old log archives weren't deleted after failures
 - Fixed flash service and improved documentation
+- MDClight software version is now correctly shown in opc ua
 
 ## [1.7.2]
 

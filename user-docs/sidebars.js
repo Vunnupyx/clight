@@ -36,6 +36,7 @@ module.exports = {
       items: [
         'DataFlow',
         // 'DataFlowConfiguration',
+        'LedStatusDisplay',
         'FactoryReset',
         'MdcLightConfiguration'
       ]

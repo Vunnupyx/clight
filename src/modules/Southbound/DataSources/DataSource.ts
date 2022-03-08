@@ -20,6 +20,11 @@ import Timeout = NodeJS.Timeout;
 import { SynchronousIntervalScheduler } from '../../SyncScheduler';
 import winston from 'winston';
 
+type DataPointReadErrorSummary = {
+  error: string;
+  count: number;
+};
+
 /**
  * Implements data source
  */
@@ -39,6 +44,7 @@ export abstract class DataSource extends EventEmitter {
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected termsAndConditionsAccepted = false;
   protected processedDataPointCount = 0;
+  protected dataPointReadErrors: DataPointReadErrorSummary[] = [];
   protected readCycleCount = 0;
 
   /**
@@ -117,6 +123,17 @@ export abstract class DataSource extends EventEmitter {
     );
   }
 
+  protected handleReadDpError(error: string): void {
+    const errorSummary = this.dataPointReadErrors.find(
+      (err) => err.error == error
+    );
+    if (errorSummary) {
+      errorSummary.count = errorSummary.count + 1;
+    } else {
+      this.dataPointReadErrors.push({ error, count: 1 });
+    }
+  }
+
   /**
    * Logs data point summary
    */
@@ -127,7 +144,16 @@ export abstract class DataSource extends EventEmitter {
       `${logPrefix} processed ${this.processedDataPointCount} data points in ${this.readCycleCount} read cycles. Current state: ${this.currentStatus}`
     );
 
+    if (this.dataPointReadErrors.length > 0) {
+      for (const error of this.dataPointReadErrors) {
+        winston.error(
+          `${logPrefix} reading data points ${error.count} errors occurred with message ${error.error}`
+        );
+      }
+    }
+
     this.processedDataPointCount = 0;
+    this.dataPointReadErrors = [];
     this.readCycleCount = 0;
   }
 

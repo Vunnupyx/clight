@@ -266,8 +266,6 @@ export class S7DataSource extends DataSource {
       // Don't read NC data points in case there is no nc configured
       nckDataPointsToRead = this.nckEnabled ? nckDataPointsToRead : [];
 
-      console.log('Reading NC data points:', nckDataPointsToRead);
-
       // winston.debug(
       //   `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
       // );
@@ -276,10 +274,19 @@ export class S7DataSource extends DataSource {
         this.readNckData(nckDataPointsToRead)
       ]);
 
-      let allDpError = currentCycleDataPoints.length > 0;
+      let allDpError =
+        [...nckDataPointsToRead, ...plcAddressesToRead].length > 0;
 
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
+        // Skip is current data point wasn't read
+        if (
+          ![...nckDataPointsToRead, ...plcAddressesToRead].some(
+            (address) => address === dp.address
+          )
+        )
+          continue;
+
         let value,
           error = null;
         if (dp.type === 's7') {
@@ -328,7 +335,7 @@ export class S7DataSource extends DataSource {
         this.init();
       }
 
-      this.onDataPointMeasurement(measurements);
+      if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
       winston.error(`S7DataSource Error: ${e.message} / ${JSON.stringify(e)}`);
     }

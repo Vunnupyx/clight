@@ -221,7 +221,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x4
   },
   '/fake/address/1': {
-    // N_SALAP_alarmNo1_2
+    // to test invalid addresses
     syntaxId: 0x82,
     areaUnit: 0x1,
     column: 0x2,

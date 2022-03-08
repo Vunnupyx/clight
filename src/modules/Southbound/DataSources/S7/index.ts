@@ -38,12 +38,22 @@ const defaultS71500Connection: IS7DataSourceConnection = {
   slot: 1
 };
 
-const defaultNckConnection: IS7DataSourceConnection = {
+const defaultNckSlConnection: IS7DataSourceConnection = {
   ipAddr: '',
   port: 102,
   rack: 0,
   slot: 2 // That's only the plc (300) slot. For the nck, the slot 4 is set inside that driver
 };
+
+const defaultNckPlConnection: IS7DataSourceConnection = {
+  ipAddr: '',
+  port: 102,
+  rack: 0,
+  slot: 2 // That's only the plc (300) slot. For the nck, the slot 3 is set inside that driver
+};
+
+const NCK_SL_SLOT = 4;
+const NCK_PL_SLOT = 3;
 
 /**
  * Implementation of s7 data source
@@ -54,10 +64,22 @@ export class S7DataSource extends DataSource {
   private isDisconnected = false;
   private cycleActive = false;
 
+  private nckEnabled = false;
+
   private client = new NodeS7({
     silent: true
   });
   private nckClient = new SinumerikNCK();
+
+  get nckSlot() {
+    switch (this.config.type) {
+      case 'nck-pl':
+        return NCK_PL_SLOT;
+      case 'nck':
+      default:
+        return NCK_SL_SLOT;
+    }
+  }
 
   /**
    * Initializes s7 data source and connects to device
@@ -67,7 +89,7 @@ export class S7DataSource extends DataSource {
     const logPrefix = `${S7DataSource.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
-    const { name, protocol, connection, enabled } = this.config;
+    const { connection, enabled } = this.config;
 
     if (!enabled) {
       winston.info(
@@ -88,8 +110,12 @@ export class S7DataSource extends DataSource {
     }
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
+    this.nckEnabled =
+      this.config.type === 'nck' || this.config.type === 'nck-pl';
+    winston.info(`NC enabled: ${this.nckEnabled}`);
+
     const nckDataPointsConfigured =
-      this.config.type === 'nck' &&
+      this.nckEnabled &&
       this.config.dataPoints.find((dp: IDataPointConfig) => {
         return dp.type === 'nck';
       });
@@ -105,12 +131,22 @@ export class S7DataSource extends DataSource {
         winston.debug(`${logPrefix} Connecting to NCK & PLC`);
         await Promise.all([
           this.connectPLC(),
-          this.nckClient.connect(connection.ipAddr)
+          this.nckClient.connect(
+            connection.ipAddr,
+            undefined,
+            undefined,
+            this.nckSlot
+          )
         ]);
         clearTimeout(this.reconnectTimeoutId);
       } else if (nckDataPointsConfigured && !plcDataPointsConfigured) {
         winston.debug(`${logPrefix} Connecting to NCK only`);
-        await this.nckClient.connect(connection.ipAddr);
+        await this.nckClient.connect(
+          connection.ipAddr,
+          undefined,
+          undefined,
+          this.nckSlot
+        );
         clearTimeout(this.reconnectTimeoutId);
       } else if (plcDataPointsConfigured && !nckDataPointsConfigured) {
         winston.debug(`${logPrefix} Connecting to PLC only`);
@@ -194,6 +230,35 @@ export class S7DataSource extends DataSource {
   }
 
   /**
+   * Override setupDataPoints to set fixed intervals for s7 data source
+   */
+  protected setupDataPoints(defaultFrequency: number = 1000): void {
+    if (this.readSchedulerListenerId) return;
+
+    const logPrefix = `${this.name}::setupDataPoints`;
+    winston.debug(`${logPrefix} setup data points`);
+
+    let interval = 1000;
+    switch (this.config.type) {
+      case 'nck-pl':
+        interval = 10000;
+        break;
+      case 's7-300/400':
+      case 's7-1200/1500':
+      case 'nck':
+      case 'custom':
+      default:
+        interval = 1000;
+        break;
+    }
+
+    this.readSchedulerListenerId = this.scheduler.addListener(
+      [interval],
+      this.dataSourceCycle.bind(this)
+    );
+  }
+
+  /**
    * Reads all data points for current intervals and creates and publishes events
    * @param  {Array<number>} currentIntervals
    * @returns Promise
@@ -211,11 +276,16 @@ export class S7DataSource extends DataSource {
 
     try {
       this.cycleActive = true;
+
+      // const currentCycleDataPoints: Array<IDataPointConfig> =
+      //   this.config.dataPoints.filter((dp: IDataPointConfig) => {
+      //     const rf = Math.max(dp.readFrequency || 1000, 1000);
+      //     return currentIntervals.includes(rf);
+      //   });
+
+      // Always read all data points
       const currentCycleDataPoints: Array<IDataPointConfig> =
-        this.config.dataPoints.filter((dp: IDataPointConfig) => {
-          const rf = Math.max(dp.readFrequency || 1000, 1000);
-          return currentIntervals.includes(rf);
-        });
+        this.config.dataPoints;
 
       const plcAddressesToRead = [];
       for (const dp of currentCycleDataPoints) {
@@ -226,8 +296,9 @@ export class S7DataSource extends DataSource {
       for (const dp of currentCycleDataPoints) {
         if (dp.type === 'nck') nckDataPointsToRead.push(dp.address);
       }
-      nckDataPointsToRead =
-        this.config.type === 'nck' ? nckDataPointsToRead : [];
+
+      // Don't read NC data points in case there is no nc configured
+      nckDataPointsToRead = this.nckEnabled ? nckDataPointsToRead : [];
 
       // winston.debug(
       //   `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
@@ -237,21 +308,30 @@ export class S7DataSource extends DataSource {
         this.readNckData(nckDataPointsToRead)
       ]);
 
-      let allDpError = currentCycleDataPoints.length > 0;
+      let allDpError =
+        [...nckDataPointsToRead, ...plcAddressesToRead].length > 0;
 
       const measurements: IMeasurement[] = [];
       for (const dp of currentCycleDataPoints) {
+        // Skip is current data point wasn't read
+        if (
+          ![...nckDataPointsToRead, ...plcAddressesToRead].some(
+            (address) => address === dp.address
+          )
+        )
+          continue;
+
         let value,
           error = null;
         if (dp.type === 's7') {
           value = plcResults.datapoints[dp.address];
           error = this.checkError(plcResults.error, value);
-        } else if (dp.type === 'nck' && this.config.type === 'nck') {
+        } else if (dp.type === 'nck' && this.nckEnabled) {
           const index = nckDataPointsToRead.indexOf(dp.address);
           const result = nckResults[index];
           value = result.value;
           error = result.error;
-        } else if (dp.type === 'nck' && this.config.type !== 'nck') {
+        } else if (dp.type === 'nck' && this.nckEnabled) {
           error = true;
         }
 
@@ -289,7 +369,7 @@ export class S7DataSource extends DataSource {
         this.init();
       }
 
-      this.onDataPointMeasurement(measurements);
+      if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
       winston.error(`S7DataSource Error: ${e.message} / ${JSON.stringify(e)}`);
     }
@@ -318,7 +398,13 @@ export class S7DataSource extends DataSource {
         break;
       case 'nck':
         connection = {
-          ...defaultNckConnection,
+          ...defaultNckSlConnection,
+          ipAddr: this.config.connection.ipAddr
+        };
+        break;
+      case 'nck-pl':
+        connection = {
+          ...defaultNckPlConnection,
           ipAddr: this.config.connection.ipAddr
         };
         break;

@@ -37,7 +37,8 @@ export class Connection {
 }
 
 export enum S7Types {
-  Sinumerik = 'nck',
+  SinumerikSl = 'nck',
+  SinumerikPl = 'nck-pl',
   S7_300_400 = 's7-300/400',
   S7_1200_1500 = 's7-1200/1500'
 }

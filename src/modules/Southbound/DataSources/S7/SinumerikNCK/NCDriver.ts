@@ -128,6 +128,9 @@ export default class SinumerikNCKProtocolDriver {
     rack: number = 0,
     slot: number = 4
   ): Promise<void> {
+    winston.info(
+      `Try to connect to nc using host: ${host}:${port} (rack: ${rack}, slot: ${slot})`
+    );
     try {
       this.tcpClient = new net.Socket();
       this.tcpClient.setTimeout(this.timeout);

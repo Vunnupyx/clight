@@ -219,7 +219,19 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     numOfLine: 0x1,
     dataType: 0x7,
     byteLength: 0x4
+  },
+  '/fake/address/1': {
+    // to test invalid addresses
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x2,
+    line: 0x1,
+    blockType: 0x76,
+    numOfLine: 0x1,
+    dataType: 0x7,
+    byteLength: 0x4
   }
+
   // SSP_SPEED_OVR: {
   //   qualityBuffer: null,
   //   byteLength: 50, // Dummy

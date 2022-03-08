@@ -1508,7 +1508,7 @@ export default {
         },
         type: {
           type: 'string',
-          enum: ['s7', 'nck']
+          enum: ['s7', 'nck', 'nck-pl']
         }
       }
     },

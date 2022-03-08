@@ -25,4 +25,4 @@ ENV MDC_LIGHT_FOLDER=/
 ARG MDC_LIGHT_RUNTIME_VERSION=staging
 ENV MDC_LIGHT_RUNTIME_VERSION ${MDC_LIGHT_RUNTIME_VERSION}
 
-CMD ["node", "index.js"]
+CMD ["node", "--max-old-space-size=1024", "index.js"]

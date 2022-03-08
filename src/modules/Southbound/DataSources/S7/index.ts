@@ -230,6 +230,35 @@ export class S7DataSource extends DataSource {
   }
 
   /**
+   * Override setupDataPoints to set fixed intervals for s7 data source
+   */
+  protected setupDataPoints(defaultFrequency: number = 1000): void {
+    if (this.readSchedulerListenerId) return;
+
+    const logPrefix = `${this.name}::setupDataPoints`;
+    winston.debug(`${logPrefix} setup data points`);
+
+    let interval = 1000;
+    switch (this.config.type) {
+      case 'nck-pl':
+        interval = 10000;
+        break;
+      case 's7-300/400':
+      case 's7-1200/1500':
+      case 'nck':
+      case 'custom':
+      default:
+        interval = 1000;
+        break;
+    }
+
+    this.readSchedulerListenerId = this.scheduler.addListener(
+      [interval],
+      this.dataSourceCycle.bind(this)
+    );
+  }
+
+  /**
    * Reads all data points for current intervals and creates and publishes events
    * @param  {Array<number>} currentIntervals
    * @returns Promise
@@ -247,11 +276,16 @@ export class S7DataSource extends DataSource {
 
     try {
       this.cycleActive = true;
+
+      // const currentCycleDataPoints: Array<IDataPointConfig> =
+      //   this.config.dataPoints.filter((dp: IDataPointConfig) => {
+      //     const rf = Math.max(dp.readFrequency || 1000, 1000);
+      //     return currentIntervals.includes(rf);
+      //   });
+
+      // Always read all data points
       const currentCycleDataPoints: Array<IDataPointConfig> =
-        this.config.dataPoints.filter((dp: IDataPointConfig) => {
-          const rf = Math.max(dp.readFrequency || 1000, 1000);
-          return currentIntervals.includes(rf);
-        });
+        this.config.dataPoints;
 
       const plcAddressesToRead = [];
       for (const dp of currentCycleDataPoints) {

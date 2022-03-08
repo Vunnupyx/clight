@@ -4,6 +4,17 @@ title: Changelog
 
 # Changelog
 
+## [1.7.4]
+
+### Added
+
+- Support for SINUMERIK 840D pl with a static read frequency of 5 seconds
+- Improved data source logs
+
+## Fixed
+
+- Fixed memory leak which leads to the crash of some containers
+
 ## [1.7.3]
 
 ### Added

@@ -227,7 +227,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     column: 0x2,
     line: 0x1,
     blockType: 0x76,
-    numOfLine: 0x1,
+    numOfLine: 0x100,
     dataType: 0x7,
     byteLength: 0x4
   }

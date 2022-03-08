@@ -241,7 +241,7 @@ export class S7DataSource extends DataSource {
     let interval = 1000;
     switch (this.config.type) {
       case 'nck-pl':
-        interval = 10000;
+        interval = 5000;
         break;
       case 's7-300/400':
       case 's7-1200/1500':
@@ -350,9 +350,10 @@ export class S7DataSource extends DataSource {
             type: DataPointLifecycleEventTypes.ReadSuccess
           });
         } else {
-          winston.error(
-            `Failed to read datapoint ${dp.name} - Error: ${error}`
-          );
+          // winston.error(
+          //   `Failed to read datapoint ${dp.name} - Error: ${error}`
+          // );
+          this.handleReadDpError(error);
           this.onDataPointLifecycle({
             id: dp.id,
             level: EventLevels.DataPoint,

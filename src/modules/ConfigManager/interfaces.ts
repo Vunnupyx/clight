@@ -63,6 +63,7 @@ export type IS7DataSourceTypes =
   | 's7-300/400'
   | 's7-1200/1500'
   | 'nck'
+  | 'nck-pl'
   | 'custom';
 export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
 

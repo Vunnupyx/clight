@@ -66,8 +66,16 @@ export default {
         description: '',
         parameters: [],
         responses: {
-          '204': {
-            description: 'OK'
+          '200': {
+            description: 'OK',
+            "schema": {
+              "type":"object",
+              "properties": {
+                "version":{
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }

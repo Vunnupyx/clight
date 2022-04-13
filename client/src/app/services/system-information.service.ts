@@ -60,6 +60,14 @@ export class SystemInformationService {
       }));
     }
   }
+  
+  async getUpdateStatus(): Promise<void> {
+    const response = await this.httpService.get<void>(
+      `/systemInfo/update`
+    );
+
+    
+  }
 
   async getServerTime(): Promise<number> {
     const response = await this.httpService.get<{ timestamp: number }>(

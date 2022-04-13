@@ -51,6 +51,18 @@
       <mat-expansion-panel [expanded]="true" class="mt-25">
         <mat-expansion-panel-header>
           <mat-panel-title>
+            {{ 'settings-general.UpdateSystem' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>
+          <button mat-raised-button color="primary" (click)="update()">
+            {{ 'settings-general.UpdateNow' | translate }}
+          </button>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel [expanded]="true" class="mt-25">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
             {{ 'settings-general.RestartDevice' | translate }}
           </mat-panel-title>
         </mat-expansion-panel-header>

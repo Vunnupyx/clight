@@ -14,6 +14,8 @@ import {
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LogsService } from 'app/services/logs.service';
+import { UpdateDialogComponent, UpdateDialogResult, UpdateDialogResultStatus } from './update/update-dialog.component';
+import { AlertDialogComponent, AlertDialogModel } from 'app/shared/components/alert-dialog/alert-dialog.component';
 
 @Component({
   selector: 'app-general',
@@ -61,6 +63,29 @@ export class GeneralComponent implements OnInit {
 
   async downloadLogs() {
     await this.logsService.download();
+  }
+
+  async update() {
+    const dialogRef = this.dialog.open(UpdateDialogComponent, {
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: UpdateDialogResult) => {
+      if (result.status === UpdateDialogResultStatus.Dismissed) {
+        return;
+      }
+      if (result.status === UpdateDialogResultStatus.Failed) {
+        const alertRef = this.dialog.open(AlertDialogComponent, {
+          disableClose: true,
+          data: {
+            type: 'error',
+            content: this.translate.instant(result.error || 'Unknown error'),
+            confirmText: this.translate.instant('common.OK'),
+            hideCancelButton: true,
+          } as AlertDialogModel,
+        });
+      }
+    });
   }
 
   async restart() {

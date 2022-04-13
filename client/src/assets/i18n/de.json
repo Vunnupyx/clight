@@ -1,4 +1,8 @@
 {
+  "common": {
+    "OK": "",
+    "Cancel": ""
+  },
   "layout": {
     "Settings": "Einstellungen",
     "General": "Allgemein",
@@ -75,6 +79,8 @@
   },
   "settings-general": {
     "General": "Allgemein",
+    "UpdateSystem": "",
+    "UpdateNow": "",
     "Language": "Sprache",
     "DeviceInfo": "Geräte Informationen",
     "CELOSLanguage": "CELOS Sprache",

@@ -34,6 +34,7 @@ export interface RequestOptionsArgs {
   params?: RequestHttpParams;
   withCredentials?: boolean;
   responseType: string;
+  observe?: string;
 }
 
 @Injectable()

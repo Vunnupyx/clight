@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { HttpService } from '../shared';
+import { HttpService, RequestOptionsArgs } from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { SystemInformationSection } from '../models';
 import { errorHandler } from '../shared/utils';
@@ -12,6 +13,18 @@ export class SystemInformationState {
   status!: Status;
   sections!: SystemInformationSection[];
   serverOffset!: number;
+}
+
+export enum UpdateStatus {
+  UpToDate,
+  NeedsUpdate,
+  CheckFailed,
+  Dismissed,
+  UpdateSuccessful,
+}
+
+export interface HealthcheckResponse {
+  version: string;
 }
 
 @Injectable()
@@ -61,12 +74,21 @@ export class SystemInformationService {
     }
   }
   
-  async getUpdateStatus(): Promise<void> {
-    const response = await this.httpService.get<void>(
-      `/systemInfo/update`
+  async getUpdateStatus(): Promise<UpdateStatus> {
+    const response = await this.httpService.get<HttpResponse<void>>(
+      `/systemInfo/update`,
+      {
+        observe: 'response',
+        responseType: 'raw',
+      } as RequestOptionsArgs,
     );
-
-    
+    return this._getUpdateStatus(response.status);
+  }
+  
+  async healthcheck(): Promise<HealthcheckResponse> {
+    return await this.httpService.get<HealthcheckResponse>(
+      `/healthcheck`,
+    );
   }
 
   async getServerTime(): Promise<number> {
@@ -108,5 +130,13 @@ export class SystemInformationService {
       status: Status.NotInitialized,
       serverOffset: 0 // TODO: remove it when backend is ready
     };
+  }
+
+  private _getUpdateStatus(httpCode: number) {
+    switch (httpCode) {
+      case 204: return UpdateStatus.UpToDate;
+      case 200: return UpdateStatus.NeedsUpdate;
+      default: return UpdateStatus.CheckFailed;
+    }
   }
 }

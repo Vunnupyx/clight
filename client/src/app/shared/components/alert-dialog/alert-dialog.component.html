@@ -24,11 +24,11 @@
 <div mat-dialog-content>
   <p style="margin: 16px 20px" [innerHTML]="data.content"></p>
 </div>
-<div mat-dialog-actions style="flex-direction: row-reverse;">
-  <button mat-button *ngIf="!data.hideCancelButton" mat-raised-button cdkFocusInitial (click)="onDismiss()">
+<div mat-dialog-actions style="flex-direction: column; align-items: center; margin: 0;">
+  <button mat-button *ngIf="!data.hideCancelButton" mat-raised-button cdkFocusInitial (click)="onDismiss()" style="min-width: 100px">
     {{data.cancelText}}
   </button>
-  <button mat-button mat-raised-button color="warn" (click)="onConfirm()">
+  <button mat-button mat-raised-button color="warn" (click)="onConfirm()" style="min-width: 100px">
     {{data.confirmText}}
   </button>
 </div>

@@ -1,16 +1,13 @@
-<!-- <h1 mat-dialog-title></h1> -->
-
 <div mat-dialog-content>
   <p>
     <mat-spinner></mat-spinner>
   </p>
+  <ng-container *ngIf="updateInProgress">
+    <h3 class="text-center">
+      {{ 'settings-general.InstallingUpdate' | translate }}
+    </h3>
+    <p class="text-center">
+      {{ 'settings-general.InstallingUpdateDescr' | translate }}
+    </p>
+  </ng-container>
 </div>
-
-<!-- <div mat-dialog-actions class="d-flex justify-content-end">
-  <button type="button" mat-button (click)="onConfirm()">
-    {{ 'quick-start.Yes' | translate }}
-  </button>
-  <button type="submit" mat-raised-button color="primary" (click)="onDismiss()">
-    {{ 'quick-start.No' | translate }}
-  </button>
-</div> -->

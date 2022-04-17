@@ -5,7 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import {
   BackupService,
   SystemInformationService,
-  TemplateService
+  TemplateService,
+  UpdateStatus
 } from 'app/services';
 import { LocalStorageService } from 'app/shared';
 import {
@@ -14,7 +15,7 @@ import {
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LogsService } from 'app/services/logs.service';
-import { UpdateDialogComponent, UpdateDialogResult, UpdateDialogResultStatus } from './update/update-dialog.component';
+import { UpdateDialogComponent, UpdateDialogResult } from './update/update-dialog.component';
 import { AlertDialogComponent, AlertDialogModel } from 'app/shared/components/alert-dialog/alert-dialog.component';
 
 @Component({
@@ -68,18 +69,46 @@ export class GeneralComponent implements OnInit {
   async update() {
     const dialogRef = this.dialog.open(UpdateDialogComponent, {
       disableClose: true,
+      width: '650px',
     });
 
     dialogRef.afterClosed().subscribe(async (result: UpdateDialogResult) => {
-      if (result.status === UpdateDialogResultStatus.Dismissed) {
+      if (result.status === UpdateStatus.Dismissed) {
         return;
       }
-      if (result.status === UpdateDialogResultStatus.Failed) {
+      if (result.status === UpdateStatus.UpToDate) {
         const alertRef = this.dialog.open(AlertDialogComponent, {
           disableClose: true,
+          width: '650px',
+          data: {
+            type: 'success',
+            title: this.translate.instant('settings-general.YourSystemUpToDate'),
+            confirmText: this.translate.instant('common.OK'),
+            hideCancelButton: true,
+          } as AlertDialogModel,
+        });
+      }
+      if (result.status === UpdateStatus.UpdateSuccessful) {
+        const alertRef = this.dialog.open(AlertDialogComponent, {
+          disableClose: true,
+          width: '650px',
+          data: {
+            type: 'success',
+            title: this.translate.instant('settings-general.YourSystemUpdateSuccess'),
+            content: this.translate.instant(result.error || 'settings-general.YourSystemUpdateSuccessDescr'),
+            confirmText: this.translate.instant('common.OK'),
+            hideCancelButton: true,
+          } as AlertDialogModel,
+        });
+      }
+      if (result.status === UpdateStatus.CheckFailed) {
+        const alertRef = this.dialog.open(AlertDialogComponent, {
+          disableClose: true,
+          width: '650px',
           data: {
             type: 'error',
-            content: this.translate.instant(result.error || 'Unknown error'),
+            title: this.translate.instant('settings-general.UpdateFailed'),
+            content: this.translate.instant(result.error || 'settings-general.UnknownError'),
             confirmText: this.translate.instant('common.OK'),
             hideCancelButton: true,
           } as AlertDialogModel,

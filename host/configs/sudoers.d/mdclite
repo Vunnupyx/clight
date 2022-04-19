@@ -1,0 +1,6 @@
+mdclite ALL=(root) NOPASSWD: /usr/bin/hostnamectl
+mdclite ALL=(root) NOPASSWD: /usr/bin/systemctl restart systemd-timesyncd
+mdclite ALL=(root) NOPASSWD: /usr/bin/timedatectl
+mdclite ALL=(root) NOPASSWD: /usr/bin/nmcli
+mdclite ALL=(root) NOPASSWD: /usr/sbin/reboot
+mdclite ALL=(root) NOPASSWD: /usr/bin/docker-compose

@@ -1,6 +1,6 @@
 Host dockerhost
   HostName host.docker.internal
-  User root
-  IdentityFile /home/mdclite/.ssh/nmcli/nmclikey
+  User mdclite
+  IdentityFile /root/.ssh/nmcli/nmclikey
   StrictHostKeyChecking no
 

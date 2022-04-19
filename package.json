@@ -63,6 +63,7 @@
     "dump:remote:internal": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk1 | gzip -1 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
     "setup_mock_sysfs": "./scripts/setupSysfsMock.sh",
     "deploy:permissions:file": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp host/configs/sudoers.d/mdclite $INSTALL_HOST:/etc/sudoers.d/mdclite && ssh $INSTALL_HOST chmod 440 /etc/sudoers.d/mdclite",
+    "deploy:network:connections": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp host/configs/NetworkManager/* $INSTALL_HOST:/etc/NetworkManager/system-connections"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

@@ -44,7 +44,7 @@ services:
         target: /sys
       - type: bind
         source: $HOST/home/mdclite/.ssh/nmcli
-        target: /home/mdclite/.ssh/nmcli
+        target: /root/.ssh/nmcli
     environment:
       - PORT=80
       - LOG_LEVEL=debug

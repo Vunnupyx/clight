@@ -212,7 +212,7 @@ export class AuthManager {
    * @returns {Promise<string>} Mac Address
    */
   private async readDeviceLabelMacAddress(): Promise<string> {
-    const address = await new System().readMacAddress('eth1');
+    const address = await new System().readMacAddress('eth0');
     return address === null ? this.EMPTY_MAC_ADDRESS : address;
   }
 }

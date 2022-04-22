@@ -18,7 +18,7 @@ let configManager: ConfigManager;
  */
 async function healthCheckGetHandler(request: Request, response: Response) {
   if(!configManager) response.status(500).json({error: "init in progress"});
-  const mdcVersion = await configManager.getSystemInformation()[1]['items'][0]['value'];
+  const mdcVersion = (await configManager.getSystemInformation())[1]['items'][0]['value'];
   response.status(200).json({
     version: mdcVersion
   });

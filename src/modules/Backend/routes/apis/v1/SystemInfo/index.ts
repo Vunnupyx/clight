@@ -48,7 +48,8 @@ async function triggerContainerUpdate(request: Request, response: Response) {
       };
       case updateStatus.NETWORK_ERROR: {
         response.status(400).json({
-          error: "No update possible. Please check your network configuration"
+          error: "No update possible. Please check your network configuration",
+          code: "error_no_network"
         });
         break};
     }

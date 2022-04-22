@@ -1,5 +1,6 @@
 import SshService from '../SshService/';
 import winston from 'winston';
+import { json } from 'body-parser';
 
 export enum updateStatus {
     AVAILABLE = 'available',
@@ -21,10 +22,10 @@ export default class UpdateManager {
     triggerUpdate(): Promise<updateStatusType> {
         const logPrefix = `UpdateManager::triggerUpdate`;
   
-        const hostPrefix = `HOST=""`;
+        // const hostPrefix = `HOST=""`;
         const images = `docker images -q`;
-        const pull = `${hostPrefix} docker-compose pull`;
-        const restart = `${hostPrefix} docker-compose up -d`;
+        const pull = `docker-compose pull`;
+        const restart = `docker-compose up -d`;
         const cleanup = `docker images prune`;
         
         let firstImages: string;
@@ -61,7 +62,8 @@ export default class UpdateManager {
                 return updateStatus.AVAILABLE;
             })
             .catch((err) => {
-                winston.error(`${logPrefix} error during update. Please check your network connection.`);
+                console.log();
+                winston.error(`${logPrefix} error during update. Please check your network connection. ${JSON.stringify(err)}`);
                 return updateStatus.NETWORK_ERROR;
             })
     }

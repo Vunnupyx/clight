@@ -87,6 +87,8 @@
     "InstallingUpdate": "Installing update",
     "InstallingUpdateDescr": "This will take a few minutes. Please don't reload the page",
     "UpdateFailed": "Update Failed",
+    "UpdateFailed-error_no_network": "No update possible. Please check your network configuration",
+    "UpdateFailedCheckNetworkConfig": "Update failed. Please check your network configuration",
     "UpdateInstallFailed": "Failed to install updates. Please contact support",
     "UnknownError": "Unknown error",
     "DeviceInfo": "Device Info",

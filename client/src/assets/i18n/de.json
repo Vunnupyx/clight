@@ -87,6 +87,8 @@
     "InstallingUpdate": "",
     "InstallingUpdateDescr": "",
     "UpdateFailed": "",
+    "UpdateFailed-error_no_network": "",
+    "UpdateFailedCheckNetworkConfig": "",
     "UpdateInstallFailed": "",
     "UnknownError": "",
     "Language": "Sprache",

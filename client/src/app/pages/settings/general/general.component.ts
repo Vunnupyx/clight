@@ -108,7 +108,7 @@ export class GeneralComponent implements OnInit {
           data: {
             type: 'error',
             title: this.translate.instant('settings-general.UpdateFailed'),
-            content: this.translate.instant(result.error || 'settings-general.UnknownError'),
+            content: this.translate.instant(result.error || 'settings-general.UpdateFailedCheckNetworkConfig'),
             confirmText: this.translate.instant('common.OK'),
             hideCancelButton: true,
           } as AlertDialogModel,

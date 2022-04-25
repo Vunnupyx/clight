@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,10 +47,18 @@ export class UpdateDialogComponent implements OnInit {
         this.dialogRef.close({ status: UpdateStatus.UpdateSuccessful });
       }
       
-    } catch (error: any) {
-      console.error(error);
+    } catch (err: any) {
+      console.error(err);
 
-      const errorText = error?.error?.error || error?.toString();
+      let errorText = this.translate.instant('settings-general.UpdateFailedCheckNetworkConfig');
+      if (err instanceof HttpErrorResponse && err.error) {
+        const {error, code} = JSON.parse(err.error)
+        errorText = code 
+          ? this.translate.instant(`settings-general.UpdateFailed-${code}`)
+          : error;
+      } else {
+        errorText = err.error.message;
+      }
       this.dialogRef.close({ status: UpdateStatus.CheckFailed, error: errorText });
     }
   }

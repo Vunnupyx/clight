@@ -48,7 +48,7 @@ const defaultS7DataSource: IDataSourceConfig = {
   name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.S7,
-  enabled: true,
+  enabled: false,
   type: 'nck',
   connection: {
     ipAddr: '192.168.214.1',

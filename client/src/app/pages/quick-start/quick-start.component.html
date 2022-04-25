@@ -69,7 +69,7 @@
       <ng-template matStepLabel>
         {{ 'quick-start.SelectTemplate' | translate }}
       </ng-template>
-      <form [formGroup]="templateForm" class="pt-20">
+      <form [formGroup]="templateForm" class="pt-20" (submit)="onSubmit()">
         <div class="step-description">
           <p>
             {{ 'quick-start.Descriptions.Step2' | translate }}
@@ -100,13 +100,16 @@
             {{ 'quick-start.ContinueWithoutTemplate' | translate }}
           </button>
 
-          <button mat-raised-button matStepperNext>
+          <!-- <button mat-raised-button matStepperNext>
             {{ 'quick-start.Next' | translate }}
+          </button> -->
+          <button mat-raised-button matStepperNext>
+            {{ 'quick-start.Save' | translate }}
           </button>
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="sourceForm">
+    <!-- <mat-step [stepControl]="sourceForm">
       <ng-template matStepLabel>
         {{ 'quick-start.SelectSource' | translate }}
       </ng-template>
@@ -199,6 +202,6 @@
           </button>
         </div>
       </form>
-    </mat-step>
+    </mat-step> -->
   </mat-stepper>
 </div>

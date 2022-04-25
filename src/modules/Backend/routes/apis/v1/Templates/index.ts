@@ -43,8 +43,8 @@ export function setDataSinksManager(manager: DataSinksManager) {
 function templatesGetHandler(request: Request, response: Response): void {
   const templates = configManager.defaultTemplates.templates.map((x) => ({
     ...x,
-    dataSources: x.dataSources.map((y) => y.protocol),
-    dataSinks: x.dataSinks.map((y) => y.protocol)
+    dataSources: x.dataSources.filter((x) => x.enabled).map((y) => y.protocol),
+    dataSinks: x.dataSinks.filter((x) => x.enabled).map((y) => y.protocol)
   }));
 
   const payload = {

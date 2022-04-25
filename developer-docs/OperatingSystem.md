@@ -9,78 +9,62 @@
 
 ## Image configuration
 
-1. Setup a new root password when prompted
+1. Setup a new root password when prompted (Please use password from Lastpass)
 2. Clean up unneeded or outdated packages `apt purge node-red node-red nodejs mosquitto tcf-agent`
 3. Check that no ports are still listening beside SSH (Port 22) `netstat -tulpn | grep LISTEN`
-4. Install docker
+4. Install dependencies
 
 ```
 apt update
-apt install apt-transport-https ca-certificates curl gnupg lsb-release
+apt install apt-transport-https ca-certificates curl gnupg lsb-release docker-compose timesyncd
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 apt update
 apt install docker-ce docker-ce-cli containerd.io
-docker run hello-world
 ```
 
-5. Install docker-compose
 
+5. Enable timesyncd
 ```
-apt install python3-setuptools python3.7-dev
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-pip3 install --upgrade pip
-pip3 install docker-compose
-```
-
-6. Cleanup
-
-```
-rustup self uninstall
-apt purge python3-setuptools python3.7-dev
+systemctl enable /lib/systemd/system/systemd-timesyncd.service
+chown root:mdclite /etc/systemd/timesyncd.conf
+chmod 664 /etc/systemd/timesyncd.conf
 ```
 
-7. Login to registry: `docker login registry.gitlab.com``
-8. Create `docker-compose.yml`
-9. Start containers: `docker-compose -d up`
-
-10. Remove device specific configuration
-
+6. Copy configs
 ```
-rm -rf /etc/MDCLight/config/auth.json
-rm -rf /etc/MDCLight/config/ssl.crt
-rm -rf /etc/MDCLight/config/ssl_private.key
-rm -rf /etc/ssh/ssh_host_*
-rm -rf  rm -rf /etc/MDCLight/logs/*.log
-cat /dev/null > ~/.bash_history && history -c && exit
-nmcli con mod eth0-default ipv4.method auto
-nmcli con up eth0-default
-nmcli con mod eth1-default ipv4.addresses 192.168.214.230/24 ipv4.gateway 0.0.0.0.0 ipv4.dns 0.0.0.0 ipv4.method manual
-nmcli con up eth1-default
+npm run deploy:all
 ```
 
-11. And shutdown: `shutdown -h now`
-12. Remove the sd card & insert it into an SD Card reader
-13. `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.0_resized.img bs=1m count=13517`
+
+7. Cleanup
+```
+apt autoremove
+```
+
+8. Create mdclite user
+Use password from Lastpass
+```
+adduser mdclite
+```
+
+9. Login to mdclite account 
+10. Login to docker image registry: `docker login registry.gitlab.com`
+11. Start containers: `sudo docker-compose -d up`
+
+12. Remove device specific configuration
+```
+npm run deploy:clean:logs
+```
+13. And shutdown: `shutdown -h now`
+14. Remove the sd card & insert it into an SD Card reader
+15. `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.0_resized.img bs=1m count=13517`
 
 ## Update containers
 
+### Via frontend 
+Login to device and click the `update now` button.
+### Manual
 1. Pull newer containers: `docker-compose pull`
 2. Restart `docker-compose down && docker-compose up -d`
 
-## SSL Cert generation
-
-```
-[Unit]
-Description=Generate SSL certificate & private key if they don't exist already
-WantedBy=docker.service
-
-[Service]
-Type=oneshot
-ExecStart=bash -c 'test ! -e /etc/MDCLight/config/ssl_private.key && openssl req -x509 -nodes -days 10950 -newkey rsa:2048 -keyout /etc/MDCLight/config/ssl_private.key -out /etc/MDCLight/config/ssl.crt -subj "/C=DE/L=Munich/O=codestryke GmbH/CN=IOT2050/emailAddress=info@codestryke.com" || true'
-RemainAfterExit=true
-StandardOutput=journal
-
-[Install]
-WantedBy=multi-user.target
-```

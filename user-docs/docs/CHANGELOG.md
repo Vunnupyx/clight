@@ -4,6 +4,14 @@ title: Changelog
 
 # Changelog
 
+## [Current]
+
+### Changed
+
+- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Renamed IoTconnector Light to IoTconnector Lite
+- [MDCL-218](https://codestryke.atlassian.net/browse/MDCL-217) Switched CELOS logo to DMG Connectivity logo
+- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Removed step 3 and 4 from configuration wizard. The "enabled" flag of datasources and datasinks are now only controlled by the templates
+
 ## [1.7.4]
 
 ### Added

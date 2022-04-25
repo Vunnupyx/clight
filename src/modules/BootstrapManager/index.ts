@@ -21,6 +21,7 @@ import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { System } from '../System';
 import HostnameController from '../HostnameController';
 import { LedStatusService } from '../LedStatusService';
+import { LicenseCheck } from '../LicenseChecker';
 
 /**
  * Launches agent and handles module life cycles
@@ -37,6 +38,7 @@ export class BootstrapManager {
   private backend: RestApiManager;
   private hwEvents: IoT2050HardwareEvents;
   private ledManager: LedStatusService;
+  private licenseChecker: LicenseCheck;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -87,6 +89,7 @@ export class BootstrapManager {
       this.configManager,
       this.dataSourcesManager
     );
+    this.licenseChecker = new LicenseCheck();
   }
 
   /**
@@ -94,6 +97,7 @@ export class BootstrapManager {
    */
   public async start() {
     try {
+      await this.licenseChecker.checkLicense();
       await this.ledManager.init();
       this.setupKillEvents();
 
@@ -159,14 +163,19 @@ export class BootstrapManager {
       //   process.exit(1);
       // }, 5 * 60 * 1000);
     } catch (error) {
-      this.errorEventsBus.push({
-        id: 'device',
-        level: EventLevels.Device,
-        type: DeviceLifecycleEventTypes.LaunchError,
-        payload: error.toString()
-      });
-
-      winston.error('Error while launching. Exiting program.');
+      if (error?.code === 'LICENSE_CHECK_FAILED') {
+        winston.error(error?.msg);
+      } else  {
+        this.errorEventsBus.push({
+          id: 'device',
+          level: EventLevels.Device,
+          type: DeviceLifecycleEventTypes.LaunchError,
+          payload: error.toString()
+        });
+  
+        winston.error('Error while launching. Exiting program.');
+      }
+     
       process.exit(1);
     }
   }

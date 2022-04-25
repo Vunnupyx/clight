@@ -4,7 +4,7 @@ title: Application Interfaces
 
 ## Introduction
 
-`Application Interfaces` provide the intersections protocols in the IoT Connector light. The process data read from the data sources can thus be processed further by external applications, such as for example DMG MORI MONITORING, or cloud platforms.
+`Application Interfaces` provide the intersections protocols in the IoT Connector lite. The process data read from the data sources can thus be processed further by external applications, such as for example DMG MORI MONITORING, or cloud platforms.
 
 The current supported interfaces/protocols are:
 

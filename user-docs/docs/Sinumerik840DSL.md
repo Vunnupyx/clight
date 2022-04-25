@@ -61,4 +61,4 @@ Here are some examples to guide you in addressing your variables:
 | `DB2,DTLZ12`                | -                | Date\*\*     | A timestamp in the DTL format, in UTC                  |
 
 - \*) Note that strings in S7 PLCs use two extra bytes at start for size & length of the string
-- \*\*) Note that in the IoT Connector Light, `Date` data types are _always_ represented in UTC.
+- \*\*) Note that in the IoTconnector light, `Date` data types are _always_ represented in UTC.

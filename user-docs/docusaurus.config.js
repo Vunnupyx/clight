@@ -1,6 +1,6 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  title: 'MDClight Documentation',
+  title: 'IoTconnector lite Documentation',
   tagline: '',
   url: 'https://dmgmori.com',
   baseUrl: '/help/',
@@ -14,9 +14,9 @@ module.exports = {
     locales: ['en'],
     localeConfigs: {
       en: {
-        label: 'English',
-      },
-    },
+        label: 'English'
+      }
+    }
   },
   themeConfig: {
     // announcementBar: {
@@ -24,10 +24,10 @@ module.exports = {
     //   content:""
     // },
     navbar: {
-      title: 'MDClight',
+      title: 'IoTconnector lite',
       logo: {
         alt: 'DMG Mori',
-        src: 'img/celos.svg',
+        src: 'img/logo-connectivity-white.png'
       },
       items: [
         // {
@@ -38,8 +38,8 @@ module.exports = {
           to: 'docs/',
           activeBasePath: 'docs',
           label: 'Documentation',
-          position: 'left',
-        },
+          position: 'left'
+        }
         // {
         //   type: 'localeDropdown',
         //   position: 'right',
@@ -50,7 +50,7 @@ module.exports = {
         //     },
         //   ],
         // },
-      ],
+      ]
     },
     footer: {
       links: [
@@ -59,8 +59,8 @@ module.exports = {
           items: [
             {
               label: 'Getting Started',
-              to: '/docs/',
-            },
+              to: '/docs/'
+            }
             // {
             //   label: 'Platform Builder Guide',
             //   to: '/docs/platform-engineers/overview',
@@ -69,8 +69,8 @@ module.exports = {
             //   label: 'Developer Experience Guide',
             //   to: '/docs/quick-start-appfile',
             // },
-          ],
-        },
+          ]
+        }
         // {
         //   title: 'Community',
         //   items: [
@@ -98,11 +98,11 @@ module.exports = {
         <br />
         <strong>© DMG MORI ${new Date().getFullYear()}</strong> <strong>| <a href="https://dmgmori.com">dmgmori.com</a></strong>
         <br />
-      `,
+      `
     },
     prism: {
-      theme: require('prism-react-renderer/themes/dracula'),
-    },
+      theme: require('prism-react-renderer/themes/dracula')
+    }
   },
   plugins: [
     // [
@@ -129,7 +129,7 @@ module.exports = {
           showLastUpdateAuthor: false,
           showLastUpdateTime: true,
           includeCurrentVersion: true,
-          lastVersion: 'current',
+          lastVersion: 'current'
           // versions: {
           //   current: {
           //     label: 'master',
@@ -138,14 +138,14 @@ module.exports = {
           // },
         },
         blog: {
-          showReadingTime: true,
+          showReadingTime: true
           // editUrl:
           //   'https://google.com',
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      },
-    ],
-  ],
+          customCss: require.resolve('./src/css/custom.css')
+        }
+      }
+    ]
+  ]
 };

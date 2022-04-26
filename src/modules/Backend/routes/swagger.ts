@@ -66,8 +66,16 @@ export default {
         description: '',
         parameters: [],
         responses: {
-          '204': {
-            description: 'OK'
+          '200': {
+            description: 'OK',
+            "schema": {
+              "type":"object",
+              "properties": {
+                "version":{
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -1319,6 +1327,34 @@ export default {
         responses: {
           '204': {
             description: 'OK'
+          }
+        }
+      }
+    },
+    '/systemInfo/update': {
+      get: {
+        tags: ['systemInfo'],
+        description: 'Update all containers if possible',
+        operationId: 'updateContainerGet',
+        responses: {
+          '200': {
+            description: 'OK'
+          },
+          '204': {
+            description: 'Request successfully but no updates available'
+          },
+          '400': {
+            description: 'Update failed. Possibly no network connection.',
+            schema: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'string',
+                  example:
+                    'No update possible. Please check your network configuration.'
+                }
+              }
+            }
           }
         }
       }

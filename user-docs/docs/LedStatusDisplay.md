@@ -6,7 +6,7 @@ title: Status LEDs
 
 ## Introduction
 
-The current runtime status of MDCLight is also directly visible on the `Siemens™ SIMATIC IoT2050™` device and displayed by different LEDs and with different colors.
+The current runtime status of IoTconnector lite is also directly visible on the `Siemens™ SIMATIC IoT2050™` device and displayed by different LEDs and with different colors.
 
 There are two different LEDs on the `Siemens™ SIMATIC IoT2050™` device:
 
@@ -31,8 +31,8 @@ USER 1 LED displays the current configuration state:
 
 USER 2 LED has only 2 states:
 
-- Off (MDCLight is not running)
-- Green (MDCLight is running)
+- Off (IoTconnector lite is not running)
+- Green (IoTconnector lite is running)
 
 ### What does `configured` means?
 

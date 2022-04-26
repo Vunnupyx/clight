@@ -1,12 +1,12 @@
 ---
-title: Getting Started - Operating System Installation and MDCLight Commissioning
+title: Getting Started - Operating System Installation and IoTconnector lite Commissioning
 ---
 
 ## Prepare SD Card
 
 You can find the latest Golden Image for the IoT2050 Advanced can be downloaded here:
 
-_[Download IoTConnector Light OS](https://codestryke-artifacts.s3.eu-central-1.amazonaws.com/dmg-mdclight/6nGDr9SZEvhN9qTLOuzMBK61mMb96OmJVf4d/Z9DGRRrFEX87Axzyq0aSxB6sB3LqFWCnW1tk/iot-connector-light-os-v1.2.0.zip)_
+_[Download IoTconnector lite OS](https://codestryke-artifacts.s3.eu-central-1.amazonaws.com/dmg-mdclight/6nGDr9SZEvhN9qTLOuzMBK61mMb96OmJVf4d/Z9DGRRrFEX87Axzyq0aSxB6sB3LqFWCnW1tk/iot-connector-light-os-v1.2.0.zip)_
 
 Unzip the image and use dd to copy the operating system to an SD Card. Industrial SD Cards are recommended.
 
@@ -23,7 +23,7 @@ After the command or balena Etcher is finished your SD Card is ready.
 ## Setup IoT2050 & Change Boot Order
 
 By default (for newer IoT2050 Advanced device) the Siemens Industrial OS 2.x is installed on the internal MMC storage. In addition the boot priority is set
-to the internal memory above the SD card slot. This means that you have to boot into the Industrial OS, complete the setup wizard and change the boot order before you can use the "MDCLight OS".
+to the internal memory above the SD card slot. This means that you have to boot into the Industrial OS, complete the setup wizard and change the boot order before you can use the "IoTconnector lite OS".
 
 1. First you need to complete the Industrial OS setup wizard. For this you need to connect a keyboard and monitor to your IoT2050 device. Keep in mind that an if you
    want to use an "Display Port" to HDMI adapter, you need to use an active one.
@@ -68,8 +68,8 @@ For X1 P2 - eth1 (company network - default setting: DHCP):
 
 ## Configuration Web Interface
 
-- The MDCLight can be configured via the web interface (accessible via port 80 on both network interfaces)
-- After the configuration is changed you need to restart the MDCLight, either via a reboot of the device or via `docker-compose down && docker-compose up -d` (In the user folder of "root" - `cd ~`)
+- The IoTconnector lite can be configured via the web interface (accessible via port 80 on both network interfaces)
+- After the configuration is changed you need to restart the IoTconnector lite, either via a reboot of the device or via `docker-compose down && docker-compose up -d` (In the user folder of "root" - `cd ~`)
 - You can use the `nmcli` command to see the IP addresses for both interfaces (For DHCP you can see the IP address which was assigned to the device)
 
 ## Connecting MTConnect Applications
@@ -84,8 +84,8 @@ For X1 P2 - eth1 (company network - default setting: DHCP):
 
 ## Configuration documentation & reference
 
-- Primarily the MDCLight should be configured via the webserver
-- The MDClight config is stored in `/etc/MDCLight/config/config.json` - You can use `IP=<your ip> yarn copy_mdc_conf` to update the MDC light config on an IoT2050 from the repository
+- Primarily the IoTconnector lite should be configured via the webserver
+- The IoTconnector lite config is stored in `/etc/MDCLight/config/config.json` - You can use `IP=<your ip> yarn copy_mdc_conf` to update the IoTconnector lite config on an IoT2050 from the repository
 - See the "MdcLightConfiguration" document for an explanation of the configuration format
 - The MTConnect agent configuration is stored in `/etc/MDCLight/mtc_config` - The documentation for these config files can be found on the [MTConnect Agent Github](https://github.com/mtconnect/cppagent#configuration)
 - After you changed the configuration you need to restart the docker containers `docker-compose down && docker-compose up -d`. HINT: To avoid problems with the

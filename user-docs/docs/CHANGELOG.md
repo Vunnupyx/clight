@@ -4,6 +4,14 @@ title: Changelog
 
 # Changelog
 
+## [Current]
+
+### Changed
+
+- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Renamed IoTconnector Light to IoTconnector Lite
+- [MDCL-218](https://codestryke.atlassian.net/browse/MDCL-217) Switched CELOS logo to DMG Connectivity logo
+- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Removed step 3 and 4 from configuration wizard. The "enabled" flag of datasources and datasinks are now only controlled by the templates
+
 ## [1.7.4]
 
 ### Added
@@ -26,7 +34,7 @@ title: Changelog
 - Fixed USER1 & USER2 LED statuses and added documentation
 - Fixed bug where old log archives weren't deleted after failures
 - Fixed flash service and improved documentation
-- MDClight software version is now correctly shown in opc ua
+- IoTConnector lite software version is now correctly shown in opc ua
 - Invalid NTP-Server configuration only returns error once which prevents error if saving on other network tabs when a wrong ntp server is set
 
 ## [1.7.2]

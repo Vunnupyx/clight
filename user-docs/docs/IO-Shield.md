@@ -4,7 +4,7 @@ title: 'Data source: IO-Shield'
 
 ## Introduction
 
-With this data source you can connect electrical signals to your IoTConnector light device. The signals can either be digital (Sink or Source, 0V/24V) or analog inputs (0-10V or 0-20mA). This is especially useful if you want to connect older equipment without a digital control or a machine where access to the control is not possible.
+With this data source you can connect electrical signals to your IoTconnector lite device. The signals can either be digital (Sink or Source, 0V/24V) or analog inputs (0-10V or 0-20mA). This is especially useful if you want to connect older equipment without a digital control or a machine where access to the control is not possible.
 
 ## Default Configuration
 

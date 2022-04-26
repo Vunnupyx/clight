@@ -45,6 +45,14 @@ services:
       - type: bind
         source: $HOST/home/mdclite/.ssh/nmcli
         target: /root/.ssh/nmcli
+      - type: bind
+        read_only: true
+        source: /var/log
+        target: /host/log/system
+      - type: bind
+        read_only: true
+        source: /var/lib/docker/containers
+        target: /host/log/docker
     environment:
       - PORT=80
       - LOG_LEVEL=debug

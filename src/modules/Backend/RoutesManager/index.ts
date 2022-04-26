@@ -59,7 +59,7 @@ import {
   termsAndConditionsHandlers,
   setConfigManager as termsAndConditionsSetConfigManager
 } from '../routes/apis/v1/TermsAndConditions';
-import { healthCheckHandlers, setConfigManager as healthCheckSetConfigManager } from '../routes/apis/v1/Healthcheck';
+import { healthCheckHandlers } from '../routes/apis/v1/Healthcheck';
 import { ConfigManager } from '../../ConfigManager';
 import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
@@ -123,8 +123,7 @@ export class RoutesManager {
       networkConfigSetConfigManager,
       systemInfoSetConfigManager,
       templatesConfigSetConfigManager,
-      termsAndConditionsSetConfigManager,
-      healthCheckSetConfigManager
+      termsAndConditionsSetConfigManager
     ].forEach((func) => func(options.configManager));
     authSetAuthManager(options.authManager);
     setDataSinksManager(options.dataSinksManager);

@@ -145,7 +145,7 @@ export class BootstrapManager {
         }
       });
       // Activate watcher
-      await this.hwEvents.watchUserButtonLongPress();
+      this.hwEvents.watchUserButtonLongPress();
 
       this.lifecycleEventsBus.push({
         id: 'device',

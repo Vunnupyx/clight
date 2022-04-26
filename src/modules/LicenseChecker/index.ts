@@ -9,6 +9,7 @@ export class LicenseCheck {
     '8CF3191EBD22',
     '8CF3193A0A60',
     '8CF3195B9ABE',
+    '8CF3194C05C9',
     'E0DCA0C86F7E'
   ];
   #system = new System();

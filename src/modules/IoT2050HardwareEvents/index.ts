@@ -23,10 +23,12 @@ export default class IoT2050HardwareEvents {
   /**
    * Start watching button
    */
-  public watchUserButtonLongPress(): void {
+  public async watchUserButtonLongPress(): Promise<void> {
     const logPrefix = `${this.constructor.name}::watchUserButtonLongPress`;
-    if (!this.is_2050()) {
-      winston.error(`${logPrefix} no iot2050 device detected. Registration to USER_BUTTON not available.`);
+    if (!(await this.is_2050())) {
+      winston.error(
+        `${logPrefix} no iot2050 device detected. Registration to USER_BUTTON not available.`
+      );
       return;
     }
     if (this.#child) {
@@ -56,11 +58,11 @@ export default class IoT2050HardwareEvents {
    */
   public registerCallback(callback: Function): number {
     const logPrefix = `${this.constructor.name}::registerCallback `;
-    
-    winston.debug(`${logPrefix} register callback to USER_BUTTON event.`)
 
-    if ((this.#unusedSlots.length === 0)) {
-      return (this.#callbacks.push(callback) - 1);
+    winston.debug(`${logPrefix} register callback to USER_BUTTON event.`);
+
+    if (this.#unusedSlots.length === 0) {
+      return this.#callbacks.push(callback) - 1;
     }
     const index = this.#unusedSlots.shift();
     this.#callbacks[index] = callback;
@@ -71,7 +73,7 @@ export default class IoT2050HardwareEvents {
    * Remove callback by index.
    */
   public removeCallback(index: number): void {
-    if (index === (this.#callbacks.length - 1)) {
+    if (index === this.#callbacks.length - 1) {
       this.#callbacks.pop();
       return;
     }
@@ -86,7 +88,9 @@ export default class IoT2050HardwareEvents {
   private dataHandler(stdout: GpioReturn) {
     const logPrefix = `${this.constructor.name}::dataHandler`;
 
-    winston.debug(`${logPrefix} receive button event. Start checking if it meet the callback conditions.`)
+    winston.debug(
+      `${logPrefix} receive button event. Start checking if it meet the callback conditions.`
+    );
     // Ignore first received data
     if (!this.#initData) {
       this.#initData = true;
@@ -97,12 +101,16 @@ export default class IoT2050HardwareEvents {
       return;
     }
     if (Date.now() - this.#fistEventTS > this.#buttonPressedTriggerTimeMs) {
-      winston.debug(`${logPrefix} conditions fulfilled. Execute all callbacks.`);
+      winston.debug(
+        `${logPrefix} conditions fulfilled. Execute all callbacks.`
+      );
       this.#callbacks.forEach(async (cb, index) => {
         try {
           await cb();
         } catch (e) {
-          winston.error(`${logPrefix} error during calling callback number ${index}`);
+          winston.error(
+            `${logPrefix} error during calling callback number ${index}`
+          );
         }
       });
     }
@@ -112,7 +120,7 @@ export default class IoT2050HardwareEvents {
   /**
    * Restart child process if crashes because of error
    */
-  private errorHandler(stderr) {
+  private async errorHandler(stderr) {
     const logPrefix = `${this.constructor.name}::errorHandler`;
     winston.error(
       `${logPrefix} received error from process due to ${JSON.stringify(
@@ -120,7 +128,7 @@ export default class IoT2050HardwareEvents {
       )}`
     );
     if (this.#child.exitCode) {
-      this.watchUserButtonLongPress();
+      await this.watchUserButtonLongPress();
     }
   }
 
@@ -132,7 +140,7 @@ export default class IoT2050HardwareEvents {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
       if (board.indexOf('SIMATIC IOT2050') >= 0) return true;
     } catch (e) {
-      return false
+      return false;
     }
     return false;
   }

@@ -25,4 +25,19 @@ export default class HostnameController {
     winston.info(`Setting hostname to '${hostname}'`);
     await SshService.sendCommand(`hostnamectl set-hostname '${hostname}'`);
   }
+
+  /**
+   * Returns the set hostname of the docker host machine. 
+   * Return 'UnknownHostname' on any error.
+   */
+  static async getHostname(): Promise<string> {
+    return SshService.sendCommand('hostnamectl')
+      .then((status) => {
+        return status.substr(0, status.indexOf('\n')).replace('Static hostname: ', '');
+      })
+      .catch((err) => {
+        winston.error(`HostnameController:getHostname error catching hostname due to ${JSON.stringify(err)}`);
+        return 'UnknownHostname';
+      }) 
+  }
 }

@@ -1,0 +1,677 @@
+$swal2-white:       #fff !default;
+$swal2-black:       #000 !default;
+
+// BOX MODEL
+$swal2-width: 32em !default;
+$swal2-padding: 1.25em !default;
+$swal2-border-radius: .3125em !default;
+$swal2-box-shadow: #d9d9d9 !default;
+
+// BACKGROUND
+$swal2-background: $swal2-white !default;
+
+// TYPOGRAPHY
+$swal2-font: inherit !default;
+$swal2-font-size: 1rem !default;
+
+// BACKDROP
+$swal2-backdrop: rgba($swal2-black, .4) !default;
+
+// ICONS
+$swal2-icon-size: 5em !default;
+$swal2-icon-margin: 1.25em auto 1.875em !default;
+$swal2-icon-zoom: normal !default;
+$swal2-success: #a5dc86 !default;
+$swal2-success-border: rgba($swal2-success, .3) !default;
+$swal2-error: #f27474 !default;
+$swal2-warning: #f8bb86 !default;
+$swal2-info: #3fc3ee !default;
+$swal2-question: #87adbd !default;
+
+// IMAGE
+$swal2-image-margin: 1.25em auto !default;
+
+// TITLE
+$swal2-title-margin: 0 0 .4em !default;
+$swal2-title-color: lighten($swal2-black, 35) !default;
+$swal2-title-font-size: 1.875em !default;
+
+// CONTENT
+$swal2-content-color: lighten($swal2-black, 33) !default;
+$swal2-content-font-size: 1.125em !default;
+
+// INPUT
+$swal2-input-margin: 1em auto !default;
+$swal2-input-height: 2.625em !default;
+$swal2-input-padding: .75em !default;
+$swal2-input-border: lighten($swal2-black, 85) !default;
+$swal2-input-border-radius: .1875em !default;
+$swal2-input-border-focus: #b4dbed !default;
+$swal2-input-box-shadow: rgba($swal2-black, .06) !default;
+$swal2-input-box-shadow-focus: #c4e6f5 !default;
+$swal2-input-font-size: 1.125em !default;
+
+// TEXTAREA SPECIFIC VARIABLES
+$swal2-textarea-height: 6.75em !default;
+
+// VALIDATION ERROR
+$swal2-validationerror-justify-content: center !default;
+$swal2-validationerror-padding: .625em !default;
+$swal2-validationerror-background: lighten($swal2-black, 94) !default;
+$swal2-validationerror-color: lighten($swal2-black, 40) !default;
+$swal2-validationerror-font-size: 1em !default;
+$swal2-validationerror-font-weight: 300 !default;
+$swal2-validationerror-icon-background: $swal2-error !default;
+$swal2-validationerror-icon-color: $swal2-white !default;
+$swal2-validationerror-icon-zoom: normal !default;
+
+// PROGRESS STEPS
+$swal2-progress-steps-margin: 0 0 1.25em !default;
+$swal2-progress-steps-distance: 2.5em !default;
+
+// FOOTER
+$swal2-footer-margin: 1.25em 0 0 !default;
+$swal2-footer-border-color: #eee !default;
+$swal2-footer-color: lighten($swal2-black, 33) !default;
+$swal2-footer-font-size: 1em !default;
+
+// ANIMATIONS
+$swal2-show-animation: swal2-show .3s !default;
+$swal2-hide-animation: swal2-hide .15s forwards !default;
+$swal2-success-line-tip-animation: swal2-animate-success-line-tip .75s !default;
+$swal2-success-line-long-animation: swal2-animate-success-line-long .75s !default;
+$swal2-success-circular-line-animation: swal2-rotate-success-circular-line 4.25s ease-in !default;
+$swal2-error-icon-animation: swal2-animate-error-icon .5s !default;
+$swal2-error-x-mark-animation: swal2-animate-error-x-mark .5s !default;
+
+// CLOSE BUTTON
+$swal2-close-button-width: 1.2em !default;
+$swal2-close-button-height: 1.2em !default;
+$swal2-close-button-position: absolute !default;
+$swal2-close-button-gap: 0 !default;
+$swal2-close-button-transition: color .1s ease-out !default;
+$swal2-close-button-border: none !default;
+$swal2-close-button-border-radius: 0 !default;
+$swal2-close-button-background: transparent !default;
+$swal2-close-button-color: lighten($swal2-black, 80) !default;
+$swal2-close-button-font-size: 2.5em !default;
+
+// CLOSE BUTTON:HOVER
+$swal2-close-button-hover-transform: none !default;
+$swal2-close-button-hover-color: $swal2-error !default;
+
+// ACTIONS
+$swal2-actions-margin: 1.25em auto 0 !default;
+
+// CONFIRM BUTTON
+$swal2-confirm-button-border: 0 !default;
+$swal2-confirm-button-border-radius: .25em !default;
+$swal2-confirm-button-background-color: #3085d6 !default;
+$swal2-confirm-button-color: $swal2-white !default;
+$swal2-confirm-button-font-size: 1.0625em !default;
+
+// CANCEL BUTTON
+$swal2-cancel-button-border: 0 !default;
+$swal2-cancel-button-border-radius: .25em !default;
+$swal2-cancel-button-background-color: #aaa !default;
+$swal2-cancel-button-color: $swal2-white !default;
+$swal2-cancel-button-font-size: 1.0625em !default;
+
+// COMMON VARIABLES FOR CONFIRM AND CANCEL BUTTONS
+$swal2-button-darken-hover: rgba($swal2-black, .1) !default;
+$swal2-button-darken-active: rgba($swal2-black, .2) !default;
+$swal2-button-focus-outline: rgba(50, 100, 150, .4) !default;
+
+// TOASTS
+$swal2-toast-width: auto !default;
+$swal2-toast-padding: .625em !default;
+$swal2-toast-title-font-size: 1em !default;
+$swal2-toast-content-font-size: 1em !default;
+$swal2-toast-input-font-size: 1em !default;
+$swal2-toast-validation-font-size: 1em !default;
+$swal2-toast-buttons-font-size: 1em !default;
+
+:host {
+    text-align: center;
+    display: block;
+    position: relative;
+
+    div[mat-dialog-actions] {
+        justify-content: space-between;
+    }
+
+    //SWAL START 
+    .swal2-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .swal2-close {
+        position: $swal2-close-button-position;
+        top: $swal2-close-button-gap - 16px;
+        right: $swal2-close-button-gap - 16px;
+        justify-content: center;
+        width: $swal2-close-button-width;
+        height: $swal2-close-button-height;
+        padding: 0;
+        transition: $swal2-close-button-transition;
+        border: $swal2-close-button-border;
+        border-radius: $swal2-close-button-border-radius;
+        background: $swal2-close-button-background;
+        color: $swal2-close-button-color;
+        font-family: serif;
+        font-size: $swal2-close-button-font-size;
+        line-height: 1.2;
+        cursor: pointer;
+        overflow: hidden;
+
+        &:hover {
+            transform: $swal2-close-button-hover-transform;
+            color: $swal2-close-button-hover-color;
+        }
+    }
+}
+
+.swal2-icon {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    width: $swal2-icon-size;
+    height: $swal2-icon-size;
+    margin: $swal2-icon-margin;
+    border: .25em solid transparent;
+    border-radius: 50%;
+    line-height: $swal2-icon-size;
+    cursor: default;
+    box-sizing: content-box;
+    user-select: none;
+    zoom: $swal2-icon-zoom;
+
+    &-text {
+        font-size: 3.75em;
+    }
+
+    &.swal2-error {
+        border-color: $swal2-error;
+
+        .swal2-x-mark {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        [class^='swal2-x-mark-line'] {
+            display: block;
+            position: absolute;
+            top: 2.3125em;
+            width: 2.9375em;
+            height: .3125em;
+            border-radius: .125em;
+            background-color: $swal2-error;
+
+            &[class$='left'] {
+                left: 1.0625em;
+                transform: rotate(45deg);
+            }
+
+            &[class$='right'] {
+                right: 1em;
+                transform: rotate(-45deg);
+            }
+        }
+    }
+
+    &.swal2-warning {
+        border-color: lighten($swal2-warning, 7);
+        color: $swal2-warning;
+    }
+
+    &.swal2-info {
+        border-color: lighten($swal2-info, 20);
+        color: $swal2-info;
+    }
+
+    &.swal2-question {
+        border-color: lighten($swal2-question, 20);
+        color: $swal2-question;
+    }
+
+    &.swal2-success {
+        border-color: $swal2-success;
+
+        [class^='swal2-success-circular-line'] {
+            // Emulate moving circular line
+            position: absolute;
+            width: 3.75em;
+            height: 7.5em;
+            transform: rotate(45deg);
+            border-radius: 50%;
+
+            &[class$='left'] {
+                top: -.4375em;
+                left: -2.0635em;
+                transform: rotate(-45deg);
+                transform-origin: 3.75em 3.75em;
+                border-radius: 7.5em 0 0 7.5em;
+            }
+
+            &[class$='right'] {
+                top: -.6875em;
+                left: 1.875em;
+                transform: rotate(-45deg);
+                transform-origin: 0 3.75em;
+                border-radius: 0 7.5em 7.5em 0;
+            }
+        }
+
+        .swal2-success-ring {
+            // Ring
+            position: absolute;
+            top: -.25em;
+            left: -.25em;
+            width: 100%;
+            height: 100%;
+            border: .25em solid $swal2-success-border;
+            border-radius: 50%;
+            z-index: 2;
+            box-sizing: content-box;
+        }
+
+        .swal2-success-fix {
+            // Hide corners left from animation
+            position: absolute;
+            top: .5em;
+            left: 1.625em;
+            width: .4375em;
+            height: 5.625em;
+            transform: rotate(-45deg);
+            z-index: 1;
+        }
+
+        [class^='swal2-success-line'] {
+            display: block;
+            position: absolute;
+            height: .3125em;
+            border-radius: .125em;
+            background-color: $swal2-success;
+            z-index: 2;
+
+            &[class$='tip'] {
+                top: 2.875em;
+                left: .875em;
+                width: 1.5625em;
+                transform: rotate(45deg);
+            }
+
+            &[class$='long'] {
+                top: 2.375em;
+                right: .5em;
+                width: 2.9375em;
+                transform: rotate(-45deg);
+            }
+        }
+    }
+}
+
+// github.com/sweetalert2/sweetalert2/issues/268
+[class^='swal2'] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.swal2-show {
+    animation: $swal2-show-animation;
+
+    &.swal2-noanimation {
+        animation: none;
+    }
+}
+
+.swal2-hide {
+    animation: $swal2-hide-animation;
+
+    &.swal2-noanimation {
+        animation: none;
+    }
+}
+
+// Success icon animation
+.swal2-animate-success-icon {
+    .swal2-success-line-tip {
+        animation: $swal2-success-line-tip-animation;
+    }
+
+    .swal2-success-line-long {
+        animation: $swal2-success-line-long-animation;
+    }
+
+    .swal2-success-circular-line-right {
+        animation: $swal2-success-circular-line-animation;
+    }
+}
+
+// Error icon animation
+.swal2-animate-error-icon {
+    animation: $swal2-error-icon-animation;
+
+    .swal2-x-mark {
+        animation: $swal2-error-x-mark-animation;
+    }
+}
+
+@-webkit-keyframes swal2-show {
+    0% {
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7);
+    }
+
+    45% {
+        -webkit-transform: scale(1.05);
+        transform: scale(1.05);
+    }
+
+    80% {
+        -webkit-transform: scale(0.95);
+        transform: scale(0.95);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@keyframes swal2-show {
+    0% {
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7);
+    }
+
+    45% {
+        -webkit-transform: scale(1.05);
+        transform: scale(1.05);
+    }
+
+    80% {
+        -webkit-transform: scale(0.95);
+        transform: scale(0.95);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@-webkit-keyframes swal2-hide {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+@keyframes swal2-hide {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes swal2-animate-success-line-tip {
+    0% {
+        top: 1.1875em;
+        left: .0625em;
+        width: 0;
+    }
+
+    54% {
+        top: 1.0625em;
+        left: .125em;
+        width: 0;
+    }
+
+    70% {
+        top: 2.1875em;
+        left: -.375em;
+        width: 3.125em;
+    }
+
+    84% {
+        top: 3em;
+        left: 1.3125em;
+        width: 1.0625em;
+    }
+
+    100% {
+        top: 2.8125em;
+        left: .875em;
+        width: 1.5625em;
+    }
+}
+
+@keyframes swal2-animate-success-line-tip {
+    0% {
+        top: 1.1875em;
+        left: .0625em;
+        width: 0;
+    }
+
+    54% {
+        top: 1.0625em;
+        left: .125em;
+        width: 0;
+    }
+
+    70% {
+        top: 2.1875em;
+        left: -.375em;
+        width: 3.125em;
+    }
+
+    84% {
+        top: 3em;
+        left: 1.3125em;
+        width: 1.0625em;
+    }
+
+    100% {
+        top: 2.8125em;
+        left: .875em;
+        width: 1.5625em;
+    }
+}
+
+@-webkit-keyframes swal2-animate-success-line-long {
+    0% {
+        top: 3.375em;
+        right: 2.875em;
+        width: 0;
+    }
+
+    65% {
+        top: 3.375em;
+        right: 2.875em;
+        width: 0;
+    }
+
+    84% {
+        top: 2.1875em;
+        right: 0;
+        width: 3.4375em;
+    }
+
+    100% {
+        top: 2.375em;
+        right: .5em;
+        width: 2.9375em;
+    }
+}
+
+@keyframes swal2-animate-success-line-long {
+    0% {
+        top: 3.375em;
+        right: 2.875em;
+        width: 0;
+    }
+
+    65% {
+        top: 3.375em;
+        right: 2.875em;
+        width: 0;
+    }
+
+    84% {
+        top: 2.1875em;
+        right: 0;
+        width: 3.4375em;
+    }
+
+    100% {
+        top: 2.375em;
+        right: .5em;
+        width: 2.9375em;
+    }
+}
+
+@-webkit-keyframes swal2-rotate-success-circular-line {
+    0% {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    5% {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    12% {
+        -webkit-transform: rotate(-405deg);
+        transform: rotate(-405deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(-405deg);
+        transform: rotate(-405deg);
+    }
+}
+
+@keyframes swal2-rotate-success-circular-line {
+    0% {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    5% {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    12% {
+        -webkit-transform: rotate(-405deg);
+        transform: rotate(-405deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(-405deg);
+        transform: rotate(-405deg);
+    }
+}
+
+@-webkit-keyframes swal2-animate-error-x-mark {
+    0% {
+        margin-top: 1.625em;
+        -webkit-transform: scale(0.4);
+        transform: scale(0.4);
+        opacity: 0;
+    }
+
+    50% {
+        margin-top: 1.625em;
+        -webkit-transform: scale(0.4);
+        transform: scale(0.4);
+        opacity: 0;
+    }
+
+    80% {
+        margin-top: -.375em;
+        -webkit-transform: scale(1.15);
+        transform: scale(1.15);
+    }
+
+    100% {
+        margin-top: 0;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes swal2-animate-error-x-mark {
+    0% {
+        margin-top: 1.625em;
+        -webkit-transform: scale(0.4);
+        transform: scale(0.4);
+        opacity: 0;
+    }
+
+    50% {
+        margin-top: 1.625em;
+        -webkit-transform: scale(0.4);
+        transform: scale(0.4);
+        opacity: 0;
+    }
+
+    80% {
+        margin-top: -.375em;
+        -webkit-transform: scale(1.15);
+        transform: scale(1.15);
+    }
+
+    100% {
+        margin-top: 0;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes swal2-animate-error-icon {
+    0% {
+        -webkit-transform: rotateX(100deg);
+        transform: rotateX(100deg);
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: rotateX(0deg);
+        transform: rotateX(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes swal2-animate-error-icon {
+    0% {
+        -webkit-transform: rotateX(100deg);
+        transform: rotateX(100deg);
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: rotateX(0deg);
+        transform: rotateX(0deg);
+        opacity: 1;
+    }
+}

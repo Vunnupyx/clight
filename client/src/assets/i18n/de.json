@@ -1,4 +1,8 @@
 {
+  "common": {
+    "OK": "",
+    "Cancel": ""
+  },
   "layout": {
     "Settings": "Einstellungen",
     "General": "Allgemein",
@@ -75,6 +79,18 @@
   },
   "settings-general": {
     "General": "Allgemein",
+    "UpdateSystem": "",
+    "UpdateNow": "",
+    "YourSystemUpToDate": "",
+    "YourSystemUpdateSuccess": "",
+    "YourSystemUpdateSuccessDescr": "",
+    "InstallingUpdate": "",
+    "InstallingUpdateDescr": "",
+    "UpdateFailed": "",
+    "UpdateFailed-error_no_network": "",
+    "UpdateFailedCheckNetworkConfig": "",
+    "UpdateInstallFailed": "",
+    "UnknownError": "",
     "Language": "Sprache",
     "DeviceInfo": "Geräte Informationen",
     "CELOSLanguage": "CELOS Sprache",

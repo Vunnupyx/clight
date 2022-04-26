@@ -1,0 +1,34 @@
+<div class="swal2-header swal2-show">
+  <button *ngIf="data.showCloseButton" type="button" class="swal2-close" (click)="onDismiss()" aria-label="Chiudi" style="display: flex;">×</button>
+  <div class="swal2-icon" [ngClass]="classNames">
+    <span class="swal2-icon-text" [ngSwitch]="type">
+      <ng-container *ngSwitchCase="'success'"><!--empty--></ng-container>
+      <ng-container *ngSwitchCase="'error'"><!--empty--></ng-container>
+      <ng-container *ngSwitchCase="'warning'">!</ng-container>
+      <ng-container *ngSwitchCase="'question'">?</ng-container>
+      <ng-container *ngSwitchCase="'info'">i</ng-container>
+    </span>
+    <div class="swal2-success-circular-line-left" style="background-color: rgb(255, 255, 255);"></div>
+    <span class="swal2-success-line-tip"></span>
+    <span class="swal2-success-line-long"></span>
+    <div class="swal2-success-ring"></div>
+    <div class="swal2-success-fix" style="background-color: rgb(255, 255, 255);"></div>
+    <div class="swal2-success-circular-line-right" style="background-color: rgb(255, 255, 255);"></div>
+    <span class="swal2-x-mark"><span class="swal2-x-mark-line-left"></span><span
+        class="swal2-x-mark-line-right"></span></span>
+  </div>
+
+</div>
+
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content>
+  <p style="margin: 16px 20px" [innerHTML]="data.content"></p>
+</div>
+<div mat-dialog-actions style="flex-direction: column; align-items: center; margin: 0;">
+  <button mat-button *ngIf="!data.hideCancelButton" mat-raised-button cdkFocusInitial (click)="onDismiss()" style="min-width: 100px">
+    {{data.cancelText}}
+  </button>
+  <button mat-button mat-raised-button color="warn" (click)="onConfirm()" style="min-width: 100px">
+    {{data.confirmText}}
+  </button>
+</div>

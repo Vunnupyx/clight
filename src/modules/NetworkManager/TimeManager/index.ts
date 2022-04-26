@@ -65,8 +65,10 @@ export class TimeManager {
     const logPrefix = `TimeManager::setNTPServer`;
 
     await this.testNTPServer(ntpServerIP).catch(() => {
-      return Promise.reject(`${ntpServerIP} is not available or is not a valid NTP server.`);
-    })
+      return Promise.reject(
+        `${ntpServerIP} is not available or is not a valid NTP server.`
+      );
+    });
     const readCommand = `cat ${TimeManager.CONFIG_PATH}`;
     const { stdout: currentConfig, stderr } = await SshService.sendCommand(
       readCommand
@@ -109,8 +111,6 @@ export class TimeManager {
     time: string,
     timezone: string
   ): Promise<void> {
-    
-
     const logPrefix = `TimeManager::setTimeManually`;
     winston.info(`${logPrefix} ${time} in timezone ${timezone}`);
     const timeRegex =
@@ -146,14 +146,24 @@ export class TimeManager {
   /**
    * Test if a server is a valid and available ntp server.
    */
-   private static async testNTPServer(server: string): Promise<void> {
+  private static async testNTPServer(server: string): Promise<void> {
     const logPrefix = `TimeManager::testNTPServer`;
-    const client = createSocket('udp4');
-    const bufferData = new Array(48).fill(0);
-    bufferData[0] = 0x1b;
-    const requestData = Buffer.from(bufferData);
 
-    await new Promise<void>((res, rej) => {
+    await new Promise<void>(async (res, rej) => {
+      const testInterfaceRes = await SshService.sendCommand(
+        'nmcli -g GENERAL.STATE con show eth0-default'
+      );
+
+      if (testInterfaceRes.stdout !== 'activated') {
+        rej('Not testing ntp server. Interface is down!');
+        return;
+      }
+
+      const client = createSocket('udp4');
+      const bufferData = new Array(48).fill(0);
+      bufferData[0] = 0x1b;
+      const requestData = Buffer.from(bufferData);
+
       winston.debug(`${logPrefix} start testing: ${server}`);
 
       const timeout = setTimeout(() => {

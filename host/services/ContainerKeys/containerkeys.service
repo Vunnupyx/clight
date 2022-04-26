@@ -1,0 +1,11 @@
+[Unit]
+Description=Generate a public/private ssh key pair for the container network manager.
+
+[Service]
+Type=oneshot
+ExecStart=bash -c 'KEY_COMMENT="key for network manager of mdc container" && if [ -d /home/mdclite/.ssh/nmcli]; then rm /home/mdclite/.ssh/nmcli/*; else mkdir /home/mdclite/.ssh/nmcli; fi && ssh-keygen -t rsa -b 4096 -N "" -C "$KEY_COMMENT" -f /home/mdclite/.ssh/nmcli/nmclikey && sed -i "/$KEY_COMMENT/d" /home/mdclite/.ssh/authorized_keys && cat /home/mdclite/.ssh/nmcli/nmclikey.pub >> /home/mdclite/.ssh/authorized_keys'
+RemainAfterExit=true
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -131,8 +131,7 @@ export class BootstrapManager {
       });
 
       await this.configManager.init();
-
-      this.hwEvents.subscribeLongPress(async () => {
+      const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {
           await this.configManager.factoryResetConfiguration();
           const system = new System();
@@ -141,6 +140,8 @@ export class BootstrapManager {
           winston.error(`Device factory reset error: ${e}`);
         }
       });
+      // Activate watcher
+      this.hwEvents.watchUserButtonLongPress();
 
       this.lifecycleEventsBus.push({
         id: 'device',

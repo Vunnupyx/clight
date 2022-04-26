@@ -23,11 +23,6 @@ export default class NetworkManagerCliController {
     );
     const decodedResult =
       NetworkManagerCliController.decodeNmCliData(parsedResult);
-    if (decodedResult.name !== networkInterface) {
-      throw new Error(
-        `Configuration mismatch for interface: requested ${networkInterface}-default, got ${decodedResult.name}`
-      );
-    }
     return decodedResult;
   }
 

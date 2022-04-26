@@ -6,6 +6,10 @@ This service generates a new pair of public/private RSA 4096 bit key at every sy
 
 ## Installation
 
-This service ist already install on MDC Light Golden Image . `containerkeys.service` is located at _/etc/systemd/system_. The Shell script `containerkeys.sh` is located inside _/root_.
+### Automatic
 
+Simply run `npm run deploy:service:containerkeys`
+
+### Manual
+Copy `containerkeys.service` to `/etc/systemd/system`.
 Service must be enabled via `systemctl enable containerkeys.service` for starting on automatically.

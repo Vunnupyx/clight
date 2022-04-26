@@ -17,10 +17,13 @@ export class System {
     networkInterface: 'eth0' | 'eth1'
   ): Promise<string | null> {
     let address;
-
+    enum interfaceMapping {
+      'eth0' = 'eno1',
+      'eth1' = 'eno2'
+    }
     try {
       address = await fs.readFile(
-        `/sys/class/net/${networkInterface}/address`,
+        `/sys/class/net/${interfaceMapping[networkInterface]}/address`,
         {
           encoding: 'utf-8'
         }

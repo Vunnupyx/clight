@@ -43,7 +43,7 @@ services:
         source: $HOST/sys
         target: /sys
       - type: bind
-        source: $HOST/root/.ssh/nmcli
+        source: $HOST/home/mdclite/.ssh/nmcli
         target: /root/.ssh/nmcli
     environment:
       - PORT=80

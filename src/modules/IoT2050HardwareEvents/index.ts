@@ -1,68 +1,139 @@
 import { promises as fs } from 'fs';
 import winston from 'winston';
+import { ChildProcess, spawn } from 'child_process';
 
+type GpioReturn = {
+  type: 'Buffer';
+  data: number[];
+};
+
+/**
+ * Handel event on long press USERBUTTON.
+ * Triggers given callbacks if button is pressed longer then #buttonPressedTriggerTimeMs
+ */
 export default class IoT2050HardwareEvents {
-  private longPressCallback: () => void;
-  private buttonPressStarted: number;
-  private lastLongPressState: boolean;
-  private buttonSetup = false;
-  private oldButtonState = false;
-  constructor() {
-    setInterval(this.readButtonStatus.bind(this), 500);
-  }
+  #buttonPressedTriggerTimeMs = 5000;
+  #userButtonGpioPin = 20;
+  #fistEventTS: number = null;
+  #child: ChildProcess = null;
+  #initData = false;
+  #callbacks: Function[] = [];
+  #unusedSlots: number[] = [];
 
-  private async readButtonStatus() {
+  /**
+   * Start watching button
+   */
+  public watchUserButtonLongPress(): void {
+    const logPrefix = `${this.constructor.name}::watchUserButtonLongPress`;
+    if (!this.is_2050()) {
+      winston.error(`${logPrefix} no iot2050 device detected. Registration to USER_BUTTON not available.`);
+      return;
+    }
+    if (this.#child) {
+      winston.info(`${logPrefix} UserButton already watched`);
+      return;
+    }
+    const cmd = 'stdbuf';
+    const options = [
+      '-oL',
+      'mraa-gpio',
+      'monitor',
+      this.#userButtonGpioPin.toString()
+    ];
     try {
-      if (!this.buttonSetup) {
-        this.buttonSetup = true;
-        await fs.writeFile(
-          `${await this.sysfs_prefix()}/sys/class/gpio/export`,
-          '211'
-        );
-      }
-    } catch (error) {
-      winston.error(`Error setting up user button input for reading: ${error}`);
+      this.#child = spawn(cmd, options);
+      this.#child.stdout.on('data', this.dataHandler.bind(this));
+      this.#child.stderr.on('error', this.errorHandler.bind(this));
+      winston.info(`${logPrefix} connection to button successfully.`);
+    } catch (err) {
+      winston.error(`${logPrefix} error during connecting to button.`);
     }
-
-    const currentTime = new Date().getTime();
-    // File content is 0 if button is pressed - so if checks for pressed button
-
-    let buttonPressed = false;
-    try {
-      buttonPressed =
-        `${await fs.readFile(
-          `${await this.sysfs_prefix()}/sys/class/gpio/gpio211/value`,
-          'utf-8'
-        )}`
-          .replace('\n', '')
-          .trim() === '0';
-    } catch (error) {
-      winston.error(`Error reading user button status ${error}`);
-    }
-    if (buttonPressed && !this.oldButtonState) {
-      this.buttonPressStarted = currentTime;
-    }
-
-    const longPressActive =
-      buttonPressed && currentTime - this.buttonPressStarted > 5000;
-    if (longPressActive && !this.lastLongPressState) {
-      this.longPressCallback();
-    }
-    this.lastLongPressState = longPressActive;
-    this.oldButtonState = buttonPressed;
   }
 
-  public subscribeLongPress(callback) {
-    this.longPressCallback = callback;
+  /**
+   * Register callback for event handler.
+   * @returns index inside the array for removing
+   */
+  public registerCallback(callback: Function): number {
+    const logPrefix = `${this.constructor.name}::registerCallback `;
+    
+    winston.debug(`${logPrefix} register callback to USER_BUTTON event.`)
+
+    if ((this.#unusedSlots.length === 0)) {
+      return (this.#callbacks.push(callback) - 1);
+    }
+    const index = this.#unusedSlots.shift();
+    this.#callbacks[index] = callback;
+    return index;
   }
 
-  private async sysfs_prefix() {
+  /**
+   * Remove callback by index.
+   */
+  public removeCallback(index: number): void {
+    if (index === (this.#callbacks.length - 1)) {
+      this.#callbacks.pop();
+      return;
+    }
+    delete this.#callbacks[index];
+    this.#unusedSlots.push(index);
+    this.#unusedSlots.sort();
+  }
+
+  /**
+   * Handles received data
+   */
+  private dataHandler(stdout: GpioReturn) {
+    const logPrefix = `${this.constructor.name}::dataHandler`;
+
+    winston.debug(`${logPrefix} receive button event. Start checking if it meet the callback conditions.`)
+    // Ignore first received data
+    if (!this.#initData) {
+      this.#initData = true;
+      return;
+    }
+    if (!this.#fistEventTS) {
+      this.#fistEventTS = Date.now();
+      return;
+    }
+    if (Date.now() - this.#fistEventTS > this.#buttonPressedTriggerTimeMs) {
+      winston.debug(`${logPrefix} conditions fulfilled. Execute all callbacks.`);
+      this.#callbacks.forEach(async (cb, index) => {
+        try {
+          await cb();
+        } catch (e) {
+          winston.error(`${logPrefix} error during calling callback number ${index}`);
+        }
+      });
+    }
+    this.#fistEventTS = null;
+  }
+
+  /**
+   * Restart child process if crashes because of error
+   */
+  private errorHandler(stderr) {
+    const logPrefix = `${this.constructor.name}::errorHandler`;
+    winston.error(
+      `${logPrefix} received error from process due to ${JSON.stringify(
+        stderr
+      )}`
+    );
+    if (this.#child.exitCode) {
+      this.watchUserButtonLongPress();
+    }
+  }
+
+  /**
+   * Check for button registry.
+   */
+  private async is_2050(): boolean {
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
-      if (board.indexOf('SIMATIC IOT2050') >= 0) return '';
+      if (board.indexOf('SIMATIC IOT2050') >= 0) return true;
     } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
+      return false
     }
-    return 'src/modules/IoT2050HardwareEvents';
+    return false;
   }
 }

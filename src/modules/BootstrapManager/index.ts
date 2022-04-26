@@ -145,7 +145,7 @@ export class BootstrapManager {
         }
       });
       // Activate watcher
-      this.hwEvents.watchUserButtonLongPress();
+      await this.hwEvents.watchUserButtonLongPress();
 
       this.lifecycleEventsBus.push({
         id: 'device',
@@ -166,17 +166,17 @@ export class BootstrapManager {
     } catch (error) {
       if (error?.code === 'LICENSE_CHECK_FAILED') {
         winston.error(error?.msg);
-      } else  {
+      } else {
         this.errorEventsBus.push({
           id: 'device',
           level: EventLevels.Device,
           type: DeviceLifecycleEventTypes.LaunchError,
           payload: error.toString()
         });
-  
+
         winston.error('Error while launching. Exiting program.');
       }
-     
+
       process.exit(1);
     }
   }

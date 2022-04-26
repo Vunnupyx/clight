@@ -45,6 +45,10 @@ services:
       - type: bind
         source: $HOST/root/.ssh/nmcli
         target: /root/.ssh/nmcli
+      - type: bind
+        read_only: true
+        source: /var/log
+        target: /host/log
     environment:
       - PORT=80
       - LOG_LEVEL=debug

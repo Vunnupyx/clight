@@ -2,6 +2,8 @@ import { System } from '../System';
 
 export class LicenseCheck {
   #macList = [
+    // dev
+    '000000000000',
     // codestryke
     '8CF31929BA4A',
     '8CF3191EBD22',

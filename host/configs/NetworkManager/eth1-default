@@ -9,8 +9,8 @@ permissions=
 mac-address-blacklist=
 
 [ipv4]
-dns-search=
-method=auto
+address1=192.168.214.230
+method=manual
 
 [ipv6]
 addr-gen-mode=stable-privacy

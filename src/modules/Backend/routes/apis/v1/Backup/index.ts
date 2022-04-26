@@ -1,4 +1,5 @@
 import { ConfigManager } from '../../../../../ConfigManager';
+import HostnameController from '../../../../../HostnameController';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import fs from 'fs';
@@ -68,6 +69,9 @@ async function backupPostHandle(
   }
 }
 
+/**
+ * Bundle logs into zip archiv and send it with response
+ */
 async function logsGetHandler(
   request: Request,
   response: Response
@@ -77,12 +81,17 @@ async function logsGetHandler(
   const dateString = `${date.getFullYear()}-${
     date.getMonth() + 1
   }-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-  const fileName = `logs-${dateString}.zip`;
-  const path = '/mdclight/logs';
-  const zipCommand = `zip -0 -j -r ${path}/${fileName} ${path}/*.log`;
-
+  const hostname = await HostnameController.getHostname();
+  const outFileName = `${hostname}-${dateString}.zip`;
+  const outPath = '/mdclight/logs';
+  const inputPaths = [
+    `${outPath}/*log`,
+    '/host/log'
+  ];
+  const zipCommand = `zip -0 -j -r ${outPath}/${outFileName} ${inputPaths.join(' ')}`;
+ 
   const saveDelete = () => {
-    fs.unlink(`${path}/${fileName}`, (err) => {
+    fs.unlink(`${outPath}/${outFileName}`, (err) => {
       if (err) {
         winston.error(
           `${logPrefix} error during cleanup zip file. Retry after delay of 5sec`
@@ -107,11 +116,11 @@ async function logsGetHandler(
   }
   response.writeHead(200, {
     'Content-Type': 'application/octet-stream',
-    'Content-Disposition': `attachment; filename=${fileName}`
+    'Content-Disposition': `attachment; filename=${outFileName}`
   });
   let stream;
   try {
-    stream = fs.createReadStream(`${path}/${fileName}`);
+    stream = fs.createReadStream(`${outPath}/${outFileName}`);
   } catch (err) {
     winston.error(`${logPrefix} error during read file due to ${err?.msg}`);
     saveDelete();

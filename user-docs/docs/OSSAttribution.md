@@ -2,7 +2,7 @@
 title: Open Source Attributions
 ---
 
-## MDC Light
+## MDC Lite
 
 ```
 @apidevtools/json-schema-ref-parser

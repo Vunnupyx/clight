@@ -67,7 +67,7 @@ Prerequisites: Download and install balenaEtcher from https://www.balena.io/etch
 
 ## Step 1: Create the base bootable usb flash drive image from scratch
 
-1.  Download your image of IoTconnector light you want to flash on the internal mmc into the root directory of this project
+1.  Download your image of IoTconnector Lite you want to flash on the internal mmc into the root directory of this project
 2.  Open your favorite shell. (Bash, ZSH ... )
 3.  Set environment variable for ssh connection to IoT2050 via `export INSTALL_HOST=USERNAME@IOT2050NETWORKADDRESS`
     and replace `USERNAME` with your ssh username and `IOT2050NETWORKADDRESS` with the IP of your IoT2050 device

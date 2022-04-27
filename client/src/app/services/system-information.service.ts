@@ -20,11 +20,11 @@ export enum UpdateStatus {
   NeedsUpdate,
   CheckFailed,
   Dismissed,
-  UpdateSuccessful,
+  UpdateSuccessful
 }
 
 export interface HealthcheckResponse {
-  version: string;
+  timestamp: string;
 }
 
 @Injectable()
@@ -73,22 +73,20 @@ export class SystemInformationService {
       }));
     }
   }
-  
+
   async getUpdateStatus(): Promise<UpdateStatus> {
     const response = await this.httpService.get<HttpResponse<void>>(
       `/systemInfo/update`,
       {
         observe: 'response',
-        responseType: 'raw',
-      } as RequestOptionsArgs,
+        responseType: 'raw'
+      } as RequestOptionsArgs
     );
     return this._getUpdateStatus(response.status);
   }
-  
+
   async healthcheck(): Promise<HealthcheckResponse> {
-    return await this.httpService.get<HealthcheckResponse>(
-      `/healthcheck`,
-    );
+    return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
   }
 
   async getServerTime(): Promise<number> {
@@ -134,9 +132,12 @@ export class SystemInformationService {
 
   private _getUpdateStatus(httpCode: number) {
     switch (httpCode) {
-      case 204: return UpdateStatus.UpToDate;
-      case 200: return UpdateStatus.NeedsUpdate;
-      default: return UpdateStatus.CheckFailed;
+      case 204:
+        return UpdateStatus.UpToDate;
+      case 200:
+        return UpdateStatus.NeedsUpdate;
+      default:
+        return UpdateStatus.CheckFailed;
     }
   }
 }

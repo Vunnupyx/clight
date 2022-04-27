@@ -28,7 +28,7 @@ export default class UpdateManager {
     // const hostPrefix = `HOST=""`;
     const images = `docker images -q`;
     const pull = `docker-compose pull`;
-    const restart = `docker-compose up -d --force-recreate`;
+    const restart = `nohup bash -e "docker-compose down && docker-compose up -d"`;
     const cleanup = `docker image prune -f`;
 
     let firstImages: string;

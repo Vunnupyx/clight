@@ -3,14 +3,14 @@ import { System } from '../System';
 export class LicenseCheck {
   #macList = [
     // dev
-    '000000000000',
+    '00:00:00:00:00:00',
     // codestryke
-    '8CF31929BA4A',
-    '8CF3191EBD22',
-    '8CF3193A0A60',
-    '8CF3195B9ABE',
-    '8CF3194C05C9',
-    'E0DCA0C86F7E'
+    '8C:F3:19:29:BA:4A',
+    '8C:F3:19:1E:BD:22',
+    '8C:F3:19:3A:0A:60',
+    '8C:F3:19:5B:9A:BE',
+    '8C:F3:19:4C:05:C9',
+    'E0:DC:A0:C8:6F:7E'
   ];
   #system = new System();
 

@@ -3,7 +3,7 @@ import winston from 'winston';
 
 import { ConfigManager } from '../../../../../ConfigManager';
 import { System } from '../../../../../System';
-import UpdateManager, {updateStatus} from '../../../../../UpdateManager';
+import UpdateManager, { updateStatus } from '../../../../../UpdateManager';
 
 let configManager: ConfigManager;
 const updateManager = new UpdateManager();
@@ -30,30 +30,30 @@ async function systemInfoGetHandler(request: Request, response: Response) {
  * Trigger update mechanism of docker images
  */
 async function triggerContainerUpdate(request: Request, response: Response) {
-  const timeOut = 10*60*1000;
+  const timeOut = 10 * 60 * 1000;
   request.setTimeout(timeOut, () => {
     winston.error(`Request on /systemInfo/update timeout after ${timeOut} ms.`);
     response.sendStatus(408);
-  })
-  updateManager.triggerUpdate()
-  .then((resp) => {
-    switch(resp) {
+  });
+  updateManager.triggerUpdate().then((resp) => {
+    switch (resp) {
       case updateStatus.AVAILABLE: {
         response.sendStatus(200);
         break;
-      };
+      }
       case updateStatus.NOT_AVAILABLE: {
         response.sendStatus(204);
-        break
-      };
+        break;
+      }
       case updateStatus.NETWORK_ERROR: {
         response.status(400).json({
-          error: "No update possible. Please check your network configuration",
-          code: "error_no_network"
+          error: 'No update possible. Please check your network configuration',
+          code: 'error_no_network'
         });
-        break};
+        break;
+      }
     }
-  })
+  });
 }
 
 /**

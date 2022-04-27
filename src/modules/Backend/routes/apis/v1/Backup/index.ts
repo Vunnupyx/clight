@@ -88,7 +88,7 @@ async function logsGetHandler(
     `${outPath}/*log`,
     '/host/log'
   ];
-  const zipCommand = `zip -0 -j -r ${outPath}/${outFileName} ${inputPaths.join(' ')}`;
+  const zipCommand = `zip -0 -r ${outPath}/${outFileName} ${inputPaths.join(' ')}`;
  
   const saveDelete = () => {
     fs.unlink(`${outPath}/${outFileName}`, (err) => {

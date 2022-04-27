@@ -126,7 +126,7 @@ export class BootstrapManager {
         ])
           .then(() => winston.info(log + ' Successfully.'))
           .catch((err) => {
-            winston.error(`${log} Failed due to ${err.message}`);
+            winston.error(`${log} Failed due to ${JSON.stringify(err)}`);
           });
 
         HostnameController.setDefaultHostname().catch((e) =>
@@ -145,7 +145,7 @@ export class BootstrapManager {
         }
       });
       // Activate watcher
-      this.hwEvents.watchUserButtonLongPress();
+      await this.hwEvents.watchUserButtonLongPress();
 
       this.lifecycleEventsBus.push({
         id: 'device',

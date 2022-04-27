@@ -28,8 +28,8 @@ export default class UpdateManager {
     // const hostPrefix = `HOST=""`;
     const images = `docker images -q`;
     const pull = `docker-compose pull`;
-    const restart = `docker-compose up -d`;
-    const cleanup = `docker images prune`;
+    const restart = `docker-compose up -d --force-recreate`;
+    const cleanup = `docker image prune -f`;
 
     let firstImages: string;
     winston.info(`${logPrefix} check installed images`);

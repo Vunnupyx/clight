@@ -1,18 +1,18 @@
-# Machine Data Connector light
+# Machine Data Connector Lite
 
 ## Getting started
 
-To run the development version of the MDC light you need either Mac OS 10.15.x (or newer), Ubuntu 20.04 or Debian 10. On your operating system docker, nodejs (14.x) and yarn needs to be installed. VSCode is recommended as an IDE.
+To run the development version of the MDC Lite you need either Mac OS 10.15.x (or newer), Ubuntu 20.04 or Debian 10. On your operating system docker, nodejs (14.x) and yarn needs to be installed. VSCode is recommended as an IDE.
 
 You also need to have access to the `registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light` docker registry, or you need to build the
 docker containers locally using the entry points in the package.json. Use you Gitlab credentials to authenticate with the registry.
 
-To run the MDC light runtime, use the following commands:
+To run the MDC Lite runtime, use the following commands:
 
 - `yarn` - Install dependencies
 - `yarn docker:run:mtc` - Run the MTConnect agent
 - `yarn dev` - To start the agent (in a different terminal)
-- `IP=192.168.185.100 yarn copy_mdc_conf` to update the MDC light config on an IoT2050
+- `IP=192.168.185.100 yarn copy_mdc_conf` to update the MDC Lite config on an IoT2050
 
 ### Local development without IO-Shield
 

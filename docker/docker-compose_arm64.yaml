@@ -94,7 +94,7 @@ services:
       options:
         max-size: '50m'
   autoheal:
-    image: willfarrell/autoheal:latest
+    image: willfarrell/autoheal:1.2.0
     restart: always
     volumes:
       - type: bind

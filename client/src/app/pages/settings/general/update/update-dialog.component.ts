@@ -2,11 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { SystemInformationService, UpdateStatus } from 'app/services/system-information.service';
+import {
+  SystemInformationService,
+  UpdateStatus
+} from 'app/services/system-information.service';
 import { sleep } from 'app/shared/utils';
 import { Subscription } from 'rxjs';
 
-const UPDATE_POLLING_INTERVAL_MS = 1000;//10_000;
+const UPDATE_POLLING_INTERVAL_MS = 1000; //10_000;
 const UPDATE_TIMEOUT_MS = 10 * 60_000;
 
 export interface UpdateDialogResult {
@@ -20,71 +23,75 @@ export interface UpdateDialogResult {
   styleUrls: ['./update-dialog.component.scss']
 })
 export class UpdateDialogComponent implements OnInit {
-
   sub = new Subscription();
+  checkingForUpdates = false;
   updateInProgress = false;
 
   constructor(
     private dialogRef: MatDialogRef<any, UpdateDialogResult>,
     @Inject(MAT_DIALOG_DATA) private data: any,
     private systemInformationService: SystemInformationService,
-    private translate: TranslateService,
-  ) {
-  }
+    private translate: TranslateService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     try {
-      const {version} = await this.systemInformationService.healthcheck();
+      const healthCheckResponse =
+        await this.systemInformationService.healthcheck();
+      this.checkingForUpdates = true;
       const status = await this.systemInformationService.getUpdateStatus();
-      
+      this.checkingForUpdates = false;
+
       if (status === UpdateStatus.UpToDate) {
         this.dialogRef.close({ status });
       }
-      
+
       if (status === UpdateStatus.NeedsUpdate) {
         this.updateInProgress = true;
-        await this.waitForUpdateComplete(version);
+        await this.waitForUpdateComplete(healthCheckResponse.timestamp);
         this.dialogRef.close({ status: UpdateStatus.UpdateSuccessful });
       }
-      
     } catch (err: any) {
       console.error(err);
 
-      let errorText = this.translate.instant('settings-general.UpdateFailedCheckNetworkConfig');
+      let errorText = this.translate.instant(
+        'settings-general.UpdateFailedCheckNetworkConfig'
+      );
       if (err instanceof HttpErrorResponse && err.error) {
-        const {error, code} = JSON.parse(err.error)
-        errorText = code 
+        const { error, code } = JSON.parse(err.error);
+        errorText = code
           ? this.translate.instant(`settings-general.UpdateFailed-${code}`)
           : error;
       } else {
         errorText = err.error.message;
       }
-      this.dialogRef.close({ status: UpdateStatus.CheckFailed, error: errorText });
+      this.dialogRef.close({
+        status: UpdateStatus.CheckFailed,
+        error: errorText
+      });
     }
   }
-  
-  private async waitForUpdateComplete(installedVersion: string) {
+
+  private async waitForUpdateComplete(systemStartTime: string) {
     const started = Date.now();
 
-    while (!await this.checkVersionChanged(installedVersion)) {
-
+    while (!(await this.checkVersionChanged(systemStartTime))) {
       if (Date.now() - started > UPDATE_TIMEOUT_MS) {
-        throw new Error(this.translate.instant('system-general.UpdateInstallFailed'))
+        throw new Error(
+          this.translate.instant('system-general.UpdateInstallFailed')
+        );
       }
 
       await sleep(UPDATE_POLLING_INTERVAL_MS);
     }
-
-
   }
 
-  private async checkVersionChanged(installedVersion: string) {
+  private async checkVersionChanged(systemStartTime: string) {
     try {
-      const {version} = await this.systemInformationService.healthcheck();
-      return version != installedVersion;
+      const { timestamp } = await this.systemInformationService.healthcheck();
+      return timestamp != systemStartTime;
     } catch (err) {
       return false;
     }
   }
-
 }

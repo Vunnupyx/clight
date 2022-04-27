@@ -2,6 +2,14 @@
   <p>
     <mat-spinner></mat-spinner>
   </p>
+  <ng-container *ngIf="checkingForUpdates">
+    <h3 class="text-center">
+      {{ 'settings-general.CheckUpdate' | translate }}
+    </h3>
+    <p class="text-center">
+      {{ 'settings-general.CheckUpdateDescr' | translate }}
+    </p>
+  </ng-container>
   <ng-container *ngIf="updateInProgress">
     <h3 class="text-center">
       {{ 'settings-general.InstallingUpdate' | translate }}

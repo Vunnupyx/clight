@@ -148,13 +148,24 @@ export class TimeManager {
    */
   private static async testNTPServer(server: string): Promise<void> {
     const logPrefix = `TimeManager::testNTPServer`;
+    winston.debug(`${logPrefix} start testing: ${server}`);
 
     await new Promise<void>(async (res, rej) => {
-      const testInterfaceRes = await SshService.sendCommand(
-        'nmcli -g GENERAL.STATE con show eth0-default'
-      );
+      let testInterfaceRes = null;
+      try {
+        testInterfaceRes = await SshService.sendCommand(
+          'nmcli -g GENERAL.STATE con show eth0-default'
+        );
+      } catch (e) {
+        winston.warn(
+          'Not testing ntp server. Could not check interface state!'
+        );
+        rej('Not testing ntp server. Could not check interface state!');
+        return;
+      }
 
       if (testInterfaceRes.stdout !== 'activated') {
+        winston.warn('Not testing ntp server. Interface is down!');
         rej('Not testing ntp server. Interface is down!');
         return;
       }
@@ -163,8 +174,6 @@ export class TimeManager {
       const bufferData = new Array(48).fill(0);
       bufferData[0] = 0x1b;
       const requestData = Buffer.from(bufferData);
-
-      winston.debug(`${logPrefix} start testing: ${server}`);
 
       const timeout = setTimeout(() => {
         client.close();

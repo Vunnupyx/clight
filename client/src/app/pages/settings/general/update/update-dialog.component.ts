@@ -36,8 +36,8 @@ export class UpdateDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const { startUpTime } = await this.systemInformationService.healthcheck();
       this.checkingForUpdates = true;
+      const { startUpTime } = await this.systemInformationService.healthcheck();
       const status = await this.systemInformationService.getUpdateStatus();
       this.checkingForUpdates = false;
 
@@ -57,10 +57,16 @@ export class UpdateDialogComponent implements OnInit {
         'settings-general.UpdateFailedCheckNetworkConfig'
       );
       if (err instanceof HttpErrorResponse && err.error) {
-        const { error, code } = JSON.parse(err.error);
-        errorText = code
-          ? this.translate.instant(`settings-general.UpdateFailed-${code}`)
-          : error;
+        try {
+          const { error, code } = JSON.parse(err.error);
+          errorText = code
+            ? this.translate.instant(`settings-general.UpdateFailed-${code}`)
+            : error;
+        } catch (e) {
+          this.dialogRef.close({
+            status: UpdateStatus.UnexpectedError
+          });
+        }
       } else {
         errorText = err.error.message;
       }

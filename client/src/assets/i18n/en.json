@@ -92,7 +92,7 @@
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
     "UpdateFailedCheckNetworkConfig": "Update failed. Please check your network configuration.",
     "UpdateInstallFailed": "Failed to install updates. Please contact support.",
-    "UnknownError": "Unknown error",
+    "UnknownError": "An unexpected error ocurred. Please try again later.",
     "DeviceInfo": "Device Info",
     "Language": "Language",
     "CELOSLanguage": "CELOS Language",

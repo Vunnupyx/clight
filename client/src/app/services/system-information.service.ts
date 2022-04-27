@@ -20,7 +20,8 @@ export enum UpdateStatus {
   NeedsUpdate,
   CheckFailed,
   Dismissed,
-  UpdateSuccessful
+  UpdateSuccessful,
+  UnexpectedError
 }
 
 export interface HealthcheckResponse {

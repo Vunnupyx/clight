@@ -15,8 +15,14 @@ import {
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LogsService } from 'app/services/logs.service';
-import { UpdateDialogComponent, UpdateDialogResult } from './update/update-dialog.component';
-import { AlertDialogComponent, AlertDialogModel } from 'app/shared/components/alert-dialog/alert-dialog.component';
+import {
+  UpdateDialogComponent,
+  UpdateDialogResult
+} from './update/update-dialog.component';
+import {
+  AlertDialogComponent,
+  AlertDialogModel
+} from 'app/shared/components/alert-dialog/alert-dialog.component';
 
 @Component({
   selector: 'app-general',
@@ -34,7 +40,7 @@ export class GeneralComponent implements OnInit {
     private localStorageService: LocalStorageService,
     private templatesService: TemplateService,
     private toastr: ToastrService,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {}
 
   get availableLangs() {
@@ -69,7 +75,7 @@ export class GeneralComponent implements OnInit {
   async update() {
     const dialogRef = this.dialog.open(UpdateDialogComponent, {
       disableClose: true,
-      width: '650px',
+      width: '650px'
     });
 
     dialogRef.afterClosed().subscribe(async (result: UpdateDialogResult) => {
@@ -82,10 +88,12 @@ export class GeneralComponent implements OnInit {
           width: '650px',
           data: {
             type: 'success',
-            title: this.translate.instant('settings-general.YourSystemUpToDate'),
+            title: this.translate.instant(
+              'settings-general.YourSystemUpToDate'
+            ),
             confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true,
-          } as AlertDialogModel,
+            hideCancelButton: true
+          } as AlertDialogModel
         });
       }
       if (result.status === UpdateStatus.UpdateSuccessful) {
@@ -94,11 +102,15 @@ export class GeneralComponent implements OnInit {
           width: '650px',
           data: {
             type: 'success',
-            title: this.translate.instant('settings-general.YourSystemUpdateSuccess'),
-            content: this.translate.instant(result.error || 'settings-general.YourSystemUpdateSuccessDescr'),
+            title: this.translate.instant(
+              'settings-general.YourSystemUpdateSuccess'
+            ),
+            content: this.translate.instant(
+              result.error || 'settings-general.YourSystemUpdateSuccessDescr'
+            ),
             confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true,
-          } as AlertDialogModel,
+            hideCancelButton: true
+          } as AlertDialogModel
         });
       }
       if (result.status === UpdateStatus.CheckFailed) {
@@ -108,10 +120,27 @@ export class GeneralComponent implements OnInit {
           data: {
             type: 'error',
             title: this.translate.instant('settings-general.UpdateFailed'),
-            content: this.translate.instant(result.error || 'settings-general.UpdateFailedCheckNetworkConfig'),
+            content: this.translate.instant(
+              result.error || 'settings-general.UpdateFailedCheckNetworkConfig'
+            ),
             confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true,
-          } as AlertDialogModel,
+            hideCancelButton: true
+          } as AlertDialogModel
+        });
+      }
+      if (result.status === UpdateStatus.UnexpectedError) {
+        const alertRef = this.dialog.open(AlertDialogComponent, {
+          disableClose: true,
+          width: '650px',
+          data: {
+            type: 'error',
+            title: this.translate.instant('settings-general.UpdateFailed'),
+            content: this.translate.instant(
+              result.error || 'settings-general.UnknownError'
+            ),
+            confirmText: this.translate.instant('common.OK'),
+            hideCancelButton: true
+          } as AlertDialogModel
         });
       }
     });

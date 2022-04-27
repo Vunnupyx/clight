@@ -24,7 +24,7 @@ export enum UpdateStatus {
 }
 
 export interface HealthcheckResponse {
-  timestamp: string;
+  startUpTime: string;
 }
 
 @Injectable()

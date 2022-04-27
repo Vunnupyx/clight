@@ -36,8 +36,7 @@ export class UpdateDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const healthCheckResponse =
-        await this.systemInformationService.healthcheck();
+      const { startUpTime } = await this.systemInformationService.healthcheck();
       this.checkingForUpdates = true;
       const status = await this.systemInformationService.getUpdateStatus();
       this.checkingForUpdates = false;
@@ -48,7 +47,7 @@ export class UpdateDialogComponent implements OnInit {
 
       if (status === UpdateStatus.NeedsUpdate) {
         this.updateInProgress = true;
-        await this.waitForUpdateComplete(healthCheckResponse.timestamp);
+        await this.waitForUpdateComplete(startUpTime);
         this.dialogRef.close({ status: UpdateStatus.UpdateSuccessful });
       }
     } catch (err: any) {
@@ -88,8 +87,8 @@ export class UpdateDialogComponent implements OnInit {
 
   private async checkVersionChanged(systemStartTime: string) {
     try {
-      const { timestamp } = await this.systemInformationService.healthcheck();
-      return timestamp != systemStartTime;
+      const { startUpTime } = await this.systemInformationService.healthcheck();
+      return startUpTime != systemStartTime;
     } catch (err) {
       return false;
     }

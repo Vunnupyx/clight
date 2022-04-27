@@ -32,10 +32,11 @@ export default class HostnameController {
    */
   static async getHostname(): Promise<string> {
     return SshService.sendCommand('hostnamectl')
-      .then((status) => {
-        return status.stdout
-          ?.substr(0, status.indexOf('\n'))
-          ?.replace('Static hostname: ', '');
+      .then(({ stdout, stderr }) => {
+        if (stderr !== '') throw stderr;
+        return stdout
+          .substr(0, stdout.indexOf('\n'))
+          .replace('Static hostname: ', '');
       })
       .catch((err) => {
         winston.error(

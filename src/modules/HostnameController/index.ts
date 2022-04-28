@@ -36,7 +36,8 @@ export default class HostnameController {
         if (stderr !== '') throw stderr;
         return stdout
           .substr(0, stdout.indexOf('\n'))
-          .replace('Static hostname: ', '');
+          .replace('Static hostname: ', '')
+          .trim();
       })
       .catch((err) => {
         winston.error(

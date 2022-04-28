@@ -28,7 +28,7 @@ export default class UpdateManager {
     // const hostPrefix = `HOST=""`;
     const images = `docker images -q`;
     const pull = `docker-compose pull`;
-    const restart = `nohup bash -c "docker-compose down && docker-compose up -d"`;
+    const restart = `screen -d -m /etc/update.sh`;
     const cleanup = `docker image prune -f`;
 
     let firstImages: string;
@@ -62,13 +62,14 @@ export default class UpdateManager {
           return updateStatus.NOT_AVAILABLE;
         }
         // restart with delay because of response delay to frontend
-        setTimeout(() => {
+        setTimeout(async () => {
           winston.info(`${logPrefix} restarting container after update.`);
-          SshService.sendCommand(restart).finally(() => {
+          const res = await SshService.sendCommand(restart);
+          if (res.stderr) {
             winston.error(
               `Error during container restart. Please restart device.`
             );
-          });
+          }
         }, this.#restartDelay);
         return updateStatus.AVAILABLE;
       })

@@ -165,7 +165,9 @@ export class TimeManager {
       }
 
       if (testInterfaceRes.stdout !== 'activated') {
-        winston.warn('Not testing ntp server. Interface is down!');
+        winston.warn(
+          `Not testing ntp server. Interface is down! (Response: "${testInterfaceRes.stdout}"`
+        );
         rej('Not testing ntp server. Interface is down!');
         return;
       }

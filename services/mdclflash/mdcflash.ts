@@ -174,12 +174,10 @@ class MDCLFlasher {
       readdir('/root', async (err, files) => {
         if(err) rej();
         const filename = files.find((str) => /iot-connector[a-zA-Z-.\d]*\.img\.gz/.test(str));
-        console.log(`MARKUS ${filename}`);
         if(!filename) rej({msg: `No mdc lite image found. Abort!`});
         const imagePath = `/root/${filename}`;
         let target;
         try {
-          console.log(`MARKUS VOR NEUEM PROMISE`);
           await new Promise<void>((res, rej) => {
             access(imagePath, constants.F_OK, (err) => {
               if(err) rej({msg: `No mdc lite image found. Abort!`});

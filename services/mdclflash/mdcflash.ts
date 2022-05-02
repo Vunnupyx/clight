@@ -75,7 +75,11 @@ class MDCLFlasher {
         if (this.#lastButtonCount >= this.#durationPollRatio) {
           this.stopBlink(1);
           clearInterval(this.#userButtonWatcher);
-          this.transferData().then(() => {
+          this.transferData()
+          .then(() => {
+            this.fixGPT();
+          })
+          .then(() => {
             this.#fwFlasher.flash();
           });
         }
@@ -222,6 +226,21 @@ class MDCLFlasher {
       });
       });
   })
+  }
+
+  private fixGPT() {
+    const cmd = `sgdisk /dev/mmcblk1 -e`;
+    return new Promise<void>((res, rej) => {
+      exec(cmd, (err, stdout, stderr) => { 
+        if(err || stderr !== '') {
+          console.log(`Error fixing Boot sector`);
+          rej()
+        }
+        console.log(`Boot sector fixed.`);
+        res();
+      })
+    })
+
   }
 }
 

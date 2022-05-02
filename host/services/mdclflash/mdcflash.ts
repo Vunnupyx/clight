@@ -342,6 +342,21 @@ class MDCLFlasher {
   private extractChecksumFromString(str: string): string {
     return str.trim().split(' ')[0];
   }
+
+  private fixGPT() {
+    const cmd = `sgdisk /dev/mmcblk1 -e`;
+    return new Promise<void>((res, rej) => {
+      exec(cmd, (err, stdout, stderr) => { 
+        if(err || stderr !== '') {
+          console.log(`Error fixing Boot sector`);
+          rej()
+        }
+        console.log(`Boot sector fixed.`);
+        res();
+      })
+    })
+
+  }
 }
 
 class FWFlasher {

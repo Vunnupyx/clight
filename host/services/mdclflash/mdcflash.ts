@@ -77,7 +77,9 @@ class MDCLFlasher {
   private initUserButtonWatcher(): void {
     console.log('Starting mdcflash service. Watching user button...');
     this.#userButtonWatcher = setInterval(() => {
-      const value = readFileSync(this.#userButtonPath).toString('utf8').trim();
+      const value = readFileSync(this.#userButtonPath)
+        .toString('utf8')
+        .trim();
       if (value === '0') {
         this.#lastButtonCount++;
         if (this.#lastButtonCount >= this.#durationPollRatio) {

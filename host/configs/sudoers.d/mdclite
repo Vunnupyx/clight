@@ -4,4 +4,5 @@ mdclite ALL=(root) NOPASSWD: /usr/bin/timedatectl
 mdclite ALL=(root) NOPASSWD: /usr/bin/nmcli
 mdclite ALL=(root) NOPASSWD: /usr/sbin/reboot
 mdclite ALL=(root) NOPASSWD: /usr/bin/docker-compose
-mdclite ALL=(mdclite) NOPASSWD: /usr/bin/docker
+mdclite ALL=(root) NOPASSWD: /usr/bin/docker
+mdclite ALL=(root) NOPASSWD: /usr/bin/screen -d -m /etc/update.sh

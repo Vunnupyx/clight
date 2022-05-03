@@ -16,15 +16,15 @@
 
 ```
 apt update
-apt install apt-transport-https ca-certificates curl gnupg lsb-release docker-compose timesyncd
+apt install apt-transport-https ca-certificates curl gnupg lsb-release docker-compose timesyncd screen
 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 apt update
 apt install docker-ce docker-ce-cli containerd.io
 ```
 
-
 5. Enable timesyncd
+
 ```
 systemctl enable /lib/systemd/system/systemd-timesyncd.service
 chown root:mdclite /etc/systemd/timesyncd.conf
@@ -32,39 +32,45 @@ chmod 664 /etc/systemd/timesyncd.conf
 ```
 
 6. Copy configs
+
 ```
 npm run deploy:all
 ```
 
-
 7. Cleanup
+
 ```
 apt autoremove
 ```
 
 8. Create mdclite user
-Use password from Lastpass
+   Use password from Lastpass
+
 ```
 adduser mdclite
 ```
 
-9. Login to mdclite account 
+9. Login to mdclite account
 10. Login to docker image registry: `docker login registry.gitlab.com`
 11. Start containers: `sudo docker-compose -d up`
 
 12. Remove device specific configuration
+
 ```
 npm run deploy:clean:logs
 ```
+
 13. And shutdown: `shutdown -h now`
 14. Remove the sd card & insert it into an SD Card reader
 15. `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.0_resized.img bs=1m count=13517`
 
 ## Update containers
 
-### Via frontend 
+### Via frontend
+
 Login to device and click the `update now` button.
+
 ### Manual
+
 1. Pull newer containers: `docker-compose pull`
 2. Restart `docker-compose down && docker-compose up -d`
-

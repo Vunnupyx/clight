@@ -66,6 +66,7 @@
     "deploy:service:tlskeys": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp host/services/TLSKeys/*.service $INSTALL_HOST:/etc/systemd/system && ssh $INSTALL_HOST systemctl enable tlskeys.service && ssh $INSTALL_HOST systemctl start containerkeys.service",
     "deploy:permissions:file": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp host/configs/sudoers.d/mdclite $INSTALL_HOST:/etc/sudoers.d/mdclite && ssh $INSTALL_HOST chmod 440 /etc/sudoers.d/mdclite",
     "deploy:network:connections": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp host/configs/NetworkManager/*default $INSTALL_HOST:/etc/NetworkManager/system-connections",
+    "deploy:script:update": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp host/scripts/update/update.sh $INSTALL_HOST:/opt && ssh $INSTALL_HOST chmod 100 /opt/update.sh",
     "deploy:service:all": "npm run deploy:service:containerkeys && npm run deploy:service:tlskeys",
     "deploy:change:user:pw": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && read -p \"user to change password: \" USERNAME && read -s -p \"New password: \" NEW_PASSWORD && ssh $INSTALL_HOST `echo -e \"$NEW_PASSWORD\n$NEW_PASSWORD\" | passwd $USERNAME`",
     "deploy:all": "npm run copy_mdc_conf && npm run copy_mtc_conf && npm run deploy:permissions:file && npm run deploy:network:connections && npm run copy_compose",

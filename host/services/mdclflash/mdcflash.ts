@@ -343,19 +343,19 @@ class MDCLFlasher {
     return str.trim().split(' ')[0];
   }
 
-  private fixGPT() {
+  private fixGPT(): Promise<void> {
     const cmd = `sgdisk /dev/mmcblk1 -e`;
     return new Promise<void>((res, rej) => {
-      exec(cmd, (err, stdout, stderr) => { 
-        if(err || stderr !== '') {
+      exec(cmd, (err, _stdout, stderr) => {
+        if (err || stderr !== '') {
           console.log(`Error fixing Boot sector`);
-          rej()
+          rej();
         }
         console.log(`Boot sector fixed.`);
         res();
-      })
-    })
-
+      });
+      res();
+    });
   }
 }
 

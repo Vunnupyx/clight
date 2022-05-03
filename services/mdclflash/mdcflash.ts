@@ -1,4 +1,12 @@
-import { writeFileSync, readdirSync, readFileSync, existsSync, access, readdir, constants } from 'fs';
+import {
+  writeFileSync,
+  readdirSync,
+  readFileSync,
+  existsSync,
+  access,
+  readdir,
+  constants
+} from 'fs';
 import { exec, execSync } from 'child_process';
 import { exit } from 'process';
 
@@ -76,12 +84,12 @@ class MDCLFlasher {
           this.stopBlink(1);
           clearInterval(this.#userButtonWatcher);
           this.transferData()
-          .then(() => {
-            this.fixGPT();
-          })
-          .then(() => {
-            this.#fwFlasher.flash();
-          });
+            .then(() => {
+              return this.fixGPT();
+            })
+            .then(() => {
+              this.#fwFlasher.flash();
+            });
         }
         return;
       }
@@ -92,7 +100,11 @@ class MDCLFlasher {
   /**
    * Start blinking of the user led.
    */
-  public blink(interval: number, color: TLedColors = 'green', number: 1 | 2 = 1) {
+  public blink(
+    interval: number,
+    color: TLedColors = 'green',
+    number: 1 | 2 = 1
+  ) {
     let paths: Array<string> = this.getLedPaths(color, number);
 
     const unset = () => {
@@ -126,7 +138,10 @@ class MDCLFlasher {
    * Set all colors of user led off.
    */
   private clearAll() {
-    [...this.getLedPaths('orange', 1),...this.getLedPaths('orange', 2)].forEach((path) => {
+    [
+      ...this.getLedPaths('orange', 1),
+      ...this.getLedPaths('orange', 2)
+    ].forEach((path) => {
       writeFileSync(path, LED.OFF);
     });
   }
@@ -161,7 +176,10 @@ class MDCLFlasher {
         return [this.#ledPathRed.replace('<NUMBER>', number.toString())];
       }
       case 'orange': {
-        return [this.#ledPathRed.replace('<NUMBER>', number.toString()), this.#ledPathGreen.replace('<NUMBER>', number.toString())];
+        return [
+          this.#ledPathRed.replace('<NUMBER>', number.toString()),
+          this.#ledPathGreen.replace('<NUMBER>', number.toString())
+        ];
       }
     }
   }
@@ -176,71 +194,75 @@ class MDCLFlasher {
       this.blink(1000, 'orange');
       // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
       readdir('/root', async (err, files) => {
-        if(err) rej();
-        const filename = files.find((str) => /iot-connector[a-zA-Z-.\d]*\.img\.gz/.test(str));
-        if(!filename) rej({msg: `No mdc lite image found. Abort!`});
+        if (err) rej();
+        const filename = files.find((str) =>
+          /iot-connector[a-zA-Z-.\d]*\.img\.gz/.test(str)
+        );
+        if (!filename) rej({ msg: `No mdc lite image found. Abort!` });
         const imagePath = `/root/${filename}`;
         let target;
         try {
           await new Promise<void>((res, rej) => {
             access(imagePath, constants.F_OK, (err) => {
-              if(err) rej({msg: `No mdc lite image found. Abort!`});
+              if (err) rej({ msg: `No mdc lite image found. Abort!` });
               res();
             });
-        })
-        target = execSync('ls /dev/mmcblk*boot0 2>/dev/null | sed "s/boot0//"')
-          .toString('ascii')
-          .trim();
-      } catch (err) {
-        console.log(err.msg || `Error due to detect target device. Abort`);
-        exit(1);
-      }
-      if (!target || target.length === 0) {
-        console.log(`Error due to detect target device. Abort`);
-        exit(1);
-      }
-
-      const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
-
-      const startDate = new Date();
-      exec(command, (err, stdout, stderr) => {
-        const finishDate = new Date();
-        this.stopBlink();
-        if (err || stderr !== '') {
-          console.error(err);
-          console.error(stderr);
-          this.blink(500, 'red');
-          setTimeout(() => {
-            exit(1);
-          }, 10000);
+          });
+          target = execSync(
+            'ls /dev/mmcblk*boot0 2>/dev/null | sed "s/boot0//"'
+          )
+            .toString('ascii')
+            .trim();
+        } catch (err) {
+          console.log(err.msg || `Error due to detect target device. Abort`);
+          exit(1);
         }
-        console.log(
-          `Data successfully transferred to internal MCC. Finished after: ${
-            (finishDate.getTime() - startDate.getTime()) / 1000
-          }s`
-        );
-        console.log(stdout);
+        if (!target || target.length === 0) {
+          console.log(`Error due to detect target device. Abort`);
+          exit(1);
+        }
 
-        this.glow(0, 'green');
-        res();
+        const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
+
+        const startDate = new Date();
+        exec(command, (err, stdout, stderr) => {
+          const finishDate = new Date();
+          this.stopBlink();
+          if (err || stderr !== '') {
+            console.error(err);
+            console.error(stderr);
+            this.blink(500, 'red');
+            setTimeout(() => {
+              exit(1);
+            }, 10000);
+          }
+          console.log(
+            `Data successfully transferred to internal MCC. Finished after: ${
+              (finishDate.getTime() - startDate.getTime()) / 1000
+            }s`
+          );
+          console.log(stdout);
+
+          this.glow(0, 'green');
+          res();
+        });
       });
-      });
-  })
+    });
   }
 
-  private fixGPT() {
+  private fixGPT(): Promise<void> {
     const cmd = `sgdisk /dev/mmcblk1 -e`;
     return new Promise<void>((res, rej) => {
-      exec(cmd, (err, stdout, stderr) => { 
-        if(err || stderr !== '') {
+      exec(cmd, (err, _stdout, stderr) => {
+        if (err || stderr !== '') {
           console.log(`Error fixing Boot sector`);
-          rej()
+          rej();
         }
         console.log(`Boot sector fixed.`);
         res();
-      })
-    })
-
+      });
+      res();
+    });
   }
 }
 
@@ -254,13 +276,17 @@ class FWFlasher {
 
   public async flash() {
     console.log(`Starting firmware flashing.`);
-    const shutdown = () => {setTimeout(() => {
-      console.log(`Rebooting`);
-      execSync('sudo /sbin/shutdown now');
-    }, 10_000);}
+    const shutdown = () => {
+      setTimeout(() => {
+        console.log(`Rebooting`);
+        execSync('sudo /sbin/shutdown now');
+      }, 10_000);
+    };
     this.mdclFlasher.stopBlink(2);
     if (!(await this.checkFWVersion())) {
-      console.log(`Installed firmware version is higher or equal to installable firmware version`);
+      console.log(
+        `Installed firmware version is higher or equal to installable firmware version`
+      );
       this.mdclFlasher.glow(0, 'green', 2);
       shutdown();
       exit(0);
@@ -268,7 +294,11 @@ class FWFlasher {
     this.mdclFlasher.blink(1000, 'orange', 2);
     console.log('Nach blink orange');
     const proc = exec(this.#flashCommand, (err, _stdout, stderr) => {
-      console.log(`Flash ausgeführt ${JSON.stringify(err)} ${JSON.stringify(_stdout)} ${JSON.stringify(stderr)}`);
+      console.log(
+        `Flash ausgeführt ${JSON.stringify(err)} ${JSON.stringify(
+          _stdout
+        )} ${JSON.stringify(stderr)}`
+      );
       this.mdclFlasher.stopBlink(2);
       if (err || stderr !== '') {
         this.mdclFlasher.glow(0, 'red', 2);
@@ -281,8 +311,8 @@ class FWFlasher {
           this.#installedVersion
         } to ${this.#newVersion}. Reboot after 10 seconds.`
       );
-      
-      shutdown()
+
+      shutdown();
     });
     let count = 1;
     proc.stdout.on('data', (data) => {
@@ -291,31 +321,38 @@ class FWFlasher {
         proc.stdin.write('y');
         proc.stdin.end();
       }
-    })
+    });
   }
 
   private async checkFWVersion(): Promise<boolean> {
     return new Promise((res, _rej) => {
-      readdir('/root',(err, files) => {
-        if(err) res(false);
-        const filename = files.find((str) => /IOT2050-[-a-zA-Z.0-9]*.tar.xz/.test(str));
-        const newVersion = filename.match(/V[\d]{2}.[\d]{2}.[\d]{2}/).toString().replace('V', '').split('.')
+      readdir('/root', (err, files) => {
+        if (err) res(false);
+        const filename = files.find((str) =>
+          /IOT2050-[-a-zA-Z.0-9]*.tar.xz/.test(str)
+        );
+        const newVersion = filename
+          .match(/V[\d]{2}.[\d]{2}.[\d]{2}/)
+          .toString()
+          .replace('V', '')
+          .split('.');
         exec(this.#checkCommand, (err, stdout, stderr) => {
-          if(err || stderr !== '') {
+          if (err || stderr !== '') {
             res(false);
           }
-          const [_date, version, _unknown, _buildnumber] = stdout.replace('fw_version=', '').split('-');
+          const [_date, version, _unknown, _buildnumber] = stdout
+            .replace('fw_version=', '')
+            .split('-');
           const installedVersion = version.split('.');
           for (const [index, newV] of newVersion.entries()) {
-            if(newV > installedVersion[index]) {
+            if (newV > installedVersion[index]) {
               res(true);
             }
           }
-         res(false); 
-        })
-      })
-    })
-
+          res(false);
+        });
+      });
+    });
   }
 }
 

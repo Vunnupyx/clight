@@ -126,7 +126,7 @@ export class OPCUAAdapter {
 
   private async getHostname(): Promise<string> {
     const macAddress =
-      (await new System().readMacAddress('eth1')) || '000000000000';
+      (await new System().readMacAddress('eth0')) || '000000000000';
     const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
     return `DM${formattedMacAddress}`;
   }
@@ -243,10 +243,9 @@ export class OPCUAAdapter {
         cb(null, valid);
       }
     };
-
+    //BUGFIX: NODESET ORDER IS IMPORTANT FOR CONSTRUCTOR
     const nodeSets = await this.setupNodesets();
 
-    // TODO: Inject project logger to OPCUAServer
     this.server = new OPCUAServer({
       ...{
         ...this.opcuaRuntimeConfig,
@@ -259,7 +258,15 @@ export class OPCUAAdapter {
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,
       certificateFile,
-      nodeset_filename: nodeSets,
+      nodeset_filename: [
+        '/mdclight/config/tmpnodesets/Opc.Ua.NodeSet2.xml',
+        '/mdclight/config/tmpnodesets/Opc.Ua.Di.NodeSet2.xml',
+        '/mdclight/config/tmpnodesets/Opc.Ua.Machinery.NodeSet2.xml',
+        '/mdclight/config/tmpnodesets/Opc.Ua.IA.NodeSet2.xml',
+        '/mdclight/config/tmpnodesets/Opc.Ua.MachineTool.Nodeset2.xml',
+        '/mdclight/config/tmpnodesets/dmgmori-umati-types-v2.0.11.xml',
+        '/mdclight/config/tmpnodesets/dmgmori-umati-v2.0.11.xml'
+      ],
       securityPolicies: [
         SecurityPolicy.None,
         SecurityPolicy.Basic128Rsa15,

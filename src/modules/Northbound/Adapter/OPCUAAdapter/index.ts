@@ -97,7 +97,7 @@ export class OPCUAAdapter {
   private async setupNodesets() {
     this.nodesetDir = path.join(
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      'mdclight/config/tmpnodesets'
+      '/nodeSets/tmpnodesets'
     );
     await fs.rm(this.nodesetDir, { recursive: true, force: true });
     await fs.copy(
@@ -259,13 +259,13 @@ export class OPCUAAdapter {
       privateKeyFile,
       certificateFile,
       nodeset_filename: [
-        '/mdclight/config/tmpnodesets/Opc.Ua.NodeSet2.xml',
-        '/mdclight/config/tmpnodesets/Opc.Ua.Di.NodeSet2.xml',
-        '/mdclight/config/tmpnodesets/Opc.Ua.Machinery.NodeSet2.xml',
-        '/mdclight/config/tmpnodesets/Opc.Ua.IA.NodeSet2.xml',
-        '/mdclight/config/tmpnodesets/Opc.Ua.MachineTool.Nodeset2.xml',
-        '/mdclight/config/tmpnodesets/dmgmori-umati-types-v2.0.11.xml',
-        '/mdclight/config/tmpnodesets/dmgmori-umati-v2.0.11.xml'
+        '/nodeSets/Opc.Ua.NodeSet2.xml',
+        '/nodeSets/Opc.Ua.Di.NodeSet2.xml',
+        '/nodeSets/Opc.Ua.Machinery.NodeSet2.xml',
+        '/nodeSets/Opc.Ua.IA.NodeSet2.xml',
+        '/nodeSets/Opc.Ua.MachineTool.Nodeset2.xml',
+        '/nodeSets/dmgmori-umati-types-v2.0.11.xml',
+        '/nodeSets/dmgmori-umati-v2.0.11.xml'
       ],
       securityPolicies: [
         SecurityPolicy.None,

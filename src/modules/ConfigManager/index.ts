@@ -365,6 +365,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     await promisefs.copyFile(factoryConfig, configPath);
     await promisefs.unlink(authConfig);
+    await promisefs.unlink(`${this.configFolder}/certs`);
   }
 
   /**

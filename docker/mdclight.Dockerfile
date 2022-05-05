@@ -8,6 +8,8 @@ RUN npm install
 # Install key pair for network manager cli
 RUN mkdir /root/.ssh/
 COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
+COPY _mdclight/opcua_nodeSet /nodeSets
+COPY _mdclight/runtime.json /runtime
 RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 

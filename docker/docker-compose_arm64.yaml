@@ -31,19 +31,19 @@ services:
     restart: always
     volumes:
       - type: bind
-        source: $HOST/etc/MDCLight/config
+        source: /etc/MDCLight/config
         target: /mdclight/config
       - type: bind
-        source: $HOST/etc/MDCLight/logs
+        source: /etc/MDCLight/logs
         target: /mdclight/logs
       - type: bind
-        source: $HOST/proc
+        source: /proc
         target: /proc
       - type: bind
-        source: $HOST/sys
+        source: /sys
         target: /sys
       - type: bind
-        source: $HOST/home/mdclite/.ssh/nmcli
+        source: /home/mdclite/.ssh/nmcli
         target: /root/.ssh/nmcli
       - type: bind
         read_only: true

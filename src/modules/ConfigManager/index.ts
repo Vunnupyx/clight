@@ -126,7 +126,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
     'mdclight/config'
   );
-  private runtimeFolder = '/runtime'
+  private runtimeFolder = '/runTimeFiles'
   private keyFolder = path.join(this.configFolder, 'keys');
 
   private configName = 'config.json';

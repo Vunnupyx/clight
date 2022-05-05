@@ -29,7 +29,7 @@
       "productName": "MDCLight",
       "softwareVersion": "1.0.0"
     },
-    "nodesetDir": "/nodeSets"
+    "nodesetDir": "/runTimeFiles/nodeSets"
   },
   "datahub": {
     "signalGroups": {

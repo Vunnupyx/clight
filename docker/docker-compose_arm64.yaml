@@ -58,6 +58,7 @@ services:
       - LOG_LEVEL=debug
     ports:
       - '4840:4840'
+      - '7878:7878'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     labels:

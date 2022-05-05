@@ -28,7 +28,7 @@ export default class UpdateManager {
     // const hostPrefix = `HOST=""`;
     const images = `docker images -q`;
     const pull = `docker-compose pull`;
-    const restart = `screen -d -m /etc/update.sh`;
+    const restart = `screen -d -m /opt/update.sh`;
     const cleanup = `docker image prune -f`;
 
     let firstImages: string;

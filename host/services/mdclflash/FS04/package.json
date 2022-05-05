@@ -13,7 +13,7 @@
     "dump:remote:external": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk0 bs=1m count=13517 | gzip -9 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
     "dump:remote:internal": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk1 bs=1m count=13517 | gzip -9 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
     "dump:remote:internal:uncompressed": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk1 bs=1M count=13517\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".img\"",
-    "enable:service": "ssh $(npm run read:host) systemctl enable mdclflash.service",
+    "enable:service": "export INSTALL_HOST=`../../../devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh $INSTALL_HOST \"systemctl enable mdclflash.service && systemctl start mdclflash.service\"",
     "read:host": "../../../devTools/checkEnvironmentVariable.sh"
   },
   "author": "Markus Leitz",

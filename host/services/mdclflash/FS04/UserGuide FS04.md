@@ -1,10 +1,12 @@
 # MDCL Flasher User Guide
 
-This image of MDCL Flasher flashes MDC Lite version 2.0 to internal eMMC of the IOT2050 and update the firmware version to V01.02.01 if necessary.
+!!! FS:04 ONLY !!!
+
+This image of MDCL Flasher flashes MDC Lite version 2.0 to internal eMMC of the IOT2050.
 
 ## How to install:
 
-1. Download MDC_LITE_INSTALLER-<MDCVERSION>-<FIRMWARE_VERSION>.zip from AWS
+1. Download MDC_LITE_INSTALLER-<MDCVERSION>-FS04.zip from AWS
 2. Unzip the bundle
 3. Insert USB device to PC
 4. [Linux] Copy flasher to USB Stick
@@ -18,9 +20,8 @@ This image of MDCL Flasher flashes MDC Lite version 2.0 to internal eMMC of the 
 1. Remove SD card
 2. Insert USB stick to any USB port
 3. Start IOT2050 and hold USER-Button during bootup. You can release USER-Button if STAT LED is blinking.
-4. Wait for green blinking USER1- and USER2-LED
-5. Hold USER-Button for 3 seconds.
+4. Wait for green blinking USER1-LED.
+5. Hold USER-Button for 3 seconds and release.
 6. USER1 LED starts blinking orange -> Device install mdc lite to eMMC
-7. After installation the installer check the installed firmware version and update if necessary.
-8. If the USER2-LED is green and the USER1-LED is off the installation was successful.
-9. Remove USB device and restart IOT2050
+7. If the USER1-LED is green and the installation was successful.
+8. Remove USB device and restart IOT2050

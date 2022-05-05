@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   webserver:
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server:latest
+    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server:2.0-beta
     restart: always
     ports:
       - '443:443'
@@ -27,7 +27,7 @@ services:
         max-size: '50m'
   mdclight:
     privileged: true
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest
+    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:2.0-beta
     restart: always
     volumes:
       - type: bind
@@ -95,7 +95,7 @@ services:
       options:
         max-size: '50m'
   autoheal:
-    image: willfarrell/autoheal:1.2.0
+    image: willfarrell/autoheal:latest
     restart: always
     volumes:
       - type: bind

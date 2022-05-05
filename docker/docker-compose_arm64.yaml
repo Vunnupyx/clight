@@ -7,10 +7,10 @@ services:
       - '443:443'
     volumes:
       - type: bind
-        source: $HOST/etc/MDCLight/config/ssl_private.key
+        source: /etc/MDCLight/config/ssl_private.key
         target: /etc/ssl/private/private.key
       - type: bind
-        source: $HOST/etc/MDCLight/config/ssl.crt
+        source: /etc/MDCLight/config/ssl.crt
         target: /etc/ssl/certs/ssl.crt
     depends_on:
       - mdclight
@@ -77,7 +77,7 @@ services:
     restart: always
     volumes:
       - type: bind
-        source: $HOST/etc/MDCLight/mtc_config
+        source: /etc/MDCLight/mtc_config
         target: /agentConfiguration
     depends_on:
       - mdclight

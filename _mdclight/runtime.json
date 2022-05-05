@@ -29,7 +29,7 @@
       "productName": "MDCLight",
       "softwareVersion": "1.0.0"
     },
-    "nodesetDir": "mdclight/config/opcua_nodeSet"
+    "nodesetDir": "/nodeSets"
   },
   "datahub": {
     "signalGroups": {

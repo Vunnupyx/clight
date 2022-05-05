@@ -1,14 +1,12 @@
 import {
   writeFileSync,
-  readdirSync,
-  readFileSync,
-  existsSync,
   access,
   readdir,
   constants
 } from 'fs';
-import { exec, execSync } from 'child_process';
+import { exec, execSync, ChildProcess, spawn } from 'child_process';
 import { exit } from 'process';
+import EventEmitter from 'events';
 
 enum LED {
   ON = '1',
@@ -21,94 +19,43 @@ type TLedColors = 'red' | 'green' | 'orange';
  * Class is a button watcher.
  * If button is clicked triggers flashing from USB port to internal eMMC drive.
  */
-class MDCLFlasher {
+class MDCLFlasher extends EventEmitter {
   #ledPathRed = '/sys/class/leds/user-led<NUMBER>-red/brightness';
   #ledPathGreen = '/sys/class/leds/user-led<NUMBER>-green/brightness';
-  #gpioExportPath = '/sys/class/gpio/export';
-  #gpioChipPath =
-    '/sys/devices/platform/interconnect@100000/interconnect@100000:interconnect@28380000/interconnect@100000:interconnect@28380000:interconnect@42040000/42110000.wkup_gpio0/gpio';
-  #userButtonWatcher = null;
-  #userButtonPath;
-  #lastButtonCount: number = 0;
-  readonly #watchDurationMs = 3000;
-  readonly #pollingIntervalMs = 250;
-  readonly #durationPollRatio = this.#watchDurationMs / this.#pollingIntervalMs;
   #blinkTimers = {
     1: [],
     2: []
   };
-  #fwFlasher: FWFlasher = new FWFlasher(this);
+  #buttonWatcher: IoT2050HardwareEvents;
 
   constructor() {
-    this.setupGPIOPaths();
+    super();
+    this.#buttonWatcher = new IoT2050HardwareEvents();
+    this.#buttonWatcher.watchUserButtonLongPress(this);
+    this.#buttonWatcher.registerCB(this.startFlash.bind(this));
     this.clearAll();
 
-    this.initUserButtonWatcher();
     this.blink(500, 'green', 1);
     this.blink(500, 'green', 2);
   }
 
-  /**
-   * Read the base id of the gpio chip. User button id is base id +25.
-   * Export the button value file if necessary.
-   */
-  private setupGPIOPaths(): void {
-    const filesAndFolders = readdirSync(this.#gpioChipPath);
-    if (filesAndFolders.length > 1) {
-      console.log(`Can not detect gpio chip number`);
-      exit(1);
-    }
-
-    const chipNumber = filesAndFolders.join().match(/\d+/g)?.join();
-    const buttonID = parseInt(chipNumber) + 25;
-
-    this.#userButtonPath = `/sys/class/gpio/gpio${buttonID}/value`;
-
-    if (!existsSync(this.#userButtonPath)) {
-      //export button
-      execSync(`echo ${buttonID} > ${this.#gpioExportPath}`);
-    }
-  }
-
-  /**
-   * Initialize file watching for user button file.
-   * Implements logic for button trigger and handle.
-   */
-  private initUserButtonWatcher(): void {
-    console.log('Starting mdcflash service. Watching user button...');
-    this.#userButtonWatcher = setInterval(() => {
-      const value = readFileSync(this.#userButtonPath)
-        .toString('utf8')
-        .trim();
-      if (value === '0') {
-        this.#lastButtonCount++;
-        if (this.#lastButtonCount >= this.#durationPollRatio) {
-          this.stopBlink(1);
-          clearInterval(this.#userButtonWatcher);
-          this.transferData()
-            .catch((err) => {
-              console.log(`Error during transferring data.`);
-              exit(1);
-            })
-            .then(() => {
-              return this.fixGPT();
-            })
-            .catch(() => {
-              console.log(`Error during fix GPT.`);
-              exit(1);
-            })
-            .then(() => {
-              return this.#fwFlasher.flash();
-            })
-            .catch((err) => {
-              console.log(`Error during flashing new firmware.`);
-              exit(1);
-            });
-        }
-        return;
-      }
-      this.#lastButtonCount = 0;
-    }, this.#pollingIntervalMs);
+  private async startFlash(): Promise<void> {
+    this.stopBlink(1);
+    return this.transferData()
+      .catch((err) => {
+        console.log(err?.msg || 'Error during installation.');
+        this.glow(0, 'red', 1);
+        this.emit('error');
+      })
+      .then(() => {
+        this.glow(0, 'green');
+        return this.fixGPT();
+      })
+      .catch((err) => {
+        console.log(`Error during GPT fix due to ${JSON.stringify(err)}`);
+        this.glow(0, 'red');
+        this.emit('err');
+      });
   }
 
   /**
@@ -205,7 +152,6 @@ class MDCLFlasher {
   private async transferData(): Promise<void> {
     return new Promise(async (res, rej) => {
       this.blink(1000, 'orange');
-      // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
       readdir('/root', async (err, files) => {
         if (err) {
           console.log(`Error during reading files of /root`);
@@ -359,13 +305,13 @@ class MDCLFlasher {
   }
 }
 
-class FWFlasher {
-  #flashCommand = `iot2050-firmware-update /root/IOT2050*`;
-  #checkCommand = `fw_printenv fw_version`;
-  #installedVersion: string;
-  #newVersion: string;
+// class FWFlasher {
+//   #flashCommand = `iot2050-firmware-update /root/IOT2050*`;
+//   #checkCommand = `fw_printenv fw_version`;
+//   #installedVersion: string;
+//   #newVersion: string;
 
-  constructor(private mdclFlasher: MDCLFlasher) {}
+//   constructor(private mdclFlasher: MDCLFlasher) {}
 
   public async flash() {
     console.log(`Starting firmware flashing.`);
@@ -384,70 +330,72 @@ class FWFlasher {
       //shutdown();
       exit(0);
     }
-    this.mdclFlasher.blink(1000, 'orange', 2);
-    console.log('Nach blink orange');
-    const proc = exec(this.#flashCommand, (err, _stdout, stderr) => {
-      console.log(
-        `Flash ausgeführt ${JSON.stringify(err)} ${JSON.stringify(
-          _stdout
-        )} ${JSON.stringify(stderr)}`
-      );
-      this.mdclFlasher.stopBlink(2);
-      if (err || stderr !== '') {
-        this.mdclFlasher.glow(0, 'red', 2);
-        console.log(`Update firmware failed due to ${err || stderr}`);
-        exit(1);
-      }
-
-      console.log(
-        `Firmware version successfully installed from ${
-          this.#installedVersion
-        } to ${this.#newVersion}. Reboot after 10 seconds.`
-      );
-
-      shutdown();
-    });
-    let count = 1;
-    proc.stdout.on('data', (data) => {
-      if (count > 0) {
-        count--;
-        proc.stdin.write('y');
-        proc.stdin.end();
-      }
-    });
+    const cmd = 'stdbuf';
+    const options = [
+      '-oL',
+      'gpiomon',
+      'gpiochip3',
+      '25'
+    ];
+    try {
+      this.#child = spawn(cmd, options);
+      this.#child.stdout.on('data', this.dataHandler.bind(this));
+      this.#child.stderr.on('error', this.errorHandler.bind(this));
+      console.log(`${logPrefix} connection to button successfully.`);
+    } catch (err) {
+      console.log(`${logPrefix} error during connecting to button.`);
+    }
   }
 
-  private async checkFWVersion(): Promise<boolean> {
-    return new Promise((res, _rej) => {
-      readdir('/root', (err, files) => {
-        if (err) res(false);
-        const filename = files.find((str) =>
-          /IOT2050-[-a-zA-Z.0-9]*.tar.xz/.test(str)
-        );
-        const newVersion = filename
-          .match(/V[\d]{2}.[\d]{2}.[\d]{2}/)
-          .toString()
-          .replace('V', '')
-          .split('.');
-        exec(this.#checkCommand, (err, stdout, stderr) => {
-          if (err || stderr !== '') {
-            res(false);
-          }
-          const [_date, version, _unknown, _buildnumber] = stdout
-            .replace('fw_version=', '')
-            .split('-');
-          const installedVersion = version.split('.');
-          for (const [index, newV] of newVersion.entries()) {
-            if (newV > installedVersion[index]) {
-              res(true);
-            }
-          }
-          res(false);
-        });
-      });
-    });
+  public registerCB(cb: Function): void {
+    this.#callback = cb;
+  }
+
+  /**
+   * Handles received data
+   */
+  private async dataHandler(stdout: GpioReturn) {
+    const logPrefix = `${this.constructor.name}::dataHandler`;
+
+    console.log(
+      `${logPrefix} receive button event. Start checking if it meet the callback conditions.`
+    );
+    if (!this.#fistEventTS) {
+      this.#fistEventTS = Date.now();
+      return;
+    }
+    if ((Date.now() - this.#fistEventTS) > this.#buttonPressedTriggerTimeMs) {
+      console.log(
+        `${logPrefix} conditions fulfilled. Execute all callbacks.`
+      );
+        try {
+          await this.#callback();
+          this.#child.kill('SIGINT');
+        } catch (e) {
+          console.log(
+            `${logPrefix} error during calling installer.`
+          );
+        }
+    }
+    this.#fistEventTS = null;
+  }
+
+  /**
+   * Restart child process if crashes because of error
+   */
+  private async errorHandler(stderr) {
+    const logPrefix = `${this.constructor.name}::errorHandler`;
+    console.log(
+      `${logPrefix} received error from process due to ${JSON.stringify(
+        stderr
+      )}`
+    );
+    if (this.#child.exitCode) {
+      await this.watchUserButtonLongPress(this.#flasher);
+    }
   }
 }
+
 
 /**
  * Start service

@@ -11,6 +11,7 @@ export class LicenseCheck {
     '8C:F3:19:5B:9A:BE',
     '8C:F3:19:4C:05:C9',
     'E0:DC:A0:C8:6F:7E',
+    '8C:F3:19:6A:E6:B5',
     // DMG
     '8C:F3:19:6B:17:5E',
     '8C:F3:19:6B:17:44',

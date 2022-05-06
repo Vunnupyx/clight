@@ -5,6 +5,7 @@ import winston from 'winston';
 import fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { System } from '../../../../../System';
 const execPromise = promisify(exec);
 
 let configManager: ConfigManager;
@@ -81,15 +82,18 @@ async function logsGetHandler(
   const dateString = `${date.getFullYear()}-${
     date.getMonth() + 1
   }-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-  const hostname = await HostnameController.getHostname();
+
+  const macAddress = await new System().readMacAddress('eth0');
+  const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
+  const hostname = `DM${formattedMacAddress}`;
+
   const outFileName = `${hostname}-${dateString}.zip`;
   const outPath = '/mdclight/logs';
-  const inputPaths = [
-    `${outPath}/*log`,
-    '/host/log'
-  ];
-  const zipCommand = `zip -0 -r ${outPath}/${outFileName} ${inputPaths.join(' ')}`;
- 
+  const inputPaths = [`${outPath}/*log`, '/host/log'];
+  const zipCommand = `zip -0 -r ${outPath}/${outFileName} ${inputPaths.join(
+    ' '
+  )}`;
+
   const saveDelete = () => {
     fs.unlink(`${outPath}/${outFileName}`, (err) => {
       if (err) {

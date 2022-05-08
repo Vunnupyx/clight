@@ -6,3 +6,4 @@ mdclite ALL=(root) NOPASSWD: /usr/sbin/reboot
 mdclite ALL=(root) NOPASSWD: /usr/bin/docker-compose
 mdclite ALL=(root) NOPASSWD: /usr/bin/docker
 mdclite ALL=(root) NOPASSWD: /usr/bin/screen -d -m /opt/update.sh
+mdclite ALL=(root) NOPASSWD: /etc/systemd/timesyncd.conf

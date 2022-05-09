@@ -34,6 +34,14 @@ export default class NetworkManagerCliController {
     config: NetworkInterfaceInfo
   ): Promise<void> {
     const logPrefix = `${NetworkManagerCliController.name}::setConfiguration`;
+    const oldConfig = await this.getConfiguration(networkInterface);
+
+    if (!NetworkManagerCliController.checkConfigChanged(config, oldConfig)) {
+      winston.info(`${logPrefix} new config === old config. No changes`);
+      return Promise.resolve();
+    }
+    
+
     let ipAddress = '';
     if (
       !(
@@ -80,6 +88,24 @@ export default class NetworkManagerCliController {
     NetworkManagerCliController[configName] = null;
     NetworkManagerCliController[configName] =
       await NetworkManagerCliController.getConfiguration(networkInterface);
+  }
+
+  /**
+   * Returns true if config has changed.
+   */
+  static checkConfigChanged(newConfig, oldConfig): boolean {
+    const newConfigCopy = Object.assign({}, newConfig);
+    const oldConfigCopy = Object.assign({}, oldConfig);
+    delete oldConfigCopy["name"];
+    delete newConfigCopy["name"];
+    var changed = false;
+    for (const key of Object.keys(newConfigCopy)) {
+      if (oldConfigCopy[key] !== newConfigCopy[key]) {
+        changed = true;
+        break;
+      }
+    }
+    return changed;
   }
 
   /**

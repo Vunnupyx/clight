@@ -36,7 +36,7 @@ services:
     volumes:
       - type: bind
         source: ../_mdclight/local/config
-        target: /mdclight/config
+        target: /mdclight
       - type: bind
         source: ../_mdclight/local/logs
         target: /mdclight/logs

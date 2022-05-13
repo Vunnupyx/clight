@@ -30,7 +30,6 @@ ARG MDC_LIGHT_RUNTIME_VERSION=staging
 ENV MDC_LIGHT_RUNTIME_VERSION ${MDC_LIGHT_RUNTIME_VERSION}
 ENV NODE_ENV=development
 
-
 #FAKE LEDS FOR LOCAL TEST CONTAINER ENV
 ENV MOCK_LEDS=fakeSys
 RUN mkdir -p ${MOCK_LEDS}/sys/class/leds/user-led1-green && touch ${MOCK_LEDS}/sys/class/leds/user-led1-green/brightness

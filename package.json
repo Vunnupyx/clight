@@ -53,6 +53,7 @@
     "docker:build:mdclight:arm": "docker buildx build --build-arg MDC_LIGHT_RUNTIME_VERSION=2.0-beta --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:2.0-beta -f docker/mdclight.Dockerfile --push .",
     "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
     "docker:build:mtc-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest -f docker/mtconnect_arm64.Dockerfile --push .",
+    "deploy:service:mdcflash": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && buil&& scp services/mdclflash/*.service $INSTALL_HOST:/etc/systemd/system && ssh $INSTALL_HOST systemctl enable mdclflash.service && ssh $INSTALL_HOST systemctl start mdclflash.service",
     "test": "jest",
     "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight",
     "copy_mtc_conf": "scp -r _mdclight/mtc_config/MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",

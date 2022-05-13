@@ -1,4 +1,12 @@
-import { writeFileSync, readdirSync, readFileSync, existsSync } from 'fs';
+import {
+  writeFileSync,
+  readdirSync,
+  readFileSync,
+  existsSync,
+  access,
+  readdir,
+  constants
+} from 'fs';
 import { exec, execSync } from 'child_process';
 import { exit } from 'process';
 
@@ -14,8 +22,8 @@ type TLedColors = 'red' | 'green' | 'orange';
  * If button is clicked triggers flashing from USB port to internal eMMC drive.
  */
 class MDCLFlasher {
-  #ledPathRed = '/sys/class/leds/user-led1-red/brightness';
-  #ledPathGreen = '/sys/class/leds/user-led1-green/brightness';
+  #ledPathRed = '/sys/class/leds/user-led<NUMBER>-red/brightness';
+  #ledPathGreen = '/sys/class/leds/user-led<NUMBER>-green/brightness';
   #gpioExportPath = '/sys/class/gpio/export';
   #gpioChipPath =
     '/sys/devices/platform/interconnect@100000/interconnect@100000:interconnect@28380000/interconnect@100000:interconnect@28380000:interconnect@42040000/42110000.wkup_gpio0/gpio';
@@ -25,19 +33,19 @@ class MDCLFlasher {
   readonly #watchDurationMs = 3000;
   readonly #pollingIntervalMs = 250;
   readonly #durationPollRatio = this.#watchDurationMs / this.#pollingIntervalMs;
-  #blinkTimers = [];
+  #blinkTimers = {
+    1: [],
+    2: []
+  };
+  #fwFlasher: FWFlasher = new FWFlasher(this);
 
   constructor() {
     this.setupGPIOPaths();
     this.clearAll();
 
-    // process.on('SIGKILL', () => {
-    //   this.clearAll();
-    //   exit(0);
-    // });
-
     this.initUserButtonWatcher();
-    this.blink(500, 'green');
+    this.blink(500, 'green', 1);
+    this.blink(500, 'green', 2);
   }
 
   /**
@@ -67,13 +75,21 @@ class MDCLFlasher {
   private initUserButtonWatcher(): void {
     console.log('Starting mdcflash service. Watching user button...');
     this.#userButtonWatcher = setInterval(() => {
-      const value = readFileSync(this.#userButtonPath).toString('utf8').trim();
+      const value = readFileSync(this.#userButtonPath)
+        .toString('utf8')
+        .trim();
       if (value === '0') {
         this.#lastButtonCount++;
         if (this.#lastButtonCount >= this.#durationPollRatio) {
-          this.stopBlink();
+          this.stopBlink(1);
           clearInterval(this.#userButtonWatcher);
-          this.transferData();
+          this.transferData()
+            .then(() => {
+              return this.fixGPT();
+            })
+            .then(() => {
+              this.#fwFlasher.flash();
+            });
         }
         return;
       }
@@ -84,11 +100,15 @@ class MDCLFlasher {
   /**
    * Start blinking of the user led.
    */
-  private blink(interval: number, color: TLedColors = 'green') {
-    let paths: Array<string> = this.getLedPaths(color);
+  public blink(
+    interval: number,
+    color: TLedColors = 'green',
+    number: 1 | 2 = 1
+  ) {
+    let paths: Array<string> = this.getLedPaths(color, number);
 
     const unset = () => {
-      this.#blinkTimers[1] = setTimeout(() => {
+      this.#blinkTimers[number][1] = setTimeout(() => {
         paths.forEach((path) => {
           writeFileSync(path, LED.OFF);
         });
@@ -96,7 +116,7 @@ class MDCLFlasher {
       }, interval / 2);
     };
     const set = () => {
-      this.#blinkTimers[0] = setTimeout(() => {
+      this.#blinkTimers[number][0] = setTimeout(() => {
         paths.forEach((path) => {
           writeFileSync(path, LED.ON);
         });
@@ -109,8 +129,8 @@ class MDCLFlasher {
   /**
    * Stop blinking of user led.
    */
-  private stopBlink() {
-    this.#blinkTimers.forEach((timer) => clearTimeout(timer));
+  public stopBlink(number: 1 | 2 = 2) {
+    this.#blinkTimers[number].forEach((timer) => clearTimeout(timer));
     this.clearAll();
   }
 
@@ -118,39 +138,48 @@ class MDCLFlasher {
    * Set all colors of user led off.
    */
   private clearAll() {
-    this.getLedPaths('orange').forEach((path) => {
+    [
+      ...this.getLedPaths('orange', 1),
+      ...this.getLedPaths('orange', 2)
+    ].forEach((path) => {
       writeFileSync(path, LED.OFF);
     });
   }
 
   /**
    * Led is growing without any interrupt.
+   * If duration = 0 LED is on permanently.
    */
-  private glow(duration: number, color: TLedColors) {
-    const paths = this.getLedPaths(color);
+  public glow(duration: number, color: TLedColors, number: 1 | 2 = 1) {
+    const paths = this.getLedPaths(color, number);
     paths.forEach((path) => {
       writeFileSync(path, LED.ON);
     });
-    setTimeout(() => {
-      paths.forEach((path) => {
-        writeFileSync(path, LED.OFF);
-      });
-    }, duration);
+    if (duration > 0) {
+      setTimeout(() => {
+        paths.forEach((path) => {
+          writeFileSync(path, LED.OFF);
+        });
+      }, duration);
+    }
   }
 
   /**
    * Get all files to be changed to mix a led color.
    */
-  private getLedPaths(color: TLedColors) {
+  private getLedPaths(color: TLedColors, number: 1 | 2 = 1) {
     switch (color) {
       case 'green': {
-        return [this.#ledPathGreen];
+        return [this.#ledPathGreen.replace('<NUMBER>', number.toString())];
       }
       case 'red': {
-        return [this.#ledPathRed];
+        return [this.#ledPathRed.replace('<NUMBER>', number.toString())];
       }
       case 'orange': {
-        return [this.#ledPathRed, this.#ledPathGreen];
+        return [
+          this.#ledPathRed.replace('<NUMBER>', number.toString()),
+          this.#ledPathGreen.replace('<NUMBER>', number.toString())
+        ];
       }
     }
   }
@@ -159,53 +188,170 @@ class MDCLFlasher {
    * Transfer data from USB to eMMC via child process.
    * Restart device after success or exit with status code 1 on any error.
    */
-  private transferData() {
+  private async transferData(): Promise<void> {
     console.log('Transferring data to /dev/mmcblk*boot1');
-
-    this.blink(1000, 'orange');
-    // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
-    const imagePath = '/root/iot-connector-light-os-*.img.gz';
-    let target;
-    try {
-      target = execSync('ls /dev/mmcblk*boot0 2>/dev/null | sed "s/boot0//"')
-        .toString('ascii')
-        .trim();
-    } catch (err) {
-      console.log(`Error due to detect target device. Abort`);
-      exit(1);
-    }
-    if (!target || target.length === 0) {
-      console.log(`Error due to detect target device. Abort`);
-      exit(1);
-    }
-
-    const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
-
-    const startDate = new Date();
-    exec(command, (err, _stdout, stderr) => {
-      const finishDate = new Date();
-      this.stopBlink();
-      if (err) {
-        console.error(err);
-        console.error(stderr);
-        this.blink(500, 'red');
-        setTimeout(() => {
+    return new Promise(async (res, rej) => {
+      this.blink(1000, 'orange');
+      // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
+      readdir('/root', async (err, files) => {
+        if (err) rej();
+        const filename = files.find((str) =>
+          /iot-connector[a-zA-Z-.\d]*\.img\.gz/.test(str)
+        );
+        if (!filename) rej({ msg: `No mdc lite image found. Abort!` });
+        const imagePath = `/root/${filename}`;
+        let target;
+        try {
+          await new Promise<void>((res, rej) => {
+            access(imagePath, constants.F_OK, (err) => {
+              if (err) rej({ msg: `No mdc lite image found. Abort!` });
+              res();
+            });
+          });
+          target = execSync(
+            'ls /dev/mmcblk*boot0 2>/dev/null | sed "s/boot0//"'
+          )
+            .toString('ascii')
+            .trim();
+        } catch (err) {
+          console.log(err.msg || `Error due to detect target device. Abort`);
           exit(1);
-        }, 10000);
-        return;
-      }
-      console.log(
-        `Data successfully transferred to internal MCC. Shutting down. Finished after: ${
-          (finishDate.getTime() - startDate.getTime()) / 1000
-        }s`
-      );
-      console.log(_stdout);
+        }
+        if (!target || target.length === 0) {
+          console.log(`Error due to detect target device. Abort`);
+          exit(1);
+        }
 
-      this.glow(10000, 'green');
+        const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
 
+        const startDate = new Date();
+        exec(command, (err, stdout, stderr) => {
+          const finishDate = new Date();
+          this.stopBlink();
+          if (err || stderr !== '') {
+            console.error(err);
+            console.error(stderr);
+            this.blink(500, 'red');
+            setTimeout(() => {
+              exit(1);
+            }, 10000);
+          }
+          console.log(
+            `Data successfully transferred to internal MCC. Finished after: ${
+              (finishDate.getTime() - startDate.getTime()) / 1000
+            }s`
+          );
+          console.log(stdout);
+
+          this.glow(0, 'green');
+          res();
+        });
+      });
+    });
+  }
+
+  private fixGPT(): Promise<void> {
+    const cmd = `sgdisk /dev/mmcblk1 -e`;
+    return new Promise<void>((res, rej) => {
+      exec(cmd, (err, _stdout, stderr) => {
+        if (err || stderr !== '') {
+          console.log(`Error fixing Boot sector`);
+          rej();
+        }
+        console.log(`Boot sector fixed.`);
+        res();
+      });
+      res();
+    });
+  }
+}
+
+class FWFlasher {
+  #flashCommand = `iot2050-firmware-update /root/IOT2050*`;
+  #checkCommand = `fw_printenv fw_version`;
+  #installedVersion: string;
+  #newVersion: string;
+
+  constructor(private mdclFlasher: MDCLFlasher) {}
+
+  public async flash() {
+    console.log(`Starting firmware flashing.`);
+    const shutdown = () => {
       setTimeout(() => {
+        console.log(`Rebooting`);
         execSync('sudo /sbin/shutdown now');
-      }, 10000);
+      }, 10_000);
+    };
+    this.mdclFlasher.stopBlink(2);
+    if (!(await this.checkFWVersion())) {
+      console.log(
+        `Installed firmware version is higher or equal to installable firmware version`
+      );
+      this.mdclFlasher.glow(0, 'green', 2);
+      shutdown();
+      exit(0);
+    }
+    this.mdclFlasher.blink(1000, 'orange', 2);
+    console.log('Nach blink orange');
+    const proc = exec(this.#flashCommand, (err, _stdout, stderr) => {
+      console.log(
+        `Flash ausgeführt ${JSON.stringify(err)} ${JSON.stringify(
+          _stdout
+        )} ${JSON.stringify(stderr)}`
+      );
+      this.mdclFlasher.stopBlink(2);
+      if (err || stderr !== '') {
+        this.mdclFlasher.glow(0, 'red', 2);
+        console.log(`Update firmware failed due to ${err || stderr}`);
+        exit(1);
+      }
+
+      console.log(
+        `Firmware version successfully installed from ${
+          this.#installedVersion
+        } to ${this.#newVersion}. Reboot after 10 seconds.`
+      );
+
+      shutdown();
+    });
+    let count = 1;
+    proc.stdout.on('data', (data) => {
+      if (count > 0) {
+        count--;
+        proc.stdin.write('y');
+        proc.stdin.end();
+      }
+    });
+  }
+
+  private async checkFWVersion(): Promise<boolean> {
+    return new Promise((res, _rej) => {
+      readdir('/root', (err, files) => {
+        if (err) res(false);
+        const filename = files.find((str) =>
+          /IOT2050-[-a-zA-Z.0-9]*.tar.xz/.test(str)
+        );
+        const newVersion = filename
+          .match(/V[\d]{2}.[\d]{2}.[\d]{2}/)
+          .toString()
+          .replace('V', '')
+          .split('.');
+        exec(this.#checkCommand, (err, stdout, stderr) => {
+          if (err || stderr !== '') {
+            res(false);
+          }
+          const [_date, version, _unknown, _buildnumber] = stdout
+            .replace('fw_version=', '')
+            .split('-');
+          const installedVersion = version.split('.');
+          for (const [index, newV] of newVersion.entries()) {
+            if (newV > installedVersion[index]) {
+              res(true);
+            }
+          }
+          res(false);
+        });
+      });
     });
   }
 }

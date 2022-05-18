@@ -28,3 +28,9 @@ export class AdapterError extends NorthBoundError {
     super(msg, code)
   }
 }
+
+export class LicenseError extends Error {
+  constructor(msg: string, public code?: string) {
+    super(msg)
+  }
+}

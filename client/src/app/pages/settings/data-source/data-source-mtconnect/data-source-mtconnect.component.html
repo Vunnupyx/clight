@@ -202,6 +202,11 @@
                 <mat-icon class="color-success">check_circle_outline</mat-icon>
               </ng-container>
               <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NoLicense"
+              >
+                <mat-icon class="color-danger">highlight_off</mat-icon>
+              </ng-container>
+              <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
               >
                 <mat-icon class="color-danger">highlight_off</mat-icon>

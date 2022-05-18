@@ -3,7 +3,7 @@ import { IErrorEvent, ILifecycleEvent } from '../../../../common/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
 import { VirtualDataPointManager } from '../../../VirtualDataPointManager';
 import { ConfigManager } from '../../../ConfigManager';
-import { LedStatusService } from '../../../LedStatusService';
+import { LicenseChecker } from '../../../LicenseChecker';
 
 export interface IDataSourcesManagerParams {
   configManager: ConfigManager;
@@ -12,5 +12,5 @@ export interface IDataSourcesManagerParams {
   errorBus: EventBus<IErrorEvent>;
   measurementsBus: MeasurementEventBus;
   lifecycleBus: EventBus<ILifecycleEvent>;
-  ledManager: LedStatusService
+  licenseChecker: LicenseChecker
 }

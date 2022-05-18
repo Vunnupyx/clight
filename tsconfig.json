@@ -42,7 +42,8 @@
   "include": ["src/**/*.ts", "../docs/developer/DataSources/decoder.tsa"],
   "exclude": [
     "node_modules/**",
-    "src/modules/LocalNetworkConfigurationServer/client"
+    "src/modules/LocalNetworkConfigurationServer/client",
+    "src/**/*.test.ts"
   ],
   "compileOnSave": false
 }

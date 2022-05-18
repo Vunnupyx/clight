@@ -63,7 +63,8 @@ export enum LifecycleEventStatus {
   Reconnecting = 'reconnecting',
   ConnectionError = 'failedtoconnect',
   Unavailable = 'unavailable',
-  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted',
+  NoLicense = 'nolicense'
 }
 
 export interface IBaseAppEvent {

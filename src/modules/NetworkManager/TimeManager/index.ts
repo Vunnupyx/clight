@@ -63,14 +63,17 @@ export class TimeManager {
    */
   public static async setNTPServer(ntpServerIP: string): Promise<void> {
     const logPrefix = `TimeManager::setNTPServer`;
-
-    await this.testNTPServer(ntpServerIP).catch(() => {
+    try {
+      await this.testNTPServer(ntpServerIP)
+    } catch (error) {
       return Promise.reject(
         `${ntpServerIP} is not available or is not a valid NTP server.`
       );
-    });
+    }
+    
     const readCommand = `cat ${TimeManager.CONFIG_PATH}`;
-    var { stdout: currentConfig, stderr } = await SshService.sendCommand(
+
+    let { stdout: currentConfig, stderr } = await SshService.sendCommand(
       readCommand
     );
     if (stderr !== '') {
@@ -171,26 +174,23 @@ export class TimeManager {
     const logPrefix = `TimeManager::testNTPServer`;
     winston.debug(`${logPrefix} start testing: ${server}`);
 
-    await new Promise<void>(async (res, rej) => {
-      let testInterfaceRes = null;
+    return new Promise<void>(async (res, rej) => {
+      let testInterfaceRes;
       try {
         testInterfaceRes = await SshService.sendCommand(
           'nmcli -g GENERAL.STATE con show eth0-default'
         );
       } catch (e) {
-        winston.warn(
-          'Not testing ntp server. Could not check interface state!'
-        );
-        rej('Not testing ntp server. Could not check interface state!');
-        return;
+        const warn = `Not testing ntp server. Could not check interface state!`;
+        winston.warn(warn);
+        return rej(warn);
       }
 
       if (testInterfaceRes.stdout.trim() !== 'activated') {
         winston.warn(
           `Not testing ntp server. Interface is down! (Response: "${testInterfaceRes.stdout}"`
         );
-        rej('Not testing ntp server. Interface is down!');
-        return;
+        return rej('Not testing ntp server. Interface is down!');
       }
 
       const client = createSocket('udp4');

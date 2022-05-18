@@ -30,3 +30,7 @@ logs/
 *.img
 *.img.gz
 *.img.zip
+_mdclight/local/ssl*
+_mdclight/local/config/*
+_mdclight/local/fakeSSH/**
+_mdclight/local/logs/*

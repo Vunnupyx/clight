@@ -26,6 +26,7 @@ export class LedStatusService {
   #southboundConnected = false;
   #configCheckRunning = false;
   #sysfsPrefix = '';
+  private locked = false;
 
   constructor(
     private configManager: ConfigManager,
@@ -99,6 +100,10 @@ export class LedStatusService {
   ): void {
     const logPrefix = `LedStatusService::blink`;
     let paths;
+    if (ledNumber === 2 && this.locked) {
+      winston.warn(`${logPrefix} can not set LED 2 to blink mode because LED is locked by invalid license.`);
+      return;
+    }
     switch (color) {
       case 'green': {
         paths = [this.getLedPathByNumberAndColor(ledNumber, color)];
@@ -151,8 +156,8 @@ export class LedStatusService {
           set();
         }, OnDurationMs);
       };
+      unset();
     }
-    this.setLed(paths);
   }
 
   /**
@@ -160,6 +165,10 @@ export class LedStatusService {
    */
   private async clearLed(ledNumber: 1 | 2) {
     const logPrefix = `LedStatusService::clearLed`;
+    if(this.locked && ledNumber === 2) {
+      winston.warn(`${logPrefix} can not clear LED 2 because LED is locked by invalid license.`);
+      return;
+    }
     const paths = [
       this.getLedPathByNumberAndColor(ledNumber, 'red'),
       this.getLedPathByNumberAndColor(ledNumber, 'green')
@@ -197,7 +206,11 @@ export class LedStatusService {
   private getLedPathByNumberAndColor(
     ledNumber: 1 | 2,
     color: 'red' | 'green'
-  ): PathLike {
+  ): PathLike | null {
+    if(this.locked && ledNumber === 2) {
+      winston.warn(`LedStatusService::getLedPathByNumberAndColor can not generate LED2 path because LED is locked by invalid license.`);
+      return null;
+    }
     return `${this.#sysfsPrefix}/sys/class/leds/user-led${ledNumber.toString(
       10
     )}-${color}/brightness`;
@@ -327,19 +340,45 @@ export class LedStatusService {
   }
 
   /**
-   * Set LED for display of runtime status.
+   * Set/unset LED2 for display of runtime status.
    */
   public runTimeStatus(status: boolean): void {
     const logPrefix = `LedStatusService::runTimeStatus`;
 
-    const path = this.getLedPathByNumberAndColor(2, 'green');
-    status ? this.setLed([path]) : this.unsetLed([path]);
+    if(this.locked) {
+      winston.warn(`${logPrefix} can not ${status ? 'set' : 'unset '} runtime status because LED is locked by invalid license.`);
+      return;
+    }
 
-    winston.info(
-      `${logPrefix} set USER LED 2 to ${
-        status ? 'ON' : 'OFF'
-      } (Runtime status: ${status ? 'RUNNING' : 'NOT RUNNING'})`
-    );
+    const path = this.getLedPathByNumberAndColor(2, 'green');
+    this.clearLed(2).then(() => {
+      if(status) {
+        this.setLed([path]);
+        winston.info(
+          `${logPrefix} set USER LED 2 to ${
+            status ? 'green' : 'OFF'
+          } (Runtime status: ${status ? 'RUNNING' : 'NOT RUNNING'})`
+        );
+      }
+    })
+  }
+
+  /**
+   * Set LED 2 blinking red.
+   */
+  public setLicenseInvalid(): void {
+    const logPrefix = `LedStatusService::setLicenseInvalid`;
+    if(this.locked) {
+      winston.warn(`${logPrefix} already set.`);
+      return;
+    }
+    winston.info(`${logPrefix} start.`);
+    this.clearLed(2).then(() => {
+      this.blink(2, 500, 500, 'red');
+      this.locked = true;
+      winston.info(`${logPrefix} succeeded.`);
+    })
+    
   }
 
   /**
@@ -348,6 +387,10 @@ export class LedStatusService {
    * @returns
    */
   private async setSysfsPrefix() {
+    if (process.env.MOCK_LEDS) {
+      this.#sysfsPrefix = process.env.MOCK_LEDS;
+      return; 
+    }
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
       if (board.indexOf('SIMATIC IOT2050') >= 0) {

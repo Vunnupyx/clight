@@ -168,9 +168,9 @@ export class DataHubAdapter {
    */
   public async init(): Promise<DataHubAdapter> {
     const logPrefix = `${DataHubAdapter.#className}::init`;
-
+    
     this.#serialNumber = (
-      (await new System().readMacAddress('eth1')) || '000000000000'
+      (await new System().readMacAddress('eth0')) || '000000000000'
     )
       .split(':')
       .join('');

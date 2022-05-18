@@ -11,6 +11,7 @@ import { ConfigManager } from '../../../ConfigManager';
 import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
 import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
+import { LicenseChecker } from '../../../LicenseChecker';
 import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
 import { DataHubDataSink, DataHubDataSinkOptions } from '../DataHubDataSink';
 import { DataSink } from '../DataSink';
@@ -30,6 +31,7 @@ export interface IDataSinkManagerParams {
   errorBus: EventBus<IErrorEvent>;
   measurementsBus: MeasurementEventBus;
   lifecycleBus: EventBus<ILifecycleEvent>;
+  licenseChecker: LicenseChecker
 }
 
 /**
@@ -46,6 +48,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private dataAddedDuringRestart = false;
   private dataSinkConnectRetryTimer: NodeJS.Timer;
   private sinksRetryCount: number = 0;
+  private licenseChecker: LicenseChecker;
 
   constructor(params: IDataSinkManagerParams) {
     super();
@@ -55,12 +58,13 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
+    this.licenseChecker = params.licenseChecker;
   }
 
   private init(): Promise<DataSinksManager> {
     const logPrefix = `${DataSinksManager.#className}::init`;
     winston.info(`${logPrefix} initializing.`);
-
+   
     this.createDataSinks();
     const initMethods = this.dataSinks.map((sink) => sink.init());
     return Promise.allSettled(initMethods)
@@ -97,7 +101,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Creates all configures data sinks
    */
-  public createDataSinks(): void {
+  private createDataSinks(): void {
     const logPrefix = `${DataSinksManager.#className}::createDataSinks`;
     winston.info(`${logPrefix} creating.`);
 
@@ -106,7 +110,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT),
       mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config.termsAndConditions.accepted,
+        licenseChecker: this.licenseChecker
     };
 
     const opcuaDataSinkOptions: IOPCUADataSinkOptions = {
@@ -115,14 +120,16 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       generalConfig: this.configManager.config.general,
       runtimeConfig: this.configManager.runtimeConfig.opcua,
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config.termsAndConditions.accepted,
+        licenseChecker: this.licenseChecker
     };
     const dataHubDataSinkOptions: DataHubDataSinkOptions = {
       mapping: this.configManager.config.mapping,
       dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
       runTimeConfig: this.configManager.runtimeConfig.datahub,
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config.termsAndConditions.accepted,
+      licenseChecker: this.licenseChecker
     };
 
     this.configManager.config.dataSinks.forEach((sink) => {

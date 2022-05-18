@@ -42,9 +42,8 @@
           </div>
 
           <div>
-            <mat-checkbox
-              [checked]="!!(termsAccepted$ | async)"
-              (change)="onAcceptChange($event)"
+            <mat-checkbox 
+              [(ngModel)]="termsAccepted"
               >{{ 'quick-start.Accept' | translate }}</mat-checkbox
             >
           </div>
@@ -58,7 +57,8 @@
           <button
             mat-raised-button
             matStepperNext
-            [disabled]="!(termsAccepted$ | async)"
+            (click)="onAcceptClicked()"
+            [disabled]="!termsAccepted"
           >
             {{ 'quick-start.Next' | translate }}
           </button>

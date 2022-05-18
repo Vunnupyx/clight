@@ -37,7 +37,7 @@ export class OPCUADataSink extends DataSink {
     this.opcuaAdapter = new OPCUAAdapter({
       config: options.dataSinkConfig,
       generalConfig: options.generalConfig,
-      runtimeConfig: options.runtimeConfig
+      runtimeConfig: options.runtimeConfig,
     });
     this.generalConfig = options.generalConfig;
   }
@@ -45,6 +45,12 @@ export class OPCUADataSink extends DataSink {
   public async init(): Promise<OPCUADataSink> {
     const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
+
+    if(!this.licenseChecker.isLicensed) {
+      winston.warn(`${logPrefix} no valid license found. Stop initializing.`)
+      this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
+      return this;
+    }
 
     if (!this.enabled) {
       winston.info(

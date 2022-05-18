@@ -498,7 +498,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     publicKey: string;
   }> {
     const logPrefix = `${ConfigManager.className}::loadJwtPrivateKey`;
-    winston.info(`${logPrefix} laoding jwt key pair.`);
+    winston.info(`${logPrefix} loading jwt key pair.`);
 
     try {
       const privateKeyPath = path.join(this.keyFolder, this.privateKeyName);

@@ -3,6 +3,7 @@ import {
   IBaseLifecycleEvent,
   LifecycleEventStatus
 } from '../../../common/interfaces';
+import { LicenseChecker } from '../../LicenseChecker';
 
 export interface IDataSourceLifecycleEvent extends IBaseLifecycleEvent {
   dataSource: IDataSourceEvent;
@@ -19,6 +20,7 @@ export interface IMeasurement {
 export interface IDataSourceParams {
   readonly config: IDataSourceConfig;
   readonly termsAndConditionsAccepted: boolean;
+  readonly licenseChecker: LicenseChecker
 }
 
 export interface IDataSourceEvent {

@@ -1,9 +1,10 @@
+import winston from 'winston';
+import { LicenseError } from '../../common/errors';
+import { LedStatusService } from '../LedStatusService';
 import { System } from '../System';
 
-export class LicenseCheck {
+export class LicenseChecker {
   #macList = [
-    // dev
-    '00:00:00:00:00:00',
     // codestryke
     '8C:F3:19:29:BA:4A',
     '8C:F3:19:1E:BD:22',
@@ -43,21 +44,54 @@ export class LicenseCheck {
     '8C:F3:19:35:86:D3',
     '8C:F3:19:3A:0A:74'
   ];
-  #system = new System();
+  private _isLicensed: boolean = null;
+  private system = new System();
+  private _ledManager: LedStatusService;
 
-  public async checkLicense(): Promise<true> {
-    const logPrefix = `${this.constructor.name}::checkMAC`;
-    let mac = await this.#system.readMacAddress('eth0');
 
-    if (mac === null && process.env.NODE_ENV === 'development')
-      mac = '00:00:00:00:00:00';
+  async init(): Promise<void> {
+    const logPrefix = `${this.constructor.name}::init`;
+    winston.info(`${logPrefix} initializing...`);
+    if (!this._ledManager) {
+      winston.warn(`${logPrefix} LedStatusService not available!`);
+      return Promise.reject();
+    }
+    if(this._isLicensed !== null) {
+      winston.info(`${logPrefix} already initialized`);
+      return Promise.resolve();
+    };
+    let mac = await this.system.readMacAddress('eth0');
+
+    const initialized = `${logPrefix} initialized.`;
+    if (mac === null && process.env.NODE_ENV === 'development') {
+      this._isLicensed = true;
+      winston.info(initialized);
+      return Promise.resolve();
+    }
 
     if (!this.#macList.includes(mac)) {
-      throw {
-        msg: `${logPrefix} License is not valid! Please contact support.`,
-        code: 'LICENSE_CHECK_FAILED'
-      };
+      winston.warn(
+        `${logPrefix} License is not valid! Please contact support.`
+      );
+      this._ledManager.setLicenseInvalid();
+      this._isLicensed = false;
+      return Promise.resolve();
     }
-    return true;
+    this._isLicensed = true;
+    winston.info(initialized);
+  }
+
+  set ledManager(manager: LedStatusService) {
+    this._ledManager = manager;
+  }
+
+  get isLicensed(): boolean {
+    const logPrefix = `${this.constructor.name}::isLicensed`;
+    if (this._isLicensed === null) {
+      const msg = `${logPrefix} calling before initialized.`;
+      winston.error(msg);
+      throw new LicenseError(msg, 'NOT_YET_INITIATED');
+    }
+    return this._isLicensed;
   }
 }

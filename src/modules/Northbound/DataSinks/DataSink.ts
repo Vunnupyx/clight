@@ -11,6 +11,7 @@ import {
 import { DataPointMapper } from '../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { isEmpty } from 'lodash';
+import { LicenseChecker } from '../../LicenseChecker';
 
 export enum DataSinkStatus {
   CONNECTING = 'CONNECTING',
@@ -29,6 +30,7 @@ export interface IDataSinkOptions {
   mapping: IDataPointMapping[];
   dataSinkConfig: IDataSinkConfig;
   termsAndConditionsAccepted: boolean;
+  licenseChecker: LicenseChecker
 }
 
 /**
@@ -42,6 +44,7 @@ export abstract class DataSink {
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected enabled = false;
   protected termsAndConditionsAccepted = false;
+  protected licenseChecker: LicenseChecker;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -52,6 +55,7 @@ export abstract class DataSink {
     this.dataPointMapper = new DataPointMapper(options.mapping);
     this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
     this.enabled = options.dataSinkConfig.enabled;
+    this.licenseChecker = options.licenseChecker;
   }
 
   /**

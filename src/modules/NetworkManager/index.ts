@@ -75,11 +75,10 @@ export default class NetworkManagerCliController {
     } catch (e) {
       if (config.dhcp && e.stderr.includes('at this time')) {
         winston.warn(
-          `Could not activate on ${networkInterface} - error ignored because DHCP server might not be available`
+          `${logPrefix} could not activate on ${networkInterface} - error ignored because DHCP server might not be available`
         );
       } else {
-        winston.error('Failed to set network configuration');
-        winston.error(e);
+        winston.error(`${logPrefix} failed to set network configuration due to ${e.stderr.trim() || JSON.stringify(e)}`);
         return Promise.reject(e);
       }
     }

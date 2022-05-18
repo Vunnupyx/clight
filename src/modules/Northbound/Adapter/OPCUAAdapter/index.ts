@@ -21,7 +21,6 @@ import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import path from 'path';
 import { compare } from 'bcrypt';
 import { System } from '../../../System';
-import { hostname } from 'os';
 
 interface IOPCUAAdapterOptions {
   config: IDataSinkConfig;

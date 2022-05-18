@@ -13,6 +13,7 @@
     "DataSinks": "Anwendungs Schnittstellen",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen",
+    "ChangePassword": "",
     "Logout": "Logout"
   },
   "auth-login": {

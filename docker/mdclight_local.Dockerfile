@@ -10,6 +10,7 @@ RUN mkdir /root/.ssh/
 COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
 COPY _mdclight/opcua_nodeSet /runTimeFiles/nodeSets
 COPY _mdclight/runtime.json /runTimeFiles/
+
 RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 
@@ -21,7 +22,7 @@ RUN mv build/main app
 
 WORKDIR /app
 
-ENV LOG_LEVEL=debug
+ENV LOG_LEVEL=info
 ENV MDC_LIGHT_FOLDER=/
 
 

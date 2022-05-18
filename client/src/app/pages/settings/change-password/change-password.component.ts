@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 import { ProfileService } from '../../../services/profile.service';
 import { ChangePasswordRequest } from '../../../models/auth';
-import { AuthService, LocalStorageService } from 'app/shared';
+import { AuthService } from 'app/shared';
 
 @Component({
   selector: 'app-change-password',
@@ -25,7 +25,6 @@ export class ChangePasswordComponent implements OnInit {
     private toastr: ToastrService,
     private translate: TranslateService,
     private profileService: ProfileService,
-    private localStorageService: LocalStorageService,
     private authService: AuthService,
   ) {}
 
@@ -60,23 +59,23 @@ export class ChangePasswordComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  async onSubmit() {
     const data: ChangePasswordRequest = {
       oldPassword: this.changePassword.oldPassword,
       newPassword: this.changePassword.newPassword
     };
 
-    return this.profileService
-      .changePassword(data)
-      .then(() => {
-        this.authService.clearOldPassword();
-        this.toastr.success(
-          this.translate.instant(
-            'settings-change-password.ChangePasswordSuccess'
-          )
-        );
-        this.router.navigate(['/']);
-      })
-      .catch((error) => this.toastr.error(error.error.message));
+    try {
+      await this.profileService.changePassword(data);
+      this.authService.clearOldPassword();
+      this.toastr.success(
+        this.translate.instant(
+          'settings-change-password.ChangePasswordSuccess'
+        )
+      );
+      this.router.navigate(['/']);
+    } catch (error: any) {
+      this.toastr.error(error.error.message);
+    }
   }
 }

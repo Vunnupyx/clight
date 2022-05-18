@@ -35,6 +35,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   checkedSinks: { [key: string]: boolean } = {};
 
   shouldOpenTerms = true;
+  termsAccepted = false;
 
   sub = new Subscription();
 
@@ -66,10 +67,6 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     return this.termsService.termsText.pipe(distinctUntilChanged());
   }
 
-  get termsAccepted$() {
-    return this.termsService.accepted.pipe(distinctUntilChanged());
-  }
-
   constructor(
     private templateService: TemplateService,
     private termsService: TermsAndConditionsService,
@@ -80,7 +77,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.templateForm = this.formBuilder.group({
       templateId: ['', Validators.required]
     });
@@ -107,17 +104,17 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     );
 
     this.templateService.getAvailableTemplates();
-    this.termsService
-      .getTermsAndConditions(this.currentLang)
-      .then((accepted) => (this.shouldOpenTerms = !accepted));
+    const accepted = await this.termsService.getTermsAndConditions(this.currentLang);
+    this.termsAccepted = accepted;
+    this.shouldOpenTerms = !accepted;
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
 
-  onAcceptChange(event) {
-    this.termsService.accept(event.checked);
+  onAcceptClicked() {
+    this.termsService.accept(this.termsAccepted);
   }
 
   onTemplateChange() {
@@ -196,12 +193,14 @@ export class QuickStartComponent implements OnInit, OnDestroy {
       data: new ConfirmDialogModel(title, message)
     });
 
-    dialogRef.afterClosed().subscribe((dialogResult) => {
+    dialogRef.afterClosed().subscribe(async (dialogResult) => {
       if (!dialogResult) {
         return;
       }
 
-      this.templateService.skip().then(() => this.router.navigate(['/']));
+      await this.termsService.accept(this.termsAccepted);
+      await this.templateService.skip();
+      this.router.navigate(['/']);
     });
   }
 

@@ -79,7 +79,7 @@ export class VirtualDataPointManager {
   private greater(
     sourceEvents: IDataSourceMeasurementEvent[], 
     config: IVirtualDataPointConfig, equal: boolean = false): boolean | null {
-      const logPrefix = `${this.constructor.name}::greater`;
+      const logPrefix = `${this.constructor.name}::greater${equal ? '(Equal)' : ''}`;
       if (sourceEvents.length > 1 || sourceEvents.length === 0) {
         winston.warn(`${logPrefix} is only available for one source but receive ${sourceEvents.length}`);
         return null;
@@ -94,9 +94,9 @@ export class VirtualDataPointManager {
       switch (typeof value) {
         case 'number': {
           if (equal) {
-            result = (value >= compare
+            result = value >= compare
           } else {
-            result = (value > compare)
+            result = value > compare
           }
           return result; 
         };
@@ -110,6 +110,54 @@ export class VirtualDataPointManager {
             result = parsed>= compare;
           } else {
             result = parsed > compare;
+          }
+          return result;
+        };
+        case 'boolean': {
+          winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+          return null;
+        };
+        default: {
+          winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+          return null;
+        }
+      }
+  }
+
+  private smaller(
+    sourceEvents: IDataSourceMeasurementEvent[], 
+    config: IVirtualDataPointConfig, equal: boolean = false): boolean | null {
+      const logPrefix = `${this.constructor.name}::smaller ${equal ? '(Equal)' : ''}`;
+      if (sourceEvents.length > 1 || sourceEvents.length === 0) {
+        winston.warn(`${logPrefix} is only available for one source but receive ${sourceEvents.length}`);
+        return null;
+      }
+      if (typeof config.comparativeValue !== 'number') {
+        winston.warn(`${logPrefix} got ${config.comparativeValue} for comparison but is only available for 'number' values.`);
+        return null;
+      }
+      const value = sourceEvents[0].measurement.value;
+      const compare = config.comparativeValue;
+      let result: boolean;
+      switch (typeof value) {
+        case 'number': {
+          if (equal) {
+            result = value <= compare
+          } else {
+            result = value < compare
+          }
+          return result; 
+        };
+        case 'string': {
+          const parsed = parseFloat(value);
+          if (isNaN(parsed)) {
+            winston.error(`${logPrefix} no valid number.`)
+            return null;
+          }
+          if (equal) {
+            result = parsed <= compare;
+          } else {
+            result = parsed < compare;
           }
           return result;
         };
@@ -261,6 +309,10 @@ export class VirtualDataPointManager {
         return this.greater(sourceEvents, config);
       case 'greaterEqual':
         return this.greater(sourceEvents, config, true);
+      case 'smaller': 
+        return this.smaller(sourceEvents, config);
+      case 'smallerEqual':
+        return this.smaller(sourceEvents, config, true);
       default:
         winston.warn(
           `Invalid type (${config.operationType}) provided for virtual data point ${config.id}!`

@@ -244,7 +244,7 @@ export function isDataPointMapping(obj: any): obj is IDataPointMapping {
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds' | 'greater' | 'greaterEqual';
+  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds' | 'greater' | 'greaterEqual' | 'smaller' | 'smallerEqual';
   thresholds?: ITargetDataMap;
   comparativeValue: string | number;
 }

@@ -383,6 +383,8 @@ export class VirtualDataPointManager {
         return this.smaller(sourceEvents, config, true);
       case 'equal': 
         return this.equal(sourceEvents, config);
+      case 'unequal':
+        return this.unequal(sourceEvents, config);
       default:
         winston.warn(
           `Invalid type (${config.operationType}) provided for virtual data point ${config.id}!`

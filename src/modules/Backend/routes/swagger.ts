@@ -1521,7 +1521,7 @@ export default {
         },
         operationType: {
           type: 'string',
-          enum: ['and', 'or', 'not', 'counter]']
+          enum: ["and", "or", "not", "counter", "thresholds", "greater", "greaterEqual"]
         }
       }
     },

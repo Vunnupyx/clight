@@ -174,35 +174,24 @@ export class VirtualDataPointManager {
         winston.warn(`${logPrefix} is only available for one source but receive ${sourceEvents.length}`);
         return null;
       }
-      if (typeof config.comparativeValue !== 'number') {
-        winston.warn(`${logPrefix} got ${config.comparativeValue} for comparison but is only available for 'number' values.`);
-        return null;
-      }
       const value = sourceEvents[0].measurement.value;
       const compare = config.comparativeValue;
       switch (typeof value) {
         case 'number': {
           // Correct method to compare
           // floating-point numbers
-          if (Math.abs(compare - value) < 1e-9) {
+          if (typeof compare === 'number' && Math.abs(compare - value) < 1e-9) {
             return true;
           } else {
             return false;
           }
         };
         case 'string': {
-          const parsed = parseFloat(value);
-          if (isNaN(parsed)) {
-            winston.error(`${logPrefix} no valid number.`)
+          if(typeof compare !== 'string') {
+            winston.warn(`${logPrefix} try to compare string with non string value: ${compare}`);
             return null;
           }
-          // Correct method to compare
-          // floating-point numbers
-          if (Math.abs(compare - parsed) < 1e-9) {
-            return true;
-          } else {
-            return false;
-          }
+          return value.trim() === compare.trim();
         };
         case 'boolean': {
           winston.warn(`${logPrefix} boolean is not a valid compare value.`);
@@ -213,6 +202,12 @@ export class VirtualDataPointManager {
           return null;
         }
       }
+  }
+
+  private unequal(
+    sourceEvents: IDataSourceMeasurementEvent[], 
+    config: IVirtualDataPointConfig): boolean | null {
+      return !this.equal(sourceEvents, config);
   }
 
   /**

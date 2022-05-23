@@ -76,6 +76,14 @@ export class VirtualDataPointManager {
     return retValue;
   }
 
+  /**
+   * Check if value of sourceEvents first entry is greater the compare value config.comparativeValue.
+   * 
+   * @param sourceEvents  Array of measurements
+   * @param config operation config
+   * @param equal optional parameter to check for >= instead of >
+   * @returns true if it is greater, false if not and null if something went wrong.
+   */
   private greater(
     sourceEvents: IDataSourceMeasurementEvent[], 
     config: IVirtualDataPointConfig, equal: boolean = false): boolean | null {
@@ -120,6 +128,14 @@ export class VirtualDataPointManager {
       }
   }
 
+   /**
+   * Check if value of sourceEvents first entry is smaller the compare value config.comparativeValue.
+   * 
+   * @param sourceEvents  Array of measurements
+   * @param config operation config
+   * @param equal optional parameter to check for <= instead of <
+   * @returns true if it is smaller, false if not and null if something went wrong.
+   */
   private smaller(
     sourceEvents: IDataSourceMeasurementEvent[], 
     config: IVirtualDataPointConfig, equal: boolean = false): boolean | null {
@@ -166,6 +182,13 @@ export class VirtualDataPointManager {
       }
   }
 
+   /**
+   * Check if value of sourceEvents first entry is equal the compare value config.comparativeValue.
+   * 
+   * @param sourceEvents  Array of measurements
+   * @param config operation config
+   * @returns true if it is equal, false if not and null if something went wrong.
+   */
   private equal(
     sourceEvents: IDataSourceMeasurementEvent[], 
     config: IVirtualDataPointConfig): boolean | null {
@@ -204,6 +227,13 @@ export class VirtualDataPointManager {
       }
   }
 
+  /**
+   * Check if value of sourceEvents first entry is unequal the compare value config.comparativeValue.
+   * 
+   * @param sourceEvents  Array of measurements
+   * @param config operation config
+   * @returns true if it is unequal, false if not and null if something went wrong.
+   */
   private unequal(
     sourceEvents: IDataSourceMeasurementEvent[], 
     config: IVirtualDataPointConfig): boolean | null {

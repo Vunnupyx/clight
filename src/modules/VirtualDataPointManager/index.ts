@@ -194,7 +194,7 @@ export class VirtualDataPointManager {
    * @param  {IVirtualDataPointConfig} config
    * @returns boolean
    */
-  private calulateValue(
+  private calculateValue(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
   ): boolean | number | null {
@@ -266,7 +266,7 @@ export class VirtualDataPointManager {
       // Skip virtual data point if one or more source events are missing
       if (sourceEvents.some((event) => typeof event === 'undefined')) continue;
 
-      const value = this.calulateValue(sourceEvents, vdpConfig);
+      const value = this.calculateValue(sourceEvents, vdpConfig);
 
       if (value === null) {
         continue;

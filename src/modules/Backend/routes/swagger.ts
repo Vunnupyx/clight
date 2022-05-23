@@ -1522,6 +1522,9 @@ export default {
         operationType: {
           type: 'string',
           enum: ["and", "or", "not", "counter", "thresholds", "greater", "greaterEqual", "smaller", "smallerEqual", "equal", "unequal"]
+        },
+        reset: {
+          "type": "boolean"
         }
       }
     },

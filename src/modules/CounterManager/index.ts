@@ -51,9 +51,7 @@ export class CounterManager {
       this.counters[id] = 1;
     }
 
-    if (this.persist) {
-      fs.writeFileSync(this.counterStoragePath, JSON.stringify(this.counters));
-    }
+    this.saveToFile();
 
     return this.counters[id];
   }
@@ -65,5 +63,25 @@ export class CounterManager {
    */
   public getValue(id: string): number {
     return this.counters[id] || 0;
+  }
+
+  /**
+   * Rest counter to zero
+   * @param id identifier of the vdp counter
+   */
+  public reset(id: string): void {
+    const logPrefix = `CounterManager::reset`;
+    if (typeof this.counters[id] === 'undefined') {
+      winston.warn(`${logPrefix} try to reset unknown id: ${id} .`);
+      return;
+    }
+    this.counters[id] = 0;
+    this.saveToFile();
+  }
+
+  private saveToFile(): void {
+    if (this.persist) {
+      fs.writeFileSync(this.counterStoragePath, JSON.stringify(this.counters));
+    }
   }
 }

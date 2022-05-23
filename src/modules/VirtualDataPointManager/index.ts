@@ -468,4 +468,13 @@ export class VirtualDataPointManager {
 
     return virtualEvents;
   }
+
+  /**
+   * Set counter to 0
+   * @param id identifier of the virtual datapoint 
+   */
+  public resetCounter(id: string): void {
+    winston.info(`${this.constructor.name}::resetCounter `);
+    this.counters.reset(id);
+  }
 }

@@ -89,7 +89,8 @@ export class BootstrapManager {
       configManager: this.configManager,
       dataSourcesManager: this.dataSourcesManager,
       dataSinksManager: this.dataSinksManager,
-      dataPointCache: this.dataPointCache
+      dataPointCache: this.dataPointCache,
+      vdpManager: this.virtualDataPointManager
     });
 
     this.hwEvents = new IoT2050HardwareEvents();

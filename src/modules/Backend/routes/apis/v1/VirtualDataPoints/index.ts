@@ -1,8 +1,10 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, response, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import { VirtualDataPointManager } from '../../../../../VirtualDataPointManager';
 
 let configManager: ConfigManager;
+let vdpManager: VirtualDataPointManager;
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -10,6 +12,10 @@ let configManager: ConfigManager;
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
+}
+
+export function setVdpManager(config: VirtualDataPointManager) {
+  vdpManager = config;
 }
 
 /**
@@ -98,15 +104,19 @@ async function vdpDeleteHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  configManager.changeConfig(
-    'update',
-    'virtualDataPoints',
-    request.body,
-    (vdp) => {
-      return (vdp.id = request.body.id);
-    }
-  );
-  await configManager.configChangeCompleted();
+  if (request.body.reset && request.params.id) {
+    vdpManager.resetCounter(request.params.id);
+  } else {
+    configManager.changeConfig(
+      'update',
+      'virtualDataPoints',
+      request.body,
+      (vdp) => {
+        return (vdp.id = request.body.id);
+      }
+    );
+    await configManager.configChangeCompleted();
+  }
   response.status(200).json({
     changed: request.body,
     href: `/vdps/${request.body.id}`

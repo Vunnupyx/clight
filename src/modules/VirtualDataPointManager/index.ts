@@ -93,12 +93,10 @@ export class VirtualDataPointManager {
       let result: boolean;
       switch (typeof value) {
         case 'number': {
-          if (equal) {
-            result = value >= compare
-          } else {
-            result = value > compare
+          if (equal && Math.abs(compare - value) < 1e-9) {
+            return true;
           }
-          return result; 
+          return value > compare;
         };
         case 'string': {
           const parsed = parseFloat(value);
@@ -106,12 +104,10 @@ export class VirtualDataPointManager {
             winston.error(`${logPrefix} no valid number.`)
             return null;
           }
-          if (equal) {
-            result = parsed>= compare;
-          } else {
-            result = parsed > compare;
+          if (equal && Math.abs(compare - value) < 1e-9) {
+            return true;
           }
-          return result;
+          return parsed > compare;
         };
         case 'boolean': {
           winston.warn(`${logPrefix} boolean is not a valid compare value.`);
@@ -141,12 +137,12 @@ export class VirtualDataPointManager {
       let result: boolean;
       switch (typeof value) {
         case 'number': {
-          if (equal) {
-            result = value <= compare
-          } else {
-            result = value < compare
+          // Correct method to compare
+          // floating-point numbers
+          if (equal && Math.abs(compare - value) < 1e-9) {
+            return true;
           }
-          return result; 
+          return value < compare;
         };
         case 'string': {
           const parsed = parseFloat(value);
@@ -154,12 +150,59 @@ export class VirtualDataPointManager {
             winston.error(`${logPrefix} no valid number.`)
             return null;
           }
-          if (equal) {
-            result = parsed <= compare;
-          } else {
-            result = parsed < compare;
+          if (equal && Math.abs(compare - parsed) < 1e-9) {
+            return true;
           }
-          return result;
+          return parsed < compare;
+        };
+        case 'boolean': {
+          winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+          return null;
+        };
+        default: {
+          winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+          return null;
+        }
+      }
+  }
+
+  private equal(
+    sourceEvents: IDataSourceMeasurementEvent[], 
+    config: IVirtualDataPointConfig): boolean | null {
+      const logPrefix = `${this.constructor.name}::equal`;
+      if (sourceEvents.length > 1 || sourceEvents.length === 0) {
+        winston.warn(`${logPrefix} is only available for one source but receive ${sourceEvents.length}`);
+        return null;
+      }
+      if (typeof config.comparativeValue !== 'number') {
+        winston.warn(`${logPrefix} got ${config.comparativeValue} for comparison but is only available for 'number' values.`);
+        return null;
+      }
+      const value = sourceEvents[0].measurement.value;
+      const compare = config.comparativeValue;
+      switch (typeof value) {
+        case 'number': {
+          // Correct method to compare
+          // floating-point numbers
+          if (Math.abs(compare - value) < 1e-9) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        case 'string': {
+          const parsed = parseFloat(value);
+          if (isNaN(parsed)) {
+            winston.error(`${logPrefix} no valid number.`)
+            return null;
+          }
+          // Correct method to compare
+          // floating-point numbers
+          if (Math.abs(compare - parsed) < 1e-9) {
+            return true;
+          } else {
+            return false;
+          }
         };
         case 'boolean': {
           winston.warn(`${logPrefix} boolean is not a valid compare value.`);
@@ -313,6 +356,8 @@ export class VirtualDataPointManager {
         return this.smaller(sourceEvents, config);
       case 'smallerEqual':
         return this.smaller(sourceEvents, config, true);
+      case 'equal': 
+        return this.equal(sourceEvents, config);
       default:
         winston.warn(
           `Invalid type (${config.operationType}) provided for virtual data point ${config.id}!`

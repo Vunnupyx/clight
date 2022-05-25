@@ -112,7 +112,7 @@ export class VirtualDataPointManager {
             winston.error(`${logPrefix} no valid number.`)
             return null;
           }
-          if (equal && Math.abs(compare - value) < 1e-9) {
+          if (equal && Math.abs(compare - parsed) < 1e-9) {
             return true;
           }
           return parsed > compare;
@@ -310,7 +310,7 @@ export class VirtualDataPointManager {
       this.toBoolean(measurement.value) &&
       this.cache.hasChanged(measurement.id)
     ) {
-      return this.counters.increment(measurement.id);
+      return this.counters.increment(measurement.id, config.resetSchedule);
     }
 
     return null;

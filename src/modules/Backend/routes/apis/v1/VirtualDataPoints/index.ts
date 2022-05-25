@@ -106,6 +106,7 @@ async function vdpDeleteHandler(
 ): Promise<void> {
   if (request.body.reset && request.params.id) {
     vdpManager.resetCounter(request.params.id);
+    delete request.body.reset;
   } else {
     configManager.changeConfig(
       'update',

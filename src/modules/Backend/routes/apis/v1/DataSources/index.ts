@@ -6,6 +6,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
+import {exec} from 'child_process';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import {
   DataSourceProtocols,
@@ -291,6 +292,57 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
   response.status(200).json({ status });
 }
 
+/**
+ * Send ICMP ping to sps. Send back response with avg of ping
+ * 
+ * @param request 
+ * @param response 
+ */
+function pingNC(request: Request, response: Response) {
+  if(request.params.datasourceProtocol !== 's7') {
+    response.json({
+      error: {
+        msg: `Not possible for ${request.params.datasourceProtocol} source`
+      }
+    }).status(404);
+    return;
+  }
+  const {connection: {ipAddr: ip}} = configManager.config.dataSources.find((src) => {
+    return src.protocol === request.params.datasourceProtocol
+  })
+  if (!ip) {
+    response.json({
+      error: {
+        msg: `No ip for s7 found.`
+      }
+    }).status(404);
+    return;
+  }
+  const cmd = `ping -w 5 ${ip} | tail -n 1`;
+  exec(cmd, (error, stdout, stderr) => {
+    if (error || stderr !== '' || stdout === ''){
+      response.status(500).json({
+        error: {
+          msg: `${JSON.stringify(error) || stderr}`
+        }
+      });
+      return;
+    }
+    const [, avg,,] = stdout.match(/[0-9]*\.[0-9]*/g);
+    if (!avg) {
+      response.status(500).json({
+        error: {
+          msg: `Connections check to s7 failed.`
+        }
+      });
+      return;
+    }
+    response.status(200).json({
+      delay: avg
+    });
+  })
+}
+
 export const dataSourceHandlers = {
   // Single DataSource
   dataSourceGet: dataSourceGetHandler,
@@ -303,5 +355,7 @@ export const dataSourceHandlers = {
   dataSourcesPostDatapoint: dataSourcesPostDatapointHandler,
   dataSourcesGetDatapoint: dataSourcesGetDatapointHandler,
   dataSourcesDeleteDatapoint: dataSourcesDeleteDatapointHandler,
-  dataSourcesPatchDatapoint: dataSourcesPatchDatapointHandler
+  dataSourcesPatchDatapoint: dataSourcesPatchDatapointHandler,
+  // ping to s7
+  dataSourceGetPing: pingNC
 };

@@ -299,7 +299,10 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
  * @param response 
  */
 function pingNC(request: Request, response: Response) {
+  const logPrefix = `Backend::DataSources::pingNC`;
+  winston.debug(`${logPrefix} called.`)
   if(request.params.datasourceProtocol !== 's7') {
+    winston.debug(`${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`);
     response.json({
       error: {
         msg: `Not possible for ${request.params.datasourceProtocol} source`
@@ -310,6 +313,7 @@ function pingNC(request: Request, response: Response) {
   const {connection: {ipAddr: ip}} = configManager.config.dataSources.find((src) => {
     return src.protocol === request.params.datasourceProtocol
   })
+  winston.debug(`${logPrefix} get ip: ${ip}`);
   if (!ip) {
     response.json({
       error: {
@@ -318,25 +322,29 @@ function pingNC(request: Request, response: Response) {
     }).status(404);
     return;
   }
-  const cmd = `ping -w 5 ${ip} | tail -n 1`;
+  const cmd = `ping -w 3 ${ip}`;
   exec(cmd, (error, stdout, stderr) => {
     if (error || stderr !== '' || stdout === ''){
+      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
         error: {
-          msg: `${JSON.stringify(error) || stderr}`
+          msg: `Host unreachable`
         }
       });
       return;
     }
-    const [, avg,,] = stdout.match(/[0-9]*\.[0-9]*/g);
+    let filtered = stdout.match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g).join();
+    const [min, avg , max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
     if (!avg) {
+      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
         error: {
-          msg: `Connections check to s7 failed.`
+          msg: `Host unreachable.`
         }
       });
       return;
     }
+    winston.debug(`${logPrefix} send response with: ${avg} ms delay`);
     response.status(200).json({
       delay: avg
     });

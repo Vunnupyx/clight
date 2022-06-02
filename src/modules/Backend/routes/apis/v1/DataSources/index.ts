@@ -322,7 +322,7 @@ function pingNC(request: Request, response: Response) {
     }).status(404);
     return;
   }
-  const cmd = `ping -w 3 ${ip}`;
+  const cmd = `ping -w 1 -i 0.3 ${ip}`;
   exec(cmd, (error, stdout, stderr) => {
     if (error || stderr !== '' || stdout === ''){
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);

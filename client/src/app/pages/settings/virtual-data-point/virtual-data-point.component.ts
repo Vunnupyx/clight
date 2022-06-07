@@ -235,6 +235,15 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  onReset(obj: VirtualDataPoint) {
+    if(obj.operationType !== 'counter') {
+      return;
+    }
+    // send id to reset endpoind
+    // add rest propertie to patch
+    this.virtualDataPointService.resetCounter(obj);
+  }
+
   getSourceNames(sources: string[]) {
     return this.sources
       .filter((x) => sources.includes(x.id))

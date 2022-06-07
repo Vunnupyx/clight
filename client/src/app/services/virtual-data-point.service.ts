@@ -98,6 +98,25 @@ export class VirtualDataPointService
     return true;
   }
 
+  async resetCounter(vdp: VirtualDataPoint): Promise<boolean> {
+    const payload = {
+      changed: {
+        ...vdp,
+        reset: true
+      }
+    }
+    console.log(payload);
+    return this.httpService.patch(`/vdps/${vdp.id}`, payload)
+      .then((response) => {
+        console.log(response);
+        return true;
+      }).catch((error) => {
+        console.log(error);
+        return false;
+      }
+    );
+  }
+
   async getDataPoints() {
     this._store.patchState((state) => ({
       status: Status.Loading,

@@ -111,7 +111,7 @@ export class VirtualDataPointService
         return true;
       }).catch((error) => {
         this.toastr.error(
-          this.translate.instant('settings-virtual-data-point.CounterResetError')
+          this.translate.instant('settings-virtual-data-point.CounterResetError', {NAME: payload?.name})
         );
         return false;
       }

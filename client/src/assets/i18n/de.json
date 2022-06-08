@@ -191,6 +191,8 @@
     "Delete": "Löschen",
     "Reset": "Zurücksetzen",
     "Save": "Speichern",
+    "CounterResetSuccess": "Zähler '{{NAME}}' erfolgreich zurückgesetzt.",
+    "CounterResetError": "Zähler '{{NAME}}' zurücksetzen gescheitert.",
     "Cancel": "Abbrechen",
     "SetThreshold": "Grenzwerte setzen",
     "LiveData": "Aktuelwert",

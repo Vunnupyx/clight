@@ -191,6 +191,8 @@
     "Delete": "削除",
     "Reset": "リセット",
     "Save": "保存",
+    "CounterResetSuccess": "カウンタ'{{NAME}}'が正常にリセットされました。",
+    "CounterResetError": "カウンタ'{{NAME}}'のリセットに失敗しました。",
     "Cancel": "キャンセル",
     "SetThreshold": "閾値設定",
     "LiveData": "ライブデータ",

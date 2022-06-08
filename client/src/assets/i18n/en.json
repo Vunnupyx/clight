@@ -190,6 +190,8 @@
     "Edit": "Edit",
     "Delete": "Delete",
     "Reset": "Reset",
+    "CounterResetSuccess": "Counter '{{NAME}}' was successfully reset.",
+    "CounterResetError": "Counter '{{NAME}}' reset failed.",
     "Save": "Save",
     "Cancel": "Cancel",
     "SetThreshold": "Set Threshold",

@@ -100,18 +100,19 @@ export class VirtualDataPointService
 
   async resetCounter(vdp: VirtualDataPoint): Promise<boolean> {
     const payload = {
-      changed: {
         ...vdp,
         reset: true
-      }
     }
-    console.log(payload);
     return this.httpService.patch(`/vdps/${vdp.id}`, payload)
       .then((response) => {
-        console.log(response);
+        this.toastr.success(
+          this.translate.instant('settings-virtual-data-point.CounterResetSuccess', {NAME: response?.changed?.name})
+        );
         return true;
       }).catch((error) => {
-        console.log(error);
+        this.toastr.error(
+          this.translate.instant('settings-virtual-data-point.CounterResetError')
+        );
         return false;
       }
     );

@@ -239,8 +239,6 @@ export class VirtualDataPointComponent implements OnInit {
     if(obj.operationType !== 'counter') {
       return;
     }
-    // send id to reset endpoind
-    // add rest propertie to patch
     this.virtualDataPointService.resetCounter(obj);
   }
 

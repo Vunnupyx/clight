@@ -1,5 +1,7 @@
 import winston from 'winston';
+import 'winston-daily-rotate-file';
 import path from 'path';
+import { DailyRotateFileTransportOptions } from 'winston-daily-rotate-file';
 
 /**
  * Initializes settings for winston logger
@@ -39,17 +41,21 @@ export class Logger {
         )
       )
     });
-    const file = new winston.transports.File({
+
+    const options: DailyRotateFileTransportOptions = {
       maxFiles: 5,
+      maxSize: '10m',
       handleExceptions: true,
-      filename: path.join(__dirname, '../../../mdclight/logs/MDClight.log'),
-      maxsize: 10 * 1000 * 1000, // 10 Mb
+      handleRejections: true,
+      filename: path.join(__dirname, '../../../mdclight/logs/MDClight'),
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()
-      )
-    });
+      ),
+      extension: '.log',
+    };
+    const file = new winston.transports.DailyRotateFile(options);
 
     winston.add(console);
     winston.add(file);

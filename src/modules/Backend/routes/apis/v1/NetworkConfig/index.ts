@@ -37,8 +37,13 @@ async function networkConfigGetHandler(
     return [undefined, undefined];
   });
 
-  const { x1: cx1, x2: cx2, time } = configManager.config.networkConfig;
+  const { x1: cx1, x2: cx2, time: cfgTime } = configManager.config.networkConfig;
 
+  const reachable = await TimeManager.testNTPServer(cfgTime.ntpHost).then(() => true).catch(() => false);
+  const time = {
+    ...cfgTime,
+    reachable
+  }
   const merged = {
     x1: {
       useDhcp: x1?.dhcp || cx1.useDhcp,

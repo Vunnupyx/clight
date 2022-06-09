@@ -331,7 +331,9 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time",
-    "ChooseTimeZone": "Choose Time Zone"
+    "ChooseTimeZone": "Choose Time Zone",
+    "nptUnreachable": "NTPサーバーに到達できない",
+    "nptUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。"
   },
   "system-information": {
     "SystemInformation": "システム情報",

@@ -331,7 +331,9 @@
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
     "SetCurrentTime": "Systemzeit setzen",
-    "ChooseTimeZone": "Zeitzone"
+    "ChooseTimeZone": "Zeitzone",
+    "nptUnreachable": "NTP Server nicht erreichbar",
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
   },
   "system-information": {
     "SystemInformation": "System Informationen",

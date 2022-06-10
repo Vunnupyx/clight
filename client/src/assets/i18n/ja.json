@@ -13,6 +13,7 @@
     "DataSinks": "アプリケーションインタフェース",
     "Network": "ネットワーク",
     "SystemInformation": "システム情報",
+    "ChangePassword": "",
     "Logout": "ログアウト"
   },
   "auth-login": {
@@ -145,6 +146,7 @@
     "NoNetwork": "NoNetwork",
     "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",
+    "NoLicense": "非ライセンス",
     "ConnectionError": "Failed to connect",
     "Disabled": "無効",
     "Unavailable": "使用不可",
@@ -219,6 +221,7 @@
     "NoNetwork": "ネットワーク接続なし",
     "Connecting": "接続中",
     "Reconnecting": "再接続中",
+    "NoLicense": "非ライセンス",
     "Disabled": "無効",
     "Unavailable": "使用不可",
     "TermsAndConditionsNotAccepted": "規約を承認していません",

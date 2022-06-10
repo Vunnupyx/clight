@@ -136,6 +136,7 @@ export default class IoT2050HardwareEvents {
    * Check for button registry.
    */
   private async is_2050(): Promise<boolean> {
+    if (process.env.MOCK_USER_BUTTON) return false;
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
       if (board.indexOf('SIMATIC IOT2050') >= 0) return true;

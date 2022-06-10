@@ -13,6 +13,7 @@
     "DataSinks": "Anwendungs Schnittstellen",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen",
+    "ChangePassword": "",
     "Logout": "Logout"
   },
   "auth-login": {
@@ -145,6 +146,7 @@
     "NoNetwork": "Kein Netzwerk",
     "Connecting": "Verbindung wird aufgebaut",
     "Reconnecting": "Neu verbinden",
+    "NoLicense": "Nicht lizenziert",
     "ConnectionError": "Verbindung fehlgeschlagen",
     "Disabled": "Deaktiviert",
     "Unavailable": "Nicht verfügbar",
@@ -222,6 +224,7 @@
     "NoNetwork": "Kein Netzwerk",
     "Connecting": "Verbindung wird aufgebaut",
     "Reconnecting": "Neu verbinden",
+    "NoLicense": "Nicht lizenziert",
     "ConnectionError": "Verbindung fehlgeschlagen",
     "Disabled": "Deaktiviert",
     "Unavailable": "Nicht verfügbar",

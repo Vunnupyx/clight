@@ -106,6 +106,12 @@
             'layout.SystemInformation' | translate
           }}</span>
         </a>
+        <a mat-list-item routerLink="settings/change-password">
+          <mat-icon>info</mat-icon>
+          <span routerLinkActive="active" class="menu-text">{{
+            'layout.ChangePassword' | translate
+          }}</span>
+        </a>
         <a mat-list-item (click)="logout()">
           <mat-icon>logout</mat-icon>
           <span routerLinkActive="active" class="menu-text">{{

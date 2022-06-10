@@ -128,6 +128,12 @@ export class DataHubDataSink extends DataSink {
     const logPrefix = `${this.name}::init`;
     winston.debug(`${logPrefix} initializing.`);
 
+    if(!this.licenseChecker.isLicensed) {
+      winston.warn(`${logPrefix} no valid license found. Stop initializing.`)
+      this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
+      return this;
+    }
+
     if (!this.enabled) {
       winston.info(
         `${logPrefix} datahub data sink is disabled. Skipping initialization.`

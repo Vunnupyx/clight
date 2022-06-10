@@ -14,6 +14,12 @@ import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/
 import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 
+const licenseCheckerMock = {
+  isLicensed: jest.fn().mockImplementation(() => {
+    return true
+  })
+}
+
 jest.mock('fs');
 jest.mock('winston');
 
@@ -38,7 +44,8 @@ xdescribe('Test MTConnectDataSink', () => {
       mapping: [],
       dataSinkConfig,
       mtConnectConfig,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      licenseChecker: licenseCheckerMock as any
     });
 
     dataSink.init();
@@ -56,8 +63,8 @@ xdescribe('Test MTConnectDataSink', () => {
 
   test('should map bool values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>(),
-      lifecycleEventsBus: new EventBus<null>()
+      errorEventsBus: new EventBus<null>() as any,
+      lifecycleEventsBus: new EventBus<null>() as any,
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -97,7 +104,8 @@ xdescribe('Test MTConnectDataSink', () => {
       mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      licenseChecker: licenseCheckerMock as any
     });
 
     dataSink.init();
@@ -123,8 +131,8 @@ xdescribe('Test MTConnectDataSink', () => {
 
   test('should map enum values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>(),
-      lifecycleEventsBus: new EventBus<null>()
+      errorEventsBus: new EventBus<null>() as any,
+      lifecycleEventsBus: new EventBus<null>() as any
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -180,7 +188,8 @@ xdescribe('Test MTConnectDataSink', () => {
       mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      licenseChecker: licenseCheckerMock as any
     });
 
     dataSink.init();
@@ -217,8 +226,8 @@ xdescribe('Test MTConnectDataSink', () => {
 
   test('should not change string or number values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>(),
-      lifecycleEventsBus: new EventBus<null>()
+      errorEventsBus: new EventBus<null>() as any,
+      lifecycleEventsBus: new EventBus<null>() as any
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -278,7 +287,8 @@ xdescribe('Test MTConnectDataSink', () => {
       mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      licenseChecker: licenseCheckerMock as any
     });
 
     dataSink.init();
@@ -317,8 +327,8 @@ xdescribe('Test MTConnectDataSink', () => {
 
   test('should handle life cycle events', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>(),
-      lifecycleEventsBus: new EventBus<null>()
+      errorEventsBus: new EventBus<null>() as any,
+      lifecycleEventsBus: new EventBus<null>() as any
     });
 
     const dataSinkConfig: IDataSinkConfig = {
@@ -336,7 +346,8 @@ xdescribe('Test MTConnectDataSink', () => {
       mapping: [],
       dataSinkConfig,
       mtConnectConfig,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      licenseChecker: licenseCheckerMock as any
     });
 
     dataSink.init();

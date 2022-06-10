@@ -13,7 +13,6 @@ import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
 import { RestApiManager } from '../Backend/RESTAPIManager';
-import { DataPointMapper } from '../DataPointMapper';
 import NetworkManagerCliController from '../NetworkManager';
 import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
 import { TimeManager } from '../NetworkManager/TimeManager';
@@ -21,7 +20,7 @@ import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { System } from '../System';
 import HostnameController from '../HostnameController';
 import { LedStatusService } from '../LedStatusService';
-import { LicenseCheck } from '../LicenseChecker';
+import { LicenseChecker } from '../LicenseChecker';
 
 /**
  * Launches agent and handles module life cycles
@@ -38,7 +37,7 @@ export class BootstrapManager {
   private backend: RestApiManager;
   private hwEvents: IoT2050HardwareEvents;
   private ledManager: LedStatusService;
-  private licenseChecker: LicenseCheck;
+  private licenseChecker: LicenseChecker;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -56,13 +55,16 @@ export class BootstrapManager {
       configManager: this.configManager,
       cache: this.dataPointCache
     });
+    
+    this.licenseChecker = new LicenseChecker();
 
     this.dataSinksManager = new DataSinksManager({
       configManager: this.configManager,
       dataPointCache: this.dataPointCache,
       errorBus: this.errorEventsBus,
       lifecycleBus: this.lifecycleEventsBus,
-      measurementsBus: this.measurementsEventsBus
+      measurementsBus: this.measurementsEventsBus,
+      licenseChecker: this.licenseChecker
     });
     this.configManager.dataSinksManager = this.dataSinksManager;
 
@@ -73,8 +75,14 @@ export class BootstrapManager {
       errorBus: this.errorEventsBus,
       lifecycleBus: this.lifecycleEventsBus,
       measurementsBus: this.measurementsEventsBus,
-      ledManager: this.ledManager
+      licenseChecker: this.licenseChecker
     });
+
+    this.ledManager = new LedStatusService(
+      this.configManager,
+      this.dataSourcesManager
+    );
+
     this.configManager.dataSourcesManager = this.dataSourcesManager;
 
     this.backend = new RestApiManager({
@@ -85,11 +93,7 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
-    this.ledManager = new LedStatusService(
-      this.configManager,
-      this.dataSourcesManager
-    );
-    this.licenseChecker = new LicenseCheck();
+    this.licenseChecker.ledManager = this.ledManager;
   }
 
   /**
@@ -97,7 +101,7 @@ export class BootstrapManager {
    */
   public async start() {
     try {
-      await this.licenseChecker.checkLicense();
+      await this.licenseChecker.init();
       await this.ledManager.init();
       this.setupKillEvents();
 
@@ -110,11 +114,6 @@ export class BootstrapManager {
         const nx2: NetworkInterfaceInfo =
           NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth1');
 
-        let timePromise = Promise.resolve();
-        if (time && time.useNtp) {
-          timePromise = TimeManager.setNTPServer(time.ntpHost);
-        }
-
         Promise.all([
           Object.keys(x1).length !== 0
             ? NetworkManagerCliController.setConfiguration('eth0', nx1)
@@ -122,15 +121,17 @@ export class BootstrapManager {
           Object.keys(x2).length !== 0
             ? NetworkManagerCliController.setConfiguration('eth1', nx2)
             : Promise.resolve(),
-          timePromise
+          time && time.useNtp 
+            ? TimeManager.setNTPServer(time.ntpHost)
+            : Promise.resolve()
         ])
           .then(() => winston.info(log + ' Successfully.'))
-          .catch((err) => {
+          .catch((err) => {          
             winston.error(`${log} Failed due to ${JSON.stringify(err)}`);
-          });
-
-        HostnameController.setDefaultHostname().catch((e) =>
-          winston.error(`Failed to set hostname: ${e}`)
+          }).then(() => {
+            return HostnameController.setDefaultHostname();
+          }).catch((e) =>
+            winston.error(`Failed to set hostname: ${e?.msg}`)
         );
       });
 

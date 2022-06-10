@@ -22,7 +22,8 @@ export enum DataSourceConnectionStatus {
   Reconnecting = 'reconnecting',
   ConnectionError = 'failedtoconnect',
   Unavailable = 'unavailable', // in case of status can't be loaded
-  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted',
+  NoLicense = 'nolicense'
 }
 
 export class DataSourceConnection {

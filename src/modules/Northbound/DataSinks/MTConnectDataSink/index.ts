@@ -59,6 +59,12 @@ export class MTConnectDataSink extends DataSink {
     const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
+    if(!this.licenseChecker.isLicensed) {
+      winston.warn(`${logPrefix} no valid license found. Stop initializing.`)
+      this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
+      return this;
+    }
+
     if (!this.enabled) {
       winston.info(
         `${logPrefix} MTConnect data sink is disabled. Skipping initialization.`

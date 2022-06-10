@@ -13,6 +13,7 @@
     "DataSinks": "Application Interfaces",
     "Network": "Network",
     "SystemInformation": "System Information",
+    "ChangePassword": "Change Password",
     "Logout": "Logout"
   },
   "auth-login": {
@@ -145,6 +146,7 @@
     "NoNetwork": "NoNetwork",
     "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",
+    "NoLicense": "Not licensed",
     "ConnectionError": "Failed to connect",
     "Disabled": "Disabled",
     "Unavailable": "Unavailable",
@@ -222,6 +224,7 @@
     "NoNetwork": "No Network",
     "Connecting": "Starting",
     "Reconnecting": "Reconnecting",
+    "NoLicense": "Not licensed",
     "Disabled": "Disabled",
     "ConnectionError": "Failed to Connect",
     "Unavailable": "Unavailable",

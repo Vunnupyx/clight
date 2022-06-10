@@ -16,8 +16,7 @@ import winston from 'winston';
 import { ConfigManager } from '../../../ConfigManager';
 import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
-import { promisify } from 'util';
-import { LedStatusService } from '../../../LedStatusService';
+import { LicenseChecker } from '../../../LicenseChecker';
 
 interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
@@ -36,7 +35,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private virtualDataPointManager: VirtualDataPointManager;
   private dataAddedDuringRestart = false;
   private dataSinksRestartPending = false;
-  private ledManager: LedStatusService;
+  private licenseChecker: LicenseChecker;
 
   constructor(params: IDataSourcesManagerParams) {
     super();
@@ -54,10 +53,12 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     this.measurementsBus = params.measurementsBus;
     this.dataPointCache = params.dataPointCache;
     this.virtualDataPointManager = params.virtualDataPointManager;
-    this.ledManager = params.ledManager;
+    this.licenseChecker = params.licenseChecker;
   }
 
-  private init() {
+  private init(): void {
+    const logPrefix = `${this.constructor.name}::init`;
+    winston.info(`${logPrefix} initializing...`);
     this.spawnDataSources();
   }
 
@@ -90,13 +91,15 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     const s7DataSourceParams: IDataSourceParams = {
       config: this.findDataSourceConfig(DataSourceProtocols.S7),
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config.termsAndConditions.accepted,
+        licenseChecker: this.licenseChecker
     };
 
     const ioshieldDataSourceParams: IDataSourceParams = {
       config: this.findDataSourceConfig(DataSourceProtocols.IOSHIELD),
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config.termsAndConditions.accepted,
+        licenseChecker: this.licenseChecker
     };
 
     this.dataSources.push(new S7DataSource(s7DataSourceParams));

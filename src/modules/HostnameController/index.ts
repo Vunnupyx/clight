@@ -19,6 +19,9 @@ export default class HostnameController {
    */
   static async setDefaultHostname(): Promise<void> {
     const macAddress = await new System().readMacAddress('eth0');
+
+    if (!macAddress) return Promise.reject({msg: `HostnameController::setDefaultHostname failed due to can not read MAC address of 'eth0' interface`});
+
     const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
 
     const hostname = `DM${formattedMacAddress}`;

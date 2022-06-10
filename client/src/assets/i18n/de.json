@@ -197,6 +197,7 @@
     "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
+    "SetComparativeValue": "",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",

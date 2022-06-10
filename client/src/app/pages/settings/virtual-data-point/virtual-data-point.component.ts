@@ -20,6 +20,7 @@ import {
 } from '../../../services';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { Status } from 'app/shared/state';
+import { PromptDialogComponent, PromptDialogModel } from 'app/shared/components/prompt-dialog/prompt-dialog.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -30,13 +31,19 @@ export class VirtualDataPointComponent implements OnInit {
   datapointRows?: VirtualDataPoint[];
 
   VirtualDataPointOperationType = VirtualDataPointOperationType;
-
+  
   Operations = [
     VirtualDataPointOperationType.AND,
     VirtualDataPointOperationType.OR,
     VirtualDataPointOperationType.NOT,
     VirtualDataPointOperationType.COUNTER,
-    VirtualDataPointOperationType.THRESHOLDS
+    VirtualDataPointOperationType.THRESHOLDS,
+    VirtualDataPointOperationType.GREATER,
+    VirtualDataPointOperationType.GREATER_EQUAL,
+    VirtualDataPointOperationType.SMALLER,
+    VirtualDataPointOperationType.SMALLER_EQUAL,
+    VirtualDataPointOperationType.EQUAL,
+    VirtualDataPointOperationType.UNEQUAL,
   ];
 
   unsavedRow?: VirtualDataPoint;
@@ -254,6 +261,47 @@ export class VirtualDataPointComponent implements OnInit {
 
   getRowIndex(id: string) {
     return this.datapointRows?.findIndex((x) => x.id === id)!;
+  }
+
+  canSetComparativeValue(operationType: VirtualDataPointOperationType | undefined) {
+    return [
+      VirtualDataPointOperationType.COUNTER,
+      VirtualDataPointOperationType.GREATER,
+      VirtualDataPointOperationType.GREATER_EQUAL,
+      VirtualDataPointOperationType.SMALLER,
+      VirtualDataPointOperationType.SMALLER_EQUAL,
+      VirtualDataPointOperationType.EQUAL,
+      VirtualDataPointOperationType.UNEQUAL,
+    ].includes(operationType!);
+  }
+
+  onSetComparativeValue(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.thresholds) {
+      virtualPoint.thresholds = {};
+    }
+
+    const dialogRef = this.dialog.open<PromptDialogComponent, PromptDialogModel, string>(
+      PromptDialogComponent,
+      {
+        data: {
+          title: this.translate.instant('settings-virtual-data-point.SetComparativeValue'),
+          inputValue: virtualPoint.comparativeValue,
+        } as PromptDialogModel,
+      });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.comparativeValue = result;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          ...virtualPoint,
+          comparativeValue: result
+        });
+      }
+    });
   }
 
   onSetThreshold(virtualPoint: VirtualDataPoint) {

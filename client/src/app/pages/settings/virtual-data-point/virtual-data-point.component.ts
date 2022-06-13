@@ -20,6 +20,7 @@ import {
 } from '../../../services';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { Status } from 'app/shared/state';
+import { SetSchedulesModalComponent } from './set-schedules-modal/set-schedules-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -254,6 +255,34 @@ export class VirtualDataPointComponent implements OnInit {
 
   getRowIndex(id: string) {
     return this.datapointRows?.findIndex((x) => x.id === id)!;
+  }
+
+  onSetSchedule(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.resetSchedules) {
+      virtualPoint.resetSchedules = {} as any;
+    }
+
+    const dialogRef = this.dialog.open(SetSchedulesModalComponent, {
+      data: {
+        schedules: { ...virtualPoint.resetSchedules },
+      },
+      width: '1400px',
+      maxWidth: '100%'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.resetSchedules = result;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          ...virtualPoint,
+          resetSchedules: result,
+        });
+      }
+    });
   }
 
   onSetThreshold(virtualPoint: VirtualDataPoint) {

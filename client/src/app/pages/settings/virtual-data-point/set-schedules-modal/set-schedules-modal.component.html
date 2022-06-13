@@ -1,0 +1,75 @@
+<h1 mat-dialog-title>
+  {{ 'settings-virtual-data-point.SetSchedules' | translate }}
+</h1>
+
+<div mat-dialog-content class="p-0">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 col-md-7">
+        <div
+          echarts
+          [options]="options"
+          [initOpts]="{ width: '820px' }"
+          (chartInit)="onChartInit($event)"
+        ></div>
+      </div>
+      <div class="col-12 col-md-5 ngx-datatable select-type-table">
+        <div class="row mb-5">
+          <div class="col-5 text-center">
+            {{ 'settings-virtual-data-point.Value' | translate }}
+          </div>
+          <div class="col-5 text-center">
+            {{ 'settings-virtual-data-point.Threshold' | translate }}
+          </div>
+        </div>
+        <div class="row mb-5" *ngFor="let row of rows; let i = index">
+          <div class="col-5">
+            <input type="text" class="w-100 h-100" [(ngModel)]="row.value" />
+          </div>
+          <div class="col-5">
+            <input
+              type="text"
+              class="w-100 h-100"
+              [(ngModel)]="row.threshold"
+              (ngModelChange)="onThresholdChanged()"
+            />
+          </div>
+          <div class="col-2">
+            <mat-button-toggle-group #group="matButtonToggleGroup">
+              <mat-button-toggle
+                [matTooltip]="'settings-virtual-data-point.Delete' | translate"
+                matTooltipPosition="above"
+                (click)="
+                  deleteThreshold(i); onThresholdChanged(); group.value = null
+                "
+                ><mat-icon>delete_outline</mat-icon></mat-button-toggle
+              >
+            </mat-button-toggle-group>
+          </div>
+        </div>
+        <div class="row mt-15">
+          <div class="col-12">
+            <button
+              type="button"
+              mat-mini-fab
+              color="primary"
+              class="wh-32 border-round mat-elevation-z0"
+              (click)="onAdd()"
+              [matTooltip]="
+                'settings-virtual-data-point.AddThreshold' | translate
+              "
+              matTooltipPosition="above"
+            >
+              <mat-icon style="margin-top: -10px">add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button type="submit" mat-raised-button color="primary" (click)="onClose()">
+    {{ 'settings-virtual-data-point.Set' | translate }}
+  </button>
+</div>

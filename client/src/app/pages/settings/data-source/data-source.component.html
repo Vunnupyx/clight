@@ -238,6 +238,26 @@
           </div>
         </div>
       </div>
+      <div 
+      *ngIf="dataSource?.protocol !== Protocol.IOShield"
+      class="d-flex align-items-center justify-content-end markustesting" style="margin-top: 25px">
+
+        <mat-spinner
+          diameter="20"
+          *ngIf="isLoading"
+          class="mr-10"
+        ></mat-spinner>
+
+        <button
+          mat-raised-button
+          type="button"
+          class="btn-sm"
+          [disabled]="isLoading"
+          (click)="onPing()"
+        >
+          {{ 'settings-data-source.TestConnection' | translate }}
+        </button>
+      </div>
     </div>
   </div>
 

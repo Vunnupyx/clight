@@ -197,7 +197,6 @@
     "DeleteTitle": "削除",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
     "SetThresholds": "閾値設定",
-    "SetSchedules": "",
     "Set": "設定",
     "Value": "値",
     "Threshold": "閾値",
@@ -206,7 +205,14 @@
     "BulkError": "変更が適用できません。再試行してください。",
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
-    "DuplicatedName": "You are not allowed to duplicate names"
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "SetSchedules": "",
+    "AddSchedule": "",
+    "DayDate": "",
+    "Month": "",
+    "Hour": "",
+    "Minutes": "",
+    "Seconds": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",

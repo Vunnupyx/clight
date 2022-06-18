@@ -197,7 +197,6 @@
     "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
-    "SetSchedules": "",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",
@@ -206,7 +205,14 @@
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Bitte versuche es später erneut!",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen übernehmen",
-    "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden."
+    "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
+    "SetSchedules": "",
+    "AddSchedule": "",
+    "DayDate": "",
+    "Month": "",
+    "Hour": "",
+    "Minutes": "",
+    "Seconds": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",

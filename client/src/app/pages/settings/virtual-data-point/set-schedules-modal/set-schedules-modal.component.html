@@ -2,72 +2,131 @@
   {{ 'settings-virtual-data-point.SetSchedules' | translate }}
 </h1>
 
-<div mat-dialog-content class="p-0">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12 col-md-7">
-        <div
-          echarts
-          [options]="options"
-          [initOpts]="{ width: '820px' }"
-          (chartInit)="onChartInit($event)"
-        ></div>
-      </div>
-      <div class="col-12 col-md-5 ngx-datatable select-type-table">
-        <div class="row mb-5">
-          <div class="col-5 text-center">
-            {{ 'settings-virtual-data-point.Value' | translate }}
-          </div>
-          <div class="col-5 text-center">
-            {{ 'settings-virtual-data-point.Threshold' | translate }}
-          </div>
-        </div>
-        <div class="row mb-5" *ngFor="let row of rows; let i = index">
-          <div class="col-5">
-            <input type="text" class="w-100 h-100" [(ngModel)]="row.value" />
-          </div>
-          <div class="col-5">
-            <input
-              type="text"
-              class="w-100 h-100"
-              [(ngModel)]="row.threshold"
-              (ngModelChange)="onThresholdChanged()"
-            />
-          </div>
-          <div class="col-2">
-            <mat-button-toggle-group #group="matButtonToggleGroup">
-              <mat-button-toggle
-                [matTooltip]="'settings-virtual-data-point.Delete' | translate"
-                matTooltipPosition="above"
-                (click)="
-                  deleteThreshold(i); onThresholdChanged(); group.value = null
-                "
-                ><mat-icon>delete_outline</mat-icon></mat-button-toggle
-              >
-            </mat-button-toggle-group>
-          </div>
-        </div>
-        <div class="row mt-15">
-          <div class="col-12">
-            <button
-              type="button"
-              mat-mini-fab
-              color="primary"
-              class="wh-32 border-round mat-elevation-z0"
-              (click)="onAdd()"
-              [matTooltip]="
-                'settings-virtual-data-point.AddThreshold' | translate
-              "
-              matTooltipPosition="above"
-            >
-              <mat-icon style="margin-top: -10px">add</mat-icon>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div mat-dialog-content>
+  <ngx-datatable
+    [headerHeight]="50"
+    rowHeight="auto"
+    [rows]="rows"
+    class="overflow-auto select-type-table"
+  >
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Name' | translate"
+        prop="name"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.DayDate' | translate"
+        prop="day"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div *ngIf="row.date" class="text-ellipsis" [title]="value">{{ row.date }}th</div>
+        <div *ngIf="row.day" class="text-ellipsis" [title]="value">{{ row.day }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Month' | translate"
+        prop="month"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Hour' | translate"
+        prop="hours"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Minutes' | translate"
+        prop="minutes"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Seconds' | translate"
+        prop="seconds"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Actions' | translate"
+        cellClass="button-cell"
+        [sortable]="false"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <mat-button-toggle-group [disabled]="">
+          <mat-button-toggle
+            [matTooltip]="'settings-virtual-data-point.Delete' | translate"
+            matTooltipPosition="above"
+            [disabled]="true"
+            (click)="deleteAt(rowIndex)"
+            ><mat-icon>delete</mat-icon>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+  <button
+    type="button"
+    mat-mini-fab
+    color="primary"
+    class="wh-32 border-round mat-elevation-z0"
+    (click)="onAdd()"
+    [matTooltip]="
+      'settings-virtual-data-point.AddSchedule' | translate
+    "
+    matTooltipPosition="above"
+    [disabled]="!canAdd()"
+  >
+    <mat-icon style="margin-top: -10px">add</mat-icon>
+  </button>
 </div>
+
 <div mat-dialog-actions>
   <button type="submit" mat-raised-button color="primary" (click)="onClose()">
     {{ 'settings-virtual-data-point.Set' | translate }}

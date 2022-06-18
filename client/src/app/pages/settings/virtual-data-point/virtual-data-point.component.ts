@@ -20,7 +20,7 @@ import {
 } from '../../../services';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { Status } from 'app/shared/state';
-import { SetSchedulesModalComponent } from './set-schedules-modal/set-schedules-modal.component';
+import { SetSchedulesModalComponent, SetSchedulesModalData } from './set-schedules-modal/set-schedules-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -259,27 +259,29 @@ export class VirtualDataPointComponent implements OnInit {
 
   onSetSchedule(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.resetSchedules) {
-      virtualPoint.resetSchedules = {} as any;
+      virtualPoint.resetSchedules = [];
     }
 
-    const dialogRef = this.dialog.open(SetSchedulesModalComponent, {
-      data: {
-        schedules: { ...virtualPoint.resetSchedules },
-      },
-      width: '1400px',
-      maxWidth: '100%'
-    });
+    const dialogRef = this.dialog.open<SetSchedulesModalComponent, SetSchedulesModalData, SetSchedulesModalData>(
+      SetSchedulesModalComponent,
+      {
+        data: {
+          schedules: virtualPoint.resetSchedules.slice(),
+        },
+        width: '1400px',
+        maxWidth: '100%'
+      });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (!virtualPoint.id) {
-          virtualPoint.resetSchedules = result;
+          virtualPoint.resetSchedules = result.schedules;
           return;
         }
 
         this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
           ...virtualPoint,
-          resetSchedules: result,
+          resetSchedules: result.schedules,
         });
       }
     });

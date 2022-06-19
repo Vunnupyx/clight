@@ -103,8 +103,7 @@
           <mat-button-toggle
             [matTooltip]="'settings-virtual-data-point.Delete' | translate"
             matTooltipPosition="above"
-            [disabled]="true"
-            (click)="deleteAt(rowIndex)"
+            (click)="onDelete(rowIndex)"
             ><mat-icon>delete</mat-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>
@@ -127,8 +126,11 @@
   </button>
 </div>
 
-<div mat-dialog-actions>
-  <button type="submit" mat-raised-button color="primary" (click)="onClose()">
-    {{ 'settings-virtual-data-point.Set' | translate }}
+<div mat-dialog-actions class="justify-content-end">
+  <button type="button" mat-raised-button color="secondary" (click)="onCancel()">
+    {{ 'settings-virtual-data-point.Cancel' | translate }}
+  </button>
+  <button type="submit" mat-raised-button color="primary" (click)="onSave()">
+    {{ 'settings-virtual-data-point.Save' | translate }}
   </button>
 </div>

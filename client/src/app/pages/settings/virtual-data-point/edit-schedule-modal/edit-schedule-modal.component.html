@@ -1,0 +1,121 @@
+<h1 mat-dialog-title>
+  {{ 'settings-virtual-data-point.SetScheduledReset' | translate }}
+</h1>
+
+<form #form="ngForm" (ngSubmit)="onSave()">
+  <div mat-dialog-content *ngIf="schedule">
+    <div class="d-flex align-items-center">
+      <div class="mr-30">
+        <span>{{ 'settings-virtual-data-point.ScheduleName' | translate }}</span>
+      </div>
+      <div class="flex-fill">
+        <mat-form-field>
+          <input matInput type="text" [(ngModel)]="schedule.name" name="name" required>
+        </mat-form-field>
+      </div>
+    </div>
+    <h4>{{ 'settings-virtual-data-point.Day' | translate }}</h4>
+    <div class="d-flex flex-wrap justify-content-between">
+      <mat-button-toggle-group
+        [(ngModel)]="schedule.day"
+        [ngModelOptions]="{standalone: true}"
+        (ngModelChange)="onSetDay()">
+        <mat-button-toggle [value]="ScheduleDay.MONDAY">{{ 'days-of-week.Monday' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleDay.TUESDAY">{{ 'days-of-week.Tuesday' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleDay.WEDNESDAY">{{ 'days-of-week.Wednesday' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleDay.THURSDAY">{{ 'days-of-week.Thursday' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleDay.FRIDAY">{{ 'days-of-week.Friday' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleDay.SATURDAY">{{ 'days-of-week.Saturday' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleDay.SUNDAY">{{ 'days-of-week.Sunday' | translate }}</mat-button-toggle>
+      </mat-button-toggle-group>
+      <mat-button-toggle-group
+        [(ngModel)]="schedule.day"
+        [ngModelOptions]="{standalone: true}"
+        style="margin-left: 8px;"
+        (ngModelChange)="onSetDay()">
+        <mat-button-toggle [value]="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+    <h4>{{ 'settings-virtual-data-point.DayOfMonth' | translate }}</h4> 
+    <div style="width: 250px;">
+      <mat-form-field>
+        <mat-select 
+          [(ngModel)]="schedule.date"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onSetDate()">
+          <mat-option [value]="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</mat-option>
+          <mat-option *ngFor="let _ of [].constructor(31); let index = index" [value]="index + 1">{{ index + 1 }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <h4>{{ 'settings-virtual-data-point.Month' | translate }}</h4>
+    <div class="d-flex flex-wrap justify-content-between">
+      <mat-button-toggle-group
+        [(ngModel)]="schedule.month"
+        [ngModelOptions]="{standalone: true}">
+        <mat-button-toggle [value]="ScheduleMonth.JAN">{{ 'month.Jan' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.FEB">{{ 'month.Feb' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.MAR">{{ 'month.Mar' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.APR">{{ 'month.Apr' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.MAY">{{ 'month.May' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.JUN">{{ 'month.Jun' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.JUL">{{ 'month.Jul' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.AUG">{{ 'month.Aug' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.SEP">{{ 'month.Sep' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.OCT">{{ 'month.Oct' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.NOV">{{ 'month.Nov' | translate }}</mat-button-toggle>
+        <mat-button-toggle [value]="ScheduleMonth.DEC">{{ 'month.Dec' | translate }}</mat-button-toggle>
+      </mat-button-toggle-group>
+      <mat-button-toggle-group
+        [(ngModel)]="schedule.month"
+        [ngModelOptions]="{standalone: true}"
+        style="margin-left: 8px;">
+        <mat-button-toggle [value]="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <h4>{{ 'settings-virtual-data-point.Hour' | translate }}</h4>
+        <mat-form-field>
+          <mat-select 
+            [(ngModel)]="schedule.hours"
+            [ngModelOptions]="{standalone: true}">
+            <mat-option [value]="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</mat-option>
+            <mat-option *ngFor="let _ of [].constructor(24); let index = index" [value]="index">{{ index }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-4">
+        <h4>{{ 'settings-virtual-data-point.Minutes' | translate }}</h4>
+        <mat-form-field>
+          <mat-select 
+            [(ngModel)]="schedule.minutes"
+            [ngModelOptions]="{standalone: true}">
+            <mat-option [value]="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</mat-option>
+            <mat-option *ngFor="let _ of [].constructor(60); let index = index" [value]="index">{{ index | number:'2.0' }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-4">
+        <h4>{{ 'settings-virtual-data-point.Seconds' | translate }}</h4>
+        <mat-form-field>
+          <mat-select 
+            [(ngModel)]="schedule.seconds"
+            [ngModelOptions]="{standalone: true}">
+            <mat-option [value]="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</mat-option>
+            <mat-option *ngFor="let _ of [].constructor(60); let index = index" [value]="index">{{ index | number:'2.0' }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="justify-content-end" style="margin-right: 14px;">
+    <button type="button" mat-raised-button color="secondary" (click)="onCancel()">
+      {{ 'settings-virtual-data-point.Cancel' | translate }}
+    </button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="form.invalid || !isValid()">
+      {{ 'settings-virtual-data-point.Save' | translate }}
+    </button>
+  </div>
+</form>

@@ -17,6 +17,31 @@ export class VirtualDataPoint {
   resetSchedules?: VirtualDataPointSchedule[];
 }
 
+export enum ScheduleMonth {
+  JAN = 'Jan',
+  FEB = 'Feb',
+  MAR = 'Mar',
+  APR = 'Apr',
+  MAY = 'May',
+  JUN = 'Jun',
+  JUL = 'Jul',
+  AUG = 'Aug',
+  SEP = 'Sep',
+  OCT = 'Oct',
+  NOV = 'Nov',
+  DEC = 'Dec',
+}
+
+export enum ScheduleDay {
+  MONDAY = 'Monday',
+  TUESDAY = 'Tuesday',
+  WEDNESDAY = 'Wednesday',
+  THURSDAY = 'Thursday',
+  FRIDAY = 'Friday',
+  SATURDAY = 'Saturday',
+  SUNDAY = 'Sunday',
+}
+
 export type ScheduleEvery = 'Every';
 
 export interface VirtualDataPointScheduleCommon {
@@ -32,7 +57,7 @@ export interface VirtualDataPointScheduleWithDate extends VirtualDataPointSchedu
 }
 
 export interface VirtualDataPointScheduleWithDay extends VirtualDataPointScheduleCommon {
-  day: string|ScheduleEvery;
+  day: ScheduleDay|ScheduleEvery;
 }
 
-export type VirtualDataPointSchedule = VirtualDataPointScheduleWithDate | VirtualDataPointScheduleWithDay;
+export type VirtualDataPointSchedule = VirtualDataPointScheduleWithDate & VirtualDataPointScheduleWithDay;

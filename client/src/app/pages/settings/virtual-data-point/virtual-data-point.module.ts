@@ -10,6 +10,7 @@ import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { VirtualDataPointGuard } from './virtual-data-point.guard';
 import { SetSchedulesModalComponent } from './set-schedules-modal/set-schedules-modal.component';
+import { EditScheduleModalComponent } from './edit-schedule-modal/edit-schedule-modal.component';
 
 const routes: Routes = [
   {
@@ -24,6 +25,7 @@ const COMPONENTS = [
   VirtualDataPointComponent,
   SetThresholdsModalComponent,
   SetSchedulesModalComponent,
+  EditScheduleModalComponent,
 ];
 
 @NgModule({

@@ -208,11 +208,16 @@
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
     "SetSchedules": "",
     "AddSchedule": "",
+    "ScheduleName": "",
     "DayDate": "",
     "Month": "",
     "Hour": "",
     "Minutes": "",
-    "Seconds": ""
+    "Seconds": "",
+    "SetScheduledReset": "",
+    "ScheduleEvery": "",
+    "Day": "",
+    "DayOfMonth": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
@@ -349,5 +354,28 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
+  },
+  "days-of-week": {
+    "Monday": "",
+    "Tuesday": "",
+    "Wednesday": "",
+    "Thursday": "",
+    "Friday": "",
+    "Saturday": "",
+    "Sunday": ""
+  },
+  "month": {
+    "Jan": "",
+    "Feb": "",
+    "Mar": "",
+    "Apr": "",
+    "May": "",
+    "Jun": "",
+    "Jul": "",
+    "Aug": "",
+    "Sep": "",
+    "Oct": "",
+    "Nov": "",
+    "Dec": ""
   }
 }

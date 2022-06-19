@@ -208,11 +208,16 @@
     "DuplicatedName": "You are not allowed to duplicate names",
     "SetSchedules": "Set Schedules",
     "AddSchedule": "Add Schedule",
+    "ScheduleName": "Schedule Name",
     "DayDate": "Day/Date",
     "Month": "Month",
     "Hour": "Hour",
     "Minutes": "Minutes",
-    "Seconds": "Seconds"
+    "Seconds": "Seconds",
+    "SetScheduledReset": "Set scheduled reset",
+    "ScheduleEvery": "Every",
+    "Day": "Day",
+    "DayOfMonth": "Day of the month"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
@@ -349,5 +354,28 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+  },
+  "days-of-week": {
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday",
+    "Sunday": "Sunday"
+  },
+  "month": {
+    "Jan": "Jan",
+    "Feb": "Feb",
+    "Mar": "Mar",
+    "Apr": "Apr",
+    "May": "May",
+    "Jun": "Jun",
+    "Jul": "Jul",
+    "Aug": "Aug",
+    "Sep": "Sep",
+    "Oct": "Oct",
+    "Nov": "Nov",
+    "Dec": "Dec"
   }
 }

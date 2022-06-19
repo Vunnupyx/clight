@@ -268,22 +268,22 @@ export class VirtualDataPointComponent implements OnInit {
         data: {
           schedules: virtualPoint.resetSchedules.slice(),
         },
-        width: '1400px',
-        maxWidth: '100%'
       });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (!virtualPoint.id) {
-          virtualPoint.resetSchedules = result.schedules;
-          return;
-        }
-
-        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
-          ...virtualPoint,
-          resetSchedules: result.schedules,
-        });
+      if (!result) {
+        return;
       }
+
+      if (!virtualPoint.id) {
+        virtualPoint.resetSchedules = result.schedules;
+        return;
+      }
+
+      this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+        ...virtualPoint,
+        resetSchedules: result.schedules,
+      });
     });
   }
 

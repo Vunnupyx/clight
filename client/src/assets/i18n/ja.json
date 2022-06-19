@@ -208,11 +208,16 @@
     "DuplicatedName": "You are not allowed to duplicate names",
     "SetSchedules": "",
     "AddSchedule": "",
+    "ScheduleName": "",
     "DayDate": "",
     "Month": "",
     "Hour": "",
     "Minutes": "",
-    "Seconds": ""
+    "Seconds": "",
+    "SetScheduledReset": "",
+    "ScheduleEvery": "",
+    "Day": "",
+    "DayOfMonth": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
@@ -349,5 +354,28 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+  },
+  "days-of-week": {
+    "Monday": "",
+    "Tuesday": "",
+    "Wednesday": "",
+    "Thursday": "",
+    "Friday": "",
+    "Saturday": "",
+    "Sunday": ""
+  },
+  "month": {
+    "Jan": "",
+    "Feb": "",
+    "Mar": "",
+    "Apr": "",
+    "May": "",
+    "Jun": "",
+    "Jul": "",
+    "Aug": "",
+    "Sep": "",
+    "Oct": "",
+    "Nov": "",
+    "Dec": ""
   }
 }

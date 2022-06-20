@@ -274,6 +274,7 @@ export interface IConfig {
   networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
   termsAndConditions: TermsAndConditionsConfig;
+  env: 'stag' | 'dev' | 'prod'
 }
 
 export interface IConfigManagerParams {

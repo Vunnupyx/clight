@@ -51,7 +51,7 @@ adduser mdclite
 ```
 
 9. Login to mdclite account
-10. Login to docker image registry: `docker login registry.gitlab.com`
+10. Login to docker image registrys: *is part of deploy:all*
 11. Start containers: `sudo docker-compose -d up`
 
 12. Remove device specific configuration

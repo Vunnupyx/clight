@@ -114,6 +114,18 @@ export const emptyDefaultConfig: IConfig = {
   },
   termsAndConditions: {
     accepted: false
+  },
+  env: {
+    selected: 'prod',
+    mdc: {
+      tag: 'latest'
+    },
+    mtc: {
+      tag: 'latest'
+    },
+    web: {
+      tag: 'latest'
+    }
   }
 };
 
@@ -221,6 +233,44 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           },
           telemetry: {
             intervalHours: undefined
+          }
+        }
+      },
+      registries: {
+        dev: {
+          url: '',
+          mdc: {
+            tag: 'latest'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'latest'
+          }
+        },
+        prod: {
+          url: '',
+          mdc: {
+            tag: 'latest'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'latest'
+          }
+        },
+        stag: {
+          url: '',
+          mdc: {
+            tag: 'latest'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'latest'
           }
         }
       }

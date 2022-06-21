@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   webserver:
-    image: ${DOCKER_REGISTRY}/mdc-web-server:2.0-beta
+    image: ${DOCKER_REGISTRY}/mdc-web-server:${DOCKER_WEBSERVER_TAG}
     restart: always
     ports:
       - '443:443'
@@ -27,7 +27,7 @@ services:
         max-size: '50m'
   mdclight:
     privileged: true
-    image: ${DOCKER_REGISTRY}/mdclight:2.0-beta
+    image: ${DOCKER_REGISTRY}/mdclight:${DOCKER_MDC_TAG}
     restart: always
     volumes:
       - type: bind
@@ -73,7 +73,7 @@ services:
       options:
         max-size: '50m'
   mtconnect-agent:
-    image: ${DOCKER_REGISTRY}/mtconnect-prod_arm64:latest
+    image: ${DOCKER_REGISTRY}/mtconnect-prod_arm64:${DOCKER_MTC_TAG}
     restart: always
     volumes:
       - type: bind

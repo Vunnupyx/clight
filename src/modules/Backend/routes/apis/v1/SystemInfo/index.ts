@@ -6,7 +6,7 @@ import { System } from '../../../../../System';
 import UpdateManager, { updateStatus } from '../../../../../UpdateManager';
 
 let configManager: ConfigManager;
-const updateManager = new UpdateManager();
+let updateManager; 
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -14,6 +14,7 @@ const updateManager = new UpdateManager();
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
+  updateManager = new UpdateManager(configManager);
 }
 
 /**
@@ -78,9 +79,19 @@ async function restartPostHandler(request: Request, response: Response) {
   response.status(204);
 }
 
+/**
+ * Returns current set env variable ENV
+ * @param request HTTP Request
+ * @param response 
+ */
+function systemGetEnvironment(request: Request, response: Response) {
+  response.json({env: configManager.config.env.selected}).status(200);
+}
+
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
   systemTimeGet: systemTimeGetHandler,
   restartPost: restartPostHandler,
-  updateContainerGet: triggerContainerUpdate
+  updateContainerGet: triggerContainerUpdate,
+  systemEnvironmentGet: systemGetEnvironment
 };

@@ -547,5 +547,17 @@
     "completed": false,
     "currentTemplate": null,
     "currentTemplateName": null
+  },
+  "env": {
+    "selected": "prod",
+    "web": {
+      "tag": "latest"
+    },
+    "mdc": {
+      "tag": "latest"
+    },
+    "mtc": {
+      "tag": "latest"
+    }
   }
 }

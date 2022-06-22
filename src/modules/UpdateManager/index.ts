@@ -38,8 +38,8 @@ export default class UpdateManager {
     const envVars = `${registry} ${webServerTag} ${mdcTag} ${mtcTag}`;
     // const hostPrefix = `HOST=""`;
     const images = `docker images -q`;
-    const pull = `${envVars} docker-compose pull`;
-    const restart = `screen -d -m /opt/update.sh "${envVars}"`; 
+    const pull = `"bash -c '${envVars} docker-compose pull'"`;
+    const restart = `screen -d -m /opt/update.sh`; 
     const cleanup = `docker image prune -f`;
 
     let firstImages: string;
@@ -76,7 +76,7 @@ export default class UpdateManager {
         // restart with delay because of response delay to frontend
         setTimeout(async () => {
           winston.info(`${logPrefix} restarting container after update.`);
-          const res = await SshService.sendCommand(restart);
+          const res = await SshService.sendCommand(restart, [registry, webServerTag, mdcTag, mtcTag]);
           if (res.stderr) {
             winston.error(
               `Error during container restart. Please restart device.`

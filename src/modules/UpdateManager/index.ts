@@ -95,4 +95,91 @@ export default class UpdateManager {
         return updateStatus.NETWORK_ERROR;
       });
   }
+
+  /**
+   * Compare current running docker config with config entry.
+   * @param currentConfig
+   * @returns true if it does not match
+   */
+  private changeInTagOrRepo(currentConfig: {
+    repo: string;
+    web: {
+      tag: string;
+    };
+    mdc: {
+      tag: string;
+    };
+    mtc: {
+      tag: string;
+    };
+  }): Promise<boolean> {
+    const logPrefix = `${this.constructor.name}::changeInTagOrRepo`;
+
+    const cmd = `docker ps`;
+    winston.debug(`${logPrefix} sending: ${cmd}`);
+    return SshService.sendCommand(cmd)
+      .then((res) => {
+        if (res.stderr.length !== 0) {
+          winston.debug(
+            `${logPrefix} received error from ${cmd}: ${res.stderr}`
+          );
+          throw res.stderr;
+        }
+        winston.debug(`${logPrefix} received: ${res.stdout}`);
+        type ContainerMap = {
+          [prob in 'web' | 'mtc' | 'mdc']: {
+            [subprob in 'imageName' | 'tag' | 'repo']: string;
+          };
+        };
+        // @ts-ignore
+        let containerMap: ContainerMap = {};
+        res.stdout
+          .trim()
+          .split('\n')
+          .slice(1)
+          .forEach((line) => {
+            const z = line.split(/[ ]+/)[1].split(':');
+            const lastSlashIndex = z[0].search(/(\b\/\b)(?!.*\1)/);
+            const imageName = z[0].substring(lastSlashIndex + 1);
+            const repo = z[0].substring(0, lastSlashIndex);
+            const tag = z[1];
+            let image;
+            switch (imageName) {
+              case 'mdc-web-server': {
+                image = 'web';
+                break;
+              }
+              case 'mtconnect-prod_arm64': {
+                image = 'mtc';
+                break;
+              }
+              case 'mdclight': {
+                image = 'mdc';
+                break;
+              }
+              default:
+                return;
+            }
+            containerMap[image] = { imageName, tag, repo };
+          });
+        return containerMap;
+      })
+      .then((containerMap) => {
+        for (const [key, entry] of Object.entries(containerMap)) {
+          if (
+            currentConfig[key]?.tag !== entry.tag ||
+            currentConfig.repo !== entry.repo
+          ) {
+            winston.debug(
+              `${logPrefix} found change in docker container ${entry.imageName} configuration. From ${currentConfig[key]?.tag} to ${entry.tag} and from ${currentConfig.repo} to ${entry.repo}`
+            );
+            return true;
+          }
+        }
+        winston.debug(
+          `${logPrefix} no changes in docker container configuration found.`
+        );
+        return false;
+      });
+  }
 }

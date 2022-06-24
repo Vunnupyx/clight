@@ -27,20 +27,30 @@ export default class UpdateManager {
   triggerUpdate(): Promise<updateStatusType> {
     const logPrefix = `UpdateManager::triggerUpdate`;
 
-    // registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/
-    const selected = this.configManager.config.env.selected;  // selected environment
+    const selected = this.configManager.config.env.selected; // selected environment
     const registry = `DOCKER_REGISTRY=${this.configManager.runtimeConfig.registries[selected].url}`;
 
-    const webServerTag = `DOCKER_WEBSERVER_TAG=${this.configManager.config.env.web.tag || this.configManager.runtimeConfig.registries[selected].web.tag}`;
-    const mdcTag = `DOCKER_MDC_TAG=${this.configManager.config.env.mdc.tag || this.configManager.runtimeConfig.registries[selected].mdc.tag}`;
-    const mtcTag = `DOCKER_MTC_TAG=${this.configManager.config.env.mtc.tag || this.configManager.runtimeConfig.registries[selected].mtc.tag}`;
+    const webServerTag =
+      this.configManager.config.env.web.tag ||
+      this.configManager.runtimeConfig.registries[selected].web.tag;
+    const webServerTagString = `DOCKER_WEBSERVER_TAG=${webServerTag}`;
 
-    const envVars = `${registry} ${webServerTag} ${mdcTag} ${mtcTag}`;
-    // const hostPrefix = `HOST=""`;
+    const mdcTag =
+      this.configManager.config.env.mdc.tag ||
+      this.configManager.runtimeConfig.registries[selected].mdc.tag;
+    const mdcTagString = `DOCKER_MDC_TAG=${mdcTag}`;
+
+    const mtcTag =
+      this.configManager.config.env.mtc.tag ||
+      this.configManager.runtimeConfig.registries[selected].mtc.tag;
+    const mtcTagString = `DOCKER_MTC_TAG=${mtcTag}`;
+
+    const envVars = `${registry} ${webServerTagString} ${mdcTagString} ${mtcTagString}`;
     const images = `docker images -q`;
     const pull = `"bash -c '${envVars} docker-compose pull'"`;
-    const restart = `screen -d -m /opt/update.sh`; 
+    const restart = `screen -d -m /opt/update.sh`;
     const cleanup = `docker image prune -f`;
+    const dnsFixDelaySec = 15;
 
     let firstImages: string;
     winston.info(`${logPrefix} check installed images`);
@@ -63,20 +73,52 @@ export default class UpdateManager {
         winston.debug(`${logPrefix} pull command: ${pull}`);
         return SshService.sendCommand(pull);
       })
+      .catch((error) => {
+        winston.error(
+          `${logPrefix} catch error ${JSON.stringify(
+            error
+          )} after pull. Start retry after delay of ${dnsFixDelaySec}s.`
+        );
+        return new Promise((res, rej) =>
+          setTimeout(async () => {
+            winston.debug(`${logPrefix} try to pull again...`);
+            SshService.sendCommand(pull).then(res).catch(rej);
+          }, dnsFixDelaySec * 1_000)
+        );
+      })
       .then(() => {
         winston.info(`${logPrefix} checking new images.`);
         return SshService.sendCommand(images);
       })
-      .then((response) => {
+      .then(async (response) => {
         if (response.stderr.length !== 0) throw response.stderr;
-        if (firstImages === response.stdout) {
-          winston.info(`${logPrefix} no update available. No restart required.`);
-          return updateStatus.NOT_AVAILABLE;
+
+        if (
+          await this.changeInTagOrRepo({
+            repo: this.configManager.runtimeConfig.registries[selected].url,
+            mdc: { tag: mdcTag },
+            mtc: { tag: mtcTag },
+            web: { tag: webServerTag }
+          })
+        ) {
+          winston.info(
+            `${logPrefix} staging environment change detected. Restart required.`
+          );
+        } else if (firstImages === response.stdout) {
+          winston.info(
+                `${logPrefix} no update available. No restart required.`
+              );
+              return updateStatus.NOT_AVAILABLE;
         }
-        // restart with delay because of response delay to frontend
+
         setTimeout(async () => {
           winston.info(`${logPrefix} restarting container after update.`);
-          const res = await SshService.sendCommand(restart, [registry, webServerTag, mdcTag, mtcTag]);
+          const res = await SshService.sendCommand(restart, true, [
+            registry,
+            webServerTagString,
+            mdcTagString,
+            mtcTagString
+          ]);
           if (res.stderr) {
             winston.error(
               `Error during container restart. Please restart device.`
@@ -86,7 +128,6 @@ export default class UpdateManager {
         return updateStatus.AVAILABLE;
       })
       .catch((err) => {
-        console.log();
         winston.error(
           `${logPrefix} error during update. Please check your network connection. ${JSON.stringify(
             err

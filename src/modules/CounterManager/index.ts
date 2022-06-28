@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { NumberType } from 'node-opcua';
 import path from 'path';
 import winston from 'winston';
 
@@ -83,7 +82,7 @@ type ScheduleDescriptionDate = ScheduleDescriptionBase & {
 export type ScheduleDescription = ScheduleDescriptionDay | ScheduleDescriptionDate;
 
 type ScheduledCounterResetDict = {
-  [id: string]: ScheduleDescription;
+  [id: string]: ScheduleDescription[];
 };
 
 type timerDict = {
@@ -145,14 +144,14 @@ export class CounterManager {
    * @param  {string} id
    * @returns number
    */
-  public increment(id: string, config?: ScheduleDescription): number {
+  public increment(id: string, config?: ScheduleDescription[]): number {
     const logPrefix = `${this.constructor.name}::increment`;
     winston.debug(`${logPrefix} increment counter for id: ${id}`);
     if (typeof this.counters[id] !== 'undefined') {
       this.counters[id] = this.counters[id] + 1;
     } else {
       winston.debug(`${logPrefix} unknown id ${id} found. Create new counter.`);
-      this.setScheduledReset(id, config);
+      if (config) this.setScheduledReset(id, config);
       this.counters[id] = 1;
     }
 
@@ -183,7 +182,6 @@ export class CounterManager {
       return;
     }
     this.counters[id] = 0;
-    this.scheduledResets[id].lastReset = Date.now();
     this.saveCountersToFile();
   }
 
@@ -205,10 +203,10 @@ export class CounterManager {
     winston.info(`${this.constructor.name}::saveSchedulingToFile saved.`);
   }
 
-  public setScheduledReset(id: string, resetConfig: ScheduleDescription): void {
+  private setScheduledReset(id: string, resetConfig: ScheduleDescription[]): void {
     const logPrefix = `CounterManager::setScheduledReset`;
     winston.debug(`${logPrefix} for id ${id} with config: ${resetConfig}`);
-    this.scheduledResets[id] = { ...resetConfig, created: Date.now() };
+    this.scheduledResets[id] = resetConfig.map(entry => {return {created: Date.now(), ...entry}});
     this.saveSchedulingToFile();
   }
 
@@ -219,24 +217,27 @@ export class CounterManager {
     const logPrefix = `${this.constructor.name}::checkMissedResets`;
     winston.debug(`${logPrefix} started.`);
     for (const [id, config] of Object.entries(this.scheduledResets)) {
-      const nextDate = this.calcNextTrigger(config, new Date());
-      const nextNextDate = this.calcNextTrigger(config, new Date(nextDate));
+      for (const [index, configEntry] of config.entries()) {
+      const nextDate = this.calcNextTrigger(configEntry, new Date());
+      const nextNextDate = this.calcNextTrigger(configEntry, new Date(nextDate));
       const interval = nextNextDate.getTime() - nextDate.getTime();
       const lastDate = nextDate.getTime() - interval;
 
-      if(lastDate < config.created) {
+      if(lastDate < configEntry.created) {
         // No reset missed because timer is younger
         winston.debug(`${logPrefix} ignore reset because timer is younger as last trigger date.`);
         continue;
       }
-      if(lastDate === config?.lastReset) {
+      if(lastDate === configEntry?.lastReset) {
         // last reset correct done
         winston.debug(`${logPrefix} ignore reset because last reset was successfully.`);
         continue;
       }
       winston.debug(`${logPrefix} reset for counter '${id}' because last reset was skipped.`);
       this.reset(id);
-    }
+      this.scheduledResets[id][index].lastReset = Date.now();
+    }}
+
     winston.debug(`${logPrefix} done.`);
   }
 
@@ -249,7 +250,7 @@ export class CounterManager {
     winston.debug(`${logPrefix} start check for scheduled resets.`);
 
     for (const [id, scheduleData] of Object.entries(this.scheduledResets)) {
-      winston.debug(
+      for (const [index, entry] of scheduleData.entries()){winston.debug(
         `${logPrefix} found scheduling for id: ${id} : ${JSON.stringify(
           scheduleData
         )}`
@@ -261,7 +262,7 @@ export class CounterManager {
       }
 
       const now = new Date();
-      const nextScheduling = this.calcNextTrigger(scheduleData, now);
+      const nextScheduling = this.calcNextTrigger(entry, now);
 
       winston.debug(
         `${logPrefix} next trigger time found: ${nextScheduling.toString()}`
@@ -277,8 +278,9 @@ export class CounterManager {
           winston.debug(`${logPrefix} timer for ${id} expired. Start reset.`);
           this.reset(id);
         }, timeDiff * -1);
-      }
+      }}
     }
+
     if (!this.schedulerChecker) {
       winston.debug(
         `${logPrefix} set interval with timing ${this.schedulerCheckerInterval} for scheduler checker.`

@@ -161,7 +161,7 @@ export class Iot2050MraaDI10 {
 
   private async analogRead(sysfs_file: string): Promise<number> {
     const data = await fs.readFile(
-      `${await this.sysfs_prefix()}${sysfs_file}`,
+      `${sysfs_file}`,
       'utf-8'
     );
     const parsedValue = parseInt(data, 10);
@@ -169,6 +169,10 @@ export class Iot2050MraaDI10 {
     return scaledValue;
   }
 
+  /**
+   * 
+   * @deprecated
+   */
   private async sysfs_prefix() {
     try {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');

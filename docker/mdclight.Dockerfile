@@ -1,4 +1,6 @@
-FROM registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight-base:latest
+ARG DOCKER_REGISTRY
+
+FROM ${DOCKER_REGISTRY}/mdclight-base:latest
 
 WORKDIR /
 # Install compiled MDC light runtime

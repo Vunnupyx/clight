@@ -1,25 +1,6 @@
-# Azure pipelines for the iot connector lite
-# TODO: Adjust pipeline to build for 3 stages (prod, stag, dev)
-# TODO: Use new service connections (mdc-light-acr, mdc-light-acr-stag, mdc-light-acr-dev)
+# Azure pipelines for the iot connector lite (for develop and all feature, hotfix and bugfix branches)
 
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
-
-# Only run for specific branches
-# trigger:
-#   batch: boolean # batch changes if true (the default); start a new build for every push if false
-#   branches:
-#     include: [ string ] # branch names which will trigger a build
-#     exclude: [ string ] # branch names which will not
-#   tags:  # Tag names to include or exclude for triggering a run.
-#     include: [ branchFilter ] # List of items to include.
-#     exclude: [ branchFilter ] # List of items to exclude.
-
-# Using variables
-# - bash: |
-#     echo "##vso[task.setvariable variable=myVar;]foo"
-
-# - bash: |
-#   echo "You can use macro syntax for variables: $(myVar)"
 
 trigger:
   branches:

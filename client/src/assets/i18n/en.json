@@ -176,6 +176,7 @@
     },
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
+    "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable"
@@ -212,7 +213,9 @@
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
-    "BulkError": "Changes have not been applied. Please, try again!"
+    "BulkError": "Changes have not been applied. Please, try again!",
+    "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
+    "HostUnreachable": "Host unreachable please check IP configuration"
   },
   "settings-data-sink": {
     "DataSink": "Data Sink",

@@ -68,11 +68,11 @@ export default {
         responses: {
           '200': {
             description: 'OK',
-            "schema": {
-              "type":"object",
-              "properties": {
-                "version":{
-                  "type": "string"
+            schema: {
+              type: 'object',
+              properties: {
+                version: {
+                  type: 'string'
                 }
               }
             }
@@ -261,6 +261,41 @@ export default {
             description: 'Request status of selected dateSource.',
             schema: {
               $ref: '#/definitions/currentStatus'
+            }
+          }
+        }
+      }
+    },
+    '/datasources/{datasourceProtocol}/ping': {
+      parameters: [
+        {
+          name: 'datasourceProtocol',
+          in: 'path',
+          description: 'protocol of the datasource',
+          required: true,
+          type: 'string'
+        }
+      ],
+      get: {
+        tags: ['datasource'],
+        operationId: 'dataSourceGetPing',
+        responses: {
+          '200': {
+            description: 'Request status of selected dateSource.',
+            schema: {
+              $ref: '#/definitions/pingResult'
+            }
+          },
+          '404': {
+            description: 'No IP set for source or source does not support ping',
+            schema: {
+              $ref: '#/definitions/pingError'
+            }
+          },
+          '500': {
+            description: 'Internal error during ping',
+            schema: {
+              $ref: '#/definitions/pingError'
             }
           }
         }
@@ -1859,6 +1894,24 @@ export default {
         status: {
           type: 'string',
           enum: ['connected', 'disconnected']
+        }
+      }
+    },
+    pingError: {
+      properties: {
+        error: {
+          properties: {
+            msg: {
+              type: 'string'
+            }
+          }
+        }
+      }
+    },
+    pingResult: {
+      properties: {
+        delay: {
+          type: 'string'
         }
       }
     },

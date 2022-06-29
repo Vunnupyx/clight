@@ -1,4 +1,4 @@
-# Azure pipelines for the iot connector lite (for develop and all feature, hotfix and bugfix branches)
+# Azure pipelines for the mdclight (for develop and all feature, hotfix and bugfix branches)
 
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
 

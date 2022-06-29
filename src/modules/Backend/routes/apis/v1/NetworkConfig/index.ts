@@ -111,10 +111,6 @@ async function networkConfigPatchHandler(
   ]).then((results) => {
     results.forEach((result) => {
       if (result.status === 'rejected') {
-        if (result.reason && (typeof result.reason === 'string') && result.reason.includes('is not available or is not a valid NTP server.')) {
-          errorMsg = result.reason;
-          return;
-        }
         winston.error(
           `networkConfigPatchHandler error due to ${result.reason}. Only writing configuration to config file.`
         );

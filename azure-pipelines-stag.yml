@@ -1,0 +1,84 @@
+# Azure pipelines for the iot connector lite
+# TODO: Adjust pipeline to build for 3 stages (prod, stag, dev)
+# TODO: Use new service connections (mdc-light-acr, mdc-light-acr-stag, mdc-light-acr-dev)
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
+
+# Only run for specific branches
+# trigger:
+#   batch: boolean # batch changes if true (the default); start a new build for every push if false
+#   branches:
+#     include: [ string ] # branch names which will trigger a build
+#     exclude: [ string ] # branch names which will not
+#   tags:  # Tag names to include or exclude for triggering a run.
+#     include: [ branchFilter ] # List of items to include.
+#     exclude: [ branchFilter ] # List of items to exclude.
+
+# Using variables
+# - bash: |
+#     echo "##vso[task.setvariable variable=myVar;]foo"
+
+# - bash: |
+#   echo "You can use macro syntax for variables: $(myVar)"
+
+trigger:
+  branches:
+    include: [staging]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  DOCKER_REGISTRY: mdclightstaging.azurecr.io
+  BRANCH_NAME: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-')]
+
+steps:
+  - task: Docker@2
+    displayName: Login
+    inputs:
+      containerRegistry: 'mdc-light-acr-dev'
+      command: 'login'
+  - task: CmdLine@2
+    displayName: BuildBase
+    inputs:
+      script: | # Only build image if dockerfile has changed
+        PATH_FILTER="docker/mdclight-base.Dockerfile"
+        CHANGED_FILES=$(git diff HEAD HEAD~ --name-only)
+        MATCH_COUNT=0
+
+        echo "Checking for file changes..."
+        for FILE in $CHANGED_FILES
+        do
+          if [[ $FILE == *$PATH_FILTER* ]]; then
+            echo "MATCH:  ${FILE} changed"
+            MATCH_COUNT=$(($MATCH_COUNT+1))
+          else
+            echo "IGNORE: ${FILE} changed"
+          fi
+        done
+
+        echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
+        if [[ $MATCH_COUNT -gt 0 ]]; then
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 -t ${DOCKER_REGISTRY}/mdclight-base:latest -f docker/mdclight-base.Dockerfile --push .
+        fi
+  - task: CmdLine@2
+    displayName: Build
+    inputs:
+      script: |
+        docker run --privileged --rm tonistiigi/binfmt --install arm64
+        docker run --privileged --rm tonistiigi/binfmt
+        docker buildx create --use
+        docker buildx build --build-arg MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags --abbrev=0) --platform linux/arm64 -t ${DOCKER_REGISTRY}/mdclight:${BRANCH_NAME} -f docker/mdclight.Dockerfile . --push --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY}
+        apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y curl software-properties-common gnupg2 apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+        curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+        echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+        add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        apt-get install nodejs yarn unzip -y
+        yarn && cd client && yarn && cd ..
+        yarn build:webserver
+        docker buildx build --platform linux/arm64 -t ${DOCKER_REGISTRY}/mdc-web-server:${BRANCH_NAME} -f docker/mdcwebserver_arm64.Dockerfile --push client

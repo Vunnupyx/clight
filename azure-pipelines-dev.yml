@@ -25,7 +25,7 @@ steps:
       script: | # Only build image if dockerfile has changed
         MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
 
-        echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
+        echo "$MATCH_COUNT match(es) found."
         if [[ $MATCH_COUNT -gt 0 ]]; then
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
@@ -46,11 +46,18 @@ steps:
           scripts/build/dockerBuildMdclightBase.sh
         fi
   - task: CmdLine@2
-    displayName: Build
+    displayName: BuildMdc
     inputs:
       script: |
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use
         scripts/build/dockerBuildMdclight.sh
+  - task: CmdLine@2
+    displayName: BuildWebserver
+    inputs:
+      script: |
+        docker run --privileged --rm tonistiigi/binfmt --install arm64
+        docker run --privileged --rm tonistiigi/binfmt
+        docker buildx create --use
         scripts/build/dockerBuildWebserver.sh

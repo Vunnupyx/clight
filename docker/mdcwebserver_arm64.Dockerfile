@@ -1,4 +1,4 @@
-FROM node:18-alpine as build
+FROM node:16-alpine as build
 
 COPY package.json package.json
 COPY client client

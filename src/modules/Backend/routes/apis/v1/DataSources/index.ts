@@ -6,6 +6,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
+import {exec} from 'child_process';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import {
   DataSourceProtocols,
@@ -291,6 +292,65 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
   response.status(200).json({ status });
 }
 
+/**
+ * Send ICMP ping to sps. Send back response with avg of ping
+ * 
+ * @param request 
+ * @param response 
+ */
+function pingNC(request: Request, response: Response) {
+  const logPrefix = `Backend::DataSources::pingNC`;
+  winston.debug(`${logPrefix} called.`)
+  if(request.params.datasourceProtocol !== 's7') {
+    winston.debug(`${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`);
+    response.json({
+      error: {
+        msg: `Not possible for ${request.params.datasourceProtocol} source`
+      }
+    }).status(404);
+    return;
+  }
+  const {connection: {ipAddr: ip}} = configManager.config.dataSources.find((src) => {
+    return src.protocol === request.params.datasourceProtocol
+  })
+  winston.debug(`${logPrefix} get ip: ${ip}`);
+  if (!ip) {
+    response.json({
+      error: {
+        msg: `No ip for s7 found.`
+      }
+    }).status(404);
+    return;
+  }
+  const cmd = `ping -w 1 -i 0.3 ${ip}`;
+  exec(cmd, (error, stdout, stderr) => {
+    if (error || stderr !== '' || stdout === ''){
+      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
+      response.status(500).json({
+        error: {
+          msg: `Host unreachable`
+        }
+      });
+      return;
+    }
+    let filtered = stdout.match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g).join();
+    const [min, avg , max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
+    if (!avg) {
+      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
+      response.status(500).json({
+        error: {
+          msg: `Host unreachable.`
+        }
+      });
+      return;
+    }
+    winston.debug(`${logPrefix} send response with: ${avg} ms delay`);
+    response.status(200).json({
+      delay: avg
+    });
+  })
+}
+
 export const dataSourceHandlers = {
   // Single DataSource
   dataSourceGet: dataSourceGetHandler,
@@ -303,5 +363,7 @@ export const dataSourceHandlers = {
   dataSourcesPostDatapoint: dataSourcesPostDatapointHandler,
   dataSourcesGetDatapoint: dataSourcesGetDatapointHandler,
   dataSourcesDeleteDatapoint: dataSourcesDeleteDatapointHandler,
-  dataSourcesPatchDatapoint: dataSourcesPatchDatapointHandler
+  dataSourcesPatchDatapoint: dataSourcesPatchDatapointHandler,
+  // ping to s7
+  dataSourceGetPing: pingNC
 };

@@ -415,6 +415,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return this.sourceDataPointService.apply(this.dataSource?.protocol!);
   }
 
+  async onPing() {
+    return this.sourceDataPointService.ping(this.dataSource?.protocol);
+  }
+
   private onConnection(x: DataSourceConnection | undefined) {
     this.connection = x;
   }

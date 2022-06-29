@@ -7,13 +7,14 @@
     "build": "tsc",
     "bundle": "node bundle.js",
     "postinstall": "npm run bundle && npm run copy:service && npm run copy:script && npm run enable:service",
-    "copy:service": "scp mdclflash.service $INSTALL_HOST:/etc/systemd/system",
-    "copy:script": "scp ./build/flashService.js $INSTALL_HOST:/root",
-    "copy:flashImage": "scp ./iot-connector-light-os-*.img.gz $INSTALL_HOST:/root",
+    "copy:service": "export INSTALL_HOST=`../../devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp mdclflash.service $INSTALL_HOST:/etc/systemd/system",
+    "copy:script": "export INSTALL_HOST=`../../devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp ./build/flashService.js $INSTALL_HOST:/root",
+    "copy:installImage:to:device": "scp ./iot-connector-light-os-*.img.gz $INSTALL_HOST:/root",
     "dump:remote:external": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk0 bs=1m count=13517 | gzip -9 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
     "dump:remote:internal": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk1 bs=1m count=13517 | gzip -9 -\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".gz\"",
     "dump:remote:internal:uncompressed": "ssh $REMOTE_HOST \"/root/cleanup.sh && dd if=/dev/mmcblk1 bs=1M count=13517\" | dd of=\"./dump-\"`date +\"%d-%m-%Y\"`\".img\"",
-    "enable:service": "ssh $INSTALL_HOST systemctl enable mdclflash.service"
+    "enable:service": "ssh $INSTALL_HOST systemctl enable mdclflash.service",
+    "read:host": "../../devTools/checkEnvironmentVariable.sh"
   },
   "author": "Markus Leitz",
   "license": "UNLICENCED",

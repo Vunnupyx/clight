@@ -126,7 +126,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
     'mdclight/config'
   );
-  private runtimeFolder = '/runTimeFiles'
+  private runtimeFolder = '/runTimeFiles';
   private keyFolder = path.join(this.configFolder, 'keys');
 
   private configName = 'config.json';
@@ -366,7 +366,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     await promisefs.copyFile(factoryConfig, configPath);
     await promisefs.unlink(authConfig);
-    await promisefs.unlink(`${this.configFolder}/certs`);
+    if (fs.existsSync(`${this.configFolder}/certs`)) {
+      await promisefs.rmdir(`${this.configFolder}/certs`, {
+        recursive: true
+      });
+    }
   }
 
   /**
@@ -456,7 +460,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
-    const configPath = path.join(configName === this.runtimeConfigName ?  this.runtimeFolder : this.configFolder, configName);
+    const configPath = path.join(
+      configName === this.runtimeConfigName
+        ? this.runtimeFolder
+        : this.configFolder,
+      configName
+    );
 
     return Promise.all([promisefs.readFile(configPath, { encoding: 'utf-8' })])
       .catch(() => {

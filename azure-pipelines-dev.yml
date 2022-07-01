@@ -43,7 +43,7 @@ steps:
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
           docker buildx create --use
-          scripts/build/dockerBuildMdclightBase.sh
+          scripts/build/dockerBuildMtc.sh
         fi
   - task: CmdLine@2
     displayName: BuildMdc

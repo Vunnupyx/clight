@@ -9,7 +9,12 @@ const routes: Routes = [
   {
     path: 'settings/change-password',
     component: ChangePasswordComponent,
-  }
+  },
+  {
+    path: 'forced-change-password',
+    component: ChangePasswordComponent,
+    data: { noLayout: true },
+  },
 ];
 
 const COMPONENTS = [

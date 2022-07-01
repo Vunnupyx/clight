@@ -59,7 +59,7 @@
     "docker:build:mtc-prod": "docker buildx build --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest -f docker/mtconnect_arm64.Dockerfile --push .",
     "deploy:service:mdcflash": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && buil&& scp services/mdclflash/*.service $INSTALL_HOST:/etc/systemd/system && ssh $INSTALL_HOST systemctl enable mdclflash.service && ssh $INSTALL_HOST systemctl start mdclflash.service",
     "test": "jest",
-    "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight",
+    "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight/config",
     "copy_mtc_conf": "scp -r _mdclight/mtc_config/MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
     "copy_compose": "scp docker/docker-compose_arm64.yaml root@$IP:/home/mdclite/docker-compose.yaml && ssh root@$IP chown mdclite:mdclite /home/mdclite/docker-compose.yaml",
     "format": "prettier --write .",

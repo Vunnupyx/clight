@@ -11,7 +11,7 @@ const routes: Routes = [
     component: ChangePasswordComponent,
   },
   {
-    path: 'forced-change-password',
+    path: 'reset-password',
     component: ChangePasswordComponent,
     data: { noLayout: true },
   },

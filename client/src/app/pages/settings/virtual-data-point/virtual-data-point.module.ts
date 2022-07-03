@@ -22,15 +22,14 @@ const routes: Routes = [
 const COMPONENTS = [VirtualDataPointComponent, SetThresholdsModalComponent];
 
 @NgModule({
-  declarations: COMPONENTS,
-  imports: [
-    SharedModule,
-    ConfirmDialogModule,
-    RouterModule.forRoot(routes),
-    NgxEchartsModule
-  ],
-  exports: [RouterModule, ...COMPONENTS],
-  entryComponents: [SetThresholdsModalComponent],
-  providers: [VirtualDataPointGuard]
+    declarations: COMPONENTS,
+    imports: [
+        SharedModule,
+        ConfirmDialogModule,
+        RouterModule.forRoot(routes),
+        NgxEchartsModule
+    ],
+    exports: [RouterModule, ...COMPONENTS],
+    providers: [VirtualDataPointGuard]
 })
 export class VirtualDataPointModule {}

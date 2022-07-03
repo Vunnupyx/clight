@@ -4,7 +4,7 @@ import {
   NgxMatDatetimePickerModule,
   NgxMatTimepickerModule,
   NgxMatNativeDateModule
-} from '@angular-material-components/datetime-picker';
+} from '@angular-material-components/datetime-picker/projects/datetime-picker/src';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { NetworkComponent } from './network.component';

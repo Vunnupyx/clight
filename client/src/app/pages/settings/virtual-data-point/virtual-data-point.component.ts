@@ -257,16 +257,24 @@ export class VirtualDataPointComponent implements OnInit {
     return this.datapointRows?.findIndex((x) => x.id === id)!;
   }
 
-  onSetSchedule(virtualPoint: VirtualDataPoint) {
-    if (!virtualPoint.resetSchedules) {
-      virtualPoint.resetSchedules = [];
+  setOperationType(virtualPoint: VirtualDataPoint, newOperationType: VirtualDataPointOperationType) {
+    if (!virtualPoint) {
+      return;
     }
+    virtualPoint.operationType = newOperationType;
+
+    if (newOperationType === VirtualDataPointOperationType.COUNTER) {
+      virtualPoint.resetSchedules = virtualPoint.resetSchedules || [];
+    }
+  }
+
+  onSetSchedule(virtualPoint: VirtualDataPoint) {
 
     const dialogRef = this.dialog.open<SetSchedulesModalComponent, SetSchedulesModalData, SetSchedulesModalData>(
       SetSchedulesModalComponent,
       {
         data: {
-          schedules: virtualPoint.resetSchedules.slice(),
+          schedules: virtualPoint.resetSchedules!.slice(),
         },
       });
 

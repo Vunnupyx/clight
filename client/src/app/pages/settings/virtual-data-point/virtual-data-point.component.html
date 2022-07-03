@@ -121,9 +121,7 @@
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
-              (ngModelChange)="
-                unsavedRow && (unsavedRow.operationType = $event)
-              "
+              (ngModelChange)="setOperationType(unsavedRow, $event)"
             >
               <mat-option *ngFor="let op of Operations" [value]="op">{{
                 op | uppercase

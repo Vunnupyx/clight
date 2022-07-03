@@ -265,7 +265,6 @@ export class VirtualDataPointComponent implements OnInit {
 
   canSetComparativeValue(operationType: VirtualDataPointOperationType | undefined) {
     return [
-      VirtualDataPointOperationType.COUNTER,
       VirtualDataPointOperationType.GREATER,
       VirtualDataPointOperationType.GREATER_EQUAL,
       VirtualDataPointOperationType.SMALLER,

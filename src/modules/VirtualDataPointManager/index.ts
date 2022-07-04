@@ -3,7 +3,7 @@ import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { CounterManager } from '../CounterManager';
 import { DataPointCache } from '../DatapointCache';
-import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
+import { IDataSourceMeasurementEvent, IMeasurement } from '../Southbound/DataSources/interfaces';
 
 interface IVirtualDataPointManagerParams {
   configManager: ConfigManager;
@@ -153,6 +153,47 @@ export class VirtualDataPointManager {
   }
 
   /**
+   * Check 'enumerated' grouped virtual data point and return the 'returnValueIfTrue' of the highest true value.
+   * 
+   * @param sourceEvents 
+   * @param config 
+   * @returns string
+   */
+  private enumeration(
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig
+    ): string | null {
+      const logPrefix = `${this.constructor.name}::enumeration`;
+      if (config.operationType !== 'enumeration') {
+        winston.error(`${logPrefix} receive invalid operation type: ${config.operationType}`);
+        return null;
+      }
+      if (typeof config.enumeration === undefined) {
+        winston.error(`${logPrefix} no enumeration configuration found`);
+        return null;
+      }
+
+      // Iterate over sorted by high prio array
+      for (const entry of config.enumeration.sort((a, b) => {
+        return b.priority - a.priority;
+      })) {
+        const hit = sourceEvents.find((event) => {
+          winston.debug(`${logPrefix} searching for entry ${entry.source} found ${event.measurement.id}`);
+          if (event.measurement.id === entry.source) {
+            winston.error(`TREFFER`);
+            winston.error(JSON.stringify(event.measurement));
+          };
+          return event.measurement.id === entry.source && !!event.measurement.value;
+        });
+        if(!!hit) {
+          return entry.returnValueIfTrue;
+        }
+      }
+      // No true value in list
+      return null;
+    }
+
+  /**
    * Calculates virtual data points from type thresholds
    *
    * @param  {IDataSourceMeasurementEvent[]} sourceEvents
@@ -194,10 +235,10 @@ export class VirtualDataPointManager {
    * @param  {IVirtualDataPointConfig} config
    * @returns boolean
    */
-  private calulateValue(
+  private calculateValue(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
-  ): boolean | number | null {
+  ): IMeasurement['value'] {
     switch (config.operationType) {
       case 'and':
         return this.and(sourceEvents, config);
@@ -209,6 +250,8 @@ export class VirtualDataPointManager {
         return this.count(sourceEvents, config);
       case 'thresholds':
         return this.thresholds(sourceEvents, config);
+      case 'enumeration': 
+        return this.enumeration(sourceEvents, config);
       default:
         winston.warn(
           `Invalid type (${config.operationType}) provided for virtual data point ${config.id}!`
@@ -266,7 +309,7 @@ export class VirtualDataPointManager {
       // Skip virtual data point if one or more source events are missing
       if (sourceEvents.some((event) => typeof event === 'undefined')) continue;
 
-      const value = this.calulateValue(sourceEvents, vdpConfig);
+      const value = this.calculateValue(sourceEvents, vdpConfig);
 
       if (value === null) {
         continue;

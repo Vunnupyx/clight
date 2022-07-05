@@ -183,7 +183,6 @@ export class VirtualDataPointManager {
           return event.measurement.id === entry.source && !!event.measurement.value;
         });
         if(hit) {
-          winston.debug(`${logPrefix} found ${}`)
           return entry.returnValueIfTrue;
         }
       }

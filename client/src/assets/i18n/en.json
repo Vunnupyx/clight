@@ -334,7 +334,9 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time",
-    "ChooseTimeZone": "Choose Time Zone"
+    "ChooseTimeZone": "Choose Time Zone",
+    "nptUnreachable": "NTP Server unreachable",
+    "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply."
   },
   "system-information": {
     "SystemInformation": "System Information",

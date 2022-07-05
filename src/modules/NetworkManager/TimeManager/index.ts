@@ -170,7 +170,7 @@ export class TimeManager {
   /**
    * Test if a server is a valid and available ntp server.
    */
-  private static async testNTPServer(server: string): Promise<void> {
+  public static async testNTPServer(server: string): Promise<void> {
     const logPrefix = `TimeManager::testNTPServer`;
     winston.debug(`${logPrefix} start testing: ${server}`);
 

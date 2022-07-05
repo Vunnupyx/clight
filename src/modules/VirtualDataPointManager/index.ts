@@ -28,7 +28,7 @@ export class VirtualDataPointManager {
 
     this.configManager = params.configManager;
     this.cache = params.cache;
-    this.counters = new CounterManager();
+    this.counters = new CounterManager(this.configManager);
   }
 
   private init() {
@@ -310,7 +310,7 @@ export class VirtualDataPointManager {
       this.toBoolean(measurement.value) &&
       this.cache.hasChanged(measurement.id)
     ) {
-      return this.counters.increment(measurement.id, config.resetSchedule);
+      return this.counters.increment(measurement.id);
     }
 
     return null;

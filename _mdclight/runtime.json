@@ -113,7 +113,7 @@
       }
     },
     "stag": {
-      "url": "mdclightdev.azurecr.io",
+      "url": "mdclightstaging.azurecr.io",
       "web": {
         "tag": "staging"
       },

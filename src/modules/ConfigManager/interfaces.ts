@@ -248,7 +248,7 @@ export interface IVirtualDataPointConfig {
   operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds' | 'greater' | 'greaterEqual' | 'smaller' | 'smallerEqual' | "equal" | "unequal";
   thresholds?: ITargetDataMap;
   comparativeValue?: string | number;
-  resetSchedule?: ScheduleDescription[]
+  resetSchedules?: ScheduleDescription[]
 }
 
 export interface ISystemInfoItem {

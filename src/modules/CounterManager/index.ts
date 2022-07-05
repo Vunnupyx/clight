@@ -436,7 +436,7 @@ export class CounterManager {
   //         );
   //         // @ts-ignore
   //         diff = currentDate - dateFromScheduling;
-  //         if (diff < 0) {gll
+  //         if (diff < 0) {
   //           // New date is in future, break out for loop
   //           break;
   //         }
@@ -471,8 +471,6 @@ export class CounterManager {
         if (input[entry] !== 'Every') continue;
         // @ts-ignore
         data[entry] += 1;
-        //TODO:
-        console.log(data);
 
         testDate = new Date(
           data.year,

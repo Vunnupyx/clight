@@ -121,7 +121,7 @@ export const emptyDefaultConfig: IConfig = {
       tag: 'main'
     },
     mtc: {
-      tag: 'main'
+      tag: 'latest'
     },
     web: {
       tag: 'main'
@@ -240,37 +240,37 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         dev: {
           url: '',
           mdc: {
-            tag: 'latest'
+            tag: 'develop'
           },
           mtc: {
             tag: 'latest'
           },
           web: {
-            tag: 'latest'
+            tag: 'develop'
           }
         },
         prod: {
           url: '',
           mdc: {
-            tag: 'latest'
+            tag: 'main'
           },
           mtc: {
             tag: 'latest'
           },
           web: {
-            tag: 'latest'
+            tag: 'main'
           }
         },
         stag: {
           url: '',
           mdc: {
-            tag: 'latest'
+            tag: 'staging'
           },
           mtc: {
             tag: 'latest'
           },
           web: {
-            tag: 'latest'
+            tag: 'staging'
           }
         }
       }

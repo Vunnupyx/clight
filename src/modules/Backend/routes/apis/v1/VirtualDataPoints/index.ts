@@ -39,7 +39,13 @@ async function vdpsPostHandler(
   response: Response
 ): Promise<void> {
   //TODO: Input validation
-  const newData = { ...request.body, ...{ id: uuidv4() } };
+  const newData = { ...request.body, ...{ id: uuidv4()} };
+  if(newData.operationType === "counter" && newData.resetSchedules?.length > 0) {
+    for (const [index, resetEntry] of newData.resetSchedules.entries()) {
+      newData.resetSchedules[index].created = Date.now();
+      newData.resetSchedules[index].lastReset = undefined;
+    }
+  }
   configManager.changeConfig('insert', 'virtualDataPoints', newData);
   await configManager.configChangeCompleted();
   response.status(200).json({

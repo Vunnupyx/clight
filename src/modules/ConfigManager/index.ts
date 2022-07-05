@@ -118,13 +118,13 @@ export const emptyDefaultConfig: IConfig = {
   env: {
     selected: 'prod',
     mdc: {
-      tag: 'latest'
+      tag: 'main'
     },
     mtc: {
-      tag: 'latest'
+      tag: 'main'
     },
     web: {
-      tag: 'latest'
+      tag: 'main'
     }
   }
 };
@@ -138,7 +138,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
     'mdclight/config'
   );
-  private runtimeFolder = '/runTimeFiles'
+  private runtimeFolder = '/runTimeFiles';
   private keyFolder = path.join(this.configFolder, 'keys');
 
   private configName = 'config.json';
@@ -506,7 +506,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
-    const configPath = path.join(configName === this.runtimeConfigName ?  this.runtimeFolder : this.configFolder, configName);
+    const configPath = path.join(
+      configName === this.runtimeConfigName
+        ? this.runtimeFolder
+        : this.configFolder,
+      configName
+    );
 
     return Promise.all([promisefs.readFile(configPath, { encoding: 'utf-8' })])
       .catch(() => {

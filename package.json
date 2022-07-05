@@ -51,7 +51,7 @@
     "docker:build:mtc-prod": "scripts/build/dockerBuildMtc.sh",
     "deploy:service:mdcflash": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && buil&& scp services/mdclflash/*.service $INSTALL_HOST:/etc/systemd/system && ssh $INSTALL_HOST systemctl enable mdclflash.service && ssh $INSTALL_HOST systemctl start mdclflash.service",
     "test": "jest",
-    "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight",
+    "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight/config",
     "copy_mtc_conf": "scp -r _mdclight/mtc_config/MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
     "copy_compose": "scp docker/docker-compose_arm64.yaml mdclite@$IP:/home/mdclite/docker-compose.yaml && scp -r docker/environments/.env* mdclite@$IP:/home/mdclite/",
     "format": "prettier --write .",

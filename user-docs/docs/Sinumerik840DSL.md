@@ -16,7 +16,7 @@ For NCK you can select from a list of BTSS string like variable addresses, by cl
 
 ### PLC Data Points
 
-The data point addresses are slightly different than the variable addresses used in Step 7 or TIA Portal. The main difference is that the data point address includes the data type, so that the IoTConnector Lite can decode the raw bytes properly. You can enter a data point address string in the text field on the data point line.
+The data point addresses are slightly different than the variable addresses used in Step 7 or TIA Portal. The main difference is that the data point address includes the data type, so that the IoT connector flex can decode the raw bytes properly. You can enter a data point address string in the text field on the data point line.
 
 Here are some examples to guide you in addressing your variables:
 
@@ -61,4 +61,4 @@ Here are some examples to guide you in addressing your variables:
 | `DB2,DTLZ12`                | -                | Date\*\*     | A timestamp in the DTL format, in UTC                  |
 
 - \*) Note that strings in S7 PLCs use two extra bytes at start for size & length of the string
-- \*\*) Note that in the IoTconnector Lite, `Date` data types are _always_ represented in UTC.
+- \*\*) Note that in the IoTconnector flex, `Date` data types are _always_ represented in UTC.

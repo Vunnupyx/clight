@@ -1,0 +1,63 @@
+# Azure pipelines for the mdclight
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
+
+trigger:
+  branches:
+    include: [main]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  DOCKER_REGISTRY: mdclightdev.azurecr.io
+  BRANCH_NAME: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-')]
+
+steps:
+  - task: Docker@2
+    displayName: Login
+    inputs:
+      containerRegistry: 'mdc-light-acr-dev'
+      command: 'login'
+  - task: CmdLine@2
+    displayName: BuildBase
+    inputs:
+      script: | # Only build image if dockerfile has changed
+        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
+
+        echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
+        if [[ $MATCH_COUNT -gt 0 ]]; then
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          scripts/build/dockerBuildMdclightBase.sh
+        fi
+  - task: CmdLine@2
+    displayName: BuildMtc
+    inputs:
+      script: | # Only build image if dockerfile has changed
+        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mtconnect_arm64.dockerfile")
+
+        echo "$MATCH_COUNT match(es) found."
+        if [[ $MATCH_COUNT -gt 0 ]]; then
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          scripts/build/dockerBuildMtc.sh
+        fi
+  - task: CmdLine@2
+    displayName: BuildMdc
+    inputs:
+      script: |
+        docker run --privileged --rm tonistiigi/binfmt --install arm64
+        docker run --privileged --rm tonistiigi/binfmt
+        docker buildx create --use
+        scripts/build/dockerBuildMdclight.sh
+  - task: CmdLine@2
+    displayName: BuildWebserver
+    inputs:
+      script: |
+        docker run --privileged --rm tonistiigi/binfmt --install arm64
+        docker run --privileged --rm tonistiigi/binfmt
+        docker buildx create --use
+        scripts/build/dockerBuildWebserver.sh

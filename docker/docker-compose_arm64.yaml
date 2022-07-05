@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   webserver:
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server:2.0-beta
+    image: mdclightdev.azurecr.io/mdc-web-server:develop
     restart: always
     ports:
       - '443:443'
@@ -27,7 +27,7 @@ services:
         max-size: '50m'
   mdclight:
     privileged: true
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:2.0-beta
+    image: mdclightdev.azurecr.io/mdclight:develop
     restart: always
     volumes:
       - type: bind
@@ -73,7 +73,7 @@ services:
       options:
         max-size: '50m'
   mtconnect-agent:
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
+    image: mdclightdev.azurecr.io/mtconnect-prod_arm64:latest
     restart: always
     volumes:
       - type: bind

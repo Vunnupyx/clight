@@ -176,6 +176,7 @@
     },
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Ändeurngen speichern",
+    "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable"
@@ -209,7 +210,10 @@
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
-    "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuche es später erneut!"
+    "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuche es später erneut!",
+    "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
+    "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
+  
   },
   "settings-data-sink": {
     "DataSink": "Applikations Interfaces",
@@ -331,7 +335,9 @@
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
     "SetCurrentTime": "Systemzeit setzen",
-    "ChooseTimeZone": "Zeitzone"
+    "ChooseTimeZone": "Zeitzone",
+    "nptUnreachable": "NTP Server nicht erreichbar",
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
   },
   "system-information": {
     "SystemInformation": "System Informationen",

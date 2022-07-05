@@ -25,7 +25,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { NgxIpModule } from 'ngx-ip';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 import { SharedServicesModule } from './services/shared-services.module';
@@ -64,7 +63,6 @@ import { DocBtnComponent } from './components/doc-btn/doc-btn.component';
     MatStepperModule,
     MatProgressSpinnerModule,
     NgxDatatableModule,
-    NgxIpModule,
     NgxMatSelectSearchModule,
     AppTranslationModule,
     SharedServicesModule,

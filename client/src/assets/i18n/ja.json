@@ -176,6 +176,7 @@
     },
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
+    "TestConnection": "テスト接続",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable"
@@ -209,7 +210,9 @@
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
-    "BulkError": "変更下適用できません。再試行してください。"
+    "BulkError": "変更下適用できません。再試行してください。",
+    "ConnectionAvailableWithDelay": "の遅延で接続可能。 ",
+    "HostUnreachable": "ホストが到達できない IP設定を確認してください"
   },
   "settings-data-sink": {
     "DataSink": "データシンク",
@@ -331,7 +334,9 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time",
-    "ChooseTimeZone": "Choose Time Zone"
+    "ChooseTimeZone": "Choose Time Zone",
+    "nptUnreachable": "NTPサーバーに到達できない",
+    "nptUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。"
   },
   "system-information": {
     "SystemInformation": "システム情報",

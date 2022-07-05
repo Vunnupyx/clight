@@ -85,7 +85,6 @@ export class LedStatusService {
   }
 
   public async init(): Promise<LedStatusService> {
-    await this.setSysfsPrefix();
     return this;
   }
 
@@ -385,8 +384,11 @@ export class LedStatusService {
    * Sets directory prefix to mocked sys folder for dev environments.
    * Setup mock with "yarn setup_mock_sysfs"
    * @returns
+   * @deprecated
    */
   private async setSysfsPrefix() {
+    this.#sysfsPrefix = '';
+    return;
     if (process.env.MOCK_LEDS) {
       this.#sysfsPrefix = process.env.MOCK_LEDS;
       return; 

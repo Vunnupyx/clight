@@ -26,7 +26,7 @@ Using the "Use Proxy" switch you can switch the proxy settings on and off - if i
 
 ## Time (NTP)
 
-On the "Time" tab you can configure the server for time synchronization. It is required that time synchronization always working correctly, so that all services of the IoTConnector Lite are working properly.
+On the "Time" tab you can configure the server for time synchronization. It is required that time synchronization always working correctly, so that all services of the IoT connector flex are working properly.
 
 With the "Use NTP Server" switch you can enable or disable NTP synchronization. If the switch is set to active you can specify an NTP server.
 Enter the IP address or hostname of your NTP server.

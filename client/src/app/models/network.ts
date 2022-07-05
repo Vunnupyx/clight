@@ -29,4 +29,5 @@ export class NetworkConfig {
   ntpHost?: string;
   currentTime?: string;
   timezone?: string;
+  reachable?: boolean;
 }

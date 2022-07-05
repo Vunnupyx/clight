@@ -551,13 +551,13 @@
   "env": {
     "selected": "prod",
     "web": {
-      "tag": "latest"
+      "tag": "main"
     },
     "mdc": {
-      "tag": "latest"
+      "tag": "main"
     },
     "mtc": {
-      "tag": "latest"
+      "tag": "main"
     }
   }
 }

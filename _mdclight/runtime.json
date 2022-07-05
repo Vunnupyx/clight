@@ -89,39 +89,39 @@
   },
   "registries": {
     "prod": {
-      "url":"mdclight.azurecr.io",
+      "url": "mdclight.azurecr.io",
       "web": {
-        "tag": "latest"
+        "tag": "main"
       },
       "mdc": {
-        "tag": "latest"
+        "tag": "main"
       },
       "mtc": {
-        "tag": "latest"
+        "tag": "main"
       }
     },
     "dev": {
       "url": "mdclightdev.azurecr.io",
       "web": {
-        "tag": "latest"
+        "tag": "develop"
       },
       "mdc": {
-        "tag": "latest"
+        "tag": "develop"
       },
       "mtc": {
-        "tag": "latest"
+        "tag": "develop"
       }
     },
     "stag": {
       "url": "mdclightdev.azurecr.io",
       "web": {
-        "tag": "latest"
+        "tag": "staging"
       },
       "mdc": {
-        "tag": "latest"
+        "tag": "staging"
       },
       "mtc": {
-        "tag": "latest"
+        "tag": "staging"
       }
     }
   }

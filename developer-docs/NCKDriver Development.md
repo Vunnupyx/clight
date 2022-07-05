@@ -9,7 +9,9 @@
 
 - It is recommended to use Wireshark for debugging and further development, the current release of Wireshark includes a full S7 communication decoder, including the NC flavor of S7 communication.
 
-## NC Variables
+## NC PLC Variables
+
+- DB5,X35.0 (ProgramRun)
 
 ### Introduction
 
@@ -38,6 +40,10 @@ Example output can be found in the file `NCVarSelectorTestOutput.awl`
 
 Documentation HTMLs can be used to support all/more variables in the NCKDriver: `C:\Program Files (x86)\Siemens\NCVar Selector`
 Decompile htmls: `Hh.exe -decompile ausgabeverzeichnis chmdatei.chm`
+
+## NCK S7 Variables
+
+To test the NCK PLC connection, there should be the following addresses available:
 
 ## Glossary
 

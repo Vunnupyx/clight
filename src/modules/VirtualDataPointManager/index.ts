@@ -174,23 +174,21 @@ export class VirtualDataPointManager {
       }
 
       // Iterate over sorted by high prio array
-      for (const entry of config.enumeration.sort((a, b) => {
+      for (const entry of config.enumeration.items.sort((a, b) => {
         return b.priority - a.priority;
       })) {
-        const hit = sourceEvents.find((event) => {
+        const hit = !!sourceEvents.find((event) => {
           winston.debug(`${logPrefix} searching for entry ${entry.source} found ${event.measurement.id}`);
-          if (event.measurement.id === entry.source) {
-            winston.error(`TREFFER`);
-            winston.error(JSON.stringify(event.measurement));
-          };
+          winston.debug(`${logPrefix} measurment is: ${!!event.measurement.value}`);
           return event.measurement.id === entry.source && !!event.measurement.value;
         });
-        if(!!hit) {
+        if(hit) {
+          winston.debug(`${logPrefix} found ${}`)
           return entry.returnValueIfTrue;
         }
       }
       // No true value in list
-      return null;
+      return config.enumeration?.defaultValue || null;
     }
 
   /**

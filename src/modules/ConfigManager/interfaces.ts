@@ -250,7 +250,10 @@ export interface IVirtualDataPointConfig {
   sources: string[];
   operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds' | 'enumeration';
   thresholds?: ITargetDataMap;
-  enumeration?: EnumOperationEntry[];
+  enumeration?: {
+    defaultValue?: string,
+    items: EnumOperationEntry[],
+  };
 }
 
 export interface ISystemInfoItem {

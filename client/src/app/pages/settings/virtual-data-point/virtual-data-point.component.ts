@@ -20,6 +20,7 @@ import {
 } from '../../../services';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { Status } from 'app/shared/state';
+import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -36,7 +37,8 @@ export class VirtualDataPointComponent implements OnInit {
     VirtualDataPointOperationType.OR,
     VirtualDataPointOperationType.NOT,
     VirtualDataPointOperationType.COUNTER,
-    VirtualDataPointOperationType.THRESHOLDS
+    VirtualDataPointOperationType.THRESHOLDS,
+    VirtualDataPointOperationType.ENUMERATION,
   ];
 
   unsavedRow?: VirtualDataPoint;
@@ -256,6 +258,42 @@ export class VirtualDataPointComponent implements OnInit {
     return this.datapointRows?.findIndex((x) => x.id === id)!;
   }
 
+  onSetEnumeration(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.enumeration) {
+      virtualPoint.enumeration = {items:[]};
+    }
+
+    const protocol = this.sourceDataPointService.getProtocol(
+      virtualPoint.sources![0]
+    );
+
+    this.sourceDataPointService.getDataPoints(protocol);
+    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
+
+    const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
+      data: {
+        enumeration: { ...virtualPoint.enumeration },
+        sources: virtualPoint.sources,
+        protocol,
+      },
+      width: '1300px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.enumeration = result.enumeration;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          ...virtualPoint,
+          enumeration: result.enumeration,
+        });
+      }
+    });
+  }
+
   onSetThreshold(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.thresholds) {
       virtualPoint.thresholds = {};
@@ -297,7 +335,8 @@ export class VirtualDataPointComponent implements OnInit {
   ) {
     return [
       VirtualDataPointOperationType.AND,
-      VirtualDataPointOperationType.OR
+      VirtualDataPointOperationType.OR,
+      VirtualDataPointOperationType.ENUMERATION,
     ].includes(operationType!);
   }
 

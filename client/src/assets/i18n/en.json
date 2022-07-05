@@ -206,7 +206,8 @@
     "BulkError": "Changes have not been applied. Please, try again!",
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
-    "DuplicatedName": "You are not allowed to duplicate names"
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "SetEnumeration": "Set enumeration"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",

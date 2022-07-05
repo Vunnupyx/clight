@@ -5,7 +5,8 @@ export enum VirtualDataPointOperationType {
   OR = 'or',
   NOT = 'not',
   COUNTER = 'counter',
-  THRESHOLDS = 'thresholds'
+  THRESHOLDS = 'thresholds',
+  ENUMERATION = 'enumeration',
 }
 
 export class VirtualDataPoint {
@@ -14,4 +15,16 @@ export class VirtualDataPoint {
   sources?: string[];
   name?: string;
   thresholds?: ObjectMap<number>;
+  enumeration?: VirtualDataPointEnumeration;
+}
+
+export interface VirtualDataPointEnumeration {
+  defaultValue?: string;
+  items: VirtualDataPointEnumerationItem[];
+}
+
+export interface VirtualDataPointEnumerationItem {
+  priority: number;
+  source: string;
+  returnValueIfTrue: string;
 }

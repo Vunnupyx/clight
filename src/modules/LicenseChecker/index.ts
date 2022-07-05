@@ -208,6 +208,23 @@ export class LicenseChecker {
       winston.info(`${logPrefix} already initialized`);
       return Promise.resolve();
     }
+
+    //duplicate detection
+    const dups = this.#macList.filter(
+      (item, index, arr) => arr.indexOf(item) !== index
+    );
+    if (dups.length > 0) {
+      winston.warn(`${logPrefix} duplicated MAC addresses detected: ${dups}`);
+    }
+
+    //invalid detection
+    const invalid = this.#macList.filter(
+      (item, index) => !/(([0-9A-F]{2}:){5}[0-9-A-F]{2})/.test(item)
+    );
+    if (invalid.length > 0) {
+      winston.warn(`${logPrefix} invalid MAC addresses detected: ${invalid}`);
+    }
+
     let mac = await this.system.readMacAddress('eth0');
 
     const initialized = `${logPrefix} initialized.`;

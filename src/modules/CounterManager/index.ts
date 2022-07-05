@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
+import { ConfigManager } from '../ConfigManager';
 
 type CounterDict = {
   [id: string]: number;
@@ -68,7 +69,7 @@ type ScheduleDescriptionBase = {
   minutes: MinuteType;
   seconds: SecondsType;
   created: number;
-  lastReset: number;
+  lastReset: number | undefined;
 };
 type ScheduleDescriptionDay = ScheduleDescriptionBase & {
   day: DayType;
@@ -79,7 +80,9 @@ type ScheduleDescriptionDate = ScheduleDescriptionBase & {
 };
 
 // TODO Fix TYPE
-export type ScheduleDescription = ScheduleDescriptionDay | ScheduleDescriptionDate;
+export type ScheduleDescription =
+  | ScheduleDescriptionDay
+  | ScheduleDescriptionDate;
 
 type ScheduledCounterResetDict = {
   [id: string]: ScheduleDescription[];
@@ -95,13 +98,7 @@ type timerDict = {
 export class CounterManager {
   private persist = true;
   private counters: CounterDict = {};
-  private scheduledResets: ScheduledCounterResetDict = {};
   private configFolder = '../../../mdclight/config';
-  private scheduleStoragePath = path.join(
-    __dirname,
-    this.configFolder,
-    '/resetSchedulers.json'
-  );
   private counterStoragePath = '';
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
@@ -110,7 +107,7 @@ export class CounterManager {
   /**
    * Initializes counter manages and tries to restore old counter states
    */
-  constructor() {
+  constructor(private configManager: ConfigManager) {
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       winston.warn(
         'Configuration folder for storing counter values not found! The counts are not persisted!'
@@ -130,13 +127,9 @@ export class CounterManager {
       );
     }
 
-    if (fs.existsSync(this.scheduleStoragePath)) {
-      this.scheduledResets = JSON.parse(
-        fs.readFileSync(this.scheduleStoragePath, 'utf-8')
-      );
-      this.checkMissedResets();
-    }
-    this.checkTimers();
+    // TODO: DIGMDCLGHT-20 Scheduled reset was not finalized by sprint end.
+    //this.checkMissedResets();
+    //this.checkTimers();
   }
 
   /**
@@ -144,14 +137,13 @@ export class CounterManager {
    * @param  {string} id
    * @returns number
    */
-  public increment(id: string, config?: ScheduleDescription[]): number {
+  public increment(id: string): number {
     const logPrefix = `${this.constructor.name}::increment`;
     winston.debug(`${logPrefix} increment counter for id: ${id}`);
     if (typeof this.counters[id] !== 'undefined') {
       this.counters[id] = this.counters[id] + 1;
     } else {
       winston.debug(`${logPrefix} unknown id ${id} found. Create new counter.`);
-      if (config) this.setScheduledReset(id, config);
       this.counters[id] = 1;
     }
 
@@ -192,52 +184,53 @@ export class CounterManager {
     }
   }
 
-  private saveSchedulingToFile() {
-    winston.info(`${this.constructor.name}::saveSchedulingToFile saving...`);
-    if (this.persist) {
-      fs.writeFileSync(
-        this.scheduleStoragePath,
-        JSON.stringify(this.scheduledResets)
-      );
-    }
-    winston.info(`${this.constructor.name}::saveSchedulingToFile saved.`);
-  }
-
-  private setScheduledReset(id: string, resetConfig: ScheduleDescription[]): void {
-    const logPrefix = `CounterManager::setScheduledReset`;
-    winston.debug(`${logPrefix} for id ${id} with config: ${resetConfig}`);
-    this.scheduledResets[id] = resetConfig.map(entry => {return {created: Date.now(), ...entry}});
-    this.saveSchedulingToFile();
-  }
-
   /**
    * Check at startup if any reset was missed
    */
   private checkMissedResets() {
     const logPrefix = `${this.constructor.name}::checkMissedResets`;
     winston.debug(`${logPrefix} started.`);
-    for (const [id, config] of Object.entries(this.scheduledResets)) {
-      for (const [index, configEntry] of config.entries()) {
-      const nextDate = this.calcNextTrigger(configEntry, new Date());
-      const nextNextDate = this.calcNextTrigger(configEntry, new Date(nextDate));
-      const interval = nextNextDate.getTime() - nextDate.getTime();
-      const lastDate = nextDate.getTime() - interval;
-
-      if(lastDate < configEntry.created) {
-        // No reset missed because timer is younger
-        winston.debug(`${logPrefix} ignore reset because timer is younger as last trigger date.`);
-        continue;
+    const counterEntries = this.configManager.config.virtualDataPoints.filter(
+      (vdp) => {
+        return (
+          vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
+        );
       }
-      if(lastDate === configEntry?.lastReset) {
-        // last reset correct done
-        winston.debug(`${logPrefix} ignore reset because last reset was successfully.`);
-        continue;
-      }
-      winston.debug(`${logPrefix} reset for counter '${id}' because last reset was skipped.`);
-      this.reset(id);
-      this.scheduledResets[id][index].lastReset = Date.now();
-    }}
+    );
+    for (const counter of counterEntries) {
+      const id = counter.sources[0];
+      for (const [index, configEntry] of counter?.resetSchedules?.entries()) {
+        const nextDate = this.calcNextTrigger(configEntry, new Date());
+        const nextNextDate = this.calcNextTrigger(
+          configEntry,
+          new Date(nextDate)
+        );
+        const interval = nextNextDate.getTime() - nextDate.getTime();
+        const lastDate = nextDate.getTime() - interval;
 
+        if (lastDate < configEntry.created) {
+          // No reset missed because timer is younger
+          winston.debug(
+            `${logPrefix} ignore reset because timer is younger as last trigger date.`
+          );
+          continue;
+        }
+        if (lastDate === configEntry?.lastReset) {
+          // last reset correct done
+          winston.debug(
+            `${logPrefix} ignore reset because last reset was successfully.`
+          );
+          continue;
+        }
+        winston.debug(
+          `${logPrefix} reset for counter '${id}' because last reset was skipped.`
+        );
+        this.configManager.config.virtualDataPoints.find(
+          (vdp) => vdp.id === counter.id
+        ).resetSchedules[index].lastReset = Date.now();
+        this.reset(id);
+      }
+    }
     winston.debug(`${logPrefix} done.`);
   }
 
@@ -249,36 +242,53 @@ export class CounterManager {
 
     winston.debug(`${logPrefix} start check for scheduled resets.`);
 
-    for (const [id, scheduleData] of Object.entries(this.scheduledResets)) {
-      for (const [index, entry] of scheduleData.entries()){winston.debug(
-        `${logPrefix} found scheduling for id: ${id} : ${JSON.stringify(
-          scheduleData
-        )}`
-      );
-      // There is already a running timer for this id!
-      if (this.startedTimers[id] !== undefined) {
-        winston.debug(`${logPrefix} timer for ${id} already started.`);
-        continue;
+    const counterEntries = this.configManager.config.virtualDataPoints.filter(
+      (vdp) => {
+        return (
+          vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
+        );
       }
+    );
+    winston.error(`MARKUS ${JSON.stringify(counterEntries)}`);
+    for (const scheduleData of counterEntries) {
+      const counterId = scheduleData.sources[0];
+      const vdpId = scheduleData.id;
+      for (const [index, entry] of scheduleData?.resetSchedules?.entries()) {
+        winston.debug(
+          `${logPrefix} found scheduling for id: ${counterId} : ${JSON.stringify(
+            scheduleData
+          )}`
+        );
+        // There is already a running timer for this id!
+        if (this.startedTimers[counterId] !== undefined) {
+          winston.debug(`${logPrefix} timer for ${counterId} already started.`);
+          continue;
+        }
 
-      const now = new Date();
-      const nextScheduling = this.calcNextTrigger(entry, now);
+        const now = new Date();
+        const nextScheduling = this.calcNextTrigger(entry, now);
 
-      winston.debug(
-        `${logPrefix} next trigger time found: ${nextScheduling.toString()}`
-      );
-      winston.debug(
-        `${logPrefix} check if trigger time is inside next interval.`
-      );
-      const timeDiff = now.getTime() - nextScheduling.getTime();
-      //Check if diff is in range of interval
-      if ( timeDiff > this.schedulerCheckerInterval * -1) {
-        winston.debug(`${logPrefix} start timer for id: ${id}`);
-        this.startedTimers[id] = setTimeout(() => {
-          winston.debug(`${logPrefix} timer for ${id} expired. Start reset.`);
-          this.reset(id);
-        }, timeDiff * -1);
-      }}
+        winston.debug(
+          `${logPrefix} next trigger time found: ${nextScheduling}`
+        );
+        winston.debug(
+          `${logPrefix} check if trigger time is inside next interval.`
+        );
+        const timeDiff = now.getTime() - nextScheduling.getTime();
+        //Check if diff is in range of interval
+        if (timeDiff > this.schedulerCheckerInterval * -1) {
+          winston.debug(`${logPrefix} start timer for id: ${counterId}`);
+          this.configManager.config.virtualDataPoints.find(
+            (vdp) => vdp.id === vdpId
+          ).resetSchedules[index].lastReset = Date.now();
+          this.startedTimers[counterId] = setTimeout(() => {
+            winston.debug(
+              `${logPrefix} timer for ${counterId} expired. Start reset.`
+            );
+            this.reset(counterId);
+          }, timeDiff * -1);
+        }
+      }
     }
 
     if (!this.schedulerChecker) {
@@ -294,108 +304,213 @@ export class CounterManager {
 
   /**
    * Calculate calculates the next date
-   * 
-   * @param scheduleData 
+   *
+   * @param scheduleData
    * @param currentDate date object to compare
    * @returns next calculated date
    */
-  private calcNextTrigger(scheduleData: ScheduleDescription, currentDate: Date): Date {
-    const logPrefix = `${this.constructor.name}::calcNextTrigger`;
-    let diff: number;
-    let dateFromScheduling: Date;
-    const timeData = {
-      year: currentDate.getFullYear(),
-      month:
-        scheduleData.month === 'Every'
-          ? currentDate.getMonth()
-          : scheduleData.month,
-      date:
-      // @ts-ignore
-        scheduleData.date === 'Every'
-          ? currentDate.getDate()
-          // @ts-ignore
-          : scheduleData.date,
-      hours:
-        scheduleData.hours === 'Every'
-          ? currentDate.getHours()
-          : scheduleData.hours,
-      min:
-        scheduleData.minutes === 'Every'
-          ? currentDate.getMinutes()
-          : scheduleData.minutes,
-      sec: scheduleData.seconds
-    };
-    // Find next day if day is set
+  // private calcNextTrigger(
+  //   scheduleData: ScheduleDescription,
+  //   currentDate: Date
+  // ): Date {
+  //   let diff: number;
+  //   let dateFromScheduling: Date = new Date();
+  //   const timeData = {
+  //     year: currentDate.getFullYear(),
+  //     month:
+  //       scheduleData.month === 'Every'
+  //         ? currentDate.getMonth()
+  //         : scheduleData.month,
+  //     date:
+  //       //@ts-ignore
+  //       scheduleData.date
+  //         ? //@ts-ignore
+  //           scheduleData.date
+  //         : currentDate.getDate(),
+  //     hours:
+  //       scheduleData.hours === 'Every'
+  //         ? currentDate.getHours()
+  //         : scheduleData.hours,
+  //     min:
+  //       scheduleData.minutes === 'Every'
+  //         ? currentDate.getMinutes()
+  //         : scheduleData.minutes,
+  //     sec: scheduleData.seconds
+  //   };
+  //   // Find next day if day is set
+  //   // @ts-ignore
+  //   if (scheduleData?.day) {
+  //     // TODO: FIX EVERY
+  //     //@ts-ignore
+  //     if (scheduleData?.day !== 'Every') {
+  //       dateFromScheduling = new Date(
+  //         timeData.year,
+  //         timeData.month,
+  //         // @ts-ignore
+  //         currentDate.getDate() +
+  //           // @ts-ignore
+  //           ((7 - currentDate.getDay() + Day[scheduleData.day]) % 7 || 0),
+  //         timeData.hours,
+  //         timeData.min,
+  //         timeData.sec
+  //       );
+  //       // @ts-ignore
+  //       diff = currentDate - dateFromScheduling;
+  //       if (!(diff < 0)) {
+  //         dateFromScheduling = new Date(
+  //           timeData.year,
+  //           timeData.month,
+  //           // @ts-ignore
+  //           dateFromScheduling.getDay() + 7,
+  //           timeData.hours,
+  //           timeData.min,
+  //           timeData.sec
+  //         );
+  //       }
+  //     } else {
+  //       console.log(`Day auf Every`);
+  //       dateFromScheduling = new Date(
+  //         timeData.year,
+  //         timeData.month,
+  //         timeData.date,
+  //         timeData.hours,
+  //         timeData.min,
+  //         timeData.sec
+  //       );
+  //       // @ts-ignore
+  //       diff = currentDate - dateFromScheduling;
+  //       if (!(diff < 0)) {
+  //         // increase every entries with one and check if new date is in future
+  //         for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
+  //           // Ignore non 'Every' entries
+  //           // @ts-ignore
+  //           if (scheduleData[entry] !== 'Every') continue;
+  //           // @ts-ignore
+  //           timeData[entry] += 1;
+  //           dateFromScheduling = new Date(
+  //             timeData.year,
+  //             timeData.month,
+  //             timeData.date,
+  //             timeData.hours,
+  //             timeData.min,
+  //             timeData.sec
+  //           );
+  //           // @ts-ignore
+  //           diff = currentDate - dateFromScheduling;
+  //           if (diff < 0) {
+  //             // New date is in future, break out for loop
+  //             break;
+  //           }
+  //           // @ts-ignore
+  //           currentDate[entry] -= 1;
+  //         }
+  //       }
+  //     }
+  //   } else {
+  //     dateFromScheduling = new Date(
+  //       timeData.year,
+  //       timeData.month,
+  //       timeData.date,
+  //       timeData.hours,
+  //       timeData.min,
+  //       timeData.sec
+  //     );
+  //     // @ts-ignore
+  //     diff = currentDate - dateFromScheduling;
+  //     // generated dateFromScheduling in past search for next event
+  //     if (!(diff < 0)) {
+  //       // increase every entries with one and check if new date is in future
+  //       for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
+  //         // Ignore non 'Every' entries
+  //         // @ts-ignore
+  //         if (scheduleData[entry] !== 'Every') continue;
+  //         // @ts-ignore
+  //         timeData[entry] += 1;
+  //         dateFromScheduling = new Date(
+  //           timeData.year,
+  //           timeData.month,
+  //           timeData.date,
+  //           timeData.hours,
+  //           timeData.min,
+  //           timeData.sec
+  //         );
+  //         // @ts-ignore
+  //         diff = currentDate - dateFromScheduling;
+  //         if (diff < 0) {gll
+  //           // New date is in future, break out for loop
+  //           break;
+  //         }
+  //         // @ts-ignore
+  //         currentDate[entry] -= 1;
+  //       }
+  //     }
+  //   }
+  //   return dateFromScheduling;
+  // }
+  
+
+  public calcNextTrigger(input: ScheduleDescription, currentDate: Date) {
+    // DATE ist definiert!!!!
     // @ts-ignore
-    if (scheduleData?.day) {
-      winston.debug(
-        // @ts-ignore
-        `${logPrefix} found entry for day property: ${scheduleData.day}`
-      );
-      let dateFromScheduling = new Date(
-        timeData.year,                  
-        timeData.month,
-        // @ts-ignore
-        currentDate.getDate() +
-        // @ts-ignore
-          ((7 - currentDate.getDay() + parseInt(Day[scheduleData.day]), 10) % 7 || 0),
-        timeData.hours,
-        timeData.min,
-        timeData.sec
-      );
+    input = {...input, year: currentDate.getFullYear()}
+    const data = {
+      year: currentDate.getFullYear(),
+      month: input.month === 'Every' ? currentDate.getMonth() : input.month,
       // @ts-ignore
-      diff = currentDate - dateFromScheduling;
-      if (!(diff < 0)) {
-        dateFromScheduling = new Date(
-          timeData.year,
-          timeData.month,
-          // @ts-ignore
-          dateFromScheduling.getDay() + 7,
-          timeData.hours,
-          timeData.min,
-          timeData.sec
+      date:  input.date,
+      hours: input.hours === 'Every' ? currentDate.getHours() : input.hours,
+      min: input.minutes === 'Every' ? currentDate.getMinutes() : input.minutes,
+      second: input.seconds
+    };
+
+    let testDate = new Date(data.year, data.month, data.date, data.hours, data.min, data.second);
+    if (currentDate.getTime() > testDate.getTime()) {
+      console.log(`Datum: ${currentDate}`);
+      console.log(`Berechnetes Datum liegt in der Vergangenheit: ${testDate}`);
+      for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
+        if (input[entry] !== 'Every') continue;
+        // @ts-ignore
+        data[entry] += 1;
+        //TODO:
+        console.log(data);
+
+        testDate = new Date(
+          data.year,
+          data.month,
+          data.date,
+          data.hours,
+          data.min,
+          data.second
         );
-        // @ts-ignore
-        diff = currentDate - dateFromScheduling;
-      }
+        console.log(`Neuer Versuch: ${testDate}`);
+        console.log()
+        if (currentDate.getTime() < testDate.getTime()) return testDate;
+      } 
     } else {
-      // @ts-ignore
-      winston.debug(`${logPrefix} found date property: ${scheduleData.date}`);
-      dateFromScheduling = new Date(
-        timeData.year,
-        timeData.month,
-        timeData.date,
-        timeData.hours,
-        timeData.min,
-        timeData.sec
-      );
-      // @ts-ignore
-      diff = currentDate - dateFromScheduling;
-      // generated dateFromScheduling in past search for next event
-      if (!(diff < 0)) {
-        // increase every entries with one and check if new date is in future
-        for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
-          // Ignore non 'Every' entries
-          if (scheduleData[entry] !== 'Every') continue;
-          timeData[entry] += 1;
-          dateFromScheduling = new Date(
-            timeData.year,
-            timeData.month,
-            timeData.date,
-            timeData.hours,
-            timeData.min,
-            timeData.sec
-          );
-          // @ts-ignore
-          diff = currentDate - dateFromScheduling;
-          if (diff < 0) {
-            // New date is in future, break out for loop
-            break;
-          }
-          currentDate[entry] -= 1;
-        }
-      }
+      return testDate;
     }
-    return dateFromScheduling;
+    // for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
+    //   // Ignore non 'Every' entries
+    //   // @ts-ignore
+    //   if (scheduleData[entry] !== 'Every') continue;
+    //   // @ts-ignore
+    //   timeData[entry] += 1;
+    //   dateFromScheduling = new Date(
+    //     timeData.year,
+    //     timeData.month,
+    //     timeData.date,
+    //     timeData.hours,
+    //     timeData.min,
+    //     timeData.sec
+    //   );
+    //   // @ts-ignore
+    //   diff = currentDate - dateFromScheduling;
+    //   if (diff < 0) {
+    //     // New date is in future, break out for loop
+    //     break;
+    //   }
+    //   // @ts-ignore
+    //   currentDate[entry] -= 1;
+    // }
   }
 }

@@ -276,7 +276,7 @@ export class VirtualDataPointComponent implements OnInit {
         sources: virtualPoint.sources,
         protocol,
       },
-      width: '1300px',
+      width: '900px',
     });
 
     dialogRef.afterClosed().subscribe((result) => {

@@ -207,7 +207,11 @@
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen übernehmen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
-    "SetEnumeration": ""
+    "SetEnumeration": "",
+    "DefaultValue": "",
+    "SelectInput": "",
+    "CurrentLiveValue": "",
+    "ReturnValueIfTrue": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",

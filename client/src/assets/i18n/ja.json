@@ -207,7 +207,11 @@
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
     "DuplicatedName": "You are not allowed to duplicate names",
-    "SetEnumeration": ""
+    "SetEnumeration": "",
+    "DefaultValue": "",
+    "SelectInput": "",
+    "CurrentLiveValue": "",
+    "ReturnValueIfTrue": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",

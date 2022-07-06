@@ -1394,6 +1394,21 @@ export default {
         }
       }
     },
+    'systemInfo/environment': {
+      get: {
+        tags: ['systemInfo'],
+        description: 'Get system environment',
+        operationId: 'systemEnvironmentGet',
+        responses: {
+          '200': {
+            description: 'Returns all information about the current environment',
+            schema: {
+              '$ref': '#/definitions/envResponse'
+            }
+          }
+        }
+      }
+    },
     '/terms-and-conditions': {
       get: {
         parameters: [
@@ -2276,6 +2291,16 @@ export default {
       properties: {
         timestamp: {
           type: 'number'
+        }
+      }
+    },
+    envResponse: {
+      type: 'object',
+      required: ['env'],
+      properties: {
+        env: {
+          type: 'string',
+          enum: ['stag', 'dev', 'prod']
         }
       }
     }

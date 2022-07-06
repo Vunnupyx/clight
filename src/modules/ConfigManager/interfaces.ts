@@ -11,6 +11,22 @@ export interface IAuthRuntimeConfig {
   expiresIn: number;
 }
 
+type IRegistry = {
+  [component in TSoftwareComponents]: {
+    tag: string;
+  };
+} & {
+  url: string;
+};
+
+type TSoftwareComponents = 'web' | 'mdc' | 'mtc';
+
+interface IRegistries {
+  prod: IRegistry,
+  dev: IRegistry,
+  stag: IRegistry
+}
+
 export interface IRuntimeConfig {
   users: IUser[];
   mtconnect: IMTConnectConfig;
@@ -19,6 +35,7 @@ export interface IRuntimeConfig {
   auth: IAuthRuntimeConfig;
   datahub: IDataHubConfig;
   systemInfo: ISystemInfo[];
+  registries: IRegistries
 }
 
 export interface IGeneralConfig {
@@ -265,6 +282,14 @@ export interface TermsAndConditionsConfig {
   accepted: boolean;
 }
 
+type env = {
+  [component in TSoftwareComponents]: {
+    tag: string;
+  };
+} & {
+  selected: 'prod' | 'dev' | 'stag',
+};
+
 export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: Array<IDataSinkConfig>;
@@ -274,6 +299,7 @@ export interface IConfig {
   networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
   termsAndConditions: TermsAndConditionsConfig;
+  env: env
 }
 
 export interface IConfigManagerParams {

@@ -67,9 +67,9 @@ export default class NetworkManagerCliController {
     const nmcliCommand = `nmcli con mod ${networkInterface}-default ${addressCommand} ${gatewayCommand} ${dnsCommand} ${dhcpCommand}`;
     winston.debug(`${logPrefix} sending command to host: ${nmcliCommand}`);
     try {
-      await SshService.sendCommand(nmcliCommand);
+      await SshService.sendCommand(nmcliCommand, true);
       const resultApply = await SshService.sendCommand(
-        `nmcli con up ${networkInterface}-default`
+        `nmcli con up ${networkInterface}-default`, true
       );
       winston.info(resultApply);
     } catch (e) {

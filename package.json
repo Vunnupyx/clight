@@ -70,7 +70,7 @@
     "deploy:change:user:pw": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && read -p \"user to change password: \" USERNAME && read -s -p \"New password: \" NEW_PASSWORD && ssh $INSTALL_HOST `echo -e \"$NEW_PASSWORD\n$NEW_PASSWORD\" | passwd $USERNAME`",
     "deploy:login:container:registry": "scripts/loginDockerRegistries.sh",
     "deploy:all": "npm run deploy:login:container:registry && npm run copy_mdc_conf && npm run copy_mtc_conf && npm run deploy:permissions:file && npm run deploy:network:connections && npm run deploy:network:conf && npm run copy_compose",
-    "deploy:clean:logs:and:shutdown": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh $INSTALL_HOST \"rm -rf /etc/MDCLight/logs/*.log /etc/MDCLight/config/auth.json /etc/MDCLight/config/certs && cp /etc/MDCLight/config/config.factory.json /etc/MDCLight/config/config.json && cat /dev/null > ~/.bash_history && cat /dev/null > /home/mdclite/.bash_history && history -c && rm -rf /var/log/* && nohup shutdown now &\"",
+    "deploy:clean:logs:and:shutdown": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh $INSTALL_HOST \"rm -rf /etc/MDCLight/logs/*.log /etc/MDCLight/config/auth.json /etc/MDCLight/config/certs && cp /etc/MDCLight/config/config.factory.json /etc/MDCLight/config/config.json && cat /dev/null > /root/.bash_history && cat /dev/null > /home/mdclite/.bash_history && rm -f /root/.bash_history /home/mdclite/.bash_history && history -c && rm -rf /var/log/* && nohup shutdown now &\"",
     "deploy:clean:images": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh INSTALL_HOST docker image prune --all --force"
   },
   "devDependencies": {

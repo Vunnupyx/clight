@@ -5,9 +5,10 @@
 DEV=mdclightdev.azurecr.io
 PROD=mdclight.azurecr.io
 STAGE=mdclightstaging.azurecr.io
+MDC_USER=mdclite
 
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-SSHHOST=$($SCRIPTPATH/../devTools/checkEnvironmentVariable.sh)
+SSHHOST=$($SCRIPTPATH/../devTools/checkEnvironmentVariable.sh $MDC_USER)
 SSHCOMMAND="ssh $SSHHOST"
 
 # prod

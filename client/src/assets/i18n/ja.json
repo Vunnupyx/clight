@@ -198,6 +198,7 @@
     "DeleteTitle": "削除",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
     "SetThresholds": "閾値設定",
+    "SetComparativeValue": "",
     "Set": "設定",
     "Value": "値",
     "Threshold": "閾値",

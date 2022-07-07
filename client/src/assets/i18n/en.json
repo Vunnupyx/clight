@@ -198,6 +198,7 @@
     "DeleteTitle": "Delete",
     "DeleteMessage": "Are you sure you want to delete data point?",
     "SetThresholds": "Set Thresholds",
+    "SetComparativeValue": "Set Comparative Value",
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",

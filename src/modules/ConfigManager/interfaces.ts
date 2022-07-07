@@ -240,12 +240,20 @@ export interface QuickStartConfig {
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
   return 'source' in obj && 'target' in obj && !('id' in obj);
 }
-
+export interface EnumOperationEntry {
+  priority: number;
+  source: string,
+  returnValueIfTrue: string,
+}
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds';
+  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds' | 'enumeration';
   thresholds?: ITargetDataMap;
+  enumeration?: {
+    defaultValue?: string,
+    items: EnumOperationEntry[],
+  };
 }
 
 export interface ISystemInfoItem {

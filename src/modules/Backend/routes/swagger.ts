@@ -1556,7 +1556,36 @@ export default {
         },
         operationType: {
           type: 'string',
-          enum: ['and', 'or', 'not', 'counter]']
+          enum: ['and', 'or', 'not', 'counter', 'enumeration']
+        },
+        enumeration: {
+          type: 'object',
+          required: ['items'],
+          properties: {
+            defaultValue: {
+              type: 'string'
+            },
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['priority', 'source', 'returnValueIfTrue'],
+                minItems: 2,
+                properties: {
+                  priority: {
+                    type: 'integer',
+                    minimum: 0
+                  },
+                  source: {
+                    type: 'string'
+                  },
+                  returnValueIfTrue: {
+                    type: 'string'
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },

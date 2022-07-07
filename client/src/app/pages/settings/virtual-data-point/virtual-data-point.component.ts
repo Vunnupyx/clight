@@ -242,6 +242,13 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  onReset(obj: VirtualDataPoint) {
+    if(obj.operationType !== 'counter') {
+      return;
+    }
+    this.virtualDataPointService.resetCounter(obj);
+  }
+
   getSourceNames(sources: string[]) {
     return this.sources
       .filter((x) => sources.includes(x.id))

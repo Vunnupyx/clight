@@ -207,7 +207,11 @@
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
     "DuplicatedName": "You are not allowed to duplicate names",
-    "SetEnumeration": "Set enumeration"
+    "SetEnumeration": "Set enumeration",
+    "DefaultValue": "Default Value",
+    "SelectInput": "Select Input",
+    "CurrentLiveValue": "Current Live Value",
+    "ReturnValueIfTrue": "Value if left side is true"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",

@@ -3,7 +3,7 @@
 </h1>
 
 <div mat-dialog-content>
-  <div class="mt-20 d-flex align-items-center justify-content-between">
+  <div class="mt-20 d-flex align-items-center justify-content-end">
     <div class="mt-0 mr-25 text-nowrap">
       {{ 'settings-virtual-data-point.DefaultValue' | translate }}
     </div>
@@ -17,13 +17,13 @@
     </div>
   </div>
   <div class="set-enumeration-list" cdkDropList (cdkDropListDropped)="onReorder($event)">
-    <div class="set-enumeration-box" *ngFor="let row of rows" cdkDrag>
+    <div class="set-enumeration-box" *ngFor="let row of rows; let idx = index" cdkDrag>
       <div class="set-enumeration-custom-placeholder" *cdkDragPlaceholder></div>
       <div class="row w-100">
         <div class="col-3">
           <mat-form-field appearance="legacy">
             <mat-label>{{
-              'settings-general.CELOSLanguage' | translate
+              'settings-virtual-data-point.SelectInput' | translate
             }}</mat-label>
             <mat-select
               [(value)]="row.source"
@@ -38,7 +38,7 @@
         <div class="col-3">
           <mat-form-field appearance="legacy">
             <mat-label>{{
-              'settings-general.CELOSLanguage' | translate
+              'settings-virtual-data-point.CurrentLiveValue' | translate
             }}</mat-label>
             <input
               matInput
@@ -50,7 +50,7 @@
         <div class="col-3">
           <mat-form-field appearance="legacy">
             <mat-label>{{
-              'settings-general.CELOSLanguage' | translate
+              'settings-virtual-data-point.ReturnValueIfTrue' | translate
             }}</mat-label>
             <input
               matInput
@@ -58,6 +58,19 @@
               required
             />
           </mat-form-field>
+        </div>
+        <div class="col-3">
+          <div class="d-flex flex-column">
+            <mat-label>&nbsp;</mat-label>
+            <div class="d-flex">
+              <mat-button-toggle
+                (click)="onDelete(idx)"
+                [matTooltip]="'settings-virtual-data-point.Delete' | translate"
+                matTooltipPosition="above"
+                ><mat-icon>delete_outline</mat-icon></mat-button-toggle
+              >
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -67,6 +80,7 @@
     mat-mini-fab
     color="primary"
     class="wh-32 border-round mat-elevation-z0"
+    style="margin-top: 15px;"
     (click)="onAdd()"
     [matTooltip]="
       'settings-virtual-data-point.AddSchedule' | translate

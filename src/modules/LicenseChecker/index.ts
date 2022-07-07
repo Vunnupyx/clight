@@ -59,7 +59,7 @@ export class LicenseChecker {
     '8C:F3:19:21:60:CB',
     '8C:F3:19:21:61:0A',
     '8C:F3:19:21:61:29',
-    '8C:F3:19:21:61:3D', 
+    '8C:F3:19:21:61:3D',
     '8C:F3:19:21:61:3B',
     '8C:F3:19:21:60:FE',
     '8C:F3:19:21:61:2E',
@@ -142,12 +142,14 @@ export class LicenseChecker {
     '8C:F3:19:1F:2A:A8',
     '8C:F3:19:1E:BC:F8',
     '8C:F3:19:1E:BC:EA',
-    '8C:F3:19:1E:FE:48'
+    '8C:F3:19:1E:FE:48',
+    // DMG MORI HEITEC
+    '8C:F3:19:39:5E:14',
+    '8C:f3:f9:3A:0A:33'
   ];
   private _isLicensed: boolean = null;
   private system = new System();
   private _ledManager: LedStatusService;
-
 
   async init(): Promise<void> {
     const logPrefix = `${this.constructor.name}::init`;
@@ -156,10 +158,10 @@ export class LicenseChecker {
       winston.warn(`${logPrefix} LedStatusService not available!`);
       return Promise.reject();
     }
-    if(this._isLicensed !== null) {
+    if (this._isLicensed !== null) {
       winston.info(`${logPrefix} already initialized`);
       return Promise.resolve();
-    };
+    }
     let mac = await this.system.readMacAddress('eth0');
 
     const initialized = `${logPrefix} initialized.`;

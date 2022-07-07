@@ -206,7 +206,12 @@
     "BulkError": "変更が適用できません。再試行してください。",
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
-    "DuplicatedName": "You are not allowed to duplicate names"
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "SetEnumeration": "",
+    "DefaultValue": "",
+    "SelectInput": "",
+    "CurrentLiveValue": "",
+    "ReturnValueIfTrue": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
@@ -334,7 +339,9 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time",
-    "ChooseTimeZone": "Choose Time Zone"
+    "ChooseTimeZone": "Choose Time Zone",
+    "nptUnreachable": "NTPサーバーに到達できない",
+    "nptUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。"
   },
   "system-information": {
     "SystemInformation": "システム情報",

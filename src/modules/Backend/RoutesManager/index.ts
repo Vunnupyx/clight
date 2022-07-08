@@ -17,7 +17,8 @@ import {
 } from '../routes/apis/v1/DataSinks';
 import {
   virtualDatapointHandlers,
-  setConfigManager as vdpsSetConfigManager
+  setConfigManager as vdpsSetConfigManager,
+  setVdpManager
 } from '../routes/apis/v1/VirtualDataPoints';
 import {
   backupHandlers,
@@ -67,6 +68,7 @@ import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
 import swaggerFile from '../routes/swagger';
+import { VirtualDataPointManager } from '../../VirtualDataPointManager';
 
 interface RoutesManagerOptions {
   app: Application;
@@ -75,6 +77,7 @@ interface RoutesManagerOptions {
   dataSinksManager: DataSinksManager;
   dataPointCache: DataPointCache;
   authManager: AuthManager;
+  vdpManager: VirtualDataPointManager
 }
 
 /**
@@ -127,6 +130,7 @@ export class RoutesManager {
     ].forEach((func) => func(options.configManager));
     authSetAuthManager(options.authManager);
     setDataSinksManager(options.dataSinksManager);
+    setVdpManager(options.vdpManager);
     setTemplateDataSinksManager(options.dataSinksManager);
     setDataSourcesManager(options.dataSourcesManager);
     setTemplateDataSourcesManager(options.dataSourcesManager);

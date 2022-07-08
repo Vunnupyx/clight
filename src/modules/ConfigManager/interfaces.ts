@@ -1,6 +1,7 @@
 import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
+import { ScheduleDescription } from '../CounterManager';
 
 export interface IAuthConfig {
   secret: string;
@@ -261,8 +262,10 @@ export function isDataPointMapping(obj: any): obj is IDataPointMapping {
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds';
+  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds' | 'greater' | 'greaterEqual' | 'smaller' | 'smallerEqual' | "equal" | "unequal";
   thresholds?: ITargetDataMap;
+  comparativeValue?: string | number;
+  resetSchedules?: ScheduleDescription[]
 }
 
 export interface ISystemInfoItem {

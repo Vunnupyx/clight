@@ -9,12 +9,14 @@ import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesMana
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
+import { VirtualDataPointManager } from '../../VirtualDataPointManager';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager;
   dataSourcesManager: DataSourcesManager;
   dataSinksManager: DataSinksManager;
   dataPointCache: DataPointCache;
+  vdpManager: VirtualDataPointManager
 }
 
 /**
@@ -68,7 +70,8 @@ export class RestApiManager {
       dataSourcesManager: this.options.dataSourcesManager,
       dataSinksManager: this.options.dataSinksManager,
       dataPointCache: this.options.dataPointCache,
-      authManager
+      vdpManager: this.options.vdpManager,
+      authManager,
     });
 
     this.start();

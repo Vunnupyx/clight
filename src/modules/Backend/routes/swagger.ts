@@ -1571,7 +1571,14 @@ export default {
         },
         operationType: {
           type: 'string',
-          enum: ['and', 'or', 'not', 'counter]']
+          enum: ["and", "or", "not", "counter", "thresholds", "greater", "greaterEqual", "smaller", "smallerEqual", "equal", "unequal"]
+        },
+        comparativeValue: {
+          type: "string",
+          description: "ATTENTION also number is allowed!"
+        },
+        reset: {
+          "type": "boolean"
         }
       }
     },

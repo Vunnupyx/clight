@@ -729,12 +729,22 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const { created, updated, deleted } = changes;
 
     if (created) {
-      this._config.virtualDataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
+      const entries = Object.values<any>(created).map((item) => {
+        let newResetSchedule = []
+        if(item.operationType === "counter" && item.resetSchedules?.length > 0) {
+          for (const entry of item.resetSchedules) {
+            newResetSchedule.push({...entry, created: Date.now(), lastReset: null});
+          }
+        }
+
+        return {
+          ...{...item, resetSchedule: newResetSchedule.length > 0 ? newResetSchedule : item.resetSchedules},
           id: uuidv4()
-        }))
-      );
+        };
+      })
+
+      
+      this._config.virtualDataPoints.push(...entries);
     }
 
     if (updated) {

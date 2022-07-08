@@ -86,5 +86,43 @@
         "intervalHours": 1
       }
     }
+  },
+  "registries": {
+    "prod": {
+      "url": "mdclight.azurecr.io",
+      "web": {
+        "tag": "main"
+      },
+      "mdc": {
+        "tag": "main"
+      },
+      "mtc": {
+        "tag": "latest"
+      }
+    },
+    "dev": {
+      "url": "mdclightdev.azurecr.io",
+      "web": {
+        "tag": "develop"
+      },
+      "mdc": {
+        "tag": "develop"
+      },
+      "mtc": {
+        "tag": "latest"
+      }
+    },
+    "stag": {
+      "url": "mdclightstaging.azurecr.io",
+      "web": {
+        "tag": "staging"
+      },
+      "mdc": {
+        "tag": "staging"
+      },
+      "mtc": {
+        "tag": "latest"
+      }
+    }
   }
 }

@@ -484,5 +484,17 @@
     "completed": true
   },
   "name": "GM Series",
-  "description": "GM 16-6 or GM 20-6"
+  "description": "GM 16-6 or GM 20-6",
+  "env": {
+    "selected": "prod",
+    "web": {
+      "tag": "main"
+    },
+    "mdc": {
+      "tag": "main"
+    },
+    "mtc": {
+      "tag": "latest"
+    }
+  }
 }

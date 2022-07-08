@@ -114,6 +114,18 @@ export const emptyDefaultConfig: IConfig = {
   },
   termsAndConditions: {
     accepted: false
+  },
+  env: {
+    selected: 'prod',
+    mdc: {
+      tag: 'main'
+    },
+    mtc: {
+      tag: 'latest'
+    },
+    web: {
+      tag: 'main'
+    }
   }
 };
 
@@ -126,7 +138,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
     'mdclight/config'
   );
-  private runtimeFolder = '/runTimeFiles'
+  private runtimeFolder = '/runTimeFiles';
   private keyFolder = path.join(this.configFolder, 'keys');
 
   private configName = 'config.json';
@@ -221,6 +233,44 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           },
           telemetry: {
             intervalHours: undefined
+          }
+        }
+      },
+      registries: {
+        dev: {
+          url: '',
+          mdc: {
+            tag: 'develop'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'develop'
+          }
+        },
+        prod: {
+          url: '',
+          mdc: {
+            tag: 'main'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'main'
+          }
+        },
+        stag: {
+          url: '',
+          mdc: {
+            tag: 'staging'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'staging'
           }
         }
       }
@@ -456,7 +506,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
-    const configPath = path.join(configName === this.runtimeConfigName ?  this.runtimeFolder : this.configFolder, configName);
+    const configPath = path.join(
+      configName === this.runtimeConfigName
+        ? this.runtimeFolder
+        : this.configFolder,
+      configName
+    );
 
     return Promise.all([promisefs.readFile(configPath, { encoding: 'utf-8' })])
       .catch(() => {

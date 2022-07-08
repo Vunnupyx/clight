@@ -39,8 +39,11 @@ async function vdpsPostHandler(
   response: Response
 ): Promise<void> {
   //TODO: Input validation
-  const newData = { ...request.body, ...{ id: uuidv4()} };
-  if(newData.operationType === "counter" && newData.resetSchedules?.length > 0) {
+  const newData = { ...request.body, ...{ id: uuidv4() } };
+  if (
+    newData.operationType === 'counter' &&
+    newData.resetSchedules?.length > 0
+  ) {
     for (const [index, resetEntry] of newData.resetSchedules.entries()) {
       newData.resetSchedules[index].created = Date.now();
       newData.resetSchedules[index].lastReset = undefined;
@@ -65,6 +68,7 @@ async function vdpsPostBulkHandler(
 ): Promise<void> {
   try {
     await configManager.bulkChangeVirtualDataPoints(request.body || {});
+    await configManager.configChangeCompleted();
 
     response.status(200).send();
   } catch {
@@ -106,7 +110,7 @@ async function vdpDeleteHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
- async function vdpPatchHandler(
+async function vdpPatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -129,7 +133,6 @@ async function vdpDeleteHandler(
     href: `/vdps/${request.body.id}`
   });
 }
-
 
 export const virtualDatapointHandlers = {
   vdpsGet: vdpsGetHandler,

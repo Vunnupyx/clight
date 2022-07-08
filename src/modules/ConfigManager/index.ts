@@ -416,7 +416,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     await promisefs.copyFile(factoryConfig, configPath);
     await promisefs.unlink(authConfig);
-    await promisefs.unlink(`${this.configFolder}/certs`);
+    if (fs.existsSync(`${this.configFolder}/certs`)) {
+      await promisefs.rmdir(`${this.configFolder}/certs`, {
+        recursive: true
+      });
+    }
   }
 
   /**

@@ -78,166 +78,201 @@ export class VirtualDataPointManager {
 
   /**
    * Check if value of sourceEvents first entry is greater the compare value config.comparativeValue.
-   * 
+   *
    * @param sourceEvents  Array of measurements
    * @param config operation config
    * @param equal optional parameter to check for >= instead of >
    * @returns true if it is greater, false if not and null if something went wrong.
    */
   private greater(
-    sourceEvents: IDataSourceMeasurementEvent[], 
-    config: IVirtualDataPointConfig, equal: boolean = false): boolean | null {
-      const logPrefix = `${this.constructor.name}::greater${equal ? '(Equal)' : ''}`;
-      if (sourceEvents.length > 1 || sourceEvents.length === 0) {
-        winston.warn(`${logPrefix} is only available for one source but receive ${sourceEvents.length}`);
-        return null;
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig,
+    equal: boolean = false
+  ): boolean | null {
+    const logPrefix = `${this.constructor.name}::greater${
+      equal ? '(Equal)' : ''
+    }`;
+    if (sourceEvents.length > 1 || sourceEvents.length === 0) {
+      winston.warn(
+        `${logPrefix} is only available for one source but receive ${sourceEvents.length}`
+      );
+      return null;
+    }
+
+    // @ts-ignore
+    const compare = parseFloat(config.comparativeValue);
+    if (Number.isNaN(compare)) {
+      winston.warn(
+        `${logPrefix} got ${compare} for comparison but it's not a number`
+      );
+      return null;
+    }
+
+    const value = sourceEvents[0].measurement.value;
+
+    let result: boolean;
+    switch (typeof value) {
+      case 'number': {
+        if (equal && Math.abs(compare - value) < 1e-9) {
+          return true;
+        }
+        return value > compare;
       }
-      if (typeof config.comparativeValue !== 'number') {
-        winston.warn(`${logPrefix} got ${config.comparativeValue} for comparison but is only available for 'number' values.`);
-        return null;
-      }
-      const value = sourceEvents[0].measurement.value;
-      const compare = config.comparativeValue;
-      let result: boolean;
-      switch (typeof value) {
-        case 'number': {
-          if (equal && Math.abs(compare - value) < 1e-9) {
-            return true;
-          }
-          return value > compare;
-        };
-        case 'string': {
-          const parsed = parseFloat(value);
-          if (isNaN(parsed)) {
-            winston.error(`${logPrefix} no valid number.`)
-            return null;
-          }
-          if (equal && Math.abs(compare - parsed) < 1e-9) {
-            return true;
-          }
-          return parsed > compare;
-        };
-        case 'boolean': {
-          winston.warn(`${logPrefix} boolean is not a valid compare value.`);
-          return null;
-        };
-        default: {
-          winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+      case 'string': {
+        const parsed = parseFloat(value);
+        if (isNaN(parsed)) {
+          winston.error(`${logPrefix} no valid number.`);
           return null;
         }
+        if (equal && Math.abs(compare - parsed) < 1e-9) {
+          return true;
+        }
+        return parsed > compare;
       }
+      case 'boolean': {
+        winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+        return null;
+      }
+      default: {
+        winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+        return null;
+      }
+    }
   }
 
-   /**
+  /**
    * Check if value of sourceEvents first entry is smaller the compare value config.comparativeValue.
-   * 
+   *
    * @param sourceEvents  Array of measurements
    * @param config operation config
    * @param equal optional parameter to check for <= instead of <
    * @returns true if it is smaller, false if not and null if something went wrong.
    */
   private smaller(
-    sourceEvents: IDataSourceMeasurementEvent[], 
-    config: IVirtualDataPointConfig, equal: boolean = false): boolean | null {
-      const logPrefix = `${this.constructor.name}::smaller ${equal ? '(Equal)' : ''}`;
-      if (sourceEvents.length > 1 || sourceEvents.length === 0) {
-        winston.warn(`${logPrefix} is only available for one source but receive ${sourceEvents.length}`);
-        return null;
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig,
+    equal: boolean = false
+  ): boolean | null {
+    const logPrefix = `${this.constructor.name}::smaller ${
+      equal ? '(Equal)' : ''
+    }`;
+    if (sourceEvents.length > 1 || sourceEvents.length === 0) {
+      winston.warn(
+        `${logPrefix} is only available for one source but receive ${sourceEvents.length}`
+      );
+      return null;
+    }
+
+    // @ts-ignore
+    const compare = parseFloat(config.comparativeValue);
+    if (Number.isNaN(compare)) {
+      winston.warn(
+        `${logPrefix} got ${compare} for comparison but it's not a number`
+      );
+      return null;
+    }
+
+    const value = sourceEvents[0].measurement.value;
+    let result: boolean;
+    switch (typeof value) {
+      case 'number': {
+        // Correct method to compare
+        // floating-point numbers
+        if (equal && Math.abs(compare - value) < 1e-9) {
+          return true;
+        }
+        return value < compare;
       }
-      if (typeof config.comparativeValue !== 'number') {
-        winston.warn(`${logPrefix} got ${config.comparativeValue} for comparison but is only available for 'number' values.`);
-        return null;
-      }
-      const value = sourceEvents[0].measurement.value;
-      const compare = config.comparativeValue;
-      let result: boolean;
-      switch (typeof value) {
-        case 'number': {
-          // Correct method to compare
-          // floating-point numbers
-          if (equal && Math.abs(compare - value) < 1e-9) {
-            return true;
-          }
-          return value < compare;
-        };
-        case 'string': {
-          const parsed = parseFloat(value);
-          if (isNaN(parsed)) {
-            winston.error(`${logPrefix} no valid number.`)
-            return null;
-          }
-          if (equal && Math.abs(compare - parsed) < 1e-9) {
-            return true;
-          }
-          return parsed < compare;
-        };
-        case 'boolean': {
-          winston.warn(`${logPrefix} boolean is not a valid compare value.`);
-          return null;
-        };
-        default: {
-          winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+      case 'string': {
+        const parsed = parseFloat(value);
+        if (isNaN(parsed)) {
+          winston.error(`${logPrefix} no valid number.`);
           return null;
         }
+        if (equal && Math.abs(compare - parsed) < 1e-9) {
+          return true;
+        }
+        return parsed < compare;
       }
+      case 'boolean': {
+        winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+        return null;
+      }
+      default: {
+        winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+        return null;
+      }
+    }
   }
 
-   /**
+  /**
    * Check if value of sourceEvents first entry is equal the compare value config.comparativeValue.
-   * 
+   *
    * @param sourceEvents  Array of measurements
    * @param config operation config
    * @returns true if it is equal, false if not and null if something went wrong.
    */
   private equal(
-    sourceEvents: IDataSourceMeasurementEvent[], 
-    config: IVirtualDataPointConfig): boolean | null {
-      const logPrefix = `${this.constructor.name}::equal`;
-      if (sourceEvents.length > 1 || sourceEvents.length === 0) {
-        winston.warn(`${logPrefix} is only available for one source but receive ${sourceEvents.length}`);
-        return null;
-      }
-      const value = sourceEvents[0].measurement.value;
-      const compare = config.comparativeValue;
-      switch (typeof value) {
-        case 'number': {
-          // Correct method to compare
-          // floating-point numbers
-          if (typeof compare === 'number' && Math.abs(compare - value) < 1e-9) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-        case 'string': {
-          if(typeof compare !== 'string') {
-            winston.warn(`${logPrefix} try to compare string with non string value: ${compare}`);
-            return null;
-          }
-          return value.trim() === compare.trim();
-        };
-        case 'boolean': {
-          winston.warn(`${logPrefix} boolean is not a valid compare value.`);
-          return null;
-        };
-        default: {
-          winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
-          return null;
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig
+  ): boolean | null {
+    const logPrefix = `${this.constructor.name}::equal`;
+    if (sourceEvents.length > 1 || sourceEvents.length === 0) {
+      winston.warn(
+        `${logPrefix} is only available for one source but receive ${sourceEvents.length}`
+      );
+      return null;
+    }
+    const value = sourceEvents[0].measurement.value;
+    const compare = config.comparativeValue;
+    switch (typeof value) {
+      case 'number': {
+        // Correct method to compare
+        // floating-point numbers
+
+        if (
+          // @ts-ignore
+          !Number.isNaN(parseFloat(compare)) &&
+          // @ts-ignore
+          Math.abs(parseFloat(compare) - value) < 1e-9
+        ) {
+          return true;
+        } else {
+          return false;
         }
       }
+      case 'string': {
+        if (typeof compare !== 'string') {
+          winston.warn(
+            `${logPrefix} try to compare string with non string value: ${compare}`
+          );
+          return null;
+        }
+        return value.trim() === compare.trim();
+      }
+      case 'boolean': {
+        winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+        return null;
+      }
+      default: {
+        winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+        return null;
+      }
+    }
   }
 
   /**
    * Check if value of sourceEvents first entry is unequal the compare value config.comparativeValue.
-   * 
+   *
    * @param sourceEvents  Array of measurements
    * @param config operation config
    * @returns true if it is unequal, false if not and null if something went wrong.
    */
   private unequal(
-    sourceEvents: IDataSourceMeasurementEvent[], 
-    config: IVirtualDataPointConfig): boolean | null {
-      return !this.equal(sourceEvents, config);
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig
+  ): boolean | null {
+    return !this.equal(sourceEvents, config);
   }
 
   /**
@@ -377,11 +412,11 @@ export class VirtualDataPointManager {
         return this.greater(sourceEvents, config);
       case 'greaterEqual':
         return this.greater(sourceEvents, config, true);
-      case 'smaller': 
+      case 'smaller':
         return this.smaller(sourceEvents, config);
       case 'smallerEqual':
         return this.smaller(sourceEvents, config, true);
-      case 'equal': 
+      case 'equal':
         return this.equal(sourceEvents, config);
       case 'unequal':
         return this.unequal(sourceEvents, config);
@@ -471,7 +506,7 @@ export class VirtualDataPointManager {
 
   /**
    * Set counter to 0
-   * @param id identifier of the virtual datapoint 
+   * @param id identifier of the virtual datapoint
    */
   public resetCounter(id: string): void {
     winston.info(`${this.constructor.name}::resetCounter `);

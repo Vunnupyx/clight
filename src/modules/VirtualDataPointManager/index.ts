@@ -345,7 +345,7 @@ export class VirtualDataPointManager {
       this.toBoolean(measurement.value) &&
       this.cache.hasChanged(measurement.id)
     ) {
-      return this.counters.increment(measurement.id);
+      return this.counters.increment(config.id);
     }
 
     return null;

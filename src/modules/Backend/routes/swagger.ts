@@ -1394,6 +1394,22 @@ export default {
         }
       }
     },
+    'systemInfo/environment': {
+      get: {
+        tags: ['systemInfo'],
+        description: 'Get system environment',
+        operationId: 'systemEnvironmentGet',
+        responses: {
+          '200': {
+            description:
+              'Returns all information about the current environment',
+            schema: {
+              $ref: '#/definitions/envResponse'
+            }
+          }
+        }
+      }
+    },
     '/terms-and-conditions': {
       get: {
         parameters: [
@@ -1556,7 +1572,24 @@ export default {
         },
         operationType: {
           type: 'string',
-          enum: ['and', 'or', 'not', 'counter', 'enumeration']
+          enum: [
+            'and',
+            'or',
+            'not',
+            'counter',
+            'thresholds',
+            'greater',
+            'greaterEqual',
+            'smaller',
+            'smallerEqual',
+            'equal',
+            'unequal',
+            'enumeration'
+          ]
+        },
+        comparativeValue: {
+          type: 'string',
+          description: 'ATTENTION also number is allowed!'
         },
         enumeration: {
           type: 'object',
@@ -1586,6 +1619,9 @@ export default {
               }
             }
           }
+        },
+        reset: {
+          type: 'boolean'
         }
       }
     },
@@ -2305,6 +2341,16 @@ export default {
       properties: {
         timestamp: {
           type: 'number'
+        }
+      }
+    },
+    envResponse: {
+      type: 'object',
+      required: ['env'],
+      properties: {
+        env: {
+          type: 'string',
+          enum: ['stag', 'dev', 'prod']
         }
       }
     }

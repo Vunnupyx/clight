@@ -21,6 +21,10 @@ import {
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { Status } from 'app/shared/state';
 import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
+import {
+  PromptDialogComponent,
+  PromptDialogModel
+} from 'app/shared/components/prompt-dialog/prompt-dialog.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -39,6 +43,12 @@ export class VirtualDataPointComponent implements OnInit {
     VirtualDataPointOperationType.COUNTER,
     VirtualDataPointOperationType.THRESHOLDS,
     VirtualDataPointOperationType.ENUMERATION,
+    VirtualDataPointOperationType.GREATER,
+    VirtualDataPointOperationType.GREATER_EQUAL,
+    VirtualDataPointOperationType.SMALLER,
+    VirtualDataPointOperationType.SMALLER_EQUAL,
+    VirtualDataPointOperationType.EQUAL,
+    VirtualDataPointOperationType.UNEQUAL
   ];
 
   unsavedRow?: VirtualDataPoint;
@@ -237,6 +247,13 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  onReset(obj: VirtualDataPoint) {
+    if (obj.operationType !== 'counter') {
+      return;
+    }
+    this.virtualDataPointService.resetCounter(obj);
+  }
+
   getSourceNames(sources: string[]) {
     return this.sources
       .filter((x) => sources.includes(x.id))
@@ -258,9 +275,22 @@ export class VirtualDataPointComponent implements OnInit {
     return this.datapointRows?.findIndex((x) => x.id === id)!;
   }
 
+  canSetComparativeValue(
+    operationType: VirtualDataPointOperationType | undefined
+  ) {
+    return [
+      VirtualDataPointOperationType.GREATER,
+      VirtualDataPointOperationType.GREATER_EQUAL,
+      VirtualDataPointOperationType.SMALLER,
+      VirtualDataPointOperationType.SMALLER_EQUAL,
+      VirtualDataPointOperationType.EQUAL,
+      VirtualDataPointOperationType.UNEQUAL
+    ].includes(operationType!);
+  }
+
   onSetEnumeration(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.enumeration) {
-      virtualPoint.enumeration = {items:[]};
+      virtualPoint.enumeration = { items: [] };
     }
 
     const protocol = this.sourceDataPointService.getProtocol(
@@ -274,9 +304,9 @@ export class VirtualDataPointComponent implements OnInit {
       data: {
         enumeration: { ...virtualPoint.enumeration },
         sources: virtualPoint.sources,
-        protocol,
+        protocol
       },
-      width: '900px',
+      width: '900px'
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -288,7 +318,40 @@ export class VirtualDataPointComponent implements OnInit {
 
         this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
           ...virtualPoint,
-          enumeration: result.enumeration,
+          enumeration: result.enumeration
+        });
+      }
+    });
+  }
+
+  onSetComparativeValue(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.thresholds) {
+      virtualPoint.thresholds = {};
+    }
+
+    const dialogRef = this.dialog.open<
+      PromptDialogComponent,
+      PromptDialogModel,
+      string
+    >(PromptDialogComponent, {
+      data: {
+        title: this.translate.instant(
+          'settings-virtual-data-point.SetComparativeValue'
+        ),
+        inputValue: virtualPoint.comparativeValue
+      } as PromptDialogModel
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.comparativeValue = result;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          ...virtualPoint,
+          comparativeValue: result
         });
       }
     });
@@ -336,7 +399,7 @@ export class VirtualDataPointComponent implements OnInit {
     return [
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
-      VirtualDataPointOperationType.ENUMERATION,
+      VirtualDataPointOperationType.ENUMERATION
     ].includes(operationType!);
   }
 

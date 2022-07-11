@@ -114,6 +114,18 @@ export const emptyDefaultConfig: IConfig = {
   },
   termsAndConditions: {
     accepted: false
+  },
+  env: {
+    selected: 'prod',
+    mdc: {
+      tag: 'main'
+    },
+    mtc: {
+      tag: 'latest'
+    },
+    web: {
+      tag: 'main'
+    }
   }
 };
 
@@ -126,7 +138,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
     'mdclight/config'
   );
-  private runtimeFolder = '/runTimeFiles'
+  private runtimeFolder = '/runTimeFiles';
   private keyFolder = path.join(this.configFolder, 'keys');
 
   private configName = 'config.json';
@@ -221,6 +233,44 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           },
           telemetry: {
             intervalHours: undefined
+          }
+        }
+      },
+      registries: {
+        dev: {
+          url: '',
+          mdc: {
+            tag: 'develop'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'develop'
+          }
+        },
+        prod: {
+          url: '',
+          mdc: {
+            tag: 'main'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'main'
+          }
+        },
+        stag: {
+          url: '',
+          mdc: {
+            tag: 'staging'
+          },
+          mtc: {
+            tag: 'latest'
+          },
+          web: {
+            tag: 'staging'
           }
         }
       }
@@ -366,7 +416,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     await promisefs.copyFile(factoryConfig, configPath);
     await promisefs.unlink(authConfig);
-    await promisefs.unlink(`${this.configFolder}/certs`);
+    if (fs.existsSync(`${this.configFolder}/certs`)) {
+      await promisefs.rmdir(`${this.configFolder}/certs`, {
+        recursive: true
+      });
+    }
   }
 
   /**
@@ -456,7 +510,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
-    const configPath = path.join(configName === this.runtimeConfigName ?  this.runtimeFolder : this.configFolder, configName);
+    const configPath = path.join(
+      configName === this.runtimeConfigName
+        ? this.runtimeFolder
+        : this.configFolder,
+      configName
+    );
 
     return Promise.all([promisefs.readFile(configPath, { encoding: 'utf-8' })])
       .catch(() => {
@@ -674,12 +733,22 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const { created, updated, deleted } = changes;
 
     if (created) {
-      this._config.virtualDataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
+      const entries = Object.values<any>(created).map((item) => {
+        let newResetSchedule = []
+        if(item.operationType === "counter" && item.resetSchedules?.length > 0) {
+          for (const entry of item.resetSchedules) {
+            newResetSchedule.push({...entry, created: Date.now(), lastReset: null});
+          }
+        }
+
+        return {
+          ...{...item, resetSchedule: newResetSchedule.length > 0 ? newResetSchedule : item.resetSchedules},
           id: uuidv4()
-        }))
-      );
+        };
+      })
+
+      
+      this._config.virtualDataPoints.push(...entries);
     }
 
     if (updated) {

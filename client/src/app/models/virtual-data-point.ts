@@ -7,6 +7,12 @@ export enum VirtualDataPointOperationType {
   COUNTER = 'counter',
   THRESHOLDS = 'thresholds',
   ENUMERATION = 'enumeration',
+  GREATER = 'greater',
+  GREATER_EQUAL = 'greaterEqual',
+  SMALLER = 'smaller',
+  SMALLER_EQUAL = 'smallerEqual',
+  EQUAL = 'equal',
+  UNEQUAL = 'unequal'
 }
 
 export class VirtualDataPoint {
@@ -16,6 +22,7 @@ export class VirtualDataPoint {
   name?: string;
   thresholds?: ObjectMap<number>;
   enumeration?: VirtualDataPointEnumeration;
+  comparativeValue?: string;
 }
 
 export interface VirtualDataPointEnumeration {

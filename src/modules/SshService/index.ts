@@ -1,4 +1,5 @@
 import { promisify } from 'util';
+import winston from 'winston';
 const child_process = require('child_process');
 const exec = promisify(child_process.exec);
 
@@ -7,17 +8,16 @@ const exec = promisify(child_process.exec);
  */
 export default class SshService {
   //IMPORTANT: ssh command must be registered in /etc/sudoers
-  private static readonly baseCommand = `ssh dockerhost sudo`; //TODO
-  private static readonly baseCommandWithoutSudo = `ssh dockerhost`;
+  private static readonly sshCommand = `ssh dockerhost`;
 
   /**
    * Sends ssh command to host
    */
-  static async sendCommand(command: string): Promise<any> {
-    const commandWithoutSudo = ['cat', 'echo'];
-    for (const cmd of commandWithoutSudo) {
-      if(command.includes(cmd)) return exec(`${this.baseCommandWithoutSudo} '${command}'`);
-    }
-    return exec(`${this.baseCommand} '${command}'`);
+  static async sendCommand(command: string, needSudo = false, env?: string[]): Promise<any> {
+    const logPrefix = `SshService::sendCommand`;
+    const envVariables = env?.join(' ');
+    winston.debug(`${logPrefix} received command ${needSudo ? 'with sudo' : ''}: ${command} ${env ? `with env: ${envVariables}` : ''}`);
+
+    return exec(`${this.sshCommand}${needSudo ? ' sudo ' : ' '}${envVariables || ' '} ${command}`);
   }
 }

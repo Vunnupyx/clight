@@ -272,7 +272,13 @@ export interface IVirtualDataPointConfig {
     | 'not'
     | 'counter'
     | 'thresholds'
-    | 'enumeration';
+    | 'enumeration'
+    | 'greater'
+    | 'greaterEqual'
+    | 'smaller'
+    | 'smallerEqual'
+    | 'equal'
+    | 'unequal';
   thresholds?: ITargetDataMap;
   enumeration?: {
     defaultValue?: string;

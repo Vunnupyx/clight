@@ -212,6 +212,20 @@
     "ApplyChanges": "Änderungen übernehmen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden."
   },
+  "virtual-data-point-operation-type": {
+    "And": "",
+    "Or": "",
+    "Not": "",
+    "Counter": "",
+    "Thresholds": "",
+    "Greater": "",
+    "GreaterOrEqual": "",
+    "Smaller": "",
+    "SmallerEqual": "",
+    "Equal": "",
+    "Unequal": "",
+    "Enumeration": ""
+  },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuche es später erneut!",

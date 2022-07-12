@@ -116,7 +116,21 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ value | uppercase }}
+              <ng-container [ngSwitch]="value">
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.AND">{{ 'virtual-data-point-operation-type.And' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.OR">{{ 'virtual-data-point-operation-type.Or' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.NOT">{{ 'virtual-data-point-operation-type.Not' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.COUNTER">{{ 'virtual-data-point-operation-type.Counter' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.THRESHOLDS">{{ 'virtual-data-point-operation-type.Thresholds' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.GREATER">{{ 'virtual-data-point-operation-type.Greater' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.GREATER_EQUAL">{{ 'virtual-data-point-operation-type.GreaterOrEqual' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.SMALLER">{{ 'virtual-data-point-operation-type.Smaller' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.SMALLER_EQUAL">{{ 'virtual-data-point-operation-type.SmallerEqual' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.EQUAL">{{ 'virtual-data-point-operation-type.Equal' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.UNEQUAL">{{ 'virtual-data-point-operation-type.Unequal' | translate }}</ng-container>
+              <!-- <ng-container *ngSwitchCase="VirtualDataPointOperationType.ENUMERATION">{{ 'virtual-data-point-operation-type.Enumeration' | translate }}</ng-container> -->
+              <ng-container *ngSwitchDefault>{{ value | uppercase }}</ng-container>
+              </ng-container>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -125,8 +139,8 @@
                 unsavedRow && (unsavedRow.operationType = $event)
               "
             >
-              <mat-option *ngFor="let op of Operations" [value]="op">{{
-                op | uppercase
+              <mat-option *ngFor="let op of Operations" [value]="op.value">{{
+                op.text | translate
               }}</mat-option>
             </mat-select>
           </ng-template>

@@ -37,8 +37,8 @@
   },
   "scripts": {
     "dev": "export NODE_ENV=development && npm run loglevel:debug && ts-node-dev --respawn --inspect=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
-    "dev:docker": "npm run setup:local:dev && docker build -f docker/mdclight-base.Dockerfile -t mdclight-base:latest ./docker/ && docker-compose -f docker/docker-compose_local.yaml up --build",
-    "dev:docker:all": "npm run setup:local:dev && docker build -f docker/mdclight-base.Dockerfile -t mdclight-base:latest ./docker/ && $(docker-compose -f docker/docker-compose_local.yaml up --build & cd client && npm run dev)",
+    "dev:docker": "npm run setup:local:dev && docker build -f docker/mdclight-base.Dockerfile -t mdclight-base:latest ./docker/ && MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) docker-compose -f docker/docker-compose_local.yaml up --build",
+    "dev:docker:all": "npm run setup:local:dev && docker build -f docker/mdclight-base.Dockerfile -t mdclight-base:latest ./docker/ && $(MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) docker-compose -f docker/docker-compose_local.yaml up --build & cd client && npm run dev)",
     "dev:webserver": "cd client && yarn dev",
     "yesOrNo": "./scripts/yesOrNo.sh",
     "setup:local:dev": "./scripts/createLocalTestingEnv.sh",

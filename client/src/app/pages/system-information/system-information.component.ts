@@ -1,8 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { SystemInformationService } from '../../services';
-import { SystemInformationSection } from "../../models";
+import { SystemInformationSection } from '../../models';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-system-information',
@@ -10,7 +11,6 @@ import { SystemInformationSection } from "../../models";
   styleUrls: ['./system-information.component.scss']
 })
 export class SystemInformationComponent implements OnInit, OnDestroy {
-
   data: SystemInformationSection[] = [];
 
   private sub: Subscription = new Subscription();
@@ -19,8 +19,8 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub.add(
-      this.systemInformationService.sections.subscribe(x => this.onData(x))
-    )
+      this.systemInformationService.sections.subscribe((x) => this.onData(x))
+    );
 
     this.systemInformationService.getInfo();
   }
@@ -30,6 +30,15 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
   }
 
   private onData(x: SystemInformationSection[]) {
-    this.data = x;
+    // replace web ui version
+
+    const modifiedData = JSON.parse(
+      JSON.stringify(x).replace(
+        '$ui_version$',
+        environment.version || 'unknown'
+      )
+    );
+
+    this.data = modifiedData;
   }
 }

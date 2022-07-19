@@ -2,9 +2,11 @@ version: '3.3'
 services:
   mdclight:
     privileged: true
-    build: 
+    build:
       context: ..
       dockerfile: docker/mdclight_local.Dockerfile
+      args:
+        MDC_LIGHT_RUNTIME_VERSION: MDC_LIGHT_RUNTIME_VERSION
     #restart: always
     volumes:
       - type: bind
@@ -23,7 +25,7 @@ services:
       - '4840:4840'
       - '8083:80'
     extra_hosts:
-    # TODO: Umbiegen auf fake ssh container
+      # TODO: Umbiegen auf fake ssh container
       - 'host.docker.internal:host-gateway'
     labels:
       autoheal: true
@@ -36,4 +38,3 @@ services:
       driver: 'json-file'
       options:
         max-size: '50m'
- 

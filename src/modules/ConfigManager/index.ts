@@ -734,20 +734,32 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     if (created) {
       const entries = Object.values<any>(created).map((item) => {
-        let newResetSchedule = []
-        if(item.operationType === "counter" && item.resetSchedules?.length > 0) {
+        let newResetSchedule = [];
+        if (
+          item.operationType === 'counter' &&
+          item.resetSchedules?.length > 0
+        ) {
           for (const entry of item.resetSchedules) {
-            newResetSchedule.push({...entry, created: Date.now(), lastReset: null});
+            newResetSchedule.push({
+              ...entry,
+              created: Date.now(),
+              lastReset: null
+            });
           }
         }
 
         return {
-          ...{...item, resetSchedule: newResetSchedule.length > 0 ? newResetSchedule : item.resetSchedules},
+          ...{
+            ...item,
+            resetSchedule:
+              newResetSchedule.length > 0
+                ? newResetSchedule
+                : item.resetSchedules
+          },
           id: uuidv4()
         };
-      })
+      });
 
-      
       this._config.virtualDataPoints.push(...entries);
     }
 
@@ -985,18 +997,27 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       },
       {
         title: 'Installed software components',
-        description: '2 in total installed',
         items: [
           {
-            key: 'MDC light version',
+            key: 'IoT connector flex runtime version',
             keyDescription: 'Software component',
             value: process.env.MDC_LIGHT_RUNTIME_VERSION || 'unknown',
             valueDescription: null
           },
-          { ...this.runtimeConfig.systemInfo[0].items[0] }
+          {
+            key: 'IoT connector flex ui version',
+            keyDescription: 'Software component',
+            value: '$ui_version$', // to be replaces inside frontend
+            valueDescription: null
+          },
+          {
+            key: 'MTConnect agent version',
+            keyDescription: 'Software component',
+            value: '1.7.0.7',
+            valueDescription: 'Schema version: 1.3'
+          }
         ]
       }
-      // ...this.runtimeConfig.systemInfo
     ];
   }
 

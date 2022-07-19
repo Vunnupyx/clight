@@ -26,31 +26,25 @@ steps:
         MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
 
         echo "$MATCH_COUNT match(es) found."
-        # if [[ $MATCH_COUNT -gt 0 ]]; then
-        docker run --privileged --rm tonistiigi/binfmt --install arm64
-        docker run --privileged --rm tonistiigi/binfmt
-        docker buildx create --use
-        scripts/build/dockerBuildMdclightBase.sh
-        # fi
-  - task: CmdLine@2
-    displayName: BuildMtc
-    inputs:
-      script: | # Only build image if dockerfile has changed
-        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mtconnect_arm64.dockerfile")
+        if [[ $MATCH_COUNT -gt 0 ]]; then
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          scripts/build/dockerBuildMdclightBase.sh
+        fi
+  # - task: CmdLine@2
+  #   displayName: BuildMtc
+  #   inputs:
+  #     script: | # Only build image if dockerfile has changed
+  #       MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mtconnect_arm64.dockerfile")
 
-        echo "$MATCH_COUNT match(es) found."
-        # if [[ $MATCH_COUNT -gt 0 ]]; then
-          # docker run --privileged --rm tonistiigi/binfmt --install arm64
-          # docker run --privileged --rm tonistiigi/binfmt
-          # docker buildx create --use
-          # scripts/build/dockerBuildMtc.sh
-
-          # There is currently an issue with building the MTC image. Until that is fixed it's loaded from S3 to at least provide an images that can be used.
-          wget -O mtconnect-prod_arm64_latest.tar.gz https://codestryke-artifacts.s3.eu-central-1.amazonaws.com/dmg-mdclight/images/q7z862htFYFQZHNJ7WEBtwpzdtYsNd24/mtconnect-prod_arm64_latest.tar.gz
-          docker load -i mtconnect-prod_arm64_latest.tar.gz
-          docker tag mdclightdev.azurecr.io/mtconnect-prod_arm64:latest ${DOCKER_REGISTRY}/mtconnect-prod_arm64:latest
-          docker push ${DOCKER_REGISTRY}/mtconnect-prod_arm64:latest
-        # fi
+  #       echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
+  #       if [[ $MATCH_COUNT -gt 0 ]]; then
+  #         docker run --privileged --rm tonistiigi/binfmt --install arm64
+  #         docker run --privileged --rm tonistiigi/binfmt
+  #         docker buildx create --use
+  #         scripts/build/dockerBuildMtc.sh
+  #       fi
   - task: CmdLine@2
     displayName: BuildMdc
     inputs:

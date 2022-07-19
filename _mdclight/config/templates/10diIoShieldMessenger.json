@@ -646,5 +646,17 @@
   "systemInfo": [],
   "templates": {
     "completed": true
+  },
+  "env": {
+    "selected": "prod",
+    "web": {
+      "tag": "main"
+    },
+    "mdc": {
+      "tag": "main"
+    },
+    "mtc": {
+      "tag": "latest"
+    }
   }
 }

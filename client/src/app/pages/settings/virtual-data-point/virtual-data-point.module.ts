@@ -9,6 +9,7 @@ import { VirtualDataPointComponent } from './virtual-data-point.component';
 import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { VirtualDataPointGuard } from './virtual-data-point.guard';
+import { PromptDialogModule } from 'app/shared/components/prompt-dialog/prompt-dialog.module';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const COMPONENTS = [VirtualDataPointComponent, SetThresholdsModalComponent];
   imports: [
     SharedModule,
     ConfirmDialogModule,
+    PromptDialogModule,
     RouterModule.forRoot(routes),
     NgxEchartsModule
   ],

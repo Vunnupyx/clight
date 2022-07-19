@@ -11,7 +11,7 @@ export default class HostnameController {
    */
   static async setHostname(hostname: string): Promise<void> {
     winston.info(`Setting hostname to '${hostname}'`);
-    await SshService.sendCommand(`hostnamectl set-hostname '${hostname}'`);
+    await SshService.sendCommand(`hostnamectl set-hostname '${hostname}'`, true);
   }
 
   /**
@@ -26,7 +26,7 @@ export default class HostnameController {
 
     const hostname = `DM${formattedMacAddress}`;
     winston.info(`Setting hostname to '${hostname}'`);
-    await SshService.sendCommand(`hostnamectl set-hostname '${hostname}'`);
+    await SshService.sendCommand(`hostnamectl set-hostname '${hostname}'`, true);
   }
 
   /**

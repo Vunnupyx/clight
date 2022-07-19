@@ -5,7 +5,13 @@ export enum VirtualDataPointOperationType {
   OR = 'or',
   NOT = 'not',
   COUNTER = 'counter',
-  THRESHOLDS = 'thresholds'
+  THRESHOLDS = 'thresholds',
+  GREATER = 'greater',
+  GREATER_EQUAL = 'greaterEqual',
+  SMALLER = 'smaller',
+  SMALLER_EQUAL = 'smallerEqual',
+  EQUAL = 'equal',
+  UNEQUAL = 'unequal',
 }
 
 export class VirtualDataPoint {
@@ -14,4 +20,5 @@ export class VirtualDataPoint {
   sources?: string[];
   name?: string;
   thresholds?: ObjectMap<number>;
+  comparativeValue?: string;
 }

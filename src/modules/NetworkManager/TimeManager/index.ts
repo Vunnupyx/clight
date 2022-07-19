@@ -50,7 +50,7 @@ export class TimeManager {
     const logPrefix = `TimeManager::restartTimesyncdService`;
     winston.debug(`${logPrefix} restarting...`);
     const command = `systemctl restart systemd-timesyncd`;
-    const { stdout, stderr } = await SshService.sendCommand(command);
+    const { stdout, stderr } = await SshService.sendCommand(command, true);
     if (stderr !== '') {
       const msg = `${logPrefix} error during restart of timesyncd service.`;
       winston.error(msg);
@@ -64,13 +64,13 @@ export class TimeManager {
   public static async setNTPServer(ntpServerIP: string): Promise<void> {
     const logPrefix = `TimeManager::setNTPServer`;
     try {
-      await this.testNTPServer(ntpServerIP)
+      await this.testNTPServer(ntpServerIP);
     } catch (error) {
       return Promise.reject(
         `${ntpServerIP} is not available or is not a valid NTP server.`
       );
     }
-    
+
     const readCommand = `cat ${TimeManager.CONFIG_PATH}`;
 
     let { stdout: currentConfig, stderr } = await SshService.sendCommand(
@@ -146,19 +146,22 @@ export class TimeManager {
     }
     // Disable NTP
     winston.info(`${logPrefix} disabling NTP.`);
-    await SshService.sendCommand(`timedatectl set-ntp 0`);
+    await SshService.sendCommand(`timedatectl set-ntp 0`, true);
     winston.info(`${logPrefix} disabling NTP successfully.`);
     winston.info(`${logPrefix} setting time to ${time}`);
-    const setTimeSshCommand = `timedatectl set-time "${time}"`;
-    const setTimeRes = await SshService.sendCommand(setTimeSshCommand);
+    const setTimeSshCommand = `timedatectl set-time \"${time}\"`;
+    const setTimeRes = await SshService.sendCommand(setTimeSshCommand, true);
     if (setTimeRes.stderr !== '') {
       const errMsg = `${logPrefix} error during set manual time due to ${setTimeRes.stderr}`;
       winston.error(errMsg);
       return Promise.reject(errMsg);
     }
     winston.info(`${logPrefix} setting time zone to ${time}`);
-    const setTimezoneSshCommand = `timedatectl set-timezone "${timezone}"`;
-    const setTimezoneRes = await SshService.sendCommand(setTimezoneSshCommand);
+    const setTimezoneSshCommand = `timedatectl set-timezone \"${timezone}\"`;
+    const setTimezoneRes = await SshService.sendCommand(
+      setTimezoneSshCommand,
+      true
+    );
     if (setTimezoneRes.stderr !== '') {
       const errMsg = `${logPrefix} error during set manual time due to ${setTimeRes.stderr}`;
       winston.error(errMsg);

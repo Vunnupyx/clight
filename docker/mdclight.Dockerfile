@@ -1,4 +1,5 @@
 ARG DOCKER_REGISTRY
+ARG MDC_LIGHT_RUNTIME_VERSION
 
 FROM ${DOCKER_REGISTRY}/mdclight-base:latest
 
@@ -10,10 +11,12 @@ RUN npm install
 # Install key pair for network manager cli
 RUN mkdir /root/.ssh/
 COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
-COPY _mdclight/opcua_nodeSet /runTimeFiles/nodeSets
-COPY _mdclight/runtime.json /runTimeFiles/
 RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
+
+# Copy runtime config files
+COPY _mdclight/opcua_nodeSet /runTimeFiles/nodeSets
+COPY _mdclight/runtime.json /runTimeFiles/
 
 COPY src src
 COPY tsconfig.json tsconfig.json
@@ -25,8 +28,5 @@ WORKDIR /app
 
 ENV LOG_LEVEL=info
 ENV MDC_LIGHT_FOLDER=/
-
-ARG MDC_LIGHT_RUNTIME_VERSION=staging
-ENV MDC_LIGHT_RUNTIME_VERSION ${MDC_LIGHT_RUNTIME_VERSION}
 
 CMD ["node", "--max-old-space-size=1024", "index.js"]

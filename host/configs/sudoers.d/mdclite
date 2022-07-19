@@ -7,3 +7,5 @@ mdclite ALL=(root) NOPASSWD: /usr/bin/docker-compose
 mdclite ALL=(root) NOPASSWD: /usr/bin/docker
 mdclite ALL=(root) NOPASSWD: /usr/bin/screen -d -m /opt/update.sh
 mdclite ALL=(root) NOPASSWD: /etc/systemd/timesyncd.conf
+
+Defaults env_keep += "DOCKER_REGISTRY DOCKER_WEBSERVER_TAG DOCKER_MDC_TAG DOCKER_MTC_TAG"

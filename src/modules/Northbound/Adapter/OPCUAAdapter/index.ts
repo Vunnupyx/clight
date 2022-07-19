@@ -356,12 +356,16 @@ export class OPCUAAdapter {
       if (this[prop].close) shutdownFunctions.push(this[prop].close());
       delete this[prop];
     });
-    return Promise.all(shutdownFunctions)
-      .then(() => {
-        winston.info(`${logPrefix} successfully.`);
-      })
-      .catch((err) => {
-        winston.error(`${logPrefix} error due to ${err.message}.`);
-      });
+    return (
+      Promise.all(shutdownFunctions)
+        .then(() => {
+          winston.info(`${logPrefix} successfully.`);
+        })
+        // When restarting, the server the OPC UA server sometime throws untraceable errors. Trying to prevent that...
+        .then(() => new Promise<void>((res) => setTimeout(() => res(), 5000)))
+        .catch((err) => {
+          winston.error(`${logPrefix} error due to ${err.message}.`);
+        })
+    );
   }
 }

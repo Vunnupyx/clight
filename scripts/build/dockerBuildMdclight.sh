@@ -6,7 +6,7 @@ if [[ -z "$DOCKER_REGISTRY" ]]; then
 fi
 
 docker buildx build  --platform linux/arm64 \
-    --build-arg MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags --abbrev=0) \
+    --build-arg MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) \
     --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} \
     -t ${DOCKER_REGISTRY}/mdclight:${BRANCH_NAME:-latest} \
     -f docker/mdclight.Dockerfile . --push 

@@ -36,9 +36,7 @@ export class LicenseChecker {
     'E0:DC:A0:D7:2F:08',
     'E0:DC:A0:B9:D8:C7',
     '8C:F3:19:1E:BD:73',
-    '8C:F3:19:35:86:D3',
     '8C:F3:19:3A:0A:7A',
-    '8C:F3:19:3A:0A:60',
     '8C:F3:19:2D:8A:2E',
     '8C:F3:19:3A:0A:7C',
     '8C:F3:19:35:86:D3',
@@ -143,9 +141,57 @@ export class LicenseChecker {
     '8C:F3:19:1E:BC:F8',
     '8C:F3:19:1E:BC:EA',
     '8C:F3:19:1E:FE:48',
+    '8C:F3:19:70:CA:E9',
+    '8C:F3:19:70:CA:C2',
+    '8C:F3:19:70:CA:C8',
+    '8C:F3:19:70:CA:AA',
+    '8C:F3:19:70:CA:D5',
+    '8C:F3:19:70:CA:C6',
+    '8C:F3:19:71:44:DF',
+    '8C:F3:19:71:44:F1',
+    '8C:F3:19:71:44:E1',
+    '8C:F3:19:70:CA:CC',
+    '8C:F3:19:70:CA:CA',
+    '8C:F3:19:70:CA:AE',
+    '8C:F3:19:70:CB:F0',
+    '8C:F3:19:70:CC:07',
+    '8C:F3:19:70:CC:0B',
+    '8C:F3:19:70:CB:09',
+    '8C:F3:19:70:CA:EB',
+    '8C:F3:19:70:CB:21',
+    '8C:F3:19:70:CA:FF',
+    '8C:F3:19:70:CA:ED',
+    '8C:F3:19:70:CB:11',
+    '8C:F3:19:70:CB:17',
+    '8C:F3:19:70:CA:F7',
+    '8C:F3:19:70:CA:BC',
+    '8C:F3:19:6B:C4:75',
+    '8C:F3:19:6C:48:E6',
+    '8C:F3:19:6C:48:4B',
+    '8C:F3:19:6B:7A:E4',
+    '8C:F3:19:68:AB:B0',
+    '8C:F3:19:6C:48:50',
+    '8C:F3:19:70:CA:7B',
+    '8C:F3:19:70:CA:B8',
+    '8C:F3:19:71:44:EB',
+    '8C:F3:19:70:CA:C0',
+    '8C:F3:19:70:CA:A2',
+    '8C:F3:19:70:CA:9A',
+    '8C:F3:19:70:CA:A8',
+    '8C:F3:19:70:CA:B0',
+    '8C:F3:19:70:CA:96',
+    '8C:F3:19:70:CA:BE',
+    '8C:F3:19:70:CA:9E',
+    '8C:F3:19:70:CA:6D',
+    '8C:F3:19:70:CA:90',
+    '8C:F3:19:70:CA:B4',
+    '8C:F3:19:70:CA:A6',
+    '8C:F3:19:70:CA:B2',
+    '8C:F3:19:70:CA:98',
+    '8C:F3:19:70:CA:61',
     // DMG MORI HEITEC
     '8C:F3:19:39:5E:14',
-    '8C:f3:f9:3A:0A:33'
+    '8C:F3:19:3A:0A:33'
   ];
   private _isLicensed: boolean = null;
   private system = new System();
@@ -162,6 +208,23 @@ export class LicenseChecker {
       winston.info(`${logPrefix} already initialized`);
       return Promise.resolve();
     }
+
+    //duplicate detection
+    const dups = this.#macList.filter(
+      (item, index, arr) => arr.indexOf(item) !== index
+    );
+    if (dups.length > 0) {
+      winston.warn(`${logPrefix} duplicated MAC addresses detected: ${dups}`);
+    }
+
+    //invalid detection
+    const invalid = this.#macList.filter(
+      (item, index) => !/(([0-9A-F]{2}:){5}[0-9-A-F]{2})/.test(item)
+    );
+    if (invalid.length > 0) {
+      winston.warn(`${logPrefix} invalid MAC addresses detected: ${invalid}`);
+    }
+
     let mac = await this.system.readMacAddress('eth0');
 
     const initialized = `${logPrefix} initialized.`;

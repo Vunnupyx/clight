@@ -706,5 +706,17 @@
   ],
   "quickStart": {
     "completed": false
+  },
+  "env": {
+    "selected": "prod",
+    "web": {
+      "tag": "main"
+    },
+    "mdc": {
+      "tag": "main"
+    },
+    "mtc": {
+      "tag": "latest"
+    }
   }
 }

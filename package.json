@@ -44,7 +44,7 @@
     "setup:local:dev": "./scripts/createLocalTestingEnv.sh",
     "build": "tsc -p tsconfig.json",
     "build:dist": "ncc build build/main/index.js -o runtime --minify",
-    "build:webserver": "cd client && yarn && yarn build-dev && cd .. && cd user-docs && yarn && yarn build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",
+    "build:webserver": "cd client && yarn && yarn build && cd .. && cd user-docs && yarn && yarn build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",
     "docker:build:webserver": "scripts/build/dockerBuildWebserver.sh",
     "docker:run:mtc": "docker run -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/schemas:/schemas -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/agent.cfg:/agent.cfg -v $PWD/_mdclight/mtc_config/MtcAgentConfig_dev/MDCLight.xml:/MDCLight.xml -p 15404:5000 registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect:latest agent debug",
     "docker:build:mdclight-base": "scripts/build/dockerBuildMdclightBase.sh",

@@ -1,11 +1,11 @@
 ARG DOCKER_REGISTRY
-ARG MDC_LIGHT_RUNTIME_VERSION
 
 FROM ${DOCKER_REGISTRY}/mdclight-base:latest
 
 WORKDIR /
 
-RUN echo "Building runtime with version ${MDC_LIGHT_RUNTIME_VERSION}"
+ARG MDC_LIGHT_RUNTIME_VERSION
+RUN echo Building runtime ${MDC_LIGHT_RUNTIME_VERSION}
 
 # Install compiled MDC light runtime
 COPY package.json package.json

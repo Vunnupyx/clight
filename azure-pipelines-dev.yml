@@ -24,7 +24,6 @@ steps:
     inputs:
       script: git describe --tags
   - task: CmdLine@2
-  - task: CmdLine@2
     displayName: BuildBase
     inputs:
       script: | # Only build image if dockerfile has changed

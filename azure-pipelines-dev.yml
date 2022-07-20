@@ -23,45 +23,47 @@ steps:
     displayName: PrintVersion
     inputs:
       script: git describe --tags
-  - task: CmdLine@2
-    displayName: BuildBase
-    inputs:
-      script: | # Only build image if dockerfile has changed
-        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
+  # - task: CmdLine@2
+  #   displayName: BuildBase
+  #   inputs:
+  #     script: | # Only build image if dockerfile has changed
+  #       MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
 
-        echo "$MATCH_COUNT match(es) found."
-        if [[ $MATCH_COUNT -gt 0 ]]; then
-          docker run --privileged --rm tonistiigi/binfmt --install arm64
-          docker run --privileged --rm tonistiigi/binfmt
-          docker buildx create --use
-          scripts/build/dockerBuildMdclightBase.sh
-        fi
-  - task: CmdLine@2
-    displayName: BuildMtc
-    inputs:
-      script: | # Only build image if dockerfile has changed
-        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mtconnect_arm64.dockerfile")
+  #       echo "$MATCH_COUNT match(es) found."
+  #       if [[ $MATCH_COUNT -gt 0 ]]; then
+  #         docker run --privileged --rm tonistiigi/binfmt --install arm64
+  #         docker run --privileged --rm tonistiigi/binfmt
+  #         docker buildx create --use
+  #         scripts/build/dockerBuildMdclightBase.sh
+  #       fi
+  # - task: CmdLine@2
+  #   displayName: BuildMtc
+  #   inputs:
+  #     script: | # Only build image if dockerfile has changed
+  #       MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mtconnect_arm64.dockerfile")
 
-        echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
-        if [[ $MATCH_COUNT -gt 0 ]]; then
-          docker run --privileged --rm tonistiigi/binfmt --install arm64
-          docker run --privileged --rm tonistiigi/binfmt
-          docker buildx create --use
-          scripts/build/dockerBuildMtc.sh
-        fi
+  #       echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
+  #       if [[ $MATCH_COUNT -gt 0 ]]; then
+  #         docker run --privileged --rm tonistiigi/binfmt --install arm64
+  #         docker run --privileged --rm tonistiigi/binfmt
+  #         docker buildx create --use
+  #         scripts/build/dockerBuildMtc.sh
+  #       fi
   - task: CmdLine@2
     displayName: BuildMdc
     inputs:
       script: |
+        version=$(git describe --tags)
+        echo version
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use
-        scripts/build/dockerBuildMdclight.sh $(git describe --tags)
-  - task: CmdLine@2
-    displayName: BuildWebserver
-    inputs:
-      script: |
-        docker run --privileged --rm tonistiigi/binfmt --install arm64
-        docker run --privileged --rm tonistiigi/binfmt
-        docker buildx create --use
-        scripts/build/dockerBuildWebserver.sh
+        scripts/build/dockerBuildMdclight.sh version
+  # - task: CmdLine@2
+  #   displayName: BuildWebserver
+  #   inputs:
+  #     script: |
+  #       docker run --privileged --rm tonistiigi/binfmt --install arm64
+  #       docker run --privileged --rm tonistiigi/binfmt
+  #       docker buildx create --use
+  #       scripts/build/dockerBuildWebserver.sh

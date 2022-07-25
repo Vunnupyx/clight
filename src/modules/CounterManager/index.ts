@@ -200,8 +200,11 @@ export class CounterManager {
     for (const counter of counterEntries) {
       const id = counter.sources[0];
       for (const [index, configEntry] of counter?.resetSchedules?.entries()) {
-        const nextDate = this.calcNextTrigger(configEntry, new Date());
-        const nextNextDate = this.calcNextTrigger(
+        const nextDate = CounterManager.calcNextTrigger(
+          configEntry,
+          new Date()
+        );
+        const nextNextDate = CounterManager.calcNextTrigger(
           configEntry,
           new Date(nextDate)
         );
@@ -266,7 +269,7 @@ export class CounterManager {
         }
 
         const now = new Date();
-        const nextScheduling = this.calcNextTrigger(entry, now);
+        const nextScheduling = CounterManager.calcNextTrigger(entry, now);
 
         winston.debug(
           `${logPrefix} next trigger time found: ${nextScheduling}`
@@ -309,206 +312,170 @@ export class CounterManager {
    * @param currentDate date object to compare
    * @returns next calculated date
    */
-  // private calcNextTrigger(
-  //   scheduleData: ScheduleDescription,
-  //   currentDate: Date
-  // ): Date {
-  //   let diff: number;
-  //   let dateFromScheduling: Date = new Date();
-  //   const timeData = {
-  //     year: currentDate.getFullYear(),
-  //     month:
-  //       scheduleData.month === 'Every'
-  //         ? currentDate.getMonth()
-  //         : scheduleData.month,
-  //     date:
-  //       //@ts-ignore
-  //       scheduleData.date
-  //         ? //@ts-ignore
-  //           scheduleData.date
-  //         : currentDate.getDate(),
-  //     hours:
-  //       scheduleData.hours === 'Every'
-  //         ? currentDate.getHours()
-  //         : scheduleData.hours,
-  //     min:
-  //       scheduleData.minutes === 'Every'
-  //         ? currentDate.getMinutes()
-  //         : scheduleData.minutes,
-  //     sec: scheduleData.seconds
-  //   };
-  //   // Find next day if day is set
-  //   // @ts-ignore
-  //   if (scheduleData?.day) {
-  //     // TODO: FIX EVERY
-  //     //@ts-ignore
-  //     if (scheduleData?.day !== 'Every') {
-  //       dateFromScheduling = new Date(
-  //         timeData.year,
-  //         timeData.month,
-  //         // @ts-ignore
-  //         currentDate.getDate() +
-  //           // @ts-ignore
-  //           ((7 - currentDate.getDay() + Day[scheduleData.day]) % 7 || 0),
-  //         timeData.hours,
-  //         timeData.min,
-  //         timeData.sec
-  //       );
-  //       // @ts-ignore
-  //       diff = currentDate - dateFromScheduling;
-  //       if (!(diff < 0)) {
-  //         dateFromScheduling = new Date(
-  //           timeData.year,
-  //           timeData.month,
-  //           // @ts-ignore
-  //           dateFromScheduling.getDay() + 7,
-  //           timeData.hours,
-  //           timeData.min,
-  //           timeData.sec
-  //         );
-  //       }
-  //     } else {
-  //       console.log(`Day auf Every`);
-  //       dateFromScheduling = new Date(
-  //         timeData.year,
-  //         timeData.month,
-  //         timeData.date,
-  //         timeData.hours,
-  //         timeData.min,
-  //         timeData.sec
-  //       );
-  //       // @ts-ignore
-  //       diff = currentDate - dateFromScheduling;
-  //       if (!(diff < 0)) {
-  //         // increase every entries with one and check if new date is in future
-  //         for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
-  //           // Ignore non 'Every' entries
-  //           // @ts-ignore
-  //           if (scheduleData[entry] !== 'Every') continue;
-  //           // @ts-ignore
-  //           timeData[entry] += 1;
-  //           dateFromScheduling = new Date(
-  //             timeData.year,
-  //             timeData.month,
-  //             timeData.date,
-  //             timeData.hours,
-  //             timeData.min,
-  //             timeData.sec
-  //           );
-  //           // @ts-ignore
-  //           diff = currentDate - dateFromScheduling;
-  //           if (diff < 0) {
-  //             // New date is in future, break out for loop
-  //             break;
-  //           }
-  //           // @ts-ignore
-  //           currentDate[entry] -= 1;
-  //         }
-  //       }
-  //     }
-  //   } else {
-  //     dateFromScheduling = new Date(
-  //       timeData.year,
-  //       timeData.month,
-  //       timeData.date,
-  //       timeData.hours,
-  //       timeData.min,
-  //       timeData.sec
-  //     );
-  //     // @ts-ignore
-  //     diff = currentDate - dateFromScheduling;
-  //     // generated dateFromScheduling in past search for next event
-  //     if (!(diff < 0)) {
-  //       // increase every entries with one and check if new date is in future
-  //       for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
-  //         // Ignore non 'Every' entries
-  //         // @ts-ignore
-  //         if (scheduleData[entry] !== 'Every') continue;
-  //         // @ts-ignore
-  //         timeData[entry] += 1;
-  //         dateFromScheduling = new Date(
-  //           timeData.year,
-  //           timeData.month,
-  //           timeData.date,
-  //           timeData.hours,
-  //           timeData.min,
-  //           timeData.sec
-  //         );
-  //         // @ts-ignore
-  //         diff = currentDate - dateFromScheduling;
-  //         if (diff < 0) {
-  //           // New date is in future, break out for loop
-  //           break;
-  //         }
-  //         // @ts-ignore
-  //         currentDate[entry] -= 1;
-  //       }
-  //     }
-  //   }
-  //   return dateFromScheduling;
-  // }
-  
-
-  public calcNextTrigger(input: ScheduleDescription, currentDate: Date) {
-    // DATE ist definiert!!!!
+  private static calcNextTrigger(
+    scheduleData: ScheduleDescription,
+    currentDate: Date
+  ): Date {
+    // Find next day if day is set
     // @ts-ignore
-    input = {...input, year: currentDate.getFullYear()}
-    const data = {
-      year: currentDate.getFullYear(),
-      month: input.month === 'Every' ? currentDate.getMonth() : input.month,
-      // @ts-ignore
-      date:  input.date,
-      hours: input.hours === 'Every' ? currentDate.getHours() : input.hours,
-      min: input.minutes === 'Every' ? currentDate.getMinutes() : input.minutes,
-      second: input.seconds
-    };
-
-    let testDate = new Date(data.year, data.month, data.date, data.hours, data.min, data.second);
-    if (currentDate.getTime() > testDate.getTime()) {
-      console.log(`Datum: ${currentDate}`);
-      console.log(`Berechnetes Datum liegt in der Vergangenheit: ${testDate}`);
-      for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
-        if (input[entry] !== 'Every') continue;
-        // @ts-ignore
-        data[entry] += 1;
-
-        testDate = new Date(
-          data.year,
-          data.month,
-          data.date,
-          data.hours,
-          data.min,
-          data.second
-        );
-        console.log(`Neuer Versuch: ${testDate}`);
-        console.log()
-        if (currentDate.getTime() < testDate.getTime()) return testDate;
-      } 
+    if (scheduleData?.day) {
+      return CounterManager.calcWithDay(scheduleData, currentDate);
     } else {
-      return testDate;
+      return CounterManager.calcWithDate(scheduleData, currentDate);
     }
-    // for (const entry of ['min', 'hours', 'date', 'month', 'year']) {
-    //   // Ignore non 'Every' entries
-    //   // @ts-ignore
-    //   if (scheduleData[entry] !== 'Every') continue;
-    //   // @ts-ignore
-    //   timeData[entry] += 1;
-    //   dateFromScheduling = new Date(
-    //     timeData.year,
-    //     timeData.month,
-    //     timeData.date,
-    //     timeData.hours,
-    //     timeData.min,
-    //     timeData.sec
-    //   );
-    //   // @ts-ignore
-    //   diff = currentDate - dateFromScheduling;
-    //   if (diff < 0) {
-    //     // New date is in future, break out for loop
-    //     break;
-    //   }
-    //   // @ts-ignore
-    //   currentDate[entry] -= 1;
-    // }
+  }
+
+  /**
+   * Calculate next trigger date with defined day
+   */
+  private static calcWithDate(
+    scheduleData: ScheduleDescription,
+    currentDate: Date) {
+    const timeData = {
+      year: currentDate.getFullYear(),
+      month:
+        scheduleData.month === 'Every'
+          ? currentDate.getMonth()
+          : scheduleData.month - 1,
+      date:
+        //@ts-ignore
+        scheduleData.date
+          ? //@ts-ignore
+            scheduleData.date
+          : currentDate.getDate(),
+      hours:
+        scheduleData.hours === 'Every'
+          ? currentDate.getHours()
+          : scheduleData.hours,
+      minutes:
+        scheduleData.minutes === 'Every'
+          ? currentDate.getMinutes()
+          : scheduleData.minutes,
+      sec: scheduleData.seconds
+    };
+    let dateFromScheduling = new Date(
+      timeData.year,
+      timeData.month,
+      timeData.date,
+      timeData.hours,
+      timeData.minutes,
+      timeData.sec
+    );
+    let diff = currentDate.getTime() - dateFromScheduling.getTime();
+    // generated dateFromScheduling in past search for next event
+    if (!(diff < 0)) {
+      // increase every entries with one and check if new date is in future
+      for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
+        // Ignore non 'Every' entries
+        if (scheduleData[entry] !== 'Every') continue;
+        timeData[entry] += 1;
+        dateFromScheduling = new Date(
+          timeData.year,
+          timeData.month,
+          timeData.date,
+          timeData.hours,
+          timeData.minutes,
+          timeData.sec
+        );
+
+        diff = currentDate.getTime() - dateFromScheduling.getTime();
+        if (diff < 0) {
+          // New date is in future, break out for loop
+          return dateFromScheduling;
+        }
+        timeData[entry] -= 1;
+      }
+    }
+    return dateFromScheduling;
+  }
+
+  private static calcWithDay(
+    scheduleData: ScheduleDescription,
+    currentDate: Date) {
+    const timeData = {
+      year: currentDate.getFullYear(),
+      month:
+        scheduleData.month === 'Every'
+          ? currentDate.getMonth()
+          : scheduleData.month - 1,
+      date:
+        //@ts-ignore
+        scheduleData.date
+          ? //@ts-ignore
+            scheduleData.date
+          : currentDate.getDate(),
+      hours:
+        scheduleData.hours === 'Every'
+          ? currentDate.getHours()
+          : scheduleData.hours,
+      minutes:
+        scheduleData.minutes === 'Every'
+          ? currentDate.getMinutes()
+          : scheduleData.minutes,
+      sec: scheduleData.seconds
+    };
+    let dateFromScheduling: Date;
+    // @ts-ignore
+    if (scheduleData?.day !== 'Every') {
+      dateFromScheduling = new Date(
+        timeData.year,
+        timeData.month,
+        currentDate.getDate() +
+          // @ts-ignore
+          ((7 - currentDate.getDay() + Day[scheduleData.day]) % 7 || 0),
+        timeData.hours,
+        timeData.minutes,
+        timeData.sec
+      );
+      // @ts-ignore
+      const diff = currentDate - dateFromScheduling;
+      if (!(diff < 0)) {
+        dateFromScheduling = new Date(
+          timeData.year,
+          timeData.month,
+          dateFromScheduling.getDay() + 7,
+          timeData.hours,
+          timeData.minutes,
+          timeData.sec
+        );
+      }
+      return dateFromScheduling;
+    } else {
+      dateFromScheduling = new Date(
+        timeData.year,
+        timeData.month,
+        timeData.date,
+        timeData.hours,
+        timeData.minutes,
+        timeData.sec
+      );
+      
+      const diff = currentDate.getTime() - dateFromScheduling.getTime();
+
+      if (!(diff < 0)) {
+        // increase every entries with one and check if new date is in future
+        for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
+          // Ignore non 'Every' entries
+          if (scheduleData[entry] !== 'Every') continue;
+          timeData[entry] += 1;
+          dateFromScheduling = new Date(
+            timeData.year,
+            timeData.month,
+            timeData.date,
+            timeData.hours,
+            timeData.minutes,
+            timeData.sec
+          );
+
+          const diff = currentDate.getTime() - dateFromScheduling.getTime();
+          if (diff < 0) {
+            // New date is in future, break out for loop
+            return dateFromScheduling;
+          }
+          timeData[entry] -= 1;
+        }
+      }
+      return dateFromScheduling;
+    }
   }
 }

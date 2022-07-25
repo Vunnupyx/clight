@@ -75,9 +75,7 @@ class MDCLFlasher {
   private initUserButtonWatcher(): void {
     console.log('Starting mdcflash service. Watching user button...');
     this.#userButtonWatcher = setInterval(() => {
-      const value = readFileSync(this.#userButtonPath)
-        .toString('utf8')
-        .trim();
+      const value = readFileSync(this.#userButtonPath).toString('utf8').trim();
       if (value === '0') {
         this.#lastButtonCount++;
         if (this.#lastButtonCount >= this.#durationPollRatio) {
@@ -229,12 +227,14 @@ class MDCLFlasher {
           const finishDate = new Date();
           this.stopBlink();
           if (err || stderr !== '') {
+            console.log(`Failed to transfer data`);
             console.error(err);
             console.error(stderr);
             this.blink(500, 'red');
             setTimeout(() => {
               exit(1);
             }, 10000);
+            return;
           }
           console.log(
             `Data successfully transferred to internal MCC. Finished after: ${
@@ -256,12 +256,15 @@ class MDCLFlasher {
       exec(cmd, (err, _stdout, stderr) => {
         if (err || stderr !== '') {
           console.log(`Error fixing Boot sector`);
+          console.log(stderr);
+          console.log(err);
           rej();
+          return;
         }
         console.log(`Boot sector fixed.`);
         res();
+        return;
       });
-      res();
     });
   }
 }

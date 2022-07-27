@@ -2,6 +2,7 @@ import { MTConnectDataSink } from '..';
 import {
   DataSinkProtocols,
   DataSourceLifecycleEventTypes,
+  DataSourceProtocols,
   EventLevels
 } from '../../../../../common/interfaces';
 import { ConfigManager, emptyDefaultConfig } from '../../../../ConfigManager';
@@ -16,9 +17,9 @@ import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 
 const licenseCheckerMock = {
   isLicensed: jest.fn().mockImplementation(() => {
-    return true
+    return true;
   })
-}
+};
 
 jest.mock('fs');
 jest.mock('winston');
@@ -45,7 +46,7 @@ xdescribe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true,
-      licenseChecker: licenseCheckerMock as any
+      isLicensed: true
     });
 
     dataSink.init();
@@ -64,12 +65,12 @@ xdescribe('Test MTConnectDataSink', () => {
   test('should map bool values', async () => {
     const config = new ConfigManager({
       errorEventsBus: new EventBus<null>() as any,
-      lifecycleEventsBus: new EventBus<null>() as any,
+      lifecycleEventsBus: new EventBus<null>() as any
     });
 
     const dataSourceConfig: IDataSourceConfig = {
       name: '',
-      protocol: '',
+      protocol: DataSourceProtocols.S7,
       enabled: true,
       dataPoints: [
         { id: 'source', name: '', address: '', readFrequency: 1000, type: 's7' }
@@ -105,7 +106,7 @@ xdescribe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true,
-      licenseChecker: licenseCheckerMock as any
+      isLicensed: true
     });
 
     dataSink.init();
@@ -137,7 +138,7 @@ xdescribe('Test MTConnectDataSink', () => {
 
     const dataSourceConfig: IDataSourceConfig = {
       name: '',
-      protocol: '',
+      protocol: DataSourceProtocols.S7,
       enabled: true,
       dataPoints: [
         {
@@ -189,7 +190,7 @@ xdescribe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true,
-      licenseChecker: licenseCheckerMock as any
+      isLicensed: true
     });
 
     dataSink.init();
@@ -232,7 +233,7 @@ xdescribe('Test MTConnectDataSink', () => {
 
     const dataSourceConfig: IDataSourceConfig = {
       name: '',
-      protocol: '',
+      protocol: DataSourceProtocols.S7,
       enabled: true,
       dataPoints: [
         {
@@ -288,7 +289,7 @@ xdescribe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true,
-      licenseChecker: licenseCheckerMock as any
+      isLicensed: true
     });
 
     dataSink.init();
@@ -347,7 +348,7 @@ xdescribe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       termsAndConditionsAccepted: true,
-      licenseChecker: licenseCheckerMock as any
+      isLicensed: true
     });
 
     dataSink.init();

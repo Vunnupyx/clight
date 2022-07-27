@@ -20,7 +20,7 @@ export interface IMeasurement {
 export interface IDataSourceParams {
   readonly config: IDataSourceConfig;
   readonly termsAndConditionsAccepted: boolean;
-  readonly licenseChecker: LicenseChecker
+  readonly isLicensed: boolean;
 }
 
 export interface IDataSourceEvent {

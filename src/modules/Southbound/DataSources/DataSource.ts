@@ -5,12 +5,12 @@ import {
   DataSourceEventTypes,
   IDataSourceMeasurementEvent,
   IDataSourceParams,
-  IDataSourceLifecycleEvent,
   IMeasurement,
   IDataSourceDataPointLifecycleEvent,
   DataPointEventTypes
 } from './interfaces';
 import {
+  DataSourceProtocols,
   EventLevels,
   IBaseLifecycleEvent,
   ILifecycleEvent,
@@ -38,7 +38,7 @@ export abstract class DataSource extends EventEmitter {
   protected RECONNECT_TIMEOUT =
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
   public timestamp: number;
-  public protocol: string;
+  public protocol: DataSourceProtocols;
   protected scheduler: SynchronousIntervalScheduler;
   protected readSchedulerListenerId: number;
   protected logSchedulerListenerId: number;
@@ -47,7 +47,7 @@ export abstract class DataSource extends EventEmitter {
   protected processedDataPointCount = 0;
   protected dataPointReadErrors: DataPointReadErrorSummary[] = [];
   protected readCycleCount = 0;
-  protected licenseChecker: LicenseChecker;
+  protected isLicensed = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -55,11 +55,21 @@ export abstract class DataSource extends EventEmitter {
    */
   constructor(params: IDataSourceParams) {
     super();
-    this.config = params.config;
+    this.config = JSON.parse(JSON.stringify(params.config));
     this.scheduler = SynchronousIntervalScheduler.getInstance();
     this.protocol = params.config.protocol;
     this.termsAndConditionsAccepted = params.termsAndConditionsAccepted;
-    this.licenseChecker = params.licenseChecker;
+    this.isLicensed = params.isLicensed;
+  }
+
+  /**
+   * Compares given config with the current data source config to determine if data source should be restarted or not
+   */
+  configEqual(config: IDataSourceConfig, termsAndConditions: boolean) {
+    return (
+      JSON.stringify(this.config) === JSON.stringify(config) &&
+      this.termsAndConditionsAccepted === termsAndConditions
+    );
   }
 
   /**

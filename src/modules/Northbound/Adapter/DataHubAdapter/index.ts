@@ -93,6 +93,7 @@ export class DataHubAdapter {
   public constructor(
     staticOptions: DataHubAdapterOptions,
     dynamicOptions: IDataHubSettings,
+    proxy: IProxyConfig,
     onStateChange: (state: LifecycleEventStatus) => void = (state) => {}
   ) {
     if (
@@ -116,7 +117,7 @@ export class DataHubAdapter {
     this.#symKey = dynamicOptions?.symKey || '';
     this.#scopeId = dynamicOptions?.scopeId || '';
     this.#isGroupRegistration = staticOptions.groupDevice || false;
-    this.#proxyConfig = staticOptions.proxy || null;
+    this.#proxyConfig = proxy || null;
 
     this.onStateChange = onStateChange;
   }
@@ -168,7 +169,7 @@ export class DataHubAdapter {
    */
   public async init(): Promise<DataHubAdapter> {
     const logPrefix = `${DataHubAdapter.#className}::init`;
-    
+
     this.#serialNumber = (
       (await new System().readMacAddress('eth0')) || '000000000000'
     )

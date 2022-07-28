@@ -4,7 +4,15 @@ title: Changelog
 
 # Changelog
 
-## [Current]
+## Current
+
+- [DIGMDCLGHT-93](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-93) Fixed connection issues from time to time
+
+## [2.1.0]
+
+## Fixed
+
+- Fixed memory leak which leads to the crash of some containers
 
 ### Changed
 

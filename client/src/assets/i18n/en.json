@@ -217,6 +217,20 @@
     "CurrentLiveValue": "Current Live Value",
     "ReturnValueIfTrue": "Value if left side is true"
   },
+  "virtual-data-point-operation-type": {
+    "And": "And",
+    "Or": "Or",
+    "Not": "Not",
+    "Counter": "Counter",
+    "Thresholds": "Thresholds",
+    "Greater": "Greater",
+    "GreaterOrEqual": "Greater or Equal",
+    "Smaller": "Smaller",
+    "SmallerEqual": "Smaller or Equal",
+    "Equal": "Equal",
+    "Unequal": "Unequal",
+    "Enumeration": "Enumeration"
+  },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",

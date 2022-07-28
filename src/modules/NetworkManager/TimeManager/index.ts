@@ -64,13 +64,13 @@ export class TimeManager {
   public static async setNTPServer(ntpServerIP: string): Promise<void> {
     const logPrefix = `TimeManager::setNTPServer`;
     try {
-      await this.testNTPServer(ntpServerIP)
+      await this.testNTPServer(ntpServerIP);
     } catch (error) {
       return Promise.reject(
         `${ntpServerIP} is not available or is not a valid NTP server.`
       );
     }
-    
+
     const readCommand = `cat ${TimeManager.CONFIG_PATH}`;
 
     let { stdout: currentConfig, stderr } = await SshService.sendCommand(
@@ -149,7 +149,7 @@ export class TimeManager {
     await SshService.sendCommand(`timedatectl set-ntp 0`, true);
     winston.info(`${logPrefix} disabling NTP successfully.`);
     winston.info(`${logPrefix} setting time to ${time}`);
-    const setTimeSshCommand = `timedatectl set-time "${time}"`;
+    const setTimeSshCommand = `timedatectl set-time '${time}'`;
     const setTimeRes = await SshService.sendCommand(setTimeSshCommand, true);
     if (setTimeRes.stderr !== '') {
       const errMsg = `${logPrefix} error during set manual time due to ${setTimeRes.stderr}`;
@@ -157,8 +157,11 @@ export class TimeManager {
       return Promise.reject(errMsg);
     }
     winston.info(`${logPrefix} setting time zone to ${time}`);
-    const setTimezoneSshCommand = `timedatectl set-timezone "${timezone}"`;
-    const setTimezoneRes = await SshService.sendCommand(setTimezoneSshCommand, true);
+    const setTimezoneSshCommand = `timedatectl set-timezone '${timezone}'`;
+    const setTimezoneRes = await SshService.sendCommand(
+      setTimezoneSshCommand,
+      true
+    );
     if (setTimezoneRes.stderr !== '') {
       const errMsg = `${logPrefix} error during set manual time due to ${setTimeRes.stderr}`;
       winston.error(errMsg);

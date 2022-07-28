@@ -1,4 +1,8 @@
-import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
+import {
+  DataSourceProtocols,
+  IErrorEvent,
+  ILifecycleEvent
+} from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
 import { ScheduleDescription } from '../CounterManager';
@@ -96,7 +100,7 @@ export interface IDataPointConfig {
 export interface IDataSourceConfig {
   name: string;
   dataPoints: IDataPointConfig[];
-  protocol: string;
+  protocol: DataSourceProtocols;
   connection?: IS7DataSourceConnection;
   enabled: boolean;
   type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;

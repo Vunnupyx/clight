@@ -217,6 +217,20 @@
     "CurrentLiveValue": "",
     "ReturnValueIfTrue": ""
   },
+  "virtual-data-point-operation-type": {
+    "And": "",
+    "Or": "",
+    "Not": "",
+    "Counter": "",
+    "Thresholds": "",
+    "Greater": "",
+    "GreaterOrEqual": "",
+    "Smaller": "",
+    "SmallerEqual": "",
+    "Equal": "",
+    "Unequal": "",
+    "Enumeration": ""
+  },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
     "BulkError": "変更下適用できません。再試行してください。",

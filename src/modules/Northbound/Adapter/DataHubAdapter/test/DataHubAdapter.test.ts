@@ -103,7 +103,12 @@ describe('DataHubAdapter', () => {
     jest.resetAllMocks();
   });
   beforeAll(async () => {
-    UUT = new DataHubAdapter(dataHubAdapterOptionsMock, dataHubSettingsMock);
+    UUT = new DataHubAdapter(dataHubAdapterOptionsMock, dataHubSettingsMock, {
+      type: 'http',
+      ip: '',
+      port: 0,
+      enabled: true
+    });
     await UUT.init().then((adapter) => adapter.start());
   });
   it('reported properties are reported', async () => {

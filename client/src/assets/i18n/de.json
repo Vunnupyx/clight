@@ -94,9 +94,9 @@
     "UpdateFailedCheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut oder kontaktiere den Support.",
-    "Language": "Sprache",
+    "Language": "Language",
     "DeviceInfo": "Geräte Informationen",
-    "CELOSLanguage": "CELOS Sprache",
+    "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
     "Japanese": "Japanaisch",
@@ -217,12 +217,25 @@
     "CurrentLiveValue": "",
     "ReturnValueIfTrue": ""
   },
+  "virtual-data-point-operation-type": {
+    "And": "Und",
+    "Or": "Oder",
+    "Not": "Nicht",
+    "Counter": "Zähler",
+    "Thresholds": "Schwellwerte",
+    "Greater": "Größer",
+    "GreaterOrEqual": "Größer gleich",
+    "Smaller": "Kleiner",
+    "SmallerEqual": "Kleiner gleich",
+    "Equal": "Gleich",
+    "Unequal": "Ungleich",
+    "Enumeration": "Enumeration"
+  },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuche es später erneut!",
     "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
     "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
-  
   },
   "settings-data-sink": {
     "DataSink": "Applikations Interfaces",

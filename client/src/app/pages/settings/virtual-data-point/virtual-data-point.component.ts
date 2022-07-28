@@ -37,18 +37,54 @@ export class VirtualDataPointComponent implements OnInit {
   VirtualDataPointOperationType = VirtualDataPointOperationType;
 
   Operations = [
-    VirtualDataPointOperationType.AND,
-    VirtualDataPointOperationType.OR,
-    VirtualDataPointOperationType.NOT,
-    VirtualDataPointOperationType.COUNTER,
-    VirtualDataPointOperationType.THRESHOLDS,
-    VirtualDataPointOperationType.ENUMERATION,
-    VirtualDataPointOperationType.GREATER,
-    VirtualDataPointOperationType.GREATER_EQUAL,
-    VirtualDataPointOperationType.SMALLER,
-    VirtualDataPointOperationType.SMALLER_EQUAL,
-    VirtualDataPointOperationType.EQUAL,
-    VirtualDataPointOperationType.UNEQUAL
+    {
+      value: VirtualDataPointOperationType.AND,
+      text: 'virtual-data-point-operation-type.And'
+    },
+    {
+      value: VirtualDataPointOperationType.OR,
+      text: 'virtual-data-point-operation-type.Or'
+    },
+    {
+      value: VirtualDataPointOperationType.NOT,
+      text: 'virtual-data-point-operation-type.Not'
+    },
+    {
+      value: VirtualDataPointOperationType.COUNTER,
+      text: 'virtual-data-point-operation-type.Counter'
+    },
+    {
+      value: VirtualDataPointOperationType.THRESHOLDS,
+      text: 'virtual-data-point-operation-type.Thresholds'
+    },
+    {
+      value: VirtualDataPointOperationType.GREATER,
+      text: 'virtual-data-point-operation-type.Greater'
+    },
+    {
+      value: VirtualDataPointOperationType.GREATER_EQUAL,
+      text: 'virtual-data-point-operation-type.GreaterOrEqual'
+    },
+    {
+      value: VirtualDataPointOperationType.SMALLER,
+      text: 'virtual-data-point-operation-type.Smaller'
+    },
+    {
+      value: VirtualDataPointOperationType.SMALLER_EQUAL,
+      text: 'virtual-data-point-operation-type.SmallerEqual'
+    },
+    {
+      value: VirtualDataPointOperationType.EQUAL,
+      text: 'virtual-data-point-operation-type.Equal'
+    },
+    {
+      value: VirtualDataPointOperationType.UNEQUAL,
+      text: 'virtual-data-point-operation-type.Unequal'
+    },
+    {
+      value: VirtualDataPointOperationType.ENUMERATION,
+      text: 'virtual-data-point-operation-type.Enumeration'
+    }
   ];
 
   unsavedRow?: VirtualDataPoint;

@@ -191,7 +191,8 @@ export class LicenseChecker {
     '8C:F3:19:70:CA:61',
     // DMG MORI HEITEC
     '8C:F3:19:39:5E:14',
-    '8C:F3:19:3A:0A:33'
+    '8C:F3:19:3A:0A:33',
+    '8C:F3:19:6C:EE:41'
   ];
   private _isLicensed: boolean = null;
   private system = new System();

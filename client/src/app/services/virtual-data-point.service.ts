@@ -77,6 +77,8 @@ export class VirtualDataPointService
 
       await this.httpService.post(`/vdps/bulk`, this.getPayload());
 
+      this._getDataPoints();
+
       this.resetState();
 
       this._store.patchState((state) => {
@@ -125,15 +127,7 @@ export class VirtualDataPointService
     }));
 
     try {
-      const { vdps } = await this.httpService.get<{
-        vdps: api.VirtualDataPointType[];
-      }>('/vdps');
-
-      this._store.patchState((state) => {
-        state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
-        state.originalDataPoints = clone(state.dataPoints);
-        state.status = Status.Ready;
-      });
+      await this._getDataPoints();
     } catch (err) {
       this.toastr.error(
         this.translate.instant('settings-virtual-data-point.LoadError')
@@ -213,6 +207,18 @@ export class VirtualDataPointService
 
   public getPrefix() {
     return '[VDP]';
+  }
+
+  private async _getDataPoints() {
+    const { vdps } = await this.httpService.get<{
+      vdps: api.VirtualDataPointType[];
+    }>('/vdps');
+
+    this._store.patchState((state) => {
+      state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
+      state.originalDataPoints = clone(state.dataPoints);
+      state.status = Status.Ready;
+    });
   }
 
   private _parseDataPoint(obj: api.VirtualDataPointType) {

@@ -8,8 +8,6 @@ StartLimitBurst=5
 Type=simple
 ExecStart=/usr/bin/node /root/flashService.js
 User=root
-Restart=on-failure
-RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target

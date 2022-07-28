@@ -60,7 +60,7 @@ export class System {
     const logPrefix = `${System.className}::restartDevice`;
     try {
       winston.info(`${logPrefix} restarting device`);
-      await SshService.sendCommand('reboot');
+      await SshService.sendCommand('reboot', true);
     } catch (err) {}
 
     process.exit(0);

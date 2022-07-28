@@ -2,7 +2,7 @@
 title: Factory Reset
 ---
 
-To reset the IoTConnector lite to factory, settings you can press and hold the "USER" button for 5 seconds.
+To reset the IoT connector flex to factory, settings you can press and hold the "USER" button for 5 seconds.
 
 ![IOT2050 User Button](/content/IoT2050UserButton.png)
 

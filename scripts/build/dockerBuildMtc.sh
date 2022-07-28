@@ -7,4 +7,4 @@ fi
 
 docker buildx build --platform linux/arm64 \
     -t ${DOCKER_REGISTRY}/mtconnect-prod_arm64:latest \
-    -f docker/mtconnect_arm64.Dockerfile --push .
+    -f docker/mtconnect_arm64.dockerfile --push .

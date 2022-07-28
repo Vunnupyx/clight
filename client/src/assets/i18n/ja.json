@@ -190,7 +190,10 @@
     "Actions": "動作",
     "Edit": "編集",
     "Delete": "削除",
+    "Reset": "リセット",
     "Save": "保存",
+    "CounterResetSuccess": "カウンタ'{{NAME}}'が正常にリセットされました。",
+    "CounterResetError": "カウンタ'{{NAME}}'のリセットに失敗しました。",
     "Cancel": "キャンセル",
     "SetThreshold": "閾値設定",
     "LiveData": "ライブデータ",
@@ -198,6 +201,7 @@
     "DeleteTitle": "削除",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
     "SetThresholds": "閾値設定",
+    "SetComparativeValue": "",
     "Set": "設定",
     "Value": "値",
     "Threshold": "閾値",
@@ -207,6 +211,20 @@
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
     "DuplicatedName": "You are not allowed to duplicate names"
+  },
+  "virtual-data-point-operation-type": {
+    "And": "",
+    "Or": "",
+    "Not": "",
+    "Counter": "",
+    "Thresholds": "",
+    "Greater": "",
+    "GreaterOrEqual": "",
+    "Smaller": "",
+    "SmallerEqual": "",
+    "Equal": "",
+    "Unequal": "",
+    "Enumeration": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
@@ -334,7 +352,9 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time",
-    "ChooseTimeZone": "Choose Time Zone"
+    "ChooseTimeZone": "Choose Time Zone",
+    "nptUnreachable": "NTPサーバーに到達できない",
+    "nptUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。"
   },
   "system-information": {
     "SystemInformation": "システム情報",

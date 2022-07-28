@@ -54,10 +54,12 @@ class MDCLFlasher {
    */
   private setupGPIOPaths(): void {
     const filesAndFolders = readdirSync(this.#gpioChipPath);
-    if (filesAndFolders.length > 1)
-      throw Error(`Can not detect gpio chip number`);
-    const chipNumber = filesAndFolders.join().match(/\d+/g)?.join();
+    if (filesAndFolders.length > 1) {
+      console.log(`Can not detect gpio chip number`);
+      exit(1);
+    }
 
+    const chipNumber = filesAndFolders.join().match(/\d+/g)?.join();
     const buttonID = parseInt(chipNumber) + 25;
 
     this.#userButtonPath = `/sys/class/gpio/gpio${buttonID}/value`;
@@ -75,20 +77,30 @@ class MDCLFlasher {
   private initUserButtonWatcher(): void {
     console.log('Starting mdcflash service. Watching user button...');
     this.#userButtonWatcher = setInterval(() => {
-      const value = readFileSync(this.#userButtonPath)
-        .toString('utf8')
-        .trim();
+      const value = readFileSync(this.#userButtonPath).toString('utf8').trim();
       if (value === '0') {
         this.#lastButtonCount++;
         if (this.#lastButtonCount >= this.#durationPollRatio) {
           this.stopBlink(1);
           clearInterval(this.#userButtonWatcher);
           this.transferData()
+            .catch((err) => {
+              console.log(`Error during transferring data.`);
+              exit(1);
+            })
             .then(() => {
               return this.fixGPT();
             })
+            .catch(() => {
+              console.log(`Error during fix GPT.`);
+              exit(1);
+            })
             .then(() => {
-              this.#fwFlasher.flash();
+              return this.#fwFlasher.flash();
+            })
+            .catch((err) => {
+              console.log(`Error during flashing new firmware.`);
+              exit(1);
             });
         }
         return;
@@ -189,25 +201,35 @@ class MDCLFlasher {
    * Restart device after success or exit with status code 1 on any error.
    */
   private async transferData(): Promise<void> {
-    console.log('Transferring data to /dev/mmcblk*boot1');
     return new Promise(async (res, rej) => {
       this.blink(1000, 'orange');
       // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
       readdir('/root', async (err, files) => {
-        if (err) rej();
+        if (err) {
+          console.log(`Error during reading files of /root`);
+          return rej();
+        }
         const filename = files.find((str) =>
           /iot-connector[a-zA-Z-.\d]*\.img\.gz/.test(str)
         );
-        if (!filename) rej({ msg: `No mdc lite image found. Abort!` });
+        if (!filename) {
+          console.log(`No mdc lite image found. Abort!`);
+          return rej();
+        }
         const imagePath = `/root/${filename}`;
         let target;
+
         try {
           await new Promise<void>((res, rej) => {
             access(imagePath, constants.F_OK, (err) => {
-              if (err) rej({ msg: `No mdc lite image found. Abort!` });
-              res();
+              if (err) {
+                console.log(`No mdc lite image found. Abort!`);
+                return rej();
+              }
+              return res();
             });
           });
+
           target = execSync(
             'ls /dev/mmcblk*boot0 2>/dev/null | sed "s/boot0//"'
           )
@@ -215,26 +237,40 @@ class MDCLFlasher {
             .trim();
         } catch (err) {
           console.log(err.msg || `Error due to detect target device. Abort`);
-          exit(1);
+          return rej();
         }
         if (!target || target.length === 0) {
           console.log(`Error due to detect target device. Abort`);
-          exit(1);
+          return rej();
         }
 
         const command = `gunzip -c ${imagePath} | dd of=${target} bs=4M`;
 
+        try {
+          if (!(await this.checkMD5(filename, '/root'))) {
+            this.clearAll();
+            this.glow(0, 'red', 1);
+            this.glow(0, 'red', 2);
+            return rej();
+          }
+        } catch (err) {
+          this.clearAll();
+          this.glow(0, 'red', 1);
+          this.glow(0, 'red', 2);
+          return rej();
+        }
+
         const startDate = new Date();
+        console.log('Transferring data to /dev/mmcblk*boot1');
         exec(command, (err, stdout, stderr) => {
           const finishDate = new Date();
           this.stopBlink();
-          if (err || stderr !== '') {
-            console.error(err);
-            console.error(stderr);
+          if (err) {
+            console.log(`Failed to transfer data`);
+            console.log(`ERROR: ${JSON.stringify(err)}`);
+            console.log(`STDERR: ${stderr}`);
             this.blink(500, 'red');
-            setTimeout(() => {
-              exit(1);
-            }, 10000);
+            return rej();
           }
           console.log(
             `Data successfully transferred to internal MCC. Finished after: ${
@@ -242,27 +278,67 @@ class MDCLFlasher {
             }s`
           );
           console.log(stdout);
-
           this.glow(0, 'green');
-          res();
+          return res();
         });
       });
     });
   }
 
   private fixGPT(): Promise<void> {
+    console.log(`Starting fixing of GPT.`);
     const cmd = `sgdisk /dev/mmcblk1 -e`;
     return new Promise<void>((res, rej) => {
       exec(cmd, (err, _stdout, stderr) => {
         if (err || stderr !== '') {
           console.log(`Error fixing Boot sector`);
-          rej();
+          console.log(stderr);
+          console.log(err);
+          return rej();
         }
-        console.log(`Boot sector fixed.`);
-        res();
+        console.log(`GPT boot sector fixed.`);
+        return res();
       });
-      res();
     });
+  }
+
+  private async checkMD5(filename: string, path: string): Promise<boolean> {
+    const cmd = `md5sum ${path}/${filename}`;
+    let checksum: string = '';
+    return new Promise((res, rej) => {
+      console.log(`Validating checksum of ${filename}.`);
+      try {
+        checksum = this.extractChecksumFromString(
+          readFileSync(`${path}/${filename}.md5`).toString('utf-8')
+        );
+      } catch (err) {
+        console.log(`No checksum file found for ${filename}. Abort.`);
+        return rej();
+      }
+      exec(cmd, (err, stdout, stderr) => {
+        if (err || stderr.length !== 0) {
+          console.log(
+            `Calculation of md5 checksum for file ${filename} failed due to ${
+              err ? JSON.stringify(err) : stderr
+            }`
+          );
+          return rej(false);
+        }
+        const calcedChecksum = this.extractChecksumFromString(stdout);
+        const result = calcedChecksum === checksum;
+        if(result) {
+          console.log(`Checksum for ${filename} valid.`)
+        } else {
+          console.log(`Checksum for ${filename} invalid.`);
+        }
+        return res(result);
+      });
+      
+    });
+  }
+
+  private extractChecksumFromString(str: string): string {
+    return str.trim().split(' ')[0];
   }
 }
 
@@ -288,7 +364,7 @@ class FWFlasher {
         `Installed firmware version is higher or equal to installable firmware version`
       );
       this.mdclFlasher.glow(0, 'green', 2);
-      shutdown();
+      //shutdown();
       exit(0);
     }
     this.mdclFlasher.blink(1000, 'orange', 2);

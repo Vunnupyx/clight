@@ -190,6 +190,9 @@
     "Actions": "Actions",
     "Edit": "Edit",
     "Delete": "Delete",
+    "Reset": "Reset",
+    "CounterResetSuccess": "Counter '{{NAME}}' was successfully reset.",
+    "CounterResetError": "Counter '{{NAME}}' reset failed.",
     "Save": "Save",
     "Cancel": "Cancel",
     "SetThreshold": "Set Threshold",
@@ -198,6 +201,7 @@
     "DeleteTitle": "Delete",
     "DeleteMessage": "Are you sure you want to delete data point?",
     "SetThresholds": "Set Thresholds",
+    "SetComparativeValue": "Set Comparative Value",
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",
@@ -207,6 +211,20 @@
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
     "DuplicatedName": "You are not allowed to duplicate names"
+  },
+  "virtual-data-point-operation-type": {
+    "And": "And",
+    "Or": "Or",
+    "Not": "Not",
+    "Counter": "Counter",
+    "Thresholds": "Thresholds",
+    "Greater": "Greater",
+    "GreaterOrEqual": "Greater or Equal",
+    "Smaller": "Smaller",
+    "SmallerEqual": "Smaller or Equal",
+    "Equal": "Equal",
+    "Unequal": "Unequal",
+    "Enumeration": "Enumeration"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
@@ -334,7 +352,9 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time",
-    "ChooseTimeZone": "Choose Time Zone"
+    "ChooseTimeZone": "Choose Time Zone",
+    "nptUnreachable": "NTP Server unreachable",
+    "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply."
   },
   "system-information": {
     "SystemInformation": "System Information",

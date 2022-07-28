@@ -116,7 +116,21 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ value | uppercase }}
+              <ng-container [ngSwitch]="value">
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.AND">{{ 'virtual-data-point-operation-type.And' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.OR">{{ 'virtual-data-point-operation-type.Or' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.NOT">{{ 'virtual-data-point-operation-type.Not' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.COUNTER">{{ 'virtual-data-point-operation-type.Counter' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.THRESHOLDS">{{ 'virtual-data-point-operation-type.Thresholds' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.GREATER">{{ 'virtual-data-point-operation-type.Greater' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.GREATER_EQUAL">{{ 'virtual-data-point-operation-type.GreaterOrEqual' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.SMALLER">{{ 'virtual-data-point-operation-type.Smaller' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.SMALLER_EQUAL">{{ 'virtual-data-point-operation-type.SmallerEqual' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.EQUAL">{{ 'virtual-data-point-operation-type.Equal' | translate }}</ng-container>
+              <ng-container *ngSwitchCase="VirtualDataPointOperationType.UNEQUAL">{{ 'virtual-data-point-operation-type.Unequal' | translate }}</ng-container>
+              <!-- <ng-container *ngSwitchCase="VirtualDataPointOperationType.ENUMERATION">{{ 'virtual-data-point-operation-type.Enumeration' | translate }}</ng-container> -->
+              <ng-container *ngSwitchDefault>{{ value | uppercase }}</ng-container>
+              </ng-container>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -125,8 +139,8 @@
                 unsavedRow && (unsavedRow.operationType = $event)
               "
             >
-              <mat-option *ngFor="let op of Operations" [value]="op">{{
-                op | uppercase
+              <mat-option *ngFor="let op of Operations" [value]="op.value">{{
+                op.text | translate
               }}</mat-option>
             </mat-select>
           </ng-template>
@@ -242,6 +256,17 @@
             >
               <mat-button-toggle
                 *ngIf="
+                  canSetComparativeValue(row?.operationType)
+                "
+                (click)="onSetComparativeValue(row); group.value = null"
+                [matTooltip]="
+                  'settings-virtual-data-point.SetComparativeValue' | translate
+                "
+                matTooltipPosition="above"
+                ><mat-icon>input</mat-icon></mat-button-toggle
+              >
+              <mat-button-toggle
+                *ngIf="
                   row?.operationType ===
                   VirtualDataPointOperationType.THRESHOLDS
                 "
@@ -264,11 +289,43 @@
                 matTooltipPosition="above"
                 ><mat-icon>delete_outline</mat-icon></mat-button-toggle
               >
+              <mat-button-toggle
+              *ngIf="row?.operationType ===
+              VirtualDataPointOperationType.COUNTER"
+              (click)="onReset(row)"
+              [matTooltip]="'settings-virtual-data-point.Reset' | translate"
+              matTooltipPosition="above"
+              ><mat-icon>clear</mat-icon></mat-button-toggle
+            >
             </mat-button-toggle-group>
             <mat-button-toggle-group
               #group="matButtonToggleGroup"
               *ngIf="unsavedRowIndex === rowIndex"
             >
+              <mat-button-toggle
+                *ngIf="
+                  canSetComparativeValue(unsavedRow?.operationType)
+                "
+                (click)="
+                  unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0 &&
+                    onSetComparativeValue(unsavedRow);
+                  group.value = null
+                "
+                [matTooltip]="
+                  'settings-virtual-data-point.SetComparativeValue' | translate
+                "
+                matTooltipPosition="above"
+                [disabled]="
+                  !(
+                    unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0
+                  )
+                "
+                ><mat-icon>input</mat-icon></mat-button-toggle
+              >
               <mat-button-toggle
                 *ngIf="
                   unsavedRow?.operationType ===

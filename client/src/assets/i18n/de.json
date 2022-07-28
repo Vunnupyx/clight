@@ -94,9 +94,9 @@
     "UpdateFailedCheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut oder kontaktiere den Support.",
-    "Language": "Sprache",
+    "Language": "Language",
     "DeviceInfo": "Geräte Informationen",
-    "CELOSLanguage": "CELOS Sprache",
+    "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
     "Japanese": "Japanaisch",
@@ -190,7 +190,10 @@
     "Actions": "Aktionen",
     "Edit": "Editieren",
     "Delete": "Löschen",
+    "Reset": "Zurücksetzen",
     "Save": "Speichern",
+    "CounterResetSuccess": "Zähler '{{NAME}}' erfolgreich zurückgesetzt.",
+    "CounterResetError": "Zähler '{{NAME}}' zurücksetzen gescheitert.",
     "Cancel": "Abbrechen",
     "SetThreshold": "Grenzwerte setzen",
     "LiveData": "Aktuelwert",
@@ -198,6 +201,7 @@
     "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
+    "SetComparativeValue": "",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",
@@ -208,12 +212,25 @@
     "ApplyChanges": "Änderungen übernehmen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden."
   },
+  "virtual-data-point-operation-type": {
+    "And": "Und",
+    "Or": "Oder",
+    "Not": "Nicht",
+    "Counter": "Zähler",
+    "Thresholds": "Schwellwerte",
+    "Greater": "Größer",
+    "GreaterOrEqual": "Größer gleich",
+    "Smaller": "Kleiner",
+    "SmallerEqual": "Kleiner gleich",
+    "Equal": "Gleich",
+    "Unequal": "Ungleich",
+    "Enumeration": "Enumeration"
+  },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuche es später erneut!",
     "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
     "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
-  
   },
   "settings-data-sink": {
     "DataSink": "Applikations Interfaces",
@@ -335,7 +352,9 @@
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
     "SetCurrentTime": "Systemzeit setzen",
-    "ChooseTimeZone": "Zeitzone"
+    "ChooseTimeZone": "Zeitzone",
+    "nptUnreachable": "NTP Server nicht erreichbar",
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
   },
   "system-information": {
     "SystemInformation": "System Informationen",

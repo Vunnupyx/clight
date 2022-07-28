@@ -6,13 +6,27 @@ title: Changelog
 
 ## Current
 
+### Added
+
+- [DIGMDCLGHT-4](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-4) Added enum virtual data point
+
+### Fixed
+
 - [DIGMDCLGHT-93](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-93) Fixed connection issues from time to time
+- [DIGMDCLGHT-98](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-98) Automatically bumping versions in pipeline that are shown inside the UI
+- [DIGMDCLGHT-87](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-87) The device didn't restart after a factory reset
 
-## [2.1.0]
+### [2.1.0]
 
-## Fixed
+## Added
 
-- Fixed memory leak which leads to the crash of some containers
+- [DIGMDCLGHT-18](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-18) Counter can now be resetted via the web UI
+- [DIGMDCLGHT-9](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-9) Ping NC from UI to check connection configuration
+- [DIGMDCLGHT-24](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-24) Added ntp server connection state to ntp settings
+
+### Fixed
+
+- [DIGMDCLGHT-3](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Pulling updated containers failed sometimes.
 
 ### Changed
 
@@ -20,6 +34,9 @@ title: Changelog
 - [MDCL-218](https://codestryke.atlassian.net/browse/MDCL-217) Switched CELOS logo to DMG Connectivity logo
 - [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Removed step 3 and 4 from configuration wizard. The "enabled" flag of datasources and datasinks are now only controlled by the templates
 - [DIGMDCLGHT-27](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-27) Add a feature to change current staging environment. **RESTRICTION:** Back switch to _prod_ from _stag_ or _dev_ is not possible if there is no newer _prod_ image on registry.
+- [DIGMDCLGHT-2](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-2) Adjusted log file naming to DM{MAC}-{YYYY}-{MM}-{DD}-{HH}-{mm}-{ss}
+- [DIGMDCLGHT-11](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-11) Update NC variable set
+- [DIGMDCLGHT-15](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Renamed IoT connector light to IoT connector flex
 
 ## [1.7.4]
 
@@ -28,7 +45,7 @@ title: Changelog
 - Support for SINUMERIK 840D pl with a static read frequency of 5 seconds
 - Improved data source logs
 
-## Fixed
+### Fixed
 
 - Fixed memory leak which leads to the crash of some containers
 
@@ -38,7 +55,7 @@ title: Changelog
 
 - Updated user facing documentation
 
-## Fixed
+### Fixed
 
 - Fixed USER1 & USER2 LED statuses and added documentation
 - Fixed bug where old log archives weren't deleted after failures

@@ -190,7 +190,10 @@
     "Actions": "Aktionen",
     "Edit": "Editieren",
     "Delete": "Löschen",
+    "Reset": "Zurücksetzen",
     "Save": "Speichern",
+    "CounterResetSuccess": "Zähler '{{NAME}}' erfolgreich zurückgesetzt.",
+    "CounterResetError": "Zähler '{{NAME}}' zurücksetzen gescheitert.",
     "Cancel": "Abbrechen",
     "SetThreshold": "Grenzwerte setzen",
     "LiveData": "Aktuelwert",
@@ -198,6 +201,7 @@
     "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
+    "SetComparativeValue": "",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",
@@ -335,7 +339,9 @@
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
     "SetCurrentTime": "Systemzeit setzen",
-    "ChooseTimeZone": "Zeitzone"
+    "ChooseTimeZone": "Zeitzone",
+    "nptUnreachable": "NTP Server nicht erreichbar",
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
   },
   "system-information": {
     "SystemInformation": "System Informationen",

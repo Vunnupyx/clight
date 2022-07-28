@@ -98,6 +98,26 @@ export class VirtualDataPointService
     return true;
   }
 
+  async resetCounter(vdp: VirtualDataPoint): Promise<boolean> {
+    const payload = {
+        ...vdp,
+        reset: true
+    }
+    return this.httpService.patch(`/vdps/${vdp.id}`, payload)
+      .then((response) => {
+        this.toastr.success(
+          this.translate.instant('settings-virtual-data-point.CounterResetSuccess', {NAME: response?.changed?.name})
+        );
+        return true;
+      }).catch((error) => {
+        this.toastr.error(
+          this.translate.instant('settings-virtual-data-point.CounterResetError', {NAME: payload?.name})
+        );
+        return false;
+      }
+    );
+  }
+
   async getDataPoints() {
     this._store.patchState((state) => ({
       status: Status.Loading,

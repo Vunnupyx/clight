@@ -54,6 +54,47 @@ export class VirtualDataPointManager {
   }
 
   /**
+   * Calculates the sum of a  list of virtual data points.
+   *
+   * @param  {IDataSourceMeasurementEvent[]} sourceEvents
+   * @param  {IVirtualDataPointConfig} config
+   * @returns boolean
+   */
+  private sum(
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig
+  ): number | null {
+    const logPrefix = `VirtualDataPointManager::sum`;
+    if (config.operationType !== 'sum') {
+      winston.error(
+        `${logPrefix} called with invalid operation type.`
+      );
+      return null;
+    }
+    if (sourceEvents.length < 2) {
+      winston.warn(
+        `${logPrefix} virtual data point (${config.id}) requires at least 2 sources!`
+      );
+      return null;
+    }
+    try {
+      return sourceEvents.reduce(
+        (previousValue, { measurement: { value } }) => {
+          if (typeof value !== 'number') {
+            // Not addable
+            throw Error(`${value} is not a number.`);
+          }
+          return value + previousValue;
+        },
+        0
+      );
+    } catch (err) {
+      winston.error(`${logPrefix} ${err.message}`);
+      return null;
+    }
+  }
+
+  /**
    * Calculates virtual data points from type and
    *
    * @param  {IDataSourceMeasurementEvent[]} sourceEvents
@@ -471,6 +512,8 @@ export class VirtualDataPointManager {
         return this.equal(sourceEvents, config);
       case 'unequal':
         return this.unequal(sourceEvents, config);
+      case 'sum':
+        return this.sum(sourceEvents, config);
       default:
         // TODO Only print this once at startup or config change, if invalid
         // winston.warn(

@@ -84,6 +84,10 @@ export class VirtualDataPointComponent implements OnInit {
     {
       value: VirtualDataPointOperationType.ENUMERATION,
       text: 'virtual-data-point-operation-type.Enumeration'
+    },
+    {
+      value: VirtualDataPointOperationType.SUM,
+      text: 'virtual-data-point-operation-type.Sum'
     }
   ];
 
@@ -435,6 +439,7 @@ export class VirtualDataPointComponent implements OnInit {
     return [
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
+      VirtualDataPointOperationType.SUM,
       VirtualDataPointOperationType.ENUMERATION
     ].includes(operationType!);
   }

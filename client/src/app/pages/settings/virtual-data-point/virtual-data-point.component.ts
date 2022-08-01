@@ -20,7 +20,11 @@ import {
 } from '../../../services';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { Status } from 'app/shared/state';
-import { PromptDialogComponent, PromptDialogModel } from 'app/shared/components/prompt-dialog/prompt-dialog.component';
+import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
+import {
+  PromptDialogComponent,
+  PromptDialogModel
+} from 'app/shared/components/prompt-dialog/prompt-dialog.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -31,20 +35,60 @@ export class VirtualDataPointComponent implements OnInit {
   datapointRows?: VirtualDataPoint[];
 
   VirtualDataPointOperationType = VirtualDataPointOperationType;
-  
+
   Operations = [
-    { value: VirtualDataPointOperationType.AND, text: 'virtual-data-point-operation-type.And' },
-    { value: VirtualDataPointOperationType.OR, text: 'virtual-data-point-operation-type.Or' },
-    { value: VirtualDataPointOperationType.NOT, text: 'virtual-data-point-operation-type.Not' },
-    { value: VirtualDataPointOperationType.COUNTER, text: 'virtual-data-point-operation-type.Counter' },
-    { value: VirtualDataPointOperationType.THRESHOLDS, text: 'virtual-data-point-operation-type.Thresholds' },
-    { value: VirtualDataPointOperationType.GREATER, text: 'virtual-data-point-operation-type.Greater' },
-    { value: VirtualDataPointOperationType.GREATER_EQUAL, text: 'virtual-data-point-operation-type.GreaterOrEqual' },
-    { value: VirtualDataPointOperationType.SMALLER, text: 'virtual-data-point-operation-type.Smaller' },
-    { value: VirtualDataPointOperationType.SMALLER_EQUAL, text: 'virtual-data-point-operation-type.SmallerEqual' },
-    { value: VirtualDataPointOperationType.EQUAL, text: 'virtual-data-point-operation-type.Equal' },
-    { value: VirtualDataPointOperationType.UNEQUAL, text: 'virtual-data-point-operation-type.Unequal' },
-    { value: VirtualDataPointOperationType.SUM, text: 'virtual-data-point-operation-type.Sum' },
+    {
+      value: VirtualDataPointOperationType.AND,
+      text: 'virtual-data-point-operation-type.And'
+    },
+    {
+      value: VirtualDataPointOperationType.OR,
+      text: 'virtual-data-point-operation-type.Or'
+    },
+    {
+      value: VirtualDataPointOperationType.NOT,
+      text: 'virtual-data-point-operation-type.Not'
+    },
+    {
+      value: VirtualDataPointOperationType.COUNTER,
+      text: 'virtual-data-point-operation-type.Counter'
+    },
+    {
+      value: VirtualDataPointOperationType.THRESHOLDS,
+      text: 'virtual-data-point-operation-type.Thresholds'
+    },
+    {
+      value: VirtualDataPointOperationType.GREATER,
+      text: 'virtual-data-point-operation-type.Greater'
+    },
+    {
+      value: VirtualDataPointOperationType.GREATER_EQUAL,
+      text: 'virtual-data-point-operation-type.GreaterOrEqual'
+    },
+    {
+      value: VirtualDataPointOperationType.SMALLER,
+      text: 'virtual-data-point-operation-type.Smaller'
+    },
+    {
+      value: VirtualDataPointOperationType.SMALLER_EQUAL,
+      text: 'virtual-data-point-operation-type.SmallerEqual'
+    },
+    {
+      value: VirtualDataPointOperationType.EQUAL,
+      text: 'virtual-data-point-operation-type.Equal'
+    },
+    {
+      value: VirtualDataPointOperationType.UNEQUAL,
+      text: 'virtual-data-point-operation-type.Unequal'
+    },
+    {
+      value: VirtualDataPointOperationType.ENUMERATION,
+      text: 'virtual-data-point-operation-type.Enumeration'
+    },
+    {
+      value: VirtualDataPointOperationType.SUM,
+      text: 'virtual-data-point-operation-type.Sum'
+    }
   ];
 
   unsavedRow?: VirtualDataPoint;
@@ -244,7 +288,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onReset(obj: VirtualDataPoint) {
-    if(obj.operationType !== 'counter') {
+    if (obj.operationType !== 'counter') {
       return;
     }
     this.virtualDataPointService.resetCounter(obj);
@@ -271,15 +315,53 @@ export class VirtualDataPointComponent implements OnInit {
     return this.datapointRows?.findIndex((x) => x.id === id)!;
   }
 
-  canSetComparativeValue(operationType: VirtualDataPointOperationType | undefined) {
+  canSetComparativeValue(
+    operationType: VirtualDataPointOperationType | undefined
+  ) {
     return [
       VirtualDataPointOperationType.GREATER,
       VirtualDataPointOperationType.GREATER_EQUAL,
       VirtualDataPointOperationType.SMALLER,
       VirtualDataPointOperationType.SMALLER_EQUAL,
       VirtualDataPointOperationType.EQUAL,
-      VirtualDataPointOperationType.UNEQUAL,
+      VirtualDataPointOperationType.UNEQUAL
     ].includes(operationType!);
+  }
+
+  onSetEnumeration(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.enumeration) {
+      virtualPoint.enumeration = { items: [] };
+    }
+
+    const protocol = this.sourceDataPointService.getProtocol(
+      virtualPoint.sources![0]
+    );
+
+    this.sourceDataPointService.getDataPoints(protocol);
+    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
+
+    const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
+      data: {
+        enumeration: { ...virtualPoint.enumeration },
+        sources: virtualPoint.sources,
+        protocol
+      },
+      width: '900px'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.enumeration = result.enumeration;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          ...virtualPoint,
+          enumeration: result.enumeration
+        });
+      }
+    });
   }
 
   onSetComparativeValue(virtualPoint: VirtualDataPoint) {
@@ -287,14 +369,18 @@ export class VirtualDataPointComponent implements OnInit {
       virtualPoint.thresholds = {};
     }
 
-    const dialogRef = this.dialog.open<PromptDialogComponent, PromptDialogModel, string>(
+    const dialogRef = this.dialog.open<
       PromptDialogComponent,
-      {
-        data: {
-          title: this.translate.instant('settings-virtual-data-point.SetComparativeValue'),
-          inputValue: virtualPoint.comparativeValue,
-        } as PromptDialogModel,
-      });
+      PromptDialogModel,
+      string
+    >(PromptDialogComponent, {
+      data: {
+        title: this.translate.instant(
+          'settings-virtual-data-point.SetComparativeValue'
+        ),
+        inputValue: virtualPoint.comparativeValue
+      } as PromptDialogModel
+    });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -353,7 +439,8 @@ export class VirtualDataPointComponent implements OnInit {
     return [
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
-      VirtualDataPointOperationType.SUM
+      VirtualDataPointOperationType.SUM,
+      VirtualDataPointOperationType.ENUMERATION
     ].includes(operationType!);
   }
 

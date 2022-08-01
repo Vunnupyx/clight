@@ -210,7 +210,12 @@
     "BulkError": "Changes have not been applied. Please, try again!",
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
-    "DuplicatedName": "You are not allowed to duplicate names"
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "SetEnumeration": "Set enumeration",
+    "DefaultValue": "Default Value",
+    "SelectInput": "Select Input",
+    "CurrentLiveValue": "Current Live Value",
+    "ReturnValueIfTrue": "Value if left side is true"
   },
   "virtual-data-point-operation-type": {
     "And": "And",

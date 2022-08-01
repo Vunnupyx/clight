@@ -146,7 +146,9 @@ class MDCLFlasher {
    */
   public stopBlink(number: 1 | 2 = 2) {
     this.#blinkTimers[number].forEach((timer) => clearTimeout(timer));
-    [...this.getLedPaths('orange', number)].forEach((led) => writeFileSync(led, LED.OFF));
+    [...this.getLedPaths('orange', number)].forEach((led) =>
+      writeFileSync(led, LED.OFF)
+    );
   }
 
   /**
@@ -207,10 +209,14 @@ class MDCLFlasher {
     return new Promise(async (res, rej) => {
       //show installation start
       this.blink(1000, 'orange');
-      
+
       readdir('/root', async (err, files) => {
         if (err) {
-          console.log(`Error during reading files of /root. ${err ? JSON.stringify(err) :  ''}`);
+          console.log(
+            `Error during reading files of /root. ${
+              err ? JSON.stringify(err) : ''
+            }`
+          );
           this.setErrorLeds();
           return rej();
         }
@@ -229,7 +235,11 @@ class MDCLFlasher {
           await new Promise<void>((res, rej) => {
             access(imagePath, constants.F_OK, (err) => {
               if (err) {
-                console.log(`No mdc lite image found. Abort! ${err ? JSON.stringify(err) :  ''}`);
+                console.log(
+                  `No mdc lite image found. Abort! ${
+                    err ? JSON.stringify(err) : ''
+                  }`
+                );
                 this.setErrorLeds();
                 return rej();
               }
@@ -243,7 +253,11 @@ class MDCLFlasher {
             .toString('ascii')
             .trim();
         } catch (err) {
-          console.log(`Error due to detect target device. Abort. ${err ? JSON.stringify(err) :  ''}`);
+          console.log(
+            `Error due to detect target device. Abort. ${
+              err ? JSON.stringify(err) : ''
+            }`
+          );
           this.setErrorLeds();
           return rej();
         }
@@ -320,10 +334,10 @@ class MDCLFlasher {
 
   /**
    * Check MD5 of given file and validate against checksum file. Pattern filename.md5
-   * 
-   * @param filename 
-   * @param path 
-   * @returns 
+   *
+   * @param filename
+   * @param path
+   * @returns
    */
   private async checkMD5(filename: string, path: string): Promise<boolean> {
     const cmd = `md5sum ${path}/${filename}`;
@@ -335,7 +349,11 @@ class MDCLFlasher {
           readFileSync(`${path}/${filename}.md5`).toString('utf-8')
         );
       } catch (err) {
-        console.log(`No checksum file found for ${filename}. Abort. ${err ? JSON.stringify(err) :  ''}`);
+        console.log(
+          `No checksum file found for ${filename}. Abort. ${
+            err ? JSON.stringify(err) : ''
+          }`
+        );
         return rej();
       }
       exec(cmd, (err, stdout, stderr) => {
@@ -349,14 +367,13 @@ class MDCLFlasher {
         }
         const calcedChecksum = this.extractChecksumFromString(stdout);
         const result = calcedChecksum === checksum;
-        if(result) {
-          console.log(`Checksum for ${filename} valid.`)
+        if (result) {
+          console.log(`Checksum for ${filename} valid.`);
         } else {
           console.log(`Checksum for ${filename} invalid.`);
         }
         return res(result);
       });
-      
     });
   }
 
@@ -386,13 +403,14 @@ class FWFlasher {
       console.log(
         `Installed firmware version is higher or equal to available firmware update file.`
       );
-      //Succes all fine
+      //Success all fine
       this.mdclFlasher.stopBlink(2);
       this.mdclFlasher.glow(0, 'green', 2);
       exit(0);
     }
 
     // Update required
+    console.log(`Installing fw update.`);
     const proc = exec(this.#flashCommand, (err, _stdout, stderr) => {
       console.log(
         `Flash ausgeführt ${JSON.stringify(err)} ${JSON.stringify(
@@ -421,7 +439,6 @@ class FWFlasher {
         count--;
         proc.stdin.write('y');
         proc.stdin.end();
-        proc.stdout.removeAllListeners();
       }
     });
   }

@@ -44,6 +44,7 @@ export class VirtualDataPointComponent implements OnInit {
     { value: VirtualDataPointOperationType.SMALLER_EQUAL, text: 'virtual-data-point-operation-type.SmallerEqual' },
     { value: VirtualDataPointOperationType.EQUAL, text: 'virtual-data-point-operation-type.Equal' },
     { value: VirtualDataPointOperationType.UNEQUAL, text: 'virtual-data-point-operation-type.Unequal' },
+    { value: VirtualDataPointOperationType.SUM, text: 'virtual-data-point-operation-type.Sum' },
   ];
 
   unsavedRow?: VirtualDataPoint;
@@ -351,7 +352,8 @@ export class VirtualDataPointComponent implements OnInit {
   ) {
     return [
       VirtualDataPointOperationType.AND,
-      VirtualDataPointOperationType.OR
+      VirtualDataPointOperationType.OR,
+      VirtualDataPointOperationType.SUM
     ].includes(operationType!);
   }
 

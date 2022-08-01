@@ -1,8 +1,18 @@
-# MDCL Flasher User Guide
+# MDC Flex Flasher User Guide
+## Versions
+---
+Device | Flasher Version | MDC Connector Flex version | Firmware version
+--- | --- | --- | ---
+IoT2050 **FS04** | 1.0.1 | 2.1.0 developer preview | none
 
-This image of MDCL Flasher flashes MDC Lite version 2.0 to internal eMMC of the IOT2050 and update the firmware version to V01.02.01 if necessary.
 
-## How to install:
+## Description
+---
+
+This bootable image of _MDC Flasher_ flashes the above version to internal eMMC of the IOT2050 and update the firmware version to if necessary.
+
+## How to flash to USB device:
+---
 
 1. Download MDC_LITE_INSTALLER-<MDCVERSION>-<FIRMWARE_VERSION>.zip from AWS
 2. Unzip the bundle
@@ -13,14 +23,29 @@ This image of MDCL Flasher flashes MDC Lite version 2.0 to internal eMMC of the 
 5. [Windows/Linux] You can also use balena Etcher for a safer way to flash the image: Download Balena Etcher
 6. After the command or balena Etcher is finished your USB device is ready to install mdc lite and upgrade firmware version of IOT2050.
 
-## How to use:
+## How to install on IoT2050 via USB storage:
+---
 
-1. Remove SD card
-2. Insert USB stick to any USB port
-3. Start IOT2050 and hold USER-Button during bootup. You can release USER-Button if STAT LED is blinking.
-4. Wait for green blinking USER1- and USER2-LED
+0. Shutdown Iot2050 if it is running.
+1. Unplug all removable boot devices like SD card or USB devices.
+2. Insert USB storage with flashed image (see steps above) to any USB port
+3. Start IoT2050 and hold USER-Button during bootup. You can release USER-Button if STAT LED is blinking.
+4. Wait for green blinking USER1- and USER2-LED. Now the flash service is ready to flash.
 5. Hold USER-Button for 3 seconds.
-6. USER1 LED starts blinking orange -> Device install mdc lite to eMMC
+6. USER1 LED starts blinking orange and USER2 LED is still blinking green. The installation process is running.
 7. After installation the installer check the installed firmware version and update if necessary.
-8. If the USER2-LED is green and the USER1-LED is off the installation was successful.
-9. Remove USB device and restart IOT2050
+8. If the USER2-LED is green and the USER1-LED is off the installation was successful, otherwise please check error codes section and contact support.
+9. Remove USB device and restart IOT2050 via reset button.
+10. The IoT2050 device now is booting from internal eMMC
+
+### LED states
+User 1 Led represent the state of the installer.
+
+User 2 Led repesent the state of firmware updater.
+
+## Error codes
+---
+LED User1 | LED USER2 | Description
+:------: | :------: | -----
+red   | red | Installation image corrupted. Please retry installation with a new flashed USB device. If this also fails please contact support
+green | red | Installation succeeded but firmware update failed. Please contact support

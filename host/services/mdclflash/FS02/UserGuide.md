@@ -38,8 +38,14 @@ This bootable image of _MDC Flasher_ flashes the above version to internal eMMC 
 9. Remove USB device and restart IOT2050 via reset button.
 10. The IoT2050 device now is booting from internal eMMC
 
+### LED states
+User 1 Led represent the state of the installer.
+
+User 2 Led repesent the state of firmware updater.
+
 ## Error codes
 ---
 LED User1 | LED USER2 | Description
 :------: | :------: | -----
 red   | red | Installation image corrupted. Please retry installation with a new flashed USB device. If this also fails please contact support
+green | red | Installation succeeded but firmware update failed. Please contact support

@@ -56,6 +56,8 @@ class MDCLFlasher {
     const filesAndFolders = readdirSync(this.#gpioChipPath);
     if (filesAndFolders.length > 1) {
       console.log(`Can not detect gpio chip number`);
+      this.glow(0, 'red', 1);
+      this.glow(0, 'red', 2);
       exit(1);
     }
 
@@ -84,7 +86,7 @@ class MDCLFlasher {
           this.stopBlink(1);
           clearInterval(this.#userButtonWatcher);
           this.transferData()
-            .catch((err) => {
+            .catch(() => {
               console.log(`Error during transferring data.`);
               exit(1);
             })
@@ -103,6 +105,7 @@ class MDCLFlasher {
               exit(1);
             });
         }
+        // threshold not reached
         return;
       }
       this.#lastButtonCount = 0;
@@ -143,7 +146,7 @@ class MDCLFlasher {
    */
   public stopBlink(number: 1 | 2 = 2) {
     this.#blinkTimers[number].forEach((timer) => clearTimeout(timer));
-    this.clearAll();
+    [...this.getLedPaths('orange', number)].forEach((led) => writeFileSync(led, LED.OFF));
   }
 
   /**
@@ -202,11 +205,13 @@ class MDCLFlasher {
    */
   private async transferData(): Promise<void> {
     return new Promise(async (res, rej) => {
+      //show installation start
       this.blink(1000, 'orange');
-      // const usbStick = execSync('findmnt / -o source -n').toString('ascii').trim();
+      
       readdir('/root', async (err, files) => {
         if (err) {
-          console.log(`Error during reading files of /root`);
+          console.log(`Error during reading files of /root. ${err ? JSON.stringify(err) :  ''}`);
+          this.setErrorLeds();
           return rej();
         }
         const filename = files.find((str) =>
@@ -214,6 +219,7 @@ class MDCLFlasher {
         );
         if (!filename) {
           console.log(`No mdc lite image found. Abort!`);
+          this.setErrorLeds();
           return rej();
         }
         const imagePath = `/root/${filename}`;
@@ -223,7 +229,8 @@ class MDCLFlasher {
           await new Promise<void>((res, rej) => {
             access(imagePath, constants.F_OK, (err) => {
               if (err) {
-                console.log(`No mdc lite image found. Abort!`);
+                console.log(`No mdc lite image found. Abort! ${err ? JSON.stringify(err) :  ''}`);
+                this.setErrorLeds();
                 return rej();
               }
               return res();
@@ -236,11 +243,13 @@ class MDCLFlasher {
             .toString('ascii')
             .trim();
         } catch (err) {
-          console.log(err.msg || `Error due to detect target device. Abort`);
+          console.log(`Error due to detect target device. Abort. ${err ? JSON.stringify(err) :  ''}`);
+          this.setErrorLeds();
           return rej();
         }
         if (!target || target.length === 0) {
           console.log(`Error due to detect target device. Abort`);
+          this.setErrorLeds();
           return rej();
         }
 
@@ -248,15 +257,11 @@ class MDCLFlasher {
 
         try {
           if (!(await this.checkMD5(filename, '/root'))) {
-            this.clearAll();
-            this.glow(0, 'red', 1);
-            this.glow(0, 'red', 2);
+            this.setErrorLeds();
             return rej();
           }
         } catch (err) {
-          this.clearAll();
-          this.glow(0, 'red', 1);
-          this.glow(0, 'red', 2);
+          this.setErrorLeds();
           return rej();
         }
 
@@ -264,12 +269,12 @@ class MDCLFlasher {
         console.log('Transferring data to /dev/mmcblk*boot1');
         exec(command, (err, stdout, stderr) => {
           const finishDate = new Date();
-          this.stopBlink();
+          this.stopBlink(1);
           if (err) {
             console.log(`Failed to transfer data`);
             console.log(`ERROR: ${JSON.stringify(err)}`);
             console.log(`STDERR: ${stderr}`);
-            this.blink(500, 'red');
+            this.setErrorLeds();
             return rej();
           }
           console.log(
@@ -278,13 +283,23 @@ class MDCLFlasher {
             }s`
           );
           console.log(stdout);
-          this.glow(0, 'green');
+          this.glow(0, 'green', 1);
           return res();
         });
       });
     });
   }
 
+  private setErrorLeds() {
+    this.stopBlink(1);
+    this.stopBlink(2);
+    this.glow(0, 'red', 1);
+    this.glow(0, 'red', 2);
+  }
+
+  /**
+   * Fix GPT table on eMMC after flash
+   */
   private fixGPT(): Promise<void> {
     console.log(`Starting fixing of GPT.`);
     const cmd = `sgdisk /dev/mmcblk1 -e`;
@@ -294,6 +309,7 @@ class MDCLFlasher {
           console.log(`Error fixing Boot sector`);
           console.log(stderr);
           console.log(err);
+          this.setErrorLeds();
           return rej();
         }
         console.log(`GPT boot sector fixed.`);
@@ -302,6 +318,13 @@ class MDCLFlasher {
     });
   }
 
+  /**
+   * Check MD5 of given file and validate against checksum file. Pattern filename.md5
+   * 
+   * @param filename 
+   * @param path 
+   * @returns 
+   */
   private async checkMD5(filename: string, path: string): Promise<boolean> {
     const cmd = `md5sum ${path}/${filename}`;
     let checksum: string = '';
@@ -312,7 +335,7 @@ class MDCLFlasher {
           readFileSync(`${path}/${filename}.md5`).toString('utf-8')
         );
       } catch (err) {
-        console.log(`No checksum file found for ${filename}. Abort.`);
+        console.log(`No checksum file found for ${filename}. Abort. ${err ? JSON.stringify(err) :  ''}`);
         return rej();
       }
       exec(cmd, (err, stdout, stderr) => {
@@ -343,32 +366,33 @@ class MDCLFlasher {
 }
 
 class FWFlasher {
-  #flashCommand = `iot2050-firmware-update /root/IOT2050*`;
+  // Only with correct file type
+  #flashCommand = `iot2050-firmware-update /root/IOT2050*.tar.xz`;
   #checkCommand = `fw_printenv fw_version`;
-  #installedVersion: string;
-  #newVersion: string;
+  #installedVersion: string = '';
+  #newVersion: string = '';
 
   constructor(private mdclFlasher: MDCLFlasher) {}
 
-  public async flash() {
-    console.log(`Starting firmware flashing.`);
-    const shutdown = () => {
-      setTimeout(() => {
-        console.log(`Rebooting`);
-        execSync('sudo /sbin/shutdown now');
-      }, 10_000);
-    };
+  public async flash(): Promise<void> {
+    console.log(`Check installed firmware version.`);
+
+    // Display progress
     this.mdclFlasher.stopBlink(2);
+    this.mdclFlasher.blink(1000, 'orange', 2);
+
+    // No update required
     if (!(await this.checkFWVersion())) {
       console.log(
-        `Installed firmware version is higher or equal to installable firmware version`
+        `Installed firmware version is higher or equal to available firmware update file.`
       );
+      //Succes all fine
+      this.mdclFlasher.stopBlink(2);
       this.mdclFlasher.glow(0, 'green', 2);
-      //shutdown();
       exit(0);
     }
-    this.mdclFlasher.blink(1000, 'orange', 2);
-    console.log('Nach blink orange');
+
+    // Update required
     const proc = exec(this.#flashCommand, (err, _stdout, stderr) => {
       console.log(
         `Flash ausgeführt ${JSON.stringify(err)} ${JSON.stringify(
@@ -379,27 +403,33 @@ class FWFlasher {
       if (err || stderr !== '') {
         this.mdclFlasher.glow(0, 'red', 2);
         console.log(`Update firmware failed due to ${err || stderr}`);
-        exit(1);
+        return Promise.reject();
       }
 
       console.log(
         `Firmware version successfully installed from ${
           this.#installedVersion
-        } to ${this.#newVersion}. Reboot after 10 seconds.`
+        } to ${this.#newVersion}.`
       );
-
-      shutdown();
+      return Promise.resolve();
     });
+
+    // Ignore first data then type y to stdin for accept.
     let count = 1;
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', () => {
       if (count > 0) {
         count--;
         proc.stdin.write('y');
         proc.stdin.end();
+        proc.stdout.removeAllListeners();
       }
     });
   }
 
+  /**
+   * Check installed fw version via fw_printenv and compare with update file version.
+   * @returns update required?
+   */
   private async checkFWVersion(): Promise<boolean> {
     return new Promise((res, _rej) => {
       readdir('/root', (err, files) => {
@@ -412,6 +442,7 @@ class FWFlasher {
           .toString()
           .replace('V', '')
           .split('.');
+        this.#newVersion = newVersion.join('.');
         exec(this.#checkCommand, (err, stdout, stderr) => {
           if (err || stderr !== '') {
             res(false);
@@ -420,6 +451,7 @@ class FWFlasher {
             .replace('fw_version=', '')
             .split('-');
           const installedVersion = version.split('.');
+          this.#installedVersion = version;
           for (const [index, newV] of newVersion.entries()) {
             if (newV > installedVersion[index]) {
               res(true);
@@ -433,6 +465,6 @@ class FWFlasher {
 }
 
 /**
- * Start service
+ * Entrypoint
  */
-const t = new MDCLFlasher();
+const mdcFlasher = new MDCLFlasher();

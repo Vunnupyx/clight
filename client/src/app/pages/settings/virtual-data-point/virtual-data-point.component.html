@@ -278,6 +278,18 @@
                 ><mat-icon>show_chart</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
+                *ngIf="
+                  row?.operationType ===
+                  VirtualDataPointOperationType.ENUMERATION
+                "
+                (click)="onSetEnumeration(row); group.value = null"
+                [matTooltip]="
+                  'settings-virtual-data-point.SetEnumeration' | translate
+                "
+                matTooltipPosition="above"
+                ><mat-icon>list</mat-icon></mat-button-toggle
+              >
+              <mat-button-toggle
                 (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
@@ -350,6 +362,31 @@
                   )
                 "
                 ><mat-icon>show_chart</mat-icon></mat-button-toggle
+              >
+              <mat-button-toggle
+                *ngIf="
+                  unsavedRow?.operationType ===
+                  VirtualDataPointOperationType.ENUMERATION
+                "
+                (click)="
+                  unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0 &&
+                    onSetEnumeration(unsavedRow);
+                  group.value = null
+                "
+                [matTooltip]="
+                  'settings-virtual-data-point.SetEnumeration' | translate
+                "
+                matTooltipPosition="above"
+                [disabled]="
+                  !(
+                    unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0
+                  )
+                "
+                ><mat-icon>list</mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="

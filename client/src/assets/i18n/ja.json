@@ -210,7 +210,12 @@
     "BulkError": "変更が適用できません。再試行してください。",
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
-    "DuplicatedName": "You are not allowed to duplicate names"
+    "DuplicatedName": "You are not allowed to duplicate names",
+    "SetEnumeration": "",
+    "DefaultValue": "",
+    "SelectInput": "",
+    "CurrentLiveValue": "",
+    "ReturnValueIfTrue": ""
   },
   "virtual-data-point-operation-type": {
     "And": "",

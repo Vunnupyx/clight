@@ -1577,7 +1577,8 @@
             "smallerEqual",
             "equal",
             "unequal",
-            "enumeration"
+            "enumeration",
+            "sum"
           ]
         },
         "comparativeValue": {

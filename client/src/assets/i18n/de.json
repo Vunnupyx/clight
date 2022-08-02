@@ -229,6 +229,7 @@
     "SmallerEqual": "Kleiner gleich",
     "Equal": "Gleich",
     "Unequal": "Ungleich",
+    "Sum": "Summe",
     "Enumeration": "Enumeration"
   },
   "settings-data-source-point": {

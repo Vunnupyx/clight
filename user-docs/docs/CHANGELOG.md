@@ -9,6 +9,7 @@ title: Changelog
 ### Added
 
 - [DIGMDCLGHT-4](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-4) Added enum virtual data point
+- Improved logs: Printing logs while processing data points only once in 15min
 
 ### Fixed
 

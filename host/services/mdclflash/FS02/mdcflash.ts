@@ -410,13 +410,8 @@ class FWFlasher {
     }
 
     // Update required
-    console.log(`Installing fw update.`);
+    console.log(`Firmware update required. Starting update.`);
     const proc = exec(this.#flashCommand, (err, _stdout, stderr) => {
-      console.log(
-        `Flash ausgeführt ${JSON.stringify(err)} ${JSON.stringify(
-          _stdout
-        )} ${JSON.stringify(stderr)}`
-      );
       this.mdclFlasher.stopBlink(2);
       if (err || stderr !== '') {
         this.mdclFlasher.glow(0, 'red', 2);
@@ -429,12 +424,14 @@ class FWFlasher {
           this.#installedVersion
         } to ${this.#newVersion}.`
       );
+      this.mdclFlasher.glow(0, 'green', 2);
       return Promise.resolve();
     });
 
     // Ignore first data then type y to stdin for accept.
     let count = 1;
-    proc.stdout.on('data', () => {
+    proc.stdout.on('data', (data) => {
+      console.log(data)
       if (count > 0) {
         count--;
         proc.stdin.write('y');
@@ -448,6 +445,7 @@ class FWFlasher {
    * @returns update required?
    */
   private async checkFWVersion(): Promise<boolean> {
+    console.log(`checkFWVersion called.`);
     return new Promise((res, _rej) => {
       readdir('/root', (err, files) => {
         if (err) res(false);

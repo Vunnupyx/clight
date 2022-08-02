@@ -1011,6 +1011,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             valueDescription: null
           },
           {
+            key: 'IoT connector flex OS version',
+            keyDescription: 'Operating System',
+            value: system.readOsVersion(),
+            valueDescription: null
+          },
+          {
             key: 'MTConnect agent version',
             keyDescription: 'Software component',
             value: '1.7.0.7',

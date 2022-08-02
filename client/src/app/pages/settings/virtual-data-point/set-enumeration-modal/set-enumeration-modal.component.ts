@@ -1,11 +1,12 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DataPointLiveData, DataSourceProtocol, SourceDataPoint, VirtualDataPointEnumeration, VirtualDataPointEnumerationItem } from 'app/models';
+import { DataPointLiveData, DataSourceProtocol, SourceDataPoint, VirtualDataPoint, VirtualDataPointEnumeration, VirtualDataPointEnumerationItem } from 'app/models';
 import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
-import { SourceDataPointService } from 'app/services';
+import { SourceDataPointService, VirtualDataPointService } from 'app/services';
 import { Subscription } from 'rxjs';
 import { ObjectMap } from 'app/shared/utils';
+import { withLatestFrom } from 'rxjs/operators';
 
 export interface SetEnumerationModalData {
   protocol?: DataSourceProtocol;
@@ -34,13 +35,18 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<SetEnumerationModalComponent, SetEnumerationModalData>,
     @Inject(MAT_DIALOG_DATA) public data: SetEnumerationModalData,
     private sourceDataPointService: SourceDataPointService,
+    private virtualDataPointService: VirtualDataPointService,
   ) {}
 
   ngOnInit() {
     
-    this.sub.add(this.sourceDataPointService.dataPoints.subscribe(x => this.onDataPoints(x)));
+    this.sub.add(
+      this.sourceDataPointService.dataPoints
+        .pipe(withLatestFrom(this.virtualDataPointService.dataPoints))
+        .subscribe(([sourceDataPoints, virtualDataPoints]) => this.onDataPoints(sourceDataPoints, virtualDataPoints))
+    );
     this.sub.add(this.sourceDataPointService.dataPointsLivedata.subscribe(x => this.onLiveData(x)));
-
+  
     this.liveDataSub = this.sourceDataPointService
       .setLivedataTimer(
         this.data.protocol!,
@@ -103,15 +109,29 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
     return this.liveData[source]?.value;
   }
 
+  getSourcePrefix(source: SourceDataPoint | VirtualDataPoint) {
+    if ((source as SourceDataPoint).address) {
+      return `[${(source as SourceDataPoint).address}]`;
+    }
+    return this.virtualDataPointService.getPrefix();
+  }
+
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
 
-  private onDataPoints(arr: SourceDataPoint[]) {
-    if (!arr) {
+  private onDataPoints(sourceDataPoints: SourceDataPoint[], virtualDataPoints: VirtualDataPoint[]) {
+    if (!sourceDataPoints?.length) {
       return;
     }
-    this.sourceOptions = this.data.sources?.map(sourceId => arr.find(obj => obj.id === sourceId)).filter(Boolean) as SourceDataPoint[];
+    const dictionaries = [
+      ...(sourceDataPoints || []),
+      ...(virtualDataPoints || [])
+    ];
+    
+    this.sourceOptions = this.data.sources
+        ?.map(sourceId => dictionaries.find(obj => obj.id === sourceId) as SourceDataPoint)
+        .filter(Boolean);
   }
 
   private onLiveData(obj: ObjectMap<DataPointLiveData>) {

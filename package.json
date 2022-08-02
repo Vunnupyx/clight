@@ -73,7 +73,8 @@
     "deploy:login:container:registry": "scripts/loginDockerRegistries.sh",
     "deploy:all": "npm run deploy:login:container:registry && npm run copy_mdc_conf && npm run copy_mtc_conf && npm run deploy:permissions:file && npm run deploy:network:connections && npm run deploy:network:conf && npm run copy_compose",
     "deploy:clean:logs:and:shutdown": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh $INSTALL_HOST \"rm -rf /etc/MDCLight/logs/*.log /etc/MDCLight/config/auth.json /etc/MDCLight/config/certs && cp /etc/MDCLight/config/config.factory.json /etc/MDCLight/config/config.json && cat /dev/null > /root/.bash_history && cat /dev/null > /home/mdclite/.bash_history && rm -f /root/.bash_history /home/mdclite/.bash_history && history -c && rm -rf /var/log/* && nohup shutdown now &\"",
-    "deploy:clean:images": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh INSTALL_HOST docker image prune --all --force"
+    "deploy:clean:images": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh INSTALL_HOST docker image prune --all --force",
+    "upload:installer:aws": "pushd $PATHTOINSTALLERFOLDER; zip -x \".DS_Store\" -9 -r - . | aws s3 cp - \"s3://codestryke-artifacts/dmg-mdclight/6nGDr9SZEvhN9qTLOuzMBK61mMb96OmJVf4d/Z9DGRRrFEX87Axzyq0aSxB6sB3LqFWCnW1tk/2.1.0 Developer Preview/Installer/$NEWFILENAME\""
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

@@ -9,6 +9,7 @@ import { VirtualDataPointComponent } from './virtual-data-point.component';
 import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { VirtualDataPointGuard } from './virtual-data-point.guard';
+import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
 import { PromptDialogModule } from 'app/shared/components/prompt-dialog/prompt-dialog.module';
 
 const routes: Routes = [
@@ -20,7 +21,11 @@ const routes: Routes = [
   }
 ];
 
-const COMPONENTS = [VirtualDataPointComponent, SetThresholdsModalComponent];
+const COMPONENTS = [
+  VirtualDataPointComponent,
+  SetThresholdsModalComponent,
+  SetEnumerationModalComponent
+];
 
 @NgModule({
   declarations: COMPONENTS,
@@ -32,7 +37,7 @@ const COMPONENTS = [VirtualDataPointComponent, SetThresholdsModalComponent];
     NgxEchartsModule
   ],
   exports: [RouterModule, ...COMPONENTS],
-  entryComponents: [SetThresholdsModalComponent],
+  entryComponents: [SetThresholdsModalComponent, SetEnumerationModalComponent],
   providers: [VirtualDataPointGuard]
 })
 export class VirtualDataPointModule {}

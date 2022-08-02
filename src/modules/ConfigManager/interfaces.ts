@@ -262,7 +262,11 @@ export interface QuickStartConfig {
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
   return 'source' in obj && 'target' in obj && !('id' in obj);
 }
-
+export interface EnumOperationEntry {
+  priority: number;
+  source: string;
+  returnValueIfTrue: string;
+}
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
@@ -272,13 +276,19 @@ export interface IVirtualDataPointConfig {
     | 'not'
     | 'counter'
     | 'thresholds'
+    | 'enumeration'
     | 'greater'
     | 'greaterEqual'
     | 'smaller'
     | 'smallerEqual'
     | 'equal'
-    | 'unequal';
+    | 'unequal'
+    | 'sum';
   thresholds?: ITargetDataMap;
+  enumeration?: {
+    defaultValue?: string;
+    items: EnumOperationEntry[];
+  };
   comparativeValue?: string | number;
   resetSchedules?: ScheduleDescription[];
 }

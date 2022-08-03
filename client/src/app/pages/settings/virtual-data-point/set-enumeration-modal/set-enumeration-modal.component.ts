@@ -118,6 +118,7 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+    this.liveDataSub.unsubscribe();
   }
 
   private onDataPoints(sourceDataPoints: SourceDataPoint[], virtualDataPoints: VirtualDataPoint[]) {

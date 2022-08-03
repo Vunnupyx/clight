@@ -123,11 +123,11 @@ export class TimeManager {
         '#RootDistanceMaxSec=5',
         '#PollIntervalMinSec=32',
         '#PollIntervalMaxSec=2048'
-      ].join('\n');
+      ].join('');
     }
     const newConfig = await this.composeConfig(currentConfig, ntpServerAddress);
     winston.info(`${logPrefix} generate new config: ${newConfig}`);
-    const writeCommand = `printf "${newConfig}" > ${this.CONFIG_PATH}`;
+    const writeCommand = `echo "${newConfig}" > ${this.CONFIG_PATH}`;
     return SshService.sendCommand(writeCommand)
       .then((response) => {
         if (response.stderr.length > 0) {

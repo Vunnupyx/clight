@@ -23,14 +23,14 @@ export default class SshService {
     return execPromis(`${this.sshCommand} ${chainedCommand}`)
       // Log exec return without changing error and response behavior
       .then(({stderr, stdout}) => {
-        const logMsg = `Received from command :${chainedCommand}
+        const logMsg = `${logPrefix} received from command: ${chainedCommand} \n
         stdout: ${stdout}
         stderr: ${stderr}
         `;
         winston.debug(logMsg);
         return {stderr, stdout};
     }).catch((err) => {
-      const logMsg = `Catch error from command :${chainedCommand}
+      const logMsg = `${logPrefix} catch error from command: ${chainedCommand} \n
         error: ${JSON.stringify(err)}
         stdout: ${err.stdout}
         stderr: ${err.stderr}

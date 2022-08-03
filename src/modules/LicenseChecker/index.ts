@@ -206,6 +206,8 @@ export class LicenseChecker {
     '8C:F3:19:6C:87:34',
     '8C:F3:19:6B:C4:97',
     '8C:F3:19:6B:C4:A1',
+    '8C:F3:19:70:CA:F5',
+    '8C:F3:19:70:CA:F9',
     // DMG MORI HEITEC
     '8C:F3:19:39:5E:14',
     '8C:F3:19:3A:0A:33',

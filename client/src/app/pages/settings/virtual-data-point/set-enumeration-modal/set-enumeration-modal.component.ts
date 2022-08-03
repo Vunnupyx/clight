@@ -111,7 +111,7 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
 
   getSourcePrefix(source: SourceDataPoint | VirtualDataPoint) {
     if ((source as SourceDataPoint).address) {
-      return `[${(source as SourceDataPoint).address}]`;
+      return this.sourceDataPointService.getPrefix(source.id);
     }
     return this.virtualDataPointService.getPrefix();
   }

@@ -127,7 +127,7 @@ export class TimeManager {
     }
     const newConfig = await this.composeConfig(currentConfig, ntpServerAddress);
     winston.info(`${logPrefix} generate new config: ${newConfig}`);
-    const writeCommand = `echo -e '${newConfig}' > ${this.CONFIG_PATH}`;
+    const writeCommand = `cat << EOF > ${this.CONFIG_PATH} ${newConfig} EOF`;
     return SshService.sendCommand(writeCommand)
       .then((response) => {
         if (response.stderr.length > 0) {

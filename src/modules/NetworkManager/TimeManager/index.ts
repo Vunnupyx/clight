@@ -6,10 +6,13 @@ import SshService from '../../SshService';
  */
 export class TimeManager {
   static CONFIG_PATH = '/etc/systemd/timesyncd.conf';
+
   /**
    * Parse network address out of config file.
    */
   private static parseConfig(configContent: string) {
+    const logPrefix = `TimeManager::parseConfig`;
+    winston.debug(`${logPrefix} called with ${configContent}`);
     const lines = configContent.split('\n');
     for (const line of lines) {
       if (line.indexOf('NTP=') >= 0) {
@@ -22,27 +25,32 @@ export class TimeManager {
       }
     }
   }
+
   /**
    * Compose new ntp server to config string.
    */
   private static composeConfig(
     configContent: string,
-    ntpServerIP: string
+    ntpServerAddress: string
   ): string {
+    const logPrefix = `TimerManager::composeConfig`;
+    winston.debug(`${logPrefix} called with new ntp server: ${ntpServerAddress}`)
     let newConfig = '';
     for (const line of configContent.split('\n')) {
       if (line.indexOf('NTP=') >= 0 && line.indexOf('FallbackNTP=') < 0) {
-        if (ntpServerIP === '0.0.0.0') {
+        if (ntpServerAddress === '0.0.0.0') {
           newConfig += `NTP=\n`;
         } else {
-          newConfig += `NTP=${ntpServerIP}\n`;
+          newConfig += `NTP=${ntpServerAddress}\n`;
         }
       } else {
         newConfig += `${line}\n`;
       }
     }
+    winston.debug(`${logPrefix} new composed config: \n${newConfig}`);
     return newConfig;
   }
+  
   /**
    * Restart time service on host.
    */

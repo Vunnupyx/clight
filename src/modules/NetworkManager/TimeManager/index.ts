@@ -103,41 +103,49 @@ export class TimeManager {
     );
     // Config file is empty -> Bugfix reset to default
     if (currentConfig.trim() === '') {
-      currentConfig = `#  This file is part of systemd.
-#
-#  systemd is free software; you can redistribute it and/or modify it
-#  under the terms of the GNU Lesser General Public License as published by
-#  the Free Software Foundation; either version 2.1 of the License, or
-#  (at your option) any later version.
-#
-# Entries in this file show the compile time defaults.
-# You can change settings by editing this file.
-# Defaults can be restored by simply deleting this file.
-#
-# See timesyncd.conf(5) for details.
-
-[Time]
-#NTP=
-#FallbackNTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.pool.ntp.org
-#RootDistanceMaxSec=5
-#PollIntervalMinSec=32
-#PollIntervalMaxSec=2048`;
+      currentConfig = [
+        '# This file is part of systemd.',
+        '#',
+        '#  systemd is free software; you can redistribute it and/or modify it',
+        '#  under the terms of the GNU Lesser General Public License as published by',
+        '#  the Free Software Foundation; either version 2.1 of the License, or',
+        '#  (at your option) any later version.',
+        '#',
+        '# Entries in this file show the compile time defaults.',
+        '# You can change settings by editing this file.',
+        '# Defaults can be restored by simply deleting this file.',
+        '#',
+        '# See timesyncd.conf(5) for details.',
+        '',
+        '[Time]',
+        '#NTP=',
+        '#FallbackNTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.pool.ntp.org',
+        '#RootDistanceMaxSec=5',
+        '#PollIntervalMinSec=32',
+        '#PollIntervalMaxSec=2048'
+      ].join('\n');
     }
     const newConfig = await this.composeConfig(currentConfig, ntpServerAddress);
     winston.info(`${logPrefix} generate new config: ${newConfig}`);
-    const writeCommand = `echo "${newConfig}" > ${this.CONFIG_PATH}`;
-    return SshService.sendCommand(writeCommand).then((response) => {
-      if(response.stderr.length > 0) {
-        winston.error(`${logPrefix} error during write to ${this.CONFIG_PATH} due to ${stderr}`);
-        return Promise.reject(stderr);
-      }
-      winston.info(
-        `${logPrefix} written new NTP-Server (${ntpServerAddress}) to host.`
-      );
-      return this.restartTimesyncdService();
-    }).catch((err) => {
-      winston.error(`${logPrefix} error setting ntp server due to ${JSON.stringify(err)}`)
-    });
+    const writeCommand = `echo '${newConfig}' > ${this.CONFIG_PATH}`;
+    return SshService.sendCommand(writeCommand)
+      .then((response) => {
+        if (response.stderr.length > 0) {
+          winston.error(
+            `${logPrefix} error during write to ${this.CONFIG_PATH} due to ${stderr}`
+          );
+          return Promise.reject(stderr);
+        }
+        winston.info(
+          `${logPrefix} written new NTP-Server (${ntpServerAddress}) to host.`
+        );
+        return this.restartTimesyncdService();
+      })
+      .catch((err) => {
+        winston.error(
+          `${logPrefix} error setting ntp server due to ${JSON.stringify(err)}`
+        );
+      });
   }
 
   /**
@@ -148,11 +156,13 @@ export class TimeManager {
     winston.info(`${logPrefix} reading config from host machine.`);
     const readCommand = `cat ${this.CONFIG_PATH}`;
     return await SshService.sendCommand(readCommand).then((response) => {
-      if(response.stderr.length > 0) {
-        winston.error(`${logPrefix} error reading ntp server due to ${response.stderr}`);
+      if (response.stderr.length > 0) {
+        winston.error(
+          `${logPrefix} error reading ntp server due to ${response.stderr}`
+        );
         return Promise.reject(response.stderr);
       }
-      if(typeof response.stdout !== 'string') {
+      if (typeof response.stdout !== 'string') {
         winston.error(`${logPrefix} expect string but got buffer. Abort`);
         return Promise.reject();
       }
@@ -160,8 +170,7 @@ export class TimeManager {
         `${logPrefix} read config from remote host successful. ${response.stdout}`
       );
       return this.parseConfig(response.stdout);
-    })
-    
+    });
   }
 
   /**

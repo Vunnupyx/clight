@@ -127,14 +127,14 @@ export class TimeManager {
     }
     const newConfig = await this.composeConfig(currentConfig, ntpServerAddress);
     winston.info(`${logPrefix} generate new config: ${newConfig}`);
-    const writeCommand = `echo '${newConfig}' > ${this.CONFIG_PATH}`;
+    const writeCommand = `cat << EOF ${newConfig} EOF > ${this.CONFIG_PATH}`;
     return SshService.sendCommand(writeCommand)
       .then((response) => {
         if (response.stderr.length > 0) {
           winston.error(
-            `${logPrefix} error during write to ${this.CONFIG_PATH} due to ${stderr}`
+            `${logPrefix} error during write to ${this.CONFIG_PATH} due to ${response.stderr}`
           );
-          return Promise.reject(stderr);
+          return Promise.reject(response.stderr);
         }
         winston.info(
           `${logPrefix} written new NTP-Server (${ntpServerAddress}) to host.`

@@ -31,7 +31,7 @@
               <mat-option *ngFor="let sourceOption of sourceOptions"
                 [value]="sourceOption.id"
                 required
-                >[{{ sourceOption.address }}] {{ sourceOption.name }}</mat-option>
+                >{{ getSourcePrefix(sourceOption) }} {{ sourceOption.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

@@ -13,6 +13,7 @@ title: Changelog
 
 ### Fixed
 
+- [DIGMDCLGHT-99](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-99) Timeserver now is set correctly
 - [DIGMDCLGHT-93](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-93) Fixed connection issues from time to time
 - [DIGMDCLGHT-98](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-98) Automatically bumping versions in pipeline that are shown inside the UI
 - [DIGMDCLGHT-87](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-87) The device didn't restart after a factory reset

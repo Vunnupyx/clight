@@ -68,6 +68,12 @@ export default class UpdateManager {
       })
       .then((response) => {
         if (response.stderr.length !== 0) throw response.stderr;
+        if (typeof response.stdout !== 'string') {
+          winston.error(
+            `HostnameController::getHostname expect string but received buffer.Abort`
+          );
+          return Promise.reject();
+        }
         firstImages = response.stdout;
         winston.info(`${logPrefix} looking for available updates.`);
         winston.debug(`${logPrefix} pull command: ${pull}`);
@@ -106,9 +112,9 @@ export default class UpdateManager {
           );
         } else if (firstImages === response.stdout) {
           winston.info(
-                `${logPrefix} no update available. No restart required.`
-              );
-              return updateStatus.NOT_AVAILABLE;
+            `${logPrefix} no update available. No restart required.`
+          );
+          return updateStatus.NOT_AVAILABLE;
         }
 
         setTimeout(async () => {
@@ -165,6 +171,12 @@ export default class UpdateManager {
             `${logPrefix} received error from ${cmd}: ${res.stderr}`
           );
           throw res.stderr;
+        }
+        if (typeof res.stdout !== 'string') {
+          winston.error(
+            `HostnameController::getHostname expect string but received buffer.Abort`
+          );
+          return Promise.reject();
         }
         winston.debug(`${logPrefix} received: ${res.stdout}`);
         type ContainerMap = {

@@ -1,4 +1,5 @@
 import { createSocket } from 'dgram';
+import { response } from 'express';
 import winston from 'winston';
 import SshService from '../../SshService';
 /**
@@ -6,10 +7,13 @@ import SshService from '../../SshService';
  */
 export class TimeManager {
   static CONFIG_PATH = '/etc/systemd/timesyncd.conf';
+
   /**
    * Parse network address out of config file.
    */
   private static parseConfig(configContent: string) {
+    const logPrefix = `TimeManager::parseConfig`;
+    winston.debug(`${logPrefix} called with ${configContent}`);
     const lines = configContent.split('\n');
     for (const line of lines) {
       if (line.indexOf('NTP=') >= 0) {
@@ -22,27 +26,34 @@ export class TimeManager {
       }
     }
   }
+
   /**
    * Compose new ntp server to config string.
    */
   private static composeConfig(
     configContent: string,
-    ntpServerIP: string
+    ntpServerAddress: string
   ): string {
+    const logPrefix = `TimerManager::composeConfig`;
+    winston.debug(
+      `${logPrefix} called with new ntp server: ${ntpServerAddress}`
+    );
     let newConfig = '';
     for (const line of configContent.split('\n')) {
       if (line.indexOf('NTP=') >= 0 && line.indexOf('FallbackNTP=') < 0) {
-        if (ntpServerIP === '0.0.0.0') {
+        if (ntpServerAddress === '0.0.0.0') {
           newConfig += `NTP=\n`;
         } else {
-          newConfig += `NTP=${ntpServerIP}\n`;
+          newConfig += `NTP=${ntpServerAddress}\n`;
         }
       } else {
         newConfig += `${line}\n`;
       }
     }
+    winston.debug(`${logPrefix} new composed config: \n${newConfig}`);
     return newConfig;
   }
+
   /**
    * Restart time service on host.
    */
@@ -58,16 +69,18 @@ export class TimeManager {
     }
     winston.debug(`${logPrefix} restart successfully.`);
   }
+
   /**
    * Set NTP Server on remote host.
    */
-  public static async setNTPServer(ntpServerIP: string): Promise<void> {
+  public static async setNTPServer(ntpServerAddress: string): Promise<void> {
     const logPrefix = `TimeManager::setNTPServer`;
+    winston.debug(`${logPrefix} `);
     try {
-      await this.testNTPServer(ntpServerIP);
+      await this.testNTPServer(ntpServerAddress);
     } catch (error) {
       return Promise.reject(
-        `${ntpServerIP} is not available or is not a valid NTP server.`
+        `${ntpServerAddress} is not available or is not a valid NTP server.`
       );
     }
 
@@ -81,51 +94,85 @@ export class TimeManager {
       winston.error(msg);
       return Promise.reject(new Error(msg));
     }
+    if (typeof currentConfig !== 'string') {
+      winston.error(`${logPrefix} expect string but receive buffer. Abort.`);
+      return Promise.reject();
+    }
     winston.info(
       `${logPrefix} read current config from host: ${currentConfig}`
     );
+    // Config file is empty -> Bugfix reset to default
     if (currentConfig.trim() === '') {
-      currentConfig = `#  This file is part of systemd.
-#
-#  systemd is free software; you can redistribute it and/or modify it
-#  under the terms of the GNU Lesser General Public License as published by
-#  the Free Software Foundation; either version 2.1 of the License, or
-#  (at your option) any later version.
-#
-# Entries in this file show the compile time defaults.
-# You can change settings by editing this file.
-# Defaults can be restored by simply deleting this file.
-#
-# See timesyncd.conf(5) for details.
-
-[Time]
-#NTP=
-#FallbackNTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.pool.ntp.org
-#RootDistanceMaxSec=5
-#PollIntervalMinSec=32
-#PollIntervalMaxSec=2048`;
+      currentConfig = [
+        '# This file is part of systemd.',
+        '#',
+        '#  systemd is free software; you can redistribute it and/or modify it',
+        '#  under the terms of the GNU Lesser General Public License as published by',
+        '#  the Free Software Foundation; either version 2.1 of the License, or',
+        '#  (at your option) any later version.',
+        '#',
+        '# Entries in this file show the compile time defaults.',
+        '# You can change settings by editing this file.',
+        '# Defaults can be restored by simply deleting this file.',
+        '#',
+        '# See timesyncd.conf(5) for details.',
+        '',
+        '[Time]',
+        '#NTP=',
+        '#FallbackNTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.pool.ntp.org',
+        '#RootDistanceMaxSec=5',
+        '#PollIntervalMinSec=32',
+        '#PollIntervalMaxSec=2048',
+        'EOF'
+      ].join('\n');
     }
-    const newConfig = await this.composeConfig(currentConfig, ntpServerIP);
+    const newConfig = await this.composeConfig(currentConfig, ntpServerAddress);
     winston.info(`${logPrefix} generate new config: ${newConfig}`);
-    const writeCommand = `echo "${newConfig}" > ${this.CONFIG_PATH}`;
-    const t = await SshService.sendCommand(writeCommand);
-    winston.info(
-      `${logPrefix} written new NTP-Server (${ntpServerIP}) to host`
-    );
-    await this.restartTimesyncdService();
+    const writeCommand = `tee ${this.CONFIG_PATH} <<EOF
+${newConfig}`;
+    return SshService.sendCommand(writeCommand)
+      .then((response) => {
+        if (response.stderr.length > 0) {
+          winston.error(
+            `${logPrefix} error during write to ${this.CONFIG_PATH} due to ${response.stderr}`
+          );
+          return Promise.reject(response.stderr);
+        }
+        winston.info(
+          `${logPrefix} written new NTP-Server (${ntpServerAddress}) to host.`
+        );
+        return this.restartTimesyncdService();
+      })
+      .catch((err) => {
+        winston.error(
+          `${logPrefix} error setting ntp server due to ${JSON.stringify(err)}`
+        );
+      });
   }
+
   /**
    * Return currently configured NTP server.
    */
   public static async getNTPServer(): Promise<string> {
     const logPrefix = `TimeManager::getNTPServer`;
-    winston.info(`${logPrefix} reading config from remote host.`);
+    winston.info(`${logPrefix} reading config from host machine.`);
     const readCommand = `cat ${this.CONFIG_PATH}`;
-    const currentConfig = await SshService.sendCommand(readCommand);
-    winston.info(
-      `${logPrefix} read config from remote host successful. ${currentConfig}`
-    );
-    return this.parseConfig(currentConfig);
+    return await SshService.sendCommand(readCommand).then((response) => {
+      if (response.stderr.length > 0) {
+        winston.error(
+          `${logPrefix} error reading ntp server due to ${response.stderr}`
+        );
+        return Promise.reject(response.stderr);
+      }
+      if (typeof response.stdout !== 'string') {
+        winston.error(`${logPrefix} expect string but got buffer. Abort`);
+        return Promise.reject();
+      }
+      winston.info(
+        `${logPrefix} read config from remote host successful. ${response.stdout}`
+      );
+      return this.parseConfig(response.stdout);
+    });
   }
 
   /**

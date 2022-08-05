@@ -1,29 +1,54 @@
 import { isNil, isUndefined } from 'lodash';
+import { JsonDataSetMessageContentMask } from 'node-opcua-types';
+import { stderr } from 'process';
 import winston from 'winston';
 import SshService from '../SshService';
 import { NetworkInterfaceInfo } from './interfaces';
 
 /**
- * Set network configuration for MDCL host.
+ * Handle network configuration for MDCL host system.
+ * Communicate via ssh to host machine.
+ * Cache configurations after write.
  */
 export default class NetworkManagerCliController {
   /**
-   * Load configuration from host.
+   * Load configuration file from host.
    */
   static async getConfiguration(
     networkInterface: 'eth0' | 'eth1'
   ): Promise<NetworkInterfaceInfo> {
+    const logPrefix = `NetworkManagerCliController::getConfiguration`;
     const configName = `lastConfig${networkInterface.replace('e', 'E')}`;
-    if (NetworkManagerCliController[configName])
-      return NetworkManagerCliController[configName];
+    if (NetworkManagerCliController[configName]) {
+      winston.debug(`${logPrefix} found configuration for ${networkInterface} in cache. Return cached value.`);
+      return Promise.resolve(NetworkManagerCliController[configName]);
+    }
+      
     const nmcliCommand = `nmcli -t -f IP4,IPV4,CONNECTION,GENERAL con show ${networkInterface}-default`;
-    const result = await SshService.sendCommand(nmcliCommand);
-    const parsedResult = NetworkManagerCliController.parseNmCliOutput(
-      result.stdout
-    );
-    const decodedResult =
-      NetworkManagerCliController.decodeNmCliData(parsedResult);
-    return decodedResult;
+    return SshService.sendCommand(nmcliCommand).then((result) => {
+      if (
+        typeof result.stdout !== 'string' ||
+        typeof result.stderr !== 'string'
+      ) {
+        winston.error(`${logPrefix} except string received buffer. Abort.`);
+        return Promise.reject();
+      }
+      if (result.stderr.length !== 0) {
+        winston.error(
+          `${logPrefix} error during reading ${networkInterface} due to ${stderr}`
+        );
+        return Promise.reject();
+      }
+      const parsedResult = NetworkManagerCliController.parseNmCliOutput(
+        result.stdout
+      );
+      const decodedResult =
+        NetworkManagerCliController.decodeNmCliData(parsedResult);
+      return decodedResult;
+    }).catch((err) => {
+      winston.error(`${logPrefix} error during reading ${networkInterface} config file due to ${JSON.stringify(err)}`);
+      return Promise.reject();
+    });
   }
 
   /**
@@ -40,7 +65,6 @@ export default class NetworkManagerCliController {
       winston.info(`${logPrefix} new config === old config. No changes`);
       return Promise.resolve();
     }
-    
 
     let ipAddress = '';
     if (
@@ -69,7 +93,8 @@ export default class NetworkManagerCliController {
     try {
       await SshService.sendCommand(nmcliCommand, true);
       const resultApply = await SshService.sendCommand(
-        `nmcli con up ${networkInterface}-default`, true
+        `nmcli con up ${networkInterface}-default`,
+        true
       );
       winston.info(resultApply);
     } catch (e) {
@@ -78,7 +103,11 @@ export default class NetworkManagerCliController {
           `${logPrefix} could not activate on ${networkInterface} - error ignored because DHCP server might not be available`
         );
       } else {
-        winston.error(`${logPrefix} failed to set network configuration due to ${e.stderr.trim() || JSON.stringify(e)}`);
+        winston.error(
+          `${logPrefix} failed to set network configuration due to ${
+            e.stderr.trim() || JSON.stringify(e)
+          }`
+        );
         return Promise.reject(e);
       }
     }
@@ -95,8 +124,8 @@ export default class NetworkManagerCliController {
   static checkConfigChanged(newConfig, oldConfig): boolean {
     const newConfigCopy = Object.assign({}, newConfig);
     const oldConfigCopy = Object.assign({}, oldConfig);
-    delete oldConfigCopy["name"];
-    delete newConfigCopy["name"];
+    delete oldConfigCopy['name'];
+    delete newConfigCopy['name'];
     var changed = false;
     for (const key of Object.keys(newConfigCopy)) {
       if (oldConfigCopy[key] !== newConfigCopy[key]) {

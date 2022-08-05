@@ -50,7 +50,9 @@
     "docker:build:mdclight-base": "scripts/build/dockerBuildMdclightBase.sh",
     "docker:build:mdclight": "scripts/build/dockerBuildMdclight.sh",
     "docker:build:mtc-prod": "scripts/build/dockerBuildMtc.sh",
-    "deploy:service:mdcflash": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && buil&& scp services/mdclflash/*.service $INSTALL_HOST:/etc/systemd/system && ssh $INSTALL_HOST systemctl enable mdclflash.service && ssh $INSTALL_HOST systemctl start mdclflash.service",
+    "docker:build:mdclight:arm": "docker buildx build --build-arg MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags --abbrev=0) --platform linux/arm64 -t registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:latest -f docker/mdclight.Dockerfile --push .",
+    "docker:run:mdclight": "docker run -it registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-light",
+    "deploy:service:mdcflash": "cd host/services/mdclflash && npm install^",
     "test": "jest",
     "copy_mdc_conf": "scp -r _mdclight/config root@$IP:/etc/MDCLight/config",
     "copy_mtc_conf": "scp -r _mdclight/mtc_config/MtcAgentConfig_prod root@$IP:/etc/MDCLight/mtc_config",
@@ -70,10 +72,12 @@
     "deploy:script:update": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && scp -rp host/scripts/update/update.sh $INSTALL_HOST:/opt && ssh $INSTALL_HOST chmod 100 /opt/update.sh",
     "deploy:service:all": "npm run deploy:service:containerkeys && npm run deploy:service:tlskeys && npm run deploy:service:systemd-resolved",
     "deploy:change:user:pw": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && read -p \"user to change password: \" USERNAME && read -s -p \"New password: \" NEW_PASSWORD && ssh $INSTALL_HOST `echo -e \"$NEW_PASSWORD\n$NEW_PASSWORD\" | passwd $USERNAME`",
+    "deploy:version": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && devTools/writeOsVersion.sh",
     "deploy:login:container:registry": "scripts/loginDockerRegistries.sh",
-    "deploy:all": "npm run deploy:login:container:registry && npm run copy_mdc_conf && npm run copy_mtc_conf && npm run deploy:permissions:file && npm run deploy:network:connections && npm run deploy:network:conf && npm run copy_compose",
+    "deploy:all": "npm run deploy:login:container:registry && npm run copy_mdc_conf && npm run copy_mtc_conf && npm run deploy:permissions:file && npm run deploy:network:connections && npm run deploy:network:conf && npm run copy_compose && npm run deploy:version",
     "deploy:clean:logs:and:shutdown": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh $INSTALL_HOST \"rm -rf /etc/MDCLight/logs/*.log /etc/MDCLight/config/auth.json /etc/MDCLight/config/certs && cp /etc/MDCLight/config/config.factory.json /etc/MDCLight/config/config.json && cat /dev/null > /root/.bash_history && cat /dev/null > /home/mdclite/.bash_history && rm -f /root/.bash_history /home/mdclite/.bash_history && history -c && rm -rf /var/log/* && nohup shutdown now &\"",
-    "deploy:clean:images": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh INSTALL_HOST docker image prune --all --force"
+    "deploy:clean:images": "export INSTALL_HOST=`devTools/checkEnvironmentVariable.sh $INSTALL_HOST` && ssh INSTALL_HOST docker image prune --all --force",
+    "upload:installer:aws": "pushd $PATHTOINSTALLERFOLDER; zip -x \".DS_Store\" -9 -r - . | aws s3 cp - \"s3://codestryke-artifacts/dmg-mdclight/6nGDr9SZEvhN9qTLOuzMBK61mMb96OmJVf4d/Z9DGRRrFEX87Axzyq0aSxB6sB3LqFWCnW1tk/2.1.0 Developer Preview/Installer/$NEWFILENAME\""
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

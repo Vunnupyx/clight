@@ -7,11 +7,24 @@ import {
   IDataSourceMeasurementEvent,
   IMeasurement
 } from '../Southbound/DataSources/interfaces';
+import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 interface IVirtualDataPointManagerParams {
   configManager: ConfigManager;
   cache: DataPointCache;
 }
+
+type LogEntry = {
+  count: number;
+  log: string;
+};
+
+type LogSummary = {
+  error: LogEntry[];
+  warn: LogEntry[];
+  info: LogEntry[];
+  debug: LogEntry[];
+};
 
 /**
  * Calculates virtual datapoints
@@ -21,6 +34,14 @@ export class VirtualDataPointManager {
   private config: IVirtualDataPointConfig[] = null;
   private cache: DataPointCache;
   private counters: CounterManager;
+  private scheduler: SynchronousIntervalScheduler;
+  private logSchedulerListenerId: number;
+  private logSummary: LogSummary = {
+    error: [],
+    warn: [],
+    info: [],
+    debug: []
+  };
 
   private static className: string = VirtualDataPointManager.name;
 
@@ -32,10 +53,59 @@ export class VirtualDataPointManager {
     this.configManager = params.configManager;
     this.cache = params.cache;
     this.counters = new CounterManager(this.configManager);
+    this.scheduler = SynchronousIntervalScheduler.getInstance();
   }
 
   private init() {
     this.config = this.configManager.config.virtualDataPoints;
+
+    this.setupLogCycle();
+  }
+
+  /**
+   * Setup log cycle for summary logging
+   */
+  protected setupLogCycle(defaultFrequency: number = 15 * 60 * 1000): void {
+    if (this.logSchedulerListenerId) return;
+
+    const logPrefix = `${VirtualDataPointManager.className}::setupLogCycle`;
+    winston.debug(`${logPrefix} setup log cycle`);
+
+    this.logSchedulerListenerId = this.scheduler.addListener(
+      [defaultFrequency],
+      this.printSummaryLogs.bind(this)
+    );
+  }
+
+  /**
+   * Logs summary of logs to not spam logs every data point ready cycle
+   */
+  protected printSummaryLogs(): void {
+    const logPrefix = `${VirtualDataPointManager.className}::logSummary`;
+
+    Object.keys(this.logSummary).forEach((level: keyof LogSummary) => {
+      if (this.logSummary[level].length > 0) {
+        for (const entry of this.logSummary[level]) {
+          winston[level](
+            `${logPrefix} Count: ${entry.count} Log: ${entry.log}`
+          );
+        }
+        this.logSummary[level] = [];
+      }
+    });
+  }
+
+  /**
+   * Adding log to summary. If Same log already exits, counting up
+   */
+  protected addSummaryLog(level: keyof LogSummary, log: string): void {
+    const entry = this.logSummary[level].find((entry) => entry.log === log);
+
+    if (entry) {
+      entry.count = entry.count + 1;
+    } else {
+      this.logSummary[level].push({ log, count: 1 });
+    }
   }
 
   /**
@@ -66,9 +136,7 @@ export class VirtualDataPointManager {
   ): number | null {
     const logPrefix = `VirtualDataPointManager::sum`;
     if (config.operationType !== 'sum') {
-      winston.error(
-        `${logPrefix} called with invalid operation type.`
-      );
+      winston.error(`${logPrefix} called with invalid operation type.`);
       return null;
     }
     if (sourceEvents.length < 2) {
@@ -106,7 +174,8 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): boolean | null {
     if (sourceEvents.length < 2) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `Virtual data point (${config.id}) requires at least 2 sources!`
       );
       return null;
@@ -137,7 +206,8 @@ export class VirtualDataPointManager {
       equal ? '(Equal)' : ''
     }`;
     if (sourceEvents.length > 1 || sourceEvents.length === 0) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `${logPrefix} is only available for one source but receive ${sourceEvents.length}`
       );
       return null;
@@ -146,7 +216,8 @@ export class VirtualDataPointManager {
     // @ts-ignore
     const compare = parseFloat(config.comparativeValue);
     if (Number.isNaN(compare)) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `${logPrefix} got ${compare} for comparison but it's not a number`
       );
       return null;
@@ -165,7 +236,7 @@ export class VirtualDataPointManager {
       case 'string': {
         const parsed = parseFloat(value);
         if (isNaN(parsed)) {
-          winston.error(`${logPrefix} no valid number.`);
+          this.addSummaryLog('error', `${logPrefix} no valid number.`);
           return null;
         }
         if (equal && Math.abs(compare - parsed) < 1e-9) {
@@ -174,11 +245,17 @@ export class VirtualDataPointManager {
         return parsed > compare;
       }
       case 'boolean': {
-        winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+        this.addSummaryLog(
+          'warn',
+          `${logPrefix} boolean is not a valid compare value.`
+        );
         return null;
       }
       default: {
-        winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+        this.addSummaryLog(
+          'warn',
+          `${logPrefix} invalid value type: ${typeof value}`
+        );
         return null;
       }
     }
@@ -201,7 +278,8 @@ export class VirtualDataPointManager {
       equal ? '(Equal)' : ''
     }`;
     if (sourceEvents.length > 1 || sourceEvents.length === 0) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `${logPrefix} is only available for one source but receive ${sourceEvents.length}`
       );
       return null;
@@ -210,7 +288,8 @@ export class VirtualDataPointManager {
     // @ts-ignore
     const compare = parseFloat(config.comparativeValue);
     if (Number.isNaN(compare)) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `${logPrefix} got ${compare} for comparison but it's not a number`
       );
       return null;
@@ -230,7 +309,7 @@ export class VirtualDataPointManager {
       case 'string': {
         const parsed = parseFloat(value);
         if (isNaN(parsed)) {
-          winston.error(`${logPrefix} no valid number.`);
+          this.addSummaryLog('error', `${logPrefix} no valid number.`);
           return null;
         }
         if (equal && Math.abs(compare - parsed) < 1e-9) {
@@ -239,11 +318,17 @@ export class VirtualDataPointManager {
         return parsed < compare;
       }
       case 'boolean': {
-        winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+        this.addSummaryLog(
+          'warn',
+          `${logPrefix} boolean is not a valid compare value.`
+        );
         return null;
       }
       default: {
-        winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+        this.addSummaryLog(
+          'warn',
+          `${logPrefix} invalid value type: ${typeof value}`
+        );
         return null;
       }
     }
@@ -262,7 +347,8 @@ export class VirtualDataPointManager {
   ): boolean | null {
     const logPrefix = `${this.constructor.name}::equal`;
     if (sourceEvents.length > 1 || sourceEvents.length === 0) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `${logPrefix} is only available for one source but receive ${sourceEvents.length}`
       );
       return null;
@@ -287,7 +373,8 @@ export class VirtualDataPointManager {
       }
       case 'string': {
         if (typeof compare !== 'string') {
-          winston.warn(
+          this.addSummaryLog(
+            'warn',
             `${logPrefix} try to compare string with non string value: ${compare}`
           );
           return null;
@@ -295,11 +382,17 @@ export class VirtualDataPointManager {
         return value.trim() === compare.trim();
       }
       case 'boolean': {
-        winston.warn(`${logPrefix} boolean is not a valid compare value.`);
+        this.addSummaryLog(
+          'warn',
+          `${logPrefix} boolean is not a valid compare value.`
+        );
         return null;
       }
       default: {
-        winston.warn(`${logPrefix} invalid value type: ${typeof value}`);
+        this.addSummaryLog(
+          'warn',
+          `${logPrefix} invalid value type: ${typeof value}`
+        );
         return null;
       }
     }
@@ -331,7 +424,8 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): boolean | null {
     if (sourceEvents.length < 2) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `Virtual data point (${config.id}) requires at least 2 sources!`
       );
       return null;
@@ -357,7 +451,8 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): boolean | null {
     if (sourceEvents.length !== 1) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `Virtual data point (${config.id}) requires exactly 1 source!`
       );
       return null;
@@ -378,7 +473,8 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): number | null {
     if (sourceEvents.length !== 1) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `Virtual data point (${config.id}) requires exactly 1 source!`
       );
       return null;
@@ -408,13 +504,17 @@ export class VirtualDataPointManager {
   ): string | null {
     const logPrefix = `${this.constructor.name}::enumeration`;
     if (config.operationType !== 'enumeration') {
-      winston.error(
+      this.addSummaryLog(
+        'error',
         `${logPrefix} receive invalid operation type: ${config.operationType}`
       );
       return null;
     }
     if (typeof config.enumeration === undefined) {
-      winston.error(`${logPrefix} no enumeration configuration found`);
+      this.addSummaryLog(
+        'error',
+        `${logPrefix} no enumeration configuration found`
+      );
       return null;
     }
 
@@ -423,12 +523,12 @@ export class VirtualDataPointManager {
       return b.priority - a.priority;
     })) {
       const hit = !!sourceEvents.find((event) => {
-        winston.debug(
-          `${logPrefix} searching for entry ${entry.source} found ${event.measurement.id}`
-        );
-        winston.debug(
-          `${logPrefix} measurment is: ${!!event.measurement.value}`
-        );
+        // winston.debug(
+        //   `${logPrefix} searching for entry ${entry.source} found ${event.measurement.id}`
+        // );
+        // winston.debug(
+        //   `${logPrefix} measurement is: ${!!event.measurement.value}`
+        // );
         return (
           event.measurement.id === entry.source && !!event.measurement.value
         );
@@ -453,7 +553,8 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): number | null {
     if (sourceEvents.length !== 1) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `Virtual data point (${config.id}) requires exactly 1 source!`
       );
       return null;
@@ -516,7 +617,7 @@ export class VirtualDataPointManager {
         return this.sum(sourceEvents, config);
       default:
         // TODO Only print this once at startup or config change, if invalid
-        // winston.warn(
+        // this.addSummaryLog("warn",
         //   `Invalid type (${config.operationType}) provided for virtual data point ${config.id}!`
         // );
         return null;
@@ -535,7 +636,8 @@ export class VirtualDataPointManager {
   ): IDataSourceMeasurementEvent[] {
     const logPrefix = `${VirtualDataPointManager.className}::getVirtualEvents`;
     if (this.config === null) {
-      winston.warn(
+      this.addSummaryLog(
+        'warn',
         `${logPrefix} Config not yet loaded. Skipping virtual event calculation`
       );
       return [];
@@ -561,7 +663,8 @@ export class VirtualDataPointManager {
           event = this.cache.getCurrentEvent(sourceId);
         }
         if (!event) {
-          winston.warn(
+          this.addSummaryLog(
+            'warn',
             `Virtual data point ${vdpConfig.id} could not be calculated, because missing event from data source ${sourceId}`
           );
         }

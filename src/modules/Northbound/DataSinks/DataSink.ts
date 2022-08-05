@@ -175,7 +175,7 @@ export abstract class DataSink {
       if (!setEvent) return;
       let value;
 
-      if (typeof setEvent.mapValue !== 'undefined') {
+      if (typeof setEvent.mapValue !== 'undefined' && setEvent.map) {
         value = setEvent.map[setEvent.mapValue];
       } else if (typeof setEvent.value === 'boolean' && setEvent.map) {
         value = setEvent.value ? setEvent.map['true'] : setEvent.map['false'];

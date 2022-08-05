@@ -83,10 +83,10 @@ export default class NetworkManagerCliController {
     const dns = isNil(config.dns) ? '' : config.dns;
     const dhcp = config.dhcp ? 'auto' : 'manual';
 
-    const addressCommand = ipAddress ? `ipv4.addresses ${ipAddress}` : '';
-    const gatewayCommand = gateway ? `ipv4.gateway ${gateway}` : '';
-    const dnsCommand = dns ? `ipv4.dns ${dns}` : '';
-    const dhcpCommand = dhcp ? `ipv4.method ${dhcp}` : '';
+    const addressCommand = `ipv4.addresses ${ipAddress ? ipAddress : `''`}`;
+    const gatewayCommand = `ipv4.gateway ${gateway ? gateway : `''`}`;
+    const dnsCommand = `ipv4.dns ${dns ? dns : `''`}`;
+    const dhcpCommand = `ipv4.method ${dhcp ? dhcp : `''`}`;
 
     const nmcliCommand = `nmcli con mod ${networkInterface}-default ${addressCommand} ${gatewayCommand} ${dnsCommand} ${dhcpCommand}`;
     winston.debug(`${logPrefix} sending command to host: ${nmcliCommand}`);

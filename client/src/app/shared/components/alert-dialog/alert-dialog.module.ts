@@ -4,9 +4,8 @@ import { SharedModule } from 'app/shared/shared.module';
 import { AlertDialogComponent } from './alert-dialog.component';
 
 @NgModule({
-  imports: [SharedModule],
-  declarations: [AlertDialogComponent],
-  exports: [AlertDialogComponent],
-  entryComponents: [AlertDialogComponent]
+    imports: [SharedModule],
+    declarations: [AlertDialogComponent],
+    exports: [AlertDialogComponent]
 })
 export class AlertDialogModule {}

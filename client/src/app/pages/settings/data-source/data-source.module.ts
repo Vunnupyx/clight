@@ -28,10 +28,9 @@ const COMPONENTS = [
 ];
 
 @NgModule({
-  imports: [SharedModule, ConfirmDialogModule, RouterModule.forRoot(routes)],
-  declarations: COMPONENTS,
-  exports: [RouterModule, ...COMPONENTS],
-  entryComponents: [SelectTypeModalComponent],
-  providers: [DataSourceGuard]
+    imports: [SharedModule, ConfirmDialogModule, RouterModule.forRoot(routes)],
+    declarations: COMPONENTS,
+    exports: [RouterModule, ...COMPONENTS],
+    providers: [DataSourceGuard]
 })
 export class DataSourceModule {}

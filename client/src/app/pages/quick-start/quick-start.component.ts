@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -23,9 +23,9 @@ import { TermsAndConditionsService } from 'app/services/terms-and-conditions.ser
   styleUrls: ['./quick-start.component.scss']
 })
 export class QuickStartComponent implements OnInit, OnDestroy {
-  templateForm!: FormGroup;
-  sourceForm!: FormGroup;
-  applicationInterfacesForm!: FormGroup;
+  templateForm!: UntypedFormGroup;
+  sourceForm!: UntypedFormGroup;
+  applicationInterfacesForm!: UntypedFormGroup;
 
   templates: ITemplate[] = [];
   templatesObj: ObjectMap<ITemplate> = {};
@@ -72,7 +72,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     private termsService: TermsAndConditionsService,
     private localStorageService: LocalStorageService,
     private translate: TranslateService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router: Router,
     private dialog: MatDialog
   ) {}

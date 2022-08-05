@@ -46,9 +46,8 @@ export class VirtualDataPointManager {
   private static className: string = VirtualDataPointManager.name;
 
   constructor(params: IVirtualDataPointManagerParams) {
-    params.configManager.once('configsLoaded', () => {
-      return this.init();
-    });
+    params.configManager.once('configsLoaded', () => this.init());
+    params.configManager.on('configChange', () => this.updateConfig());
 
     this.configManager = params.configManager;
     this.cache = params.cache;
@@ -57,9 +56,15 @@ export class VirtualDataPointManager {
   }
 
   private init() {
-    this.config = this.configManager.config.virtualDataPoints;
-
+    this.updateConfig();
     this.setupLogCycle();
+  }
+
+  private updateConfig() {
+    const logPrefix = `${VirtualDataPointManager.className}::updateConfig`;
+    winston.debug(`${logPrefix} refreshing config`);
+
+    this.config = this.configManager.config.virtualDataPoints;
   }
 
   /**

@@ -136,9 +136,7 @@ export class VirtualDataPointManager {
   ): number | null {
     const logPrefix = `VirtualDataPointManager::sum`;
     if (config.operationType !== 'sum') {
-      winston.error(
-        `${logPrefix} called with invalid operation type.`
-      );
+      winston.error(`${logPrefix} called with invalid operation type.`);
       return null;
     }
     if (sourceEvents.length < 2) {
@@ -525,12 +523,12 @@ export class VirtualDataPointManager {
       return b.priority - a.priority;
     })) {
       const hit = !!sourceEvents.find((event) => {
-        winston.debug(
-          `${logPrefix} searching for entry ${entry.source} found ${event.measurement.id}`
-        );
-        winston.debug(
-          `${logPrefix} measurment is: ${!!event.measurement.value}`
-        );
+        // winston.debug(
+        //   `${logPrefix} searching for entry ${entry.source} found ${event.measurement.id}`
+        // );
+        // winston.debug(
+        //   `${logPrefix} measurement is: ${!!event.measurement.value}`
+        // );
         return (
           event.measurement.id === entry.source && !!event.measurement.value
         );

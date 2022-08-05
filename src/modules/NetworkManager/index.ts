@@ -20,35 +20,43 @@ export default class NetworkManagerCliController {
     const logPrefix = `NetworkManagerCliController::getConfiguration`;
     const configName = `lastConfig${networkInterface.replace('e', 'E')}`;
     if (NetworkManagerCliController[configName]) {
-      winston.debug(`${logPrefix} found configuration for ${networkInterface} in cache. Return cached value.`);
+      winston.debug(
+        `${logPrefix} found configuration for ${networkInterface} in cache. Return cached value.`
+      );
       return Promise.resolve(NetworkManagerCliController[configName]);
     }
-      
+
     const nmcliCommand = `nmcli -t -f IP4,IPV4,CONNECTION,GENERAL con show ${networkInterface}-default`;
-    return SshService.sendCommand(nmcliCommand).then((result) => {
-      if (
-        typeof result.stdout !== 'string' ||
-        typeof result.stderr !== 'string'
-      ) {
-        winston.error(`${logPrefix} except string received buffer. Abort.`);
-        return Promise.reject();
-      }
-      if (result.stderr.length !== 0) {
+    return SshService.sendCommand(nmcliCommand)
+      .then((result) => {
+        if (
+          typeof result.stdout !== 'string' ||
+          typeof result.stderr !== 'string'
+        ) {
+          winston.error(`${logPrefix} except string received buffer. Abort.`);
+          return Promise.reject();
+        }
+        if (result.stderr.length !== 0) {
+          winston.error(
+            `${logPrefix} error during reading ${networkInterface} due to ${result.stderr}`
+          );
+          return Promise.reject();
+        }
+        const parsedResult = NetworkManagerCliController.parseNmCliOutput(
+          result.stdout
+        );
+        const decodedResult =
+          NetworkManagerCliController.decodeNmCliData(parsedResult);
+        return decodedResult;
+      })
+      .catch((err) => {
         winston.error(
-          `${logPrefix} error during reading ${networkInterface} due to ${stderr}`
+          `${logPrefix} error during reading ${networkInterface} config file due to ${JSON.stringify(
+            err
+          )}`
         );
         return Promise.reject();
-      }
-      const parsedResult = NetworkManagerCliController.parseNmCliOutput(
-        result.stdout
-      );
-      const decodedResult =
-        NetworkManagerCliController.decodeNmCliData(parsedResult);
-      return decodedResult;
-    }).catch((err) => {
-      winston.error(`${logPrefix} error during reading ${networkInterface} config file due to ${JSON.stringify(err)}`);
-      return Promise.reject();
-    });
+      });
   }
 
   /**

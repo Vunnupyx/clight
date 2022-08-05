@@ -122,14 +122,13 @@ export class TimeManager {
         '#FallbackNTP=0.debian.pool.ntp.org 1.debian.pool.ntp.org 2.debian.pool.ntp.org 3.debian.pool.ntp.org',
         '#RootDistanceMaxSec=5',
         '#PollIntervalMinSec=32',
-        '#PollIntervalMaxSec=2048',
-        'EOF'
+        '#PollIntervalMaxSec=2048'
       ].join('\n');
     }
     const newConfig = await this.composeConfig(currentConfig, ntpServerAddress);
     winston.info(`${logPrefix} generate new config: ${newConfig}`);
     const writeCommand = `tee ${this.CONFIG_PATH} <<EOF
-${newConfig}`;
+${newConfig.trim()}EOF`;
     return SshService.sendCommand(writeCommand)
       .then((response) => {
         if (response.stderr.length > 0) {

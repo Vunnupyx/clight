@@ -22,7 +22,7 @@ export default class SshService {
     const envVariables = env?.join(' ');
     const chainedCommand = `${needSudo ? 'sudo ' : ''}${
       env.length > 0 ? `${envVariables} ` : ''
-    }${command}`.replace(/"/g, '\n');
+    }${command}`.replace(/"/g, `\"`);
     winston.debug(`${logPrefix} sending: "${chainedCommand}"`);
 
     return (

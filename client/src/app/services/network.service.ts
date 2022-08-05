@@ -66,8 +66,36 @@ export class NetworkService {
       state.status = Status.Loading;
     });
 
+    console.log(obj);
+
+    // The backend should receive empty values for defaultGateway, dnsServer, ipAddr, netmask in case of useDhcp is enabled
+    const verifiedObj = {};
+    Object.keys(obj).forEach((key) => {
+      if (['x1', 'x2'].includes(key)) {
+        const config: NetworkConfig = obj[key];
+        if (config.useDhcp) {
+          verifiedObj[key] = {
+            ...obj[key],
+            ipAddr: '',
+            netmask: '',
+            dnsServer: '',
+            defaultGateway: ''
+          };
+        } else {
+          verifiedObj[key] = obj[key];
+        }
+      } else {
+        verifiedObj[key] = obj[key];
+      }
+    });
+
+    console.log(verifiedObj);
+
     try {
-      const response = await this.httpService.patch<any>(`/networkconfig`, obj);
+      const response = await this.httpService.patch<any>(
+        `/networkconfig`,
+        verifiedObj
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.config = response;

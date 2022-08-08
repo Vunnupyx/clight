@@ -47,7 +47,7 @@ export default class UpdateManager {
 
     const envVars = `${registry} ${webServerTagString} ${mdcTagString} ${mtcTagString}`;
     const images = `docker images -q`;
-    const pull = `"bash -c '${envVars} docker-compose pull'"`;
+    const pull = `bash -c '${envVars} docker-compose pull'`;
     const restart = `screen -d -m /opt/update.sh`;
     const cleanup = `docker image prune -f`;
     const dnsFixDelaySec = 15;

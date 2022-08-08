@@ -47,7 +47,7 @@ export default class UpdateManager {
 
     const envVars = `${registry} ${webServerTagString} ${mdcTagString} ${mtcTagString}`;
     const images = `docker images -q`;
-    const pull = `bash -c '${envVars} docker-compose pull'`;
+    const pull = `docker-compose pull`;
     const restart = `screen -d -m /opt/update.sh`;
     const cleanup = `docker image prune -f`;
     const dnsFixDelaySec = 15;
@@ -77,7 +77,12 @@ export default class UpdateManager {
         firstImages = response.stdout;
         winston.info(`${logPrefix} looking for available updates.`);
         winston.debug(`${logPrefix} pull command: ${pull}`);
-        return SshService.sendCommand(pull);
+        return SshService.sendCommand(pull, false, [
+          registry,
+          webServerTagString,
+          mdcTagString,
+          mtcTagString
+        ]);
       })
       .catch((error) => {
         winston.error(

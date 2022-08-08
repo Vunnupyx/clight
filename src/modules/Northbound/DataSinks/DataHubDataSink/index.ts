@@ -4,16 +4,19 @@ import {
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataHubAdapter, IDesiredProps } from '../../Adapter/DataHubAdapter';
-import { DataSink, IDataSinkOptions } from '../DataSink';
+import { DataSink, IDataSinkOptions, OptionalConfigs } from '../DataSink';
 import winston from 'winston';
 import {
   IDataHubConfig,
+  IDataSinkConfig,
+  IProxyConfig,
   ISignalGroups,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
 
 export interface DataHubDataSinkOptions extends IDataSinkOptions {
   runTimeConfig: IDataHubConfig;
+  proxy: IProxyConfig;
 }
 
 export type TGroupedMeasurements = Record<
@@ -34,14 +37,17 @@ export class DataHubDataSink extends DataSink {
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
   options: DataHubDataSinkOptions;
+  proxy: IProxyConfig;
 
   public constructor(options: DataHubDataSinkOptions) {
     super(options);
     this.options = options;
+    this.proxy = JSON.parse(JSON.stringify(options.proxy));
     this.#signalGroups = options.runTimeConfig.signalGroups;
     this.#datahubAdapter = new DataHubAdapter(
       options.runTimeConfig,
       options.dataSinkConfig.datahub,
+      options.proxy,
       this.handleAdapterStateChange.bind(this)
     );
   }
@@ -128,8 +134,8 @@ export class DataHubDataSink extends DataSink {
     const logPrefix = `${this.name}::init`;
     winston.debug(`${logPrefix} initializing.`);
 
-    if(!this.licenseChecker.isLicensed) {
-      winston.warn(`${logPrefix} no valid license found. Stop initializing.`)
+    if (!this.isLicensed) {
+      winston.warn(`${logPrefix} no valid license found. Stop initializing.`);
       this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
       return this;
     }
@@ -172,6 +178,21 @@ export class DataHubDataSink extends DataSink {
         winston.debug(`${logPrefix} initialized`);
         return this;
       });
+  }
+
+  /**
+   * Compares given config with the current data sink config to determine if data source should be restarted or not
+   */
+  configEqual(
+    config: IDataSinkConfig,
+    termsAndConditions: boolean,
+    optionalConfigs?: OptionalConfigs
+  ) {
+    return (
+      JSON.stringify(this.config) === JSON.stringify(config) &&
+      this.termsAndConditionsAccepted === termsAndConditions &&
+      JSON.stringify(optionalConfigs.proxy) === JSON.stringify(this.proxy)
+    );
   }
 
   /**

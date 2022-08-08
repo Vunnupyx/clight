@@ -47,7 +47,7 @@ export default class UpdateManager {
 
     const envVars = `${registry} ${webServerTagString} ${mdcTagString} ${mtcTagString}`;
     const images = `docker images -q`;
-    const pull = `"bash -c '${envVars} docker-compose pull'"`;
+    const pull = `docker-compose pull`;
     const restart = `screen -d -m /opt/update.sh`;
     const cleanup = `docker image prune -f`;
     const dnsFixDelaySec = 15;
@@ -68,10 +68,21 @@ export default class UpdateManager {
       })
       .then((response) => {
         if (response.stderr.length !== 0) throw response.stderr;
+        if (typeof response.stdout !== 'string') {
+          winston.error(
+            `HostnameController::getHostname expect string but received buffer.Abort`
+          );
+          return Promise.reject();
+        }
         firstImages = response.stdout;
         winston.info(`${logPrefix} looking for available updates.`);
         winston.debug(`${logPrefix} pull command: ${pull}`);
-        return SshService.sendCommand(pull);
+        return SshService.sendCommand(pull, false, [
+          registry,
+          webServerTagString,
+          mdcTagString,
+          mtcTagString
+        ]);
       })
       .catch((error) => {
         winston.error(
@@ -106,9 +117,9 @@ export default class UpdateManager {
           );
         } else if (firstImages === response.stdout) {
           winston.info(
-                `${logPrefix} no update available. No restart required.`
-              );
-              return updateStatus.NOT_AVAILABLE;
+            `${logPrefix} no update available. No restart required.`
+          );
+          return updateStatus.NOT_AVAILABLE;
         }
 
         setTimeout(async () => {
@@ -165,6 +176,12 @@ export default class UpdateManager {
             `${logPrefix} received error from ${cmd}: ${res.stderr}`
           );
           throw res.stderr;
+        }
+        if (typeof res.stdout !== 'string') {
+          winston.error(
+            `HostnameController::getHostname expect string but received buffer.Abort`
+          );
+          return Promise.reject();
         }
         winston.debug(`${logPrefix} received: ${res.stdout}`);
         type ContainerMap = {

@@ -242,6 +242,87 @@ describe('Test VirtualDataPointManager', () => {
     expect(virtualEvents4[0].measurement.value).toBe(2);
   });
 
+  describe(`testing sum opertation`, () => {
+    it(`calc sum correctly`, () => {
+      const events: IDataSourceMeasurementEvent[] = [
+        {
+          dataSource: {
+            name: '',
+            protocol: ''
+          },
+          measurement: {
+            id: 'inputCounter1',
+            name: '',
+            value: 14
+          }
+        },
+        {
+          dataSource: {
+            name: '',
+            protocol: ''
+          },
+          measurement: {
+            id: 'inputCounter2',
+            name: '',
+            value: 12.5
+          }
+        }
+      ];
+      // @ts-ignore
+      const re = virtualDpManager.sum(events, {id: 'testid', operationType: 'sum', sources: ['liestehkeiner', 'liestehkeiner2'],});
+      expect(re).toEqual(26.5);
+    });
+
+    it(`calc sum return null if one measurement was no number`, () => {
+      const events: IDataSourceMeasurementEvent[] = [
+        {
+          dataSource: {
+            name: '',
+            protocol: ''
+          },
+          measurement: {
+            id: 'inputCounter1',
+            name: '',
+            value: 'Non Number'
+          }
+        },
+        {
+          dataSource: {
+            name: '',
+            protocol: ''
+          },
+          measurement: {
+            id: 'inputCounter2',
+            name: '',
+            value: 12.5
+          }
+        }
+      ];
+      // @ts-ignore
+      const re = virtualDpManager.sum(events, {id: 'testid', operationType: 'sum', sources: ['liestehkeiner', 'liestehkeiner2'],});
+      expect(re).toEqual(null);
+    });
+
+    it(`calc sum return null if only one measurement was received`, () => {
+      const events: IDataSourceMeasurementEvent[] = [
+        {
+          dataSource: {
+            name: '',
+            protocol: ''
+          },
+          measurement: {
+            id: 'inputCounter1',
+            name: '',
+            value: 'Non Number'
+          }
+        }
+      ];
+      // @ts-ignore
+      const re = virtualDpManager.sum(events, {id: 'testid', operationType: 'sum', sources: ['liestehkeiner', 'liestehkeiner2'],});
+      expect(re).toEqual(null);
+    });
+  })
+
   test('should calculate nested events', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {

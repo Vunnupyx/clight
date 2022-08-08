@@ -103,6 +103,8 @@ export class SourceDataPointService
           this.getPayload()
         );
 
+        this._getDataPoints(datasourceProtocol);
+
         this.resetState();
       }
 
@@ -158,20 +160,7 @@ export class SourceDataPointService
     }));
 
     try {
-      const { dataPoints } = await this.httpService.get<{
-        dataPoints: api.Sourcedatapoint[];
-      }>(`/datasources/${datasourceProtocol}/datapoints`);
-
-      this._store.patchState((state) => {
-        state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
-        state.originalDataPoints = clone(state.dataPoints);
-        state.dataPointsSourceMap = array2map(
-          state.dataPoints,
-          (item) => item.id,
-          () => datasourceProtocol
-        );
-        state.status = Status.Ready;
-      });
+      await this._getDataPoints(datasourceProtocol);
     } catch (err) {
       this.toastr.error(
         this.translate.instant('settings-data-source-point.LoadError')
@@ -343,6 +332,23 @@ export class SourceDataPointService
       default:
         return '';
     }
+  }
+
+  private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
+    const { dataPoints } = await this.httpService.get<{
+      dataPoints: api.Sourcedatapoint[];
+    }>(`/datasources/${datasourceProtocol}/datapoints`);
+
+    this._store.patchState((state) => {
+      state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+      state.originalDataPoints = clone(state.dataPoints);
+      state.dataPointsSourceMap = array2map(
+        state.dataPoints,
+        (item) => item.id,
+        () => datasourceProtocol
+      );
+      state.status = Status.Ready;
+    });
   }
 
   private _parseDataPoint(obj: api.Sourcedatapoint) {

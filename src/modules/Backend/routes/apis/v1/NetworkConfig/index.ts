@@ -98,7 +98,7 @@ async function networkConfigPatchHandler(
       // ISO8601 to YYYY-MM-DD hh:mm:ss
       const [YYYY, MM, DD, hh, mm, ss] =
         timeConfig.currentTime.split(/[/:\-T]/);
-      timePromise = TimeManager.setTimeManually(
+      timePromise = TimeManager.setTimeAndZoneManually(
         `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss.slice(0, 2)}`,
         timeConfig.timezone
       );

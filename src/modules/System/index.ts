@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { promises as fs, readFileSync, existsSync } from 'fs';
 import { promisify } from 'util';
 import winston from 'winston';
 import SshService from '../SshService';
@@ -64,5 +64,28 @@ export class System {
     } catch (err) {}
 
     process.exit(0);
+  }
+
+  /**
+   * Reads mdc flex OS version. Located
+   */
+  public readOsVersion() {
+    try {
+      if (existsSync('/etc/mdcflex-os-release')) {
+        const fileContent = readFileSync(
+          '/etc/mdcflex-os-release',
+          'utf-8'
+        ).trim();
+        const versionLine =
+          fileContent.split('\n').find((line) => line.startsWith('VERSION=')) ||
+          'unknown';
+        return versionLine.replace('VERSION=', '');
+      }
+    } catch (e) {
+      console.log('Error reading OS version!');
+      console.log(e);
+    }
+
+    return 'unknown';
   }
 }

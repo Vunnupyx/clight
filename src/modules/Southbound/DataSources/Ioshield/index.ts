@@ -26,8 +26,8 @@ export class IoshieldDataSource extends DataSource {
 
     const { name, protocol, enabled } = this.config;
 
-    if(!this.licenseChecker.isLicensed) {
-      winston.warn(`${logPrefix} no valid license found. Stop initializing.`)
+    if (!this.isLicensed) {
+      winston.warn(`${logPrefix} no valid license found. Stop initializing.`);
       this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
       return;
     }

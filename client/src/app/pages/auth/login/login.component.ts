@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
       .then((response) => {
         if (response.passwordChangeRequired) {
           this.auth.setOldPassword(this.loginRequest.password);
-          return this.router.navigate(['/settings', 'change-password']);
+          return this.router.navigate(['/reset-password']);
         }
 
         return this.router.navigate(['/']);

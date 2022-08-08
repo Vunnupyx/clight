@@ -49,10 +49,11 @@ steps:
     displayName: BuildMdc
     inputs:
       script: |
+        version=$(git describe --tags)
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use
-        scripts/build/dockerBuildMdclight.sh
+        scripts/build/dockerBuildMdclight.sh $version
   - task: CmdLine@2
     displayName: BuildWebserver
     inputs:
@@ -60,4 +61,4 @@ steps:
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use
-        scripts/build/dockerBuildWebserver.sh
+        scripts/build/dockerBuildWebserver.sh $version

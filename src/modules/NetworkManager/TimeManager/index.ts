@@ -1,5 +1,4 @@
 import { createSocket } from 'dgram';
-import { response } from 'express';
 import winston from 'winston';
 import SshService from '../../SshService';
 /**
@@ -175,23 +174,13 @@ ${newConfig.trim()}\nEOF`;
   }
 
   /**
-   * Set time manually and disable NTP.
+   * Setting time via timedatectl
+   * @param time
+   * @returns
    */
-  public static async setTimeManually(
-    time: string,
-    timezone: string
-  ): Promise<void> {
+  public static async setTimeManually(time: string) {
     const logPrefix = `TimeManager::setTimeManually`;
-    winston.info(`${logPrefix} ${time} in timezone ${timezone}`);
-    const timeRegex =
-      /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01]) (0[1-9]|1[0-9]|2[01234]):([0-5]{1}[0-9]{1}|60):([0-5]{1}[0-9]{1}|60)/;
-    if (!timeRegex.test(time)) {
-      const errMsg = `${logPrefix} invalid time format: ${time}`;
-      winston.error(errMsg);
-      return Promise.reject(new Error(errMsg));
-    }
-    // Disable NTP
-    winston.info(`${logPrefix} disabling NTP.`);
+
     await SshService.sendCommand(`timedatectl set-ntp 0`, true);
     winston.info(`${logPrefix} disabling NTP successfully.`);
     winston.info(`${logPrefix} setting time to ${time}`);
@@ -202,17 +191,51 @@ ${newConfig.trim()}\nEOF`;
       winston.error(errMsg);
       return Promise.reject(errMsg);
     }
-    winston.info(`${logPrefix} setting time zone to ${time}`);
+  }
+
+  /**
+   * Setting time zone via timedatectl
+   * @param timezone
+   * @returns
+   */
+  public static async setTimeZoneManually(timezone: string) {
+    const logPrefix = `TimeManager::setTimeZoneManually`;
+    winston.info(`${logPrefix} setting time zone to ${timezone}`);
     const setTimezoneSshCommand = `timedatectl set-timezone '${timezone}'`;
     const setTimezoneRes = await SshService.sendCommand(
       setTimezoneSshCommand,
       true
     );
     if (setTimezoneRes.stderr !== '') {
-      const errMsg = `${logPrefix} error during set manual time due to ${setTimeRes.stderr}`;
+      const errMsg = `${logPrefix} error during set manual time due to ${setTimezoneRes.stderr}`;
       winston.error(errMsg);
       return Promise.reject(errMsg);
     }
+  }
+
+  /**
+   * Set time manually and disable NTP.
+   */
+  public static async setTimeAndZoneManually(
+    time: string,
+    timezone: string
+  ): Promise<void> {
+    const logPrefix = `TimeManager::setTimeAndZoneManually`;
+    winston.info(`${logPrefix} ${time} in timezone ${timezone}`);
+    const timeRegex =
+      /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01]) (0[1-9]|1[0-9]|2[01234]):([0-5]{1}[0-9]{1}|60):([0-5]{1}[0-9]{1}|60)/;
+    if (!timeRegex.test(time)) {
+      const errMsg = `${logPrefix} invalid time format: ${time}`;
+      winston.error(errMsg);
+      return Promise.reject(new Error(errMsg));
+    }
+    // Disable NTP
+    winston.info(`${logPrefix} disabling NTP.`);
+
+    // Time Zone must be set first to prevent wrong set time!!!
+    await TimeManager.setTimeZoneManually(timezone);
+    await TimeManager.setTimeManually(time);
+
     winston.info(`${logPrefix} set time ${time} ${timezone} successfully.`);
   }
 

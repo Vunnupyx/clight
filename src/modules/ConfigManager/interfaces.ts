@@ -1,4 +1,8 @@
-import { IErrorEvent, ILifecycleEvent } from '../../common/interfaces';
+import {
+  DataSourceProtocols,
+  IErrorEvent,
+  ILifecycleEvent
+} from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
 import { ScheduleDescription } from '../CounterManager';
@@ -23,9 +27,9 @@ type IRegistry = {
 type TSoftwareComponents = 'web' | 'mdc' | 'mtc';
 
 interface IRegistries {
-  prod: IRegistry,
-  dev: IRegistry,
-  stag: IRegistry
+  prod: IRegistry;
+  dev: IRegistry;
+  stag: IRegistry;
 }
 
 export interface IRuntimeConfig {
@@ -36,7 +40,7 @@ export interface IRuntimeConfig {
   auth: IAuthRuntimeConfig;
   datahub: IDataHubConfig;
   systemInfo: ISystemInfo[];
-  registries: IRegistries
+  registries: IRegistries;
 }
 
 export interface IGeneralConfig {
@@ -96,7 +100,7 @@ export interface IDataPointConfig {
 export interface IDataSourceConfig {
   name: string;
   dataPoints: IDataPointConfig[];
-  protocol: string;
+  protocol: DataSourceProtocols;
   connection?: IS7DataSourceConnection;
   enabled: boolean;
   type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
@@ -258,14 +262,35 @@ export interface QuickStartConfig {
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
   return 'source' in obj && 'target' in obj && !('id' in obj);
 }
-
+export interface EnumOperationEntry {
+  priority: number;
+  source: string;
+  returnValueIfTrue: string;
+}
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
-  operationType: 'and' | 'or' | 'not' | 'counter' | 'thresholds' | 'greater' | 'greaterEqual' | 'smaller' | 'smallerEqual' | "equal" | "unequal";
+  operationType:
+    | 'and'
+    | 'or'
+    | 'not'
+    | 'counter'
+    | 'thresholds'
+    | 'enumeration'
+    | 'greater'
+    | 'greaterEqual'
+    | 'smaller'
+    | 'smallerEqual'
+    | 'equal'
+    | 'unequal'
+    | 'sum';
   thresholds?: ITargetDataMap;
+  enumeration?: {
+    defaultValue?: string;
+    items: EnumOperationEntry[];
+  };
   comparativeValue?: string | number;
-  resetSchedules?: ScheduleDescription[]
+  resetSchedules?: ScheduleDescription[];
 }
 
 export interface ISystemInfoItem {
@@ -290,7 +315,7 @@ type env = {
     tag: string;
   };
 } & {
-  selected: 'prod' | 'dev' | 'stag',
+  selected: 'prod' | 'dev' | 'stag';
 };
 
 export interface IConfig {
@@ -302,7 +327,7 @@ export interface IConfig {
   networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
   termsAndConditions: TermsAndConditionsConfig;
-  env: env
+  env: env;
 }
 
 export interface IConfigManagerParams {

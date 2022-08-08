@@ -8,5 +8,5 @@ interface-name=eno1
 method=auto
 
 [ipv6]
-addr-gen-mode=stable-privacy
+addr-gen-mode=eui64
 method=auto

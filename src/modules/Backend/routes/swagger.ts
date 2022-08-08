@@ -1401,9 +1401,10 @@ export default {
         operationId: 'systemEnvironmentGet',
         responses: {
           '200': {
-            description: 'Returns all information about the current environment',
+            description:
+              'Returns all information about the current environment',
             schema: {
-              '$ref': '#/definitions/envResponse'
+              $ref: '#/definitions/envResponse'
             }
           }
         }
@@ -1571,14 +1572,57 @@ export default {
         },
         operationType: {
           type: 'string',
-          enum: ["and", "or", "not", "counter", "thresholds", "greater", "greaterEqual", "smaller", "smallerEqual", "equal", "unequal"]
+          enum: [
+            'and',
+            'or',
+            'not',
+            'counter',
+            'thresholds',
+            'greater',
+            'greaterEqual',
+            'smaller',
+            'smallerEqual',
+            'equal',
+            'unequal',
+            'enumeration',
+            'sum'
+          ]
         },
         comparativeValue: {
-          type: "string",
-          description: "ATTENTION also number is allowed!"
+          type: 'string',
+          description: 'ATTENTION also number is allowed!'
+        },
+        enumeration: {
+          type: 'object',
+          required: ['items'],
+          properties: {
+            defaultValue: {
+              type: 'string'
+            },
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['priority', 'source', 'returnValueIfTrue'],
+                minItems: 2,
+                properties: {
+                  priority: {
+                    type: 'integer',
+                    minimum: 0
+                  },
+                  source: {
+                    type: 'string'
+                  },
+                  returnValueIfTrue: {
+                    type: 'string'
+                  }
+                }
+              }
+            }
+          }
         },
         reset: {
-          "type": "boolean"
+          type: 'boolean'
         }
       }
     },

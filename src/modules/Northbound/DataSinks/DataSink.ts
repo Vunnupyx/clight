@@ -1,11 +1,13 @@
 import winston from 'winston';
 import {
+  DataSinkProtocols,
   ILifecycleEvent,
   LifecycleEventStatus
 } from '../../../common/interfaces';
 import {
   IDataPointMapping,
   IDataSinkConfig,
+  IProxyConfig,
   ITargetDataMap
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
@@ -30,8 +32,12 @@ export interface IDataSinkOptions {
   mapping: IDataPointMapping[];
   dataSinkConfig: IDataSinkConfig;
   termsAndConditionsAccepted: boolean;
-  licenseChecker: LicenseChecker
+  isLicensed: boolean;
 }
+
+export type OptionalConfigs = {
+  proxy?: IProxyConfig;
+};
 
 /**
  * Base class of northbound data sinks
@@ -40,22 +46,36 @@ export abstract class DataSink {
   protected name = DataSink.name;
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;
-  protected readonly _protocol: string;
+  protected readonly _protocol: DataSinkProtocols;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected enabled = false;
   protected termsAndConditionsAccepted = false;
-  protected licenseChecker: LicenseChecker;
+  protected isLicensed = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
    * @param params The user configuration object for this data source
    */
   constructor(options: IDataSinkOptions) {
-    this.config = options.dataSinkConfig;
+    this.config = JSON.parse(JSON.stringify(options.dataSinkConfig));
     this.dataPointMapper = new DataPointMapper(options.mapping);
     this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
     this.enabled = options.dataSinkConfig.enabled;
-    this.licenseChecker = options.licenseChecker;
+    this.isLicensed = options.isLicensed;
+  }
+
+  /**
+   * Compares given config with the current data sink config to determine if data source should be restarted or not
+   */
+  configEqual(
+    config: IDataSinkConfig,
+    termsAndConditions: boolean,
+    optionalConfigs?: OptionalConfigs
+  ) {
+    return (
+      JSON.stringify(this.config) === JSON.stringify(config) &&
+      this.termsAndConditionsAccepted === termsAndConditions
+    );
   }
 
   /**
@@ -155,12 +175,13 @@ export abstract class DataSink {
       if (!setEvent) return;
       let value;
 
-      if (typeof setEvent.mapValue !== 'undefined') {
+      if (typeof setEvent.mapValue !== 'undefined' && setEvent.map) {
         value = setEvent.map[setEvent.mapValue];
       } else if (typeof setEvent.value === 'boolean' && setEvent.map) {
         value = setEvent.value ? setEvent.map['true'] : setEvent.map['false'];
         if (typeof value === 'undefined') {
-          winston.error(`Map for boolean target ${target} required!`);
+          // TODO Print only at startup or config change!
+          // winston.error(`Map for boolean target ${target} required!`);
           return;
         }
       } else if (

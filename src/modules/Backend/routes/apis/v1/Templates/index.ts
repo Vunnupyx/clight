@@ -101,7 +101,10 @@ async function templatesApplyPostHandler(
 /**
  * Handle POST skip templates request
  */
-function templatesSkipPostHandler(request: Request, response: Response): void {
+async function templatesSkipPostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   configManager.config = {
     ...configManager.config,
     quickStart: {
@@ -111,6 +114,8 @@ function templatesSkipPostHandler(request: Request, response: Response): void {
         configManager.config.quickStart.currentTemplateName || null
     }
   };
+
+  await configManager.configChangeCompleted();
 
   response.status(200).json(null);
 }

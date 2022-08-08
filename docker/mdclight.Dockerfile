@@ -1,9 +1,12 @@
 ARG DOCKER_REGISTRY
-ARG MDC_LIGHT_RUNTIME_VERSION
 
 FROM ${DOCKER_REGISTRY}/mdclight-base:latest
 
 WORKDIR /
+
+ARG MDC_LIGHT_RUNTIME_VERSION
+RUN echo Building runtime ${MDC_LIGHT_RUNTIME_VERSION}
+
 # Install compiled MDC light runtime
 COPY package.json package.json
 RUN npm install
@@ -28,5 +31,6 @@ WORKDIR /app
 
 ENV LOG_LEVEL=info
 ENV MDC_LIGHT_FOLDER=/
+ENV MDC_LIGHT_RUNTIME_VERSION=$MDC_LIGHT_RUNTIME_VERSION
 
 CMD ["node", "--max-old-space-size=1024", "index.js"]

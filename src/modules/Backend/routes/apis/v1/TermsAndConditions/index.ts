@@ -42,6 +42,8 @@ async function termsAndConditionsPostHandler(
     termsAndConditions: { accepted: request.body.accepted }
   });
 
+  await configManager.configChangeCompleted();
+
   response.status(200).send();
 }
 

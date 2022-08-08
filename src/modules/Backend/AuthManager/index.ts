@@ -44,16 +44,16 @@ export class AuthManager {
       (user) => user.userName === serializedUsername
     );
 
-    if (!loggedUser && !username.startsWith('User')) {
-      winston.warn(`${logPrefix} User ${username} could not be found!`);
-      throw new Error('User with these credentials could not be found!');
-    }
-
     const macAddress = (await this.readDeviceLabelMacAddress())
       .split(':')
       .join('');
-
+    const defaultUsername = 'User';
     const defaultPassword = macAddress;
+
+    if (!loggedUser && username !== defaultUsername) {
+      winston.warn(`${logPrefix} User ${username} could not be found!`);
+      throw new Error('User with these credentials could not be found!');
+    }
 
     if (!loggedUser) {
       if (defaultPassword === password) {

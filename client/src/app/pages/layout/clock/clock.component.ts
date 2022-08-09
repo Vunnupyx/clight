@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { SystemInformationService } from 'app/services';
+import { NetworkService, SystemInformationService } from 'app/services';
 import { AuthService } from 'app/shared';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -29,6 +29,7 @@ export class ClockComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
+    private networkService: NetworkService,
     private systemInfoService: SystemInformationService,
     private toastr: ToastrService,
     private translate: TranslateService
@@ -41,6 +42,11 @@ export class ClockComponent implements OnInit, OnDestroy {
     });
     this.sub.add(
       this.authService.oldPassword$.subscribe(() => {
+        this.syncTime(true);
+      })
+    );
+    this.sub.add(
+      this.networkService.config.pipe(filter(Boolean)).subscribe(() => {
         this.syncTime(true);
       })
     );

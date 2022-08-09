@@ -4,7 +4,13 @@ title: Changelog
 
 # Changelog
 
-## Current
+## [2.1.2]
+
+### Fixed
+
+- It was not possible to add multiple input sources to the threshold vdp
+
+## [2.1.1]
 
 ### Added
 
@@ -18,7 +24,7 @@ title: Changelog
 - [DIGMDCLGHT-98](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-98) Automatically bumping versions in pipeline that are shown inside the UI
 - [DIGMDCLGHT-87](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-87) The device didn't restart after a factory reset
 
-### [2.1.0]
+## [2.1.0]
 
 ## Added
 

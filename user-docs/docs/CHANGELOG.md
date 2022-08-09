@@ -9,6 +9,7 @@ title: Changelog
 ### Fixed
 
 - It was not possible to add multiple input sources to the threshold vdp
+- [DIGMDCLGHT-126] Clock at the header now is being updated when user changes time preferences
 
 ## [2.1.1]
 

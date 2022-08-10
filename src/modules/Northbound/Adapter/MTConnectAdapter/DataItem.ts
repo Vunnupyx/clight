@@ -1,3 +1,5 @@
+import winston from 'winston';
+
 const UNAVAILABLE = 'UNAVAILABLE';
 
 /**
@@ -145,13 +147,15 @@ export class Condition extends DataItem {
    * @returns
    */
   public toString(): string {
+    winston.error(`MARKUS toString ${JSON.stringify(this)}`);
+
     const alarmMsg =
       typeof this.value === 'string' && !!this.value
         ? this.value
         : this._defaultAlarmString;
     return `${this.name}|${
       this.isActive ? 'fault' : 'NORMAL'
-    }|EX0000|<Severity>|${alarmMsg}`;
+    }|EX0000|100|${alarmMsg}`;
   }
 
   isActive(): boolean {

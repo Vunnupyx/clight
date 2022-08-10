@@ -145,6 +145,7 @@ export class MTConnectDataSink extends DataSink {
   protected processDataPointValue(dataPointId, value) {
     const dataItem = this.dataItems[dataPointId];
 
+    winston.warn(`MARKUS: processDataPointValue ${dataPointId} ${value}`);
     if (!dataItem) return;
     dataItem.value = value;
   }

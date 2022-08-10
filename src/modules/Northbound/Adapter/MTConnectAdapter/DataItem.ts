@@ -129,11 +129,32 @@ export class Event extends DataItem {}
 
 export class Sample extends DataItem {}
 
+/**
+ * Representation of a MDConnect Condition data item
+ */
 export class Condition extends DataItem {
   protected _newLine = true;
+  protected _defaultAlarmString = 'UNNAMED_ALARM';
+
+  /**
+   * Print condition as string with pattern:
+   *  DATAITEMNAME|STATUS|ERRORCODE|SEVERITY|ALARMTEXT
+   *
+   * Status can be one of:
+   * NORMAL
+   * @returns
+   */
   public toString(): string {
-    return (
-      this.name + '|' + 'NORMAL' + '|' + '' + '|' + '' + '|' + '' + '|' + ''
-    );
+    const alarmMsg =
+      typeof this.value === 'string' && !!this.value
+        ? this.value
+        : this._defaultAlarmString;
+    return `${this.name}|${
+      this.isActive ? 'fault' : 'NORMAL'
+    }|EX0000|<Severity>|${alarmMsg}`;
+  }
+
+  isActive(): boolean {
+    return !!this.value;
   }
 }

@@ -37,6 +37,7 @@ export class MTConnectDataSink extends DataSink {
   protected _protocol = DataSinkProtocols.MTCONNECT;
   protected name = MTConnectDataSink.name;
 
+  // scheduler iteration count
   private runTime: DataItem;
 
   // private system: Condition;
@@ -84,22 +85,32 @@ export class MTConnectDataSink extends DataSink {
     }
 
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
-    this.setupDataItems();
+    this.setupDataItems(); // TODO: Unsupported Datatype crash init -> where catched?
 
     this.mtcAdapter.start();
+
     if (!MTConnectDataSink.schedulerListenerId) {
       MTConnectDataSink.schedulerListenerId =
         MTConnectDataSink.scheduler.addListener([1000], async () => {
           this.runTime.value = (this.runTime.value as number) + 1;
+          // TODO: Markus muss hier wirklich gewartet werden?
           await this.mtcAdapter.sendChanged();
         });
     }
     this.updateCurrentStatus(LifecycleEventStatus.Connected);
     winston.info(`${logPrefix} initialized.`);
-    return Promise.resolve(this);
+    return this;
   }
 
-  private setupDataItems() {
+  /**
+   * Add data items (data points) to MTC adapter and 'dataItems' list.
+   *
+   * @throws Error in case of anything else except
+   *  - event
+   *  - sample
+   *  - condition
+   */
+  private setupDataItems(): void {
     this.runTime = new Event('runTime');
     this.runTime.value = 0;
 
@@ -135,30 +146,17 @@ export class MTConnectDataSink extends DataSink {
     const dataItem = this.dataItems[dataPointId];
 
     if (!dataItem) return;
-
-    if (dataItem instanceof Event) {
-      dataItem.value = value;
-      // winston.debug(`Setting MTConnect DataItem ${dataItem} to ${value}`);
-    }
-
-    if (dataItem instanceof Sample) {
-      dataItem.value = value;
-      // winston.debug(`Setting MTConnect DataItem ${dataItem} to ${value}`);
-    }
-
-    if (dataItem instanceof Condition) {
-      // TODO
-    }
+    dataItem.value = value;
   }
-
   /**
+   * NOT IMPLEMENTED
    * Handles live cycle events
-   * @param params The user configuration object for this data source
    */
   public async onLifecycleEvent(event: ILifecycleEvent) {}
 
   /**
-   * Shutdown data sink
+   * Shutdown data sink.
+   * - Remove listener from scheduler
    */
   public shutdown(): Promise<void> {
     const logPrefix = `${MTConnectDataSink.name}::shutdown`;
@@ -189,7 +187,8 @@ export class MTConnectDataSink extends DataSink {
   }
 
   /**
-   * Disconnects all data items
+   * Disconnects all data items and set status to unavailable.
+   * TODO: Why adapter is not disconnected?
    */
   public disconnect() {
     Object.keys(this.dataItems).forEach((key) => {

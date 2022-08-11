@@ -14,12 +14,30 @@
       [name]="'settings-data-source.Name' | translate"
       prop="name"
       [canAutoResize]="false"
-    ></ngx-datatable-column>
+    >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row)" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
     <ngx-datatable-column
       [name]="'settings-data-source.BTTSString' | translate"
       prop="address"
       [minWidth]="350"
-    ></ngx-datatable-column>
+    >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row)" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
 
     <ngx-datatable-column
       [name]="'settings-data-source.Actions' | translate"

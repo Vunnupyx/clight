@@ -210,8 +210,7 @@ export class LicenseChecker {
     '8C:F3:19:71:44:F1',
     'E0:DC:A0:B9:D8:C7',
     'E0:DC:A0:D7:2F:08',
-    'E0:DC:A0:FA:6F:35',
-    '8C:F3:19:70:CA:E9'
+    'E0:DC:A0:FA:6F:35'
   ];
   private _isLicensed: boolean = null;
   private system = new System();

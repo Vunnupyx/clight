@@ -139,26 +139,32 @@ export class Condition extends DataItem {
   protected _defaultAlarmString = 'UNNAMED_ALARM';
 
   /**
-   * Print condition as string with pattern:
-   *  DATAITEMNAME|STATUS|ERRORCODE|SEVERITY|ALARMTEXT
+   * Print condition dataitem as string with pattern:
+   *  DATA_ITEM_NAME|STATUS|ERRORCODE|SEVERITY|ALARM_TEXT
    *
    * Status can be one of:
-   * NORMAL
-   * @returns
+   * - NORMAL
+   * - FAULT
+   * @returns concatenated string
    */
   public toString(): string {
-    winston.error(`MARKUS toString ${JSON.stringify(this)}`);
-
     const alarmMsg =
       typeof this.value === 'string' && !!this.value
         ? this.value
         : this._defaultAlarmString;
     return `${this.name}|${
-      this.isActive ? 'fault' : 'NORMAL'
-    }|EX0000|100|${alarmMsg}`;
+      this.isActive ? 'FAULT' : 'NORMAL'
+    }|EX0000|100||${alarmMsg}`;
   }
 
-  isActive(): boolean {
+  /**
+   * Return false if value is:
+   *  - false
+   *  - empty string
+   *  - 0
+   * and true if
+   */
+  public get isActive(): boolean {
     return !!this.value;
   }
 }

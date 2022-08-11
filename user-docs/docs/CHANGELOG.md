@@ -8,6 +8,8 @@ title: Changelog
 
 ### Fixed
 
+- [DIGMDCLGHT-124](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-124) Device now only keeps one IPv4 address if dhcp is enabled
+- [DIGMDCLGHT-127](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-127) Fixed memory leak when reading PLC variables
 - It was not possible to add multiple input sources to the threshold vdp
 
 ## [2.1.1]

@@ -366,7 +366,7 @@ export class DataSourceIoshieldComponent
       data: {
         selection: obj.address,
         protocol: this.dataSource?.protocol,
-        existedAddresses: this.datapointRows?.map((x) => x.address) || []
+        existingAddresses: this.datapointRows?.map((x) => x.address) || []
       },
       width: '650px'
     });

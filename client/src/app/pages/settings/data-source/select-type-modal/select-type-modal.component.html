@@ -36,9 +36,9 @@
       >
         <mat-button-toggle-group #group="matButtonToggleGroup">
           <mat-button-toggle
-            (click)="!isExisted(row) && onSelect(row); group.value = null"
+            (click)="!isExisting(row) && onSelect(row); group.value = null"
             [matTooltip]="
-              isExisted(row)
+              isExisting(row)
                 ? ('settings-data-source.DuplicatedAddress' | translate)
                 : ('settings-data-source.SelectVariable' | translate)
             "

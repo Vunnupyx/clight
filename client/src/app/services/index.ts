@@ -7,4 +7,5 @@ export * from './device-info.service';
 export * from './source-data-point.service';
 export * from './template.service';
 export * from './virtual-data-point.service';
+export * from './network.service';
 export * from './system-information.service';

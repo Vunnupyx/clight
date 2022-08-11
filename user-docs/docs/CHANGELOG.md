@@ -10,6 +10,7 @@ title: Changelog
 
 - It was not possible to add multiple input sources to the threshold vdp
 - [DIGMDCLGHT-125] At Network settings, the time's preference is transferred and displayed correctly
+- [DIGMDCLGHT-126] Clock at the header now is being updated when user changes time preferences
 
 ## [2.1.1]
 

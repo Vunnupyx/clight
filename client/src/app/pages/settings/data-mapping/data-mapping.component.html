@@ -96,13 +96,9 @@
                 ></ngx-mat-select-search>
               </mat-option>
               <mat-option
+                *ngFor="let item of sourcesAndVirtualPointsFiltered"
                 [value]="item.id"
-                *ngFor="let item of sourcesPointsFiltered"
-                >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
-              >
-              <mat-option
-                [value]="item.id"
-                *ngFor="let item of sourcesVirtualPointsFiltered"
+                [disabled]="item.enabled == false"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
             </mat-select>
@@ -138,7 +134,11 @@
                   [(ngModel)]="filterTargetStr"
                 ></ngx-mat-select-search>
               </mat-option>
-              <mat-option [value]="item.id" *ngFor="let item of targets">
+              <mat-option 
+                *ngFor="let item of targets"
+                [value]="item.id"
+                [disabled]="!item.enabled"
+              >
                 {{ getTargetPrefix(item.id) }} {{ item.name }}
               </mat-option>
             </mat-select>

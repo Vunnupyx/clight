@@ -183,7 +183,7 @@ export class SourceDataPointService
         `/datasources`
       );
 
-      let dataPoints: api.Sourcedatapoint[] = [];
+      let dataPoints: SourceDataPoint[] = [];
       let wholeMap = {};
 
       for (const dataSource of dataSources!) {
@@ -199,12 +199,12 @@ export class SourceDataPointService
         };
 
         dataPoints = dataPoints.concat(
-          ...(dataSource.dataPoints as api.Sourcedatapoint[])
+          ...dataSource.dataPoints.map(x => this._parseDataPoint(x, dataSource))
         );
       }
 
       this._store.patchState((state) => {
-        state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+        state.dataPoints = dataPoints;
         state.dataPointsSourceMap = wholeMap;
         state.status = Status.Ready;
       });
@@ -351,8 +351,12 @@ export class SourceDataPointService
     });
   }
 
-  private _parseDataPoint(obj: api.Sourcedatapoint) {
-    return obj as SourceDataPoint;
+  private _parseDataPoint(obj: api.Sourcedatapoint, parentSource?: api.DataSourceType) {
+    const dataPoint = obj as SourceDataPoint;
+    if (parentSource) {
+      dataPoint.enabled = Boolean(parentSource.enabled);
+    }
+    return dataPoint;
   }
 
   private _emptyState() {

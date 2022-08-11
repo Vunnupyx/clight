@@ -14,7 +14,7 @@ import {
   VirtualDataPointService
 } from 'app/services';
 import { Status } from 'app/shared/state';
-import { array2map, clone, ObjectMap } from 'app/shared/utils';
+import { array2map, clone, descendingSorter, ObjectMap, sortBy } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
@@ -62,27 +62,18 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     return !!this.unsavedRow;
   }
 
-  get sourcesPoints() {
-    return this.sourceDataPoints || [];
-  }
-
-  get sourcesPointsFiltered() {
+  get sourcesAndVirtualPointsFiltered() {
     return (
-      this.sourceDataPoints?.filter((x) =>
-        x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
-      ) || []
-    );
-  }
-
-  get sourcesVirtualPoints() {
-    return this.virtualDataPoints || [];
-  }
-
-  get sourcesVirtualPointsFiltered() {
-    return (
-      this.virtualDataPoints?.filter((x) =>
-        x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
-      ) || []
+      sortBy(
+        [
+          ...this.sourceDataPoints || [],
+          ...this.virtualDataPoints || [],
+        ].filter(x =>
+          x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+        )
+        , x => String(x.enabled != false)
+        , descendingSorter
+      )
     );
   }
 
@@ -144,7 +135,7 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   onDataPoints(arr: DataPoint[]) {
-    this.dataPoints = arr;
+    this.dataPoints = sortBy(arr, x => String(x.enabled != false), descendingSorter);
     this.dataPointsById = array2map(arr, (x) => x.id!);
   }
 

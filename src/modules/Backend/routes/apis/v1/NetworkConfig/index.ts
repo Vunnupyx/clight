@@ -44,13 +44,28 @@ async function networkConfigGetHandler(
     time: cfgTime
   } = configManager.config.networkConfig;
 
+  console.log(1);
+  console.log(moment());
+  const date = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+  // 2015-09-13 03:39:27
+  console.log(2);
+  console.log(date);
+  var stillUtc = moment.utc(date).toDate();
+  // But without utc offset
+  console.log(3);
+  console.log(stillUtc);
+  var local = moment(stillUtc).local().toISOString();
+  // Local time
+  console.log(4);
+  console.log(local);
+
   const reachable = await TimeManager.testNTPServer(cfgTime.ntpHost)
     .then(() => true)
     .catch(() => false);
   const time = {
     ...cfgTime,
     reachable,
-    currentTime: moment().utc().toISOString()
+    currentTime: local
   };
   const merged = {
     x1: {

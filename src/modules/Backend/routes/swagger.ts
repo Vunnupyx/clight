@@ -2056,6 +2056,26 @@ export default {
               enum: ['socks5', 'http']
             }
           }
+        },
+        time: {
+          type: 'object',
+          properties: {
+            currentTime: {
+              type: 'string'
+            },
+            ntpHost: {
+              type: 'string'
+            },
+            reachable: {
+              type: 'boolean'
+            },
+            timezone: {
+              type: 'string'
+            },
+            useNtp: {
+              type: 'boolean'
+            }
+          }
         }
       }
     },
@@ -2123,6 +2143,26 @@ export default {
             type: {
               type: 'string',
               enum: ['socks5', 'http']
+            }
+          }
+        },
+        time: {
+          type: 'object',
+          properties: {
+            currentTime: {
+              type: 'string'
+            },
+            ntpHost: {
+              type: 'string'
+            },
+            reachable: {
+              type: 'boolean'
+            },
+            timezone: {
+              type: 'string'
+            },
+            useNtp: {
+              type: 'boolean'
             }
           }
         }

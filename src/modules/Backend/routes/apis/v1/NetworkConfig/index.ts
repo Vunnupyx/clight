@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import winston from 'winston';
+import moment from 'moment';
 import { ConfigManager } from '../../../../../ConfigManager';
 import { ITimeConfig } from '../../../../../ConfigManager/interfaces';
 import NetworkManagerCliController from '../../../../../NetworkManager';
@@ -48,7 +49,8 @@ async function networkConfigGetHandler(
     .catch(() => false);
   const time = {
     ...cfgTime,
-    reachable
+    reachable,
+    currentTime: moment().utc().toISOString()
   };
   const merged = {
     x1: {

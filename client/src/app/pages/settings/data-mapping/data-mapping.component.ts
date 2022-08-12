@@ -260,9 +260,14 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     });
   }
 
+  isSourceDisabled(dataPoint: SourceDataPoint | VirtualDataPoint) {
+    if (!('enabled' in dataPoint)) {
+      return false;
+    }
+    return !dataPoint.enabled;
+  }
+
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
   }
-
-  filterTargets(event) {}
 }

@@ -98,7 +98,10 @@
               <mat-option
                 *ngFor="let item of sourcesAndVirtualPointsFiltered"
                 [value]="item.id"
-                [disabled]="item.enabled == false"
+                [disabled]="isSourceDisabled(item)"
+                [matTooltip]="'settings-data-mapping.SourceDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="!isSourceDisabled(item)"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
             </mat-select>
@@ -138,6 +141,9 @@
                 *ngFor="let item of targets"
                 [value]="item.id"
                 [disabled]="!item.enabled"
+                [matTooltip]="'settings-data-mapping.TargetDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="item.enabled"
               >
                 {{ getTargetPrefix(item.id) }} {{ item.name }}
               </mat-option>

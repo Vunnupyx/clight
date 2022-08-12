@@ -93,7 +93,6 @@ export class MTConnectDataSink extends DataSink {
       MTConnectDataSink.schedulerListenerId =
         MTConnectDataSink.scheduler.addListener([1000], async () => {
           this.runTime.value = (this.runTime.value as number) + 1;
-          // TODO: Markus muss hier wirklich gewartet werden?
           await this.mtcAdapter.sendChanged();
         });
     }
@@ -145,7 +144,6 @@ export class MTConnectDataSink extends DataSink {
   protected processDataPointValue(dataPointId, value) {
     const dataItem = this.dataItems[dataPointId];
 
-    winston.warn(`MARKUS: processDataPointValue ${dataPointId} ${value}`);
     if (!dataItem) return;
     dataItem.value = value;
   }

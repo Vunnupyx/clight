@@ -251,7 +251,7 @@ export class CounterManager {
         );
       }
     );
-    winston.error(`MARKUS ${JSON.stringify(counterEntries)}`);
+
     for (const scheduleData of counterEntries) {
       const counterId = scheduleData.sources[0];
       const vdpId = scheduleData.id;

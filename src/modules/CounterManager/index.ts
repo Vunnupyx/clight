@@ -255,7 +255,15 @@ export class CounterManager {
     for (const scheduleData of counterEntries) {
       const counterId = scheduleData.sources[0];
       const vdpId = scheduleData.id;
-      for (const [index, entry] of scheduleData?.resetSchedules?.entries()) {
+
+      if (typeof scheduleData.resetSchedules === 'undefined') {
+        winston.warn(
+          `${logPrefix} ${scheduleData.id} no resetSchedule property found. Continue.`
+        );
+        continue;
+      }
+
+      for (const [index, entry] of scheduleData.resetSchedules.entries()) {
         winston.debug(
           `${logPrefix} found scheduling for id: ${counterId} : ${JSON.stringify(
             scheduleData

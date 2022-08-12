@@ -64,6 +64,7 @@
         [rows]="mappingRows"
         rowHeight="auto"
         columnMode="flex"
+        [rowClass]="getRowClassBound"
       >
         <ngx-datatable-column
           [name]="'settings-data-mapping.Source' | translate"
@@ -77,7 +78,9 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ getSourcePrefix(value) }} {{ getSourceDataPoint(value)?.name }}
+              <span [class.color-disabled]="isDataMappingDisabled(row)">
+                {{ getSourcePrefix(value) }} {{ getSourceDataPoint(value)?.name }}
+              </span>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -119,7 +122,9 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ getTargetPrefix(value) }} {{ getDataPoint(value)?.name }}
+              <span [class.color-disabled]="isDataMappingDisabled(row)">
+                {{ getTargetPrefix(value) }} {{ getDataPoint(value)?.name }}
+              </span>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"

@@ -50,6 +50,8 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     );
   }
 
+  getRowClassBound = this.getRowClass.bind(this);
+
   constructor(
     private sourceDataPointService: SourceDataPointService,
     private dataPointService: DataPointService,
@@ -261,10 +263,31 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   isSourceDisabled(dataPoint: SourceDataPoint | VirtualDataPoint) {
+    if (!dataPoint) {
+      return false;
+    }
+
     if (!('enabled' in dataPoint)) {
       return false;
     }
     return !dataPoint.enabled;
+  }
+
+  isDataMappingDisabled(row: DataMapping) {
+    const source = this.sourceDataPointsById[row.source] || this.virtualDataPointsById[row.source];
+    const target = this.dataPointsById[row.target];
+
+    if (!source || !target) {
+      return true;
+    }
+
+    return this.isSourceDisabled(source) || !target.enabled;
+  }
+
+  getRowClass(row: DataMapping) {
+    if (row && this.isDataMappingDisabled(row)) {
+      return 'hover-disabled';
+    }
   }
 
   ngOnDestroy() {

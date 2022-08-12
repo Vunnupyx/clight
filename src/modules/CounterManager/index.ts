@@ -127,9 +127,8 @@ export class CounterManager {
       );
     }
 
-    // TODO: DIGMDCLGHT-20 Scheduled reset was not finalized by sprint end.
-    //this.checkMissedResets();
-    //this.checkTimers();
+    this.checkMissedResets();
+    this.checkTimers();
   }
 
   /**
@@ -330,7 +329,8 @@ export class CounterManager {
    */
   private static calcWithDate(
     scheduleData: ScheduleDescription,
-    currentDate: Date) {
+    currentDate: Date
+  ) {
     const timeData = {
       year: currentDate.getFullYear(),
       month:
@@ -391,7 +391,8 @@ export class CounterManager {
 
   private static calcWithDay(
     scheduleData: ScheduleDescription,
-    currentDate: Date) {
+    currentDate: Date
+  ) {
     const timeData = {
       year: currentDate.getFullYear(),
       month:
@@ -449,7 +450,7 @@ export class CounterManager {
         timeData.minutes,
         timeData.sec
       );
-      
+
       const diff = currentDate.getTime() - dateFromScheduling.getTime();
 
       if (!(diff < 0)) {

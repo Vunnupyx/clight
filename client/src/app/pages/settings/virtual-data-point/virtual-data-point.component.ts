@@ -337,7 +337,7 @@ export class VirtualDataPointComponent implements OnInit {
       virtualPoint.sources![0]
     );
 
-    this.sourceDataPointService.getDataPoints(protocol);
+    this.sourceDataPointService.getSourceDataPointsAll();
     this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {

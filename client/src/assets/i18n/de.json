@@ -329,6 +329,7 @@
     "BulkError": "Die Änderungen konnten nicht aktualisiert werden. Bitte versuchen Sie es später erneut!",
     "SourceDisabledTooltip": "",
     "TargetDisabledTooltip": "",
+    "MappingDisabledTooltip": "",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen speichern"
   },

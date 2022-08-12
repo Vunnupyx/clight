@@ -78,7 +78,10 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              <span [class.color-disabled]="isDataMappingDisabled(row)">
+              <span [class.color-disabled]="isDataMappingDisabled(row)"
+                [matTooltip]="'settings-data-mapping.MappingDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="!isDataMappingDisabled(row)">
                 {{ getSourcePrefix(value) }} {{ getSourceDataPoint(value)?.name }}
               </span>
             </span>
@@ -122,7 +125,10 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              <span [class.color-disabled]="isDataMappingDisabled(row)">
+              <span [class.color-disabled]="isDataMappingDisabled(row)"
+                [matTooltip]="'settings-data-mapping.MappingDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="!isDataMappingDisabled(row)">
                 {{ getTargetPrefix(value) }} {{ getDataPoint(value)?.name }}
               </span>
             </span>

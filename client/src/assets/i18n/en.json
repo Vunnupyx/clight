@@ -329,6 +329,7 @@
     "BulkError": "Changes have not been applied. Please, try again!",
     "SourceDisabledTooltip": "Activate the related data source to create this mapping",
     "TargetDisabledTooltip": "Activate the related application interface to create this mapping",
+    "MappingDisabledTooltip": "The mapping is currently not active because either the data source or the application interface is deactivated.",
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes"
   },

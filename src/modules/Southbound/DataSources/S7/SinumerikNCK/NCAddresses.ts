@@ -13,6 +13,167 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x13, // DataType : BYTE := B#16#13;
     byteLength: 0x20 // Length : BYTE := B#16#20;
   },
+  // TODO: WHAT`S ABOUT THE LINE INDEX?
+  '/Channel/ChannelDiagnose/cuttingTime': {
+    // /Channel/ChannelDiagnose/cuttingTime'[1,1]
+    // String Test
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0xA, // Column : WORD := W#16#A;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x3B, // BlockType : BYTE := B#16#3B; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0xF, // DataType : BYTE := B#16#F;
+    byteLength: 0x8 // Length : BYTE := B#16#8;
+  },
+  '/Channel/State/progStatus': {
+    // /Channel/State/progStatus[1]
+    // String Test
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0xD, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7F, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Channel/ProgramInfo/msg': {
+    // /Channel/ProgramInfo/msg[1]
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0x1, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7D, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x13, // DataType : BYTE := B#16#4;
+    byteLength: 0x80 // Length : BYTE := B#16#2;
+  },
+
+  '/Channel/ProgramInfo/workPNameLong': {
+    // /Channel/ProgramInfo/workPNameLong[1]
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0xC, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7D, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x13, // DataType : BYTE := B#16#4;
+    byteLength: 0x80 // Length : BYTE := B#16#2;
+  },
+  '/Channel/ProgramInfo/workPandProgName': {
+    // /Channel/ProgramInfo/workPandProgName[1,1]
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0x10, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7D, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0xF, // DataType : BYTE := B#16#4;
+    byteLength: 0xA0 // Length : BYTE := B#16#2;
+  },
+  '/Channel/State/specParts': {
+    // /Channel/State/specParts[1]
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0x7A, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7F, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0xF, // DataType : BYTE := B#16#4;
+    byteLength: 0x8 // Length : BYTE := B#16#2;
+  },
+  '/Channel/Spindle/turnState': {
+    // /Channel/Spindle/turnState[1,1]
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0x9, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x72, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Nck/Configuration/anLanguageOnHmi': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
+    column: 0x4E, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Nck/Configuration/basicLengthUnit ': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
+    column: 0x2, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Nck/Configuration/nckType': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
+    column: 0x1F, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Nck/Configuration/nckVersion': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
+    column: 0x20, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0xF, // DataType : BYTE := B#16#4;
+    byteLength: 0x8 // Length : BYTE := B#16#2;
+  },
+  '/Channel/State/chanStatus': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0xB, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7F, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Channel/ProgramModification/optStopActive': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0xA, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7E, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Channel/ProgramModification/progTestActive': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0x10, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7E, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
+  '/Channel/ProgramModification/trialRunActive': {
+    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
+    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
+    column: 0x9, // Column : WORD := W#16#D;
+    line: 0x1, // Line : WORD := W#16#1;
+    blockType: 0x7E, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
+    dataType: 0x4, // DataType : BYTE := B#16#4;
+    byteLength: 0x2 // Length : BYTE := B#16#2;
+  },
   '/Nck/MachineAxis/feedRateOvr': {
     // /Nck/MachineAxis/feedRateOvr[1]
     // REAL / DOUBLE Test

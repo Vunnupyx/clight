@@ -66,9 +66,7 @@ export class S7DataSource extends DataSource {
 
   private nckEnabled = false;
 
-  private client = new NodeS7({
-    silent: true
-  });
+  private client = null;
   private nckClient = new SinumerikNCK();
 
   get nckSlot() {
@@ -91,8 +89,8 @@ export class S7DataSource extends DataSource {
 
     const { connection, enabled } = this.config;
 
-    if(!this.licenseChecker.isLicensed) {
-      winston.warn(`${logPrefix} no valid license found. Stop initializing.`)
+    if (!this.isLicensed) {
+      winston.warn(`${logPrefix} no valid license found. Stop initializing.`);
       this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
       return;
     }
@@ -182,16 +180,20 @@ export class S7DataSource extends DataSource {
    * @param addresses
    * @returns Promise
    */
-  private readPlcData(addresses: string[]): Promise<S7DataPointsWithError> {
+  private readPlcData(): Promise<S7DataPointsWithError> {
     return new Promise((resolve, reject) => {
-      if (addresses.length === 0) resolve({ datapoints: [], error: null });
+      if (this.getPlcAddresses().length === 0)
+        resolve({ datapoints: [], error: null });
       try {
         const timeoutId = setTimeout(
           () =>
-            reject(new Error(`PLC data timeout for addresses: [${addresses}]`)),
+            reject(
+              new Error(
+                `PLC read data timeout for addresses: [${this.getPlcAddresses()}]`
+              )
+            ),
           10000
         );
-        this.client.addItems(addresses);
         this.client.readAllItems((error, values) => {
           clearTimeout(timeoutId);
           resolve({
@@ -264,6 +266,18 @@ export class S7DataSource extends DataSource {
     );
   }
 
+  private getPlcAddresses(): string[] {
+    return this.config.dataPoints
+      .filter((dp) => dp.type === 's7')
+      .map((dp) => dp.address);
+  }
+
+  private getNckAddresses(): string[] {
+    return this.config.dataPoints
+      .filter((dp) => dp.type === 'nck')
+      .map((dp) => dp.address);
+  }
+
   /**
    * Reads all data points for current intervals and creates and publishes events
    * @param  {Array<number>} currentIntervals
@@ -283,47 +297,37 @@ export class S7DataSource extends DataSource {
     try {
       this.cycleActive = true;
 
+      //? Always read all data points
       // const currentCycleDataPoints: Array<IDataPointConfig> =
       //   this.config.dataPoints.filter((dp: IDataPointConfig) => {
       //     const rf = Math.max(dp.readFrequency || 1000, 1000);
       //     return currentIntervals.includes(rf);
       //   });
 
-      // Always read all data points
-      const currentCycleDataPoints: Array<IDataPointConfig> =
-        this.config.dataPoints;
-
-      const plcAddressesToRead = [];
-      for (const dp of currentCycleDataPoints) {
-        if (dp.type === 's7') plcAddressesToRead.push(dp.address);
-      }
-
-      let nckDataPointsToRead = [];
-      for (const dp of currentCycleDataPoints) {
-        if (dp.type === 'nck') nckDataPointsToRead.push(dp.address);
-      }
-
-      // Don't read NC data points in case there is no nc configured
-      nckDataPointsToRead = this.nckEnabled ? nckDataPointsToRead : [];
+      //? Don't read NC data points in case there is no nc configured
+      const nckDataPointsToRead = this.nckEnabled
+        ? this.getNckAddresses()
+        : ([] as string[]);
 
       // winston.debug(
       //   `Reading S7 data points, PLC: ${plcAddressesToRead}, NCK: ${nckDataPointsToRead}`
       // );
+
       const [plcResults, nckResults] = await Promise.all([
-        this.readPlcData(plcAddressesToRead),
+        this.readPlcData(),
         this.readNckData(nckDataPointsToRead)
       ]);
 
       let allDpError =
-        [...nckDataPointsToRead, ...plcAddressesToRead].length > 0;
+        [...nckDataPointsToRead, ...this.getPlcAddresses()].length > 0;
 
       const measurements: IMeasurement[] = [];
-      for (const dp of currentCycleDataPoints) {
+      for (const dp of this.config.dataPoints) {
         // Skip is current data point wasn't read
         if (
-          ![...nckDataPointsToRead, ...plcAddressesToRead].some(
-            (address) => address === dp.address
-          )
+          !this.config.dataPoints
+            .map((dp) => dp.address)
+            .some((address) => address === dp.address)
         )
           continue;
 
@@ -421,6 +425,10 @@ export class S7DataSource extends DataSource {
     }
 
     return new Promise((resolve, reject) => {
+      this.client = new NodeS7({
+        silent: true
+      });
+      this.client.addItems(this.getPlcAddresses());
       this.client.initiateConnection(
         {
           host: connection.ipAddr,
@@ -450,7 +458,6 @@ export class S7DataSource extends DataSource {
     const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
-    const { name, protocol } = this.config;
     this.isDisconnected = true;
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
 
@@ -466,6 +473,8 @@ export class S7DataSource extends DataSource {
         resolve();
       });
     });
+
+    this.client = null;
 
     winston.info(`${logPrefix} shutdown nck client`);
     await this.nckClient.disconnect();

@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   webserver:
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdc-web-server:2.0-beta
+    image: ${DOCKER_REGISTRY}/mdc-web-server:${DOCKER_WEBSERVER_TAG}
     restart: always
     ports:
       - '443:443'
@@ -27,7 +27,7 @@ services:
         max-size: '50m'
   mdclight:
     privileged: true
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mdclight:2.0-beta
+    image: ${DOCKER_REGISTRY}/mdclight:${DOCKER_MDC_TAG}
     restart: always
     volumes:
       - type: bind
@@ -36,6 +36,9 @@ services:
       - type: bind
         source: /etc/MDCLight/logs
         target: /mdclight/logs
+      - type: bind
+        source: /etc/mdcflex-os-release
+        target: /etc/mdcflex-os-release
       - type: bind
         source: /proc
         target: /proc
@@ -73,7 +76,7 @@ services:
       options:
         max-size: '50m'
   mtconnect-agent:
-    image: registry.gitlab.com/codestryke-tech/dmg-mori/mdc-light/mtconnect-prod_arm64:latest
+    image: ${DOCKER_REGISTRY}/mtconnect-prod_arm64:${DOCKER_MTC_TAG}
     restart: always
     volumes:
       - type: bind

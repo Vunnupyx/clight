@@ -11,6 +11,8 @@ import { SetThresholdsModalComponent } from './set-thresholds-modal/set-threshol
 import { VirtualDataPointGuard } from './virtual-data-point.guard';
 import { SetSchedulesModalComponent } from './set-schedules-modal/set-schedules-modal.component';
 import { EditScheduleModalComponent } from './edit-schedule-modal/edit-schedule-modal.component';
+import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
+import { PromptDialogModule } from 'app/shared/components/prompt-dialog/prompt-dialog.module';
 
 const routes: Routes = [
   {
@@ -26,6 +28,7 @@ const COMPONENTS = [
   SetThresholdsModalComponent,
   SetSchedulesModalComponent,
   EditScheduleModalComponent,
+  SetEnumerationModalComponent
 ];
 
 @NgModule({
@@ -33,6 +36,7 @@ const COMPONENTS = [
   imports: [
     SharedModule,
     ConfirmDialogModule,
+    PromptDialogModule,
     RouterModule.forRoot(routes),
     NgxEchartsModule
   ],
@@ -40,6 +44,7 @@ const COMPONENTS = [
   entryComponents: [
     SetThresholdsModalComponent,
     SetSchedulesModalComponent,
+    SetEnumerationModalComponent
   ],
   providers: [VirtualDataPointGuard]
 })

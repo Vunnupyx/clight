@@ -9,7 +9,12 @@ const routes: Routes = [
   {
     path: 'settings/change-password',
     component: ChangePasswordComponent,
-  }
+  },
+  {
+    path: 'reset-password',
+    component: ChangePasswordComponent,
+    data: { resetPasswordLayout: true },
+  },
 ];
 
 const COMPONENTS = [

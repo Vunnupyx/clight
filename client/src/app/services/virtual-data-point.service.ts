@@ -77,6 +77,8 @@ export class VirtualDataPointService
 
       await this.httpService.post(`/vdps/bulk`, this.getPayload());
 
+      this._getDataPoints();
+
       this.resetState();
 
       this._store.patchState((state) => {
@@ -98,6 +100,26 @@ export class VirtualDataPointService
     return true;
   }
 
+  async resetCounter(vdp: VirtualDataPoint): Promise<boolean> {
+    const payload = {
+        ...vdp,
+        reset: true
+    }
+    return this.httpService.patch(`/vdps/${vdp.id}`, payload)
+      .then((response) => {
+        this.toastr.success(
+          this.translate.instant('settings-virtual-data-point.CounterResetSuccess', {NAME: response?.changed?.name})
+        );
+        return true;
+      }).catch((error) => {
+        this.toastr.error(
+          this.translate.instant('settings-virtual-data-point.CounterResetError', {NAME: payload?.name})
+        );
+        return false;
+      }
+    );
+  }
+
   async getDataPoints() {
     this._store.patchState((state) => ({
       status: Status.Loading,
@@ -105,15 +127,7 @@ export class VirtualDataPointService
     }));
 
     try {
-      const { vdps } = await this.httpService.get<{
-        vdps: api.VirtualDataPointType[];
-      }>('/vdps');
-
-      this._store.patchState((state) => {
-        state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
-        state.originalDataPoints = clone(state.dataPoints);
-        state.status = Status.Ready;
-      });
+      await this._getDataPoints();
     } catch (err) {
       this.toastr.error(
         this.translate.instant('settings-virtual-data-point.LoadError')
@@ -193,6 +207,18 @@ export class VirtualDataPointService
 
   public getPrefix() {
     return '[VDP]';
+  }
+
+  private async _getDataPoints() {
+    const { vdps } = await this.httpService.get<{
+      vdps: api.VirtualDataPointType[];
+    }>('/vdps');
+
+    this._store.patchState((state) => {
+      state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
+      state.originalDataPoints = clone(state.dataPoints);
+      state.status = Status.Ready;
+    });
   }
 
   private _parseDataPoint(obj: api.VirtualDataPointType) {

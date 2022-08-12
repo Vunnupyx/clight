@@ -1394,6 +1394,22 @@ export default {
         }
       }
     },
+    'systemInfo/environment': {
+      get: {
+        tags: ['systemInfo'],
+        description: 'Get system environment',
+        operationId: 'systemEnvironmentGet',
+        responses: {
+          '200': {
+            description:
+              'Returns all information about the current environment',
+            schema: {
+              $ref: '#/definitions/envResponse'
+            }
+          }
+        }
+      }
+    },
     '/terms-and-conditions': {
       get: {
         parameters: [
@@ -1556,7 +1572,57 @@ export default {
         },
         operationType: {
           type: 'string',
-          enum: ['and', 'or', 'not', 'counter]']
+          enum: [
+            'and',
+            'or',
+            'not',
+            'counter',
+            'thresholds',
+            'greater',
+            'greaterEqual',
+            'smaller',
+            'smallerEqual',
+            'equal',
+            'unequal',
+            'enumeration',
+            'sum'
+          ]
+        },
+        comparativeValue: {
+          type: 'string',
+          description: 'ATTENTION also number is allowed!'
+        },
+        enumeration: {
+          type: 'object',
+          required: ['items'],
+          properties: {
+            defaultValue: {
+              type: 'string'
+            },
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['priority', 'source', 'returnValueIfTrue'],
+                minItems: 2,
+                properties: {
+                  priority: {
+                    type: 'integer',
+                    minimum: 0
+                  },
+                  source: {
+                    type: 'string'
+                  },
+                  returnValueIfTrue: {
+                    type: 'string'
+                  }
+                }
+              }
+            }
+          }
+        },
+        reset: {
+          type: 'boolean'
         }
       }
     },
@@ -2276,6 +2342,16 @@ export default {
       properties: {
         timestamp: {
           type: 'number'
+        }
+      }
+    },
+    envResponse: {
+      type: 'object',
+      required: ['env'],
+      properties: {
+        env: {
+          type: 'string',
+          enum: ['stag', 'dev', 'prod']
         }
       }
     }

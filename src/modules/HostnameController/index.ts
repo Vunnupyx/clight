@@ -11,7 +11,10 @@ export default class HostnameController {
    */
   static async setHostname(hostname: string): Promise<void> {
     winston.info(`Setting hostname to '${hostname}'`);
-    await SshService.sendCommand(`hostnamectl set-hostname '${hostname}'`);
+    await SshService.sendCommand(
+      `hostnamectl set-hostname '${hostname}'`,
+      true
+    );
   }
 
   /**
@@ -20,13 +23,19 @@ export default class HostnameController {
   static async setDefaultHostname(): Promise<void> {
     const macAddress = await new System().readMacAddress('eth0');
 
-    if (!macAddress) return Promise.reject({msg: `HostnameController::setDefaultHostname failed due to can not read MAC address of 'eth0' interface`});
+    if (!macAddress)
+      return Promise.reject({
+        msg: `HostnameController::setDefaultHostname failed due to can not read MAC address of 'eth0' interface`
+      });
 
     const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
 
     const hostname = `DM${formattedMacAddress}`;
     winston.info(`Setting hostname to '${hostname}'`);
-    await SshService.sendCommand(`hostnamectl set-hostname '${hostname}'`);
+    await SshService.sendCommand(
+      `hostnamectl set-hostname '${hostname}'`,
+      true
+    );
   }
 
   /**
@@ -37,6 +46,12 @@ export default class HostnameController {
     return SshService.sendCommand('hostnamectl')
       .then(({ stdout, stderr }) => {
         if (stderr !== '') throw stderr;
+        if (typeof stdout !== 'string') {
+          winston.error(
+            `HostnameController::getHostname expect string but received buffer.Abort`
+          );
+          return Promise.reject();
+        }
         return stdout
           .substr(0, stdout.indexOf('\n'))
           .replace('Static hostname: ', '')

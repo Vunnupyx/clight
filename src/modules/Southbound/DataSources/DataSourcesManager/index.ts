@@ -56,10 +56,10 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     this.licenseChecker = params.licenseChecker;
   }
 
-  private init(): void {
+  private async init(): Promise<void> {
     const logPrefix = `${this.constructor.name}::init`;
     winston.info(`${logPrefix} initializing...`);
-    this.spawnDataSources();
+    await this.spawnDataSources();
   }
 
   /**
@@ -83,41 +83,45 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     return !!this.dataSources?.length;
   }
 
+  public async spawnDataSources() {
+    const logPrefix = `${DataSourcesManager.className}::spawnDataSources`;
+    winston.info(
+      `${logPrefix} Setup data sources. Currently running ${JSON.stringify(
+        this.dataSources.map((dataSource) => dataSource.protocol)
+      )}`
+    );
+
+    const initFunc = [DataSourceProtocols.S7, DataSourceProtocols.IOSHIELD]
+      .filter(
+        (protocol) =>
+          !this.dataSources.some(
+            (dataSource) => dataSource.protocol === protocol
+          )
+      )
+      .map((protocol) => this.spawnDataSource(protocol));
+    await Promise.all(initFunc);
+  }
+
   /**
    * Spawns and initializes all configured data sources
    * @returns void
    */
-  public spawnDataSources(): void {
-    const s7DataSourceParams: IDataSourceParams = {
-      config: this.findDataSourceConfig(DataSourceProtocols.S7),
+  public async spawnDataSource(protocol: DataSourceProtocols): Promise<void> {
+    const params: IDataSourceParams = {
+      config: this.findDataSourceConfig(protocol),
       termsAndConditionsAccepted:
         this.configManager.config.termsAndConditions.accepted,
-        licenseChecker: this.licenseChecker
+      isLicensed: this.licenseChecker.isLicensed
     };
 
-    const ioshieldDataSourceParams: IDataSourceParams = {
-      config: this.findDataSourceConfig(DataSourceProtocols.IOSHIELD),
-      termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted,
-        licenseChecker: this.licenseChecker
-    };
+    const dataSource = this.dataSourceFactory(params);
 
-    this.dataSources.push(new S7DataSource(s7DataSourceParams));
-    this.dataSources.push(new IoshieldDataSource(ioshieldDataSourceParams));
+    // It must be pushed before initialization, to prevent double initialization
+    this.dataSources.push(dataSource);
 
-    const logPrefix = `${DataSourcesManager.className}::init`;
-    winston.info(`${logPrefix} Setup data sources`);
-
-    this.dataSources.forEach((dataSource) => {
-      if (!dataSource) {
-        return;
-      }
-
-      dataSource.on(DataSourceEventTypes.Measurement, this.onMeasurementEvent);
-      dataSource.on(DataSourceEventTypes.Lifecycle, this.onLifecycleEvent);
-
-      dataSource.init();
-    });
+    dataSource.on(DataSourceEventTypes.Measurement, this.onMeasurementEvent);
+    dataSource.on(DataSourceEventTypes.Lifecycle, this.onLifecycleEvent);
+    await dataSource.init();
   }
 
   private findDataSourceConfig(
@@ -126,6 +130,17 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     return this.configManager.config.dataSources.find(
       (sink) => sink.protocol === protocol
     );
+  }
+
+  private dataSourceFactory(params: IDataSourceParams): DataSource {
+    switch (params.config.protocol) {
+      case DataSourceProtocols.S7:
+        return new S7DataSource(params);
+      case DataSourceProtocols.IOSHIELD:
+        return new IoshieldDataSource(params);
+      default:
+        throw new Error('Invalid data source!');
+    }
   }
 
   /**
@@ -175,13 +190,31 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     this.dataSinksRestartPending = true;
     const logPrefix = `${DataSourcesManager.name}::configChangeHandler`;
 
-    winston.info(`${logPrefix} reloading datasources.`);
+    winston.info(`${logPrefix} reloading necessary datasources.`);
 
     const shutdownFns = [];
     this.dataSources.forEach((source) => {
-      shutdownFns.push(source.shutdown());
+      // Shut down data sources with a changed configuration
+      if (
+        !source.configEqual(
+          this.findDataSourceConfig(source.protocol),
+          this.configManager.config.termsAndConditions.accepted
+        )
+      ) {
+        winston.info(
+          `${logPrefix} detected configuration change for ${source.protocol} data source. Preparing shutdown.`
+        );
+        shutdownFns.push(source.shutdown());
+
+        this.dataSources = this.dataSources.filter(
+          (dataSource) => dataSource.protocol !== source.protocol
+        );
+      } else {
+        winston.info(
+          `${logPrefix} skipping shutdown of ${source.protocol} data source. No changes detected.`
+        );
+      }
     });
-    this.dataSources = [];
 
     let err: Error = null;
     Promise.allSettled(shutdownFns)

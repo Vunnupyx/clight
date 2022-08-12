@@ -5,7 +5,15 @@ export enum VirtualDataPointOperationType {
   OR = 'or',
   NOT = 'not',
   COUNTER = 'counter',
-  THRESHOLDS = 'thresholds'
+  THRESHOLDS = 'thresholds',
+  ENUMERATION = 'enumeration',
+  GREATER = 'greater',
+  GREATER_EQUAL = 'greaterEqual',
+  SMALLER = 'smaller',
+  SMALLER_EQUAL = 'smallerEqual',
+  EQUAL = 'equal',
+  UNEQUAL = 'unequal',
+  SUM = 'sum'
 }
 
 export class VirtualDataPoint {
@@ -15,6 +23,19 @@ export class VirtualDataPoint {
   name?: string;
   thresholds?: ObjectMap<number>;
   resetSchedules?: VirtualDataPointSchedule[];
+  enumeration?: VirtualDataPointEnumeration;
+  comparativeValue?: string;
+}
+
+export interface VirtualDataPointEnumeration {
+  defaultValue?: string;
+  items: VirtualDataPointEnumerationItem[];
+}
+
+export interface VirtualDataPointEnumerationItem {
+  priority: number;
+  source: string;
+  returnValueIfTrue: string;
 }
 
 export enum ScheduleMonth {
@@ -29,7 +50,7 @@ export enum ScheduleMonth {
   SEP = 'Sep',
   OCT = 'Oct',
   NOV = 'Nov',
-  DEC = 'Dec',
+  DEC = 'Dec'
 }
 
 export enum ScheduleDay {
@@ -39,25 +60,28 @@ export enum ScheduleDay {
   THURSDAY = 'Thursday',
   FRIDAY = 'Friday',
   SATURDAY = 'Saturday',
-  SUNDAY = 'Sunday',
+  SUNDAY = 'Sunday'
 }
 
 export type ScheduleEvery = 'Every';
 
 export interface VirtualDataPointScheduleCommon {
   name: string;
-  month: number|ScheduleEvery;
-  hours: number|ScheduleEvery;
-  minutes: number|ScheduleEvery;
+  month: number | ScheduleEvery;
+  hours: number | ScheduleEvery;
+  minutes: number | ScheduleEvery;
   seconds: number;
 }
 
-export interface VirtualDataPointScheduleWithDate extends VirtualDataPointScheduleCommon {
-  date: number|ScheduleEvery;
+export interface VirtualDataPointScheduleWithDate
+  extends VirtualDataPointScheduleCommon {
+  date: number | ScheduleEvery;
 }
 
-export interface VirtualDataPointScheduleWithDay extends VirtualDataPointScheduleCommon {
-  day: ScheduleDay|ScheduleEvery;
+export interface VirtualDataPointScheduleWithDay
+  extends VirtualDataPointScheduleCommon {
+  day: ScheduleDay | ScheduleEvery;
 }
 
-export type VirtualDataPointSchedule = VirtualDataPointScheduleWithDate & VirtualDataPointScheduleWithDay;
+export type VirtualDataPointSchedule = VirtualDataPointScheduleWithDate &
+  VirtualDataPointScheduleWithDay;

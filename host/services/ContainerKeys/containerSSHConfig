@@ -3,4 +3,4 @@ Host dockerhost
   User mdclite
   IdentityFile /root/.ssh/nmcli/nmclikey
   StrictHostKeyChecking no
-
+  LogLevel ERROR

@@ -51,18 +51,44 @@ adduser mdclite
 ```
 
 9. Login to mdclite account
-10. Login to docker image registry: `docker login registry.gitlab.com`
-11. Start containers: `sudo docker-compose -d up`
+10. Login to docker image registrys: *is part of deploy:all*
+11. Start containers: 
+```
+DOCKER_REGISTRY=<PATH_TO_PROD_REPO> DOCKER_WEBSERVER_TAG=<TAG> DOCKER_MDC_TAG=<TAG> DOCKER_MTC_TAG=<TAG> docker-compose -d up
+```
 
-12. Remove device specific configuration
+12. Remove device specific configuration.
+
+Run from repo:
 
 ```
 npm run deploy:clean:logs
 ```
 
 13. And shutdown: `shutdown -h now`
-14. Remove the sd card & insert it into an SD Card reader
-15. `dd if=/dev/rdisk2 of=iot-connector-light-os-v1.7.0_resized.img bs=1m count=13517`
+14. Remove all bootable devices including the sd card from which the image should be made.
+15. Insert bootable USB device with separate iot2050 meta image for manipulation of sd card image
+16. Boot device with usb device and hold down the `USER`-Button during start.
+17. Login to root user of USB device
+18. Insert SD card
+19. `fdisk -l /dev/mmcblk0` <- SD-Card device
+20. Note `END` value of the partition `/dev/mmcblk0p1`
+21. [OPTIONAL] If the partition is to big for the internal eMMC (+-16GB) you can resize the partition before clone. I recommend a size round about 13GB.
+
+    1. Install _parted_ on USB device image via `apt update && apt install parted`.
+    2. `parted /dev/mmcblk0p1`
+    3. `print` shows current size
+    4. `resize` starts the resize process
+    5. insert `1` for the first partition
+    6. insert the new size in MB for ex. 13000 for 13GB
+    7. `quit`
+    8. [IMPORTANT ]Please do step 19. and 20 again because the `END` of the partition has changed!
+
+22. Remove the sd card & insert it into an SD Card reader
+23. Check the device path of the inserted sd card (macOS: `diskutil -l`) mostly /dev/disk2. [IMPORTANT] Please be safe to copy the correct device.
+24. Calculate the `count` for dd: Use the noted value of (`END` +1 )/2048
+25. Clone sd card image via `dd if=/dev/<PATH-TO-SD-CARD> bs=1m count=<CALCULATED_VALUE> | gzip -9 > <PATH-TO-SAVE-IMAGE>`
+    [INFO] on macOS please use rdisk<DISKNUMBER> for speedup copy
 
 ## Update containers
 

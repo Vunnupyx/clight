@@ -4,7 +4,8 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -32,6 +33,7 @@ import { SelectTypeModalComponent } from '../select-type-modal/select-type-modal
 import { PromptService } from 'app/shared/services/prompt.service';
 import { IP_REGEX } from 'app/shared/utils/regex';
 import { Status } from 'app/shared/state';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-data-source-ioshield',
@@ -76,6 +78,8 @@ export class DataSourceIoshieldComponent
   dsFormValid = true;
 
   filterDigitalInputAddressStr = '';
+
+  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
   get ioshieldAddresses() {
     return this.DigitalInputAddresses.filter((x) => {
@@ -154,6 +158,10 @@ export class DataSourceIoshieldComponent
         this.switchDataSource(curr);
       }
     }
+  }
+
+  ngAfterViewInit() {
+    this.ngxDatatable.columnMode = ColumnMode.force;
   }
 
   filterIOShieldAddress(address: string): boolean {

@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { Connection } from 'app/api/models';
 import {
   DataPointLiveData,
@@ -65,6 +66,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   dsFormValid = true;
 
   filterDigitalInputAddressStr = '';
+
+  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
   get ioshieldAddresses() {
     return this.DigitalInputAddresses.filter((x) => {
@@ -132,6 +135,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.dataSourceService.getDataSources();
   }
 
+  ngAfterViewInit() {
+    this.ngxDatatable.columnMode = ColumnMode.force;
+  }
+  
   toString(x: any): string {
     return String(x);
   }

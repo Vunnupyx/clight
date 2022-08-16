@@ -1,5 +1,5 @@
 import { createSocket } from 'dgram';
-import { lookup } from 'dns/promises';
+const dns = require('dns').promises;
 import winston from 'winston';
 import SshService from '../../SshService';
 /**
@@ -259,7 +259,7 @@ ${newConfig.trim()}\nEOF`;
         return rej(warn);
       }
       try {
-        await lookup(server);
+        await dns.lookup(server);
       } catch (err) {
         winston.error(
           `${logPrefix} DNS lookup for ${server} failed. Testing NTP Server aborted.`

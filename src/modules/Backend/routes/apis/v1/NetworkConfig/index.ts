@@ -5,6 +5,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { ITimeConfig } from '../../../../../ConfigManager/interfaces';
 import NetworkManagerCliController from '../../../../../NetworkManager';
 import { TimeManager } from '../../../../../NetworkManager/TimeManager';
+import SshService from '../../../../../SshService';
 
 let configManager: ConfigManager;
 
@@ -44,13 +45,29 @@ async function networkConfigGetHandler(
     time: cfgTime
   } = configManager.config.networkConfig;
 
+  let currentTime = moment().toISOString(); // may be in wrong timezone, because docker doesn't now it
+
+  try {
+    const timeRes = await SshService.sendCommand('date +%FT%T');
+
+    if (timeRes.stderr === '') {
+      currentTime = timeRes.stdout as string;
+    }
+  } catch (err) {
+    winston.warn(
+      `${logPrefix} failed to read current date. Returning docker time instead (always UTC). Error: ${JSON.stringify(
+        err
+      )}`
+    );
+  }
+
   const reachable = await TimeManager.testNTPServer(cfgTime.ntpHost)
     .then(() => true)
     .catch(() => false);
   const time = {
     ...cfgTime,
     reachable,
-    currentTime: moment().toISOString() // TODO: Get via ssh. Docker does not know timezone
+    currentTime
   };
   const merged = {
     x1: {

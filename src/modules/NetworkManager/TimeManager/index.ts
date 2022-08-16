@@ -1,4 +1,5 @@
 import { createSocket } from 'dgram';
+import { lookup } from 'dns/promises';
 import winston from 'winston';
 import SshService from '../../SshService';
 /**
@@ -257,6 +258,14 @@ ${newConfig.trim()}\nEOF`;
         winston.warn(warn);
         return rej(warn);
       }
+      try {
+        await lookup(server);
+      } catch (err) {
+        winston.error(
+          `${logPrefix} DNS lookup for ${server} failed. Testing NTP Server aborted.`
+        );
+        return rej(err);
+      }
 
       if (testInterfaceRes.stdout.trim() !== 'activated') {
         winston.warn(
@@ -272,6 +281,7 @@ ${newConfig.trim()}\nEOF`;
 
       const timeout = setTimeout(() => {
         client.close();
+        client.removeAllListeners();
         winston.error(`${logPrefix} request timed out.`);
       }, 1000 * 10);
 
@@ -288,15 +298,18 @@ ${newConfig.trim()}\nEOF`;
       });
 
       client.send(requestData, 123, server, (err, bytes) => {
-        winston.info(
-          `${logPrefix} send ${requestData} to ${server}. Size of message is ${bytes} bytes.`
-        );
         if (err) {
-          winston.error(`${logPrefix} ${server} not available due to ${err}`);
+          winston.error(
+            `${logPrefix} ${server} not available due to ${JSON.stringify(err)}`
+          );
           client.close();
+          client.removeAllListeners();
           clearTimeout(timeout);
           rej();
         }
+        winston.info(
+          `${logPrefix} send ${requestData} to ${server}. Size of message is ${bytes} bytes.`
+        );
       });
     });
   }

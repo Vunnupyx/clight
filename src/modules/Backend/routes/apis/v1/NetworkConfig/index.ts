@@ -51,7 +51,7 @@ async function networkConfigGetHandler(
     const timeRes = await SshService.sendCommand('date +%FT%T');
 
     if (timeRes.stderr === '') {
-      currentTime = timeRes.stdout as string;
+      currentTime = (timeRes.stdout as string).trim();
     }
   } catch (err) {
     winston.warn(

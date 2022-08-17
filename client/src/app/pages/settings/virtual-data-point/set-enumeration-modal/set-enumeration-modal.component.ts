@@ -79,7 +79,9 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.defaultValue = this.data.enumeration.defaultValue!;
-    this.rows = this.data.enumeration.items;
+    this.rows = this.data.enumeration.items.sort(
+      (a, b) => a.priority - b.priority
+    );
   }
 
   onDelete(index: number) {

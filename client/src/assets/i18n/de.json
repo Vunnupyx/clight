@@ -364,6 +364,8 @@
   },
   "system-information": {
     "SystemInformation": "System Informationen",
+    "MaterialThemeVersion": "",
+    "SoftwareComponent": "",
     "LoadError": "System Informationen konnten nicht geladen werden. Verusche es später erneut"
   },
   "prompt": {

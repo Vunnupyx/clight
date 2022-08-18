@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { SystemInformationService } from '../../services';
 import { SystemInformationSection } from '../../models';
 import { environment } from '../../../environments/environment';
+import { MaterialThemeVersion } from 'app/app.component';
 
 @Component({
   selector: 'app-system-information',
@@ -11,6 +12,8 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./system-information.component.scss']
 })
 export class SystemInformationComponent implements OnInit, OnDestroy {
+  readonly MaterialThemeVersion = MaterialThemeVersion;
+  
   data: SystemInformationSection[] = [];
 
   private sub: Subscription = new Subscription();

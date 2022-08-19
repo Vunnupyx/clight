@@ -13,7 +13,7 @@ import { MaterialThemeVersion } from 'app/app.component';
 })
 export class SystemInformationComponent implements OnInit, OnDestroy {
   readonly MaterialThemeVersion = MaterialThemeVersion;
-  
+
   data: SystemInformationSection[] = [];
 
   private sub: Subscription = new Subscription();
@@ -34,13 +34,22 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
 
   private onData(x: SystemInformationSection[]) {
     // replace web ui version
-
     const modifiedData = JSON.parse(
       JSON.stringify(x).replace(
         '$ui_version$',
         environment.version || 'unknown'
       )
     );
+
+    // Inject CELOS X material theme version
+    if (modifiedData && modifiedData[1]) {
+      modifiedData[1]?.items.push({
+        key: 'CELOS X material theme version',
+        keyDescription: 'Software component',
+        value: MaterialThemeVersion,
+        valueDescription: ''
+      });
+    }
 
     this.data = modifiedData;
   }

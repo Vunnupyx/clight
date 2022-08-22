@@ -1,4 +1,9 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import {
@@ -14,12 +19,19 @@ import {
   VirtualDataPointService
 } from 'app/services';
 import { Status } from 'app/shared/state';
-import { array2map, clone, ObjectMap } from 'app/shared/utils';
+import {
+  array2map,
+  clone,
+  ObjectMap
+} from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import {
+  ColumnMode,
+  DatatableComponent
+} from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-data-mapping',

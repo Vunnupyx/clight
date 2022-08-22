@@ -1,6 +1,14 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import {
+  ColumnMode,
+  DatatableComponent
+} from '@swimlane/ngx-datatable';
 import { Connection } from 'app/api/models';
 import {
   DataPointLiveData,
@@ -14,14 +22,20 @@ import {
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
-import { DataSourceService, SourceDataPointService } from 'app/services';
+import {
+  DataSourceService,
+  SourceDataPointService
+} from 'app/services';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
-import { clone, ObjectMap } from 'app/shared/utils';
+import {
+  clone,
+  ObjectMap
+} from 'app/shared/utils';
 import { IP_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';

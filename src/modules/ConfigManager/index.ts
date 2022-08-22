@@ -751,7 +751,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         return {
           ...{
             ...item,
-            resetSchedule:
+            resetSchedules:
               newResetSchedule.length > 0
                 ? newResetSchedule
                 : item.resetSchedules

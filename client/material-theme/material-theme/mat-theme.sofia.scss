@@ -1,0 +1,38 @@
+﻿@import "colors.sofia";
+
+// Define a custom typography config that overrides the font-family as well as the
+// `headlines` and `body-1` levels.
+$sofia-typography: mat-typography-config(
+  $font-family:   '"Inter", sans-serif',
+  $button:        mat-typography-level(18px, 32px, 500, 'Inter', 0.4px),
+  $input:         mat-typography-level(18px, 1.125, 500),
+  $subheading-1:  mat-typography-level(18px, 24px, 500),
+  $subheading-2:  mat-typography-level(18px, 28px, 400),
+  $title:         mat-typography-level(28px, 32px, 600),
+  $body-2:        mat-typography-level(18px, 24px, 600),
+  $body-1:        mat-typography-level(18px, 20px, 500, $letter-spacing: -0.06px),
+  $caption:       mat-typography-level(18px, 24px, 500),
+);
+// $display-4:     mat-typography-level(112px, 112px, 300, $letter-spacing: -0.05em),
+// $display-3:     mat-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
+// $display-2:     mat-typography-level(45px, 48px, 400, $letter-spacing: -0.005em),
+// $display-1:     mat-typography-level(34px, 40px, 400),
+// $headline:      mat-typography-level(18px, 24px, bold, '"Inter-Bold", sans-serif'),
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core($sofia-typography);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as `color` or `typography`.
+$dmg-app-theme: mat-light-theme(
+    $dmg-app-primary,
+    $dmg-app-secondary,
+    $dmg-app-warning
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($dmg-app-theme);

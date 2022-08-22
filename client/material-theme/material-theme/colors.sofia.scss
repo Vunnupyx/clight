@@ -1,0 +1,147 @@
+﻿$celos-background: #ffffff;
+
+// use our text color
+$dark-primary-text: rgb(18, 18, 18);
+$dark-secondary-text: rgb(35, 38, 43);
+$dark-disabled-text: rgba(black, 0.38);
+$dark-dividers: rgba(black, 0.38);
+$dark-focused: rgb(0, 0, 0);
+
+// Define custom palettes
+$sofia-primary: (
+  50: #e2f2fe,
+  100: #b9ddfe,
+  200: #8cc8fe,
+  300: #5bb2fe,
+  400: #31a1fe,
+  500: #0091fd,
+  600: #2881e8,
+  700: #0071db,
+  800: #0460c9,
+  900: #0641aa,
+  A100: #d9dfff,
+  A200: #a6b5ff,
+  A400: #738bff,
+  A700: #5976ff,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: $dark-primary-text,
+  )
+);
+
+$sofia-secondary: (
+  50 : #f7fbff,
+  100 : #f3f6fd,
+  200 : #eef1f8,
+  300 : #e2e5ec,
+  400 : #bfc3ca,
+  500 : #a1a5ab,
+  600 : #787b81,
+  700 : #64676d,
+  800 : #44474d,
+  900 : #23262b,
+  A100 : #ffffff,
+  A200 : #ffffff,
+  A400 : #ffffff,
+  A700 : #fffafa,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: $dark-primary-text,
+  )
+);
+
+$sofia-warning: (
+  50 : #fde3e2,
+  100 : #fbb8b7,
+  200 : #f98987,
+  300 : #fe5036,
+  400 : #f43632,
+  500 : #f2130e,
+  600 : #f0110c,
+  700 : #ee0e0a,
+  800 : #ec0b08,
+  900 : #e80604,
+  A100 : #ffffff,
+  A200 : #ffdcdc,
+  A400 : #ffaaa9,
+  A700 : #ff9090,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $light-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $dark-primary-text,
+    A700: $dark-primary-text,
+  )
+);
+
+$visualization-primary: (
+  300: #5bb2fe,
+  400: #31a1fe,
+  600: #2881e8,
+  800: #0460c9,
+  900: #0641aa
+);
+
+$visualization-secondary: (
+  300: #67c7d2,
+  400: #34b4c3,
+  500: #02a2b4,
+  600: #018999,
+  700: #017986
+);
+
+$visualization-tertiary: (
+  300: #59c8e7,
+  400: #33bce2,
+  500: #00acdb,
+  600: #0092ba,
+  700: #0080a4
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$dmg-app-primary: mat-palette($sofia-primary, 700, 200, 800);
+$dmg-app-secondary:  mat-palette($sofia-secondary, 800, 300, 900);
+$dmg-app-warning:    mat-palette($sofia-warning);
+
+// Status variables
+$status-success: #28a17f;
+$status-information: #0070db;
+$status-information-background: #2d3138;
+$status-warning: #fab104;
+$status-error: #f3304d;
+

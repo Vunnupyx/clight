@@ -29,8 +29,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   get showLoading() {
     return this.networkService.status !== Status.Ready
-        && this.networkService.status !== Status.Failed
-        && this.networkService.status !== Status.NotInitialized;
+        && this.networkService.status !== Status.Failed;
   }
 
   get tabs() {

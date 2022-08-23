@@ -20,19 +20,6 @@
         /></span>
       </div>
       <span class="spacer"></span>
-      <div class="white-section">
-        <div class="white-section-tab"></div>
-        <span class="spacer"></span>
-        <button
-          mat-raised-button
-          mat-icon-button
-          class="mat-secondary layout-button"
-        >
-          <mat-icon>apps</mat-icon>
-        </button>
-        <span class="spacer"></span>
-      </div>
-      <span class="spacer"></span>
       <span class="help-wrapper">
         <a mat-icon-button [href]="supportHref" target="_blank">
           <mat-icon>help_outline</mat-icon>
@@ -88,21 +75,6 @@
         /></span>
       </div>
       <span class="spacer"></span>
-      <div class="white-section">
-        <div class="white-section-tab"></div>
-        <span class="spacer"></span>
-        <button
-          mat-raised-button
-          mat-icon-button
-          class="mat-secondary layout-button"
-          routerLink="settings/general"
-          routerLinkActive="active"
-        >
-          <mat-icon>apps</mat-icon>
-        </button>
-        <span class="spacer"></span>
-      </div>
-      <span class="spacer"></span>
       <span class="help-wrapper">
         <a mat-icon-button [href]="supportHref" target="_blank">
           <mat-icon>help_outline</mat-icon>
@@ -121,6 +93,7 @@
         [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'"
         [opened]="(isHandset$ | async) === false"
+        [disableClose]="(isHandset$ | async) === false"
       >
         <mat-toolbar>
           <mat-icon>account_balance_wallet</mat-icon>

@@ -482,6 +482,7 @@ $datatable-summary-row-background-hover: #ddd !default;
     box-shadow: none;
     border: solid 1px #ccc;
     min-width: 26px;
+    height: unset !important;
 
     mat-button-toggle:not(.small-button) {
       width: 30px;

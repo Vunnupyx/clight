@@ -525,7 +525,7 @@ export class VirtualDataPointManager {
 
     // Iterate over sorted by high prio array
     for (const entry of config.enumeration.items.sort((a, b) => {
-      return b.priority - a.priority;
+      return a.priority - b.priority;
     })) {
       const hit = !!sourceEvents.find((event) => {
         // winston.debug(

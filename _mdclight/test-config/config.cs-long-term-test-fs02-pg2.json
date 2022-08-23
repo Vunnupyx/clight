@@ -309,6 +309,36 @@
           "address": "/fake/address/1",
           "id": "fail15",
           "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "BYTE7",
+          "address": "DB21,BYTE7",
+          "id": "be470245-45d5-4655-abb6-7904b8b2ad49"
+        },
+        {
+          "type": "s7",
+          "name": "Bool7.0",
+          "address": "DB21,X7.0",
+          "id": "4a06c77b-7811-4337-923a-790692ed4317"
+        },
+        {
+          "type": "s7",
+          "name": "Bool7.1",
+          "address": "DB21,X7.1",
+          "id": "91c7ec63-c6a1-4fb6-be01-73b2427365ef"
+        },
+        {
+          "type": "s7",
+          "name": "Bool7.2",
+          "address": "DB21,X7.2",
+          "id": "e9863fc4-eed1-4ced-9937-af66b208b042"
+        },
+        {
+          "type": "s7",
+          "name": "DWORD7",
+          "address": "DB21,DWORD7",
+          "id": "778f400b-eaec-42b5-b3d7-1a3270bf6c50"
         }
       ],
       "protocol": "s7",
@@ -814,14 +844,9 @@
         "defaultValue": "OFF",
         "items": [
           {
-            "source": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
-            "returnValueIfTrue": "RED",
-            "priority": 0
-          },
-          {
-            "source": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7",
-            "returnValueIfTrue": "YELLOW",
-            "priority": 1
+            "source": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
+            "returnValueIfTrue": "BLUE",
+            "priority": 3
           },
           {
             "source": "831268a3-6088-4bca-b099-27f745a84637",
@@ -829,9 +854,51 @@
             "priority": 2
           },
           {
-            "source": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
-            "returnValueIfTrue": "BLUE",
-            "priority": 3
+            "source": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7",
+            "returnValueIfTrue": "YELLOW",
+            "priority": 1
+          },
+          {
+            "source": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
+            "returnValueIfTrue": "RED",
+            "priority": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "84fd46e0-4f6c-4fed-872d-9ae49739e52f",
+      "sources": [
+        "9b0aba24-a662-40fb-b7ea-90a2662a3907",
+        "d2e3ac9b-f7e3-4251-8e79-52ab364fba63",
+        "d524441f-5361-4323-addf-eefe542351cf",
+        "13d63dbc-d630-45e9-8f39-8610dc4f0a3a",
+        "d8090a1a-9e7f-494b-a695-ff077f4df75a"
+      ],
+      "operationType": "enumeration",
+      "name": "trsr",
+      "enumeration": {
+        "defaultValue": "TEST",
+        "items": [
+          {
+            "source": "9b0aba24-a662-40fb-b7ea-90a2662a3907",
+            "priority": 3,
+            "returnValueIfTrue": "4"
+          },
+          {
+            "source": "d524441f-5361-4323-addf-eefe542351cf",
+            "priority": 2,
+            "returnValueIfTrue": "3"
+          },
+          {
+            "source": "d524441f-5361-4323-addf-eefe542351cf",
+            "priority": 1,
+            "returnValueIfTrue": "2"
+          },
+          {
+            "source": "d8090a1a-9e7f-494b-a695-ff077f4df75a",
+            "priority": 0,
+            "returnValueIfTrue": "1"
           }
         ]
       }
@@ -946,5 +1013,17 @@
   },
   "termsAndConditions": {
     "accepted": true
+  },
+  "env": {
+    "selected": "dev",
+    "mdc": {
+      "tag": "develop"
+    },
+    "mtc": {
+      "tag": "latest"
+    },
+    "web": {
+      "tag": "develop"
+    }
   }
 }

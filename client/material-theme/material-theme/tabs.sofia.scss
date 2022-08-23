@@ -1,0 +1,41 @@
+.mat-tab-header {
+  border-bottom: none;
+
+    .mat-tab-link-container,
+    .mat-tab-label-container {
+      .mat-tab-links,
+      .mat-tab-labels {
+        background-color: $light-primary-text;
+
+        .mat-tab-link,
+        .mat-tab-label {
+          opacity: unset;
+          color: mat-color($dmg-app-secondary, 500);
+
+          .mat-tab-link-content,
+          .mat-tab-label-content {
+            font-size: 14px;
+            text-align: center;
+            letter-spacing: 0.4px;
+          }
+
+          &.mat-tab-link-active,
+          &.mat-tab-label-active {
+            .mat-tab-link-content,
+            .mat-tab-label-content {
+              color: $dark-primary-text;
+            }
+          }
+        }
+      }
+
+      .mat-ink-bar {
+        background-color: mat-color($dmg-app-secondary, 900);
+      }
+    }
+
+    .mat-tab-header-pagination {
+      box-shadow: none;
+      background-color: $light-primary-text;
+    }
+}

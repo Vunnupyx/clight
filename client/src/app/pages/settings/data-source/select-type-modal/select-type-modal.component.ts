@@ -19,7 +19,7 @@ import { DataSourceService } from '../../../../services';
 export interface SelectTypeModalData {
   selection: string;
   protocol: DataSourceProtocol;
-  existedAddresses: string[];
+  existingAddresses: string[];
 }
 
 @Component({
@@ -49,8 +49,8 @@ export class SelectTypeModalComponent implements OnInit {
     this.dialogRef.close(row);
   }
 
-  isExisted({ address }) {
-    return this.data.existedAddresses.includes(address);
+  isExisting({ address }) {
+    return this.data.existingAddresses.includes(address);
   }
 
   onClose() {

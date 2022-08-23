@@ -211,7 +211,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       data: {
         selection: undefined,
         dataSinkProtocol: this.dataSink?.protocol,
-        existedAddresses: this.datapointRows
+        existingAddresses: this.datapointRows
           .map((x) => x.address)
           .filter(Boolean)
       }

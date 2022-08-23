@@ -1,0 +1,6 @@
+::ng-deep {
+    .ngx-datatable.single-selection .datatable-body-row.active, .ngx-datatable.single-selection .datatable-body-row.active .datatable-row-group, .ngx-datatable.multi-selection .datatable-body-row.active, .ngx-datatable.multi-selection .datatable-body-row.active .datatable-row-group, .ngx-datatable.multi-click-selection .datatable-body-row.active, .ngx-datatable.multi-click-selection .datatable-body-row.active .datatable-row-group {
+        background-color: unset !important;
+        color: unset !important;
+    }
+}

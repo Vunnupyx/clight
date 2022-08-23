@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { SelectionType } from '@swimlane/ngx-datatable';
 import { VirtualDataPointSchedule } from 'app/models';
 import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { EditScheduleModalComponent, EditScheduleModalData } from '../edit-schedule-modal/edit-schedule-modal.component';
@@ -10,9 +11,11 @@ export interface SetSchedulesModalData {
 
 @Component({
   selector: 'app-set-schedules-modal',
-  templateUrl: 'set-schedules-modal.component.html'
+  templateUrl: 'set-schedules-modal.component.html',
+  styleUrls: ['./set-schedules-modal.component.scss'],
 })
 export class SetSchedulesModalComponent implements OnInit {
+  SelectionType = SelectionType;
 
   rows: VirtualDataPointSchedule[] = [];
   unsavedRow?: VirtualDataPointSchedule;
@@ -75,6 +78,26 @@ export class SetSchedulesModalComponent implements OnInit {
     });
   }
 
+  onEdit({ selected }: { selected: VirtualDataPointSchedule[] }) {
+    const schedule = selected[0];
+    const index = this.rows.indexOf(schedule);
+
+    const dialogRef = this.dialog.open<EditScheduleModalComponent, EditScheduleModalData, EditScheduleModalData>(
+      EditScheduleModalComponent,
+      {
+        data: {
+          schedule,
+        },
+      });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
+        return;
+      }
+      this.onEditConfirm(index, result.schedule);
+    });
+  }
+
   onSave() {
     this.dialogRef.close({ schedules: this.rows });
   }
@@ -85,5 +108,9 @@ export class SetSchedulesModalComponent implements OnInit {
 
   private onAddConfirm(newSchedule: VirtualDataPointSchedule) {
     this.rows = this.rows.concat([newSchedule]);
+  }
+
+  private onEditConfirm(index: number, schedule: VirtualDataPointSchedule) {
+    this.rows = this.rows.map((x, i) => i === index ? schedule : x);
   }
 }

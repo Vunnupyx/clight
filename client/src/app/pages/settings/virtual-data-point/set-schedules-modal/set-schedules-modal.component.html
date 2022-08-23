@@ -8,6 +8,8 @@
     rowHeight="auto"
     [rows]="rows"
     class="overflow-auto select-type-table"
+    [selectionType]="SelectionType.single"
+    (select)="onEdit($event)"
   >
     <ngx-datatable-column
         [name]="'settings-virtual-data-point.Name' | translate"
@@ -103,7 +105,7 @@
           <mat-button-toggle
             [matTooltip]="'settings-virtual-data-point.Delete' | translate"
             matTooltipPosition="above"
-            (click)="onDelete(rowIndex)"
+            (click)="onDelete(rowIndex); $event.stopPropagation()"
             ><mat-icon>delete</mat-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>

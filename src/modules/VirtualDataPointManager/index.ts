@@ -51,7 +51,7 @@ export class VirtualDataPointManager {
 
     this.configManager = params.configManager;
     this.cache = params.cache;
-    this.counters = new CounterManager(this.configManager);
+    this.counters = new CounterManager(this.configManager, this.cache);
     this.scheduler = SynchronousIntervalScheduler.getInstance();
   }
 

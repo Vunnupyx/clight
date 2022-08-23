@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
 import { ConfigManager } from '../ConfigManager';
+import { DataPointCache } from '../DatapointCache';
 
 type CounterDict = {
   [id: string]: number;
@@ -102,12 +103,15 @@ export class CounterManager {
   private counterStoragePath = '';
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
-  private schedulerCheckerInterval = 5000; //1000 * 60; // ms * sec => 1 min
+  private schedulerCheckerInterval = 1000 * 60; //1000 * 60; // ms * sec => 1 min
 
   /**
    * Initializes counter manages and tries to restore old counter states
    */
-  constructor(private configManager: ConfigManager) {
+  constructor(
+    private configManager: ConfigManager,
+    private cache: DataPointCache
+  ) {
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       winston.warn(
         'Configuration folder for storing counter values not found! The counts are not persisted!'
@@ -122,10 +126,13 @@ export class CounterManager {
     );
 
     if (fs.existsSync(this.counterStoragePath)) {
+      // TODO: Update Cache at startup
       this.counters = JSON.parse(
         fs.readFileSync(this.counterStoragePath, 'utf8')
       );
     }
+
+    // TODOD: update cache
 
     this.checkMissedResets();
     this.checkTimers();
@@ -173,6 +180,7 @@ export class CounterManager {
       return;
     }
     this.counters[id] = 0;
+    this.cache.resetValue(id, 0);
     this.saveCountersToFile();
   }
 
@@ -253,8 +261,8 @@ export class CounterManager {
     );
 
     for (const scheduleData of counterEntries) {
-      const counterId = scheduleData.sources[0];
       const vdpId = scheduleData.id;
+      const counterId = vdpId;
 
       if (typeof scheduleData.resetSchedules === 'undefined') {
         winston.warn(
@@ -279,7 +287,7 @@ export class CounterManager {
         const nextScheduling = CounterManager.calcNextTrigger(entry, now);
 
         winston.debug(
-          `${logPrefix} next trigger time found: ${nextScheduling}`
+          `${logPrefix} next trigger local time found: ${nextScheduling.toLocaleString()}. Current local time is: ${now.toLocaleString()}`
         );
         winston.debug(
           `${logPrefix} check if trigger time is inside next interval.`
@@ -291,11 +299,13 @@ export class CounterManager {
           this.configManager.config.virtualDataPoints.find(
             (vdp) => vdp.id === vdpId
           ).resetSchedules[index].lastReset = Date.now();
+          // TODO: CounterID is not a good index because there can be more than one reset
           this.startedTimers[counterId] = setTimeout(() => {
             winston.debug(
               `${logPrefix} timer for ${counterId} expired. Start reset.`
             );
             this.reset(counterId);
+            this.startedTimers[counterId] = undefined;
           }, timeDiff * -1);
         }
       }

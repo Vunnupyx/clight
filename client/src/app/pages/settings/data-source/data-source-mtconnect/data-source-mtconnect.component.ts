@@ -4,7 +4,8 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -32,6 +33,7 @@ import { IP_REGEX } from 'app/shared/utils/regex';
 import { SelectTypeModalComponent } from '../select-type-modal/select-type-modal.component';
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-data-source-mtconnect',
@@ -107,6 +109,8 @@ export class DataSourceMtconnectComponent
 
   private mapIOShieldsKeys = Object.keys(this.mapIOShieldsAIAddresses);
 
+  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
+
   constructor(
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
@@ -156,6 +160,10 @@ export class DataSourceMtconnectComponent
         this.switchDataSource(curr);
       }
     }
+  }
+
+  ngAfterViewInit() {
+    this.ngxDatatable.columnMode = ColumnMode.force;
   }
 
   filterIOShieldAddress(address: string): boolean {

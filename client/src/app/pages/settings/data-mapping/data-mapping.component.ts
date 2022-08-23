@@ -1,4 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import {
@@ -14,11 +19,19 @@ import {
   VirtualDataPointService
 } from 'app/services';
 import { Status } from 'app/shared/state';
-import { array2map, clone, ObjectMap } from 'app/shared/utils';
+import {
+  array2map,
+  clone,
+  ObjectMap
+} from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  ColumnMode,
+  DatatableComponent
+} from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-data-mapping',
@@ -41,6 +54,8 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   filterSourceStr: string = '';
 
   sub = new Subscription();
+
+  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
   get targets() {
     return (
@@ -118,6 +133,10 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     this.virtualDataPointService.getDataPoints();
     this.dataPointService.getDataPointsAll();
     this.dataMappingService.getDataMappingsAll();
+  }
+
+  ngAfterViewInit() {
+    this.ngxDatatable.columnMode = ColumnMode.force;
   }
 
   getSourcePrefix(id: string | undefined) {

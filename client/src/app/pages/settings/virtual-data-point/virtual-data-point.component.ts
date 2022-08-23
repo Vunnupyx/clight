@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,6 +29,10 @@ import {
   PromptDialogComponent,
   PromptDialogModel
 } from 'app/shared/components/prompt-dialog/prompt-dialog.component';
+import {
+  ColumnMode,
+  DatatableComponent
+} from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -98,6 +106,8 @@ export class VirtualDataPointComponent implements OnInit {
   filterSourceStr: string = '';
 
   sub = new Subscription();
+
+  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
   private sourceDataPoints: SourceDataPoint[] = [];
 
@@ -175,6 +185,10 @@ export class VirtualDataPointComponent implements OnInit {
     this.virtualDataPointService.getDataPoints();
     this.virtualDataPointService.getLiveDataForDataPoints();
     this.sourceDataPointService.getSourceDataPointsAll();
+  }
+
+  ngAfterViewInit() {
+    this.ngxDatatable.columnMode = ColumnMode.force;
   }
 
   onDiscard() {

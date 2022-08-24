@@ -8,7 +8,10 @@ import { HttpService } from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler, ObjectMap } from '../shared/utils';
 import { NetworkConfig, NetworkType } from '../models';
-import { fromISOStringIgnoreTimezone, toISOStringIgnoreTimezone } from 'app/shared/utils/datetime';
+import {
+  fromISOStringIgnoreTimezone,
+  toISOStringIgnoreTimezone
+} from 'app/shared/utils/datetime';
 
 export class NetworkState {
   status!: Status;
@@ -51,7 +54,7 @@ export class NetworkService {
       const response = await this.httpService.get<any>(`/networkconfig`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.config = this._parseNetworkConfig(response);
+        state.config = response;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
@@ -76,7 +79,7 @@ export class NetworkService {
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.config = this._parseNetworkConfig(response);
+        state.config = response;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
@@ -87,14 +90,9 @@ export class NetworkService {
     }
   }
 
-  private _parseNetworkConfig(response: any): ObjectMap<NetworkConfig> {
-    const timeObj = response[NetworkType.TIME];
-    timeObj.currentTime = fromISOStringIgnoreTimezone(new Date(timeObj.currentTime));
-    return response;
-  }
-
-  private _serializeNetworkConfig(obj: ObjectMap<NetworkConfig>): ObjectMap<NetworkConfig> {
-
+  private _serializeNetworkConfig(
+    obj: ObjectMap<NetworkConfig>
+  ): ObjectMap<NetworkConfig> {
     // The backend should receive empty values for defaultGateway, dnsServer, ipAddr, netmask in case of useDhcp is enabled
     const verifiedObj = {};
     Object.keys(obj).forEach((key) => {
@@ -117,9 +115,11 @@ export class NetworkService {
     });
 
     const timeObj = { ...verifiedObj[NetworkType.TIME] };
-    timeObj.currentTime = toISOStringIgnoreTimezone(new Date(timeObj.currentTime));
+    timeObj.currentTime = toISOStringIgnoreTimezone(
+      new Date(timeObj.currentTime)
+    );
     verifiedObj[NetworkType.TIME] = timeObj;
-    
+
     return verifiedObj;
   }
 

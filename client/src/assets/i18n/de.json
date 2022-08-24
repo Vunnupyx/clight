@@ -327,6 +327,9 @@
     "LoadError": "Die Mappings konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "BulkSuccess": "Die Änderungen wurden erfolgreich aktualisiert!",
     "BulkError": "Die Änderungen konnten nicht aktualisiert werden. Bitte versuchen Sie es später erneut!",
+    "SourceDisabledTooltip": "",
+    "TargetDisabledTooltip": "",
+    "MappingDisabledTooltip": "",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen speichern"
   },

@@ -98,7 +98,7 @@ export class DataPointService
         dataSinks: api.DataSinkType[];
       }>(`/datasinks`);
 
-      let dataPoints: api.DataPointType[] = [];
+      let dataPoints: DataPoint[] = [];
       let wholeMap = {};
 
       for (const dataSink of dataSinks) {
@@ -114,12 +114,12 @@ export class DataPointService
         };
 
         dataPoints = dataPoints.concat(
-          ...(dataSink.dataPoints as api.DataPointType[])
+          ...dataSink.dataPoints.map(x => this._parseDataPoint(x, dataSink))
         );
       }
 
       this._store.patchState((state) => {
-        state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+        state.dataPoints = dataPoints;
         state.status = Status.Ready;
         state.dataPointsSinkMap = wholeMap;
       });
@@ -239,8 +239,12 @@ export class DataPointService
     }
   }
 
-  private _parseDataPoint(obj: api.DataPointType) {
-    return obj as any as DataPoint;
+  private _parseDataPoint(obj: api.DataPointType, parentSink?: api.DataSinkType) {
+    const dataPoint = obj as any as DataPoint;
+    if (parentSink) {
+      dataPoint.enabled = Boolean(parentSink.enabled);
+    }
+    return dataPoint;
   }
 
   private _emptyState() {

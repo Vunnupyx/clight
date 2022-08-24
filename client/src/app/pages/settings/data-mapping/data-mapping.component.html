@@ -64,6 +64,7 @@
         [rows]="mappingRows"
         rowHeight="auto"
         columnMode="flex"
+        [rowClass]="getRowClassBound"
       >
         <ngx-datatable-column
           [name]="'settings-data-mapping.Source' | translate"
@@ -77,7 +78,12 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ getSourcePrefix(value) }} {{ getSourceDataPoint(value)?.name }}
+              <span [class.color-disabled]="isDataMappingDisabled(row)"
+                [matTooltip]="'settings-data-mapping.MappingDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="!isDataMappingDisabled(row)">
+                {{ getSourcePrefix(value) }} {{ getSourceDataPoint(value)?.name }}
+              </span>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -96,13 +102,12 @@
                 ></ngx-mat-select-search>
               </mat-option>
               <mat-option
+                *ngFor="let item of sourcesAndVirtualPointsFiltered"
                 [value]="item.id"
-                *ngFor="let item of sourcesPointsFiltered"
-                >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
-              >
-              <mat-option
-                [value]="item.id"
-                *ngFor="let item of sourcesVirtualPointsFiltered"
+                [disabled]="isSourceDisabled(item)"
+                [matTooltip]="'settings-data-mapping.SourceDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="!isSourceDisabled(item)"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
               >
             </mat-select>
@@ -120,7 +125,12 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              {{ getTargetPrefix(value) }} {{ getDataPoint(value)?.name }}
+              <span [class.color-disabled]="isDataMappingDisabled(row)"
+                [matTooltip]="'settings-data-mapping.MappingDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="!isDataMappingDisabled(row)">
+                {{ getTargetPrefix(value) }} {{ getDataPoint(value)?.name }}
+              </span>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
@@ -138,7 +148,14 @@
                   [(ngModel)]="filterTargetStr"
                 ></ngx-mat-select-search>
               </mat-option>
-              <mat-option [value]="item.id" *ngFor="let item of targets">
+              <mat-option 
+                *ngFor="let item of targets"
+                [value]="item.id"
+                [disabled]="!item.enabled"
+                [matTooltip]="'settings-data-mapping.TargetDisabledTooltip' | translate"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="item.enabled"
+              >
                 {{ getTargetPrefix(item.id) }} {{ item.name }}
               </mat-option>
             </mat-select>

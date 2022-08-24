@@ -8,10 +8,8 @@ import { NetworkService } from '../../../services/network.service';
 import { clone, ObjectMap } from '../../../shared/utils';
 import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
-import {
-  fromISOStringIgnoreTimezone,
-  toISOStringIgnoreTimezone
-} from 'app/shared/utils/datetime';
+import { Status } from 'app/shared/state';
+import { toISOStringIgnoreTimezone } from 'app/shared/utils/datetime';
 
 @Component({
   selector: 'app-network',
@@ -29,6 +27,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
   ipRegex = IP_REGEX;
 
   ProxyType = ProxyType;
+
+  get showLoading() {
+    return (
+      this.networkService.status !== Status.Ready &&
+      this.networkService.status !== Status.Failed
+    );
+  }
 
   get tabs() {
     if (!this.config) {

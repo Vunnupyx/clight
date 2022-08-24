@@ -14,12 +14,30 @@
       [name]="'settings-data-source.Name' | translate"
       prop="name"
       [canAutoResize]="false"
-    ></ngx-datatable-column>
+    >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row)" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
     <ngx-datatable-column
       [name]="'settings-data-source.BTTSString' | translate"
       prop="address"
       [minWidth]="350"
-    ></ngx-datatable-column>
+    >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [class.color-disabled]="isExisting(row)" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
 
     <ngx-datatable-column
       [name]="'settings-data-source.Actions' | translate"
@@ -36,9 +54,9 @@
       >
         <mat-button-toggle-group #group="matButtonToggleGroup">
           <mat-button-toggle
-            (click)="!isExisted(row) && onSelect(row); group.value = null"
+            (click)="!isExisting(row) && onSelect(row); group.value = null"
             [matTooltip]="
-              isExisted(row)
+              isExisting(row)
                 ? ('settings-data-source.DuplicatedAddress' | translate)
                 : ('settings-data-source.SelectVariable' | translate)
             "

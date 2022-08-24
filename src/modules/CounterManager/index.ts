@@ -249,7 +249,7 @@ export class CounterManager {
         );
       }
     );
-    winston.error(`MARKUS ${JSON.stringify(counterEntries)}`);
+
     for (const scheduleData of counterEntries) {
       const counterId = scheduleData.sources[0];
       const vdpId = scheduleData.id;
@@ -447,23 +447,29 @@ export class CounterManager {
   //   }
   //   return dateFromScheduling;
   // }
-  
 
   public calcNextTrigger(input: ScheduleDescription, currentDate: Date) {
     // DATE ist definiert!!!!
     // @ts-ignore
-    input = {...input, year: currentDate.getFullYear()}
+    input = { ...input, year: currentDate.getFullYear() };
     const data = {
       year: currentDate.getFullYear(),
       month: input.month === 'Every' ? currentDate.getMonth() : input.month,
       // @ts-ignore
-      date:  input.date,
+      date: input.date,
       hours: input.hours === 'Every' ? currentDate.getHours() : input.hours,
       min: input.minutes === 'Every' ? currentDate.getMinutes() : input.minutes,
       second: input.seconds
     };
 
-    let testDate = new Date(data.year, data.month, data.date, data.hours, data.min, data.second);
+    let testDate = new Date(
+      data.year,
+      data.month,
+      data.date,
+      data.hours,
+      data.min,
+      data.second
+    );
     if (currentDate.getTime() > testDate.getTime()) {
       console.log(`Datum: ${currentDate}`);
       console.log(`Berechnetes Datum liegt in der Vergangenheit: ${testDate}`);
@@ -481,9 +487,9 @@ export class CounterManager {
           data.second
         );
         console.log(`Neuer Versuch: ${testDate}`);
-        console.log()
+        console.log();
         if (currentDate.getTime() < testDate.getTime()) return testDate;
-      } 
+      }
     } else {
       return testDate;
     }

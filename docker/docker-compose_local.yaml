@@ -24,6 +24,7 @@ services:
     ports:
       - '4840:4840'
       - '8083:80'
+      - '7878:7878'
     extra_hosts:
       # TODO: Umbiegen auf fake ssh container
       - 'host.docker.internal:host-gateway'

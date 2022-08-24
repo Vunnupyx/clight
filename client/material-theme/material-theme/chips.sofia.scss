@@ -1,0 +1,97 @@
+$dmg-chips-bg: mat-color($dmg-app-secondary, 300);
+
+.mat-chip-list .mat-chip-list-wrapper {
+    .mat-chip {
+      font-family: "Inter", sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: $dark-focused;
+      height: 40px;
+      border-radius: 20px;
+      background-color: #ffffff;
+      border: 1px solid rgba(102, 102, 102, 0.38);
+
+      &:hover(:not(.mat-chip-disabled)) {
+        background-color: rgba(mat-color($dmg-app-secondary, 300), 0.38) !important;
+
+        &::after {
+          opacity: 0;
+        }
+      }
+
+      &.mat-standard-chip {
+
+        &:focus::after {
+          background-color: mat-color($dmg-app-secondary, 300);
+          opacity: 0;
+        }
+        &.mat-chip-selected {
+          background-color: rgba(mat-color($dmg-app-secondary, 300), 0.6) !important;
+          color: $dark-focused;
+          .number-indicator {
+            background-color: mat-color($dmg-app-secondary, 600) !important;
+            color: rgba(255, 255, 255, 0.87);
+          }
+
+          &::after {
+            display: none;
+          }
+        }
+      }
+
+      .number-indicator {
+        background-color: mat-color($sofia-secondary, 100);
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        height: 24px;
+        width: 24px;
+        margin-left: 24px;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 24px;
+      }
+    }
+}
+
+.cdk-drag-preview.mat-chip, .cdk-drag-preview.mat-chip-selected {
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: $dark-focused;
+    height: 40px;
+    border-radius: 20px !important;
+    background-color: mat-color($dmg-app-secondary, 400) !important;
+
+    .number-indicator {
+      background-color: mat-color($sofia-secondary, 100);
+      color: $dark-focused;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      height: 24px;
+      width: 24px;
+      margin-left: 24px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 24px;
+    }
+}
+
+.mat-form-field {
+    .mat-form-field-flex .mat-form-field-infix .mat-chip-list {
+      // @include input-basics();
+      width: 100%;
+
+      input.mat-input-element {
+        background-color: unset;
+        border: unset;
+        box-shadow: unset;
+
+        &:active,
+        &:focus {
+          border: unset;
+        }
+      }
+    }
+  }

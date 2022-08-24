@@ -1,0 +1,42 @@
+﻿$spacings: xxs 4px,
+xs 8px,
+s 16px,
+m 24px,
+l 48px,
+xl 96px;
+
+@for $i from 1 through length($spacings) {
+  $space: nth($spacings, $i);
+  $key: nth($space, 1);
+  $value: nth($space, 2);
+
+  .spacing-#{$key} {
+    margin: #{$value};
+  }
+
+  .spacing-x-#{$key} { // x-axis
+    margin-left: #{$value};
+    margin-right: #{$value};
+  }
+
+  .spacing-y-#{$key} { // y-axis
+    margin-top: #{$value};
+    margin-bottom: #{$value};
+  }
+
+  .spacing-left-#{$key} {
+    margin-left: #{$value};
+  }
+
+  .spacing-right-#{$key} {
+    margin-right: #{$value};
+  }
+
+  .spacing-top-#{$key} {
+    margin-top: #{$value};
+  }
+
+  .spacing-bottom-#{$key} {
+    margin-bottom: #{$value};
+  }
+}

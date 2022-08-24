@@ -21,7 +21,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -35,7 +41,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
 
@@ -61,6 +73,7 @@
                 : ('settings-data-source.SelectVariable' | translate)
             "
             matTooltipPosition="above"
+            [disabled]="isExisting(row)"
             ><mat-icon>arrow_forward</mat-icon></mat-button-toggle
           >
         </mat-button-toggle-group>

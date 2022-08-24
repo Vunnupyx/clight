@@ -442,7 +442,7 @@
                     name="currentTime"
                     matInput
                     [ngxMatDatetimePicker]="picker"
-                    [(ngModel)]="config[NetworkType.TIME].currentTime"
+                    [(ngModel)]="currentTimeIgnoreTz"
                     required
                   />
                   <mat-datepicker-toggle

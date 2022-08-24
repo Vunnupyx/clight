@@ -45,7 +45,7 @@ async function networkConfigGetHandler(
     time: cfgTime
   } = configManager.config.networkConfig;
 
-  let currentTime = moment().toISOString(); // may be in wrong timezone, because docker doesn't now it
+  let currentTime = moment().format('YYYY-MM-DDThh:mm:ss'); // may be in wrong timezone, because docker doesn't now it
 
   try {
     const timeRes = await SshService.sendCommand('date +%FT%T');

@@ -8,6 +8,10 @@ import { NetworkService } from '../../../services/network.service';
 import { clone, ObjectMap } from '../../../shared/utils';
 import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
+import {
+  fromISOStringIgnoreTimezone,
+  toISOStringIgnoreTimezone
+} from 'app/shared/utils/datetime';
 
 @Component({
   selector: 'app-network',
@@ -88,7 +92,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   async saveChanges(mainForm: NgForm, networkType: NetworkType) {
-    
     await this.networkService.updateNetworkConfig(this.config);
 
     this.originalConfig = clone(this.config);
@@ -120,5 +123,15 @@ export class NetworkComponent implements OnInit, OnDestroy {
           'Pacific/'
         ].find((x) => name.startsWith(x))
       );
+  }
+
+  get currentTimeIgnoreTz(): string {
+    return toISOStringIgnoreTimezone(
+      new Date(this.config[NetworkType.TIME].currentTime)
+    );
+  }
+
+  set currentTimeIgnoreTz(date) {
+    this.config[NetworkType.TIME].currentTime = date;
   }
 }

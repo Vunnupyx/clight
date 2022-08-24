@@ -364,6 +364,8 @@
   },
   "system-information": {
     "SystemInformation": "システム情報",
+    "MaterialThemeVersion": "",
+    "SoftwareComponent": "",
     "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。"
   },
   "prompt": {

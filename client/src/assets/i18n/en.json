@@ -364,6 +364,8 @@
   },
   "system-information": {
     "SystemInformation": "System Information",
+    "MaterialThemeVersion": "CELOS X material theme",
+    "SoftwareComponent": "Software component",
     "LoadError": "Failed to load system information. Try again later"
   },
   "prompt": {

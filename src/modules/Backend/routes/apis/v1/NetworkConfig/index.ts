@@ -123,7 +123,9 @@ async function networkConfigPatchHandler(
       );
     } else {
       const allReadyConfigured =
-        timeConfig.ntpHost === configManager.config.networkConfig.time?.ntpHost;
+        timeConfig.ntpHost ===
+          configManager.config.networkConfig.time?.ntpHost &&
+        timeConfig.useNtp === configManager.config.networkConfig.time?.useNtp;
       if (allReadyConfigured)
         winston.debug(`${logPrefix} received ntp-config again, ignore data.`);
       timePromise = allReadyConfigured

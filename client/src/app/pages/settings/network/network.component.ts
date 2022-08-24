@@ -28,8 +28,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
   ProxyType = ProxyType;
 
   get showLoading() {
-    return this.networkService.status !== Status.Ready
-        && this.networkService.status !== Status.Failed;
+    return (
+      this.networkService.status !== Status.Ready &&
+      this.networkService.status !== Status.Failed
+    );
   }
 
   get tabs() {
@@ -94,7 +96,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   async saveChanges(mainForm: NgForm, networkType: NetworkType) {
-    
     await this.networkService.updateNetworkConfig(this.config);
 
     this.originalConfig = clone(this.config);

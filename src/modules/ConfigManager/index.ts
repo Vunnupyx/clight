@@ -464,24 +464,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Filters mapping array depends on enabled dataSources & dataSinks.
    */
   public getFilteredMapping() {
-    // const enabledDataPointsOfDataSources = this.config.dataSources
-    //   .filter((dataSource) => dataSource.enabled)
-    //   .map((dataSource) =>
-    //     dataSource.dataPoints.map((dataPoint) => dataPoint.id)
-    //   )
-    //   .flat();
-
     const dataSourceDataPoints: string[] = [];
     this.config.dataSources.forEach((dataSource) =>
       dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp.id))
     );
-
-    // const enabledDataPointsOfDataSinks = this.config.dataSinks
-    //   .filter((dataSource) => dataSource.enabled)
-    //   .map((dataSource) =>
-    //     dataSource.dataPoints.map((dataPoint) => dataPoint.id)
-    //   )
-    //   .flat();
 
     const dataSinkDataPoints: string[] = [];
     this.config.dataSinks.forEach((dataSink) =>

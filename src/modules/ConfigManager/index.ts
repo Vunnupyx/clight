@@ -471,9 +471,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     //   )
     //   .flat();
 
-    const dataSourceDataPoints = [];
+    const dataSourceDataPoints: string[] = [];
     this.config.dataSources.forEach((dataSource) =>
-      dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp))
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp.id))
     );
 
     // const enabledDataPointsOfDataSinks = this.config.dataSinks
@@ -483,12 +483,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     //   )
     //   .flat();
 
-    const dataSinkDataPoints = [];
+    const dataSinkDataPoints: string[] = [];
     this.config.dataSinks.forEach((dataSink) =>
-      dataSink.dataPoints.forEach((dp) => dataSinkDataPoints.push(dp))
+      dataSink.dataPoints.forEach((dp) => dataSinkDataPoints.push(dp.id))
     );
 
-    const vdps = this.config.virtualDataPoints.map((vdp) => vdp.id);
+    const vdps: string[] = this.config.virtualDataPoints.map((vdp) => vdp.id);
 
     return this.config.mapping.filter((m) => {
       // Remove mappings if the source or target data point doesn't exist.

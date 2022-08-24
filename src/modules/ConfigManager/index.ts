@@ -971,7 +971,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   public async getSystemInformation() {
     const system = new System();
-    winston.warn(`INFO: ${JSON.stringify(this.runtimeConfig.systemInfo)}`);
     return [
       {
         title: 'General system information',

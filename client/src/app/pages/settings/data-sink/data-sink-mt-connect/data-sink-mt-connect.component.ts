@@ -3,7 +3,8 @@ import {
   Input,
   OnChanges,
   OnInit,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Subscription } from 'rxjs';
@@ -32,6 +33,7 @@ import { CreateDataItemModalComponent } from '../create-data-item-modal/create-d
 import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
 import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
 import { Status } from 'app/shared/state';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -73,6 +75,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   filterAddressStr = '';
 
   dsFormValid: boolean = false;
+
+  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
   get addressesOrDataItems() {
     const array =
@@ -139,6 +143,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     }
   }
 
+  ngAfterViewInit() {
+    this.ngxDatatable.columnMode = ColumnMode.force;
+  }
+  
   onDiscard() {
     return this.dataPointService.revert();
   }
@@ -203,7 +211,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       data: {
         selection: undefined,
         dataSinkProtocol: this.dataSink?.protocol,
-        existedAddresses: this.datapointRows
+        existingAddresses: this.datapointRows
           .map((x) => x.address)
           .filter(Boolean)
       }

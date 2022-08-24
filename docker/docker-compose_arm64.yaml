@@ -37,6 +37,9 @@ services:
         source: /etc/MDCLight/logs
         target: /mdclight/logs
       - type: bind
+        source: /etc/mdcflex-os-release
+        target: /etc/mdcflex-os-release
+      - type: bind
         source: /proc
         target: /proc
       - type: bind

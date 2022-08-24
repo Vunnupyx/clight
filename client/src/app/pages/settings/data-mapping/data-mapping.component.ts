@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import {
@@ -14,11 +14,18 @@ import {
   VirtualDataPointService
 } from 'app/services';
 import { Status } from 'app/shared/state';
-import { array2map, clone, descendingSorter, ObjectMap, sortBy } from 'app/shared/utils';
+import {
+  array2map,
+  clone,
+  ObjectMap,
+  descendingSorter,
+  sortBy
+} from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-data-mapping',
@@ -41,6 +48,8 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   filterSourceStr: string = '';
 
   sub = new Subscription();
+
+  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
   get targets() {
     return (
@@ -65,17 +74,15 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   get sourcesAndVirtualPointsFiltered() {
-    return (
-      sortBy(
-        [
-          ...this.sourceDataPoints || [],
-          ...this.virtualDataPoints || [],
-        ].filter(x =>
-          x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
-        )
-        , x => String(x.enabled != false)
-        , descendingSorter
-      )
+    return sortBy(
+      [
+        ...(this.sourceDataPoints || []),
+        ...(this.virtualDataPoints || [])
+      ].filter((x) =>
+        x.name?.toLowerCase().includes(this.filterSourceStr.toLowerCase())
+      ),
+      (x) => String(x.enabled != false),
+      descendingSorter
     );
   }
 
@@ -113,6 +120,10 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     this.dataMappingService.getDataMappingsAll();
   }
 
+  ngAfterViewInit() {
+    this.ngxDatatable.columnMode = ColumnMode.force;
+  }
+
   getSourcePrefix(id: string | undefined) {
     if (!this.sourceDataPointsById || !this.virtualDataPointsById) {
       return null;
@@ -137,7 +148,11 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   onDataPoints(arr: DataPoint[]) {
-    this.dataPoints = sortBy(arr, x => String(x.enabled != false), descendingSorter);
+    this.dataPoints = sortBy(
+      arr,
+      (x) => String(x.enabled != false),
+      descendingSorter
+    );
     this.dataPointsById = array2map(arr, (x) => x.id!);
   }
 
@@ -274,7 +289,9 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   isDataMappingDisabled(row: DataMapping) {
-    const source = this.sourceDataPointsById[row.source] || this.virtualDataPointsById[row.source];
+    const source =
+      this.sourceDataPointsById[row.source] ||
+      this.virtualDataPointsById[row.source];
     const target = this.dataPointsById[row.target];
 
     if (!source || !target) {

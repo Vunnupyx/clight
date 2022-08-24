@@ -8,6 +8,6 @@ No custom rules are applied to the checkbox component.
 
 ## Code Examples
 
-```html
+``` html
 <mat-checkbox>Check me!</mat-checkbox>
 ```

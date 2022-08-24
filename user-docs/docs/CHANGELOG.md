@@ -4,7 +4,18 @@ title: Changelog
 
 # Changelog
 
-## Current
+## [2.1.2]
+
+### Fixed
+
+- [DIGMDCLGHT-124](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-124) Device now only keeps one IPv4 address if dhcp is enabled
+- [DIGMDCLGHT-127](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-127) Fixed memory leak when reading PLC variables
+- It was not possible to add multiple input sources to the threshold vdp
+- [DIGMDCLGHT-126] Clock at the header now is being updated when user changes time preferences
+- [DIGMDCLGHT-72](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-72) Now columns of tables can be resized
+- [DIGMDCLGHT-94](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-94) When creating a data source, already used addresses a disabled and greyed out.
+
+## [2.1.1]
 
 ### Added
 
@@ -18,7 +29,7 @@ title: Changelog
 - [DIGMDCLGHT-98](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-98) Automatically bumping versions in pipeline that are shown inside the UI
 - [DIGMDCLGHT-87](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-87) The device didn't restart after a factory reset
 
-### [2.1.0]
+## [2.1.0]
 
 ## Added
 

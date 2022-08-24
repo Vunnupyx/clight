@@ -1,19 +1,39 @@
 {
-  "name": "material-theme",
-  "version": "0.0.1",
+  "name": "@celosnext/material-theme",
+  "version": "13.8.2",
+  "description": "Material theme file that have color pallet and typography that fits with design in UI component library. Also there is some style overridings of material components",
+  "author": "DMG Mori - SDK",
+  "publishConfig": {
+    "registry": "https://artifactory.app.dmgmori.com/artifactory/api/npm/sws-celosnext-npm-dev/"
+  },
   "peerDependencies": {
-    "@angular/common": "^11.2.11",
-    "@angular/core": "^11.2.11"
+    "@angular/animations": "^13.0.0",
+    "@angular/common": "^13.0.0",
+    "@angular/core": "^13.0.0",
+    "@angular/forms": "^13.0.0",
+    "@angular/material": "^13.0.0"
   },
   "dependencies": {
     "tslib": "^2.0.0"
   },
-  "main": "bundles/material-theme.umd.js",
-  "module": "fesm2015/material-theme.js",
-  "es2015": "fesm2015/material-theme.js",
-  "esm2015": "esm2015/material-theme.js",
-  "fesm2015": "fesm2015/material-theme.js",
-  "typings": "material-theme.d.ts",
-  "metadata": "material-theme.metadata.json",
+  "module": "fesm2015/celosnext-material-theme.mjs",
+  "es2020": "fesm2020/celosnext-material-theme.mjs",
+  "esm2020": "esm2020/celosnext-material-theme.mjs",
+  "fesm2020": "fesm2020/celosnext-material-theme.mjs",
+  "fesm2015": "fesm2015/celosnext-material-theme.mjs",
+  "typings": "celosnext-material-theme.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./celosnext-material-theme.d.ts",
+      "esm2020": "./esm2020/celosnext-material-theme.mjs",
+      "es2020": "./fesm2020/celosnext-material-theme.mjs",
+      "es2015": "./fesm2015/celosnext-material-theme.mjs",
+      "node": "./fesm2015/celosnext-material-theme.mjs",
+      "default": "./fesm2020/celosnext-material-theme.mjs"
+    }
+  },
   "sideEffects": false
 }

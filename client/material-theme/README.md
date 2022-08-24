@@ -1,4 +1,4 @@
-# DMG Mori Material Theme
+﻿# DMG Mori Material Theme
 
 Applies the DMG Mori Corporate Identity Design to Angular Material Components
 
@@ -10,13 +10,7 @@ This Repository also contains an example application which showcases all themed 
 
 ### Versioning
 
-**Current: 11.4.0**
-
-| Description     | Version |
-| --------------- | ------- |
-| Angular Version | 11      |
-| Release         | 4       |
-| Patch           | 0       |
+**Current: 11.8.2, 12.8.2, 13.8.2**
 
 ### Prerequisites
 
@@ -25,41 +19,46 @@ This Repository also contains an example application which showcases all themed 
 
 ### Features
 
-- [Layout](./docs/layout.md)
-- [Spacings](./docs/spacings.md)
++ [Layout](./docs/layout.md)
++ [Spacings](./docs/spacings.md)
 
 ### Themed Components
 
-- [Toggle Button and Toggle Button Group](./docs/toggle-buttons.md)
-- [Button](./docs/buttons.md)
-- [Card](./docs/cards.md)
-- [Checkbox](./docs/checkbox.md)
-- [Chips](./docs/chips.md)
-- [Datepicker](./docs/datepicker.md)
-- [Dialog](./docs/dialog.md)
-- [Input](./docs/inputs.md)
-- [Radio Button](./docs/radio-buttons.md)
-- [Select](./docs/select.md)
-- [Slide Toggle](./docs/slide-toggle.md)
-- [Snackbar](./docs/snackbar.md)
-- [Stepper](./docs/stepper.md)
-- [Table and Paginator](./docs/table.md)
-- [Tabs](./docs/tabs.md)
-- [Tree](./docs/tree.md)
++ [Toggle Button and Toggle Button Group](./docs/toggle-buttons.md)
++ [Button](./docs/buttons.md)
++ [Card](./docs/cards.md)
++ [Checkbox](./docs/checkbox.md)
++ [Chips](./docs/chips.md)
++ [Datepicker](./docs/datepicker.md)
++ [Dialog](./docs/dialog.md)
++ [Input](./docs/inputs.md)
++ [Radio Button](./docs/radio-buttons.md)
++ [Scrollbar](./docs/scrollbar.md)
++ [Select](./docs/select.md)
++ [Slide Toggle](./docs/slide-toggle.md)
++ [Snackbar](./docs/snackbar.md)
++ [Stepper](./docs/stepper.md)
++ [Table and Paginator](./docs/table.md)
++ [Tabs](./docs/tabs.md)
++ [Tree](./docs/tree.md)
+
+### New Components
+
++ [DMG Header](./docs/dmg-header.md)
 
 ## Dependencies
 
-| Dependency                        | Version |
-| --------------------------------- | ------- |
-| @angular/animations               | 11      |
-| @angular/cdk                      | 11      |
-| @angular/common                   | 11      |
-| @angular/compiler                 | 11      |
-| @angular/core                     | 11      |
-| @angular/forms                    | 11      |
-| @angular/material                 | 11      |
-| @angular/platform-browser         | 11      |
-| @angular/platform-browser-dynamic | 11      |
-| rxjs                              | 6.5     |
-| tslib                             | 2       |
-| zone.js                           | 0.11    |
+| Dependency                            | Version |
+|---------------------------------------|---------|
+| tslib                                 | 2       |
+
+## Peer Dependencies
+
+| Peer Dependency                       | lib major version 11  | 12 | 13  |
+|---------------------------------------|-----------------------|----|-----|
+| @angular/animations                   | 11                    | 12 | 13  |
+| @angular/common                       | 11                    | 12 | 13  |
+| @angular/compiler                     | 11                    | 12 | 13  |
+| @angular/core                         | 11                    | 12 | 13  |
+| @angular/forms                        | 11                    | 12 | 13  |
+| @angular/material                     | 11                    | 12 | 13  |

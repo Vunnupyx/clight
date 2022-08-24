@@ -48,7 +48,20 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+        <div [ngSwitch]="value">
+          <ng-container *ngSwitchCase="ScheduleMonth.JAN">{{ 'month.Jan' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.FEB">{{ 'month.Feb' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.MAR">{{ 'month.Mar' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.APR">{{ 'month.Apr' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.MAY">{{ 'month.May' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.JUN">{{ 'month.Jun' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.JUL">{{ 'month.Jul' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.AUG">{{ 'month.Aug' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.SEP">{{ 'month.Sep' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.OCT">{{ 'month.Oct' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.NOV">{{ 'month.Nov' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.DEC">{{ 'month.Dec' | translate }}</ng-container>
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column

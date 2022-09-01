@@ -4,6 +4,7 @@ import winston from 'winston';
 import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
+import SshService from '../SshService';
 
 type CounterDict = {
   [id: string]: number;
@@ -106,7 +107,7 @@ export class CounterManager {
   private counterStoragePath = '';
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
-  private schedulerCheckerInterval = 1000 * 10; //1000 * 60; // ms * sec => 1 min //TODO: MARKUS
+  private schedulerCheckerInterval = 1000 * 10; //1000 * 60; // ms * sec => 1 min
 
   /**
    * Initializes counter manages and tries to restore old counter states
@@ -253,7 +254,7 @@ export class CounterManager {
   /**
    * Check if timer is in range of this.schedulerCheckerInterval and start
    */
-  private checkTimers() {
+  private async checkTimers() {
     const logPrefix = `${this.constructor.name}::checkTimers`;
     winston.debug(`${logPrefix} looking for scheduled resets.`);
 
@@ -283,7 +284,8 @@ export class CounterManager {
           continue;
         }
 
-        const now = new Date();
+        const { stdout } = await SshService.sendCommand('date +%FT%T');
+        const now = new Date(<string>stdout);
         const nextScheduling = CounterManager.calcNextTrigger(entry, now);
 
         winston.debug(
@@ -355,7 +357,7 @@ export class CounterManager {
     scheduleData: ScheduleDescription,
     currentDate: Date
   ) {
-    winston.error(scheduleData);
+    const logPrefix = `${this.constructor.name}::calcWithDate`;
     const timeData = {
       year: currentDate.getFullYear(),
       month:
@@ -391,8 +393,8 @@ export class CounterManager {
     if (!(diff < 0)) {
       // increase every entries with one and check if new date is in future
       for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
-        // Ignore non 'Every' entries
-        if (scheduleData[entry] !== 'Every') continue;
+        // Ignore non 'Every' entries but there is no year entry
+        if (scheduleData[entry] !== 'Every' && entry !== 'year') continue;
         timeData[entry] += 1;
         dateFromScheduling = new Date(
           timeData.year,
@@ -410,6 +412,8 @@ export class CounterManager {
         }
         timeData[entry] -= 1;
       }
+      winston.error(`${logPrefix} no next date found for: ${scheduleData}`);
+      return null;
     }
     return dateFromScheduling;
   }

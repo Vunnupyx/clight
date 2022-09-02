@@ -102,6 +102,7 @@ async function logsGetHandler(
     fs.readdir(outPath, (err, files) => {
       if (err) {
         winston.error(`${logPrefix} error during read zip folder`);
+        return;
       }
 
       files

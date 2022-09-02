@@ -287,7 +287,13 @@ export class CounterManager {
         }
 
         const { stdout } = await SshService.sendCommand('date +%FT%T');
-        const now = new Date(<string>stdout);
+        winston.error(`MARKUS: ${stdout}`);
+        let now: Date;
+        if (typeof stdout === 'string') {
+          now = new Date(stdout);
+        } else {
+          now = new Date();
+        }
         const nextScheduling = CounterManager.calcNextTrigger(entry, now);
 
         winston.debug(

@@ -288,9 +288,11 @@ export class CounterManager {
 
         const { stdout } = await SshService.sendCommand('date +%FT%T');
         winston.error(`MARKUS: ${stdout}`);
+        winston.error(`MARKUS: type ${typeof stdout}`);
         let now: Date;
         if (typeof stdout === 'string') {
           now = new Date(stdout);
+          winston.error(now);
         } else {
           now = new Date();
         }

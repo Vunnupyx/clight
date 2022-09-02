@@ -116,7 +116,6 @@ export class CounterManager {
     private configManager: ConfigManager,
     private cache: DataPointCache
   ) {
-    winston.error(`Markus: CounterManager contructor auufgerufen`);
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       winston.warn(
         'Configuration folder for storing counter values not found! The counts are not persisted!'
@@ -207,7 +206,6 @@ export class CounterManager {
    */
   private checkMissedResets() {
     const logPrefix = `${this.constructor.name}::checkMissedResets`;
-    winston.error(`MARKUS `);
     winston.debug(`${logPrefix} started.`);
     const counterEntries = this.configManager.config.virtualDataPoints.filter(
       (vdp) => {
@@ -285,16 +283,12 @@ export class CounterManager {
           winston.debug(`${logPrefix} timer for ${counterId} already started.`);
           continue;
         }
-
         const { stdout } = await SshService.sendCommand('date +%FT%T');
-        winston.error(`MARKUS: ${stdout}`);
-        winston.error(`MARKUS: type ${typeof stdout}`);
         let now: Date;
         if (typeof stdout === 'string') {
-          now = new Date(stdout);
-          winston.error(now);
+          now = new Date(stdout.trim());
         } else {
-          now = new Date();
+          now = new Date(stdout.toString().trim());
         }
         const nextScheduling = CounterManager.calcNextTrigger(entry, now);
 

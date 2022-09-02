@@ -292,11 +292,12 @@ export class CounterManager {
         }
         const nextScheduling = CounterManager.calcNextTrigger(entry, now);
 
+        const timeDiff = now.getTime() - nextScheduling.getTime();
         winston.debug(
           `${logPrefix} local time for next reset found: ${nextScheduling.toLocaleString()}. Current local time is: ${now.toLocaleString()}`
         );
-        const timeDiff = now.getTime() - nextScheduling.getTime();
-
+        winston.debug(`Time difference to next trigger: ${timeDiff}`);
+        winston.debug(`Used Interval: ${this.schedulerChecker}`);
         //Check if diff is in range of interval. Only near resets are real scheduled via setTimeout queue
         if (timeDiff > this.schedulerCheckerInterval * -1) {
           winston.debug(

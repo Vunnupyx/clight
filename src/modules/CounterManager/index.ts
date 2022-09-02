@@ -107,7 +107,7 @@ export class CounterManager {
   private counterStoragePath = '';
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
-  private schedulerCheckerInterval = 1000 * 10; //1000 * 60; // ms * sec => 1 min
+  private schedulerCheckerInterval = 1000 * 60; //1000 * 60; // ms * sec => 1 min
 
   /**
    * Initializes counter manages and tries to restore old counter states
@@ -297,7 +297,7 @@ export class CounterManager {
           `${logPrefix} local time for next reset found: ${nextScheduling.toLocaleString()}. Current local time is: ${now.toLocaleString()}`
         );
         winston.debug(`Time difference to next trigger: ${timeDiff}`);
-        winston.debug(`Used Interval: ${this.schedulerChecker}`);
+        winston.debug(`Used Interval: ${this.schedulerCheckerInterval}`);
         //Check if diff is in range of interval. Only near resets are real scheduled via setTimeout queue
         if (timeDiff > this.schedulerCheckerInterval * -1) {
           winston.debug(

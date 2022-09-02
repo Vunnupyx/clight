@@ -116,6 +116,7 @@ export class CounterManager {
     private configManager: ConfigManager,
     private cache: DataPointCache
   ) {
+    winston.error(`Markus: CounterManager contructor auufgerufen`);
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       winston.warn(
         'Configuration folder for storing counter values not found! The counts are not persisted!'
@@ -206,6 +207,7 @@ export class CounterManager {
    */
   private checkMissedResets() {
     const logPrefix = `${this.constructor.name}::checkMissedResets`;
+    winston.error(`MARKUS `);
     winston.debug(`${logPrefix} started.`);
     const counterEntries = this.configManager.config.virtualDataPoints.filter(
       (vdp) => {

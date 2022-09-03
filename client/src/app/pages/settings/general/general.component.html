@@ -55,7 +55,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div>
-          <button mat-raised-button color="primary" (click)="restart()">
+          <button mat-raised-button color="secondary" (click)="restart()">
             {{ 'settings-general.RestartNow' | translate }}
           </button>
         </div>
@@ -67,7 +67,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div>
-          <button mat-raised-button color="primary" (click)="downloadLogs()">
+          <button mat-raised-button color="secondary" (click)="downloadLogs()">
             {{ 'settings-general.ExportLogs' | translate }}
           </button>
         </div>
@@ -93,7 +93,7 @@
           </p>
           <button
             mat-raised-button
-            color="primary"
+            color="secondary"
             [routerLink]="['/quick-start']"
           >
             {{ 'settings-general.OpenConfigurationWizard' | translate }}
@@ -112,7 +112,7 @@
           <div class="mb-10">
             <button
               mat-raised-button
-              color="primary"
+              color="secondary"
               (click)="download()"
               class="d-block mb-20"
             >
@@ -121,7 +121,7 @@
 
             <button
               mat-raised-button
-              color="primary"
+              color="secondary"
               class="d-block"
               (click)="fileInput.click()"
             >

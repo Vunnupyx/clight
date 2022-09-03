@@ -54,20 +54,20 @@ export class UpdateDialogComponent implements OnInit {
       console.error(err);
 
       let errorText = this.translate.instant(
-        'settings-general.UpdateFailedCheckNetworkConfig'
+        'system-information.UpdateFailedCheckNetworkConfig'
       );
       if (err instanceof HttpErrorResponse && err.error) {
         try {
           const { error, code } = JSON.parse(err.error);
           errorText = code
-            ? this.translate.instant(`settings-general.UpdateFailed-${code}`)
+            ? this.translate.instant(`system-information.UpdateFailed-${code}`)
             : error;
         } catch (e) {
           this.dialogRef.close({
             status: UpdateStatus.UnexpectedError
           });
         }
-      } else {
+      } else if (err?.error?.message) {
         errorText = err.error.message;
       }
       this.dialogRef.close({
@@ -83,7 +83,7 @@ export class UpdateDialogComponent implements OnInit {
     while (!(await this.checkVersionChanged(systemStartTime))) {
       if (Date.now() - started > UPDATE_TIMEOUT_MS) {
         throw new Error(
-          this.translate.instant('system-general.UpdateInstallFailed')
+          this.translate.instant('system-information.UpdateInstallFailed')
         );
       }
 

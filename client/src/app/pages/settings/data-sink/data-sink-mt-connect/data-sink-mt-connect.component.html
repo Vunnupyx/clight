@@ -200,7 +200,7 @@
 
     <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
       <div style="display: flex; width: 100%">
-        <button mat-raised-button type="button" class="btn-sm" style="margin-left: auto"
+        <button mat-raised-button type="button" class="btn-sm" color="secondary" style="margin-left: auto"
           (click)="goToMtConnectStream()" [disabled]="connection?.status !== DataSinkConnectionStatus.Connected" >
           {{ 'settings-data-sink.OpenMTConnectStream' | translate }}
         </button>

@@ -7,7 +7,11 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 import { HttpService } from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler, ObjectMap } from '../shared/utils';
-import { NetworkConfig } from '../models';
+import { NetworkConfig, NetworkType } from '../models';
+import {
+  fromISOStringIgnoreTimezone,
+  toISOStringIgnoreTimezone
+} from 'app/shared/utils/datetime';
 
 export class NetworkState {
   status!: Status;
@@ -66,8 +70,29 @@ export class NetworkService {
       state.status = Status.Loading;
     });
 
-    console.log(obj);
+    const verifiedObj = this._serializeNetworkConfig(obj);
 
+    try {
+      const response = await this.httpService.patch<any>(
+        `/networkconfig`,
+        verifiedObj
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.config = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  private _serializeNetworkConfig(
+    obj: ObjectMap<NetworkConfig>
+  ): ObjectMap<NetworkConfig> {
     // The backend should receive empty values for defaultGateway, dnsServer, ipAddr, netmask in case of useDhcp is enabled
     const verifiedObj = {};
     Object.keys(obj).forEach((key) => {
@@ -89,24 +114,13 @@ export class NetworkService {
       }
     });
 
-    console.log(verifiedObj);
+    const timeObj = { ...verifiedObj[NetworkType.TIME] };
+    timeObj.currentTime = toISOStringIgnoreTimezone(
+      new Date(timeObj.currentTime)
+    );
+    verifiedObj[NetworkType.TIME] = timeObj;
 
-    try {
-      const response = await this.httpService.patch<any>(
-        `/networkconfig`,
-        verifiedObj
-      );
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-        state.config = response;
-      });
-    } catch (err) {
-      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
-      errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Failed
-      }));
-    }
+    return verifiedObj;
   }
 
   private _emptyState() {

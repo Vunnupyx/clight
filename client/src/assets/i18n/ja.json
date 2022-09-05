@@ -327,6 +327,9 @@
     "LoadError": "マッピングの読み込みに失敗しました。時間をおいて再試行してください。",
     "BulkSuccess": "変更が適用されました。",
     "BulkError": "C変更が適用できません。再試行してください。",
+    "SourceDisabledTooltip": "",
+    "TargetDisabledTooltip": "",
+    "MappingDisabledTooltip": "",
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用"
   },
@@ -364,6 +367,8 @@
   },
   "system-information": {
     "SystemInformation": "システム情報",
+    "MaterialThemeVersion": "",
+    "SoftwareComponent": "",
     "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。"
   },
   "prompt": {

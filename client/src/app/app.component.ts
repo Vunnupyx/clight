@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalStorageService } from './shared';
 
+export const MaterialThemeVersion = '13.8.2';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

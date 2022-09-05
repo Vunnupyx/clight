@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import winston from 'winston';
+import moment from 'moment';
 import { ConfigManager } from '../../../../../ConfigManager';
 import { ITimeConfig } from '../../../../../ConfigManager/interfaces';
 import NetworkManagerCliController from '../../../../../NetworkManager';
 import { TimeManager } from '../../../../../NetworkManager/TimeManager';
+import SshService from '../../../../../SshService';
 
 let configManager: ConfigManager;
 
@@ -43,12 +45,29 @@ async function networkConfigGetHandler(
     time: cfgTime
   } = configManager.config.networkConfig;
 
+  let currentTime = moment().format('YYYY-MM-DDThh:mm:ss'); // may be in wrong timezone, because docker doesn't now it
+
+  try {
+    const timeRes = await SshService.sendCommand('date +%FT%T');
+
+    if (timeRes.stderr === '') {
+      currentTime = (timeRes.stdout as string).trim();
+    }
+  } catch (err) {
+    winston.warn(
+      `${logPrefix} failed to read current date. Returning docker time instead (always UTC). Error: ${JSON.stringify(
+        err
+      )}`
+    );
+  }
+
   const reachable = await TimeManager.testNTPServer(cfgTime.ntpHost)
     .then(() => true)
     .catch(() => false);
   const time = {
     ...cfgTime,
-    reachable
+    reachable,
+    currentTime
   };
   const merged = {
     x1: {
@@ -104,7 +123,9 @@ async function networkConfigPatchHandler(
       );
     } else {
       const allReadyConfigured =
-        timeConfig.ntpHost === configManager.config.networkConfig.time?.ntpHost;
+        timeConfig.ntpHost ===
+          configManager.config.networkConfig.time?.ntpHost &&
+        timeConfig.useNtp === configManager.config.networkConfig.time?.useNtp;
       if (allReadyConfigured)
         winston.debug(`${logPrefix} received ntp-config again, ignore data.`);
       timePromise = allReadyConfigured

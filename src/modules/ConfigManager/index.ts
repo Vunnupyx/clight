@@ -464,23 +464,24 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Filters mapping array depends on enabled dataSources & dataSinks.
    */
   public getFilteredMapping() {
-    const enabledDataPointsOfDataSources = this.config.dataSources
-      .filter((x) => x.enabled)
-      .map((x) => x.dataPoints.map((y) => y.id))
-      .flat();
+    const dataSourceDataPoints: string[] = [];
+    this.config.dataSources.forEach((dataSource) =>
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp.id))
+    );
 
-    const enabledDataPointsOfDataSinks = this.config.dataSinks
-      .filter((x) => x.enabled)
-      .map((x) => x.dataPoints.map((y) => y.id))
-      .flat();
+    const dataSinkDataPoints: string[] = [];
+    this.config.dataSinks.forEach((dataSink) =>
+      dataSink.dataPoints.forEach((dp) => dataSinkDataPoints.push(dp.id))
+    );
 
-    const vdps = this.config.virtualDataPoints.map((x) => x.id);
+    const vdps: string[] = this.config.virtualDataPoints.map((vdp) => vdp.id);
 
     return this.config.mapping.filter((m) => {
+      // Remove mappings if the source or target data point doesn't exist.
+      // TODO: That shouldn't happen at all. Modify "delete" handlers of sinks and sources to remove mappings if a removed data point was mapped.
       const sourceExists =
-        enabledDataPointsOfDataSources.includes(m.source) ||
-        vdps.includes(m.source);
-      const targetExists = enabledDataPointsOfDataSinks.includes(m.target);
+        dataSourceDataPoints.includes(m.source) || vdps.includes(m.source);
+      const targetExists = dataSinkDataPoints.includes(m.target);
 
       return sourceExists && targetExists;
     });

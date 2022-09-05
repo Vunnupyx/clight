@@ -19,11 +19,11 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     // String Test
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xA, // Column : WORD := W#16#A;
+    column: 0xa, // Column : WORD := W#16#A;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x3B, // BlockType : BYTE := B#16#3B; // "Module" in S7Toolbox
+    blockType: 0x3b, // BlockType : BYTE := B#16#3B; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xF, // DataType : BYTE := B#16#F;
+    dataType: 0xf, // DataType : BYTE := B#16#F;
     byteLength: 0x8 // Length : BYTE := B#16#8;
   },
   '/Channel/State/progStatus': {
@@ -31,9 +31,9 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     // String Test
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xD, // Column : WORD := W#16#D;
+    column: 0xd, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7F, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7f, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
     dataType: 0x4, // DataType : BYTE := B#16#4;
     byteLength: 0x2 // Length : BYTE := B#16#2;
@@ -44,7 +44,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
     column: 0x1, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7D, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7d, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
     dataType: 0x13, // DataType : BYTE := B#16#4;
     byteLength: 0x80 // Length : BYTE := B#16#2;
@@ -54,9 +54,9 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     // /Channel/ProgramInfo/workPNameLong[1]
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xC, // Column : WORD := W#16#D;
+    column: 0xc, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7D, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7d, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
     dataType: 0x13, // DataType : BYTE := B#16#4;
     byteLength: 0x80 // Length : BYTE := B#16#2;
@@ -67,20 +67,20 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
     column: 0x10, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7D, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7d, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xF, // DataType : BYTE := B#16#4;
-    byteLength: 0xA0 // Length : BYTE := B#16#2;
+    dataType: 0xf, // DataType : BYTE := B#16#4;
+    byteLength: 0xa0 // Length : BYTE := B#16#2;
   },
   '/Channel/State/specParts': {
     // /Channel/State/specParts[1]
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x7A, // Column : WORD := W#16#D;
+    column: 0x7a, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7F, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7f, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xF, // DataType : BYTE := B#16#4;
+    dataType: 0xf, // DataType : BYTE := B#16#4;
     byteLength: 0x8 // Length : BYTE := B#16#2;
   },
   '/Channel/Spindle/turnState': {
@@ -97,7 +97,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
   '/Nck/Configuration/anLanguageOnHmi': {
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-    column: 0x4E, // Column : WORD := W#16#D;
+    column: 0x4e, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
     blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
@@ -117,7 +117,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
   '/Nck/Configuration/nckType': {
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-    column: 0x1F, // Column : WORD := W#16#D;
+    column: 0x1f, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
     blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
@@ -131,15 +131,15 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     line: 0x1, // Line : WORD := W#16#1;
     blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xF, // DataType : BYTE := B#16#4;
+    dataType: 0xf, // DataType : BYTE := B#16#4;
     byteLength: 0x8 // Length : BYTE := B#16#2;
   },
   '/Channel/State/chanStatus': {
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xB, // Column : WORD := W#16#D;
+    column: 0xb, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7F, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7f, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
     dataType: 0x4, // DataType : BYTE := B#16#4;
     byteLength: 0x2 // Length : BYTE := B#16#2;
@@ -147,9 +147,9 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
   '/Channel/ProgramModification/optStopActive': {
     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xA, // Column : WORD := W#16#D;
+    column: 0xa, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7E, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7e, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
     dataType: 0x4, // DataType : BYTE := B#16#4;
     byteLength: 0x2 // Length : BYTE := B#16#2;
@@ -159,7 +159,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
     column: 0x10, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7E, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7e, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
     dataType: 0x4, // DataType : BYTE := B#16#4;
     byteLength: 0x2 // Length : BYTE := B#16#2;
@@ -169,7 +169,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
     column: 0x9, // Column : WORD := W#16#D;
     line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7E, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
+    blockType: 0x7e, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
     dataType: 0x4, // DataType : BYTE := B#16#4;
     byteLength: 0x2 // Length : BYTE := B#16#2;
@@ -324,7 +324,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     line: 0x1,
     blockType: 0x7f,
     numOfLine: 0x1,
-    dataType: 0x13,
+    dataType: 0x4,
     byteLength: 0x2
   },
   '/Nck/Configuration/maxnumAlarms': {

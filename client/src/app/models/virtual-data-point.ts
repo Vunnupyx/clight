@@ -24,6 +24,7 @@ export class VirtualDataPoint {
   thresholds?: ObjectMap<number>;
   enumeration?: VirtualDataPointEnumeration;
   comparativeValue?: string;
+  enabled?: boolean;
 }
 
 export interface VirtualDataPointEnumeration {

@@ -1,7 +1,21 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DataPointLiveData, DataSourceProtocol, SourceDataPoint, VirtualDataPoint, VirtualDataPointEnumeration, VirtualDataPointEnumerationItem } from 'app/models';
-import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA
+} from '@angular/material/dialog';
+import {
+  DataPointLiveData,
+  DataSourceProtocol,
+  SourceDataPoint,
+  VirtualDataPoint,
+  VirtualDataPointEnumeration,
+  VirtualDataPointEnumerationItem
+} from 'app/models';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel
+} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { SourceDataPointService, VirtualDataPointService } from 'app/services';
 import { Subscription } from 'rxjs';
@@ -17,12 +31,12 @@ export interface SetEnumerationModalData {
 @Component({
   selector: 'app-set-enumeration-modal',
   templateUrl: './set-enumeration-modal.component.html',
-  styleUrls: ['./set-enumeration-modal.component.scss'],
+  styleUrls: ['./set-enumeration-modal.component.scss']
 })
 export class SetEnumerationModalComponent implements OnInit, OnDestroy {
   sourceOptions?: SourceDataPoint[];
   liveData?: ObjectMap<DataPointLiveData>;
-  
+
   sub = new Subscription();
   liveDataSub!: Subscription;
 
@@ -32,30 +46,42 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<SetEnumerationModalComponent, SetEnumerationModalData>,
+    private dialogRef: MatDialogRef<
+      SetEnumerationModalComponent,
+      SetEnumerationModalData
+    >,
     @Inject(MAT_DIALOG_DATA) public data: SetEnumerationModalData,
     private sourceDataPointService: SourceDataPointService,
-    private virtualDataPointService: VirtualDataPointService,
+    private virtualDataPointService: VirtualDataPointService
   ) {}
 
   ngOnInit() {
-    
     this.sub.add(
       this.sourceDataPointService.dataPoints
         .pipe(withLatestFrom(this.virtualDataPointService.dataPoints))
-        .subscribe(([sourceDataPoints, virtualDataPoints]) => this.onDataPoints(sourceDataPoints, virtualDataPoints))
+        .subscribe(([sourceDataPoints, virtualDataPoints]) =>
+          this.onDataPoints(sourceDataPoints, virtualDataPoints)
+        )
     );
-    this.sub.add(this.sourceDataPointService.dataPointsLivedata.subscribe(x => this.onLiveData(x)));
-  
-    this.liveDataSub = this.sourceDataPointService
-      .setLivedataTimer(
-        this.data.protocol!,
-        'true'
+    this.sub.add(
+      this.sourceDataPointService.dataPointsLivedata.subscribe((x) =>
+        this.onLiveData(x)
       )
+    );
+    this.sub.add(
+      this.virtualDataPointService.dataPointsLivedata.subscribe((x) =>
+        this.onLiveData(x)
+      )
+    );
+
+    this.liveDataSub = this.sourceDataPointService
+      .setLivedataTimer(this.data.protocol!, 'true')
       .subscribe();
 
     this.defaultValue = this.data.enumeration.defaultValue!;
-    this.rows = this.data.enumeration.items;
+    this.rows = this.data.enumeration.items.sort(
+      (a, b) => a.priority - b.priority
+    );
   }
 
   onDelete(index: number) {
@@ -79,8 +105,7 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
       this.rows = [];
     }
 
-    const newSchedule = {
-    } as VirtualDataPointEnumerationItem;
+    const newSchedule = {} as VirtualDataPointEnumerationItem;
 
     this.rows = this.rows.concat([newSchedule]);
   }
@@ -89,15 +114,15 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
     this.dialogRef.close({
       enumeration: {
         defaultValue: this.defaultValue,
-        items: this.rows.map((row, index) => ({...row, priority: index})),
-      },
+        items: this.rows.map((row, index) => ({ ...row, priority: index }))
+      }
     });
   }
 
   onReorder(event) {
     moveItemInArray(this.rows, event.previousIndex, event.currentIndex);
   }
-  
+
   onCancel() {
     this.dialogRef.close();
   }
@@ -121,7 +146,10 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
     this.liveDataSub.unsubscribe();
   }
 
-  private onDataPoints(sourceDataPoints: SourceDataPoint[], virtualDataPoints: VirtualDataPoint[]) {
+  private onDataPoints(
+    sourceDataPoints: SourceDataPoint[],
+    virtualDataPoints: VirtualDataPoint[]
+  ) {
     if (!sourceDataPoints?.length) {
       return;
     }
@@ -129,17 +157,22 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
       ...(sourceDataPoints || []),
       ...(virtualDataPoints || [])
     ];
-    
+
     this.sourceOptions = this.data.sources
-        ?.map(sourceId => dictionaries.find(obj => obj.id === sourceId) as SourceDataPoint)
-        .filter(Boolean);
+      ?.map(
+        (sourceId) =>
+          dictionaries.find((obj) => obj.id === sourceId) as SourceDataPoint
+      )
+      .filter(Boolean);
   }
 
   private onLiveData(obj: ObjectMap<DataPointLiveData>) {
     if (!obj) {
       return;
     }
-    this.liveData = obj;
+    this.liveData = {
+      ...this.liveData,
+      ...obj
+    };
   }
-
 }

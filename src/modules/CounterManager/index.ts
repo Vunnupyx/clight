@@ -491,7 +491,7 @@ export class CounterManager {
         // increase every entries with one and check if new date is in future
         for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
           // Ignore non 'Every' entries
-          if (scheduleData[entry] !== 'Every') continue;
+          if (scheduleData[entry] !== 'Every' && entry !== 'year') continue;
           timeData[entry] += 1;
           dateFromScheduling = new Date(
             timeData.year,

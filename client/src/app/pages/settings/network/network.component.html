@@ -442,7 +442,7 @@
                     name="currentTime"
                     matInput
                     [ngxMatDatetimePicker]="picker"
-                    [(ngModel)]="config[NetworkType.TIME].currentTime"
+                    [(ngModel)]="this.config[NetworkType.TIME].currentTime"
                     required
                   />
                   <mat-datepicker-toggle
@@ -498,4 +498,8 @@
       </ng-container>
     </div>
   </div>
+</div>
+
+<div class="loading-block" *ngIf="showLoading">
+  <mat-spinner></mat-spinner>
 </div>

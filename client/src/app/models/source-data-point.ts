@@ -10,4 +10,5 @@ export class SourceDataPoint {
   name!: string;
   readFrequency!: number;
   type?: SourceDataPointType;
+  enabled?: boolean;
 }

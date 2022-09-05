@@ -78,6 +78,7 @@ async function logsGetHandler(
   response: Response
 ): Promise<void> {
   const logPrefix = `Backup::logsGetHandler`;
+  winston.debug(`${logPrefix} incoming log download request`);
   const date = new Date();
   const dateString = `${date.getFullYear()}-${
     date.getMonth() + 1
@@ -94,19 +95,40 @@ async function logsGetHandler(
     ' '
   )}`;
 
+  /**
+   * Deletes all log archives inside the log folder
+   */
   const saveDelete = () => {
-    fs.unlink(`${outPath}/${outFileName}`, (err) => {
+    fs.readdir(outPath, (err, files) => {
       if (err) {
-        winston.error(
-          `${logPrefix} error during cleanup zip file. Retry after delay of 5sec`
-        );
-        setTimeout(saveDelete, 5 * 1000);
+        winston.error(`${logPrefix} error during read zip folder`);
         return;
       }
-      winston.info(`${logPrefix} cleanup zip file successfully.`);
+
+      files
+        .filter((filesName) => filesName.startsWith('DM'))
+        .forEach((filename) => {
+          winston.debug(
+            `${logPrefix} deleting zip file ${outPath}/${filename}...`
+          );
+          fs.unlink(`${outPath}/${filename}`, (err) => {
+            if (err) {
+              winston.error(
+                `${logPrefix} error during cleanup zip file ${outPath}/${filename}. ${JSON.stringify(
+                  err
+                )}`
+              );
+              return;
+            }
+            winston.info(
+              `${logPrefix} cleanup zip file ${outPath}/${filename} successfully.`
+            );
+          });
+        });
     });
   };
 
+  winston.debug(`${logPrefix} archiving log files`);
   try {
     const { stderr } = await execPromise(zipCommand);
     if (stderr !== '') {
@@ -118,6 +140,7 @@ async function logsGetHandler(
     saveDelete();
     return;
   }
+  winston.debug(`${logPrefix} writing response...`);
   response.writeHead(200, {
     'Content-Type': 'application/octet-stream',
     'Content-Disposition': `attachment; filename=${outFileName}`
@@ -133,6 +156,7 @@ async function logsGetHandler(
   }
   stream.on('end', () => {
     saveDelete();
+    winston.debug(`${logPrefix} log download finished successfully.`);
   });
   stream.pipe(response);
 }

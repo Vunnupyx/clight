@@ -107,7 +107,7 @@ export class CounterManager {
   private counterStoragePath = '';
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
-  private schedulerCheckerInterval = 1000 * 60; //1000 * 60; // ms * sec => 1 min
+  private schedulerCheckerInterval = 1000 * 60 * 5; // 5Min
 
   /**
    * Initializes counter manages and tries to restore old counter states

@@ -2,6 +2,7 @@ import { NCVarSelectorAddress } from './interfaces';
 
 /**
  * INFO: Addresses are defined in MDClite_signallist_840D_SL_4_5.awl from ticket.
+ * @see ... developer-docs/MDClite_signallist_840D_SL_4_5.awl
  * @see https://jira.app.dmgmori.com/browse/DIGMDCLGHT-11?jql=project%20%3D%20DIGMDCLGHT%20AND%20NOT%20attachments%20is%20EMPTY
  */
 export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {

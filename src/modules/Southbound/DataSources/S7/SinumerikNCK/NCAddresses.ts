@@ -415,6 +415,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x7,
     byteLength: 0x4
   },
+  // only for long time memory leak testing
   '/fake/address/1': {
     // to test invalid addresses
     syntaxId: 0x82,

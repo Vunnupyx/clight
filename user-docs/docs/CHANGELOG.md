@@ -4,6 +4,14 @@ title: Changelog
 
 # Changelog
 
+## [2.1.3]
+
+### Fixed
+
+- [DIGMDCLGHT-130](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-130) An misconfigured nck data point crashed the MTconnect agent, due to an invalid character
+- [DIGMDCLGHT-131](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-131) DNS lookup errors when testing ntp servers caused the runtime to crash
+- [DIGMDCLGHT-122](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-122) Minor issue where pressing "ESC" inside the menu caused the menu to disappear forever
+
 ## [2.1.2]
 
 ### Fixed

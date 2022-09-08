@@ -102,7 +102,6 @@
           <mat-select 
             [(ngModel)]="schedule.seconds"
             [ngModelOptions]="{standalone: true}">
-            <mat-option [value]="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</mat-option>
             <mat-option *ngFor="let _ of [].constructor(60); let index = index" [value]="index">{{ index | number:'2.0' }}</mat-option>
           </mat-select>
         </mat-form-field>

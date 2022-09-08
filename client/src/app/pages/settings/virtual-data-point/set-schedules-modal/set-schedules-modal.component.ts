@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SelectionType } from '@swimlane/ngx-datatable';
-import { ScheduleMonth, VirtualDataPointSchedule } from 'app/models';
+import { ScheduleEvery, ScheduleMonth, VirtualDataPointSchedule } from 'app/models';
 import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { EditScheduleModalComponent, EditScheduleModalData } from '../edit-schedule-modal/edit-schedule-modal.component';
 
@@ -17,6 +17,7 @@ export interface SetSchedulesModalData {
 export class SetSchedulesModalComponent implements OnInit {
   SelectionType = SelectionType;
   ScheduleMonth = ScheduleMonth;
+  ScheduleEvery: ScheduleEvery = 'Every';
 
   rows: VirtualDataPointSchedule[] = [];
   unsavedRow?: VirtualDataPointSchedule;

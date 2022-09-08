@@ -35,7 +35,12 @@
         let-row="row"
       >
         <div *ngIf="row.date" class="text-ellipsis" [title]="value">{{ row.date }}th</div>
-        <div *ngIf="row.day" class="text-ellipsis" [title]="value">{{ row.day }}</div>
+        <div *ngIf="row.day" class="text-ellipsis" [title]="value">
+          <ng-container [ngSwitch]="value">
+            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ row.day }}</ng-container>
+          </ng-container>
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -61,6 +66,7 @@
           <ng-container *ngSwitchCase="ScheduleMonth.OCT">{{ 'month.Oct' | translate }}</ng-container>
           <ng-container *ngSwitchCase="ScheduleMonth.NOV">{{ 'month.Nov' | translate }}</ng-container>
           <ng-container *ngSwitchCase="ScheduleMonth.DEC">{{ 'month.Dec' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
         </div>
       </ng-template>
     </ngx-datatable-column>
@@ -74,7 +80,12 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+        <div class="text-ellipsis" [title]="value">
+          <ng-container [ngSwitch]="value">
+            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ value }}</ng-container>
+          </ng-container>
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -87,7 +98,12 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+        <div class="text-ellipsis" [title]="value">
+          <ng-container [ngSwitch]="value">
+            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ value }}</ng-container>
+          </ng-container>
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column

@@ -1,0 +1,167 @@
+<h1 mat-dialog-title>
+  {{ 'settings-virtual-data-point.SetSchedules' | translate }}
+</h1>
+
+<div mat-dialog-content>
+  <ngx-datatable
+    [headerHeight]="50"
+    rowHeight="auto"
+    [rows]="rows"
+    class="overflow-auto select-type-table"
+    [selectionType]="SelectionType.single"
+    (select)="onEdit($event)"
+  >
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Name' | translate"
+        prop="name"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.DayDate' | translate"
+        prop="day"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div *ngIf="row.date" class="text-ellipsis" [title]="value">{{ row.date }}th</div>
+        <div *ngIf="row.day" class="text-ellipsis" [title]="value">
+          <ng-container [ngSwitch]="value">
+            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ row.day }}</ng-container>
+          </ng-container>
+        </div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Month' | translate"
+        prop="month"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div [ngSwitch]="value">
+          <ng-container *ngSwitchCase="ScheduleMonth.JAN">{{ 'month.Jan' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.FEB">{{ 'month.Feb' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.MAR">{{ 'month.Mar' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.APR">{{ 'month.Apr' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.MAY">{{ 'month.May' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.JUN">{{ 'month.Jun' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.JUL">{{ 'month.Jul' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.AUG">{{ 'month.Aug' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.SEP">{{ 'month.Sep' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.OCT">{{ 'month.Oct' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.NOV">{{ 'month.Nov' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.DEC">{{ 'month.Dec' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+        </div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Hour' | translate"
+        prop="hours"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">
+          <ng-container [ngSwitch]="value">
+            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ value }}</ng-container>
+          </ng-container>
+        </div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Minutes' | translate"
+        prop="minutes"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">
+          <ng-container [ngSwitch]="value">
+            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ value }}</ng-container>
+          </ng-container>
+        </div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Seconds' | translate"
+        prop="seconds"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <div class="text-ellipsis" [title]="value">{{ value }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column
+        [name]="'settings-virtual-data-point.Actions' | translate"
+        cellClass="button-cell"
+        [sortable]="false"
+      >
+      <ng-template
+        ngx-datatable-cell-template
+        let-rowIndex="rowIndex"
+        let-value="value"
+        let-row="row"
+      >
+        <mat-button-toggle-group [disabled]="">
+          <mat-button-toggle
+            [matTooltip]="'settings-virtual-data-point.Delete' | translate"
+            matTooltipPosition="above"
+            (click)="onDelete(rowIndex); $event.stopPropagation()"
+            ><mat-icon>delete</mat-icon>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+  <button
+    type="button"
+    mat-mini-fab
+    color="primary"
+    class="wh-32 border-round mat-elevation-z0"
+    (click)="onAdd()"
+    [matTooltip]="
+      'settings-virtual-data-point.AddSchedule' | translate
+    "
+    matTooltipPosition="above"
+    [disabled]="!canAdd()"
+  >
+    <mat-icon style="margin-top: -10px">add</mat-icon>
+  </button>
+</div>
+
+<div mat-dialog-actions class="justify-content-end">
+  <button type="button" mat-raised-button color="secondary" (click)="onCancel()">
+    {{ 'settings-virtual-data-point.Cancel' | translate }}
+  </button>
+  <button type="submit" mat-raised-button color="primary" (click)="onSave()">
+    {{ 'settings-virtual-data-point.Save' | translate }}
+  </button>
+</div>

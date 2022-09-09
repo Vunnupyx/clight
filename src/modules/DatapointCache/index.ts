@@ -100,6 +100,29 @@ export class DataPointCache {
   }
 
   /**
+   * Reset a specific data point to a give value.
+   *
+   * @param id identifier of the source data point
+   * @param newValue new value of the data point
+   */
+  public resetValue(id: string, newValue = 0): void {
+    if (this.dataPoints[id]) {
+      const event: IDataSourceMeasurementEvent = {
+        measurement: {
+          id,
+          name: 'reset',
+          value: newValue
+        },
+        dataSource: {
+          name: 'virtual',
+          protocol: 'virtual'
+        }
+      };
+      this.update(event);
+    }
+  }
+
+  /**
    * Clears all data points
    */
   public clearAll(): void {

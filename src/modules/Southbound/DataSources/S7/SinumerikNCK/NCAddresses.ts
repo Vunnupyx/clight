@@ -1,192 +1,209 @@
 import { NCVarSelectorAddress } from './interfaces';
 
+/**
+ * INFO: Addresses are defined in MDClite_signallist_840D_SL_4_5.awl from ticket.
+ * @see ... developer-docs/MDClite_signallist_840D_SL_4_5.awl
+ * @see https://jira.app.dmgmori.com/browse/DIGMDCLGHT-11?jql=project%20%3D%20DIGMDCLGHT%20AND%20NOT%20attachments%20is%20EMPTY
+ */
 export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
   '/Channel/ProgramPointer/progName': {
+    /** @see C1_SPARP_progName1_3 */
     // /Channel/ProgramPointer/progName[1,1]
-    // String Test
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x5, // Column : WORD := W#16#5;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7a, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x13, // DataType : BYTE := B#16#13;
-    byteLength: 0x20 // Length : BYTE := B#16#20;
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x3,
+    line: 0x1,
+    blockType: 0x7d,
+    numOfLine: 0x1,
+    dataType: 0x13,
+    byteLength: 0x20
   },
-  // TODO: WHAT`S ABOUT THE LINE INDEX?
   '/Channel/ChannelDiagnose/cuttingTime': {
+    /** @see C1_DIAGN_cuttingTime1_10 */
     // /Channel/ChannelDiagnose/cuttingTime'[1,1]
-    // String Test
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xa, // Column : WORD := W#16#A;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x3b, // BlockType : BYTE := B#16#3B; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xf, // DataType : BYTE := B#16#F;
-    byteLength: 0x8 // Length : BYTE := B#16#8;
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0xa,
+    line: 0x1,
+    blockType: 0x3b,
+    numOfLine: 0x1,
+    dataType: 0xf,
+    byteLength: 0x8
   },
   '/Channel/State/progStatus': {
+    /** @see  C1_S_progStatus_13 */
     // /Channel/State/progStatus[1]
-    // String Test
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xd, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7f, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0xd,
+    line: 0x1,
+    blockType: 0x7f,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
   },
   '/Channel/ProgramInfo/msg': {
+    /** @see C1_SPARP_msg1_1 */
     // /Channel/ProgramInfo/msg[1]
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x1, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7d, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x13, // DataType : BYTE := B#16#4;
-    byteLength: 0x80 // Length : BYTE := B#16#2;
-  },
-
-  '/Channel/ProgramInfo/workPNameLong': {
-    // /Channel/ProgramInfo/workPNameLong[1]
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xc, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7d, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x13, // DataType : BYTE := B#16#4;
-    byteLength: 0x80 // Length : BYTE := B#16#2;
-  },
-  '/Channel/ProgramInfo/workPandProgName': {
-    // /Channel/ProgramInfo/workPandProgName[1,1]
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x10, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7d, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xf, // DataType : BYTE := B#16#4;
-    byteLength: 0xa0 // Length : BYTE := B#16#2;
-  },
-  '/Channel/State/specParts': {
-    // /Channel/State/specParts[1]
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x7a, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7f, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xf, // DataType : BYTE := B#16#4;
-    byteLength: 0x8 // Length : BYTE := B#16#2;
-  },
-  '/Channel/Spindle/turnState': {
-    // /Channel/Spindle/turnState[1,1]
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x9, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x72, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Nck/Configuration/anLanguageOnHmi': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-    column: 0x4e, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Nck/Configuration/basicLengthUnit ': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-    column: 0x2, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Nck/Configuration/nckType': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-    column: 0x1f, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Nck/Configuration/nckVersion': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-    column: 0x20, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x10, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xf, // DataType : BYTE := B#16#4;
-    byteLength: 0x8 // Length : BYTE := B#16#2;
-  },
-  '/Channel/State/chanStatus': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xb, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7f, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Channel/ProgramModification/optStopActive': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0xa, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7e, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Channel/ProgramModification/progTestActive': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x10, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7e, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Channel/ProgramModification/trialRunActive': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x9, // Column : WORD := W#16#D;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7e, // BlockType : BYTE := B#16#7F; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0x4, // DataType : BYTE := B#16#4;
-    byteLength: 0x2 // Length : BYTE := B#16#2;
-  },
-  '/Nck/MachineAxis/feedRateOvr': {
-    // /Nck/MachineAxis/feedRateOvr[1]
-    // REAL / DOUBLE Test
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x1,
     line: 0x1,
-    blockType: 0x71,
+    blockType: 0x7d,
+    numOfLine: 0x1,
+    dataType: 0x13,
+    byteLength: 0x80
+  },
+  '/Channel/ProgramInfo/workPNameLong': {
+    /** @see C1_workPNameLong_12 */
+    // /Channel/ProgramInfo/workPNameLong[1]
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0xc,
+    line: 0x1,
+    blockType: 0x7d,
+    numOfLine: 0x1,
+    dataType: 0x13,
+    byteLength: 0x80
+  },
+  '/Channel/ProgramInfo/workPandProgName': {
+    /** @see C1_workPandProgName1_16 */
+    // /Channel/ProgramInfo/workPandProgName[1,1]
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x10,
+    line: 0x1,
+    blockType: 0x7d,
+    numOfLine: 0x1,
+    dataType: 0x13,
+    byteLength: 0xa0
+  },
+  '/Channel/State/specParts': {
+    /** @see C1_S_specParts_122 */
+    // /Channel/State/specParts[1]
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x7a,
+    line: 0x1,
+    blockType: 0x7f,
+    numOfLine: 0x1,
+    dataType: 0xf,
+    byteLength: 0x8
+  },
+  '/Channel/Spindle/turnState': {
+    /** @see C1_SSP_turnState1_9 */
+    // /Channel/Spindle/turnState[1,1]
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x9,
+    line: 0x1,
+    blockType: 0x72,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Nck/Configuration/anLanguageOnHmi': {
+    /** @see N_Y_anLanguageOnHmi1_78 */
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x4e,
+    line: 0x1,
+    blockType: 0x10,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Nck/Configuration/basicLengthUnit ': {
+    /** @see N_Y_basicLengthUnit_2 */
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x2,
+    line: 0x1,
+    blockType: 0x10,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Nck/Configuration/nckType': {
+    /** @see N_Y_nckType_31 */
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x1f,
+    line: 0x1,
+    blockType: 0x10,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Nck/Configuration/nckVersion': {
+    /** @see  N_Y_nckVersion_32 */
+    syntaxId: 0x82,
+    areaUnit: 0x1,
+    column: 0x20,
+    line: 0x1,
+    blockType: 0x10,
+    numOfLine: 0x1,
+    dataType: 0xf,
+    byteLength: 0x8
+  },
+  '/Channel/State/chanStatus': {
+    /** @see C1_S_chanStatus_11 */
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0xb,
+    line: 0x1,
+    blockType: 0x7f,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Channel/ProgramModification/optStopActive': {
+    /** @see C1_SINF_optStopActive_10 */
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0xa,
+    line: 0x1,
+    blockType: 0x7e,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Channel/ProgramModification/progTestActive': {
+    /** @see  C1_progTestActive_16 */
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x10,
+    line: 0x1,
+    blockType: 0x7e,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Channel/ProgramModification/trialRunActive': {
+    /** @see  C1_SINF_trialRunActive_9 */
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x9,
+    line: 0x1,
+    blockType: 0x7e,
+    numOfLine: 0x1,
+    dataType: 0x4,
+    byteLength: 0x2
+  },
+  '/Nck/MachineAxis/feedRateOvr': {
+    /** @see  C1_S_rapFeedRateOvr_4 */
+    // /Nck/MachineAxis/feedRateOvr[1]
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x4,
+    line: 0x1,
+    blockType: 0x7f,
     numOfLine: 0x1,
     dataType: 0xf,
     byteLength: 0x8
   },
   '/Channel/State/actProgNetTime': {
+    /** @see C1_S_actProgNetTime1_297 */
     // /Channel/State/actProgNetTime[u1]
     syntaxId: 0x82,
     areaUnit: 0x41,
@@ -198,6 +215,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x8
   },
   '/Bag/State/OpMode': {
+    /** @see  B1_S_opMode_3 */
     syntaxId: 0x82,
     areaUnit: 0x21,
     column: 0x3,
@@ -208,6 +226,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x2
   },
   '/Channel/ProgramModification/singleBlockActive': {
+    /** @see  C1_singleBlockActive_12 */
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0xc,
@@ -218,6 +237,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x2
   },
   '/Channel/Programinfo/selectedWorkPProg': {
+    /** @see  C1_selectedWorkPProg1_35 */
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x23,
@@ -228,6 +248,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0xa0
   },
   '/Channel/State/feedRateIpoOvr': {
+    /** @see C1_S_feedRateIpoOvr_3 */
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x3,
@@ -235,8 +256,9 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     blockType: 0x7f,
     numOfLine: 0x1,
     dataType: 0xf,
-    byteLength: 0xa8
+    byteLength: 0x8
   },
+  // TODO: NOT FOUND in FILE
   '/Channel/Configuration/numSpindles': {
     syntaxId: 0x82,
     areaUnit: 0x41,
@@ -247,6 +269,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x4,
     byteLength: 0xa2
   },
+  // TODO: NOT FOUND in FILE
   '/Channel/Spindle/SpindleType': {
     syntaxId: 0x82,
     areaUnit: 0x41,
@@ -258,6 +281,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x2
   },
   '/Channel/Spindle/speedOvr': {
+    /** @see  C1_SSP_speedOvr1_4 */
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x4,
@@ -268,6 +292,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x8
   },
   '/Channel/State/rapFeedRateOvr': {
+    /** @see  C1_S_rapFeedRateOvr_4 */
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x4,
@@ -278,6 +303,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x8
   },
   '/Channel/State/totalParts': {
+    /** @see C1_S_totalParts_120 */
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x78,
@@ -288,26 +314,29 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x8
   },
   '/Channel/State/reqParts': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x77, // Column : WORD := W#16#5;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xf, // DataType : BYTE := B#16#13;
-    byteLength: 0x8 // Length : BYTE := B#16#20;
+    /** @see C1_S_reqParts_119 */
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x77,
+    line: 0x1,
+    blockType: 0x7f,
+    numOfLine: 0x1,
+    dataType: 0xf,
+    byteLength: 0x8
   },
   '/Channel/State/actParts': {
-    syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-    areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-    column: 0x79, // Column : WORD := W#16#5;
-    line: 0x1, // Line : WORD := W#16#1;
-    blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-    numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-    dataType: 0xf, // DataType : BYTE := B#16#13;
-    byteLength: 0x8 // Length : BYTE := B#16#20;
+    /** @see C1_S_actParts_121 */
+    syntaxId: 0x82,
+    areaUnit: 0x41,
+    column: 0x79,
+    line: 0x1,
+    blockType: 0x7f,
+    numOfLine: 0x1,
+    dataType: 0xf,
+    byteLength: 0x8
   },
   '/Channel/State/actTNumber': {
+    /** @see  C1_S_actTNumber_23 */
     syntaxId: 0x82,
     areaUnit: 0x41,
     column: 0x17,
@@ -318,6 +347,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     byteLength: 0x2
   },
   '/Nck/State/numAlarms': {
+    /** @see  N_S_numAlarms_7 */
     syntaxId: 0x82,
     areaUnit: 0x1,
     column: 0x7,
@@ -327,6 +357,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x4,
     byteLength: 0x2
   },
+  // TODO: NOT FOUND in FILE
   '/Nck/Configuration/maxnumAlarms': {
     syntaxId: 0x82,
     areaUnit: 0x1,
@@ -337,6 +368,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x4,
     byteLength: 0x2
   },
+  // TODO: NOT FOUND in FILE
   '/Nck/SequencedAlarms/alarmNo': {
     // N_SALA_alarmNo1_2
     syntaxId: 0x82,
@@ -348,6 +380,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x7,
     byteLength: 0x4
   },
+  // TODO: NOT FOUND in FILE
   '/Nck/AlarmEvent/alarmNo': {
     // N_SALAC_alarmNo1_2
     syntaxId: 0x82,
@@ -359,6 +392,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x7,
     byteLength: 0x4
   },
+  // TODO: NOT FOUND in FILE
   '/Nck/LastAlarm/alarmNo': {
     // N_SALAL_alarmNo1_2
     syntaxId: 0x82,
@@ -370,6 +404,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x7,
     byteLength: 0x4
   },
+  // TODO: NOT FOUND in FILE
   '/Nck/TopPrioAlarm/alarmNo': {
     // N_SALAP_alarmNo1_2
     syntaxId: 0x82,
@@ -381,6 +416,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x7,
     byteLength: 0x4
   },
+  // only for long time memory leak testing
   '/fake/address/1': {
     // to test invalid addresses
     syntaxId: 0x82,
@@ -392,261 +428,4 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x7,
     byteLength: 0x4
   }
-
-  // SSP_SPEED_OVR: {
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "LREAL",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x4, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x72, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0xf, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x8, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // RAP_FEED_RATE_OVR: {
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "LREAL",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x4, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0xf, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x8, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // ACT_PARTS: {
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "LREAL",
-  //   value: "" as any,
-
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x79, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0xf, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x8, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // REQ_PARTS: {
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   datatype: "LREAL",
-  //   value: "" as any,
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x77, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0xf, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x8, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // ACT_TOOL_IDENT: {
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: 0x20, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "STRING",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x21, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0x13, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x20, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // TOOL_RADIUS: {
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "LREAL",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x1b, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0xf, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x8, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // TOOL_LEN1: {
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "LREAL",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x1c, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0xf, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x8, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // NUM_MACH_AXES: {
-  //   // Word Test
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "WORD",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x41, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x3, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x10, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0x4, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x2, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // TOOL_CHANGE_MFUNC: {
-  //   // Word Test
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "DINT",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x1, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x10, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0x7, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x4, // Length : BYTE := B#16#20;
-  //   },
-  // },
-  // SYS_TIME_UDWORD: {
-  //   // Word Test
-  //   qualityBuffer: null,
-  //   byteLength: 50, // Dummy
-  //   valid: false,
-  //   errCode: null,
-  //   readTransportCode: 0x04, // For PLC this always 0x04 except when reading "hardware" Counters or Timers,
-  //   byteBuffer: Buffer.alloc(1000),
-  //   dtypelen: -1, // With strings, add 2 to the length due to S7 header
-  //   arrayLength: 1,
-
-  //   datatype: "DWORD",
-  //   value: "" as any,
-  //   quality: "",
-  //   bitOffset: 0,
-  //   ncVar: {
-  //     syntaxId: 0x82, // SYNTAX_ID : BYTE := B#16#82;
-  //     areaUnit: 0x1, // Area_Unit : BYTE := B#16#41;
-  //     column: 0x121, // Column : WORD := W#16#5;
-  //     line: 0x1, // Line : WORD := W#16#1;
-  //     blockType: 0x7f, // BlockType : BYTE := B#16#7A; // "Module" in S7Toolbox
-  //     numOfLine: 0x1, // NumOfLine : BYTE := B#16#1;
-  //     dataType: 0x6, // DataType : BYTE := B#16#13;
-  //     byteLength: 0x4, // Length : BYTE := B#16#20;
-  //   },
-  // },
 };
-
-// Dev tool for Frontend model -> should be replaced by common source
-// for (const k of Object.keys(NC_ADDRESSES)) {
-//   const p = k.split('/');
-//   console.log(`{ name: '${p[p.length - 1]}', address: '${k}' },`);
-// }

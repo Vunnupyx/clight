@@ -25,7 +25,7 @@
               "
               matTooltipPosition="above"
             >
-              <mat-icon style="margin-top: -10px">add</mat-icon>
+              <mat-icon style="margin-top: -10px" svgIcon="mdc:order-add"></mat-icon>
             </button>
           </div>
         </div>
@@ -264,7 +264,7 @@
                   'settings-virtual-data-point.SetComparativeValue' | translate
                 "
                 matTooltipPosition="above"
-                ><mat-icon>input</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:settings"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 *ngIf="
@@ -276,7 +276,7 @@
                   'settings-virtual-data-point.SetThreshold' | translate
                 "
                 matTooltipPosition="above"
-                ><mat-icon>show_chart</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:diagnosis"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 *ngIf="
@@ -288,19 +288,19 @@
                   'settings-virtual-data-point.SetEnumeration' | translate
                 "
                 matTooltipPosition="above"
-                ><mat-icon>list</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:order-group"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
-                ><mat-icon>edit</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:edit"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
-                ><mat-icon>delete_outline</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:delete"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
               *ngIf="row?.operationType ===
@@ -308,7 +308,7 @@
               (click)="onReset(row)"
               [matTooltip]="'settings-virtual-data-point.Reset' | translate"
               matTooltipPosition="above"
-              ><mat-icon>clear</mat-icon></mat-button-toggle
+              ><mat-icon svgIcon="mdc:undo"></mat-icon></mat-button-toggle
             >
             </mat-button-toggle-group>
             <mat-button-toggle-group
@@ -337,7 +337,7 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-                ><mat-icon>input</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:settings"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 *ngIf="
@@ -362,7 +362,7 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-                ><mat-icon>show_chart</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:diagnosis"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 *ngIf="
@@ -387,7 +387,7 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-                ><mat-icon>list</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:order-group"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="
@@ -396,7 +396,7 @@
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
-                  >check</mat-icon
+                  svgIcon="mdc:checkmark"></mat-icon
                 ></mat-button-toggle
               >
               <mat-button-toggle
@@ -404,7 +404,7 @@
                 [matTooltip]="'settings-virtual-data-point.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"
-                  >close</mat-icon
+                  svgIcon="mdc:close"></mat-icon
                 ></mat-button-toggle
               >
             </mat-button-toggle-group>

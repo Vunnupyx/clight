@@ -23,7 +23,7 @@
               matTooltipPosition="above"
               [matTooltip]="'settings-data-mapping.AddMapping' | translate"
             >
-              <mat-icon style="margin-top: -10px">add</mat-icon>
+              <mat-icon style="margin-top: -10px" svgIcon="mdc:order-add"></mat-icon>
             </button>
           </div>
         </div>
@@ -181,13 +181,13 @@
                 (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Edit' | translate"
                 matTooltipPosition="above"
-                ><mat-icon>edit</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:edit"></mat-icon></mat-button-toggle
               >
               <mat-button-toggle
                 (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Delete' | translate"
                 matTooltipPosition="above"
-                ><mat-icon>delete_outline</mat-icon></mat-button-toggle
+                ><mat-icon svgIcon="mdc:delete"></mat-icon></mat-button-toggle
               >
             </mat-button-toggle-group>
             <mat-button-toggle-group
@@ -201,7 +201,7 @@
                 [matTooltip]="'settings-data-mapping.Save' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-success"
-                  >check</mat-icon
+                  svgIcon="mdc:checkmark"></mat-icon
                 ></mat-button-toggle
               >
               <mat-button-toggle
@@ -209,7 +209,7 @@
                 [matTooltip]="'settings-data-mapping.Cancel' | translate"
                 matTooltipPosition="above"
                 ><mat-icon class="color-error"
-                  >close</mat-icon
+                  svgIcon="mdc:close"></mat-icon
                 ></mat-button-toggle
               >
             </mat-button-toggle-group>

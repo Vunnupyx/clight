@@ -1,10 +1,12 @@
 import {
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
   ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabGroup, MatTabNavPanel } from '@angular/material/tabs';
 import {
   ColumnMode,
   DatatableComponent
@@ -54,6 +56,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;
+  dataSourceIndex?: number;
   datapointRows?: SourceDataPoint[];
   connection?: DataSourceConnection;
 
@@ -82,6 +85,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   filterDigitalInputAddressStr = '';
 
   @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
+  @ViewChild('tabs') tabs: MatTabGroup;
 
   get ioshieldAddresses() {
     return this.DigitalInputAddresses.filter((x) => {
@@ -117,7 +121,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
     private dialog: MatDialog,
-    private promptService: PromptService
+    private promptService: PromptService,
+    private changeDetector: ChangeDetectorRef
   ) {
     this.promptService.initWarnBeforePageUnload(
       () => this.sourceDataPointService.isTouched
@@ -204,11 +209,19 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
       if (newDs) {
         this.dataSource = newDs;
+        this.dataSourceIndex = this.dataSourceList?.indexOf(newDs) || 0;
       }
     }
   }
 
-  async switchDataSource(obj: DataSource) {
+  onDataSourceIndexChange(idx: number) {
+    if (!this.dataSourceList || !this.dataSourceList[idx]) {
+      return;
+    }
+    this.switchDataSource(this.dataSourceList[idx]);
+  }
+
+  private async switchDataSource(obj: DataSource) {
     if (this.isTouchedTable) {
       try {
         await this.promptService.warn();
@@ -219,6 +232,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     }
 
     this.dataSource = obj;
+    this.dataSourceIndex = this.dataSourceList?.indexOf(obj) || 0;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
 
     if (this.statusSub) {
@@ -274,6 +288,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onDataPoints(arr: SourceDataPoint[]) {
     this.datapointRows = arr;
+    this.tabs.realignInkBar();
   }
 
   isDuplicatingField(field: 'name' | 'address') {

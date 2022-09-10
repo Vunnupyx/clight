@@ -1,28 +1,4 @@
-﻿# Layout
-
-A grid layout, as well as Angular Flex Layout is available through this theme. These features include the CELOS Next screen breakpoints explained below.
-
-The parent element of the view has to contain the class `grid-layout`, which will automatically create the grid within this element.
-
-## Custom classes
-
-| Name              | Description                                                                                                                                                                   |
-|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| celos-grid-layout | Applied to the parent container creating the grid layout within the container                                                                                                 |
-| col-*n*           | Applied to a child element, assigning the element a width of n columns.</br> *n* is the number of columns the element is supposed to allocate, e.g. col-2 allocates 2 columns.  | 
-| col-*size*-*n*    | Applied to a child element, assigning the element a width of n columns in the range of the applied size.</br> *n* is the number of columns the element is supposed to allocate and *size* is the breakpoint range in which the columns are applied, e.g. col-sm-2 allocates 2 columns in the range of a small screen.  | 
-
-## Breakpoints
-
-| Key   | Range              | Number of Columns  |
-|-------|--------------------|--------------------|
-| xxs   | <= 479px           | 2                  |
-| xs    | 480px - 767px      | 4                  |
-| sm    | 768px - 991px      | 8                  |
-| md    | 992px - 1279px     | 8                  |
-| lg    | 1280px - 1559px    | 12                 |
-| xl    | 1560px - 1800px    | 12                 |
-| xxl   | >= 1800px          | 12                 |
+﻿# Flex Layout
 
 ## Directives
 
@@ -55,6 +31,41 @@ For the Angular Flex Layout Directives another set of breakpoints can be applied
 | gt-lg   | >= 1280px          | Greater than or equal to lg screen size  |
 | lt-xl   | <= 1800px          | Less than or equal to xl screen size     |
 | gt-xl   | >= 1560px          | Greater than or equal to xl screen size  |
+
+## Integration
+app.module.ts
+``` typescript
+imports: [
+  // other imports
+  DmgLayoutModule
+]
+```
+
+# Grid Layout (DEPRECATED)
+
+A grid layout, as well as Angular Flex Layout is available through this theme. These features include the CELOS Next screen breakpoints explained below.
+
+The parent element of the view has to contain the class `grid-layout`, which will automatically create the grid within this element.
+
+## Custom classes (DEPRECATED)
+
+| Name              | Description                                                                                                                                                                                                                                                                                                           |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| celos-grid-layout | Applied to the parent container creating the grid layout within the container                                                                                                                                                                                                                                         |
+| col-*n*           | Applied to a child element, assigning the element a width of n columns.</br> *n* is the number of columns the element is supposed to allocate, e.g. col-2 allocates 2 columns.                                                                                                                                        | 
+| col-*size*-*n*    | Applied to a child element, assigning the element a width of n columns in the range of the applied size.</br> *n* is the number of columns the element is supposed to allocate and *size* is the breakpoint range in which the columns are applied, e.g. col-sm-2 allocates 2 columns in the range of a small screen. | 
+
+## Breakpoints (DEPRECATED)
+
+| Key   | Range           | Number of Columns  |
+|-------|-----------------|--------------------|
+| xxs   | <= 479px        | 2                  |
+| xs    | 480px - 767px   | 4                  |
+| sm    | 768px - 991px   | 8                  |
+| md    | 992px - 1279px  | 8                  |
+| lg    | 1280px - 1559px | 12                 |
+| xl    | 1560px - 1800px | 12                 |
+| xxl   | >= 1801px       | 12                 |
 
 ## Example
 

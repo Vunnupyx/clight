@@ -1,0 +1,48 @@
+@use "modules/sofia-color";
+
+/* stylelint-disable no-descending-specificity */
+a.sofia-link {
+  text-decoration: none;
+  color: sofia-color.$blue-interaction;
+
+  &:not(.disabled) {
+    body:not(.no-hover) &:hover {
+      color: sofia-color.$blue-80;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    &:focus-visible {
+      outline: 2px solid sofia-color.$blue-interaction;
+      text-decoration: none;
+      color: sofia-color.$blue-interaction !important;
+    }
+
+    &:active {
+      text-decoration: underline;
+      color: sofia-color.$gray-100 !important;
+    }
+
+    &:visited {
+      text-decoration: none;
+      color: sofia-color.$purple-visited;
+    }
+  }
+
+  &.disabled {
+    color: sofia-color.$gray-50;
+    pointer-events: none;
+  }
+}
+
+p a.sofia-link {
+  text-decoration: underline;
+
+  &:not(.disabled):visited {
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    text-decoration: underline;
+  }
+}

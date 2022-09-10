@@ -8,7 +8,7 @@ The DMG Mori Theme will be applied on top of the default Angular Material Compon
 
 Caution! 
 The standard Angular Material Chips are only selectable by focusing the chip and the hitting SPACE.
-As a workaroud the following code snippets will enable the chip to be selectable through a click only:
+As a workaround the following code snippets will enable the chip to be selectable through a click only:
 
 ``` html
 <mat-chip 
@@ -22,9 +22,10 @@ As a workaroud the following code snippets will enable the chip to be selectable
 
 Along with the Angular Material API, the following custom classes are enabled by the theme:
 
-| Class name          | Description                                                            |
-|---------------------|------------------------------------------------------------------------|
-| number-indicator    | Applied to a div element inside the chip, adds an indication field     |
+| Class name             | Description                                                        |
+|------------------------|--------------------------------------------------------------------|
+| sofia-number-indicator | Applied to a div element inside the chip, adds an indication field |
+| sofia-chip-small       | Applies a height of 32px to the chip                               |
 
 Also, if an icon is added inside the chips component, the size of the icon is scaled down dynamically.
 
@@ -35,10 +36,11 @@ Also, if an icon is added inside the chips component, the size of the icon is sc
 <mat-chip-list>
   <mat-chip>Apple</mat-chip>
   <mat-chip>
+    Pear
     <mat-icon class="material-icons-outlined">
       favorite
-    </mat-icon>
-    Pear</mat-chip>
+    </mat-icon>  
+  </mat-chip>
   <mat-chip>Pineapple</mat-chip>
 </mat-chip-list>
 ```

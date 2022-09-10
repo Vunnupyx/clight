@@ -7,8 +7,6 @@ import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confir
 import { DataSourceComponent } from './data-source.component';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { AuthGuard } from '../../../shared/guards/auth.guard';
-import { DataSourceIoshieldComponent } from './data-source-ioshield/data-source-ioshield.component';
-import { DataSourceMtconnectComponent } from './data-source-mtconnect/data-source-mtconnect.component';
 import { DataSourceGuard } from './data-source.guard';
 
 const routes: Routes = [
@@ -22,9 +20,7 @@ const routes: Routes = [
 
 const COMPONENTS = [
   DataSourceComponent,
-  SelectTypeModalComponent,
-  DataSourceIoshieldComponent,
-  DataSourceMtconnectComponent
+  SelectTypeModalComponent
 ];
 
 @NgModule({

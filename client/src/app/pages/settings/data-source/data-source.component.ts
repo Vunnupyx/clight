@@ -1,12 +1,11 @@
 import {
-  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
   ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTabGroup, MatTabNavPanel } from '@angular/material/tabs';
+import { MatTabGroup } from '@angular/material/tabs';
 import {
   ColumnMode,
   DatatableComponent
@@ -121,8 +120,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
     private dialog: MatDialog,
-    private promptService: PromptService,
-    private changeDetector: ChangeDetectorRef
+    private promptService: PromptService
   ) {
     this.promptService.initWarnBeforePageUnload(
       () => this.sourceDataPointService.isTouched

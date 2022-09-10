@@ -117,6 +117,7 @@
   },
   "settings-data-source": {
     "DataSource": "データソース",
+    "AddDataPoint": "データポイント追加",
     "Edit": "編集",
     "Delete": "削除",
     "Save": "保存",

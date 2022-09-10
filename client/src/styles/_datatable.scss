@@ -488,11 +488,7 @@ $datatable-summary-row-background-hover: #ddd !default;
       width: 30px;
       height: 30px;
       .mat-button-toggle-label-content {
-        min-width: 25px !important;
-        width: 25px;
-        height: 25px;
-        line-height: 25px !important;
-        padding: 5px 1px;
+        padding: 6px 3px;
         mat-icon {
           font-size: 18px;
         }
@@ -502,12 +498,7 @@ $datatable-summary-row-background-hover: #ddd !default;
       width: 26px !important;
       height: 26px !important;
       .mat-button-toggle-label-content {
-        min-width: 20px !important;
-        width: 20px !important;
-        height: 20px !important;
-        line-height: 20px !important;
-        padding: 5px 1px !important;
-        margin: 0px 0 0 -5px !important;
+        padding: 5px 0 !important;
         mat-icon {
           font-size: 14px !important;
         }

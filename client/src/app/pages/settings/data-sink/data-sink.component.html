@@ -1,15 +1,13 @@
 <div class="layout-header">
   <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'settings-data-sink.DataSink' | translate }}</h2>
   <div class="layout-header__tabs">
-    <nav mat-tab-nav-bar mat-align-tabs="center">
-      <a
-        mat-tab-link
-        *ngFor="let item of dataSinkList"
-        (click)="switchDataSink(item)"
-        [active]="dataSink?.protocol === item.protocol"
-      >{{ 'settings-data-sink.Tabs.' + item.protocol | translate }}</a
-      >
-    </nav>
+    <mat-tab-group mat-align-tabs="center" #tabs
+      [selectedIndex]="dataSinkIndex"
+      (selectedIndexChange)="onDataSinkIndexChange($event)">
+      <mat-tab *ngFor="let item of dataSinkList"
+        [label]="'settings-data-sink.Tabs.' + item.protocol | translate"
+        ></mat-tab>
+    </mat-tab-group>
   </div>
 </div>
 
@@ -20,14 +18,17 @@
     <app-data-sink-mt-connect
       *ngSwitchCase="Protocol.MTConnect"
       [dataSink]="dataSink"
+      (dataPointsChange)="onDataPoints($event)"
     ></app-data-sink-mt-connect>
     <app-data-sink-mt-connect
       *ngSwitchCase="Protocol.OPC"
       [dataSink]="dataSink"
+      (dataPointsChange)="onDataPoints($event)"
     ></app-data-sink-mt-connect>
     <app-data-sink-mt-connect
       *ngSwitchCase="Protocol.DH"
       [dataSink]="dataSink"
+      (dataPointsChange)="onDataPoints($event)"
     ></app-data-sink-mt-connect>
   </ng-container>
 </div>

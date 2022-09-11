@@ -194,45 +194,45 @@
           <div class="mr-10">
             <ng-container [ngSwitch]="connection.status">
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disabled">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.NotConfigured">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Provisioning">
-                <mat-icon class="color-success">check_circle_outline</mat-icon>
+                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.NoNetwork">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connecting">
-                <mat-icon class="color-success">check_circle_outline</mat-icon>
+                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connected">
-                <mat-icon class="color-success">check_circle_outline</mat-icon>
+                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disconnected">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Reconnecting">
-                <mat-icon class="color-success">check_circle_outline</mat-icon>
+                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.NoLicense">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.ConnectionError">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Unavailable">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container *ngSwitchCase="
                   DataSourceConnectionStatus.TermsAndConditionsNotAccepted
                 ">
-                <mat-icon class="color-danger">highlight_off</mat-icon>
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
             </ng-container>
           </div>
@@ -271,7 +271,7 @@
             <button type="button" [disabled]="isEditing" mat-mini-fab color="primary" class="wh-32 border-round ml-15"
               (click)="onAdd()" [matTooltip]="'settings-data-source.AddDataPoint' | translate"
               matTooltipPosition="above">
-              <mat-icon style="margin-top: -10px">add</mat-icon>
+              <mat-icon style="margin-top: -10px" svgIcon="mdc:order-add"></mat-icon>
             </button>
           </div>
         </div>
@@ -346,7 +346,7 @@
                         unsavedRow && onAddressSelect(unsavedRow);
                         group.value = null
                       " [matTooltip]="'settings-data-source.Select' | translate" matTooltipPosition="above">
-                      <mat-icon>open_in_new</mat-icon>
+                      <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
                     </mat-button-toggle>
                   </mat-button-toggle-group>
                 </ng-container>
@@ -385,11 +385,11 @@
             <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex" #group="matButtonToggleGroup">
               <mat-button-toggle (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-data-source.Edit' | translate" matTooltipPosition="above">
-                <mat-icon>edit</mat-icon>
+                <mat-icon svgIcon="mdc:edit"></mat-icon>
               </mat-button-toggle>
               <mat-button-toggle (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-source.Delete' | translate" matTooltipPosition="above">
-                <mat-icon>delete_outline</mat-icon>
+                <mat-icon svgIcon="mdc:delete"></mat-icon>
               </mat-button-toggle>
             </mat-button-toggle-group>
             <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex" #group="matButtonToggleGroup">
@@ -399,11 +399,11 @@
                     onEditEnd();
                   group.value = null
                 " [matTooltip]="'settings-data-source.Save' | translate" matTooltipPosition="above">
-                <mat-icon class="color-success">check</mat-icon>
+                <mat-icon class="color-success" svgIcon="mdc:checkmark"></mat-icon>
               </mat-button-toggle>
               <mat-button-toggle (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-data-source.Cancel' | translate" matTooltipPosition="above">
-                <mat-icon class="color-error">close</mat-icon>
+                <mat-icon class="color-error" svgIcon="mdc:close"></mat-icon>
               </mat-button-toggle>
             </mat-button-toggle-group>
           </ng-template>

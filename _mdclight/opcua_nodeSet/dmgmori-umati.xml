@@ -64,6 +64,7 @@
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=1003</Reference>
             <Reference ReferenceType="HasComponent">ns=1;s=Equipment</Reference>
             <Reference ReferenceType="HasAddIn">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=IoTflex</Reference>
             <Reference ReferenceType="HasComponent">ns=1;s=Monitoring</Reference>
             <Reference ReferenceType="HasComponent">ns=1;s=Notification</Reference>
             <Reference ReferenceType="HasComponent">ns=1;s=Production</Reference>
@@ -248,6 +249,61 @@
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
             <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+        </References>
+    </UAVariable>
+    <UAObject NodeId="ns=1;s=IoTflex" BrowseName="1:IoTflex">
+        <DisplayName>IoTflex</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=Sensor1</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=Sensor2</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=Variable1</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=Variable2</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=Variable3</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=Variable4</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
+        </References>
+    </UAObject>
+        <UAVariable DataType="Double" NodeId="ns=1;s=Sensor1" BrowseName="1:Sensor1">
+        <DisplayName>Sensor1</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="Double" NodeId="ns=1;s=Sensor2" BrowseName="1:Sensor2">
+        <DisplayName>Sensor2</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="Double" NodeId="ns=1;s=Variable1" BrowseName="1:Variable1" AccessLevel="3">
+        <DisplayName>Variable1</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="Double" NodeId="ns=1;s=Variable2" BrowseName="1:Variable2" AccessLevel="3">
+        <DisplayName>Variable2</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="String" NodeId="ns=1;s=Variable3" BrowseName="1:Variable3" AccessLevel="3">
+        <DisplayName>Variable3</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="UInt16" NodeId="ns=1;s=Variable4" BrowseName="1:Variable4" AccessLevel="3">
+        <DisplayName>Variable4</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
     <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=Monitoring" BrowseName="4:Monitoring">

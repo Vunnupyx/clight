@@ -263,8 +263,8 @@ export class OPCUAAdapter {
         '/runTimeFiles/tmpnodesets/Opc.Ua.Machinery.NodeSet2.xml',
         '/runTimeFiles/tmpnodesets/Opc.Ua.IA.NodeSet2.xml',
         '/runTimeFiles/tmpnodesets/Opc.Ua.MachineTool.Nodeset2.xml',
-        '/runTimeFiles/tmpnodesets/dmgmori-umati-types-v2.0.11.xml',
-        '/runTimeFiles/tmpnodesets/dmgmori-umati-v2.0.11.xml'
+        '/runTimeFiles/tmpnodesets/dmgmori-umati-types.xml',
+        '/runTimeFiles/tmpnodesets/dmgmori-umati.xml'
       ],
       securityPolicies: [
         SecurityPolicy.None,

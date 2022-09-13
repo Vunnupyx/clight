@@ -18,7 +18,6 @@ export class MdcIconRegistry extends MatIconRegistry {
     super(httpClient, sanitizer, document, errorHandler);
 
     for (const [name, path] of Object.entries(mdcSvgIcons)) {
-      console.log('!!! ', {name,path})
       this.addSvgIconInNamespace('mdc', name, this.sanitizer.bypassSecurityTrustResourceUrl(path));
     }
   }

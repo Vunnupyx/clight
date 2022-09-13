@@ -1,117 +1,30 @@
-$dmg-button-primary: mat-color($dmg-app-primary, 700);
-$dmg-fab-secondary: mat-color($dmg-app-secondary, 300);
+@use "sass:color";
+@use "modules/sofia-button";
 
-@mixin button-basic($height: 48px) {
-  height: $height;
-  padding: 0px 16px;
-  border-radius: 8px;
-  box-shadow:  0px 6px 10px 0px rgba(0, 0, 0, 0.14),
-              0px 1px 18px 0px rgba(0, 0, 0, 0.12),
-              0px 3px 5px -1px rgba(0, 0, 0, 0.2) !important;
+button.mat-button-base,
+a.mat-button-base {
+  @include sofia-button.button-basic;
+  @include sofia-button.button-color("primary");
+  @include sofia-button.button-color("secondary");
+  @include sofia-button.button-color("ghost", true);
+  @include sofia-button.button-color("ghost-danger", true);
+  @include sofia-button.button-color("danger");
 
-  border: 1px solid transparent;
-
-  .mat-button-wrapper {
-    .mat-icon {
-      margin-top: -4px;
-    }
+  &.sofia-btn-justified {
+    width: 100%;
   }
 
-  background-color: $dmg-button-primary !important;
-  color: $light-primary-text !important;
+  &.mat-fab,
+  &.mat-icon-button {
+    @include sofia-button.button-basic;
 
-  &:hover {
-    background-color: darken($dmg-button-primary, 4%) !important;
-  }
-
-  &:active {
-    box-shadow: none !important;
-  }
-
-  &:disabled {
-    background-color: rgba(black, 0.38) !important;
-    color: rgba(black, 0.38) !important;
-    font-weight: 600;
-    box-shadow: none !important;
-  }
-
-  &.mat-secondary {
-    background-color: mat-color($dmg-app-secondary, A100) !important;
-    color: $dark-primary-text !important;
-    box-shadow:  0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-                0px 3px 1px -2px rgba(0, 0, 0, 0.12),
-                0px 1px 5px 0px rgba(0, 0, 0, 0.2) !important;
-
-    &:hover {
-      background-color: mat-color($dmg-app-secondary, 300) !important;
-    }
-
-    &:active:not(:disabled) {
-      box-shadow: none !important;
-    }
-
-    &:disabled {
-      background-color: mat-color($dmg-app-secondary, A100) !important;
-      border: 1px solid mat-color($dmg-app-secondary, 300);
-      color: $dark-disabled-text !important;
-    }
-  }
-}
-
-button.mat-flat-button,
-button.mat-raised-button,
-a.mat-flat-button,
-a.mat-raised-button {
-  @include button-basic();
- }
-
-button.mat-flat-button.large,
-button.mat-raised-button.large,
-a.mat-flat-button.large,
-a.mat-raised-button.large {
-  @include button-basic(56px);
- }
-
-button.mat-button,
-a.mat-button {
-  height: 48px;
-  padding: 0px 16px;
-  border-radius: 8px;
-
-  &.large {
-    height: 56px;
-  }
-
-  .mat-button-wrapper {
-    .mat-icon {
-      margin-top: -4px;
-    }
-  }
-}
-
-
-button.mat-fab {
-  @include button-basic(56px);
-  width: 56px;
-
-  &.fab-extended {
-    height: 48px;
-    border-radius: 24px;
-    width: unset;
-  }
-}
-
-button.mat-fab.fab-extended {
-  @include button-basic();
-  border-radius: 24px;
-
-  .mat-button-wrapper {
     padding: unset;
+    width: 48px;
   }
-}
 
-button.mat-mini-fab {
-  @include button-basic();
-  width: 48px;
-  padding: unset;
+  .mat-button-ripple,
+  .mat-button-focus-overlay {
+    display: none;
+    opacity: 0 !important;
+  }
 }

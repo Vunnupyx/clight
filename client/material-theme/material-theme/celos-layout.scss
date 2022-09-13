@@ -1,58 +1,63 @@
-﻿html, body { height: 100%; }
+﻿/* stylelint-disable-next-line scss/at-import-partial-extension */
+@import "modules/sofia-media";
+
+html,
 body {
-  margin: 0;
-  font-family: "Inter", sans-serif;
-  background-color: #ffffff;
+  height: 100%;
 }
 
-.celos-layout > *, .celos-grid-layout {
-  // screen xxl
-  @media screen and (min-width: 1800px) {
+body {
+  margin: 0;
+}
+
+.celos-layout > *,
+.celos-grid-layout {
+  @include screen-xxl {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-gap: 32px 32px;
+    grid-gap: 32px;
     margin: 0 32px;
   }
-  // screen xl
-  @media screen and (min-width: 1560px) and (max-width: 1799.9px) {
+
+  @include screen-xl {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-gap: 32px 32px;
+    grid-gap: 32px;
     margin: 0 32px;
   }
-  // screen lg
-  @media screen and (min-width: 1280px) and (max-width: 1559.9px) {
+
+  @include screen-lg {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-gap: 32px 32px;
+    grid-gap: 32px;
     margin: 0 32px;
   }
-  // screen md
-  @media screen and (min-width: 992px) and (max-width: 1279.9px) {
+
+  @include screen-md {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-gap: 24px 24px;
+    grid-gap: 24px;
     margin: 0 32px;
   }
-  // screen sm
-  @media screen and (min-width: 768px) and (max-width: 991.9px) {
+
+  @include screen-sm {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-gap: 24px 24px;
+    grid-gap: 24px;
     margin: 0 24px;
   }
-  // screen xs
-  @media screen and (min-width: 480px) and (max-width: 767.9px) {
+
+  @include screen-xs {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-gap: 16px 16px;
+    grid-gap: 16px;
     margin: 0 24px;
   }
-  // screen xxs
-  @media screen and (max-width: 479.9px) {
+
+  @include screen-xxs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-gap: 16px 16px;
+    grid-gap: 16px;
     margin: 0 16px;
   }
 }

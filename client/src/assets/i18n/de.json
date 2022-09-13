@@ -117,6 +117,7 @@
   },
   "settings-data-source": {
     "DataSource": "Datenquellen",
+    "AddDataPoint": "Datenpunkt hinzufügen",
     "Edit": "Bearbeiten",
     "Delete": "Löschen",
     "Save": "Speichern",

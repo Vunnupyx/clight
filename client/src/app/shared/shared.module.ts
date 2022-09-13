@@ -32,6 +32,7 @@ import { SharedServicesModule } from './services/shared-services.module';
 import { StateModule } from './state/state.module';
 import { AppTranslationModule } from 'app/app.translation';
 import { DocBtnComponent } from './components/doc-btn/doc-btn.component';
+import { MdcIconModule } from './mdc-icon/mdc-icon.module';
 
 @NgModule({
   declarations: [DocBtnComponent],
@@ -69,7 +70,8 @@ import { DocBtnComponent } from './components/doc-btn/doc-btn.component';
     AppTranslationModule,
     SharedServicesModule,
     StateModule,
-    DocBtnComponent
+    MdcIconModule,
+    DocBtnComponent,
   ]
 })
 export class SharedModule {}

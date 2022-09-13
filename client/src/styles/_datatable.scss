@@ -490,7 +490,8 @@ $datatable-summary-row-background-hover: #ddd !default;
       .mat-button-toggle-label-content {
         padding: 6px 3px;
         mat-icon {
-          font-size: 18px;
+          margin-top: -10px;
+          transform: scale(0.75);
         }
       }
     }
@@ -500,7 +501,9 @@ $datatable-summary-row-background-hover: #ddd !default;
       .mat-button-toggle-label-content {
         padding: 5px 0 !important;
         mat-icon {
-          font-size: 14px !important;
+          position: relative;
+          top: -4px;
+          transform: scale(0.8);
         }
       }
     }

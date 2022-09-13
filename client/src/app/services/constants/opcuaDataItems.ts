@@ -31,5 +31,11 @@ export default [
   { name: 'Name', address: 'ns=7;s=ActiveProgram-Name' },
   { name: 'Part Count', address: 'ns=7;s=ActiveProgram-PartCounter' },
   { name: 'Program Path', address: 'ns=7;s=ActiveProgram-ProgramPath' },
-  { name: 'Current State', address: 'ns=7;s=ActiveProgram-State-CurrentState' }
+  { name: 'Current State', address: 'ns=7;s=ActiveProgram-State-CurrentState' },
+  { name: 'Sensor 1', address: 'ns=7;s=Sensor1' },
+  { name: 'Sensor 2', address: 'ns=7;s=Sensor2' },
+  { name: 'Variable 1', address: 'ns=7;s=Variable1' },
+  { name: 'Variable 2', address: 'ns=7;s=Variable2' },
+  { name: 'Variable 3', address: 'ns=7;s=Variable3' },
+  { name: 'Variable 4', address: 'ns=7;s=Variable4' }
 ];

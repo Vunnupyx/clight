@@ -1,7 +1,7 @@
 export default [
-  { name: 'Operation Duration', address: 'NodeId	ns=7;s=OperationDuration' },
-  { name: 'Operation Mode', address: 'NodeId	ns=7;s=OperationMode' },
-  { name: 'Power On Duration', address: 'NodeId	ns=7;s=PowerOnDuration' },
+  { name: 'Operation Duration', address: 'ns=7;s=OperationDuration' },
+  { name: 'Operation Mode', address: 'ns=7;s=OperationMode' },
+  { name: 'Power On Duration', address: 'ns=7;s=PowerOnDuration' },
   { name: 'Stack Light 1 On (Blue)', address: 'ns=7;s=Light_1-SignalOn' },
   {
     name: 'Stack Light 1 Mode (Blue)',

@@ -110,7 +110,7 @@ export class OPCUAAdapter {
     const fullFiles = files.map((file) => path.join(this.nodesetDir, file));
 
     for (const file of fullFiles)
-      if (file.includes('dmgmori-umati-v')) {
+      if (file.includes('dmgmori-umati')) {
         fs.writeFileSync(
           file,
           fs

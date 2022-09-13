@@ -10,6 +10,7 @@ import {
 } from 'node-opcua';
 import { CertificateManager } from 'node-opcua-pki';
 import winston from 'winston';
+import { create } from 'xmlbuilder2';
 
 import {
   IGeneralConfig,
@@ -110,14 +111,70 @@ export class OPCUAAdapter {
     const fullFiles = files.map((file) => path.join(this.nodesetDir, file));
 
     for (const file of fullFiles)
-      if (file.includes('dmgmori-umati')) {
-        fs.writeFileSync(
-          file,
-          fs
-            .readFileSync(file, 'utf8')
-            .split('{{machineName}}')
-            .join(this.getMachineName())
-        );
+      if (file === 'dmgmori-umati.xml') {
+        let xmlFileRead = fs.readFileSync(file, { encoding: 'utf-8' });
+        let xmlFileReadMachineNameFixed = xmlFileRead
+          .split('{{machineName}}')
+          .join(this.getMachineName());
+
+        let xmlFileReadParsed = create(xmlFileReadMachineNameFixed);
+        let xmlFileReadAsObject: any = xmlFileReadParsed.end({
+          format: 'object'
+        });
+
+        // Expands data points with custom data points
+        if (this.dataSinkConfig.customDataPoints) {
+          let iotFlexNode = xmlFileReadAsObject['UANodeSet']['#'].find(
+            (el: any) => el['UAObject']?.['DisplayName'] === 'IoTflex'
+          );
+
+          let uaVariableNodeForIoTFlex = xmlFileReadAsObject['UANodeSet'][
+            '#'
+          ].find((el: any) =>
+            el['UAVariable']?.[0]?.['References']['Reference'].find(
+              (el: any) => el['#'] === 'ns=1;s=IoTflex'
+            )
+          );
+
+          for (const customConfig of this.dataSinkConfig.customDataPoints) {
+            const nodeId = `ns=1;s=${customConfig.nodeId}`;
+            const browseName = `1:${customConfig.nodeId}`;
+            const displayName = customConfig.displayName;
+            const dataType = customConfig.dataType;
+
+            //Add reference to IoTFlex for new variable
+            iotFlexNode['UAObject']['References']['Reference'].push({
+              '@ReferenceType': 'Organizes',
+              '#': nodeId
+            });
+
+            //Add custom variable
+            let uaVariable = {
+              '@DataType': dataType,
+              '@NodeId': nodeId,
+              '@BrowseName': browseName,
+              DisplayName: displayName,
+              References: {
+                Reference: [
+                  {
+                    '@ReferenceType': 'HasTypeDefinition',
+                    '#': 'i=63'
+                  },
+                  {
+                    '@ReferenceType': 'Organizes',
+                    '@IsForward': 'false',
+                    '#': 'ns=1;s=IoTflex'
+                  }
+                ]
+              }
+            };
+            uaVariableNodeForIoTFlex['UAVariable'].push(uaVariable);
+          }
+        }
+        const updatedXMLFile = create(xmlFileReadAsObject).end({
+          prettyPrint: true
+        });
+        fs.writeFileSync(file, updatedXMLFile);
       }
 
     return fullFiles;
@@ -263,8 +320,8 @@ export class OPCUAAdapter {
         '/runTimeFiles/tmpnodesets/Opc.Ua.Machinery.NodeSet2.xml',
         '/runTimeFiles/tmpnodesets/Opc.Ua.IA.NodeSet2.xml',
         '/runTimeFiles/tmpnodesets/Opc.Ua.MachineTool.Nodeset2.xml',
-        '/runTimeFiles/tmpnodesets/dmgmori-umati-types.xml',
-        '/runTimeFiles/tmpnodesets/dmgmori-umati.xml'
+        '/runTimeFiles/tmpnodesets/dmgmori-umati-types-v2.0.11.xml',
+        '/runTimeFiles/tmpnodesets/dmgmori-umati-v2.0.11.xml'
       ],
       securityPolicies: [
         SecurityPolicy.None,

@@ -90,6 +90,10 @@ export class OPCUADataSink extends DataSink {
         this.opcuaNodes[dp.address] = this.opcuaAdapter.findNode(
           dp.address
         ) as UAVariable;
+
+        if (typeof dp.initialValue !== 'undefined') {
+          this.setNodeValue(this.opcuaNodes[dp.address], dp.initialValue)
+        }
       } catch (e) {
         winston.warn(
           `${logPrefix} Unabled to find opcua data point ${dp.address}`

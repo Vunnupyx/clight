@@ -1,10 +1,36 @@
-<h1 mat-dialog-title>{{ 'settings-data-sink.CreateDataPoint' | translate }}</h1>
-<div mat-dialog-content>
+<div mat-dialog-title class="d-flex align-items-center">
+  <h1>{{ 'settings-data-sink.OpcUaVariables' | translate }}</h1>
+  <button
+    type="button"
+    mat-mini-fab
+    color="primary"
+    class="wh-32 border-round mat-elevation-z0 mt-0 ml-5"
+    style="margin-top: 15px;"
+    [matTooltip]="
+      'settings-data-sink.AddOpcUaVariable' | translate
+    "
+    matTooltipPosition="above"
+    (click)="customOpcUaVariables.onAdd()"
+  >
+    <mat-icon svgIcon="mdc:order-add"></mat-icon>
+  </button>
+</div>
+
+<div mat-dialog-content class="overflow-auto pt-0">
+  <app-custom-opc-ua-variables
+    #customOpcUaVariables
+    [hidden]="!customDatapointRows?.length"
+    [rows]="customDatapointRows"
+    [existingAddresses]="data.existingAddresses"
+    (selected)="onSelect($event)"
+  ></app-custom-opc-ua-variables>
+
+  <h3>{{ 'settings-data-sink.UmatiOpcUaVariables' | translate }}</h3>
   <ngx-datatable
     [headerHeight]="50"
     rowHeight="auto"
     [rows]="rows"
-    class="overflow-auto select-type-table"
+    class="select-type-table"
   >
     <ngx-datatable-column
       [name]="'settings-data-sink.Name' | translate"
@@ -16,11 +42,17 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row.address)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-      [name]="'settings-data-sink.DataItem' | translate"
+      [name]="'settings-data-sink.Address' | translate"
       prop="address"
     >
       <ng-template
@@ -29,20 +61,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
-      </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column
-      [name]="'settings-data-sink.Type' | translate"
-      prop="type"
-    >
-      <ng-template
-        ngx-datatable-cell-template
-        let-rowIndex="rowIndex"
-        let-value="value"
-        let-row="row"
-      >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row.address)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -55,7 +80,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row.address)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -72,7 +103,9 @@
         <mat-button-toggle-group [disabled]="">
           <mat-button-toggle
             *ngIf="isExisting(row.address)"
-            [matTooltip]="'settings-data-sink.AlreadyExistDataPoint' | translate"
+            [matTooltip]="
+              'settings-data-sink.AlreadyExistDataPoint' | translate
+            "
             matTooltipPosition="above"
             [disabled]="true"
             ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
@@ -82,7 +115,7 @@
             [matTooltip]="'settings-data-sink.SelectVariable' | translate"
             matTooltipPosition="above"
             (click)="onSelect(row)"
-          ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
+            ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>
       </ng-template>

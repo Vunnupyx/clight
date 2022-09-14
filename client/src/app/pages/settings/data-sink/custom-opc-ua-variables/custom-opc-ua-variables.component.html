@@ -1,0 +1,97 @@
+<h3>{{ 'settings-data-sink.CustomOpcUaVariables' | translate }}</h3>
+<ngx-datatable
+  [headerHeight]="50"
+  rowHeight="auto"
+  [rows]="rows"
+  class="overflow-auto select-type-table"
+>
+  <ngx-datatable-column
+    [name]="'settings-data-sink.Name' | translate"
+    prop="name"
+  >
+    <ng-template
+      ngx-datatable-cell-template
+      let-rowIndex="rowIndex"
+      let-value="value"
+      let-row="row"
+    >
+      <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column
+    [name]="'settings-data-sink.Address' | translate"
+    prop="address"
+  >
+    <ng-template
+      ngx-datatable-cell-template
+      let-rowIndex="rowIndex"
+      let-value="value"
+      let-row="row"
+    >
+      <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column
+    [name]="'settings-data-sink.DataType' | translate"
+    prop="dataType"
+  >
+    <ng-template
+      ngx-datatable-cell-template
+      let-rowIndex="rowIndex"
+      let-value="value"
+      let-row="row"
+    >
+      <ng-container [ngSwitch]="value">
+        <ng-container *ngSwitchCase="DataPointDataType.String">{{ 'data-type.String' | translate }}</ng-container>
+        <ng-container *ngSwitchCase="DataPointDataType.Double">{{ 'data-type.Double' | translate }}</ng-container>
+        <ng-container *ngSwitchCase="DataPointDataType.Byte">{{ 'data-type.Byte' | translate }}</ng-container>
+        <ng-container *ngSwitchCase="DataPointDataType.UInt16">{{ 'data-type.UInt16' | translate }}</ng-container>
+        <ng-container *ngSwitchCase="DataPointDataType.UInt32">{{ 'data-type.UInt32' | translate }}</ng-container>
+        <ng-container *ngSwitchCase="DataPointDataType.Boolean">{{ 'data-type.Boolean' | translate }}</ng-container>
+        <ng-container *ngSwitchDefault>{{ value | uppercase }}</ng-container>
+      </ng-container>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column
+    [name]="'settings-data-sink.InitialValue' | translate"
+    prop="initialValue"
+  >
+    <ng-template
+      ngx-datatable-cell-template
+      let-rowIndex="rowIndex"
+      let-value="value"
+      let-row="row"
+    >
+      <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column
+    [name]="'settings-data-sink.Actions' | translate"
+    cellClass="button-cell"
+    [sortable]="false"
+  >
+    <ng-template
+      ngx-datatable-cell-template
+      let-rowIndex="rowIndex"
+      let-value="value"
+      let-row="row"
+    >
+      <mat-button-toggle-group [disabled]="">
+        <mat-button-toggle
+          *ngIf="isExisting(row.address)"
+          [matTooltip]="'settings-data-sink.AlreadyExistDataPoint' | translate"
+          matTooltipPosition="above"
+          [disabled]="true"
+          ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle
+          *ngIf="!isExisting(row.address)"
+          [matTooltip]="'settings-data-sink.SelectVariable' | translate"
+          matTooltipPosition="above"
+          (click)="onSelect(row)"
+        ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </ng-template>
+  </ngx-datatable-column>
+</ngx-datatable>

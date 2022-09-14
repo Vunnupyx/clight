@@ -5,6 +5,7 @@ import { DataPoint, DataSink, DataSinkProtocol } from 'app/models';
 import { DataPointService, DataSinkService } from 'app/services';
 import { PromptService } from 'app/shared/services/prompt.service';
 import { MatTabGroup } from '@angular/material/tabs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-data-sink',

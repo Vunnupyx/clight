@@ -1,0 +1,353 @@
+// ------------------------------------------------------------------
+// File           : D:\DMG MORI\Connectivity - General\Themen\IoTconnector lite\Development\MDClite_signallist_840D_SL_4_5.awl
+//
+// Source File    : D:\DMG MORI\Connectivity - General\Themen\IoTconnector lite\Development\MDClite_signallist_840D_SL_4_5.var
+// Generation Date: 5/15/2022  Time: 11:29:18 PM
+// ------------------------------------------------------------------
+
+DATA_BLOCK DB  120
+VERSION : 0.0
+
+
+STRUCT
+
+ C1_S_actProgNetTime1_297:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#129;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_DIAGN_cuttingTime1_10:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#A;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#3B;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_progStatus_13:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#D;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ B1_S_opMode_3:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#21;
+   spalte : WORD := W#16#3;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_selectedWorkPProg1_35:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#23;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7D;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#13;
+   laenge : BYTE := B#16#A0;
+   END_STRUCT ;
+
+ C1_SPARP_progName1_3:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#3;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7D;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#13;
+   laenge : BYTE := B#16#20;
+   END_STRUCT ;
+
+ C1_SPARP_msg1_1:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#1;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7D;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#13;
+   laenge : BYTE := B#16#80;
+   END_STRUCT ;
+
+ C1_workPNameLong_12:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#C;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7D;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#13;
+   laenge : BYTE := B#16#80;
+   END_STRUCT ;
+
+ C1_workPandProgName1_16:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#10;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7D;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#13;
+   laenge : BYTE := B#16#A0;
+   END_STRUCT ;
+
+ C1_S_actParts_121:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#79;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_reqParts_119:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#77;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_specParts_122:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#7A;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_totalParts_120:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#78;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_feedRateIpoOvr_3:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#3;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_SSP_speedOvr1_4:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#4;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#72;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_rapFeedRateOvr_4:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#4;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_SSP_turnState1_9:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#9;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#72;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ N_Y_anLanguageOnHmi1_78:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#1;
+   spalte : WORD := W#16#4E;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#10;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ N_Y_basicLengthUnit_2:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#1;
+   spalte : WORD := W#16#2;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#10;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ N_Y_nckType_31:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#1;
+   spalte : WORD := W#16#1F;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#10;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ N_Y_nckVersion_32:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#1;
+   spalte : WORD := W#16#20;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#10;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#F;
+   laenge : BYTE := B#16#8;
+   END_STRUCT ;
+
+ C1_S_chanStatus_11:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#B;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_singleBlockActive_12:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#C;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7E;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_SINF_optStopActive_10:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#A;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7E;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_progTestActive_16:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#10;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7E;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_SINF_trialRunActive_9:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#9;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7E;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ C1_S_actTNumber_23:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#41;
+   spalte : WORD := W#16#17;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ N_S_numAlarms_7:
+   STRUCT
+   SYNTAX_ID : BYTE := B#16#82;
+   bereich_u_einheit : BYTE := B#16#1;
+   spalte : WORD := W#16#7;
+   zeile : WORD := W#16#1;
+   bausteintyp : BYTE := B#16#7F;
+   ZEILENANZAHL : BYTE := B#16#1;
+   typ : BYTE := B#16#4;
+   laenge : BYTE := B#16#2;
+   END_STRUCT ;
+
+ END_STRUCT ;
+
+BEGIN
+END_DATA_BLOCK

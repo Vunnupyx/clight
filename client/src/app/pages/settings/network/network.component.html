@@ -124,7 +124,7 @@
 
           <div class="d-flex justify-content-end mt-25">
             <button
-              mat-raised-button
+              mat-button color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
               (click)="saveChanges(mainForm, NetworkType.ETHERNET_X1)"
             >
@@ -224,7 +224,7 @@
 
           <div class="d-flex justify-content-end mt-25">
             <button
-              mat-raised-button
+              mat-button color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
               (click)="saveChanges(mainForm, NetworkType.ETHERNET_X2)"
             >
@@ -349,7 +349,7 @@
 
           <div class="d-flex justify-content-end mt-25">
             <button
-              mat-raised-button
+              mat-button color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
               (click)="saveChanges(mainForm, NetworkType.PROXY)"
             >
@@ -397,14 +397,7 @@
                   matTooltipPosition="above"
                   [required]="!!config[NetworkType.TIME].useNtp"
                 />
-                <mat-icon
-                  _ngcontent-ddb-c284=""
-                  role="img"
-                  class="mat-icon notranslate color-error material-icons mat-icon-no-color ng-star-inserted"
-                  aria-hidden="true"
-                  data-mat-icon-type="font"
-                  >highlight_off</mat-icon
-                >
+                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
                 <mat-hint>{{
                   'settings-network.nptUnreachable' | translate
                 }}</mat-hint>
@@ -418,14 +411,7 @@
                   [pattern]="hostRegex"
                   [required]="!!config[NetworkType.TIME].useNtp"
                 />
-                <mat-icon
-                  _ngcontent-ddb-c284=""
-                  role="img"
-                  class="mat-icon notranslate color-success material-icons mat-icon-no-color ng-star-inserted"
-                  aria-hidden="true"
-                  data-mat-icon-type="font"
-                  >check_circle_outline</mat-icon
-                >
+                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
               </mat-form-field>
             </div>
           </div>
@@ -487,7 +473,7 @@
 
           <div class="d-flex justify-content-end mt-25">
             <button
-              mat-raised-button
+              mat-button color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
               (click)="saveChanges(mainForm, NetworkType.TIME)"
             >

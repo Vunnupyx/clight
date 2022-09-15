@@ -1,0 +1,68 @@
+@font-face {
+  font-family: NotoSansJP;
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  unicode-range: U+30??, U+3400-4dbf, U+4e00-9faf, U+ff00-ffef;
+  src: url("NotoSansJP-Thin.otf") format("opentype");
+}
+
+@font-face {
+  font-family: NotoSansJP;
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  unicode-range: U+30??, U+3400-4dbf, U+4e00-9faf, U+ff00-ffef;
+  src: url("NotoSansJP-Light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: NotoSansJP;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+30??, U+3400-4dbf, U+4e00-9faf, U+ff00-ffef;
+  src: url("NotoSansJP-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: NotoSansJP;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+30??, U+3400-4dbf, U+4e00-9faf, U+ff00-ffef;
+  src: url("NotoSansJP-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: NotoSansJP;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+30??, U+3400-4dbf, U+4e00-9faf, U+ff00-ffef;
+  src: url("NotoSansJP-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: NotoSansJP;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+30??, U+3400-4dbf, U+4e00-9faf, U+ff00-ffef;
+  src: url("NotoSansJP-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: NotoSansJP;
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  unicode-range: U+30??, U+3400-4dbf, U+4e00-9faf, U+ff00-ffef;
+  src: url("NotoSansJP-Black.otf") format("opentype");
+}
+
+/* -------------------------------------------------------
+Usage:
+
+  html { font-family: 'NotoSansJP', sans-serif; }
+*/

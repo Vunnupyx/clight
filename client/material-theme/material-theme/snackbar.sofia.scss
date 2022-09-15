@@ -1,36 +1,111 @@
-.mat-snack-bar-container {
+@use "modules/sofia-color";
+@use "modules/sofia-typo";
+@use "modules/sofia-spacing";
+@use "modules/sofia-button";
 
-  min-width: 191px;
-  max-width: 463px;
+.mat-snack-bar-container {
+  max-width: 478px !important;
+  min-width: 100px !important;
+  min-height: sofia-spacing.$scale-64 !important;
+  background-color: sofia-color.$white;
+  border-left: 8px solid sofia-color.$white;
 
   .mat-simple-snackbar {
-    span {
-      color: rgba(255, 255, 255, 0.87);
-      font-weight: 500;
-      letter-spacing: 0.56px;
+    flex-wrap: wrap;
+    justify-content: end;
+
+    span.mat-simple-snack-bar-content {
+      color: sofia-color.$gray-100 !important;
+
+      @include sofia-typo.body-primary;
+    }
+
+    button.mat-button-base {
+      background-color: transparent;
+      color: sofia-color.$blue-interaction !important;
+      box-shadow: none;
+
+      &:active {
+        background-color: sofia-color.$gray-20 !important;
+      }
+
+      body:not(.no-hover) &:hover {
+        background-color: transparent;
+        color: sofia-color.$blue-80 !important;
+      }
+
+      &.cdk-keyboard-focused {
+        border: 1px solid sofia-color.$blue-interaction;
+
+        .mat-button-focus-overlay {
+          opacity: 0;
+        }
+      }
+    }
+  }
+
+  &.information {
+    border-color: sofia-color.$blue-interaction;
+    padding: 20px 20px 20px 64px !important;
+
+    &::before {
+      content: url("assets/icons/sofia-info.svg");
+      position: absolute;
+      top: 21.5px;
+      left: 21.5px;
     }
   }
 
   &.success {
-    background-color: $status-success;
-  }
+    border-color: sofia-color.$green-success;
+    padding: 20px 20px 20px 64px !important;
 
-  &.information {
-    background-color: $status-information-background;
-
-    .mat-button-wrapper {
-      color: mat-color($sofia-primary, 500);
+    &::before {
+      content: url("assets/icons/sofia-success.svg");
+      position: absolute;
+      top: 21.5px;
+      left: 21.5px;
     }
   }
 
   &.warning {
-    background-color: $status-warning;
-    span {
-      color: black!important;
+    border-color: sofia-color.$yellow-warning;
+    padding: 20px 20px 20px 64px !important;
+
+    &::before {
+      content: url("assets/icons/sofia-warning.svg");
+      position: absolute;
+      top: 21.5px;
+      left: 21.5px;
     }
   }
 
   &.error {
-    background-color: $status-error;
+    border-color: sofia-color.$red-danger;
+    padding: 20px 20px 20px 64px !important;
+
+    &::before {
+      content: url("assets/icons/sofia-error.svg");
+      position: absolute;
+      top: 21.5px;
+      left: 21.5px;
+    }
+
+    /* stylelint-disable-next-line no-descending-specificity */
+    .mat-simple-snackbar button.mat-button-base {
+      color: sofia-color.$red-danger !important;
+
+      body:not(.no-hover) &:hover {
+        color: #d00c29 !important;
+      }
+
+      &.cdk-keyboard-focused {
+        border: 1px solid sofia-color.$red-danger;
+
+        .mat-button-focus-overlay {
+          opacity: 0;
+        }
+      }
+    }
   }
 }

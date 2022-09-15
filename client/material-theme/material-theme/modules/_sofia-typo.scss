@@ -1,0 +1,172 @@
+////
+/// Typography Mixins for easier usage of predefined typography styles
+///
+/// @group _typo
+///
+
+@use "sass:map";
+
+///
+@mixin heading-primary {
+  font-family: map.get($sofia-typography, heading-primary, "font-family");
+  font-size: map.get($sofia-typography, heading-primary, "font-size");
+  line-height: map.get($sofia-typography, heading-primary, "line-height");
+  font-weight: map.get($sofia-typography, heading-primary, "font-weight");
+  letter-spacing: map.get($sofia-typography, heading-primary, "letter-spacing");
+}
+
+///
+@mixin heading-secondary {
+  font-family: map.get($sofia-typography, heading-secondary, "font-family");
+  font-size: map.get($sofia-typography, heading-secondary, "font-size");
+  line-height: map.get($sofia-typography, heading-secondary, "line-height");
+  font-weight: map.get($sofia-typography, heading-secondary, "font-weight");
+  letter-spacing: map.get($sofia-typography, heading-secondary, "letter-spacing");
+}
+
+///
+@mixin heading-tertiary {
+  font-family: map.get($sofia-typography, heading-tertiary, "font-family");
+  font-size: map.get($sofia-typography, heading-tertiary, "font-size");
+  line-height: map.get($sofia-typography, heading-tertiary, "line-height");
+  font-weight: map.get($sofia-typography, heading-tertiary, "font-weight");
+  letter-spacing: map.get($sofia-typography, heading-tertiary, "letter-spacing");
+}
+
+///
+@mixin subtitle-primary {
+  font-family: map.get($sofia-typography, subtitle-primary, "font-family");
+  font-size: map.get($sofia-typography, subtitle-primary, "font-size");
+  line-height: map.get($sofia-typography, subtitle-primary, "line-height");
+  font-weight: map.get($sofia-typography, subtitle-primary, "font-weight");
+  letter-spacing: map.get($sofia-typography, subtitle-primary, "letter-spacing");
+}
+
+///
+@mixin subtitle-secondary {
+  font-family: map.get($sofia-typography, subtitle-secondary, "font-family");
+  font-size: map.get($sofia-typography, subtitle-secondary, "font-size");
+  line-height: map.get($sofia-typography, subtitle-secondary, "line-height");
+  font-weight: map.get($sofia-typography, subtitle-secondary, "font-weight");
+  letter-spacing: map.get($sofia-typography, subtitle-secondary, "letter-spacing");
+}
+
+///
+@mixin subtitle-tertiary {
+  font-family: map.get($sofia-typography, subtitle-tertiary, "font-family");
+  font-size: map.get($sofia-typography, subtitle-tertiary, "font-size");
+  line-height: map.get($sofia-typography, subtitle-tertiary, "line-height");
+  font-weight: map.get($sofia-typography, subtitle-tertiary, "font-weight");
+  letter-spacing: map.get($sofia-typography, subtitle-tertiary, "letter-spacing");
+}
+
+///
+@mixin body-primary {
+  font-family: map.get($sofia-typography, body-primary, "font-family");
+  font-size: map.get($sofia-typography, body-primary, "font-size");
+  line-height: map.get($sofia-typography, body-primary, "line-height");
+  font-weight: map.get($sofia-typography, body-primary, "font-weight");
+  letter-spacing: map.get($sofia-typography, body-primary, "letter-spacing");
+}
+
+///
+@mixin body-secondary {
+  font-family: map.get($sofia-typography, body-secondary, "font-family");
+  font-size: map.get($sofia-typography, body-secondary, "font-size");
+  line-height: map.get($sofia-typography, body-secondary, "line-height");
+  font-weight: map.get($sofia-typography, body-secondary, "font-weight");
+  letter-spacing: map.get($sofia-typography, body-secondary, "letter-spacing");
+}
+
+///
+@mixin label {
+  font-family: map.get($sofia-typography, label, "font-family");
+  font-size: map.get($sofia-typography, label, "font-size");
+  line-height: map.get($sofia-typography, label, "line-height");
+  font-weight: map.get($sofia-typography, label, "font-weight");
+  letter-spacing: map.get($sofia-typography, label, "letter-spacing");
+}
+
+///
+$sofia-font-family: "NotoSansJP", "Inter", sans-serif;
+
+///
+$sofia-typography: (
+  heading-primary: (
+    "font-family": $sofia-font-family,
+    "font-size": 28px,
+    "line-height": 36px,
+    "font-weight": 600,
+    "letter-spacing": 0.25px
+  ),
+  heading-secondary: (
+    "font-family": $sofia-font-family,
+    "font-size": 24px,
+    "line-height": 32px,
+    "font-weight": 600,
+    "letter-spacing": 0
+  ),
+  heading-tertiary: (
+    "font-family": $sofia-font-family,
+    "font-size": 18px,
+    "line-height": 26px,
+    "font-weight": 600,
+    "letter-spacing": 0.15px
+  ),
+  subtitle-primary: (
+    "font-family": $sofia-font-family,
+    "font-size": 18px,
+    "line-height": 26px,
+    "font-weight": 500,
+    "letter-spacing": 0.15px
+  ),
+  subtitle-secondary: (
+    "font-family": $sofia-font-family,
+    "font-size": 16px,
+    "line-height": 24px,
+    "font-weight": 500,
+    "letter-spacing": 0.1px
+  ),
+  subtitle-tertiary: (
+    "font-family": $sofia-font-family,
+    "font-size": 14px,
+    "line-height": 22px,
+    "font-weight": 500,
+    "letter-spacing": 0.1px
+  ),
+  body-primary: (
+    "font-family": $sofia-font-family,
+    "font-size": 16px,
+    "line-height": 24px,
+    "font-weight": 400,
+    "letter-spacing": 0.5px
+  ),
+  body-secondary: (
+    "font-family": $sofia-font-family,
+    "font-size": 14px,
+    "line-height": 22px,
+    "font-weight": 400,
+    "letter-spacing": 0.25px
+  ),
+  display: (
+    "font-family": $sofia-font-family,
+    "font-size": 28px,
+    "line-height": 36px,
+    "font-weight": 600,
+    "letter-spacing": 0.25px
+  ),
+  button: (
+    "font-family": $sofia-font-family,
+    "font-size": 16px,
+    "line-height": 24px,
+    "font-weight": 500,
+    "letter-spacing": 0.15px
+  ),
+  label: (
+    "font-family": $sofia-font-family,
+    "font-size": 12px,
+    "line-height": 16px,
+    "font-weight": 400,
+    "letter-spacing": 0.4px
+  )
+);

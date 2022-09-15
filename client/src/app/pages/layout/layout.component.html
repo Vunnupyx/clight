@@ -13,7 +13,7 @@
           (click)="drawer.toggle()"
           *ngIf="isHandset$ | async"
         >
-          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+          <mat-icon svgIcon="mdc:menu" aria-label="Side nav toggle icon"></mat-icon>
         </button>
         <span routerLink="settings" class="cursor-pointer"
           ><img src="/assets/images/logo-connectivity-white.png" width="250"
@@ -22,7 +22,7 @@
       <span class="spacer"></span>
       <span class="help-wrapper">
         <a mat-icon-button [href]="supportHref" target="_blank">
-          <mat-icon>help_outline</mat-icon>
+          <mat-icon class="color-light-primary" svgIcon="mdc:unknown"></mat-icon>
         </a>
       </span>
       <span class="clock-wrapper">
@@ -40,12 +40,12 @@
         [opened]="(isHandset$ | async) === false"
       >
         <mat-toolbar>
-          <mat-icon>account_balance_wallet</mat-icon>
+          <mat-icon svgIcon="mdc:settings"></mat-icon>
           <span class="menu-heading">{{ 'layout.Settings' | translate }}</span>
         </mat-toolbar>
         <mat-nav-list>
           <a mat-list-item routerLink="reset-password">
-            <mat-icon>info</mat-icon>
+            <mat-icon svgIcon="mdc:lock"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.ChangePassword' | translate
             }}</span>
@@ -68,7 +68,7 @@
           (click)="drawer.toggle()"
           *ngIf="isHandset$ | async"
         >
-          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        <mat-icon svgIcon="mdc:menu" aria-label="Side nav toggle icon"></mat-icon>
         </button>
         <span routerLink="settings" class="cursor-pointer"
           ><img src="/assets/images/logo-connectivity-white.png" width="250"
@@ -77,7 +77,7 @@
       <span class="spacer"></span>
       <span class="help-wrapper">
         <a mat-icon-button [href]="supportHref" target="_blank">
-          <mat-icon>help_outline</mat-icon>
+          <mat-icon class="color-light-primary" svgIcon="mdc:unknown"></mat-icon>
         </a>
       </span>
       <span class="clock-wrapper">
@@ -96,66 +96,60 @@
         [disableClose]="(isHandset$ | async) === false"
       >
         <mat-toolbar>
-          <mat-icon>account_balance_wallet</mat-icon>
+          <mat-icon svgIcon="mdc:settings"></mat-icon>
           <span class="menu-heading">{{ 'layout.Settings' | translate }}</span>
         </mat-toolbar>
         <mat-nav-list>
           <a mat-list-item routerLink="settings/general">
-            <mat-icon>tune</mat-icon>
+            <mat-icon svgIcon="mdc:menu"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.General' | translate
             }}</span>
           </a>
-          <a mat-list-item routerLink="update-manager" *ngIf="false">
-            <mat-icon>update</mat-icon>
-            <span routerLinkActive="active" class="menu-text">{{
-              'layout.UpdateManager' | translate
-            }}</span>
-          </a>
           <a mat-list-item routerLink="settings/data-source">
-            <mat-icon>source</mat-icon>
+            <mat-icon svgIcon="mdc:machine"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.DataSource' | translate
             }}</span>
           </a>
           <a mat-list-item routerLink="settings/virtual-data-point">
-            <mat-icon>folder_open</mat-icon>
+            <mat-icon svgIcon="mdc:process"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.VirtualDataPoints' | translate
             }}</span>
           </a>
           <a mat-list-item routerLink="settings/data-mapping">
-            <mat-icon>link</mat-icon>
+            <mat-icon svgIcon="mdc:step-next"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.DataMapping' | translate
             }}</span>
           </a>
           <a mat-list-item routerLink="settings/data-sink">
-            <mat-icon>topic</mat-icon>
+            <mat-icon svgIcon="mdc:upload"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.DataSinks' | translate
             }}</span>
           </a>
           <a mat-list-item routerLink="settings/network">
-            <mat-icon>settings_ethernet</mat-icon>
+            <mat-icon svgIcon="mdc:network"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.Network' | translate
             }}</span>
           </a>
           <a mat-list-item routerLink="system-information">
-            <mat-icon>info</mat-icon>
+            <mat-icon svgIcon="mdc:info"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.SystemInformation' | translate
             }}</span>
           </a>
           <a mat-list-item routerLink="settings/change-password">
-            <mat-icon>info</mat-icon>
+            <mat-icon svgIcon="mdc:lock"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.ChangePassword' | translate
             }}</span>
           </a>
           <a mat-list-item (click)="logout()">
-            <mat-icon>logout</mat-icon>
+            <mat-icon svgIcon="mdc:logout"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.Logout' | translate
             }}</span>

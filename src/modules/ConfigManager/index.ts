@@ -752,10 +752,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         return {
           ...{
             ...item,
-            resetSchedule:
-              newResetSchedule.length > 0
-                ? newResetSchedule
-                : item.resetSchedules
+            resetSchedules: newResetSchedule
           },
           id: uuidv4()
         };

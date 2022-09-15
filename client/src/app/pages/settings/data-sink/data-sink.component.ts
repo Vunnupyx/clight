@@ -80,7 +80,7 @@ export class DataSinkComponent implements OnInit {
   }
 
   onDataPoints(arr: DataPoint[]) {
-    this.tabs.realignInkBar();
+    this.tabs?.realignInkBar();
   }
 
   ngOnDestroy() {

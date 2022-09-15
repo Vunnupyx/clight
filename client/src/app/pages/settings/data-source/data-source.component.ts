@@ -286,7 +286,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onDataPoints(arr: SourceDataPoint[]) {
     this.datapointRows = arr;
-    this.tabs.realignInkBar();
+    this.tabs?.realignInkBar();
   }
 
   isDuplicatingField(field: 'name' | 'address') {

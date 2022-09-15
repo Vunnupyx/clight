@@ -768,18 +768,14 @@
   ],
   "virtualDataPoints": [
     {
-      "sources": [
-        "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b"
-      ],
+      "sources": ["a6cc9e0e-34a8-456a-85ac-f8780b6dd52b"],
       "operationType": "not",
       "name": "Emergency Stop Triggered",
       "id": "dd88cdb9-994c-40ce-be60-1d37f3aa755a"
     },
     {
       "id": "9d62359b-c48b-4084-825f-1ce56c93e202",
-      "sources": [
-        "fda5000e-0942-4605-a995-9c49bd1e99d6"
-      ],
+      "sources": ["fda5000e-0942-4605-a995-9c49bd1e99d6"],
       "operationType": "thresholds",
       "name": "Virtual Execution Mode",
       "thresholds": {
@@ -807,35 +803,27 @@
     },
     {
       "id": "d714086b-07d3-4310-8acf-bac226001fa6",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "counter",
       "name": "TestCounter"
     },
     {
       "id": "0e03b56e-9746-4bd5-9436-e472b1aba3b4",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "greater",
       "name": "TestGreater",
       "comparativeValue": "100"
     },
     {
       "id": "4cb118e4-aad8-4ae1-a379-495564d5d685",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "smaller",
       "name": "TestSmaller",
       "comparativeValue": "100"
     },
     {
       "id": "36552c49-7519-41fd-b010-a66d9bf220b9",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "greaterEqual",
       "name": "TestGreaterEqual",
       "thresholds": {},
@@ -843,9 +831,7 @@
     },
     {
       "id": "0fb2ec39-bfbc-4997-a45d-11850da1c5bd",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "smallerEqual",
       "name": "TestSmallerEqual",
       "thresholds": {},
@@ -853,18 +839,14 @@
     },
     {
       "id": "d80adcdb-73a0-401d-8fd4-6367ea4fda99",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "equal",
       "name": "TestEqual",
       "comparativeValue": "100"
     },
     {
       "id": "5a09224f-9a62-42e5-99c4-a21d3c86b986",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "unequal",
       "name": "TestUnqeual"
     },
@@ -879,9 +861,7 @@
     },
     {
       "id": "13d63dbc-d630-45e9-8f39-8610dc4f0a3a",
-      "sources": [
-        "9b0aba24-a662-40fb-b7ea-90a2662a3907"
-      ],
+      "sources": ["9b0aba24-a662-40fb-b7ea-90a2662a3907"],
       "operationType": "thresholds",
       "name": "TestThreshold",
       "thresholds": {
@@ -1082,15 +1062,15 @@
     "accepted": true
   },
   "env": {
-    "selected": "dev",
+    "selected": "stag",
     "mdc": {
-      "tag": "develop"
+      "tag": "staging"
     },
     "mtc": {
       "tag": "latest"
     },
     "web": {
-      "tag": "develop"
+      "tag": "staging"
     }
   }
 }

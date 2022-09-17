@@ -5,6 +5,7 @@ import { DataSinkService } from 'app/services';
 import { Subscription } from 'rxjs';
 
 export interface EditCustomOpcUaVariableModalData {
+  isEditing?: boolean;
   customDatapoint: PreDefinedDataPoint;
 }
 
@@ -38,6 +39,9 @@ export class EditCustomOpcUaVariableModalComponent implements OnInit {
   }
 
   onOpcDataSink(x: DataSink): void {
+    if (this.data.isEditing) {
+      return;
+    }
     const predefinedOPCDataPoints = this.dataSinkService.getPredefinedOPCDataPoints();
     this.existingAddresses = [
       ...(predefinedOPCDataPoints || []).map(dp => dp.address).filter(Boolean),

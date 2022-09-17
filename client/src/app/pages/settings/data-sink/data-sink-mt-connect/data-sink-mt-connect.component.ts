@@ -35,6 +35,7 @@ import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.co
 import { Status } from 'app/shared/state';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { SelectOpcUaVariableModalComponent, SelectOpcUaVariableModalData } from '../select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -110,6 +111,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     private dataSinkService: DataSinkService,
     private dataMappingService: DataMappingService,
     private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   get isEditing() {
@@ -121,10 +123,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       this.dataSinkService.getPredefinedMtConnectDataPoints();
     this.OPCUAAddresses = this.dataSinkService.getPredefinedOPCDataPoints();
     this.sub.add(
-      combineLatest(
+      combineLatest([
         this.dataPointService.dataPoints,
         this.dataMappingService.dataMappings,
-      ).subscribe(([dataPoints, dataMappings]) => this.onDataPoints(dataPoints, dataMappings))
+      ]).subscribe(([dataPoints, dataMappings]) => this.onDataPoints(dataPoints, dataMappings))
     );
     this.sub.add(
       this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
@@ -244,7 +246,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     }
   }
 
-  onAddConfirm(result: PreDefinedDataPoint) {
+  private onAddConfirm(result: PreDefinedDataPoint) {
     const obj = {
       ...result,
       enabled: true,
@@ -310,8 +312,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   onDelete(obj: DataPoint) {
-    const title = `Delete`;
-    const message = `Are you sure you want to delete data point ${obj.name}?`;
+    const title = this.translate.instant('settings-data-sink.Delete');
+    const message = this.translate.instant('settings-data-sink.DeleteMessage');
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

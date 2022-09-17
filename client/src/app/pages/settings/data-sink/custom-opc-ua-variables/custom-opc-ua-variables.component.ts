@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { DataSinkService } from 'app/services';
+import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 
 import {
   DataPointDataType,
@@ -25,7 +27,8 @@ export class CustomOpcUaVariablesComponent {
 
   constructor(
     private dataSinkService: DataSinkService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   isExisting(address: string) {
@@ -54,9 +57,50 @@ export class CustomOpcUaVariablesComponent {
       });
   }
 
-  onAddConfirm(obj: PreDefinedDataPoint) {
-    this.rows = (this.rows || []).concat([obj]);
+  private onAddConfirm(obj: PreDefinedDataPoint) {
     this.dataSinkService.addCustomDatapoint(DataSinkProtocol.OPC, obj);
+  }
+
+  onEdit(obj: PreDefinedDataPoint) {
+    this.dialog
+      .open<
+        EditCustomOpcUaVariableModalComponent,
+        EditCustomOpcUaVariableModalData,
+        EditCustomOpcUaVariableModalData
+      >(EditCustomOpcUaVariableModalComponent, {
+        data: {
+          isEditing: true,
+          customDatapoint: obj
+        }
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (!result) {
+          return;
+        }
+        this.onEditConfirm(result.customDatapoint);
+      });
+  }
+
+  private onEditConfirm(obj: PreDefinedDataPoint) {
+    console.log('!!! onEditConfirm', obj)
+    this.dataSinkService.updateCustomDatapoint(DataSinkProtocol.OPC, obj);
+  }
+
+  onDelete(obj: PreDefinedDataPoint) {
+    const title = this.translate.instant('settings-data-sink.Delete');
+    const message = this.translate.instant('settings-data-sink.DeleteMessage');
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: new ConfirmDialogModel(title, message)
+    });
+
+    dialogRef.afterClosed().subscribe((dialogResult) => {
+      if (!dialogResult) {
+        return;
+      }
+      this.dataSinkService.deleteCustomDatapoint(DataSinkProtocol.OPC, obj);
+    });
   }
 
   onSelect(obj: PreDefinedDataPoint) {

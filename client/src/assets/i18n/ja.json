@@ -305,7 +305,8 @@
     "AddOpcUaVariable": "",
     "DataType": "",
     "SetCustomOpcUaVariable": "",
-    "NodeId": ""
+    "NodeId": "",
+    "DeleteMessage": "本当にデータポイントを削除しますか？"
   },
   "settings-data-mapping": {
     "DataMapping": "データマッピング",

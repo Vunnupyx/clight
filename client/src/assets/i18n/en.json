@@ -305,7 +305,8 @@
     "AddOpcUaVariable": "Add your own OPC UA Variable",
     "DataType": "Data Type",
     "SetCustomOpcUaVariable": "Set Custom OPC UA Variable",
-    "NodeId": "Node ID"
+    "NodeId": "Node ID",
+    "DeleteMessage": "Are you sure you want to delete data point?"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

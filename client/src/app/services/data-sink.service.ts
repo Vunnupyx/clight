@@ -202,6 +202,40 @@ export class DataSinkService {
     });
   }
 
+  updateCustomDatapoint(protocol: DataSinkProtocol, obj: PreDefinedDataPoint) {
+    this._store.patchState((state) => {
+      state.dataSinks = state.dataSinks.map((dataSink) => {
+        if (dataSink.protocol != protocol) {
+          return dataSink;
+        }
+        const customDatapoints = dataSink.customDatapoints || [];
+        return {
+          ...dataSink,
+          customDatapoints: customDatapoints.map((dp) => dp.address === obj.address ? obj : dp)
+        };
+      });
+      state.touched = true;
+    });
+  }
+
+  deleteCustomDatapoint(protocol: DataSinkProtocol, obj: PreDefinedDataPoint) {
+    this._store.patchState((state) => {
+      state.dataSinks = state.dataSinks.map((dataSink) => {
+        if (dataSink.protocol != protocol) {
+          return dataSink;
+        }
+        const customDatapoints = dataSink.customDatapoints || [];
+        return {
+          ...dataSink,
+          customDatapoints: customDatapoints.filter(
+            (dp) => dp.address !== obj.address
+          )
+        };
+      });
+      state.touched = true;
+    });
+  }
+
   getPredefinedMtConnectDataPoints() {
     return PREDEFINED_MTCONNECT_DATA_POINTS;
   }

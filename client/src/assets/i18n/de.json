@@ -305,7 +305,8 @@
     "AddOpcUaVariable": "",
     "DataType": "",
     "SetCustomOpcUaVariable": "",
-    "NodeId": ""
+    "NodeId": "",
+    "DeleteMessage": ""
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",

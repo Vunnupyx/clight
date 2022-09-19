@@ -134,6 +134,12 @@ export interface IDataHubSettings {
   symKey: string;
 }
 
+export interface IOpcuaCustomDataPoint {
+  nodeId: string;
+  name: string;
+  dataType: string;
+}
+
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
@@ -141,6 +147,7 @@ export interface IDataSinkConfig {
   enabled: boolean;
   auth?: IOpcuaAuth;
   datahub?: IDataHubSettings;
+  customDataPoints?: IOpcuaCustomDataPoint[];
 }
 
 export interface IOpcuaAuth {

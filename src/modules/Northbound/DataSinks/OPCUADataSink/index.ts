@@ -35,7 +35,7 @@ export class OPCUADataSink extends DataSink {
   constructor(options: IOPCUADataSinkOptions) {
     super(options);
     this.opcuaAdapter = new OPCUAAdapter({
-      config: options.dataSinkConfig,
+      dataSinkConfig: options.dataSinkConfig,
       generalConfig: options.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
@@ -92,7 +92,7 @@ export class OPCUADataSink extends DataSink {
         ) as UAVariable;
 
         if (typeof dp.initialValue !== 'undefined') {
-          this.setNodeValue(this.opcuaNodes[dp.address], dp.initialValue)
+          this.setNodeValue(this.opcuaNodes[dp.address], dp.initialValue);
         }
       } catch (e) {
         winston.warn(

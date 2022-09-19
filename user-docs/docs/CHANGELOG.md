@@ -3,7 +3,11 @@ title: Changelog
 ---
 
 # Changelog
+## [2.2.2]
 
+### Added
+
+- [DIGMDCLGHT-129](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-129) Added support for custom data points.
 ## [2.2.1]
 
 ### Added

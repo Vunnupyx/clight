@@ -126,6 +126,13 @@ describe(`OPCUAAdapter Test`, () => {
         expect(testAdapter).toBeInstanceOf(OPCUAAdapter);
       });
 
+      it(`with correct XML initialization (replacing DummyMachineToolName)`, async () => {
+        testAdapter = new OPCUAAdapter(configManagerMock as any);
+        await testAdapter.init();
+        expect(writtenXMLFile!.includes('DummyMachineToolName')).toBeFalsy();
+        expect(writtenXMLFile!.includes('DM000000000000')).toBeTruthy();
+      });
+
       it(`with correct custom data points, if any exists`, async () => {
         const nodeId = 'TEST_NODE_ID';
         const name = 'TEST_DISP_NAME';
@@ -152,7 +159,7 @@ describe(`OPCUAAdapter Test`, () => {
         ).toBeTruthy();
         expect(
           writtenXMLFile!.includes(
-            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${nodeId}" BrowseName="1:${nodeId}">`
+            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${nodeId}" BrowseName="2:${nodeId}">`
           )
         ).toBeTruthy();
         expect(
@@ -161,7 +168,7 @@ describe(`OPCUAAdapter Test`, () => {
       });
 
       it(`with correct custom data points, skips if existing node id given`, async () => {
-        const nodeId = 'ComponentName';
+        const nodeId = 'Identification.ComponentName';
         const name = 'TEST_DISP_NAME';
         const dataType = 'TEST_DATATYPE';
         testAdapter = new OPCUAAdapter({
@@ -243,6 +250,24 @@ describe(`OPCUAAdapter Test`, () => {
           //   });
         });
       });
+    });
+  });
+
+  describe('findNode', () => {
+    it('returns the node by using correct prefix', async () => {
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+      await testAdapter.init();
+
+      let node = await testAdapter.findNode('Variable1');
+      expect(node?.nodeId).toBe('ns=7;s=DM000000000000.Variable1');
+    });
+
+    it('returns null if no node is found', async () => {
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+      await testAdapter.init();
+
+      let node = await testAdapter.findNode('notfound');
+      expect(node).toEqual(null);
     });
   });
 });

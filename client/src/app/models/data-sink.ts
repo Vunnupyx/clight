@@ -60,5 +60,5 @@ export class DataSink {
       };
     };
   };
-  customDatapoints?: Array<PreDefinedDataPoint>;
+  customDataPoints?: Array<PreDefinedDataPoint>;
 }

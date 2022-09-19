@@ -109,8 +109,8 @@ export class DataSinkService {
       if (ds.auth) {
         payload.auth = ds.auth;
       }
-      if (ds.customDatapoints) {
-        payload.customDatapoints = ds.customDatapoints;
+      if (ds.customDataPoints) {
+        payload.customDataPoints = ds.customDataPoints;
       }
     }
 
@@ -192,10 +192,10 @@ export class DataSinkService {
         if (dataSink.protocol != protocol) {
           return dataSink;
         }
-        const customDatapoints = dataSink.customDatapoints || [];
+        const customDataPoints = dataSink.customDataPoints || [];
         return {
           ...dataSink,
-          customDatapoints: [...customDatapoints, obj]
+          customDataPoints: [...customDataPoints, obj]
         };
       });
       state.touched = true;
@@ -208,10 +208,12 @@ export class DataSinkService {
         if (dataSink.protocol != protocol) {
           return dataSink;
         }
-        const customDatapoints = dataSink.customDatapoints || [];
+        const customDataPoints = dataSink.customDataPoints || [];
         return {
           ...dataSink,
-          customDatapoints: customDatapoints.map((dp) => dp.address === obj.address ? obj : dp)
+          customDataPoints: customDataPoints.map((dp) =>
+            dp.address === obj.address ? obj : dp
+          )
         };
       });
       state.touched = true;
@@ -224,10 +226,10 @@ export class DataSinkService {
         if (dataSink.protocol != protocol) {
           return dataSink;
         }
-        const customDatapoints = dataSink.customDatapoints || [];
+        const customDataPoints = dataSink.customDataPoints || [];
         return {
           ...dataSink,
-          customDatapoints: customDatapoints.filter(
+          customDataPoints: customDataPoints.filter(
             (dp) => dp.address !== obj.address
           )
         };

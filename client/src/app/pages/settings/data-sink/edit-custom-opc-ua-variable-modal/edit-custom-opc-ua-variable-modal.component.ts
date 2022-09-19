@@ -45,7 +45,7 @@ export class EditCustomOpcUaVariableModalComponent implements OnInit {
     const predefinedOPCDataPoints = this.dataSinkService.getPredefinedOPCDataPoints();
     this.existingAddresses = [
       ...(predefinedOPCDataPoints || []).map(dp => dp.address).filter(Boolean),
-      ...(x.customDatapoints || []).map(dp => dp.address).filter(Boolean),
+      ...(x.customDataPoints || []).map(dp => dp.address).filter(Boolean),
     ];
   }
 

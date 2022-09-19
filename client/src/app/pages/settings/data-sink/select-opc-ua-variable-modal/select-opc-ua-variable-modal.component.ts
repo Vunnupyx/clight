@@ -37,11 +37,13 @@ export class SelectOpcUaVariableModalComponent implements OnInit {
   ngOnInit() {
     this.rows = this.dataSinkService.getPredefinedOPCDataPoints();
 
-    this.sub.add(this.dataSinkService.opcDataSink.subscribe(x => this.onOpcDataSink(x)));
+    this.sub.add(
+      this.dataSinkService.opcDataSink.subscribe((x) => this.onOpcDataSink(x))
+    );
   }
 
   onOpcDataSink(x: DataSink) {
-    this.customDatapointRows = x.customDatapoints;
+    this.customDatapointRows = x.customDataPoints;
   }
 
   onSelect(selected: PreDefinedDataPoint) {

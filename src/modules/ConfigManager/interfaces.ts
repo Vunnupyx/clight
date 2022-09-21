@@ -135,7 +135,7 @@ export interface IDataHubSettings {
 }
 
 export interface IOpcuaCustomDataPoint {
-  nodeId: string;
+  address: string;
   name: string;
   dataType: string;
 }

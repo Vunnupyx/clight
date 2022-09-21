@@ -32,7 +32,7 @@ const OPCUAServerMock = {
   initialized: false,
   engine: {
     addressSpace: {
-      findNode: (nodeId) => !nodeId.endsWith('notfound') && { nodeId }
+      findNode: (nodeId) => !nodeId.endsWith('notfound') && { address: nodeId }
     }
   },
   endpoints: [
@@ -127,7 +127,7 @@ describe(`OPCUAAdapter Test`, () => {
       });
 
       it(`with correct custom data points, if any exists`, async () => {
-        const nodeId = 'TEST_NODE_ID';
+        const address = 'TEST_NODE_ID';
         const name = 'TEST_DISP_NAME';
         const dataType = 'TEST_DATATYPE';
         testAdapter = new OPCUAAdapter({
@@ -136,7 +136,7 @@ describe(`OPCUAAdapter Test`, () => {
             ...configManagerMock.dataSinkConfig,
             customDataPoints: [
               {
-                nodeId,
+                address,
                 name,
                 dataType
               }
@@ -147,12 +147,12 @@ describe(`OPCUAAdapter Test`, () => {
 
         expect(
           writtenXMLFile!.includes(
-            `<Reference ReferenceType="Organizes">ns=1;s=${nodeId}</Reference>`
+            `<Reference ReferenceType="Organizes">ns=1;s=${address}</Reference>`
           )
         ).toBeTruthy();
         expect(
           writtenXMLFile!.includes(
-            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${nodeId}" BrowseName="1:${nodeId}">`
+            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${address}" BrowseName="1:${address}">`
           )
         ).toBeTruthy();
         expect(
@@ -161,7 +161,7 @@ describe(`OPCUAAdapter Test`, () => {
       });
 
       it(`with correct custom data points, skips if existing node id given`, async () => {
-        const nodeId = 'ComponentName';
+        const address = 'ComponentName';
         const name = 'TEST_DISP_NAME';
         const dataType = 'TEST_DATATYPE';
         testAdapter = new OPCUAAdapter({
@@ -170,7 +170,7 @@ describe(`OPCUAAdapter Test`, () => {
             ...configManagerMock.dataSinkConfig,
             customDataPoints: [
               {
-                nodeId,
+                address,
                 name,
                 dataType
               }
@@ -181,12 +181,12 @@ describe(`OPCUAAdapter Test`, () => {
 
         expect(
           writtenXMLFile!.includes(
-            `<Reference ReferenceType="Organizes">ns=1;s=${nodeId}</Reference>`
+            `<Reference ReferenceType="Organizes">ns=1;s=${address}</Reference>`
           )
         ).toBeFalsy();
         expect(
           writtenXMLFile!.includes(
-            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${nodeId}" BrowseName="2:${nodeId}">`
+            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${address}" BrowseName="2:${address}">`
           )
         ).toBeFalsy();
         expect(

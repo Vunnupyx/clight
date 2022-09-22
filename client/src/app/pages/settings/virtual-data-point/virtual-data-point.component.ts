@@ -33,6 +33,7 @@ import {
   ColumnMode,
   DatatableComponent
 } from '@swimlane/ngx-datatable';
+import { SetFormulaModalComponent, SetFormulaModalData } from './set-formula-modal/set-formula-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -92,6 +93,10 @@ export class VirtualDataPointComponent implements OnInit {
     {
       value: VirtualDataPointOperationType.ENUMERATION,
       text: 'virtual-data-point-operation-type.Enumeration'
+    },
+    {
+      value: VirtualDataPointOperationType.CALCULATION,
+      text: 'virtual-data-point-operation-type.Formula'
     },
     {
       value: VirtualDataPointOperationType.SUM,
@@ -378,6 +383,33 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  onSetFormula(virtualPoint: VirtualDataPoint) {
+    const dialogRef = this.dialog.open<
+      SetFormulaModalComponent,
+      SetFormulaModalData,
+      SetFormulaModalData
+    >(SetFormulaModalComponent, {
+      data: {
+        formula: virtualPoint.formula,
+        sources: virtualPoint.sources
+      },
+      width: '900px'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.formula = result.formula;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          formula: result.formula
+        });
+      }
+    });
+  }
+
   onSetComparativeValue(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.thresholds) {
       virtualPoint.thresholds = {};
@@ -455,7 +487,8 @@ export class VirtualDataPointComponent implements OnInit {
       VirtualDataPointOperationType.OR,
       VirtualDataPointOperationType.SUM,
       VirtualDataPointOperationType.ENUMERATION,
-      VirtualDataPointOperationType.THRESHOLDS
+      VirtualDataPointOperationType.THRESHOLDS,
+      VirtualDataPointOperationType.CALCULATION
     ].includes(operationType!);
   }
 

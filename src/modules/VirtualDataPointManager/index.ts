@@ -172,7 +172,6 @@ export class VirtualDataPointManager {
         );
       });
       let result = evaluate(variableReplacedFormula);
-      console.log(config.formula, variableReplacedFormula, result);
       if (
         /[*/+-]+([*/+-])/.test(variableReplacedFormula) || //check if any operators are repeating
         variableReplacedFormula.includes('Infinity') ||

@@ -146,18 +146,18 @@ export class OPCUAAdapter {
 
           for (const customConfig of this.dataSinkConfig.customDataPoints) {
             let isExistingNodeId = allUAVariables.find((x) =>
-              x['@NodeId'].endsWith(customConfig.nodeId)
+              x['@NodeId'].endsWith(customConfig.address)
             );
             if (isExistingNodeId) {
               const logPrefix = `${OPCUAAdapter.className}::setupNodesets`;
               winston.warn(
-                `${logPrefix} The custom data point with nodeId ${customConfig.nodeId} already exists! Skipping this custom data point`
+                `${logPrefix} The custom data point with address ${customConfig.address} already exists! Skipping this custom data point`
               );
               //skip if already existing nodeId
               continue;
             }
-            const nodeId = `ns=1;s=${customConfig.nodeId}`;
-            const browseName = `2:${customConfig.nodeId}`;
+            const nodeId = `ns=1;s=${customConfig.address}`;
+            const browseName = `2:${customConfig.address}`;
             const name = customConfig.name;
             const dataType = customConfig.dataType;
 

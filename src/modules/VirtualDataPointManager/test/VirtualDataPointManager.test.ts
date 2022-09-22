@@ -58,6 +58,180 @@ describe('Test VirtualDataPointManager', () => {
     cache.clearAll();
   });
 
+  describe('should calculate custom calculation expressions', () => {
+    let defaultFormula =
+      '( a6cc9e0e-34a8-456a-85ac-f8780b6dd52b / b6723asd-34a8-456a-85ac-f8780b6dd52b ) + 20';
+    test.each([
+      {
+        text: '(60 / 20) + 20',
+        firstValue: 60,
+        secondValue: 20,
+        formula: defaultFormula,
+        expectedResult: 23
+      },
+      {
+        text: 'using variables multiple times in a formula',
+        firstValue: 60,
+        secondValue: 20,
+        formula:
+          '( a6cc9e0e-34a8-456a-85ac-f8780b6dd52b / b6723asd-34a8-456a-85ac-f8780b6dd52b ) + a6cc9e0e-34a8-456a-85ac-f8780b6dd52b * b6723asd-34a8-456a-85ac-f8780b6dd52b',
+        expectedResult: 1203
+      },
+      {
+        text: 'multiple divisions',
+        firstValue: 60,
+        secondValue: 20,
+        formula:
+          'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b / b6723asd-34a8-456a-85ac-f8780b6dd52b / b6723asd-34a8-456a-85ac-f8780b6dd52b / b6723asd-34a8-456a-85ac-f8780b6dd52b',
+        expectedResult: 0.0075
+      },
+      {
+        text: 'Decimal result: (10 / 3) + 20',
+        firstValue: 10,
+        secondValue: 3,
+        formula: defaultFormula,
+        expectedResult: 23.3333
+      },
+      {
+        text: 'Formula does not include variables: (10 / 4)',
+        firstValue: 10,
+        secondValue: 3,
+        formula: '10 / 4',
+        expectedResult: 2.5
+      },
+      {
+        text: 'number/0 division',
+        firstValue: 26,
+        secondValue: 0,
+        formula: defaultFormula,
+        expectedResult: null
+      },
+      {
+        text: '0/0 division',
+        firstValue: 0,
+        secondValue: 0,
+        formula: defaultFormula,
+        expectedResult: null
+      },
+      {
+        text: 'number/Infinity division',
+        firstValue: 26,
+        secondValue: Infinity,
+        formula: defaultFormula,
+        expectedResult: null
+      },
+      {
+        text: 'number/-Infinity division',
+        firstValue: 26,
+        secondValue: -Infinity,
+        formula: defaultFormula,
+        expectedResult: null
+      },
+      {
+        text: 'Infinitiy/-Infinity division',
+        firstValue: Infinity,
+        secondValue: -Infinity,
+        formula: defaultFormula,
+        expectedResult: null
+      },
+      {
+        text: 'variable values are string',
+        firstValue: 'string1',
+        secondValue: 'string2',
+        formula: defaultFormula,
+        expectedResult: null
+      },
+      {
+        text: 'boolean words given',
+        firstValue: false,
+        secondValue: true,
+        formula: defaultFormula,
+        expectedResult: null
+      },
+      {
+        text: 'invalid variable id',
+        firstValue: 10,
+        secondValue: 20,
+        formula:
+          '34a8-4454-85ac-dgdthtt / b6723asd-34a8-456a-85ac-f8780b6dd52b',
+        expectedResult: null
+      },
+      {
+        text: 'malicious string',
+        firstValue: 10,
+        secondValue: 20,
+        formula:
+          'process.exit(); a6cc9e0e-34a8-456a-85ac-f8780b6dd52b / b6723asd-34a8-456a-85ac-f8780b6dd52b',
+        expectedResult: null
+      },
+      {
+        text: 'two operators together +-',
+        firstValue: 10,
+        secondValue: 20,
+        formula:
+          ' a6cc9e0e-34a8-456a-85ac-f8780b6dd52b +- b6723asd-34a8-456a-85ac-f8780b6dd52b',
+        expectedResult: null
+      },
+      {
+        text: 'four operators together +/*-',
+        firstValue: 10,
+        secondValue: 20,
+        formula:
+          ' a6cc9e0e-34a8-456a-85ac-f8780b6dd52b +/*- b6723asd-34a8-456a-85ac-f8780b6dd52b',
+        expectedResult: null
+      },
+      {
+        text: 'operator with quotes',
+        firstValue: 10,
+        secondValue: 20,
+        formula:
+          ' a6cc9e0e-34a8-456a-85ac-f8780b6dd52b "+" b6723asd-34a8-456a-85ac-f8780b6dd52b',
+        expectedResult: null
+      }
+    ])(
+      '$text should result in $expectedResult',
+      ({ text, firstValue, secondValue, formula, expectedResult }) => {
+        const events: IDataSourceMeasurementEvent[] = [
+          {
+            dataSource: {
+              name: '',
+              protocol: ''
+            },
+            measurement: {
+              id: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b',
+              name: '',
+              value: firstValue
+            }
+          },
+          {
+            dataSource: {
+              name: '',
+              protocol: ''
+            },
+            measurement: {
+              id: 'b6723asd-34a8-456a-85ac-f8780b6dd52b',
+              name: '',
+              value: secondValue
+            }
+          }
+        ];
+
+        // @ts-ignore
+        const result = virtualDpManager.calculation(events, {
+          sources: [
+            'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b',
+            'b6723asd-34a8-456a-85ac-f8780b6dd52b'
+          ],
+          operationType: 'calculation',
+          //name: 'MyFancyCalculation',
+          id: 'dd88cdb9-994c-40ce-be60-1d37f3aa755a',
+          formula
+        });
+        expect(result).toEqual(expectedResult);
+      }
+    );
+  });
+
   test('should calculate and', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
@@ -241,87 +415,6 @@ describe('Test VirtualDataPointManager', () => {
     expect(virtualEvents4.length).toBe(1);
     expect(virtualEvents4[0].measurement.value).toBe(2);
   });
-
-  describe(`testing sum opertation`, () => {
-    it(`calc sum correctly`, () => {
-      const events: IDataSourceMeasurementEvent[] = [
-        {
-          dataSource: {
-            name: '',
-            protocol: ''
-          },
-          measurement: {
-            id: 'inputCounter1',
-            name: '',
-            value: 14
-          }
-        },
-        {
-          dataSource: {
-            name: '',
-            protocol: ''
-          },
-          measurement: {
-            id: 'inputCounter2',
-            name: '',
-            value: 12.5
-          }
-        }
-      ];
-      // @ts-ignore
-      const re = virtualDpManager.sum(events, {id: 'testid', operationType: 'sum', sources: ['liestehkeiner', 'liestehkeiner2'],});
-      expect(re).toEqual(26.5);
-    });
-
-    it(`calc sum return null if one measurement was no number`, () => {
-      const events: IDataSourceMeasurementEvent[] = [
-        {
-          dataSource: {
-            name: '',
-            protocol: ''
-          },
-          measurement: {
-            id: 'inputCounter1',
-            name: '',
-            value: 'Non Number'
-          }
-        },
-        {
-          dataSource: {
-            name: '',
-            protocol: ''
-          },
-          measurement: {
-            id: 'inputCounter2',
-            name: '',
-            value: 12.5
-          }
-        }
-      ];
-      // @ts-ignore
-      const re = virtualDpManager.sum(events, {id: 'testid', operationType: 'sum', sources: ['liestehkeiner', 'liestehkeiner2'],});
-      expect(re).toEqual(null);
-    });
-
-    it(`calc sum return null if only one measurement was received`, () => {
-      const events: IDataSourceMeasurementEvent[] = [
-        {
-          dataSource: {
-            name: '',
-            protocol: ''
-          },
-          measurement: {
-            id: 'inputCounter1',
-            name: '',
-            value: 'Non Number'
-          }
-        }
-      ];
-      // @ts-ignore
-      const re = virtualDpManager.sum(events, {id: 'testid', operationType: 'sum', sources: ['liestehkeiner', 'liestehkeiner2'],});
-      expect(re).toEqual(null);
-    });
-  })
 
   test('should calculate nested events', () => {
     const events: IDataSourceMeasurementEvent[] = [

@@ -4,6 +4,12 @@ title: Changelog
 
 # Changelog
 
+## [2.2.2]
+
+### Changed
+
+- [DIGMDCLGHT-190](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-190) Updated user documentation
+
 ## [2.2.1]
 
 ### Added

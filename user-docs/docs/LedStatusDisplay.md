@@ -40,5 +40,5 @@ The status `configured` is defined as:
 
 - One enabled data source
 - Minimum one active data point at this active source
-- One enabled Application Interface (data sink) with minimum one data point
-- One active mapping between the enabled connected data sink data point and the enabled Application Interface data point
+- One enabled Application Interface with minimum one data point
+- One active mapping between the enabled connected data source data point and the enabled Application Interface data point

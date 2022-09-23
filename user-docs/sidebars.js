@@ -17,15 +17,17 @@ module.exports = {
         'IO-Shield',
         'VirtualDataPoints',
         'Mapping',
-        'DataSinks'
+        'ApplicationInterface'
       ]
     },
     {
       type: 'category',
-      label: 'Use cases',
+      label: 'Use Cases',
       collapsed: false,
       items: [
-        'tutorial/DMGMessenger'
+        'tutorial/DMGMessenger',
+        'tutorial/OPCUA',
+        'tutorial/MTConnect'
         // "UseCaseIoShield"
       ]
     },

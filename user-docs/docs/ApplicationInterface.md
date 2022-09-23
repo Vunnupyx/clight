@@ -14,6 +14,8 @@ The current supported interfaces/protocols are:
 
 ## General Usage
 
+![](../static/img/applicationinterface/overview.png)
+
 In the first setup process you are able to select your required `Application Interfaces`. Depending on the selected Templates there are preselected `data points` available on each interface tab.
 
 For every protocol with exception of the `CELOS Xchange` it is possible to add, delete or edit a `data point` in the list. Its also possible to enable or disable the interface completely.

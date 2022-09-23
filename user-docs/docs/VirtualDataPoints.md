@@ -6,7 +6,14 @@ title: Virtual Data Points
 
 ## Introduction
 
-Virtual Data Point (VDP) is a feature to create a calculated data point from one or more real data points. There are many linking operations available.
+Virtual Data Point (VDP) is a feature to create a calculated data point from one or more real data points. A previously defined virtual data point can also be used as an input to a VDP. There are many linking operations available.
+
+Important: If a virtual data point is defined as source of another virtual data point, the source virtual data point must be defined before it is used!
+
+Note: All operations except `Calculation` convert the source value into true/false (boolean) while evaluating for the VDP:
+
+- If the source value is a number: Any value above 0 becomes `true` and 0 value becomes `false`
+- If the source value is not number but a text: Any text length above 0 characters is interpreted as `true` whereas empty text "" becomes `false`
 
 ### How to Add a Virtual Data Point
 
@@ -42,7 +49,10 @@ Only one source can be selected.
 
 ##### COUNT
 
-Counts every state change of a data point and shows as a number.
+Counts every state change (rising flag of the source) of a data point and shows as a number.
+
+Counters are persistent across reboots. If you need to reset counters, you must delete the file where there are stored.
+
 Only one source can be selected for counting.
 
 ##### THRESHOLDS

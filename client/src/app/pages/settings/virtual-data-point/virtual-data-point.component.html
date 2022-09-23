@@ -109,6 +109,11 @@
           [flexGrow]="1"
           cellClass="input-cell"
         >
+        <ng-template ngx-datatable-header-template>
+          {{'settings-virtual-data-point.Operation' | translate}} <a [href]="supportHref" target="_blank">
+            <mat-icon class="color-success doc-btn" svgIcon="mdc:unknown"></mat-icon>
+          </a>
+        </ng-template>
           <ng-template
             ngx-datatable-cell-template
             let-rowIndex="rowIndex"

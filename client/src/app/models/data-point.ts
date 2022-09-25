@@ -7,12 +7,12 @@ export enum DataPointType {
 }
 
 export enum DataPointDataType {
-  String = 'string',
-  Double = 'double',
-  Byte = 'byte',
-  UInt16 = 'uint16',
-  UInt32 = 'uint32',
-  Boolean = 'boolean'
+  String = 'String',
+  Double = 'Double',
+  Byte = 'Byte',
+  UInt16 = 'UInt16',
+  UInt32 = 'UInt32',
+  Boolean = 'Boolean'
 }
 
 export class DataPoint {

@@ -1,41 +1,55 @@
-.mat-datepicker-content {
-    box-shadow: 0px 9px 12px 1px rgba(0, 0, 0, 0.14),
-                0px 3px 16px 2px rgba(0, 0, 0, 0.12),
-                0px 5px 6px -3px rgba(0, 0, 0, 0.2);
+@use "modules/sofia-typo";
 
-    .mat-calendar {
-        .mat-calendar-period-button {
-            font-size: 14px;
-            font-weight: 600;
-        }
-    
-        .mat-calendar-content {
-            .mat-calendar-table {
-                .mat-calendar-body-cell {
-                    &.mat-calendar
-
-                    .mat-calendar-body-label {
-                        font-size: 14px;
-                        font-weight: 600;
-                    }
-        
-                    .mat-calendar-body-cell-content {
-                        font-size: 14px;
-                        border: unset;
-                    }
-        
-                    .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
-                        border: none;
-                        color: mat-color($dmg-app-primary, 700);
-                        font-weight: 500;
-                    }
-        
-                    .mat-calendar-body-selected {
-                        font-weight: 500;
-                    }
-                }
-            }
-        }
-    }
+.mat-datepicker-toggle .mat-icon-button {
+  box-shadow: none !important;
+  width: unset !important;
+  height: unset !important;
 }
 
+.mat-datepicker-content {
+  box-shadow:
+    0 9px 12px 1px rgb(0 0 0 / 14%),
+    0 3px 16px 2px rgb(0 0 0 / 12%),
+    0 5px 6px -3px rgb(0 0 0 / 20%);
+
+  .mat-calendar {
+    .mat-calendar-period-button {
+      box-shadow: none;
+
+      @include sofia-typo.heading-tertiary;
+    }
+
+    .mat-calendar-controls .mat-icon-button {
+      height: 40px;
+      width: 40px;
+      box-shadow: none;
+    }
+
+    .mat-calendar-content {
+      .mat-calendar-table {
+        .mat-calendar-body-cell {
+          &.mat-calendar .mat-calendar-body-label {
+            font-size: 14px;
+            font-weight: 600;
+          }
+
+          .mat-calendar-body-cell-content {
+            @include sofia-typo.subtitle-secondary;
+
+            border: unset;
+          }
+
+          .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+            border: none;
+            color: #0071db;
+            font-weight: 500;
+          }
+
+          .mat-calendar-body-selected {
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+}

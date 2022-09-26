@@ -4,6 +4,23 @@
 
 <mat-divider></mat-divider>
 
+<div class="pb-5 mb-5">
+  <div class="col-12">
+    <mat-expansion-panel [expanded]="true" class="mt-25">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ 'system-information.UpdateSystem' | translate }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div>
+        <button mat-button color="primary" (click)="update()">
+          {{ 'system-information.UpdateNow' | translate }}
+        </button>
+      </div>
+    </mat-expansion-panel>
+  </div>
+</div>
+
 <div class="mb-20" *ngFor="let section of data">
   <div class="pr-25 pl-25 pt-15 pb-15">
     <h3 class="m-0 section__title">{{ section.title }}</h3>

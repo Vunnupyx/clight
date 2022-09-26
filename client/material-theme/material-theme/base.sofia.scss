@@ -1,0 +1,34 @@
+@use "sass:map";
+@use "modules/sofia-typo";
+
+h1 {
+  @include sofia-typo.heading-primary;
+}
+
+h2 {
+  @include sofia-typo.heading-secondary;
+}
+
+h3 {
+  @include sofia-typo.heading-tertiary;
+}
+
+h4 {
+  @include sofia-typo.subtitle-primary;
+}
+
+h5 {
+  @include sofia-typo.subtitle-secondary;
+}
+
+h6 {
+  @include sofia-typo.subtitle-tertiary;
+}
+
+p {
+  @include sofia-typo.body-primary;
+}
+
+p.secondary {
+  @include sofia-typo.body-secondary;
+}

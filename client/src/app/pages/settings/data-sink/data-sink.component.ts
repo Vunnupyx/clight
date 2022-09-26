@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { DataSink, DataSinkProtocol } from 'app/models';
+import { DataPoint, DataSink, DataSinkProtocol } from 'app/models';
 import { DataPointService, DataSinkService } from 'app/services';
 import { PromptService } from 'app/shared/services/prompt.service';
+import { MatTabGroup } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-data-sink',
@@ -15,9 +16,12 @@ export class DataSinkComponent implements OnInit {
 
   dataSinkList?: DataSink[];
   dataSink?: DataSink;
+  dataSinkIndex?: number;
 
   sub = new Subscription();
-
+  
+  @ViewChild('tabs') tabs: MatTabGroup;
+  
   get isTouched() {
     return this.dataPointService.isTouched;
   }
@@ -49,8 +53,16 @@ export class DataSinkComponent implements OnInit {
 
       if (newDs) {
         this.dataSink = newDs;
+        this.dataSinkIndex = this.dataSinkList?.indexOf(newDs) || 0;
       }
     }
+  }
+
+  onDataSinkIndexChange(idx: number) {
+    if (!this.dataSinkList || !this.dataSinkList[idx]) {
+      return;
+    }
+    this.switchDataSink(this.dataSinkList[idx]);
   }
 
   async switchDataSink(obj: DataSink) {
@@ -64,6 +76,11 @@ export class DataSinkComponent implements OnInit {
     }
 
     this.dataSink = obj;
+    this.dataSinkIndex = this.dataSinkList?.indexOf(obj) || 0;
+  }
+
+  onDataPoints(arr: DataPoint[]) {
+    this.tabs?.realignInkBar();
   }
 
   ngOnDestroy() {

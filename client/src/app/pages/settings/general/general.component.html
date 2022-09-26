@@ -51,23 +51,11 @@
       <mat-expansion-panel [expanded]="true" class="mt-25">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{ 'settings-general.UpdateSystem' | translate }}
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div>
-          <button mat-raised-button color="primary" (click)="update()">
-            {{ 'settings-general.UpdateNow' | translate }}
-          </button>
-        </div>
-      </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="true" class="mt-25">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
             {{ 'settings-general.RestartDevice' | translate }}
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div>
-          <button mat-raised-button color="primary" (click)="restart()">
+          <button mat-button color="secondary" (click)="restart()">
             {{ 'settings-general.RestartNow' | translate }}
           </button>
         </div>
@@ -79,7 +67,7 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div>
-          <button mat-raised-button color="primary" (click)="downloadLogs()">
+          <button mat-button color="secondary" (click)="downloadLogs()">
             {{ 'settings-general.ExportLogs' | translate }}
           </button>
         </div>
@@ -104,8 +92,8 @@
             {{ currentTemplate | async }}
           </p>
           <button
-            mat-raised-button
-            color="primary"
+            mat-button
+            color="secondary"
             [routerLink]="['/quick-start']"
           >
             {{ 'settings-general.OpenConfigurationWizard' | translate }}
@@ -123,8 +111,8 @@
         <div>
           <div class="mb-10">
             <button
-              mat-raised-button
-              color="primary"
+              mat-button
+              color="secondary"
               (click)="download()"
               class="d-block mb-20"
             >
@@ -132,8 +120,8 @@
             </button>
 
             <button
-              mat-raised-button
-              color="primary"
+              mat-button
+              color="secondary"
               class="d-block"
               (click)="fileInput.click()"
             >

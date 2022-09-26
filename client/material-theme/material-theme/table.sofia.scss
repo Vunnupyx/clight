@@ -1,23 +1,260 @@
-.mat-table {
-  width: 100%;
-  
-    .mat-header-row {
-        height: 80px;
+@use "modules/sofia-typo";
+@use "modules/sofia-color";
+@use "modules/sofia-spacing";
 
-        .mat-header-cell {
-            color: $dark-primary-text;
+.sofia-table-header {
+  width: 100%;
+  border-bottom: 1px solid sofia-color.$gray-40;
+  padding: sofia-spacing.$scale-16;
+
+  h2 {
+    margin: 0;
+  }
+
+  h4 {
+    margin: 0;
+    color: sofia-color.$gray-60;
+  }
+}
+
+.sofia-interaction-spacer {
+  width: 100%;
+  border-bottom: 1px solid sofia-color.$gray-40;
+  padding: 12px;
+
+  .mat-form-field {
+    margin: 0;
+    align-self: end;
+    flex: 1;
+
+    input {
+      text-align: end;
+    }
+
+    .mat-form-field-wrapper {
+      padding: 0;
+
+      .mat-form-field-flex {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0;
+        height: 40px;
+        box-shadow: none;
+
+        .mat-form-field-infix {
+          padding: 0;
         }
+      }
+
+      .mat-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+  }
+}
+
+.sofia-table-container {
+  background-color: inherit;
+
+  .mat-table {
+    width: 100%;
+    box-shadow: none;
+    background-color: inherit;
+
+    .mat-header-content,
+    .mat-sort-header-content,
+    .mat-header-cell:not(.mat-sort-header) {
+      padding: 0 sofia-spacing.$scale-16;
+      color: sofia-color.$gray-100;
+      text-align: start;
+
+      @include sofia-typo.subtitle-secondary;
+
+      .sofia-description {
+        color: sofia-color.$gray-80;
+
+        @include sofia-typo.body-secondary;
+      }
+    }
+
+    .mat-row.sofia-table-row-warning > td:first-of-type {
+      border-left: 2px solid sofia-color.$yellow-warning;
     }
 
     .mat-row,
+    .mat-header-row,
     .mat-footer-row {
-        height: 56px;
+      height: sofia-spacing.$scale-48;
+      padding: 0 sofia-spacing.$scale-8;
 
-        .mat-cell {
-            color: $dark-focused;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.56px;
+      .mat-column-select,
+      .mat-column-select:first-of-type,
+      .mat-column-expand,
+      .mat-column-expand:first-of-type {
+        padding: 0 sofia-spacing.$scale-8 !important;
+        width: sofia-spacing.$scale-32;
+      }
+
+      .mat-header-cell,
+      .mat-header-cell:first-of-type,
+      .mat-header-cell:last-of-type {
+        padding: 0 sofia-spacing.$scale-16;
+
+        .mat-sort-header-content {
+          padding: 0;
         }
+      }
+
+      .mat-footer-cell {
+        border-bottom: none;
+
+        .sofia-loading-footer {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          column-gap: sofia-spacing.$scale-8;
+
+          .mat-progress-spinner,
+          .mat-progress-spinner svg {
+            height: 24px !important;
+            width: 24px !important;
+          }
+        }
+      }
+
+      .mat-cell {
+        &:not(.mat-column-select) {
+          padding: 0 sofia-spacing.$scale-16;
+        }
+
+        color: sofia-color.$gray-100;
+
+        * {
+          vertical-align: middle;
+        }
+
+        @include sofia-typo.body-primary;
+
+        .sofia-cell-content {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+
+          .sofia-actions {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            column-gap: 42.25px;
+
+            mat-icon,
+            cn-icon {
+              width: 19.5px;
+              height: 19.5px;
+              font-size: 19.5px;
+            }
+          }
+        }
+      }
     }
+
+    /*
+     * ------------------------------------
+     * --------- tall rows ----------
+     * ------------------------------------
+     */
+    &.sofia-table-tall > * > .mat-row,
+    &.sofia-table-tall > * > .mat-header-row,
+    &.sofia-table-tall > * > .mat-footer-row {
+      height: sofia-spacing.$scale-64;
+      padding: 0 sofia-spacing.$scale-16 !important;
+
+      & > .mat-cell > .sofia-cell-content > * > .sofia-description {
+        color: sofia-color.$gray-60;
+
+        @include sofia-typo.body-secondary;
+      }
+
+      & > .mat-column-select,
+      & > .mat-column-select:first-of-type,
+      & > .mat-column-expand,
+      & > .mat-column-expand:first-of-type {
+        padding: 0 sofia-spacing.$scale-16;
+        width: sofia-spacing.$scale-32;
+      }
+    }
+
+    /*
+     * ------------------------------------
+     * --------- expandable rows ----------
+     * ------------------------------------
+     */
+    // stylelint-disable-next-line no-descending-specificity
+    .mat-row {
+      &.sofia-detail-row {
+        height: 0;
+
+        & > .mat-cell {
+          padding: 0;
+        }
+      }
+
+      &.sofia-element-row .mat-cell {
+        border-bottom-width: 0;
+      }
+
+      &.sofia-element-row:not(.sofia-expanded-row) {
+        &:not(.disabled) {
+          &:active {
+            background: sofia-color.$gray-20;
+          }
+
+          body:not(.no-hover) &:hover:not(:active) {
+            background: sofia-color.$gray-10;
+          }
+        }
+
+        &.disabled .mat-cell {
+          color: sofia-color.$gray-50;
+        }
+      }
+
+      .sofia-element-detail {
+        overflow: hidden;
+        display: flex;
+      }
+
+      &.sofia-expanded-row + .sofia-detail-row > .mat-cell > .sofia-element-detail {
+        margin: sofia-spacing.$scale-16;
+        border-radius: 8px;
+        background-color: sofia-color.$gray-20;
+        min-height: sofia-spacing.$scale-48;
+
+        .sofia-expanded-row + .sofia-detail-row > .mat-cell > .sofia-element-detail {
+          background-color: sofia-color.$white;
+          border: 1px solid sofia-color.$gray-40;
+        }
+
+        .mat-table {
+          .element-row:not(.sofia-expanded-row) {
+            &:not(.disabled) {
+              &:active {
+                background: sofia-color.$gray-40;
+              }
+
+              body:not(.no-hover) &:hover:not(:active) {
+                background: sofia-color.$gray-30;
+              }
+            }
+          }
+
+          tr:last-of-type .mat-cell {
+            border-bottom-width: 0;
+          }
+        }
+      }
+    }
+  }
 }

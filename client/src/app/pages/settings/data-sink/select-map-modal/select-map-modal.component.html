@@ -9,8 +9,9 @@
     (click)="onAdd()"
     [matTooltip]="'settings-data-sink.AddMapping' | translate"
     matTooltipPosition="above"
+    style="margin-top: -15px;"
   >
-    <mat-icon style="margin-top: -10px">add</mat-icon>
+    <mat-icon svgIcon="mdc:order-add"></mat-icon>
   </button>
 </div>
 <div mat-dialog-content>
@@ -106,13 +107,13 @@
             (click)="onEditStart(rowIndex, row); group.value = null"
             [matTooltip]="'settings-data-sink.Edit' | translate"
             matTooltipPosition="above"
-            ><mat-icon>edit</mat-icon></mat-button-toggle
+            ><mat-icon svgIcon="mdc:edit"></mat-icon></mat-button-toggle
           >
           <mat-button-toggle
             (click)="onDelete(row); group.value = null"
             [matTooltip]="'settings-data-sink.Delete' | translate"
             matTooltipPosition="above"
-            ><mat-icon>delete_outline</mat-icon></mat-button-toggle
+            ><mat-icon svgIcon="mdc:delete"></mat-icon></mat-button-toggle
           >
         </mat-button-toggle-group>
         <mat-button-toggle-group
@@ -127,13 +128,13 @@
             "
             [matTooltip]="'settings-data-sink.Save' | translate"
             matTooltipPosition="above"
-            ><mat-icon class="color-success">check</mat-icon></mat-button-toggle
+            ><mat-icon class="color-success" svgIcon="mdc:checkmark"></mat-icon></mat-button-toggle
           >
           <mat-button-toggle
             (click)="onEditCancel(); group.value = null"
             [matTooltip]="'settings-data-sink.Cancel' | translate"
             matTooltipPosition="above"
-            ><mat-icon class="color-error">close</mat-icon></mat-button-toggle
+            ><mat-icon class="color-error" svgIcon="mdc:close"></mat-icon></mat-button-toggle
           >
         </mat-button-toggle-group>
       </ng-template>
@@ -143,7 +144,7 @@
 <div mat-dialog-actions class="d-flex align-items-center justify-content-end">
   <button
     type="submit"
-    mat-raised-button
+    mat-button
     color="primary"
     [disabled]="isEditing"
     (click)="onSave()"

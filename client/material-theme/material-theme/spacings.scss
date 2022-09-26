@@ -1,14 +1,22 @@
-﻿$spacings: xxs 4px,
-xs 8px,
-s 16px,
-m 24px,
-l 48px,
-xl 96px;
+﻿@use "sass:list";
+
+$spacing-xxs: 4px;
+$spacing-xs: 8px;
+$spacing-s: 16px;
+$spacing-m: 24px;
+$spacing-l: 48px;
+$spacing-xl: 96px;
+$spacings: xxs $spacing-xxs,
+  xs $spacing-xs,
+  s $spacing-s,
+  m $spacing-m,
+  l $spacing-l,
+  xl $spacing-xl;
 
 @for $i from 1 through length($spacings) {
-  $space: nth($spacings, $i);
-  $key: nth($space, 1);
-  $value: nth($space, 2);
+  $space: list.nth($spacings, $i);
+  $key: list.nth($space, 1);
+  $value: list.nth($space, 2);
 
   .spacing-#{$key} {
     margin: #{$value};

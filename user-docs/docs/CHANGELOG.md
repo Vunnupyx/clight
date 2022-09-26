@@ -10,6 +10,22 @@ title: Changelog
 
 - [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) NCK reconnects after disconnecting like expected.
 
+## [2.2.1]
+
+### Added
+
+- [DIGMDCLGHT-5](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-5) Added new virtual data point types. Compare operations where already added previously. Scheduling of counter resets was added.
+- [DIGMDCLGHT-170](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-170) Added new custom data points to the opc ua interface
+
+### Changed
+
+- [DIGMDCLGHT-77](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-77) Reworked UX. Moved "System Update" to system information and changed buttons on generals page
+- [DIGMDCLGHT-76](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-76) Updated icons
+
+### Fixed
+
+- [DIGMDCLGHT-177](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-177) Fixed some misconfigured NC addresses
+
 ## [2.1.3]
 
 ### Fixed

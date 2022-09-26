@@ -250,9 +250,9 @@
             {{ value }}
           </div>
           <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
-            <ng-container *ngIf="!isCustomDataPoint(unsavedRow)">
+            <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
               <mat-select [ngModel]="value"
-                (ngModelChange)="unsavedRow && (unsavedRow.address = $event)">
+                (ngModelChange)="unsavedRow && setDataPointAddress(unsavedRow, $event)">
                 <mat-option>
                   <ngx-mat-select-search placeholderLabel="Search..." noEntriesFoundLabel="No results found"
                     [(ngModel)]="filterAddressStr"></ngx-mat-select-search>
@@ -263,7 +263,7 @@
                 </mat-option>
               </mat-select>
             </ng-container>
-            <ng-container *ngIf="isCustomDataPoint(unsavedRow)">
+            <ng-container *ngIf="isNonDefinedAddress(unsavedRow)">
               <input type="text" class="w-100" [ngModel]="value" readonly />
             </ng-container>
           </ng-container>

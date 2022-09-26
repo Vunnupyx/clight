@@ -121,7 +121,11 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.MTConnectItems =
       this.dataSinkService.getPredefinedMtConnectDataPoints();
-    this.OPCUAAddresses = this.dataSinkService.getPredefinedOPCDataPoints();
+    this.OPCUAAddresses = 
+      [
+        ...this.dataSinkService.getPredefinedOPCDataPoints(),
+        ...(this.dataSink.customDataPoints || [])
+      ];
     this.sub.add(
       combineLatest([
         this.dataPointService.dataPoints,
@@ -282,6 +286,15 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     });
   }
 
+  setDataPointAddress(obj: DataPoint, value: string) {
+    obj.address = value;
+    
+    const customDataPoint = this.getCustomDataPointByAddress(obj.address);
+    if (customDataPoint?.dataType) {
+      obj.dataType = customDataPoint.dataType;
+    }
+  }
+
   onEditEnd() {
     if (!this.datapointRows) {
       return;
@@ -360,16 +373,19 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     return this.dataPointService.getPrefix(id);
   }
 
-  isCustomDataPoint(obj: DataPoint) {
-    if (!this.dataSink || !this.dataSink.customDataPoints) {
+  isNonDefinedAddress(obj: DataPoint) {
+    if (!this.OPCUAAddresses) {
       return false;
     }
 
-    if (!obj.dataType) {
-      return false;
-    }
+    return this.OPCUAAddresses.every(dp => dp.address !== obj.address);
+  }
 
-    return Boolean(this.dataSink.customDataPoints.find(dp => dp.address === obj.address));
+  private getCustomDataPointByAddress(address: string) {
+    if (!this.dataSink?.customDataPoints) {
+      return;
+    }
+    return this.dataSink.customDataPoints.find(dp => dp.address === address);
   }
 
   saveDatahubConfig(form: NgForm) {

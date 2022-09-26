@@ -83,7 +83,6 @@ export class CustomOpcUaVariablesComponent {
   }
 
   private onEditConfirm(obj: PreDefinedDataPoint) {
-    console.log('!!! onEditConfirm', obj)
     this.dataSinkService.updateCustomDatapoint(DataSinkProtocol.OPC, obj);
   }
 

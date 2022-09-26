@@ -100,7 +100,7 @@ describe(`OPCUAAdapter Test`, () => {
   let testAdapter: OPCUAAdapter;
 
   afterEach(() => {
-    testAdapter = null;
+    testAdapter = null!;
     writtenXMLFile = null;
     jest.clearAllMocks();
   });
@@ -108,7 +108,7 @@ describe(`OPCUAAdapter Test`, () => {
   describe(`instantiation `, () => {
     describe(`fails `, () => {
       it(`without config data`, () => {
-        expect(() => new OPCUAAdapter(null)).toThrow(Error);
+        expect(() => new OPCUAAdapter(null!)).toThrow(Error);
       });
 
       it(`if config object is empty`, () => {
@@ -129,7 +129,8 @@ describe(`OPCUAAdapter Test`, () => {
       it(`with correct custom data points, if any exists`, async () => {
         const address = 'TEST_NODE_ID';
         const name = 'TEST_DISP_NAME';
-        const dataType = 'TEST_DATATYPE';
+        const dataTypeInConfig = 'string';
+        const dataType = 'String';
         testAdapter = new OPCUAAdapter({
           ...configManagerMock,
           dataSinkConfig: {
@@ -138,7 +139,7 @@ describe(`OPCUAAdapter Test`, () => {
               {
                 address,
                 name,
-                dataType
+                dataType: dataTypeInConfig
               }
             ]
           }
@@ -163,7 +164,8 @@ describe(`OPCUAAdapter Test`, () => {
       it(`with correct custom data points, skips if existing node id given`, async () => {
         const address = 'ComponentName';
         const name = 'TEST_DISP_NAME';
-        const dataType = 'TEST_DATATYPE';
+        const dataTypeInConfig = 'double';
+        const dataType = 'Double';
         testAdapter = new OPCUAAdapter({
           ...configManagerMock,
           dataSinkConfig: {
@@ -172,7 +174,7 @@ describe(`OPCUAAdapter Test`, () => {
               {
                 address,
                 name,
-                dataType
+                dataType: dataTypeInConfig
               }
             ]
           }

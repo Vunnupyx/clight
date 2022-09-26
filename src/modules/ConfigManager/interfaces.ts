@@ -134,10 +134,18 @@ export interface IDataHubSettings {
   symKey: string;
 }
 
+export enum ICustomDataPointDataType {
+  string = 'String',
+  double = 'Double',
+  byte = 'Byte',
+  uint16 = 'UInt16',
+  uint32 = 'UInt32',
+  boolean = 'Boolean'
+}
 export interface IOpcuaCustomDataPoint {
   address: string;
   name: string;
-  dataType: string;
+  dataType: ICustomDataPointDataType;
 }
 
 export interface IDataSinkConfig {

@@ -90,6 +90,21 @@ export class OPCUAAdapter {
         this.generalConfig.serialNumber ? this.generalConfig.serialNumber : ''
       }`;
   }
+  /**
+   * As data types for custom data points in config file are written in lowercase, this function looks up the right value for OPC UA usage
+   */
+  private lookupDataType(dataType) {
+    const lookupEnum = {
+      string: 'String',
+      boolean: 'Boolean',
+      double: 'Double',
+      byte: 'Byte',
+      uint16: 'UInt16',
+      uint32: 'UInt32'
+    };
+
+    return lookupEnum[dataType] || dataType;
+  }
 
   /**
    * Rewrites all xml nodesets into tmp folder and replaces static texts like the machineName
@@ -159,7 +174,7 @@ export class OPCUAAdapter {
             const nodeId = `ns=1;s=${customConfig.address}`;
             const browseName = `1:${customConfig.address}`;
             const name = customConfig.name;
-            const dataType = customConfig.dataType;
+            const dataType = this.lookupDataType(customConfig.dataType);
 
             //Add reference to IoTFlex for new variable
             iotFlexNode['UAObject']['References']['Reference'].push({

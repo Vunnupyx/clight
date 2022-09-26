@@ -6,7 +6,7 @@ module.exports = {
       type: 'category',
       label: 'Introduction',
       collapsed: false,
-      items: ['tutorial/GettingStarted']
+      items: ['tutorial/GettingStarted', 'DataFlow', 'LedStatusDisplay']
     },
     {
       type: 'category',
@@ -36,9 +36,7 @@ module.exports = {
       label: 'Advanced',
       collapsed: false,
       items: [
-        'DataFlow',
         // 'DataFlowConfiguration',
-        'LedStatusDisplay',
         'FactoryReset',
         'MdcLightConfiguration'
       ]

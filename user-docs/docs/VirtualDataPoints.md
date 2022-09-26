@@ -12,7 +12,7 @@ Important: If a virtual data point is defined as source of another virtual data 
 
 Note: All operations except `Calculation` convert the source value into true/false (boolean) while evaluating for the VDP:
 
-- If the source value is a number: Any value above 0 becomes `true` and 0 value becomes `false`
+- If the source value is a number: Any value above 0 is interpreted as `true` and 0 value is interpreted as `false`
 - If the source value is not number but a text: Any text length above 0 characters is interpreted as `true` whereas empty text "" becomes `false`
 
 ### How to Add a Virtual Data Point
@@ -126,12 +126,15 @@ Example to be provided.
 
 ### Combined Operations
 
-There are two ways to create combined operations: through `Calculation` or creating new VDPs and combining these.
+There are two ways to create combined operations:
 
-For `Calculation` please refer the explanation above.
+- Using `Calculation`:
 
-For example, to create following equation with multiple VDPs:
-_DP1 & DP2 & !DP3_
+Please refer the explanation above.
+
+- Creating new VDPs and combining these:
+
+For example, to create following equation with multiple VDPs: _DP1 & DP2 & !DP3_
 
 1. Create a first VDP1 with DP1 and DP2, AND operation
 2. Create a second VDP2 with DP3, NOT operation

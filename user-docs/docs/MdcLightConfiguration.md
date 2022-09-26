@@ -224,18 +224,18 @@ A single application interface supports the following configuration items:
   "protocol": "mtconnect",
   // Whether the application interface is enabled
   "enabled": true,
-        // Authentication option if required, only for "opcua" protocol
+  // Authentication option if required, only for "opcua" protocol
   "auth": {
-      "type": "anonymous"
+    "type": "anonymous"
   },
   // For "datahub" protocol only:
   "datahub1": {
-      //Host name for provisioning
-        "provisioningHost": "",
-        "scopeId": "",
-        "regId": "",
-        "symKey": ""
-      },
+    //Host name for provisioning
+    "provisioningHost": "",
+    "scopeId": "",
+    "regId": "",
+    "symKey": ""
+  },
   // A list of data points
   "dataPoints": [
     {
@@ -258,7 +258,7 @@ A single application interface supports the following configuration items:
         // Integer or "mapValues"
         "0": "AUTOMATIC",
         "1": "MANUAL_DATA_INPUT",
-        "2": "SEMI_AUTOMATIC"
+        "2": "SEMI_AUTOMATIC",
         // IO-Shield full mapping
         "0": "ON",
         "1": "OFF",
@@ -284,7 +284,7 @@ For example, the following would be valid:
   // Identical source and target
   "source": "10456f7b-6d0c-4488-8d19-71de07754305",
   "target": "10456f7b-6d0c-4488-8d19-71de07754305",
-  // a unique id across all data points
+  // a unique id of the mapping across all data points
   "id": "0c24235c-f56d-435b-a560-6874079effb4"
 }
 ```

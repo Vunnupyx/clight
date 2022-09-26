@@ -118,7 +118,7 @@ Returns true if the data point value is _not_ equal to the other compared data p
 
 To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
 
-##### CUSTOM CALCULATION EXPRESSION
+##### CALCULATION
 
 Custom mathematical expression using variable names and manually typing the mathematical equations. It is useful when several data points need to be combined and in more complex mathematical operations.
 
@@ -126,9 +126,9 @@ Example to be provided.
 
 ### Combined Operations
 
-There are two ways to create combined operations: through `Custom Calculation Expression` or creating new VDPs and combining these.
+There are two ways to create combined operations: through `Calculation` or creating new VDPs and combining these.
 
-For `Custom Calculation Expression` please refer the explanation above.
+For `Calculation` please refer the explanation above.
 
 For example, to create following equation with multiple VDPs:
 _DP1 & DP2 & !DP3_

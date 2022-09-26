@@ -12,7 +12,7 @@ On the top of the page you find the main settings for the data source: Enabling 
 
 You can use the Type dropdown menu on the top of the page to change select which type of ioshield you are using.
 
-![](../static/img/datasource/ioshield_types.png)
+![Input Board Types](../static/img/datasource/ioshield_types.png)
 
 ## Default Configuration
 
@@ -29,8 +29,8 @@ By default the Data Source is configured the following way:
 
 ## Adding Data Points
 
-![](../static/img/datasource/ioshield_add.png)
+![Input Board Add Data Point](../static/img/datasource/ioshield_add.png)
 
-To add a data point, click on the blue `Add Data Point` button ![](../static/img/datasource/addbutton.png).
+To add a data point, click on the blue `Add Data Point` button ![Add data point button](../static/img/datasource/addbutton.png).
 
 Newly added data points are shown at the bottom of the table. You need to give a name and select the address of the data point and save it. After all changes please click `Apply Changes` on the top right of the page.

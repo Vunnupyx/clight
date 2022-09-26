@@ -10,9 +10,9 @@ Mapping describe the relation between source data points (NC/VDP/DI) and the des
 
 ### Add a mapping
 
-![](../static/img/mapping/adding.png)
+![Mapping adding new data mapping](../static/img/mapping/adding.png)
 
-1. Click the blue button with the white plus icon ![](../static/img/mapping/mapping_addbutton.png)
+1. Click the blue button with the white plus icon ![Mapping add new button](../static/img/mapping/mapping_addbutton.png)
 2. The new item is added to the end of the table.
 3. Select the desired source point from the dropdown menu on the Source column.
 4. Select the desired target point for the desired `Application Interface` on Target column.

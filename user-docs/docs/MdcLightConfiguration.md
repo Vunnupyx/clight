@@ -41,49 +41,19 @@ There are two example configuration inside the folder: `_mdclight/config/`
 
 There are two types of data sources: The S7-Com PLC data source "s7" and the digital input shield "ioshield".
 
-- S7: With the S7 data source you can read data from S7 PLCs. Reading DBs, Inputs, Outputs and memory data ("Merkers") is supported.
-- IO-Shield: With the IO-Shield you can read data from digital inputs, wired directly to the IoT2050. Each digital input of the IO-Shield is one data point on the data source. Each data point can have three different states: 0 - off (Low, 0V), 1 - on (High, 24V) or 2 - blinking, the
-  output is changing state with a minimum frequency of 2Hz (the maximum frequency is 10Hz).
+Note : Minumum data source reading frequency is 500 milliseconds.
 
-A single data source supports the following configuration items:
+- **S7**: With the S7 data source you can read data from S7 PLCs. Reading DBs, Inputs, Outputs and memory data ("Merkers") is supported.
 
-- Note: There should be only one data source configured
+Structure for S7 Type:
 
 ```json
 {
-  // Id of data source. MUST be unique
-  "id": "dataSource",
-  // A descriptive name
-  "name": "My data source",
-  // A list of data points
-  "dataPoints": [
-    {
-      // Id of data point. MUST be unique (across all data sources)
-      "id": "estop",
-      // A descriptive name
-      "name": "Emergency Stop",
-      // Data point address
-      // Some examples for protocol "s7"
-      // Reading an input bit: "I0.0"
-      // Reading an input bit: "Q0.0"
-      // Reading an memory bit: "M50.0"
-      // Reading a boolean value: "DB93,X0.0"
-      // Reading an integer value: "DB93,INT44"
-      // Reading a real value: "DB93,REAL100"
-      // Reading a string value with an length of 10: "DB100,S0.10"
-      // Reading a string value with an length of 255: "DB100,S0.255"
-      // Reading a DWORD: "DB25,DWORD4"
-      // Reading a Byte: "DB340,BYTE60"
-      // Some examples for protocol "ioshield"
-      // Reading inputs: "DI0" - "DI9"
-      "address": "DB93,X0.0",
-      // Read frequency in ms
-      "readFrequency": 1200
-    }
-  ],
-  // Data source protocol. Supported protocols are: "s7", "ioshield"
+  // Data source protocol
   "protocol": "s7",
-  // The data sources connection info. Only required for protocol "s7"
+  // Whether this data source is enabled
+  "enabled": true,
+  // The data sources connection info
   "connection": {
     // Ip Address
     "ipAddr": "192.168.0.114",
@@ -98,7 +68,62 @@ A single data source supports the following configuration items:
     // For S7 1200 and S7 1500: Always 1
     // For S7 400: The slot, where the S7 CPU is mounted on the rack
     "slot": 2
-  }
+  },
+  // A list of data points
+  "dataPoints": [
+    {
+      // Id of data point. MUST be unique (across all data sources)
+      "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b",
+      // Type can be "nck" or "s7" for PLC inputs
+      "type": "nck",
+      // A descriptive name
+      "name": "Emergency Stop",
+      // Data point address
+      // Some examples for protocol "s7":
+      // Reading an input bit: "I0.0"
+      // Reading an input bit: "Q0.0"
+      // Reading an memory bit: "M50.0"
+      // Reading a boolean value: "DB93,X0.0"
+      // Reading an integer value: "DB93,INT44"
+      // Reading a real value: "DB93,REAL100"
+      // Reading a string value with an length of 10: "DB100,S0.10"
+      // Reading a string value with an length of 255: "DB100,S0.255"
+      // Reading a DWORD: "DB25,DWORD4"
+      // Reading a Byte: "DB340,BYTE60"
+      "address": "DB93,X0.0",
+      // Read frequency in ms
+      "readFrequency": 1200
+    }
+  ]
+}
+```
+
+- **IO-Shield**: With the IO-Shield you can read data from digital inputs, wired directly to the IoT2050. Each digital input of the IO-Shield is one data point on the data source. Each data point can have three different states: 0 - off (Low, 0V), 1 - on (High, 24V) or 2 - blinking, the
+  output is changing state with a minimum frequency of 2Hz (the maximum frequency is 10Hz).
+
+Structure for IO Shield:
+
+```json
+{
+  // Data source protocol
+  "protocol": "ioshield",
+  // Whether this data source is enabled
+  "enabled": true,
+  // Type of the IO Shield
+  "type": "ai-150+5di",
+  // A list of data points
+  "dataPoints": [
+    {
+      // Id of data point. MUST be unique (across all data sources)
+      "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b",
+      // A descriptive name
+      "name": "Emergency Stop",
+      // Type must be null for ioshield
+      "type": null,
+      // Data point address, for example reading inputs "DI0" - "DI9"
+      "address": "DI2"
+    }
+  ]
 }
 ```
 
@@ -195,16 +220,28 @@ A single application interface supports the following configuration items:
 
 ```json
 {
-  // Id of data source. MUST be unique
-  "id": "mtconnect",
-  // A descriptive name
-  "name": "My MTConnect application interface",
+  // Data source protocol. Supported protocols are: "mtconnect", "opcua" and "datahub"
+  "protocol": "mtconnect",
+  // Whether the application interface is enabled
+  "enabled": true,
+        // Authentication option if required, only for "opcua" protocol
+  "auth": {
+      "type": "anonymous"
+  },
+  // For "datahub" protocol only:
+  "datahub1": {
+      //Host name for provisioning
+        "provisioningHost": "",
+        "scopeId": "",
+        "regId": "",
+        "symKey": ""
+      },
   // A list of data points
   "dataPoints": [
     {
       // Id of datapoint. MUST be unique (across all data sources)
       // For the protocol MTconnect, that id will be associated with the id of a MTConnect data item
-      "id": "estop",
+      "id": "0c24235c-f56d-435b-a560-6874079effb4",
       // A descriptive name
       "name": "Emergency Stop",
       // The type of the mtcoonect data item. Currently supported: "event".
@@ -230,9 +267,7 @@ A single application interface supports the following configuration items:
       // Optional - Initial value, can also be used to set a constant value. Is overwritten as soon as data is read
       "initialValue": "TRIGGERED"
     }
-  ],
-  // Data source protocol. Supported protocols are: "mtconnect"
-  "protocol": "mtconnect"
+  ]
 }
 ```
 

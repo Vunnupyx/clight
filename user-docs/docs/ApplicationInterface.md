@@ -55,7 +55,9 @@ Equal to deleting a new data point you change the entries for a data point
 
 ### MTConnect specific configurations and options
 
-The MTConnect interface tab has one additional button to show the current `MTConnect` data stream in a new browser tab.
+The MTConnect interface tab has one additional button `Open MTConnect Stream` under the connection status to show the current MTConnect data stream in a new browser tab.
+
+![Open MTConnect Stream button](../static/img/applicationinterface/mtconnectstream.png)
 
 ### OPC UA
 
@@ -63,6 +65,8 @@ The OPC UA interface tab has a drop down menu to select the desired authenticati
 
 - Anonymous (No authentication required)
 - User/Password (Only entered user name and password allow access to the interface)
+
+![OPC UA Auth Options](../static/img/applicationinterface/opcuaauth.png)
 
 ### CELOS Xchange
 

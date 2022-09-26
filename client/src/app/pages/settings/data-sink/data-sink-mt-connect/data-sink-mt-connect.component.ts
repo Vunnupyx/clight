@@ -360,6 +360,18 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     return this.dataPointService.getPrefix(id);
   }
 
+  isCustomDataPoint(obj: DataPoint) {
+    if (!this.dataSink || !this.dataSink.customDataPoints) {
+      return false;
+    }
+
+    if (!obj.dataType) {
+      return false;
+    }
+
+    return Boolean(this.dataSink.customDataPoints.find(dp => dp.address === obj.address));
+  }
+
   saveDatahubConfig(form: NgForm) {
     this.dsFormValid = form.valid!;
 

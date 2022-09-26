@@ -4,6 +4,12 @@ title: Changelog
 
 # Changelog
 
+## [2.2.2]
+
+### Fixed
+
+- [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) NCK reconnects after disconnecting like expected.
+
 ## [2.1.3]
 
 ### Fixed

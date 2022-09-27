@@ -7,14 +7,19 @@ The DMG Mori Theme will be applied on top of the default Angular Material Compon
 ### Angular Material Rules
 
 In the Sofia Design the following button variants are used, which should be used in application development primarily:
-- mat-raised-button
 - mat-fab
-- mat-fab-mini
 - mat-button
 
+**DEPRECATED** (from v13.9/12.9):
+- mat-raised-button
+- mat-fab-mini
+
 Also, the *color* property within the component should only get the following values:
-- primary (blue color) - *default*
-- secondary (white color)
+- primary (blue) - *default*
+- secondary (white/grey)
+- danger (red)
+- ghost (transparent. blue font)
+- ghost-danger (transparent, red font)
 
 If no color property is specified, the primary colors will be applied.
 
@@ -22,45 +27,79 @@ If no color property is specified, the primary colors will be applied.
 
 Along with the Angular Material API, the following custom classes are enabled by the theme:
 
-| Class name      | Variants           | Description                                                       |
-|-----------------|--------------------|-------------------------------------------------------------------|
-| large           | mat-raised-button, | Applies a height of 56px to the button instead of the default     |
-|                 | (mat-flat-button)  | height of 48px.                                                   |
-| fab-extended    | mat-fab            | Applies a width of 125px to the Fab Button.                       |
+| Class name      | Variants         | Description                           |
+|-----------------|------------------|---------------------------------------|
+| sofia-btn-justified   | mat-button       | Applies a width of 100% to the button |
 
 
 ## Code Examples
 
-#### Primary
+#### Colors
 
-Default size:
+Primary:
+``` html
+<button mat-button color="primary">
+  {{buttonText}}
+</button>
+```
 
-`<button mat-raised-button color="primary"><mat-icon>add</mat-icon>Primary</button>`
+Secondary:
+``` html
+<button mat-button color="secondary">
+  {{buttonText}}
+</button>
+```
 
-Large size:
+Danger:
+``` html
+<button mat-button color="danger">
+  {{buttonText}}
+</button>
+```
 
-`<button mat-raised-button class="large" color="primary"><mat-icon>add</mat-icon>Primary</button>`
+Ghost:
+``` html
+<button mat-button color="ghost">
+  {{buttonText}}
+</button>
+```
 
-#### Secondary
+Ghost Danger:
+``` html
+<button mat-button color="ghost-danger">
+  {{buttonText}}
+</button>
+```
 
-Default size:
+#### Fab Button
 
-`<button mat-raised-button color="secondary"><mat-icon>add</mat-icon>Secondary</button>`
+``` html
+<button mat-fab color="primary">
+  {{buttonText}}
+</button>
+```
 
-Large size:
+#### Justified
 
-`<button mat-raised-button class="large" color="secondary"><mat-icon>add</mat-icon>Secondary</button>`
+``` html
+<button mat-button color="primary" class="sofia-btn-justified">
+  {{buttonText}}
+</button>
+```
 
-#### Fab
+#### With Icon
 
-Default:
+``` html
+<button mat-button color="primary">
+  {{buttonText}}
+  <mat-icon>crop_square</mat-icon>   // alternative: cn-icon component
+</button>
+```
 
-`<button mat-fab color="primary"><mat-icon>add</mat-icon></button>`
+#### Disabled
 
-Extended:
-
-`<button mat-fab class="fab-extended" color="primary"><mat-icon>add</mat-icon>Create</button>`
-
-#### Fab Mini
-
-`<button mat-mini-fab color="primary"><mat-icon>add</mat-icon></button>`
+``` html
+<button mat-button color="primary" [disabled]="btnDisabled">
+  {{buttonText}}
+</button>
+```

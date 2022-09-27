@@ -110,10 +110,10 @@
   </div>
 
   <div mat-dialog-actions class="justify-content-end" style="margin-right: 14px;">
-    <button type="button" mat-raised-button color="secondary" (click)="onCancel()">
+    <button type="button" mat-button color="secondary" (click)="onCancel()">
       {{ 'settings-virtual-data-point.Cancel' | translate }}
     </button>
-    <button type="submit" mat-raised-button color="primary" [disabled]="form.invalid || !isValid()">
+    <button type="submit" mat-button color="primary" [disabled]="form.invalid || !isValid()">
       {{ 'settings-virtual-data-point.Save' | translate }}
     </button>
   </div>

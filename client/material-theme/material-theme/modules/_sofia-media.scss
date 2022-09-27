@@ -1,0 +1,144 @@
+////
+/// @group Media Screen
+////
+
+///
+$max-width-xxs: 479.9px;
+
+///
+$min-width-xs: 480px;
+
+///
+$max-width-xs: 767.9px;
+
+///
+$min-width-sm: 768px;
+
+///
+$max-width-sm: 991.9px;
+
+///
+$min-width-md: 992px;
+
+///
+$max-width-md: 1279.9px;
+
+///
+$min-width-lg: 1280px;
+
+///
+$max-width-lg: 1559.9px;
+
+///
+$min-width-xl: 1560px;
+
+///
+$max-width-xl: 1800.9px;
+
+///
+$min-width-xxl: 1801px;
+
+///
+@mixin screen-xxs {
+  @media screen and (max-width: $max-width-xxs) {
+    @content;
+  }
+}
+
+///
+@mixin screen-xs {
+  @media screen and (min-width: $min-width-xs) and (max-width: $max-width-xs) {
+    @content;
+  }
+}
+
+///
+@mixin screen-sm {
+  @media screen and (min-width: $min-width-sm) and (max-width: $max-width-sm) {
+    @content;
+  }
+}
+
+///
+@mixin screen-md {
+  @media screen and (min-width: $min-width-md) and (max-width: $max-width-md) {
+    @content;
+  }
+}
+
+///
+@mixin screen-lg {
+  @media screen and (min-width: $min-width-lg) and (max-width: $max-width-lg) {
+    @content;
+  }
+}
+
+///
+@mixin screen-xl {
+  @media screen and (min-width: $min-width-xl) and (max-width: $max-width-xl) {
+    @content;
+  }
+}
+
+///
+@mixin screen-xxl {
+  @media screen and (min-width: $min-width-xxl) {
+    @content;
+  }
+}
+
+///
+@mixin screen-gt-xs {
+  @media screen and (min-width: $min-width-xs) {
+    @content;
+  }
+}
+
+///
+@mixin screen-lt-xs {
+  @media screen and (max-width: $max-width-xs) {
+    @content;
+  }
+}
+
+///
+@mixin screen-gt-sm {
+  @media screen and (min-width: $min-width-sm) {
+    @content;
+  }
+}
+
+///
+@mixin screen-lt-sm {
+  @media screen and (max-width: $max-width-sm) {
+    @content;
+  }
+}
+
+///
+@mixin screen-gt-md {
+  @media screen and (min-width: $min-width-md) {
+    @content;
+  }
+}
+
+///
+@mixin screen-lt-md {
+  @media screen and (max-width: $max-width-md) {
+    @content;
+  }
+}
+
+///
+@mixin screen-gt-lg {
+  @media screen and (min-width: $min-width-lg) {
+    @content;
+  }
+}
+
+///
+@mixin screen-lt-lg {
+  @media screen and (max-width: $max-width-lg) {
+    @content;
+  }
+}

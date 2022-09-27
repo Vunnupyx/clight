@@ -131,8 +131,8 @@ export class OPCUAAdapter {
           encoding: 'utf-8'
         });
         let xmlFileReadMachineNameFixed = xmlFileRead.replace(
-          new RegExp('{{machineName}}', 'g'),
-          await this.getMachineName()
+          new RegExp('DummyMachineToolName', 'g'),
+          await this.getHostname()
         );
 
         const xmlFileReadParsed = create(xmlFileReadMachineNameFixed);
@@ -172,7 +172,7 @@ export class OPCUAAdapter {
               continue;
             }
             const nodeId = `ns=1;s=${customConfig.address}`;
-            const browseName = `1:${customConfig.address}`;
+            const browseName = `2:${customConfig.address}`;
             const name = customConfig.name;
             const dataType = this.lookupDataType(customConfig.dataType);
 
@@ -416,9 +416,12 @@ export class OPCUAAdapter {
       });
   }
 
-  public findNode(nodeIdentifier: NodeIdLike): BaseNode | null {
+  public async findNode(nodeIdentifier: NodeIdLike): Promise<BaseNode | null> {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
-    const node = this.server.engine.addressSpace.findNode(nodeIdentifier);
+    const nodeIdentifierWithHostname = `ns=7;s=${await this.getHostname()}.${nodeIdentifier}`;
+    const node = this.server.engine.addressSpace.findNode(
+      nodeIdentifierWithHostname
+    );
 
     if (node) return node;
     winston.warn(`${logPrefix} Node with id ${nodeIdentifier} not found!`);

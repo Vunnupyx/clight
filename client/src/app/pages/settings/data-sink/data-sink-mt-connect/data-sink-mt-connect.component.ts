@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -53,6 +55,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   DataSinkConnectionStatus = DataSinkConnectionStatus;
 
   @Input() dataSink?: DataSink;
+  @Output() dataPointsChange = new EventEmitter<DataPoint[]>();
 
   auth: DataSinkAuth = {
     type: DataSinkAuthType.Anonymous,
@@ -200,6 +203,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       datapoint['dataMapping'] = dataMappings.find(x => datapoint.id == x.target);
     }
     this.datapointRows = dataPoints;
+    this.dataPointsChange.emit(dataPoints);
   }
 
   onAdd() {

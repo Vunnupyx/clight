@@ -1,6 +1,6 @@
 {
   "name": "@celosnext/material-theme",
-  "version": "13.8.2",
+  "version": "13.9.1",
   "description": "Material theme file that have color pallet and typography that fits with design in UI component library. Also there is some style overridings of material components",
   "author": "DMG Mori - SDK",
   "publishConfig": {

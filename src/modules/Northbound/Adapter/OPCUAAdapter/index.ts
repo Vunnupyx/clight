@@ -159,6 +159,7 @@ export class OPCUAAdapter {
             .map((x) => x['UAVariable'])
             .flat();
 
+          const hostname = await this.getHostname();
           for (const customConfig of this.dataSinkConfig.customDataPoints) {
             let isExistingNodeId = allUAVariables.find((x) =>
               x['@NodeId'].endsWith(customConfig.address)
@@ -171,7 +172,7 @@ export class OPCUAAdapter {
               //skip if already existing nodeId
               continue;
             }
-            const nodeId = `ns=1;s=${customConfig.address}`;
+            const nodeId = `ns=1;s=${hostname}.${customConfig.address}`;
             const browseName = `2:${customConfig.address}`;
             const name = customConfig.name;
             const dataType = this.lookupDataType(customConfig.dataType);

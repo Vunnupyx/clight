@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -29,11 +25,11 @@ import {
   PromptDialogComponent,
   PromptDialogModel
 } from 'app/shared/components/prompt-dialog/prompt-dialog.component';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import {
-  ColumnMode,
-  DatatableComponent
-} from '@swimlane/ngx-datatable';
-import { SetFormulaModalComponent, SetFormulaModalData } from './set-formula-modal/set-formula-modal.component';
+  SetFormulaModalComponent,
+  SetFormulaModalData
+} from './set-formula-modal/set-formula-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -97,10 +93,6 @@ export class VirtualDataPointComponent implements OnInit {
     {
       value: VirtualDataPointOperationType.CALCULATION,
       text: 'virtual-data-point-operation-type.Formula'
-    },
-    {
-      value: VirtualDataPointOperationType.SUM,
-      text: 'virtual-data-point-operation-type.Sum'
     }
   ];
 
@@ -485,7 +477,6 @@ export class VirtualDataPointComponent implements OnInit {
     return [
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
-      VirtualDataPointOperationType.SUM,
       VirtualDataPointOperationType.ENUMERATION,
       VirtualDataPointOperationType.THRESHOLDS,
       VirtualDataPointOperationType.CALCULATION

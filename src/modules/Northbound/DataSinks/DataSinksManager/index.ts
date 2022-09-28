@@ -50,7 +50,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private dataSinkConnectRetryTimer: NodeJS.Timer;
   private sinksRetryCount: number = 0;
   private licenseChecker: LicenseChecker;
-  private messengerManager: MessengerManager;
+
+  public messengerManager: MessengerManager;
 
   constructor(params: IDataSinkManagerParams) {
     super();

@@ -1,15 +1,15 @@
 .mat-dialog-container {
-    @include shadow-box(4px);
+  @include shadow-box(4px);
 
-    .mat-dialog-title {
-      margin-bottom: 16px;
-    }
+  .mat-dialog-title {
+    margin-bottom: 16px;
+  }
 
-    .mat-dialog-content {
-      padding: 24px;
-    }
+  .mat-dialog-content {
+    padding: 24px;
+  }
 
-    .mat-dialog-actions {
-      margin: 16px 16px 0px;
-    }
+  .mat-dialog-actions {
+    margin: 16px 16px 0;
+  }
 }

@@ -153,15 +153,15 @@
     matTooltipPosition="above"
     [disabled]="!canAdd()"
   >
-    <mat-icon style="margin-top: -10px">add</mat-icon>
+    <mat-icon>add</mat-icon>
   </button>
 </div>
 
 <div mat-dialog-actions class="justify-content-end">
-  <button type="button" mat-raised-button color="secondary" (click)="onCancel()">
+  <button type="button" mat-button color="secondary" (click)="onCancel()">
     {{ 'settings-virtual-data-point.Cancel' | translate }}
   </button>
-  <button type="submit" mat-raised-button color="primary" (click)="onSave()">
+  <button type="submit" mat-button color="primary" (click)="onSave()">
     {{ 'settings-virtual-data-point.Save' | translate }}
   </button>
 </div>

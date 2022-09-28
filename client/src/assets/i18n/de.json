@@ -117,6 +117,7 @@
   },
   "settings-data-source": {
     "DataSource": "Datenquellen",
+    "AddDataPoint": "Datenpunkt hinzufügen",
     "Edit": "Bearbeiten",
     "Delete": "Löschen",
     "Save": "Speichern",
@@ -296,7 +297,16 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
-    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden"
+    "DuplicatedAddress":"",
+    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
+    "OpcUaVariables": "",
+    "UmatiOpcUaVariables": "",
+    "CustomOpcUaVariables": "",
+    "AddOpcUaVariable": "",
+    "DataType": "",
+    "SetCustomOpcUaVariable": "",
+    "NodeId": "",
+    "DeleteMessage": ""
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",
@@ -376,5 +386,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
+  },
+  "data-type": {
+    "String": "",
+    "Double": "",
+    "Byte": "",
+    "UInt16": "",
+    "UInt32": "",
+    "Boolean": ""
   }
 }

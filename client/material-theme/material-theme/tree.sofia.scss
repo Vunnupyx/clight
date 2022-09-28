@@ -1,19 +1,13 @@
 .mat-tree {
-    // @include shadow-box();
-  
-    .mat-tree-node {
-      color: $dark-focused;
+  .mat-tree-node {
+    color: #000;
 
-      .mat-icon-button {
-        margin-right: 4px;
+    .mat-icon-button {
+      margin-right: 4px;
 
-        &:disabled {
-          width: 0px;
-        }
+      &:disabled {
+        width: 0;
       }
-
-      // &[aria-expanded="true"] {
-      //   font-weight: 600;
-      // }
     }
+  }
 }

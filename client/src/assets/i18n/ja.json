@@ -117,6 +117,7 @@
   },
   "settings-data-source": {
     "DataSource": "データソース",
+    "AddDataPoint": "データポイント追加",
     "Edit": "編集",
     "Delete": "削除",
     "Save": "保存",
@@ -296,7 +297,16 @@
       "Disabled": "無効"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
-    "HasDataMapping": "Datapoint is mapped to a source"
+    "DuplicatedAddress":"",
+    "HasDataMapping": "Datapoint is mapped to a source",
+    "OpcUaVariables": "",
+    "UmatiOpcUaVariables": "",
+    "CustomOpcUaVariables": "",
+    "AddOpcUaVariable": "",
+    "DataType": "",
+    "SetCustomOpcUaVariable": "",
+    "NodeId": "",
+    "DeleteMessage": "本当にデータポイントを削除しますか？"
   },
   "settings-data-mapping": {
     "DataMapping": "データマッピング",
@@ -376,5 +386,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+  },
+  "data-type": {
+    "String": "",
+    "Double": "",
+    "Byte": "",
+    "UInt16": "",
+    "UInt32": "",
+    "Boolean": ""
   }
 }

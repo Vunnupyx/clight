@@ -135,7 +135,7 @@
 
       <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
 
-      <button mat-raised-button type="button" class="btn-sm" [disabled]="!isTouchedTable || isLoading || !dsFormValid"
+      <button mat-button color="primary" type="button" class="btn-sm" [disabled]="!isTouchedTable || isLoading || !dsFormValid"
         (click)="onApply()">
         {{ 'settings-data-sink.ApplyChanges' | translate }}
       </button>
@@ -191,7 +191,7 @@
 
       <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
 
-      <button mat-raised-button type="button" class="btn-sm" [disabled]="!isTouchedTable || isLoading"
+      <button mat-button color="primary" type="button" class="btn-sm" [disabled]="!isTouchedTable || isLoading"
         (click)="onApply()">
         {{ 'settings-data-sink.ApplyChanges' | translate }}
       </button>
@@ -200,7 +200,7 @@
 
     <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
       <div style="display: flex; width: 100%">
-        <button mat-raised-button type="button" class="btn-sm" color="secondary" style="margin-left: auto"
+        <button mat-button type="button" class="btn-sm" color="secondary" style="margin-left: auto"
           (click)="goToMtConnectStream()" [disabled]="connection?.status !== DataSinkConnectionStatus.Connected" >
           {{ 'settings-data-sink.OpenMTConnectStream' | translate }}
         </button>
@@ -217,7 +217,7 @@
           <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
           <button type="button" [disabled]="isEditing" mat-mini-fab color="primary" class="wh-32 border-round ml-15"
             (click)="onAdd()" [matTooltip]="'settings-data-sink.AddDataPoint' | translate" matTooltipPosition="above">
-            <mat-icon style="margin-top: -10px" svgIcon="mdc:order-add"></mat-icon>
+            <mat-icon svgIcon="mdc:order-add"></mat-icon>
           </button>
         </div>
       </div>
@@ -249,17 +249,24 @@
           <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis" [title]="value">
             {{ value }}
           </div>
-          <mat-select *ngIf="unsavedRow && unsavedRowIndex === rowIndex" [ngModel]="value"
-            (ngModelChange)="unsavedRow && (unsavedRow.address = $event)">
-            <mat-option>
-              <ngx-mat-select-search placeholderLabel="Search..." noEntriesFoundLabel="No results found"
-                [(ngModel)]="filterAddressStr"></ngx-mat-select-search>
-            </mat-option>
-            <mat-option *ngFor="let item of addressesOrDataItems" [value]="item.address"
-              [disabled]="isExistingDataPointAddress(item.address!)">
-              {{ item.name }}
-            </mat-option>
-          </mat-select>
+          <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
+            <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
+              <mat-select [ngModel]="value"
+                (ngModelChange)="unsavedRow && setDataPointAddress(unsavedRow, $event)">
+                <mat-option>
+                  <ngx-mat-select-search placeholderLabel="Search..." noEntriesFoundLabel="No results found"
+                    [(ngModel)]="filterAddressStr"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let item of addressesOrDataItems" [value]="item.address"
+                  [disabled]="isExistingDataPointAddress(item.address!)">
+                  {{ item.name }}
+                </mat-option>
+              </mat-select>
+            </ng-container>
+            <ng-container *ngIf="isNonDefinedAddress(unsavedRow)">
+              <input type="text" class="w-100" [ngModel]="value" readonly />
+            </ng-container>
+          </ng-container>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column *ngIf="dataSink?.protocol !== Protocol.OPC" [name]="'settings-data-sink.Type' | translate"

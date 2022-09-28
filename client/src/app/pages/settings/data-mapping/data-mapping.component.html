@@ -23,7 +23,7 @@
               matTooltipPosition="above"
               [matTooltip]="'settings-data-mapping.AddMapping' | translate"
             >
-              <mat-icon style="margin-top: -10px" svgIcon="mdc:order-add"></mat-icon>
+              <mat-icon svgIcon="mdc:order-add"></mat-icon>
             </button>
           </div>
         </div>
@@ -48,7 +48,7 @@
             ></mat-spinner>
 
             <button
-              mat-raised-button
+              mat-button color="primary"
               type="button"
               class="btn-sm"
               [disabled]="!isTouchedTable || isLoading"

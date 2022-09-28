@@ -3,30 +3,17 @@
     {{ 'settings-data-source.DataSource' | translate }}
   </h2>
   <div class="layout-header__tabs">
-    <nav mat-tab-nav-bar mat-align-tabs="center">
-      <a mat-tab-link *ngFor="let item of dataSourceList" (click)="switchDataSource(item)"
-        [active]="dataSource?.protocol === item.protocol">{{ 'settings-data-source.Tabs.' + item.protocol | translate
-        }}</a>
-    </nav>
+    <mat-tab-group mat-align-tabs="center" #tabs
+      [selectedIndex]="dataSourceIndex"
+      (selectedIndexChange)="onDataSourceIndexChange($event)">
+      <mat-tab *ngFor="let item of dataSourceList"
+        [label]="'settings-data-source.Tabs.' + item.protocol | translate"
+        ></mat-tab>
+    </mat-tab-group>
   </div>
 </div>
 
 <mat-divider></mat-divider>
-
-<!-- <ng-container [ngSwitch]="dataSource?.protocol">
-  <app-data-source-mtconnect
-    *ngSwitchCase="'mtconnect'"
-    [dataSource]="dataSource!"
-  ></app-data-source-mtconnect>
-  <app-data-source-ioshield
-    *ngSwitchCase="Protocol.IOShield"
-    [dataSource]="dataSource!"
-  ></app-data-source-ioshield>
-  <app-data-source-ioshield
-    *ngSwitchCase="Protocol.S7"
-    [dataSource]="dataSource!"
-  ></app-data-source-ioshield>
-</ng-container> -->
 
 <div class="d-block m-20">
   <div class="row">
@@ -126,7 +113,7 @@
 
         <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
 
-        <button mat-raised-button type="button" class="btn-sm" [disabled]="!isTouchedTable || isLoading || !dsFormValid"
+        <button mat-button color="primary" type="button" class="btn-sm" [disabled]="!isTouchedTable || isLoading || !dsFormValid"
           (click)="onApply()">
           {{ 'settings-data-source.ApplyChanges' | translate }}
         </button>
@@ -249,7 +236,7 @@
         ></mat-spinner>
 
         <button
-          mat-raised-button
+          mat-button
           type="button"
           class="btn-sm"
           color="secondary"
@@ -271,7 +258,7 @@
             <button type="button" [disabled]="isEditing" mat-mini-fab color="primary" class="wh-32 border-round ml-15"
               (click)="onAdd()" [matTooltip]="'settings-data-source.AddDataPoint' | translate"
               matTooltipPosition="above">
-              <mat-icon style="margin-top: -10px" svgIcon="mdc:order-add"></mat-icon>
+              <mat-icon svgIcon="mdc:order-add"></mat-icon>
             </button>
           </div>
         </div>

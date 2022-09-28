@@ -3,7 +3,7 @@ import * as i0 from "@angular/core";
 export declare class BreakpointLayoutGtXlDirective extends LayoutDirective {
     protected inputs: string[];
     static ɵfac: i0.ɵɵFactoryDeclaration<BreakpointLayoutGtXlDirective, never>;
-    static ɵdir: i0.ɵɵDirectiveDeclaration<BreakpointLayoutGtXlDirective, "[fxLayout.lt-xs]", never, { "fxLayout.gt-xl": "fxLayout.gt-xl"; }, {}, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<BreakpointLayoutGtXlDirective, "[fxLayout.gt-xl]", never, { "fxLayout.gt-xl": "fxLayout.gt-xl"; }, {}, never>;
 }
 export declare class BreakpointHideGtXlDirective extends ShowHideDirective {
     protected inputs: string[];

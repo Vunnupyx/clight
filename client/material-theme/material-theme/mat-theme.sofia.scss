@@ -1,38 +1,101 @@
-﻿@import "colors.sofia";
+﻿@use "sass:map";
+@use "@angular/material" as mat;
+@use "modules/sofia-color";
+@use "modules/sofia-typo";
+/* stylelint-disable-next-line scss/at-import-partial-extension */
+@import "~@angular/material/theming";
 
-// Define a custom typography config that overrides the font-family as well as the
-// `headlines` and `body-1` levels.
-$sofia-typography: mat-typography-config(
-  $font-family:   '"Inter", sans-serif',
-  $button:        mat-typography-level(18px, 32px, 500, 'Inter', 0.4px),
-  $input:         mat-typography-level(18px, 1.125, 500),
-  $subheading-1:  mat-typography-level(18px, 24px, 500),
-  $subheading-2:  mat-typography-level(18px, 28px, 400),
-  $title:         mat-typography-level(28px, 32px, 600),
-  $body-2:        mat-typography-level(18px, 24px, 600),
-  $body-1:        mat-typography-level(18px, 20px, 500, $letter-spacing: -0.06px),
-  $caption:       mat-typography-level(18px, 24px, 500),
+$cn-palette-primary: mat.define-palette(sofia-color.$sofia-gray, 700, 300, 900);
+$cn-palette-accent: mat.define-palette(sofia-color.$sofia-blue, 700, 300, 900);
+$cn-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $cn-palette-primary,
+      accent: $cn-palette-accent
+    )
+  )
 );
-// $display-4:     mat-typography-level(112px, 112px, 300, $letter-spacing: -0.05em),
-// $display-3:     mat-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
-// $display-2:     mat-typography-level(45px, 48px, 400, $letter-spacing: -0.005em),
-// $display-1:     mat-typography-level(34px, 40px, 400),
-// $headline:      mat-typography-level(18px, 24px, bold, '"Inter-Bold", sans-serif'),
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-@include mat-core($sofia-typography);
-
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as `color` or `typography`.
-$dmg-app-theme: mat-light-theme(
-    $dmg-app-primary,
-    $dmg-app-secondary,
-    $dmg-app-warning
+$cn-heading-primary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, heading-primary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, heading-primary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, heading-primary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, heading-primary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, heading-primary, "letter-spacing"),
+);
+$cn-heading-secondary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, heading-secondary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, heading-secondary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, heading-secondary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, heading-secondary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, heading-secondary, "letter-spacing"),
+);
+$cn-heading-tertiary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, heading-tertiary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, heading-tertiary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, heading-tertiary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, heading-tertiary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, heading-tertiary, "letter-spacing"),
+);
+$cn-subtitle-primary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, subtitle-primary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, subtitle-primary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, subtitle-primary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, subtitle-primary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, subtitle-primary, "letter-spacing"),
+);
+$cn-subtitle-secondary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, subtitle-secondary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, subtitle-secondary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, subtitle-secondary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, subtitle-secondary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, subtitle-secondary, "letter-spacing"),
+);
+$cn-subtitle-tertiary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, subtitle-tertiary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, subtitle-tertiary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, subtitle-tertiary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, subtitle-tertiary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, subtitle-tertiary, "letter-spacing"),
+);
+$cn-body-primary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, body-primary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, body-primary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, body-primary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, body-primary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, body-primary, "letter-spacing"),
+);
+$cn-body-secondary: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, body-secondary, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, body-secondary, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, body-secondary, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, body-secondary, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, body-secondary, "letter-spacing"),
+);
+$cn-display: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, display, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, display, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, display, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, display, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, display, "letter-spacing"),
+);
+$cn-label: mat.define-typography-level(
+  $font-family: map.get(sofia-typo.$sofia-typography, label, "font-family"),
+  $font-weight: map.get(sofia-typo.$sofia-typography, label, "font-weight"),
+  $font-size: map.get(sofia-typo.$sofia-typography, label, "font-size"),
+  $line-height: map.get(sofia-typo.$sofia-typography, label, "line-height"),
+  $letter-spacing: map.get(sofia-typo.$sofia-typography, label, "letter-spacing"),
+);
+$cn-typography-config: mat.define-typography-config(
+  $font-family: sofia-typo.$sofia-font-family,
+  $headline: $cn-heading-primary,
+  $title: $cn-heading-secondary,
+  $subheading-2: $cn-heading-tertiary,
+  $subheading-1: $cn-subtitle-primary,
+  $body-1: $cn-body-primary,
+  $body-2: $cn-body-secondary,
+  $button: $cn-body-primary
 );
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include angular-material-theme($dmg-app-theme);
+@include mat.core($cn-typography-config);
+@include mat.core-theme($cn-theme);
+@include mat.all-component-themes($cn-theme);

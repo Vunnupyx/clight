@@ -11,7 +11,7 @@
     matTooltipPosition="above"
     style="margin-top: -15px;"
   >
-    <mat-icon style="margin-top: -10px" svgIcon="mdc:order-add"></mat-icon>
+    <mat-icon svgIcon="mdc:order-add"></mat-icon>
   </button>
 </div>
 <div mat-dialog-content>
@@ -144,7 +144,7 @@
 <div mat-dialog-actions class="d-flex align-items-center justify-content-end">
   <button
     type="submit"
-    mat-raised-button
+    mat-button
     color="primary"
     [disabled]="isEditing"
     (click)="onSave()"

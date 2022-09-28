@@ -4,8 +4,39 @@ The DMG Mori Theme will be applied on top of the default Angular Material Compon
 
 ## Development Guidelines
 
+The card component is used for two different use cases: a data display or a container. 
+The container is supposed to group other elements together and has a variable content, 
+whereas the data display should only contain grouped fata, text or an image.
+
 ### Custom Rules
-In the DMG Mori Design System, two types of elevation are available, which are enabled by applying the following class names to the component:
+
+#### Container
+
+| Class name                       | Description                                                                                     |
+|----------------------------------|-------------------------------------------------------------------------------------------------|
+| sofia-container                  | Marks the card as a container element (if no level is specified, the core stylings are applied) |
+| sofia-container-primary          | In combination with the container class, applies the primary stylings.                          |
+| sofia-container-secondary        | In combination with the container class, applies the secondary stylings.                        |
+| sofia-container-tertiary         | In combination with the container class, applies the tertiary stylings.                         |
+| sofia-container-footer-separator | Applied to the <mat-card-footer> section adds a vertical separater between the child elements   |
+
+
+#### Data Display
+
+| Class name            | Description                                                                                                                                    |
+|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| sofia-card-primary    | Applies the primary stylings to the data display card.                                                                                         |
+| sofia-card-secondary  | Applies the secondary stylings to the data display card.                                                                                       |
+| sofia-card-selectable | In combination with a checkbox in the header, applies a hover effect to the card.                                                              |
+| sofia-no-auto-order   | Applied to a child icon/button element of <mat-card-header> section removes the auto-order styling and enables the use of an icon as an avatar |
+| disabled              | Marks the card as disabled and applies stylings, accordingly.                                                                                  |
+
+
+
+
+**!! DEPRECATED !!**
+
+The following classes can be applied to the card component, as well, but they will not be available in the future:
 
 | Class name      | Description                                                               |
 |-----------------|---------------------------------------------------------------------------|
@@ -23,23 +54,74 @@ If no elevation class is specified on the card, the Angular Material default sty
 
 ## Code Examples
 
+Container: 
 ``` html
-<mat-card class="elevation-1">
+<mat-card class="container primary">
+  <mat-card-title>Container</mat-card-title>
+  <mat-card-subtitle>Additional Description if needed</mat-card-subtitle>
+</mat-card-header>
+<mat-card-content fxLayout="column" fxLayoutGap="16px">
+  <div fxLayout="row" fxLayoutGap="16px" *ngFor="let n of [0,1]">
+    <mat-card *ngFor="let n of [0,1,2]"
+      class="secondary"
+      <mat-card-header>
+        <mat-card-title>Title</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+          invidunt ut labore et dolore magna aliquyam erat, sed diam
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</mat-card-content>
+<mat-card-footer>
+  6 items
+</mat-card-footer>
+```
+
+Container with footer-separator: 
+``` html
+<mat-card class="container primary">
+  <mat-card-title>Container</mat-card-title>
+  <mat-card-subtitle>Additional Description if needed</mat-card-subtitle>
+</mat-card-header>
+<mat-card-content fxLayout="column" fxLayoutGap="16px">
+  <div fxLayout="row" fxLayoutGap="16px" *ngFor="let n of [0,1]">
+    <mat-card *ngFor="let n of [0,1,2]"
+      class="secondary"
+      <mat-card-header>
+        <mat-card-title>Title</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+          invidunt ut labore et dolore magna aliquyam erat, sed diam
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</mat-card-content>
+<mat-card-footer class="sofia-container-footer-separator">
+  <p>6 items</p>
+  <p>3 critical</p>
+</mat-card-footer>
+```
+
+
+Data Display: 
+``` html
+<mat-card class="selectable primary">
   <mat-card-header>
-    <div mat-card-avatar class="example-header-image"></div>
-    <mat-card-title>Shiba Inu</mat-card-title>
-    <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+    <mat-checkbox [disabled]="disabled"></mat-checkbox>
+    <mat-card-title>Card Title</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <p>
-      The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-      A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-      bred for hunting.
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+      invidunt ut labore et dolore magna aliquyam erat, sed diam
     </p>
   </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="secondary">LIKE</button>
-    <button mat-raised-button color="primary">SHARE</button>
-  </mat-card-actions>
 </mat-card>
 ```

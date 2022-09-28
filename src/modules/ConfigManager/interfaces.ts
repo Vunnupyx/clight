@@ -134,6 +134,16 @@ export interface IDataHubSettings {
   symKey: string;
 }
 
+export interface IMessengerServerConfig {
+  hostname?: string;
+  username?: string;
+  password?: string;
+  model?: string;
+  name?: string;
+  organization?: string;
+  timezone?: number;
+}
+
 export interface IDataSinkConfig {
   name: string;
   dataPoints: IDataSinkDataPointConfig[];
@@ -141,6 +151,7 @@ export interface IDataSinkConfig {
   enabled: boolean;
   auth?: IOpcuaAuth;
   datahub?: IDataHubSettings;
+  messenger?: IMessengerServerConfig;
 }
 
 export interface IOpcuaAuth {

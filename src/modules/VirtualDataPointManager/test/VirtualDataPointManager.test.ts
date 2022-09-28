@@ -70,6 +70,30 @@ describe('Test VirtualDataPointManager', () => {
         expectedResult: 23
       },
       {
+        // TODO I receive 23 as output? How?
+        text: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b',
+        firstValue: 60,
+        secondValue: 20,
+        formula: defaultFormula,
+        expectedResult: 60
+      },
+      {
+        // handle true as 1
+        text: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b + 1',
+        firstValue: true,
+        secondValue: 20,
+        formula: defaultFormula,
+        expectedResult: 2
+      },
+      {
+        // handle false as 0
+        text: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b + 1',
+        firstValue: false,
+        secondValue: 20,
+        formula: defaultFormula,
+        expectedResult: 1
+      },
+      {
         text: 'using variables multiple times in a formula',
         firstValue: 60,
         secondValue: 20,

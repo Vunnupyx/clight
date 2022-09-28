@@ -25,6 +25,7 @@ type DataItemDict = {
 
 export interface IMTConnectDataSinkOptions extends IDataSinkOptions {
   mtConnectConfig: IMTConnectConfig;
+  messengerManager: MessengerManager;
 }
 
 /**
@@ -52,6 +53,7 @@ export class MTConnectDataSink extends DataSink {
   constructor(options: IMTConnectDataSinkOptions) {
     super(options);
     this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig);
+    this.messengerManager = options.messengerManager;
     MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
 
@@ -85,10 +87,6 @@ export class MTConnectDataSink extends DataSink {
       );
       return this;
     }
-
-    this.messengerManager = new MessengerManager({
-      messengerConfig: this.config.messenger
-    });
 
     this.messengerManager.init();
 

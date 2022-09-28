@@ -110,8 +110,8 @@ function construct_my_address_space(server) {
         // "nodesets/Opc.Ua.PlasticsRubber.GeneralTypes.NodeSet2.xml",
         // "nodesets/Opc.Ua.PlasticsRubber.IMM2MES.NodeSet2.xml",
         // "ShowCaseMachineTool.xml"
-        'DMG_NodeSets/dmgmori-umati-types-v2.0.11.xml',
-        'DMG_NodeSets/dmgmori-umati-v2.0.11.xml',
+        'DMG_NodeSets/dmgmori-umati-types.xml',
+        'DMG_NodeSets/dmgmori-umati.xml',
         'DMG_NodeSets/Opc.Ua.MachineTool.Nodeset2.xml',
         'DMG_NodeSets/Opc.Ua.NodeSet2.xml'
       ]

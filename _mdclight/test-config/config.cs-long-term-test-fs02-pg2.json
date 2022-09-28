@@ -544,92 +544,92 @@
       "dataPoints": [
         {
           "name": "Operation Duration",
-          "address": "NodeId\tns=7;s=OperationDuration",
+          "address": "Monitoring.MachineTool.OperationDuration",
           "id": "7a79047b-6e79-41ff-9ce5-729d11b3b4e8"
         },
         {
           "name": "Power On Duration",
-          "address": "NodeId\tns=7;s=PowerOnDuration",
+          "address": "Monitoring.MachineTool.PowerOnDuration",
           "id": "873bb4df-d4c8-4aeb-b29f-e23ad5f1bec3"
         },
         {
           "name": "Emergency Stop Triggered",
-          "address": "ns=7;s=EmergencyStopTriggered",
+          "address": "Notification.EmergencyStopTriggered",
           "id": "93456cf7-249d-4edd-9025-f0c822f9b081"
         },
         {
           "name": "Program Path",
-          "address": "ns=7;s=ActiveProgram-ProgramPath",
+          "address": "Production.ActiveProgram.ProgramPath",
           "id": "ca6af0a9-68f7-4585-8699-a5ded85bc95e",
           "initialValue": "Test"
         },
         {
           "name": "Current State",
-          "address": "ns=7;s=ActiveProgram-State-CurrentState",
+          "address": "Production.ActiveProgram.State.CurrentState",
           "id": "f40e3289-7d64-4d0d-b752-55ba09a26de4"
         },
         {
           "name": "Current Run Time",
-          "address": "ns=7;s=ActiveProgram-CurrentRunTime",
+          "address": "Production.ActiveProgram.CurrentRunTime",
           "id": "67f44404-9eb6-45dc-afc3-c61e2a61cdcd"
         },
         {
           "name": "Part Count",
-          "address": "ns=7;s=ActiveProgram-PartCounter",
+          "address": "Production.ActiveProgram.PartCounter",
           "id": "9582b8e8-3bc2-4161-bc20-333fb9943134"
         },
         {
           "name": "Operation Mode",
-          "address": "NodeId\tns=7;s=OperationMode",
+          "address": "Monitoring.MachineTool.OperationMode",
           "id": "a5912bf4-770a-4c79-8a42-f43da2ed881f"
         },
         {
           "name": "Desired Parts",
-          "address": "ns=7;s=ActiveProgram-DesiredParts",
+          "address": "Production.ActiveProgram.DesiredParts",
           "id": "f9978c9a-ea04-4f1f-b3c7-7972bb481ae1"
         },
         {
           "name": "Program Name",
-          "address": "ns=7;s=ActiveProgram-Name",
+          "address": "Production.ActiveProgram.Name",
           "id": "1a468843-e2e2-4831-a111-a6844887586d"
         },
         {
           "name": "Sensor 1",
-          "address": "ns=7;s=Sensor1",
+          "address": "Sensor1",
           "enabled": true,
           "id": "fe3e2d96-c446-46e0-acc8-ae6525757100"
         },
         {
           "name": "Variable 4",
-          "address": "ns=7;s=Variable4",
+          "address": "Variable4",
           "initialValue": "42",
           "enabled": true,
           "id": "4d27a77c-7d29-4da4-9fc8-81773ceda788"
         },
         {
           "name": "Sensor 2",
-          "address": "ns=7;s=Sensor2",
+          "address": "Sensor2",
           "initialValue": "30.0012",
           "enabled": true,
           "id": "b75b3bb5-cbdd-4fed-af66-1c13f4cf864d"
         },
         {
           "name": "Variable 1",
-          "address": "ns=7;s=Variable1",
+          "address": "Variable1",
           "initialValue": "20.12",
           "enabled": true,
           "id": "46da2859-d3e4-46f9-8ef1-5ed9b545370d"
         },
         {
           "name": "Variable 2",
-          "address": "ns=7;s=Variable2",
+          "address": "Variable2",
           "initialValue": "",
           "enabled": true,
           "id": "f1ef5888-fbb2-416f-a683-c3b58291af89"
         },
         {
           "name": "Variable 3",
-          "address": "ns=7;s=Variable3",
+          "address": "Variable3",
           "initialValue": "Hello World",
           "enabled": true,
           "id": "4ccb1fec-6b3f-43a2-a136-6e439a7ed533"
@@ -886,14 +886,9 @@
         "defaultValue": "OFF",
         "items": [
           {
-            "source": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
-            "returnValueIfTrue": "RED",
-            "priority": 0
-          },
-          {
-            "source": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7",
-            "returnValueIfTrue": "YELLOW",
-            "priority": 1
+            "source": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
+            "returnValueIfTrue": "BLUE",
+            "priority": 3
           },
           {
             "source": "831268a3-6088-4bca-b099-27f745a84637",
@@ -901,9 +896,14 @@
             "priority": 2
           },
           {
-            "source": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
-            "returnValueIfTrue": "BLUE",
-            "priority": 3
+            "source": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7",
+            "returnValueIfTrue": "YELLOW",
+            "priority": 1
+          },
+          {
+            "source": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
+            "returnValueIfTrue": "RED",
+            "priority": 0
           }
         ]
       }
@@ -923,14 +923,9 @@
         "defaultValue": "TEST",
         "items": [
           {
-            "source": "d8090a1a-9e7f-494b-a695-ff077f4df75a",
-            "priority": 0,
-            "returnValueIfTrue": "1"
-          },
-          {
-            "source": "d524441f-5361-4323-addf-eefe542351cf",
-            "priority": 1,
-            "returnValueIfTrue": "2"
+            "source": "9b0aba24-a662-40fb-b7ea-90a2662a3907",
+            "priority": 3,
+            "returnValueIfTrue": "4"
           },
           {
             "source": "d524441f-5361-4323-addf-eefe542351cf",
@@ -938,9 +933,14 @@
             "returnValueIfTrue": "3"
           },
           {
-            "source": "9b0aba24-a662-40fb-b7ea-90a2662a3907",
-            "priority": 3,
-            "returnValueIfTrue": "4"
+            "source": "d524441f-5361-4323-addf-eefe542351cf",
+            "priority": 1,
+            "returnValueIfTrue": "2"
+          },
+          {
+            "source": "d8090a1a-9e7f-494b-a695-ff077f4df75a",
+            "priority": 0,
+            "returnValueIfTrue": "1"
           }
         ]
       }
@@ -1046,11 +1046,6 @@
       "source": "2e23f057-09d5-4744-ba94-da38f3210e88",
       "target": "9582b8e8-3bc2-4161-bc20-333fb9943134",
       "id": "7e3f2ba8-f5de-4092-b004-df91b2de9870"
-    },
-    {
-      "source": "fda5000e-0942-4605-a995-9c49bd1e99d6",
-      "target": "fe3e2d96-c446-46e0-acc8-ae6525757100",
-      "id": "79eec8a0-7388-474e-8823-c0387b814765"
     }
   ],
   "quickStart": {
@@ -1062,15 +1057,15 @@
     "accepted": true
   },
   "env": {
-    "selected": "stag",
+    "selected": "dev",
     "mdc": {
-      "tag": "staging"
+      "tag": "develop"
     },
     "mtc": {
       "tag": "latest"
     },
     "web": {
-      "tag": "staging"
+      "tag": "develop"
     }
   }
 }

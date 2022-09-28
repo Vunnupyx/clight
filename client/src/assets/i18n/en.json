@@ -203,7 +203,9 @@
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
-    "ReturnValueIfTrue": "Value if left side is true"
+    "ReturnValueIfTrue": "Value if left side is true",
+    "SetFormula": "Set formula",
+    "Formula": "Formula"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -218,7 +220,8 @@
     "Equal": "Equal",
     "Unequal": "Unequal",
     "Sum": "Sum",
-    "Enumeration": "Enumeration"
+    "Enumeration": "Enumeration",
+    "Formula": "Calculation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",

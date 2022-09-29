@@ -6,6 +6,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
+import { NgModel } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SourceDataPoint, VirtualDataPoint } from 'app/models';
 import { SourceDataPointService, VirtualDataPointService } from 'app/services';
@@ -42,6 +43,7 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
   formula: string;
 
   @ViewChild('formulaInput') formulaInputRef: ElementRef<HTMLInputElement>;
+  @ViewChild('formulaModel') formulaModel: NgModel;
 
   constructor(
     private dialogRef: MatDialogRef<
@@ -70,6 +72,10 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
       formula: this.serializeFormula(this.formula)
     });
   }
+
+  isValid() {
+    return Boolean(this.formula);
+  }
   
   onCancel() {
     this.dialogRef.close();
@@ -87,6 +93,7 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
       this.escapeDataPointName(dataPointName),
       this.formulaInputRef.nativeElement
     );
+    this.formulaModel.control.patchValue(this.formulaInputRef.nativeElement.value);
   }
 
   ngOnDestroy() {

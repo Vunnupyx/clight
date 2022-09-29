@@ -21,10 +21,8 @@
   </mat-chip-list>
   <div class="mt-5 pt-5">
     <mat-form-field>
-      <mat-label>{{
-        'settings-virtual-data-point.Formula' | translate
-      }}</mat-label>
-      <textarea matInput [(ngModel)]="formula" #formulaInput></textarea>
+      <mat-label>{{ 'settings-virtual-data-point.Formula' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="formula" #formulaInput #formulaModel="ngModel"></textarea>
     </mat-form-field>
   </div>
 </div>
@@ -33,7 +31,7 @@
   <button type="button" mat-button color="secondary" (click)="onCancel()">
     {{ 'settings-virtual-data-point.Cancel' | translate }}
   </button>
-  <button type="submit" mat-button color="primary" (click)="onSave()">
+  <button type="submit" mat-button color="primary" (click)="onSave()" [disabled]="!isValid()">
     {{ 'settings-virtual-data-point.Save' | translate }}
   </button>
 </div>

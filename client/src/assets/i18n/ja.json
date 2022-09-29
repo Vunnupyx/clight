@@ -219,9 +219,8 @@
     "SmallerEqual": "",
     "Equal": "",
     "Unequal": "",
-    "Sum": "",
     "Enumeration": "",
-    "Formula": ""
+    "Calculation": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",

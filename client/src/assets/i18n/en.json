@@ -219,9 +219,8 @@
     "SmallerEqual": "Smaller or Equal",
     "Equal": "Equal",
     "Unequal": "Unequal",
-    "Sum": "Sum",
     "Enumeration": "Enumeration",
-    "Formula": "Calculation"
+    "Calculation": "Calculation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",

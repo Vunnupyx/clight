@@ -92,7 +92,7 @@ export class VirtualDataPointComponent implements OnInit {
     },
     {
       value: VirtualDataPointOperationType.CALCULATION,
-      text: 'virtual-data-point-operation-type.Formula'
+      text: 'virtual-data-point-operation-type.Calculation'
     }
   ];
 

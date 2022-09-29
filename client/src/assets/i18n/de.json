@@ -219,9 +219,8 @@
     "SmallerEqual": "Kleiner gleich",
     "Equal": "Gleich",
     "Unequal": "Ungleich",
-    "Sum": "Summe",
     "Enumeration": "Enumeration",
-    "Formula": ""
+    "Calculation": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",

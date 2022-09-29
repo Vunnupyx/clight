@@ -297,7 +297,20 @@
       "Disabled": "Disabled"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
-    "HasDataMapping": "Datapoint is mapped to a source"
+    "HasDataMapping": "Datapoint is mapped to a source",
+    "TimeZone":"Time zone",
+    "Organization":"Organization",
+    "Model":"Model",
+    "ServerConfiguration":"Server configuration",
+    "DMGMORIMessenger":"DMG MORI Messenger",
+    "Register":"Register",
+    "Status":"Status",
+    "Registration":"Registration",
+    "Password":"Password",
+    "Username":"Username",
+    "Hostname":"Hostname",
+    "ServerStatus":"ServerStatus",
+    "RegisterMachine":"Register Machine"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

@@ -1,0 +1,65 @@
+<h1 mat-dialog-title>{{ 'settings-data-sink.RegisterMachine' | translate }}</h1>
+<div mat-dialog-content>
+  <h3>{{ 'settings-data-sink.ServerConfiguration' | translate }}</h3>
+</div>
+<div [formGroup]="profileForm">
+  <div class="row">
+    <h5>{{ 'settings-data-sink.Model' | translate }}</h5>
+    <mat-form-field>
+      <input type="text" matInput formControlName="model" />
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <h5>{{ 'settings-data-sink.Name' | translate }}</h5>
+    <mat-form-field>
+      <input type="text" matInput formControlName="name" />
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <h5>{{ 'settings-data-sink.Organization' | translate }}</h5>
+    <div>
+      <mat-form-field>
+        <input type="text" matInput formControlName="organization" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <h5>{{ 'settings-data-sink.TimeZone' | translate }}</h5>
+    <div>
+      <mat-form-field>
+        <mat-select
+          name="timezone"
+          required
+          formControlName="timezone"
+        >
+          <mat-option>
+            <ngx-mat-select-search
+              placeholderLabel="Search..."
+              noEntriesFoundLabel="No results found"
+              [(ngModel)]="timezoneOptionKeyphrase"
+              [ngModelOptions]="{ standalone: true }"
+            ></ngx-mat-select-search>
+          </mat-option>
+          <mat-option
+            *ngFor="let opt of timezoneOptionsSearchResults"
+            [value]="opt"
+          >
+            {{ opt }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
+
+<div class="buttons">
+
+<button mat-button color="primary" type="button" class="btn-sm" (click)="save()" mat-dialog-close cdkFocusInitial>
+  {{ 'settings-data-sink.Save' | translate }}
+</button>
+
+<button mat-button color="warn" type="button" class="btn-sm"  mat-dialog-close >
+  {{ 'settings-data-sink.Cancel' | translate }}
+</button>
+</div>

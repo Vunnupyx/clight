@@ -36,6 +36,7 @@ import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.co
 import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
 import { Status } from 'app/shared/state';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { DMGMoriMessengerComponent } from '../dmg-mori-messenger/dmg-mori-messenger.component';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -149,7 +150,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngAfterViewInit() {
     this.ngxDatatable.columnMode = ColumnMode.force;
   }
-  
+
   onDiscard() {
     return this.dataPointService.revert();
   }
@@ -362,4 +363,44 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   private onConnection(x: DataSinkConnection | undefined) {
     this.connection = x;
   }
+
+  openDMGMoriMessenger(){
+      const dialogRef = this.dialog.open(DMGMoriMessengerComponent, {
+      width: '900px'
+    });
+
+  }
+  // onSetEnumeration(virtualPoint: VirtualDataPoint) {
+  //   if (!virtualPoint.enumeration) {
+  //     virtualPoint.enumeration = { items: [] };
+  //   }
+
+  //   const protocol = this.sourceDataPointService.getProtocol(
+  //     virtualPoint.sources![0]
+  //   );
+
+  //   this.sourceDataPointService.getSourceDataPointsAll();
+  //   this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
+
+  //   const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
+  //     data: {
+  //       enumeration: { ...virtualPoint.enumeration },
+  //       sources: virtualPoint.sources,
+  //       protocol
+  //     },
+  //     width: '900px'
+  //   });
+  // dialogRef.afterClosed().subscribe((result) => {
+  //   if (result) {
+  //     if (!virtualPoint.id) {
+  //       virtualPoint.enumeration = result.enumeration;
+  //       return;
+  //     }
+
+  //     this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+  //       ...virtualPoint,
+  //       enumeration: result.enumeration
+  //     });
+  //   }
+  // });
 }

@@ -297,7 +297,20 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
-    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden"
+    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
+    "TimeZone":"",
+    "Organization":"",
+    "Model":"",
+    "ServerConfiguration":"",
+    "DMGMORIMessenger":"",
+    "Register":"",
+    "Status":"",
+    "Registration":"",
+    "Password":"",
+    "Username":"",
+    "Hostname":"",
+    "ServerStatus":"",
+    "RegisterMachine":""
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",

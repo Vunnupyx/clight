@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>
+  {{ 'settings-data-sink.DMGMORIMessenger' | translate }}
+</h1>
+<div mat-dialog-content>
+  <h3>{{ 'settings-data-sink.ServerConfiguration' | translate }}</h3>
+</div>
+<div class="row">
+  <h5>{{ 'settings-data-sink.ServerStatus' | translate }}</h5>
+  <h5 [style.color]="serverStatus === 'available' ? 'green' : 'red'">
+   Server {{ serverStatus }}
+  </h5>
+</div>
+
+<div [formGroup]="profileForm">
+  <div class="row">
+    <h5>{{ 'settings-data-sink.Hostname' | translate }}</h5>
+    <mat-form-field>
+      <input type="text" matInput formControlName="hostName" />
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <h5>{{ 'settings-data-sink.Username' | translate }}</h5>
+    <mat-form-field>
+      <input type="text" matInput formControlName="userName" />
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <p>{{ 'settings-data-sink.Password' | translate }}</p>
+    <mat-form-field>
+      <input type="password" matInput formControlName="password" />
+    </mat-form-field>
+  </div>
+</div>
+<div mat-dialog-content>
+  <p>{{ 'settings-data-sink.Registration' | translate }}</p>
+</div>
+<div class="row">
+  <p>{{ 'settings-data-sink.Status' | translate }}</p>
+  <p [style.color]="registrationStatus !== 'registered' ? 'red' : 'green'">
+    {{ registrationStatus }}
+  </p>
+</div>
+<button
+  mat-button
+  color="primary"
+  type="button"
+  class="btn-sm"
+  (click)="register()"
+  mat-dialog-close
+>
+  {{ 'settings-data-sink.Register' | translate }}
+</button>
+

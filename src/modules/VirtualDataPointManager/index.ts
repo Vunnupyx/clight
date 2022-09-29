@@ -171,12 +171,15 @@ export class VirtualDataPointManager {
           sourceEvent.measurement.value.toString()
         );
       });
+      // Replace true with 1 and false with 0
+      variableReplacedFormula = variableReplacedFormula
+        .replace(new RegExp('true', 'g'), '1')
+        .replace(new RegExp('false', 'g'), '0');
+
       let result = evaluate(variableReplacedFormula);
       if (
         /[*/+-]+([*/+-])/.test(variableReplacedFormula) || //check if any operators are repeating
         variableReplacedFormula.includes('Infinity') ||
-        variableReplacedFormula.includes('true') ||
-        variableReplacedFormula.includes('false') ||
         result === Infinity ||
         result === -Infinity ||
         result === null ||

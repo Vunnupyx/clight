@@ -70,28 +70,41 @@ describe('Test VirtualDataPointManager', () => {
         expectedResult: 23
       },
       {
-        // TODO I receive 23 as output? How?
-        text: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b',
+        text: 'value of one variable is correctly shown',
         firstValue: 60,
         secondValue: 20,
-        formula: defaultFormula,
+        formula: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b',
         expectedResult: 60
       },
       {
+        text: 'Giving only one number is working correctly',
+        firstValue: 0,
+        secondValue: 0,
+        formula: '70',
+        expectedResult: 70
+      },
+      {
         // handle true as 1
-        text: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b + 1',
+        text: 'true + 1',
         firstValue: true,
         secondValue: 20,
-        formula: defaultFormula,
+        formula: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b + 1',
         expectedResult: 2
       },
       {
         // handle false as 0
-        text: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b + 1',
+        text: 'false + 1',
         firstValue: false,
         secondValue: 20,
-        formula: defaultFormula,
+        formula: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b + 1',
         expectedResult: 1
+      },
+      {
+        text: 'boolean values in formula',
+        firstValue: false,
+        secondValue: true,
+        formula: defaultFormula,
+        expectedResult: 20
       },
       {
         text: 'using variables multiple times in a formula',
@@ -166,9 +179,9 @@ describe('Test VirtualDataPointManager', () => {
         expectedResult: null
       },
       {
-        text: 'boolean words given',
+        text: 'boolean values causes 0/0',
         firstValue: false,
-        secondValue: true,
+        secondValue: false,
         formula: defaultFormula,
         expectedResult: null
       },

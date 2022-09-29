@@ -63,6 +63,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.measurementsBus = params.measurementsBus;
     this.licenseChecker = params.licenseChecker;
     this.messengerManager = new MessengerManager({
+      configManager: this.configManager,
       messengerConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT)
         .messenger
     });

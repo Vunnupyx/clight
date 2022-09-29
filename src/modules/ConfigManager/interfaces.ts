@@ -135,17 +135,20 @@ export interface IDataHubSettings {
 }
 
 export interface IMessengerServerConfig {
-  hostname?: string;
-  username?: string;
-  password?: string;
-  model?: string;
-  name?: string;
-  organization?: string;
-  timezone?: number;
+  hostname: string | null;
+  username: string | null;
+  password: string | null;
+  model: string | null;
+  name: string | null;
+  organization: string | null;
+  timezone: number | null;
 }
-
+export interface IMessengerServerStatus {
+  server: 'notconfigured' | 'invalidhost' | 'invalidauth' | 'available';
+  registration: 'unknown' | 'notregistered' | 'registered';
+}
 export interface IDataSinkConfig {
-  name: string;
+  name: string; //TBD: this seems to be obsolete?
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;

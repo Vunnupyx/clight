@@ -13,7 +13,7 @@ import {
 import {
   dataSinksHandlers,
   setConfigManager as dataSinksSetConfigManager,
-  setDataSinksManager
+  setDataSinksManager as setDataSinksDataSinksManager
 } from '../routes/apis/v1/DataSinks';
 import {
   virtualDatapointHandlers,
@@ -57,6 +57,11 @@ import {
   setDataSinksManager as setTemplateDataSinksManager
 } from '../routes/apis/v1/Templates';
 import {
+  messengerHandlers,
+  setConfigManager as messengerConfigSetConfigManager,
+  setDataSinksManager as setMessengerDataSinksManager
+} from '../routes/apis/v1/Messenger';
+import {
   termsAndConditionsHandlers,
   setConfigManager as termsAndConditionsSetConfigManager
 } from '../routes/apis/v1/TermsAndConditions';
@@ -67,7 +72,7 @@ import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesMana
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
-import swaggerFile from '../routes/swagger';
+import swaggerFile from '../routes/swagger.json';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
 
 interface RoutesManagerOptions {
@@ -77,7 +82,7 @@ interface RoutesManagerOptions {
   dataSinksManager: DataSinksManager;
   dataPointCache: DataPointCache;
   authManager: AuthManager;
-  vdpManager: VirtualDataPointManager
+  vdpManager: VirtualDataPointManager;
 }
 
 /**
@@ -99,6 +104,7 @@ export class RoutesManager {
     ...networkConfigHandlers,
     ...systemInfoHandlers,
     ...templatesHandlers,
+    ...messengerHandlers,
     ...termsAndConditionsHandlers,
     ...healthCheckHandlers
   };
@@ -126,10 +132,12 @@ export class RoutesManager {
       networkConfigSetConfigManager,
       systemInfoSetConfigManager,
       templatesConfigSetConfigManager,
+      messengerConfigSetConfigManager,
       termsAndConditionsSetConfigManager
     ].forEach((func) => func(options.configManager));
     authSetAuthManager(options.authManager);
-    setDataSinksManager(options.dataSinksManager);
+    setDataSinksDataSinksManager(options.dataSinksManager);
+    setMessengerDataSinksManager(options.dataSinksManager);
     setVdpManager(options.vdpManager);
     setTemplateDataSinksManager(options.dataSinksManager);
     setDataSourcesManager(options.dataSourcesManager);

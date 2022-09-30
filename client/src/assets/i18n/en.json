@@ -20,7 +20,9 @@
     "Username": "Username",
     "Password": "Password",
     "SignIn": "Sign in",
-    "ForgotPassword": "Forgot your password?"
+    "ForgotPassword": "Forgot your password?",
+    "WhereToFindPassword": "Where do I find my login password?",
+    "ResetEmailSentSuccess": "Password reset email has been sent successfully!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",
@@ -34,10 +36,13 @@
     "TermsAndConditions": "Terms and Conditions",
     "Accept": "Accept",
     "Language": "Select your Language",
+    "WhatIsTemplate": "What is a template?",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
-    "LoadError": "Failed to load info. Try again later",
+    "LoadError": "Failed to load info. Please try again later",
+    "TermsLoadError": "Error loading Terms and Conditions. Please try again later.",
+    "AcceptError": "Error occured while accepting Terms and Conditions. Please try again later.",
     "Next": "Next",
     "Save": "Save",
     "Yes": "Yes",
@@ -52,22 +57,22 @@
         "description": "Ioshield description"
       },
       "s7": {
-        "name": "S7",
-        "description": "S7 description"
+        "name": "Siemens",
+        "description": "Allows connection to Siemens devices, such as SINUMERIK or S7"
       }
     },
     "DataSinks": {
       "mtconnect": {
         "name": "MTConnect",
-        "description": "MTConnect description"
+        "description": "Provides MTConnect interface for other applications"
       },
       "opcua": {
         "name": "OPCUA",
-        "description": "OPCUA Description"
+        "description": "Provides OPCUA interface for other applications"
       },
       "datahub": {
         "name": "CELOS Xchange",
-        "description": "CELOS Xchange description"
+        "description": "Provides CELOS Xchange interface for other applications"
       }
     },
     "Descriptions": {
@@ -85,8 +90,8 @@
     "Language": "Language",
     "CELOSLanguage": "CELOS Language",
     "English": "English",
-    "Deutsch": "Deutsch",
-    "Japanese": "Japanese",
+    "Deutsch": "German (Deutsch)",
+    "Japanese": "Japanese (日本語)",
     "Templates": "Templates",
     "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",
@@ -223,6 +228,7 @@
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
+    "LoadError": "Failed to load source data points. Try again later",
     "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
     "HostUnreachable": "Host unreachable please check IP configuration"
   },
@@ -285,6 +291,7 @@
     "OPCUAAuthenticationLevel": "OPC UA Authentication Level",
     "OPCUAServerUsername": "OPC UA Server Username",
     "OPCUAServerPassword": "OPC UA Server Password",
+    "NoData": "No data",
     "LoadError": "Failed to load data sinks. Try again later",
     "OpenMTConnectStream": "Open MTConnect Stream",
     "BulkSuccess": "Changes have been applied successfully!",

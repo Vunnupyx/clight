@@ -134,7 +134,9 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
     if (modifiedData && modifiedData[1]) {
       modifiedData[1]?.items.push({
         key: 'CELOS X material theme version',
-        keyDescription: 'Software component',
+        keyDescription: this.translate.instant(
+          'system-information.SoftwareComponent'
+        ),
         value: MaterialThemeVersion,
         valueDescription: ''
       });

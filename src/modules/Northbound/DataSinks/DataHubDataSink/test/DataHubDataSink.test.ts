@@ -109,15 +109,14 @@ describe('DataHubDataSink', () => {
   };
 
   describe(`instantiation successfully`, () => {
-    beforeAll(() => {
-      datasinkUUT = new DataHubDataSink(dataHubDataSinkOptions);
-    });
     afterEach(() => {
       jest.clearAllMocks();
       configMock.dataPoints = [];
     });
 
     it('initializing successfully', async () => {
+      datasinkUUT = new DataHubDataSink(dataHubDataSinkOptions);
+
       return datasinkUUT.init().then(() => {
         expect(dataHubAdapterMock.init).toBeCalled();
         expect(dataHubAdapterMock.start).toBeCalled();
@@ -198,6 +197,8 @@ describe('DataHubDataSink', () => {
           name: 'name'
         }
       ];
+
+      datasinkUUT = new DataHubDataSink(dataHubDataSinkOptions);
 
       dataPointMapperMock.getTargets.mockImplementation(() => [
         {

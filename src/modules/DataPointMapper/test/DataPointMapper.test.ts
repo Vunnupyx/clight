@@ -15,17 +15,22 @@ jest.mock('winston');
 import { DataPointMapper } from '..';
 import { ConfigManager, emptyDefaultConfig } from '../../ConfigManager';
 import { EventBus } from '../../EventBus';
+import {
+  DataSourceProtocols,
+  IErrorEvent,
+  ILifecycleEvent
+} from '../../../common/interfaces';
 
 describe('Test DataPointMapper', () => {
   test("should map a source to it's target", async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>(),
-      lifecycleEventsBus: new EventBus<null>()
+      errorEventsBus: new EventBus<IErrorEvent>(),
+      lifecycleEventsBus: new EventBus<ILifecycleEvent>()
     });
 
     const dataSource: IDataSourceConfig = {
       name: '',
-      protocol: '',
+      protocol: DataSourceProtocols.S7,
       enabled: true,
       dataPoints: [
         {

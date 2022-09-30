@@ -14,7 +14,6 @@ export class MessengerManager {
   public messengerConfig: IMessengerServerConfig;
 
   private configManager: ConfigManager;
-  private baseURL: string;
   private loginToken: string;
   private machineCatalog: Array<Object>;
   private defaultTimezoneId: string;
@@ -26,11 +25,6 @@ export class MessengerManager {
     this.messengerConfig = options.messengerConfig;
     this.configManager = options.configManager;
     this.configManager.on('configChange', this.handleConfigChange.bind(this));
-
-    //TODO
-    this.baseURL = this.messengerConfig?.hostname
-      ? `${this.messengerConfig?.hostname}/adm/api`
-      : '';
   }
 
   /**
@@ -109,26 +103,23 @@ export class MessengerManager {
       await this.getLoginToken();
     }
     try {
-      //TODO how to check if this machine is registered correctly: probably a)
-      let response = await fetch(`${this.baseURL}/machines`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.loginToken}`
+      let response = await fetch(
+        `${this.messengerConfig?.hostname}/adm/api/machines`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.loginToken}`
+          }
         }
-      });
+      );
       if (response.ok) {
         this.serverStatus.registration = 'notregistered';
         const data = await response?.json();
         //@ts-ignore
-        if (data.err || data.erd) {
-          //TBD
-        }
-        //TODO: check if this machine is registered
-        if (data.msg) {
-          let listOfRegisteredMachinesInMessenger = data.msg;
-          winston.debug(this.configManager.config.general.serialNumber);
+        if (data) {
+          let listOfRegisteredMachinesInMessenger = data;
           if (
             listOfRegisteredMachinesInMessenger.find?.(
               (registeredMachine) =>
@@ -163,17 +154,20 @@ export class MessengerManager {
       return;
     }
     try {
-      const response = await fetch(`${this.baseURL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          User: this.messengerConfig.username,
-          Pass: this.messengerConfig.password
-        })
-      });
+      const response = await fetch(
+        `${this.messengerConfig?.hostname}/adm/api/auth/login`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            User: this.messengerConfig.username,
+            Pass: this.messengerConfig.password
+          })
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         //@ts-ignore
@@ -218,14 +212,17 @@ export class MessengerManager {
 
     //Read MachineCatalog
     try {
-      const response = await fetch(`${this.baseURL}/machinecatalog`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.loginToken}`
+      const response = await fetch(
+        `${this.messengerConfig?.hostname}/adm/api/machinecatalog`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.loginToken}`
+          }
         }
-      });
+      );
       if (response.ok) {
         const data = await response?.json();
         //@ts-ignore
@@ -234,6 +231,7 @@ export class MessengerManager {
         }
         //@ts-ignore
         this.machineCatalog = data.msg;
+        winston.debug(`${logPrefix} Machine Catalog read successfully.`);
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalidauth';
@@ -250,14 +248,17 @@ export class MessengerManager {
 
     //Read MachineObject for TimezoneID
     try {
-      const response = await fetch(`${this.baseURL}/machines/new`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.loginToken}`
+      const response = await fetch(
+        `${this.messengerConfig?.hostname}/adm/api/machines/new`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.loginToken}`
+          }
         }
-      });
+      );
 
       if (response.ok) {
         const data = await response?.json();
@@ -268,6 +269,7 @@ export class MessengerManager {
         //@ts-ignore
         const machineObject = data.msg;
         this.defaultTimezoneId = machineObject.TimeZoneId;
+        winston.debug(`${logPrefix} Machine Object read successfully.`);
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalidauth';
@@ -284,14 +286,17 @@ export class MessengerManager {
 
     // Read organization units
     try {
-      const response = await fetch(`${this.baseURL}/orgunits`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.loginToken}`
+      const response = await fetch(
+        `${this.messengerConfig?.hostname}/adm/api/orgunits`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.loginToken}`
+          }
         }
-      });
+      );
 
       if (response.ok) {
         const data = await response?.json();
@@ -301,6 +306,7 @@ export class MessengerManager {
         }
         //@ts-ignore
         this.organizationUnits = data.msg;
+        winston.debug(`${logPrefix} Organization Units read successfully.`);
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalidauth';
@@ -317,14 +323,17 @@ export class MessengerManager {
 
     // Read timezones
     try {
-      const response = await fetch(`${this.baseURL}/classifiers/timezones`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.loginToken}`
+      const response = await fetch(
+        `${this.messengerConfig?.hostname}/adm/api/classifiers/timezones`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.loginToken}`
+          }
         }
-      });
+      );
       if (response.ok) {
         const data = await response?.json();
         //@ts-ignore
@@ -333,12 +342,13 @@ export class MessengerManager {
         }
         //@ts-ignore
         this.timezones = data.msg;
+        winston.debug(`${logPrefix} Timezones read successfully.`);
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalidauth';
         } else {
           winston.warn(
-            `${logPrefix} Get Timezones: Unhandled response status ${response.status} ${response.statusText} ${response}`
+            `${logPrefix} Get Timezones: Unhandled response status ${response.status} ${response.statusText} ${response.text}`
           );
         }
       }
@@ -349,45 +359,67 @@ export class MessengerManager {
 
     //Create machine
     try {
-      const response = await fetch(`${this.baseURL}/machines`, {
-        method: 'POST',
-        body: JSON.stringify({
-          MachineName: '',
-          SerialNumber: this.configManager.config.general.serialNumber,
-          LicenseNumber: '', //TBD
-          MachineCatalogId: '',
-          MachineImage: '',
-          TimeZoneId: 'givenTimezone' || this.defaultTimezoneId,
-          MTConnectAgentManagementMode: 'UA',
-          MTConnectUrl: '',
-          OrgUnitId: ''
-        }),
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.loginToken}`
-        }
+      const newMachineConfig = JSON.stringify({
+        MachineName: this.messengerConfig.name,
+        SerialNumber: this.configManager.config.general.serialNumber,
+        LicenseNumber: this.configManager.config.general.serialNumber, //TBD
+        MachineCatalogId: Number(this.messengerConfig.model),
+        MachineImage: `/adm/api/machinecatalog/image/${
+          this.machineCatalog.find(
+            //@ts-ignore
+            (machine) => machine.Id === Number(this.messengerConfig.model)
+            //@ts-ignore
+          )?.ImageFileName
+        }`, //TBD
+        TimeZoneId: this.messengerConfig.timezone ?? this.defaultTimezoneId,
+        MTConnectAgentManagementMode: 'UA',
+        MTConnectUrl: `http://${this.messengerConfig.name}:15404`, // `DMG_MORI_${'12345'}/`, //TBD
+        OrgUnitId: this.messengerConfig.organization,
+        IsHidden: false,
+        DisplayInMessenger: true,
+        ProcessMTConnectWarningsAsFaults: false
       });
+      winston.debug(
+        `${logPrefix} Creating machine with the config: ${newMachineConfig}`
+      );
+      const response = await fetch(
+        `${this.messengerConfig?.hostname}/adm/api/machines`,
+        {
+          method: 'POST',
+          body: newMachineConfig,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.loginToken}`
+          }
+        }
+      );
       if (response.ok) {
         const data = await response?.json();
         //@ts-ignore
-        if (data.err || data.erd) {
-          //TBD
-        }
-        if (data.msg) {
+
+        if (typeof data === 'string') {
           this.serverStatus.registration = 'registered';
           winston.debug(
-            `${logPrefix} Machine has been registered to Messenger successfully.`
+            `${logPrefix} Machine has been registered to Messenger successfully. Machine Id: ${data}`
           );
-        } else {
-          winston.warn(`${logPrefix} Could not successfully create machine`);
+        } else if (data.err || data.erd) {
+          winston.warn(
+            `${logPrefix} Error during create machine. data.err:${data.err} data.erd:${data.erd}`
+          );
+          //TBD
         }
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalidauth';
         } else {
           winston.warn(
-            `${logPrefix} Get Timezones: Unhandled response status ${response.status} ${response.statusText} ${response}`
+            `${logPrefix} Create machine: Unhandled response status (potentially license error): ${
+              response.status
+            } ${response.statusText} ${
+              //@ts-ignore
+              await response.text()
+            }`
           );
         }
       }

@@ -1569,7 +1569,7 @@
         "operationId": "messengerMetadataGetHandler",
         "responses": {
           "200": {
-            //TBD
+            "description": "Returns messenger server metadata"
           }
         }
       }

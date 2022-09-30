@@ -3,6 +3,7 @@
  */
 import { Request, Response } from 'express';
 import winston from 'winston';
+import { DataSinkProtocols } from '../../../../../../common/interfaces';
 
 import { ConfigManager } from '../../../../../ConfigManager';
 import {
@@ -45,7 +46,7 @@ function messengerConfigurationGetHandler(
   response: Response
 ): void {
   const currentConfig = configManager.config.dataSinks?.find(
-    (dataSink) => dataSink.protocol === 'mtconnect'
+    (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
   )?.messenger;
 
   let payload: IMessengerServerConfigResponse;
@@ -85,17 +86,16 @@ async function messengerConfigurationPostHandler(
     response.status(400).json({ message: 'Invalid Body' });
     return;
   }
-  configManager;
   const config = configManager.config;
 
   let mtConnectSink = config.dataSinks?.find(
-    (dataSink) => dataSink.protocol === 'mtconnect'
+    (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
   );
 
   let currentMessengerSettings = mtConnectSink.messenger;
 
   if (currentMessengerSettings) {
-    //TBD: Will it send unchanged values as null or same as old value?
+    //TBD: Will frontend send unchanged values as null or same as old value?
     currentMessengerSettings = {
       ...currentMessengerSettings,
       ...incomingMessengerConfig,
@@ -107,6 +107,7 @@ async function messengerConfigurationPostHandler(
   } else if (mtConnectSink) {
     mtConnectSink.messenger = incomingMessengerConfig;
   } else {
+    //if mtconnect sink doesn't exist yet, is it usecase?
     // TBD
     config.dataSinks.push({
       name: '', // TBD!
@@ -119,7 +120,8 @@ async function messengerConfigurationPostHandler(
   configManager.config = config;
 
   await configManager.configChangeCompleted();
-  await dataSinksManager.messengerManager.checkStatus(); // TBD: it will automatically do it on the event actually
+  // TBD: actually it will automatically checkstatus after configChange event
+  await dataSinksManager.messengerManager.checkStatus();
 
   response.status(200).json(null);
 }
@@ -139,7 +141,9 @@ async function messengerStatusGetHandler(request: Request, response: Response) {
     response.status(200).json(payload);
   } catch (err) {
     winston.warn(
-      `messengerStatusGetHandler:: Error while getting Messenger server status`
+      `messengerStatusGetHandler:: Error while getting Messenger server status ${JSON.stringify(
+        err
+      )}`
     );
     response.status(500).json(err); //TODO
   }

@@ -87,9 +87,7 @@ describe('MessengerManager', () => {
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
       .mockResolvedValueOnce(
-        Promise.resolve(
-          new Response(JSON.stringify({ msg: [{ SerialNumber: '' }] }))
-        )
+        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
       );
     const messengerConfig = {
       hostname: 'string',
@@ -117,7 +115,7 @@ describe('MessengerManager', () => {
       .mockResolvedValueOnce(
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
-      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify({}))))
+      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify([]))))
       .mockResolvedValueOnce(
         Promise.resolve(
           new Response(
@@ -143,7 +141,7 @@ describe('MessengerManager', () => {
         )
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify({ msg: 'success' })))
+        Promise.resolve(new Response(JSON.stringify('newMachineID')))
       );
 
     const messengerConfig = {
@@ -172,7 +170,7 @@ describe('MessengerManager', () => {
       .mockResolvedValueOnce(
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
-      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify({}))))
+      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify([]))))
       .mockResolvedValueOnce(Promise.reject(new Response(JSON.stringify({}))));
 
     const messengerConfig = {
@@ -202,9 +200,7 @@ describe('MessengerManager', () => {
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
       .mockResolvedValueOnce(
-        Promise.resolve(
-          new Response(JSON.stringify({ msg: [{ SerialNumber: '' }] }))
-        )
+        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
       )
       .mockResolvedValueOnce(Promise.reject(new Response(JSON.stringify({}))));
 
@@ -238,7 +234,7 @@ describe('MessengerManager', () => {
       .mockResolvedValueOnce(
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
-      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify({}))))
+      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify([]))))
       .mockResolvedValueOnce(
         Promise.resolve(
           new Response(
@@ -264,7 +260,7 @@ describe('MessengerManager', () => {
         )
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify({ msg: 'success' })))
+        Promise.resolve(new Response(JSON.stringify('newMachineID')))
       );
 
     messengerAdapter = new MessengerManager({

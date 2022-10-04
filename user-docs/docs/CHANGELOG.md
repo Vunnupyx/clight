@@ -10,6 +10,10 @@ title: Changelog
 
 - [DIGMDCLGHT-103](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-103) Added support for custom mathematical expressions for virtual data points
 
+### Changed
+
+- [DIGMDCLGHT-190](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-190) Updated user documentation
+
 ## [2.2.1]
 
 ### Added

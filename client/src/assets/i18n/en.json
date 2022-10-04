@@ -203,7 +203,9 @@
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
-    "ReturnValueIfTrue": "Value if left side is true"
+    "ReturnValueIfTrue": "Value if left side is true",
+    "SetFormula": "Set formula",
+    "Formula": "Formula"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -217,8 +219,8 @@
     "SmallerEqual": "Smaller or Equal",
     "Equal": "Equal",
     "Unequal": "Unequal",
-    "Sum": "Sum",
-    "Enumeration": "Enumeration"
+    "Enumeration": "Enumeration",
+    "Calculation": "Calculation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
@@ -263,7 +265,7 @@
     "Condition": "Condition",
     "SelectAVariable": "Select a variable",
     "CreateDataPoint": "Create data item",
-    "SelectVariable": "SelectVariable",
+    "SelectVariable": "Select Variable",
     "Mapping": "Mapping",
     "From": "From",
     "To": "To",
@@ -297,7 +299,16 @@
       "Disabled": "Disabled"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
-    "HasDataMapping": "Datapoint is mapped to a source"
+    "DuplicatedAddress":"You are not allowed to duplicate addresses",
+    "HasDataMapping": "Datapoint is mapped to a source",
+    "OpcUaVariables": "OPC UA Variables",
+    "UmatiOpcUaVariables": "UMATI OPC UA Variables",
+    "CustomOpcUaVariables": "Custom OPC UA Variables",
+    "AddOpcUaVariable": "Add your own OPC UA Variable",
+    "DataType": "Data Type",
+    "SetCustomOpcUaVariable": "Set Custom OPC UA Variable",
+    "NodeId": "Node ID",
+    "DeleteMessage": "Are you sure you want to delete data point?"
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",
@@ -377,5 +388,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+  },
+  "data-type": {
+    "String": "String",
+    "Double": "Double",
+    "Byte": "Byte",
+    "UInt16": "UInt16",
+    "UInt32": "UInt32",
+    "Boolean": "Boolean"
   }
 }

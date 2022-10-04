@@ -1,3 +1,5 @@
+import path from 'path';
+import fs from 'fs';
 jest.mock('winston');
 jest.mock('node-opcua-pki');
 
@@ -9,11 +11,14 @@ const configManagerMock = {
     },
     nodesetDir: 'mdclight/config/opcua_nodeSet'
   },
-  config: {
+  generalConfig: {
     general: {
       serialNumber: '',
       manufacturer: ''
     }
+  },
+  dataSinkConfig: {
+    protocol: 'opcua'
   }
 };
 
@@ -25,6 +30,11 @@ const OPCUAServerMock = {
     return Promise.resolve();
   }),
   initialized: false,
+  engine: {
+    addressSpace: {
+      findNode: (nodeId) => !nodeId.endsWith('notfound') && { nodeId }
+    }
+  },
   endpoints: [
     {
       endpointDescriptions: jest
@@ -63,14 +73,24 @@ jest.mock('node-opcua', () => {
     MessageSecurityMode: SecurityModes
   };
 });
+let writtenXMLFile: string | null = null;
 
 jest.mock('fs-extra', () => {
   return {
-    readdir: jest.fn(async () => ['filename']),
+    readdir: jest.fn(async () => ['dmgmori-umati.xml']),
     existsSync: jest.fn(),
     mkdirSync: jest.fn(),
     copy: jest.fn(),
-    rm: jest.fn()
+    rm: jest.fn(),
+    readFileSync: jest.fn(() =>
+      fs.readFileSync(
+        path.join(process.cwd(), '/_mdclight/opcua_nodeSet/dmgmori-umati.xml'),
+        { encoding: 'utf-8' }
+      )
+    ),
+    writeFileSync: jest.fn(async (name, data) => {
+      writtenXMLFile = data;
+    })
   };
 });
 
@@ -80,14 +100,15 @@ describe(`OPCUAAdapter Test`, () => {
   let testAdapter: OPCUAAdapter;
 
   afterEach(() => {
-    testAdapter = null;
+    testAdapter = null!;
+    writtenXMLFile = null;
     jest.clearAllMocks();
   });
 
   describe(`instantiation `, () => {
     describe(`fails `, () => {
       it(`without config data`, () => {
-        expect(() => new OPCUAAdapter(null)).toThrow(Error);
+        expect(() => new OPCUAAdapter(null!)).toThrow(Error);
       });
 
       it(`if config object is empty`, () => {
@@ -103,6 +124,83 @@ describe(`OPCUAAdapter Test`, () => {
       it(`with valid configManager `, () => {
         testAdapter = new OPCUAAdapter(configManagerMock as any);
         expect(testAdapter).toBeInstanceOf(OPCUAAdapter);
+      });
+
+      it(`with correct XML initialization (replacing DummyMachineToolName)`, async () => {
+        testAdapter = new OPCUAAdapter(configManagerMock as any);
+        await testAdapter.init();
+        expect(writtenXMLFile!.includes('DummyMachineToolName')).toBeFalsy();
+        expect(writtenXMLFile!.includes('DM000000000000')).toBeTruthy();
+      });
+
+      it(`with correct custom data points, if any exists`, async () => {
+        const address = 'TEST_NODE_ID';
+        const name = 'TEST_DISP_NAME';
+        const dataTypeInConfig = 'string';
+        const dataType = 'String';
+        testAdapter = new OPCUAAdapter({
+          ...configManagerMock,
+          dataSinkConfig: {
+            ...configManagerMock.dataSinkConfig,
+            customDataPoints: [
+              {
+                address,
+                name,
+                dataType: dataTypeInConfig
+              }
+            ]
+          }
+        } as any);
+        await testAdapter.init();
+
+        expect(
+          writtenXMLFile!.includes(
+            `<Reference ReferenceType="Organizes">ns=1;s=${address}</Reference>`
+          )
+        ).toBeTruthy();
+        expect(
+          writtenXMLFile!.includes(
+            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${address}" BrowseName="2:${address}">`
+          )
+        ).toBeTruthy();
+        expect(
+          writtenXMLFile!.includes(`<DisplayName>${name}</DisplayName>`)
+        ).toBeTruthy();
+      });
+
+      it(`with correct custom data points, skips if existing node id given`, async () => {
+        const address = 'Identification.ComponentName';
+        const name = 'TEST_DISP_NAME';
+        const dataTypeInConfig = 'double';
+        const dataType = 'Double';
+        testAdapter = new OPCUAAdapter({
+          ...configManagerMock,
+          dataSinkConfig: {
+            ...configManagerMock.dataSinkConfig,
+            customDataPoints: [
+              {
+                address,
+                name,
+                dataType: dataTypeInConfig
+              }
+            ]
+          }
+        } as any);
+        await testAdapter.init();
+
+        expect(
+          writtenXMLFile!.includes(
+            `<Reference ReferenceType="Organizes">ns=1;s=${address}</Reference>`
+          )
+        ).toBeFalsy();
+        expect(
+          writtenXMLFile!.includes(
+            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${address}" BrowseName="2:${address}">`
+          )
+        ).toBeFalsy();
+        expect(
+          writtenXMLFile!.includes(`<DisplayName>${name}</DisplayName>`)
+        ).toBeFalsy();
       });
 
       describe(`TODO`, () => {
@@ -154,6 +252,24 @@ describe(`OPCUAAdapter Test`, () => {
           //   });
         });
       });
+    });
+  });
+
+  describe('findNode', () => {
+    it('returns the node by using correct prefix', async () => {
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+      await testAdapter.init();
+
+      let node = await testAdapter.findNode('Variable1');
+      expect(node?.nodeId).toBe('ns=7;s=DM000000000000.Variable1');
+    });
+
+    it('returns null if no node is found', async () => {
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+      await testAdapter.init();
+
+      let node = await testAdapter.findNode('notfound');
+      expect(node).toEqual(null);
     });
   });
 });

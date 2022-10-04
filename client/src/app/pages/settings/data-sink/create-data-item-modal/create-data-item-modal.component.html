@@ -20,7 +20,7 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-      [name]="(data.dataSinkProtocol !== DataSinkProtocol.OPC ? 'settings-data-sink.DataItem' : 'settings-data-sink.Address') | translate"
+      [name]="'settings-data-sink.DataItem' | translate"
       prop="address"
     >
       <ng-template
@@ -33,7 +33,6 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-      *ngIf="data.dataSinkProtocol !== DataSinkProtocol.OPC"
       [name]="'settings-data-sink.Type' | translate"
       prop="type"
     >
@@ -80,9 +79,9 @@
           </mat-button-toggle>
           <mat-button-toggle
             *ngIf="!isExisting(row.address)"
-            [mat-dialog-close]="row"
             [matTooltip]="'settings-data-sink.SelectVariable' | translate"
             matTooltipPosition="above"
+            (click)="onSelect(row)"
           ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>

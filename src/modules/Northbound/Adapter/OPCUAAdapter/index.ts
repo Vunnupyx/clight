@@ -21,9 +21,10 @@ import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import path from 'path';
 import { compare } from 'bcrypt';
 import { System } from '../../../System';
+import { create } from 'xmlbuilder2';
 
 interface IOPCUAAdapterOptions {
-  config: IDataSinkConfig;
+  dataSinkConfig: IDataSinkConfig;
   runtimeConfig: IOPCUAConfig;
   generalConfig: IGeneralConfig;
 }
@@ -32,7 +33,7 @@ interface IOPCUAAdapterOptions {
  */
 export class OPCUAAdapter {
   private opcuaRuntimeConfig: IOPCUAAdapterOptions['runtimeConfig'];
-  private dataSinkConfig: IOPCUAAdapterOptions['config'];
+  private dataSinkConfig: IOPCUAAdapterOptions['dataSinkConfig'];
   private generalConfig: IOPCUAAdapterOptions['generalConfig'];
 
   private auth: boolean;
@@ -50,7 +51,7 @@ export class OPCUAAdapter {
 
   constructor(options: IOPCUAAdapterOptions) {
     this.opcuaRuntimeConfig = options.runtimeConfig;
-    this.dataSinkConfig = options.config;
+    this.dataSinkConfig = options.dataSinkConfig;
     this.generalConfig = options.generalConfig;
 
     if (!this.dataSinkConfig.auth) {
@@ -89,6 +90,21 @@ export class OPCUAAdapter {
         this.generalConfig.serialNumber ? this.generalConfig.serialNumber : ''
       }`;
   }
+  /**
+   * As data types for custom data points in config file are written in lowercase, this function looks up the right value for OPC UA usage
+   */
+  private lookupDataType(dataType) {
+    const lookupEnum = {
+      string: 'String',
+      boolean: 'Boolean',
+      double: 'Double',
+      byte: 'Byte',
+      uint16: 'UInt16',
+      uint32: 'UInt32'
+    };
+
+    return lookupEnum[dataType] || dataType;
+  }
 
   /**
    * Rewrites all xml nodesets into tmp folder and replaces static texts like the machineName
@@ -110,14 +126,90 @@ export class OPCUAAdapter {
     const fullFiles = files.map((file) => path.join(this.nodesetDir, file));
 
     for (const file of fullFiles)
-      if (file.includes('dmgmori-umati')) {
-        fs.writeFileSync(
-          file,
-          fs
-            .readFileSync(file, 'utf8')
-            .split('{{machineName}}')
-            .join(this.getMachineName())
+      if (file.endsWith('dmgmori-umati.xml')) {
+        const xmlFileRead: string = fs.readFileSync(file, {
+          encoding: 'utf-8'
+        });
+        let xmlFileReadMachineNameFixed = xmlFileRead.replace(
+          new RegExp('DummyMachineToolName', 'g'),
+          await this.getHostname()
         );
+
+        const xmlFileReadParsed = create(xmlFileReadMachineNameFixed);
+        const xmlFileReadAsObject: any = xmlFileReadParsed.end({
+          format: 'object'
+        });
+
+        // Expands data points with custom data points
+        if (this.dataSinkConfig.customDataPoints) {
+          const iotFlexNode = xmlFileReadAsObject['UANodeSet']['#'].find(
+            (x: any) => x['UAObject']?.['DisplayName'] === 'IoTflex'
+          );
+
+          let uaVariableNodeForIoTFlex = xmlFileReadAsObject['UANodeSet'][
+            '#'
+          ].find((x: any) =>
+            x['UAVariable']?.[0]?.['References']['Reference'].find(
+              (x: any) => x['#'] === 'ns=1;s=IoTflex'
+            )
+          );
+
+          const allUAVariables = xmlFileReadAsObject['UANodeSet']['#']
+            .filter((x: any) => x['UAVariable'])
+            .map((x) => x['UAVariable'])
+            .flat();
+
+          const hostname = await this.getHostname();
+          for (const customConfig of this.dataSinkConfig.customDataPoints) {
+            let isExistingNodeId = allUAVariables.find((x) =>
+              x['@NodeId'].endsWith(customConfig.address)
+            );
+            if (isExistingNodeId) {
+              const logPrefix = `${OPCUAAdapter.className}::setupNodesets`;
+              winston.warn(
+                `${logPrefix} The custom data point with address ${customConfig.address} already exists! Skipping this custom data point`
+              );
+              //skip if already existing nodeId
+              continue;
+            }
+            const nodeId = `ns=1;s=${hostname}.${customConfig.address}`;
+            const browseName = `2:${customConfig.address}`;
+            const name = customConfig.name;
+            const dataType = this.lookupDataType(customConfig.dataType);
+
+            //Add reference to IoTFlex for new variable
+            iotFlexNode['UAObject']['References']['Reference'].push({
+              '@ReferenceType': 'Organizes',
+              '#': nodeId
+            });
+
+            //Add custom variable
+            let uaVariable = {
+              '@DataType': dataType,
+              '@NodeId': nodeId,
+              '@BrowseName': browseName,
+              DisplayName: name,
+              References: {
+                Reference: [
+                  {
+                    '@ReferenceType': 'HasTypeDefinition',
+                    '#': 'i=63'
+                  },
+                  {
+                    '@ReferenceType': 'Organizes',
+                    '@IsForward': 'false',
+                    '#': 'ns=1;s=IoTflex'
+                  }
+                ]
+              }
+            };
+            uaVariableNodeForIoTFlex['UAVariable'].push(uaVariable);
+          }
+        }
+        const updatedXMLFile = create(xmlFileReadAsObject).end({
+          prettyPrint: true
+        });
+        fs.writeFileSync(file, updatedXMLFile);
       }
 
     return fullFiles;
@@ -325,9 +417,12 @@ export class OPCUAAdapter {
       });
   }
 
-  public findNode(nodeIdentifier: NodeIdLike): BaseNode | null {
+  public async findNode(nodeIdentifier: NodeIdLike): Promise<BaseNode | null> {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
-    const node = this.server.engine.addressSpace.findNode(nodeIdentifier);
+    const nodeIdentifierWithHostname = `ns=7;s=${await this.getHostname()}.${nodeIdentifier}`;
+    const node = this.server.engine.addressSpace.findNode(
+      nodeIdentifierWithHostname
+    );
 
     if (node) return node;
     winston.warn(`${logPrefix} Node with id ${nodeIdentifier} not found!`);

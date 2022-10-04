@@ -14,6 +14,8 @@ The current supported interfaces/protocols are:
 
 ## General Usage
 
+![](../static/img/applicationinterface/overview.png)
+
 In the first setup process you are able to select your required `Application Interfaces`. Depending on the selected Templates there are preselected `data points` available on each interface tab.
 
 For every protocol with exception of the `CELOS Xchange` it is possible to add, delete or edit a `data point` in the list. Its also possible to enable or disable the interface completely.
@@ -53,7 +55,9 @@ Equal to deleting a new data point you change the entries for a data point
 
 ### MTConnect specific configurations and options
 
-The MTConnect interface tab has one additional button to show the current `MTConnect` data stream in a new browser tab.
+The MTConnect interface tab has one additional button `Open MTConnect Stream` under the connection status to show the current MTConnect data stream in a new browser tab.
+
+![Open MTConnect Stream button](../static/img/applicationinterface/mtconnectstream.png)
 
 ### OPC UA
 
@@ -61,6 +65,8 @@ The OPC UA interface tab has a drop down menu to select the desired authenticati
 
 - Anonymous (No authentication required)
 - User/Password (Only entered user name and password allow access to the interface)
+
+![OPC UA Auth Options](../static/img/applicationinterface/opcuaauth.png)
 
 ### CELOS Xchange
 

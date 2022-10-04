@@ -92,7 +92,7 @@ async function dataSinkPatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  let allowed = ['enabled', 'auth'];
+  let allowed = ['enabled', 'auth', 'customDataPoints'];
   const protocol = request.params.datasinkProtocol;
 
   const config = configManager.config;

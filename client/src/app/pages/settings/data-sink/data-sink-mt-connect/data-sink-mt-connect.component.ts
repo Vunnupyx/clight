@@ -11,8 +11,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
 
 import {
   DataMapping,
@@ -23,7 +21,8 @@ import {
   DataSinkAuthType,
   DataSinkConnection,
   DataSinkConnectionStatus,
-  DataSinkProtocol
+  DataSinkProtocol,
+  PreDefinedDataPoint
 } from 'app/models';
 import { DataMappingService, DataPointService, DataSinkService } from 'app/services';
 import { arrayToMap, clone } from 'app/shared/utils';
@@ -31,11 +30,12 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { CreateDataItemModalComponent } from '../create-data-item-modal/create-data-item-modal.component';
+import { CreateDataItemModalComponent, CreateDataItemModalData } from '../create-data-item-modal/create-data-item-modal.component';
 import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
-import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
 import { Status } from 'app/shared/state';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { SelectOpcUaVariableModalComponent, SelectOpcUaVariableModalData } from '../select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -50,8 +50,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ];
   DataSinkAuthType = DataSinkAuthType;
   Protocol = DataSinkProtocol;
-  MTConnectItems: DataPoint[] = [];
-  OPCUAAddresses: DataPoint[] = [];
+  MTConnectItems: PreDefinedDataPoint[] = [];
+  OPCUAAddresses: PreDefinedDataPoint[] = [];
   DataSinkConnectionStatus = DataSinkConnectionStatus;
 
   @Input() dataSink?: DataSink;
@@ -111,7 +111,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     private dataSinkService: DataSinkService,
     private dataMappingService: DataMappingService,
     private dialog: MatDialog,
-    private toastr: ToastrService,
     private translate: TranslateService
   ) {}
 
@@ -122,12 +121,16 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.MTConnectItems =
       this.dataSinkService.getPredefinedMtConnectDataPoints();
-    this.OPCUAAddresses = this.dataSinkService.getPredefinedOPCDataPoints();
+    this.OPCUAAddresses = 
+      [
+        ...this.dataSinkService.getPredefinedOPCDataPoints(),
+        ...(this.dataSink.customDataPoints || [])
+      ];
     this.sub.add(
-      combineLatest(
+      combineLatest([
         this.dataPointService.dataPoints,
         this.dataMappingService.dataMappings,
-      ).subscribe(([dataPoints, dataMappings]) => this.onDataPoints(dataPoints, dataMappings))
+      ]).subscribe(([dataPoints, dataMappings]) => this.onDataPoints(dataPoints, dataMappings))
     );
     this.sub.add(
       this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
@@ -211,32 +214,46 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       return;
     }
 
-    const dialogRef = this.dialog.open(CreateDataItemModalComponent, {
-      data: {
-        selection: undefined,
-        dataSinkProtocol: this.dataSink?.protocol,
-        existingAddresses: this.datapointRows
-          .map((x) => x.address)
-          .filter(Boolean)
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) {
-        return;
-      }
-      this.onAddConfirm(result);
-    });
+    if (this.dataSink?.protocol === DataSinkProtocol.OPC) {
+      this.dialog.open<SelectOpcUaVariableModalComponent, SelectOpcUaVariableModalData, PreDefinedDataPoint>(
+        SelectOpcUaVariableModalComponent,
+        {
+          data: {
+            existingAddresses: this.datapointRows
+              .map((x) => x.address)
+              .filter(Boolean)
+          } as SelectOpcUaVariableModalData
+        }
+      ).afterClosed().subscribe(result => {
+        if (!result) {
+          return;
+        }
+        this.onAddConfirm(result);
+      });
+    } else {
+      this.dialog.open<CreateDataItemModalComponent, CreateDataItemModalData, PreDefinedDataPoint>(
+        CreateDataItemModalComponent,
+        {
+          data: {
+            dataSinkProtocol: this.dataSink?.protocol,
+            existingAddresses: this.datapointRows
+              .map((x) => x.address)
+              .filter(Boolean)
+          } as CreateDataItemModalData
+        }
+      ).afterClosed().subscribe(result => {
+        if (!result) {
+          return;
+        }
+        this.onAddConfirm(result);
+      });
+    }
   }
 
-  onAddConfirm(result: PreDefinedDataPoint) {
+  private onAddConfirm(result: PreDefinedDataPoint) {
     const obj = {
-      name: result.name,
-      address: result.address,
-      initialValue: result.initialValue,
-      type: result.type,
+      ...result,
       enabled: true,
-      map: result.map
     } as DataPoint;
 
     this.unsavedRowIndex = this.datapointRows!.length;
@@ -269,6 +286,15 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     });
   }
 
+  setDataPointAddress(obj: DataPoint, value: string) {
+    obj.address = value;
+    
+    const customDataPoint = this.getCustomDataPointByAddress(obj.address);
+    if (customDataPoint?.dataType) {
+      obj.dataType = customDataPoint.dataType;
+    }
+  }
+
   onEditEnd() {
     if (!this.datapointRows) {
       return;
@@ -299,8 +325,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   onDelete(obj: DataPoint) {
-    const title = `Delete`;
-    const message = `Are you sure you want to delete data point ${obj.name}?`;
+    const title = this.translate.instant('settings-data-sink.Delete');
+    const message = this.translate.instant('settings-data-sink.DeleteMessage');
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)
@@ -345,6 +371,21 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   getDataSinkDataPointPrefix(id: string) {
     return this.dataPointService.getPrefix(id);
+  }
+
+  isNonDefinedAddress(obj: DataPoint) {
+    if (!this.OPCUAAddresses) {
+      return false;
+    }
+
+    return this.OPCUAAddresses.every(dp => dp.address !== obj.address);
+  }
+
+  private getCustomDataPointByAddress(address: string) {
+    if (!this.dataSink?.customDataPoints) {
+      return;
+    }
+    return this.dataSink.customDataPoints.find(dp => dp.address === address);
   }
 
   saveDatahubConfig(form: NgForm) {

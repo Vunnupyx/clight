@@ -1,4 +1,4 @@
-import { DataPoint } from './data-point';
+import { DataPoint, PreDefinedDataPoint } from './data-point';
 
 export enum DataSinkProtocol {
   MTConnect = 'mtconnect',
@@ -48,7 +48,7 @@ export class DataHubConfig {
 export class DataSink {
   id?: string;
   name!: string;
-  datapoints!: Array<DataPoint>;
+  dataPoints!: Array<DataPoint>;
   enabled!: boolean;
   protocol!: DataSinkProtocol;
   auth?: DataSinkAuth;
@@ -60,4 +60,5 @@ export class DataSink {
       };
     };
   };
+  customDataPoints?: Array<PreDefinedDataPoint>;
 }

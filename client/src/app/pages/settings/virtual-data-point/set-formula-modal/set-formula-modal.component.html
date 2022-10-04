@@ -1,0 +1,37 @@
+<h1 mat-dialog-title>
+  {{ 'settings-virtual-data-point.SetFormula' | translate }}
+</h1>
+
+<div mat-dialog-content class="pb-0">
+  <mat-chip-list>
+    <mat-chip
+      class="cursor-pointer"
+      *ngFor="let operator of Operators"
+      (click)="onDataPointSelected(operator)"
+      >{{ operator }}</mat-chip
+    >
+  </mat-chip-list>
+  <mat-chip-list>
+    <mat-chip
+      class="cursor-pointer"
+      *ngFor="let sourceOption of sourceOptions"
+      (click)="onDataPointSelected(sourceOption.name)"
+      >{{ getSourcePrefix(sourceOption) }} {{ sourceOption.name }}</mat-chip
+    >
+  </mat-chip-list>
+  <div class="mt-5 pt-5">
+    <mat-form-field>
+      <mat-label>{{ 'settings-virtual-data-point.Formula' | translate }}</mat-label>
+      <textarea matInput [(ngModel)]="formula" #formulaInput #formulaModel="ngModel"></textarea>
+    </mat-form-field>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mt-0 pt-0">
+  <button type="button" mat-button color="secondary" (click)="onCancel()">
+    {{ 'settings-virtual-data-point.Cancel' | translate }}
+  </button>
+  <button type="submit" mat-button color="primary" (click)="onSave()" [disabled]="!isValid()">
+    {{ 'settings-virtual-data-point.Save' | translate }}
+  </button>
+</div>

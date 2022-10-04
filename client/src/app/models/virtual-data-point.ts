@@ -13,7 +13,7 @@ export enum VirtualDataPointOperationType {
   SMALLER_EQUAL = 'smallerEqual',
   EQUAL = 'equal',
   UNEQUAL = 'unequal',
-  SUM = 'sum'
+  CALCULATION = 'calculation'
 }
 
 export class VirtualDataPoint {
@@ -23,6 +23,7 @@ export class VirtualDataPoint {
   name?: string;
   thresholds?: ObjectMap<number>;
   enumeration?: VirtualDataPointEnumeration;
+  formula?: string;
   comparativeValue?: string;
   enabled?: boolean;
 }

@@ -6,7 +6,7 @@ module.exports = {
       type: 'category',
       label: 'Introduction',
       collapsed: false,
-      items: ['tutorial/GettingStarted']
+      items: ['tutorial/GettingStarted', 'DataFlow', 'LedStatusDisplay']
     },
     {
       type: 'category',
@@ -17,15 +17,17 @@ module.exports = {
         'IO-Shield',
         'VirtualDataPoints',
         'Mapping',
-        'DataSinks'
+        'ApplicationInterface'
       ]
     },
     {
       type: 'category',
-      label: 'Use cases',
+      label: 'Use Cases',
       collapsed: false,
       items: [
-        'tutorial/DMGMessenger'
+        'tutorial/DMGMessenger',
+        'tutorial/OPCUA',
+        'tutorial/MTConnect'
         // "UseCaseIoShield"
       ]
     },
@@ -34,9 +36,7 @@ module.exports = {
       label: 'Advanced',
       collapsed: false,
       items: [
-        'DataFlow',
         // 'DataFlowConfiguration',
-        'LedStatusDisplay',
         'FactoryReset',
         'MdcLightConfiguration'
       ]

@@ -210,7 +210,13 @@ export class LicenseChecker {
     '8C:F3:19:71:44:F1',
     'E0:DC:A0:B9:D8:C7',
     'E0:DC:A0:D7:2F:08',
-    'E0:DC:A0:FA:6F:35'
+    'E0:DC:A0:FA:6F:35',
+    // Cem and 4 new from Mr. Herrmann
+    '8C:F3:19:7F:8E:86',
+    '8C:F3:19:7F:DA:F1',
+    '8C:F3:19:71:99:56',
+    '8C:F3:19:71:98:F4',
+    '8C:F3:19:71:99:5A'
   ];
   private _isLicensed: boolean = null;
   private system = new System();

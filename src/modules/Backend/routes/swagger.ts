@@ -1585,7 +1585,7 @@ export default {
             'equal',
             'unequal',
             'enumeration',
-            'sum'
+            'calculation'
           ]
         },
         comparativeValue: {

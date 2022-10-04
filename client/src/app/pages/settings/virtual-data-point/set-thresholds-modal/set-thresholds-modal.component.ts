@@ -256,12 +256,11 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   private prepareThresholds() {
     return this.rows.reduce((acc, curr) => {
       if (
-        Number.isFinite(Number(curr.value)) &&
+        curr.value &&
         Number.isFinite(Number(curr.threshold))
       ) {
-        acc[Number(curr.value)] = Number(curr.threshold);
+        acc[curr.value] = Number(curr.threshold);
       }
-
       return acc;
     }, {});
   }

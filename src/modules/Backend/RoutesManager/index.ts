@@ -67,7 +67,7 @@ import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesMana
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
-import swaggerFile from '../routes/swagger';
+import swaggerFile from '../routes/swagger.json';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
 
 interface RoutesManagerOptions {
@@ -77,7 +77,7 @@ interface RoutesManagerOptions {
   dataSinksManager: DataSinksManager;
   dataPointCache: DataPointCache;
   authManager: AuthManager;
-  vdpManager: VirtualDataPointManager
+  vdpManager: VirtualDataPointManager;
 }
 
 /**

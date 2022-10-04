@@ -310,7 +310,18 @@
     "Username":"",
     "Hostname":"",
     "ServerStatus":"",
-    "RegisterMachine":""
+    "RegisterMachine":"",
+    "RegistrationStatus": {
+      "Notregistered": "",
+      "Registered": "",
+      "Unknown": ""
+    },
+    "ServerStatusValues": {
+      "Invalidhost": "",
+      "NotConfigured": "",
+      "Invalidauth": "",
+      "Available": ""
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "データマッピング",

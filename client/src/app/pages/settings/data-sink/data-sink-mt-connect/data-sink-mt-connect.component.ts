@@ -25,7 +25,11 @@ import {
   DataSinkConnectionStatus,
   DataSinkProtocol
 } from 'app/models';
-import { DataMappingService, DataPointService, DataSinkService } from 'app/services';
+import {
+  DataMappingService,
+  DataPointService,
+  DataSinkService
+} from 'app/services';
 import { arrayToMap, clone } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
@@ -36,7 +40,13 @@ import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.co
 import { PreDefinedDataPoint } from '../create-data-item-modal/create-data-item-modal.component.mock';
 import { Status } from 'app/shared/state';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
-import { DMGMoriMessengerComponent } from '../dmg-mori-messenger/dmg-mori-messenger.component';
+import { MessengerConnectionComponent } from '../messenger-connection/messenger-connection.component';
+import {
+  MessengerConfiguration,
+  MessengerConnectionService,
+  MessengerStatus,
+  MessengerStore
+} from 'app/services/messenger-connection.service';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -54,6 +64,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   MTConnectItems: DataPoint[] = [];
   OPCUAAddresses: DataPoint[] = [];
   DataSinkConnectionStatus = DataSinkConnectionStatus;
+  messengerConfiguration: MessengerConfiguration;
+  messengerStatus: MessengerStatus;
 
   @Input() dataSink?: DataSink;
   @Output() dataPointsChange = new EventEmitter<DataPoint[]>();
@@ -77,7 +89,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   statusSub!: Subscription;
 
   filterAddressStr = '';
-
   dsFormValid: boolean = false;
 
   @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
@@ -107,11 +118,16 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     return `http://${window.location.hostname}:15404/current`;
   }
 
+  get isBusy() {
+    return this.messengerConnectionService.queryStatus;
+  }
+
   constructor(
     private dataPointService: DataPointService,
     private dataSinkService: DataSinkService,
     private dataMappingService: DataMappingService,
     private dialog: MatDialog,
+    private messengerConnectionService: MessengerConnectionService,
     private toastr: ToastrService,
     private translate: TranslateService
   ) {}
@@ -127,11 +143,23 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.sub.add(
       combineLatest(
         this.dataPointService.dataPoints,
-        this.dataMappingService.dataMappings,
-      ).subscribe(([dataPoints, dataMappings]) => this.onDataPoints(dataPoints, dataMappings))
+        this.dataMappingService.dataMappings
+      ).subscribe(([dataPoints, dataMappings]) =>
+        this.onDataPoints(dataPoints, dataMappings)
+      )
     );
     this.sub.add(
       this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
+    );
+    this.sub.add(
+      this.messengerConnectionService.config.subscribe(
+        (v) => (this.messengerConfiguration = v)
+      )
+    );
+    this.sub.add(
+      this.messengerConnectionService.status.subscribe(
+        (v) => (this.messengerStatus = v)
+      )
     );
   }
 
@@ -201,7 +229,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   onDataPoints(dataPoints: DataPoint[], dataMappings: DataMapping[]) {
     for (const datapoint of dataPoints) {
-      datapoint['dataMapping'] = dataMappings.find(x => datapoint.id == x.target);
+      datapoint['dataMapping'] = dataMappings.find(
+        (x) => datapoint.id == x.target
+      );
     }
     this.datapointRows = dataPoints;
     this.dataPointsChange.emit(dataPoints);
@@ -364,43 +394,16 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.connection = x;
   }
 
-  openDMGMoriMessenger(){
-      const dialogRef = this.dialog.open(DMGMoriMessengerComponent, {
-      width: '900px'
+  async openDMGMoriMessenger() {
+    await this.messengerConnectionService.getMessengerStatus();
+    await this.messengerConnectionService.getMessengerConfig();
+
+    this.dialog.open(MessengerConnectionComponent, {
+      width: '900px',
+      data: {
+        configuration: this.messengerConfiguration,
+        status: this.messengerStatus
+      }
     });
-
   }
-  // onSetEnumeration(virtualPoint: VirtualDataPoint) {
-  //   if (!virtualPoint.enumeration) {
-  //     virtualPoint.enumeration = { items: [] };
-  //   }
-
-  //   const protocol = this.sourceDataPointService.getProtocol(
-  //     virtualPoint.sources![0]
-  //   );
-
-  //   this.sourceDataPointService.getSourceDataPointsAll();
-  //   this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
-
-  //   const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
-  //     data: {
-  //       enumeration: { ...virtualPoint.enumeration },
-  //       sources: virtualPoint.sources,
-  //       protocol
-  //     },
-  //     width: '900px'
-  //   });
-  // dialogRef.afterClosed().subscribe((result) => {
-  //   if (result) {
-  //     if (!virtualPoint.id) {
-  //       virtualPoint.enumeration = result.enumeration;
-  //       return;
-  //     }
-
-  //     this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
-  //       ...virtualPoint,
-  //       enumeration: result.enumeration
-  //     });
-  //   }
-  // });
 }

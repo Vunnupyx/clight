@@ -294,8 +294,11 @@
           color="secondary"
           style="margin-left: auto"
           (click)="openDMGMoriMessenger()"
-          [disabled]="connection?.status !== DataSinkConnectionStatus.Connected"
+          [disabled]="
+            isBusy || connection?.status !== DataSinkConnectionStatus.Connected
+          "
         >
+          <mat-spinner *ngIf="isBusy" diameter="25"></mat-spinner>
           {{ 'Connect Messenger' | translate }}
         </button>
       </div>

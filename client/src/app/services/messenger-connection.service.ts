@@ -1,23 +1,28 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpMockupService, HttpService } from 'app/shared';
 import { Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
 import { ToastrService } from 'ngx-toastr';
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
-export type ServerStatus =
-  | 'notconfigured'
-  | 'invalidhost'
-  | 'invalidauth'
-  | 'available';
+export enum ServerStatus {
+  Invalidhost = 'invalidhost',
+  NotConfigured = 'notconfigured',
+  Invalidauth = 'invalidauth',
+  Available = 'available'
+}
 
-export type RegistrationStatus = 'notregistered' | 'registered' | 'unknown';
+export enum RegistrationStatus {
+  Notregistered = 'notregistered',
+  Registered = 'registered',
+  Unknown = 'unknown'
+}
 
 export interface MessengerConfiguration {
   hostname: string | null;
   username: string | null;
-  password: boolean;
+  password: boolean | string;
   model: string | null;
   name: string | null;
   organization: string | null;
@@ -30,24 +35,28 @@ export interface MessengerStatus {
 }
 
 export interface MessengerStore {
+  isBusy: boolean;
   status: MessengerStatus;
-  configuration: MessengerConfiguration
+  configuration: MessengerConfiguration;
 }
 
-const RESPONSE_CONFIG = {
-  hostname: "My host",
-  username: "Alex87",
-  password: true,
-  model: "Tesla X",
-  name: "Alex",
-  organization: "Cligth",
-  timezone: 8,
-}
 
-const RESPONSE_STATUS:MessengerStatus = {
-  server:'available',
-  registration: 'registered'
-}
+// TODO: Connect to API
+let RESPONSE_CONFIG: MessengerConfiguration = {
+  // hostname: 'Test',
+  // username: 'Teest',
+  // password: true,
+  // model: 'Test',
+  // name: 'Test',
+  // organization: 'Test',
+  // timezone: 8
+} as any;
+
+// TODO: Connect to API
+const RESPONSE_STATUS: MessengerStatus = {
+  // server: ServerStatus.Available,
+  // registration: RegistrationStatus.Registered
+} as any;
 
 @Injectable({
   providedIn: 'root'
@@ -55,52 +64,79 @@ const RESPONSE_STATUS:MessengerStatus = {
 export class MessengerConnectionService {
   private _store: Store<MessengerStore>;
 
-
   constructor(
     storeFactory: StoreFactory<MessengerStore>,
-    private httpService:HttpMockupService,
-    // private httpService: HttpService,
+    private httpService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
 
-
-  get status() {
-    return this._store.snapshot.status;
+  get config() {
+    return this._store.state.pipe(map((x) => x.configuration));
   }
 
-  get config() {
-    return this._store.state
+  get status() {
+    return this._store.state.pipe(map((x) => x.status));
+  }
+
+  get queryStatus() {
+    return this._store.snapshot.isBusy;
   }
 
   async getMessengerConfig() {
+    this._store.patchState((state) => {
+      state.isBusy = true;
+    });
     try {
-      const response = await this.httpService.get<MessengerConfiguration>(`/messenger/configuration`,undefined, RESPONSE_CONFIG);
+      const response = await this.httpService.get<MessengerConfiguration>(
+        `/messenger/configuration`,
+        undefined,
+        RESPONSE_CONFIG
+      );
       this._store.patchState((state) => {
         state.configuration = response;
+        state.isBusy = false;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-network.LoadError'));
+      this._store.patchState((state) => {
+        state.isBusy = false;
+      });
+      this.toastr.error(this.translate.instant('settings-data-sink.LoadError'));
       errorHandler(err);
     }
   }
 
   async getMessengerStatus() {
+    this._store.patchState((state) => {
+      state.isBusy = true;
+    });
     try {
-      const response = await this.httpService.get<MessengerStatus>(`/messenger/status`,undefined, RESPONSE_STATUS);
+      const response = await this.httpService.get<MessengerStatus>(
+        `/messenger/status`,
+        undefined,
+        RESPONSE_STATUS
+      );
       this._store.patchState((state) => {
         state.status = response;
+        state.isBusy = false;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-network.LoadError'));
+      this._store.patchState((state) => {
+        state.isBusy = false;
+      });
+      this.toastr.error(this.translate.instant('settings-data-sink.LoadError'));
       errorHandler(err);
     }
   }
 
-  async updateNetworkConfig(obj: any) {
+  async updateNetworkConfig(obj: Partial<MessengerConfiguration>) {
+    this._store.patchState((state) => {
+      state.isBusy = true;
+    });
     try {
+      this.setMockData(obj);
       const response = await this.httpService.post<any>(
         `/messenger/configuration`,
         obj,
@@ -108,12 +144,18 @@ export class MessengerConnectionService {
         RESPONSE_CONFIG
       );
       this._store.patchState((state) => {
-        state.status.registration = 'registered'
         state.configuration = response;
+        state.isBusy = false;
       });
+      this.toastr.success(
+        this.translate.instant('settings-data-sink.BulkSuccess')
+      );
     } catch (err) {
-      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
+      this.toastr.error(this.translate.instant('settings-data-sink.BulkError'));
       errorHandler(err);
+      this._store.patchState((state) => {
+        state.isBusy = false;
+      });
     }
   }
 
@@ -126,15 +168,18 @@ export class MessengerConnectionService {
         model: null,
         name: null,
         organization: null,
-        timezone: null,
+        timezone: null
       },
       status: {
-        server: 'notconfigured',
-        registration: 'unknown'
-      }
-    }
+        server: ServerStatus.NotConfigured,
+        registration: RegistrationStatus.Unknown
+      },
+      isBusy: false
+    };
   }
+
+  setMockData(obj: Partial<MessengerConfiguration>) {
+    RESPONSE_CONFIG = { ...RESPONSE_CONFIG, ...obj };
+  }
+
 }
-
-
-

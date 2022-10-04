@@ -11,8 +11,8 @@ import { CreateDataItemModalComponent } from './create-data-item-modal/create-da
 import { SelectMapModalComponent } from './select-map-modal/select-map-modal.component';
 import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { DataSinkGuard } from './data-sink.guard';
-import { DMGMoriMessengerComponent } from './dmg-mori-messenger/dmg-mori-messenger.component';
 import { RegisterMachineComponent } from './register-machine/register-machine.component';
+import { MessengerConnectionComponent } from './messenger-connection/messenger-connection.component';
 
 const routes: Routes = [
   {
@@ -28,8 +28,8 @@ const COMPONENTS = [
   DataSinkMtConnectComponent,
   CreateDataItemModalComponent,
   SelectMapModalComponent,
-  DMGMoriMessengerComponent,
-  RegisterMachineComponent
+  RegisterMachineComponent,
+  MessengerConnectionComponent
 ];
 
 @NgModule({

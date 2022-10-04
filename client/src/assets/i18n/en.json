@@ -298,19 +298,30 @@
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
     "HasDataMapping": "Datapoint is mapped to a source",
-    "TimeZone":"Time zone",
-    "Organization":"Organization",
-    "Model":"Model",
-    "ServerConfiguration":"Server configuration",
-    "DMGMORIMessenger":"DMG MORI Messenger",
-    "Register":"Register",
-    "Status":"Status",
-    "Registration":"Registration",
-    "Password":"Password",
-    "Username":"Username",
-    "Hostname":"Hostname",
-    "ServerStatus":"ServerStatus",
-    "RegisterMachine":"Register Machine"
+    "TimeZone": "Time zone",
+    "Organization": "Organization",
+    "Model": "Model",
+    "ServerConfiguration": "Server configuration",
+    "DMGMORIMessenger": "DMG MORI Messenger",
+    "Register": "Register",
+    "Status": "Status",
+    "Registration": "Registration",
+    "Password": "Password",
+    "Username": "Username",
+    "Hostname": "Hostname",
+    "Server": "Server Status",
+    "RegisterMachine": "Register Machine",
+    "RegistrationStatus": {
+      "Notregistered": "You are not registered",
+      "Registered": "Your machine is registered",
+      "Unknown": "Registration status is unknown"
+    },
+    "ServerStatus": {
+      "Invalidhost": "Server host is invalid",
+      "NotConfigured": "Server is not configured",
+      "Invalidauth": "Server authentication is invalid",
+      "Available": "Server is available"
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

@@ -1,7 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NgForm } from '@angular/forms';
-import { NetworkService } from 'app/services';
-import { MessengerConnectionService } from 'app/services/messenger-connection.service';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MessengerConnectionService,
+  MessengerStore
+} from 'app/services/messenger-connection.service';
 import * as moment from 'moment';
 
 @Component({
@@ -11,10 +14,10 @@ import * as moment from 'moment';
 })
 export class RegisterMachineComponent implements OnInit {
   profileForm = new FormGroup({
-    model: new FormControl(''),
-    name: new FormControl(''),
-    organization: new FormControl(''),
-    timezone: new FormControl('')
+    model: new FormControl('', Validators.required),
+    name: new FormControl('', Validators.required),
+    organization: new FormControl('', Validators.required),
+    timezone: new FormControl('', Validators.required)
   });
 
   get timezoneOptionsSearchResults() {
@@ -28,32 +31,39 @@ export class RegisterMachineComponent implements OnInit {
     );
   }
 
+  get isBusy() {
+    return this.messengerConnectionService.queryStatus;
+  }
+
+  isFormSending = true;
   timezoneOptions!: string[];
   timezoneOptionKeyphrase = '';
 
-  constructor(private networkService: NetworkService, private messengerConnectionService:MessengerConnectionService) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: Partial<MessengerStore>,
+    public dialogRef: MatDialogRef<RegisterMachineComponent>,
+    private messengerConnectionService: MessengerConnectionService
+  ) {}
 
   ngOnInit(): void {
     this.timezoneOptions = this._getTimezoneOptions();
-    this.messengerConnectionService.config.subscribe(v=>{
-      this.profileForm.patchValue({
-        model:v.configuration.model,
-        name:v.configuration.name,
-        organization:v.configuration.organization,
-        timezone:this.timezoneOptions[v.configuration.timezone]
-      })
-    })
-    console.log(this._getTimezoneOptions())
+    this.profileForm.patchValue({
+      model: this.data.configuration.model,
+      name: this.data.configuration.name,
+      organization: this.data.configuration.organization,
+      timezone: this.timezoneOptions[this.data.configuration.timezone]
+    });
   }
 
-  save(){
-    const obj ={
-      model:this.profileForm.value.model,
-      name:this.profileForm.value.name,
-      organization:this.profileForm.value.organization,
-      timezone:this.timezoneOptions.indexOf(this.profileForm.value.timezone)
-    }
-    this.messengerConnectionService.updateNetworkConfig(obj)
+  save() {
+    const obj = {
+      model: this.profileForm.value.model,
+      name: this.profileForm.value.name,
+      organization: this.profileForm.value.organization,
+      timezone: this.timezoneOptions.indexOf(this.profileForm.value.timezone)
+    };
+    this.messengerConnectionService.updateNetworkConfig(obj);
+    this.close();
   }
 
   private _getTimezoneOptions() {
@@ -73,5 +83,10 @@ export class RegisterMachineComponent implements OnInit {
           'Pacific/'
         ].find((x) => name.startsWith(x))
       );
+  }
+
+  close() {
+    this.isFormSending = false;
+    this.dialogRef.close();
   }
 }

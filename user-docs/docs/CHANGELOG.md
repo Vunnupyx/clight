@@ -4,7 +4,11 @@ title: Changelog
 
 # Changelog
 
-## [2.2.2]
+## [2.3.0]
+
+### Fixed
+
+- [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) Reconnecting to Sinumeriks now works also when no PLC is connected
 
 ### Added
 

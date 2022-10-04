@@ -10,6 +10,11 @@ title: Changelog
 
 - [DIGMDCLGHT-129](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-129) Added support for custom data points.
 - [DIGMDCLGHT-175](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-175) Added support for OPC UA schema version 2.0.18. Supports usage of config file between different machines. Ignores if custom given node id matches existing one.
+- [DIGMDCLGHT-103](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-103) Added support for custom mathematical expressions for virtual data points
+
+### Changed
+
+- [DIGMDCLGHT-190](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-190) Updated user documentation
 
 ## [2.2.1]
 

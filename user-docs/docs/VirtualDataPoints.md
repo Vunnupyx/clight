@@ -6,7 +6,14 @@ title: Virtual Data Points
 
 ## Introduction
 
-Virtual Data Point (VDP) is a feature to create a calculated data point from one or more real data points. There are many linking operations available.
+Virtual Data Point (VDP) is a feature to create a calculated data point from one or more real data points. A previously defined virtual data point can also be used as an input to a VDP. There are many linking operations available.
+
+Important: If a virtual data point is defined as source of another virtual data point, the source virtual data point must be defined before it is used!
+
+Note: All operations except `Calculation` convert the source value into true/false (boolean) while evaluating for the VDP:
+
+- If the source value is a number: Any value above 0 is interpreted as `true` and 0 value is interpreted as `false`
+- If the source value is not number but a text: Any text length above 0 characters is interpreted as `true` whereas empty text "" becomes `false`
 
 ### How to Add a Virtual Data Point
 
@@ -42,7 +49,10 @@ Only one source can be selected.
 
 ##### COUNT
 
-Counts every state change of a data point and shows as a number.
+Counts every state change (rising flag of the source) of a data point and shows as a number.
+
+Counters are persistent across reboots. If you need to reset counters, you must delete the file where there are stored.
+
 Only one source can be selected for counting.
 
 ##### THRESHOLDS
@@ -108,7 +118,7 @@ Returns true if the data point value is _not_ equal to the other compared data p
 
 To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
 
-##### CUSTOM CALCULATION EXPRESSION
+##### CALCULATION
 
 Custom mathematical expression using variable names and manually typing the mathematical equations. It is useful when several data points need to be combined and in more complex mathematical operations.
 
@@ -116,12 +126,15 @@ Example to be provided.
 
 ### Combined Operations
 
-There are two ways to create combined operations: through `Custom Calculation Expression` or creating new VDPs and combining these.
+There are two ways to create combined operations:
 
-For `Custom Calculation Expression` please refer the explanation above.
+- Using `Calculation`:
 
-For example, to create following equation with multiple VDPs:
-_DP1 & DP2 & !DP3_
+Please refer the explanation above.
+
+- Creating new VDPs and combining these:
+
+For example, to create following equation with multiple VDPs: _DP1 & DP2 & !DP3_
 
 1. Create a first VDP1 with DP1 and DP2, AND operation
 2. Create a second VDP2 with DP3, NOT operation

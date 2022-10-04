@@ -26,17 +26,3 @@ The following templates are available:
 - SINUMERIK 840d SL (Connect SINUMERIK 840D sl controls to DMG Messenger)
 
 After you have selected your template, you can fine tune the data source and application interface in the following steps. After you completed the wizard you can now start to connect your client applications.
-
-## Connecting Client Applications
-
-### MTConnect
-
-- The MTConnect endpoint is exposed on port `15404` on both network interfaces
-- Checkout the "Network Settings"-Tab to see which IP addresses are configured for your device
-- You can use the "Open MTConnect Stream" button on the Application Interfaces/MTConnect page to see the current values in MTConnect
-
-### OPC UA
-
-- The OPC UA Server endpoint is exposed on port `4840` on both network interfaces
-- Checkout the "Network Settings"-Tab to see which IP addresses are configured for your device
-- You can use the the free software [uaExpert](https://www.unified-automation.com/products/development-tools/uaexpert.html) to check the values on the OPC UA server

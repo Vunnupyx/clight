@@ -298,7 +298,7 @@ export interface IVirtualDataPointConfig {
     | 'smallerEqual'
     | 'equal'
     | 'unequal'
-    | 'sum';
+    | 'calculation';
   thresholds?: ITargetDataMap;
   enumeration?: {
     defaultValue?: string;
@@ -306,6 +306,7 @@ export interface IVirtualDataPointConfig {
   };
   comparativeValue?: string | number;
   resetSchedules?: ScheduleDescription[];
+  formula?: string;
 }
 
 export interface ISystemInfoItem {

@@ -203,7 +203,9 @@
     "DefaultValue": "",
     "SelectInput": "",
     "CurrentLiveValue": "",
-    "ReturnValueIfTrue": ""
+    "ReturnValueIfTrue": "",
+    "SetFormula": "",
+    "Formula": ""
   },
   "virtual-data-point-operation-type": {
     "And": "",
@@ -217,8 +219,8 @@
     "SmallerEqual": "",
     "Equal": "",
     "Unequal": "",
-    "Sum": "",
-    "Enumeration": ""
+    "Enumeration": "",
+    "Calculation": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",

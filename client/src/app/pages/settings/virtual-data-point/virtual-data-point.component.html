@@ -51,7 +51,8 @@
             ></mat-spinner>
 
             <button
-              mat-button color="primary"
+              mat-button
+              color="primary"
               type="button"
               class="btn-sm"
               [disabled]="!isTouchedTable || isLoading"
@@ -109,6 +110,14 @@
           [flexGrow]="1"
           cellClass="input-cell"
         >
+          <ng-template ngx-datatable-header-template let-sort="sortFn">
+            <span class="pointer" (click)="sort()">{{
+              'settings-virtual-data-point.Operation' | translate
+            }}</span>
+            <a [href]="supportHref" target="_blank">
+              <mat-icon class="doc-btn" svgIcon="mdc:unknown"></mat-icon>
+            </a>
+          </ng-template>
           <ng-template
             ngx-datatable-cell-template
             let-rowIndex="rowIndex"
@@ -117,20 +126,88 @@
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
               <ng-container [ngSwitch]="value">
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.AND">{{ 'virtual-data-point-operation-type.And' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.OR">{{ 'virtual-data-point-operation-type.Or' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.NOT">{{ 'virtual-data-point-operation-type.Not' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.COUNTER">{{ 'virtual-data-point-operation-type.Counter' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.THRESHOLDS">{{ 'virtual-data-point-operation-type.Thresholds' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.GREATER">{{ 'virtual-data-point-operation-type.Greater' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.GREATER_EQUAL">{{ 'virtual-data-point-operation-type.GreaterOrEqual' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.SMALLER">{{ 'virtual-data-point-operation-type.Smaller' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.SMALLER_EQUAL">{{ 'virtual-data-point-operation-type.SmallerEqual' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.EQUAL">{{ 'virtual-data-point-operation-type.Equal' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.UNEQUAL">{{ 'virtual-data-point-operation-type.Unequal' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.CALCULATION">{{ 'virtual-data-point-operation-type.Calculation' | translate }}</ng-container>
-              <ng-container *ngSwitchCase="VirtualDataPointOperationType.ENUMERATION">{{ 'virtual-data-point-operation-type.Enumeration' | translate }}</ng-container>
-              <ng-container *ngSwitchDefault>{{ value | uppercase }}</ng-container>
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.AND"
+                  >{{
+                    'virtual-data-point-operation-type.And' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.OR"
+                  >{{
+                    'virtual-data-point-operation-type.Or' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.NOT"
+                  >{{
+                    'virtual-data-point-operation-type.Not' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.COUNTER"
+                  >{{
+                    'virtual-data-point-operation-type.Counter' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.THRESHOLDS"
+                  >{{
+                    'virtual-data-point-operation-type.Thresholds' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.GREATER"
+                  >{{
+                    'virtual-data-point-operation-type.Greater' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.GREATER_EQUAL"
+                  >{{
+                    'virtual-data-point-operation-type.GreaterOrEqual'
+                      | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.SMALLER"
+                  >{{
+                    'virtual-data-point-operation-type.Smaller' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.SMALLER_EQUAL"
+                  >{{
+                    'virtual-data-point-operation-type.SmallerEqual' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.EQUAL"
+                  >{{
+                    'virtual-data-point-operation-type.Equal' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.UNEQUAL"
+                  >{{
+                    'virtual-data-point-operation-type.Unequal' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.CALCULATION"
+                  >{{
+                    'virtual-data-point-operation-type.Calculation' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.ENUMERATION"
+                  >{{
+                    'virtual-data-point-operation-type.Enumeration' | translate
+                  }}</ng-container
+                >
+                <ng-container *ngSwitchDefault>{{
+                  value | uppercase
+                }}</ng-container>
               </ng-container>
             </span>
             <mat-select
@@ -256,16 +333,14 @@
               #group="matButtonToggleGroup"
             >
               <mat-button-toggle
-                *ngIf="
-                  canSetComparativeValue(row?.operationType)
-                "
+                *ngIf="canSetComparativeValue(row?.operationType)"
                 (click)="onSetComparativeValue(row); group.value = null"
                 [matTooltip]="
                   'settings-virtual-data-point.SetComparativeValue' | translate
                 "
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:settings"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:settings"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="
                   row?.operationType ===
@@ -276,8 +351,8 @@
                   'settings-virtual-data-point.SetThreshold' | translate
                 "
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:diagnosis"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:diagnosis"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="
                   row?.operationType ===
@@ -288,8 +363,8 @@
                   'settings-virtual-data-point.SetEnumeration' | translate
                 "
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:order-group"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:order-group"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="
                   row?.operationType ===
@@ -300,37 +375,36 @@
                   'settings-virtual-data-point.SetFormula' | translate
                 "
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:system"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:system"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:edit"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:edit"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:delete"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:delete"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
-              *ngIf="row?.operationType ===
-              VirtualDataPointOperationType.COUNTER"
-              (click)="onReset(row)"
-              [matTooltip]="'settings-virtual-data-point.Reset' | translate"
-              matTooltipPosition="above"
-              ><mat-icon svgIcon="mdc:undo"></mat-icon></mat-button-toggle
-            >
+                *ngIf="
+                  row?.operationType === VirtualDataPointOperationType.COUNTER
+                "
+                (click)="onReset(row)"
+                [matTooltip]="'settings-virtual-data-point.Reset' | translate"
+                matTooltipPosition="above"
+                ><mat-icon svgIcon="mdc:undo"></mat-icon
+              ></mat-button-toggle>
             </mat-button-toggle-group>
             <mat-button-toggle-group
               #group="matButtonToggleGroup"
               *ngIf="unsavedRowIndex === rowIndex"
             >
               <mat-button-toggle
-                *ngIf="
-                  canSetComparativeValue(unsavedRow?.operationType)
-                "
+                *ngIf="canSetComparativeValue(unsavedRow?.operationType)"
                 (click)="
                   unsavedRow &&
                     unsavedRow.sources &&
@@ -349,8 +423,8 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-                ><mat-icon svgIcon="mdc:settings"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:settings"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="
                   unsavedRow?.operationType ===
@@ -374,8 +448,8 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-                ><mat-icon svgIcon="mdc:diagnosis"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:diagnosis"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="
                   unsavedRow?.operationType ===
@@ -399,8 +473,8 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-                ><mat-icon svgIcon="mdc:order-group"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:order-group"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="
                   unsavedRow?.operationType ===
@@ -424,26 +498,25 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-                ><mat-icon svgIcon="mdc:system"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:system"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 (click)="
                   !isDuplicatingName() && onEditEnd(); group.value = null
                 "
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"
                 matTooltipPosition="above"
-                ><mat-icon class="color-success"
-                  svgIcon="mdc:checkmark"></mat-icon
-                ></mat-button-toggle
-              >
+                ><mat-icon
+                  class="color-success"
+                  svgIcon="mdc:checkmark"
+                ></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Cancel' | translate"
                 matTooltipPosition="above"
-                ><mat-icon class="color-error"
-                  svgIcon="mdc:close"></mat-icon
-                ></mat-button-toggle
-              >
+                ><mat-icon class="color-error" svgIcon="mdc:close"></mat-icon
+              ></mat-button-toggle>
             </mat-button-toggle-group>
           </ng-template>
         </ngx-datatable-column>

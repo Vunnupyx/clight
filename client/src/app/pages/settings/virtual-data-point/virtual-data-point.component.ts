@@ -151,6 +151,10 @@ export class VirtualDataPointComponent implements OnInit {
     return this.virtualDataPointService.status === Status.Loading;
   }
 
+  get supportHref() {
+    return `${window.location.protocol}//${window.location.hostname}/help/docs/VirtualDataPoints`;
+  }
+
   constructor(
     private virtualDataPointService: VirtualDataPointService,
     private sourceDataPointService: SourceDataPointService,

@@ -8,7 +8,7 @@
         <Uri>http://opcfoundation.org/UA/IA/</Uri>
     </NamespaceUris>
     <Models>
-        <Model ModelUri="http://DMGMORI.com/UA/OemExtensions/" PublicationDate="2021-04-06T06:45:04Z" Version="2.0.11">
+        <Model ModelUri="http://DMGMORI.com/UA/OemExtensions/" PublicationDate="2022-08-19T07:36:47Z" Version="2.0.18">
             <RequiredModel ModelUri="http://opcfoundation.org/UA/" PublicationDate="2020-07-15T00:00:00Z" Version="1.04.7"/>
             <RequiredModel ModelUri="http://opcfoundation.org/UA/DI/" PublicationDate="2020-06-02T00:00:00Z" Version="1.02.2"/>
             <RequiredModel ModelUri="http://opcfoundation.org/UA/IA/" PublicationDate="2020-08-31T00:00:00Z" Version="1.00.0"/>
@@ -26,6 +26,7 @@
         <Alias Alias="DateTime">i=13</Alias>
         <Alias Alias="NodeId">i=17</Alias>
         <Alias Alias="LocalizedText">i=21</Alias>
+        <Alias Alias="HasEventSource">i=36</Alias>
         <Alias Alias="HasModellingRule">i=37</Alias>
         <Alias Alias="HasTypeDefinition">i=40</Alias>
         <Alias Alias="GeneratesEvent">i=41</Alias>
@@ -44,9 +45,168 @@
     </Aliases>
     <Extensions>
         <Extension>
-            <ua:ModelInfo Tool="UaModeler" Hash="reM2+AYvmIEGO/XQr/MQjw==" Version="1.6.4"/>
+            <ua:ModelInfo Tool="UaModeler" Hash="AVrsLZZhGBnWCMoPU/7YAA==" Version="1.6.4"/>
         </Extension>
     </Extensions>
+    <UAObjectType IsAbstract="true" NodeId="ns=1;i=1013" BrowseName="1:ToolDataConditionType">
+        <DisplayName>ToolDataConditionType</DisplayName>
+        <References>
+            <Reference ReferenceType="HasComponent">ns=1;i=6091</Reference>
+            <Reference ReferenceType="HasSubtype" IsForward="false">i=10523</Reference>
+        </References>
+    </UAObjectType>
+    <UAVariable DataType="String" ParentNodeId="ns=1;i=1013" NodeId="ns=1;i=6091" BrowseName="1:globalId">
+        <DisplayName>globalId</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1013</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+        </References>
+    </UAVariable>
+    <UAObjectType NodeId="ns=1;i=1014" BrowseName="1:MissingToolDataConditionType">
+        <DisplayName>MissingToolDataConditionType</DisplayName>
+        <Description>The MissingToolDataCondition is used to inform clients that a tool was scanned at the machine, which is not listed in the tool data base of the machine</Description>
+        <References>
+            <Reference ReferenceType="HasComponent">ns=1;i=6092</Reference>
+            <Reference ReferenceType="HasSubtype" IsForward="false">ns=1;i=1013</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5018</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5023</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5030</Reference>
+        </References>
+    </UAObjectType>
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;i=1014" NodeId="ns=1;i=6092" BrowseName="1:channel">
+        <DisplayName>channel</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1014</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+        </References>
+    </UAVariable>
+    <UAObjectType NodeId="ns=1;i=1015" BrowseName="1:ToolDataUpdateRequestConditionType">
+        <DisplayName>ToolDataUpdateRequestConditionType</DisplayName>
+        <Description>The ToolDataUpdateRequestCondition is used to inform clients that a tool was scanned at the machine, which already known to the machine but might need an update</Description>
+        <References>
+            <Reference ReferenceType="HasComponent">ns=1;i=6093</Reference>
+            <Reference ReferenceType="HasSubtype" IsForward="false">ns=1;i=1013</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5019</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5027</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5031</Reference>
+        </References>
+    </UAObjectType>
+    <UAVariable DataType="String" ParentNodeId="ns=1;i=1015" NodeId="ns=1;i=6093" BrowseName="1:systemId">
+        <DisplayName>systemId</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1015</Reference>
+        </References>
+    </UAVariable>
+    <UAObjectType IsAbstract="true" NodeId="ns=1;i=1016" BrowseName="1:DMGMORI_ToolEventType">
+        <DisplayName Locale="en">DMGMORI_ToolEventType</DisplayName>
+        <Description Locale="en">Tool events for tool data exchange</Description>
+        <References>
+            <Reference ReferenceType="HasSubtype" IsForward="false">i=2041</Reference>
+        </References>
+    </UAObjectType>
+    <UAObjectType IsAbstract="true" NodeId="ns=1;i=1017" BrowseName="1:ToolMovedEventType">
+        <DisplayName Locale="en">ToolMovedEventType</DisplayName>
+        <Description Locale="en">Parent type  for tool load or unload events</Description>
+        <References>
+            <Reference ReferenceType="HasComponent">ns=1;i=6094</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=6095</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=6096</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=6097</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=6098</Reference>
+            <Reference ReferenceType="HasSubtype" IsForward="false">ns=1;i=1016</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=6099</Reference>
+        </References>
+    </UAObjectType>
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;i=1017" NodeId="ns=1;i=6094" BrowseName="1:channel">
+        <DisplayName>channel</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1017</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="String" ParentNodeId="ns=1;i=1017" NodeId="ns=1;i=6095" BrowseName="1:globalId">
+        <DisplayName>globalId</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1017</Reference>
+            <Reference ReferenceType="HasModellingRule">i=80</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="String" ParentNodeId="ns=1;i=1017" NodeId="ns=1;i=6096" BrowseName="1:systemId">
+        <DisplayName>systemId</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1017</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;i=1017" NodeId="ns=1;i=6097" BrowseName="1:toolId1">
+        <DisplayName>toolId1</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1017</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;i=1017" NodeId="ns=1;i=6098" BrowseName="1:toolId2">
+        <DisplayName>toolId2</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasModellingRule">i=80</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1017</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="String" ParentNodeId="ns=1;i=1017" NodeId="ns=1;i=6099" BrowseName="1:toolName">
+        <DisplayName>toolName</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasModellingRule">i=80</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1017</Reference>
+        </References>
+    </UAVariable>
+    <UAObjectType IsAbstract="true" NodeId="ns=1;i=1018" BrowseName="1:ToolLoadedEventType">
+        <DisplayName Locale="en">ToolLoadedEventType</DisplayName>
+        <Description Locale="en">This event is used to indicate that a tool was loaded to the machine tool</Description>
+        <References>
+            <Reference ReferenceType="HasComponent">ns=1;i=6100</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=6101</Reference>
+            <Reference ReferenceType="HasSubtype" IsForward="false">ns=1;i=1017</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5020</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5028</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5032</Reference>
+        </References>
+    </UAObjectType>
+    <UAVariable DataType="String" ParentNodeId="ns=1;i=1018" NodeId="ns=1;i=6100" BrowseName="1:magazineName">
+        <DisplayName>magazineName</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1018</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+        </References>
+    </UAVariable>
+    <UAVariable DataType="String" ParentNodeId="ns=1;i=1018" NodeId="ns=1;i=6101" BrowseName="1:placeNumber">
+        <DisplayName>placeNumber</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1018</Reference>
+        </References>
+    </UAVariable>
+    <UAObjectType IsAbstract="true" NodeId="ns=1;i=1019" BrowseName="1:ToolUnloadedEventType">
+        <DisplayName Locale="en">ToolUnloadedEventType</DisplayName>
+        <Description Locale="en">This event is used to indicate that a tool was unloaded from the machine</Description>
+        <References>
+            <Reference ReferenceType="HasSubtype" IsForward="false">ns=1;i=1017</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5021</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5029</Reference>
+            <Reference ReferenceType="GeneratesEvent" IsForward="false">ns=1;i=5033</Reference>
+        </References>
+    </UAObjectType>
     <UAObjectType NodeId="ns=1;i=1007" BrowseName="1:DMGMORI_ActiveToolType">
         <DisplayName>DMGMORI_ActiveToolType</DisplayName>
         <References>
@@ -89,19 +249,22 @@
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1007</Reference>
         </References>
     </UAObject>
-    <UAObjectType NodeId="ns=1;i=1002" BrowseName="1:DMGMORI_ToolDataInterface">
-        <DisplayName>DMGMORI_ToolDataInterface</DisplayName>
+    <UAObjectType NodeId="ns=1;i=1002" BrowseName="1:DMGMORI_ToolDataInterfaceType">
+        <DisplayName Locale="en">DMGMORI_ToolDataInterfaceType</DisplayName>
+        <Description Locale="en">Function interface for the tool data exchange</Description>
         <References>
             <Reference ReferenceType="HasComponent">ns=1;i=7001</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=7002</Reference>
             <Reference ReferenceType="HasSubtype" IsForward="false">i=58</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=7011</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=7007</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=7003</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=7009</Reference>
         </References>
     </UAObjectType>
     <UAMethod ParentNodeId="ns=1;i=1002" NodeId="ns=1;i=7001" BrowseName="1:AddTool">
-        <DisplayName>AddTool</DisplayName>
+        <DisplayName Locale="en">AddTool</DisplayName>
+        <Description Locale="en">Adds a tool to the machines tool table</Description>
         <References>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1002</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6010</Reference>
@@ -168,14 +331,12 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolID</uax:Name>
+                            <uax:Name>errorMessage</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
                             <uax:Description/>
                         </uax:Argument>
                     </uax:Body>
@@ -186,9 +347,9 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>errorMessage</uax:Name>
+                            <uax:Name>systemId</uax:Name>
                             <uax:DataType>
-                                <uax:Identifier>i=15</uax:Identifier>
+                                <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
                             <uax:ValueRank>-1</uax:ValueRank>
                             <uax:ArrayDimensions/>
@@ -200,7 +361,8 @@
         </Value>
     </UAVariable>
     <UAMethod ParentNodeId="ns=1;i=1002" NodeId="ns=1;i=7002" BrowseName="1:DeleteTool">
-        <DisplayName>DeleteTool</DisplayName>
+        <DisplayName Locale="en">DeleteTool</DisplayName>
+        <Description Locale="en">Deletes a tool from machine tool table</Description>
         <References>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1002</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6012</Reference>
@@ -223,14 +385,12 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolId</uax:Name>
+                            <uax:Name>systemId</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
                             <uax:Description/>
                         </uax:Argument>
                     </uax:Body>
@@ -269,7 +429,7 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>errorMesage</uax:Name>
+                            <uax:Name>errorMessage</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
                             </uax:DataType>
@@ -282,8 +442,107 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
+    <UAMethod ParentNodeId="ns=1;i=1002" NodeId="ns=1;i=7011" BrowseName="1:GetSystemId">
+        <DisplayName Locale="en">GetSystemId</DisplayName>
+        <Description Locale="en">Requests the systemId for a given global tool ID</Description>
+        <References>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1002</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6087</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6088</Reference>
+        </References>
+    </UAMethod>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7011" ValueRank="1" NodeId="ns=1;i=6087" ArrayDimensions="1" BrowseName="InputArguments">
+        <DisplayName>InputArguments</DisplayName>
+        <References>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7011</Reference>
+        </References>
+        <Value>
+            <uax:ListOfExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>globalId</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+            </uax:ListOfExtensionObject>
+        </Value>
+    </UAVariable>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7011" ValueRank="1" NodeId="ns=1;i=6088" ArrayDimensions="3" BrowseName="OutputArguments">
+        <DisplayName>OutputArguments</DisplayName>
+        <References>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7011</Reference>
+        </References>
+        <Value>
+            <uax:ListOfExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>state</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=7</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>errorMessage</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=15</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>systemId</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+            </uax:ListOfExtensionObject>
+        </Value>
+    </UAVariable>
     <UAMethod ParentNodeId="ns=1;i=1002" NodeId="ns=1;i=7007" BrowseName="1:GetToolData">
-        <DisplayName>GetToolData</DisplayName>
+        <DisplayName Locale="en">GetToolData</DisplayName>
+        <Description Locale="en">Read the tool data for one specific tool</Description>
         <References>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1002</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6004</Reference>
@@ -306,14 +565,12 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolId</uax:Name>
+                            <uax:Name>systemId</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
                             <uax:Description/>
                         </uax:Argument>
                     </uax:Body>
@@ -352,7 +609,7 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>ToolData</uax:Name>
+                            <uax:Name>errorMessage</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
                             </uax:DataType>
@@ -368,7 +625,7 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>errorMessage</uax:Name>
+                            <uax:Name>toolData</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
                             </uax:DataType>
@@ -382,7 +639,8 @@
         </Value>
     </UAVariable>
     <UAMethod ParentNodeId="ns=1;i=1002" NodeId="ns=1;i=7003" BrowseName="1:GetToolList">
-        <DisplayName>GetToolList</DisplayName>
+        <DisplayName Locale="en">GetToolList</DisplayName>
+        <Description Locale="en">Get a list of all tools, containing only a subset of the tools' data</Description>
         <References>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1002</Reference>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
@@ -420,7 +678,7 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolList</uax:Name>
+                            <uax:Name>errorMessage</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
                             </uax:DataType>
@@ -436,7 +694,7 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>errorMessage</uax:Name>
+                            <uax:Name>toolList</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
                             </uax:DataType>
@@ -450,7 +708,8 @@
         </Value>
     </UAVariable>
     <UAMethod ParentNodeId="ns=1;i=1002" NodeId="ns=1;i=7009" BrowseName="1:SetToolData">
-        <DisplayName>SetToolData</DisplayName>
+        <DisplayName Locale="en">SetToolData</DisplayName>
+        <Description Locale="en">Set the parameters for a specific tool</Description>
         <References>
             <Reference ReferenceType="HasProperty">ns=1;i=6024</Reference>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
@@ -473,14 +732,12 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolId</uax:Name>
+                            <uax:Name>systemId</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
                             <uax:Description/>
                         </uax:Argument>
                     </uax:Body>
@@ -548,6 +805,65 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
+    <UAObjectType NodeId="ns=1;i=1001" BrowseName="1:DMGMORI_ToolEventsType">
+        <DisplayName Locale="en">DMGMORI_ToolEventsType</DisplayName>
+        <Description Locale="en">The DMGMORI_ToolEventType is the entry point for gathering tool events and conditions for the tool data exchange.</Description>
+        <References>
+            <Reference ReferenceType="HasSubtype" IsForward="false">i=58</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5023</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5023</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5027</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5027</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5028</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5028</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5029</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5029</Reference>
+        </References>
+    </UAObjectType>
+    <UAObject ParentNodeId="ns=1;i=1001" EventNotifier="1" NodeId="ns=1;i=5023" BrowseName="1:MissingToolDataCondition">
+        <DisplayName Locale="en">MissingToolDataCondition</DisplayName>
+        <Description Locale="en">Events source for missing tool data conditions. Holds an object node for each condition.</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1014</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=1001" EventNotifier="1" NodeId="ns=1;i=5027" BrowseName="1:ToolDataUpdateRequestCondition">
+        <DisplayName Locale="en">ToolDataUpdateRequestCondition</DisplayName>
+        <Description Locale="en">Events source for tool data update request conditions. Holds an object node for each condition.</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1015</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=1001" EventNotifier="1" NodeId="ns=1;i=5028" BrowseName="1:ToolLoadedEvent">
+        <DisplayName Locale="en">ToolLoadedEvent</DisplayName>
+        <Description Locale="en">Event source for tool loaded events</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1018</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=1001" EventNotifier="1" NodeId="ns=1;i=5029" BrowseName="1:ToolUnloadedEvent">
+        <DisplayName Locale="en">ToolUnloadedEvent</DisplayName>
+        <Description Locale="en">Event source for tool unloaded events</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=1001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1019</Reference>
+        </References>
+    </UAObject>
     <UAObjectType NodeId="ns=1;i=1006" BrowseName="1:DMGMORI_ChannelMonitoringType">
         <DisplayName>DMGMORI_ChannelMonitoringType</DisplayName>
         <References>
@@ -567,7 +883,6 @@
             <Reference ReferenceType="HasComponent">ns=1;i=6020</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=1;i=1007</Reference>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6021</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=5003</Reference>
         </References>
     </UAObject>
@@ -593,14 +908,6 @@
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5026</Reference>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
-        </References>
-    </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;i=5026" NodeId="ns=1;i=6021" BrowseName="1:Name">
-        <DisplayName>Name</DisplayName>
-        <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=5026</Reference>
-            <Reference ReferenceType="HasModellingRule">i=80</Reference>
-            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
     <UAObject ParentNodeId="ns=1;i=5026" NodeId="ns=1;i=5003" BrowseName="1:ToolLife">
@@ -847,7 +1154,7 @@
             <Reference ReferenceType="HasComponent">ns=1;i=5009</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=5012</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=5015</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;i=5001</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5034</Reference>
         </References>
     </UAObjectType>
     <UAObject ParentNodeId="ns=1;i=1003" NodeId="ns=1;i=5002" BrowseName="1:CustomData">
@@ -1062,6 +1369,7 @@
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=5013</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1003</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5022</Reference>
         </References>
     </UAObject>
     <UAVariable DataType="Boolean" ParentNodeId="ns=1;i=5012" NodeId="ns=1;i=6072" BrowseName="1:EmergencyStopTriggered">
@@ -1080,6 +1388,66 @@
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=38</Reference>
             <Reference ReferenceType="GeneratesEvent">ns=2;i=35</Reference>
             <Reference ReferenceType="HasModellingRule">i=80</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5012" EventNotifier="1" NodeId="ns=1;i=5022" BrowseName="1:ToolEvents">
+        <DisplayName>ToolEvents</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">ns=1;i=1001</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5030</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5030</Reference>
+            <Reference ReferenceType="HasModellingRule">i=80</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5031</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5031</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5012</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5032</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5032</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5033</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5033</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5022" EventNotifier="1" NodeId="ns=1;i=5030" BrowseName="1:MissingToolDataCondition">
+        <DisplayName Locale="en">MissingToolDataCondition</DisplayName>
+        <Description Locale="en">Events source for missing tool data conditions. Holds an object node for each condition.</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1014</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5022" EventNotifier="1" NodeId="ns=1;i=5031" BrowseName="1:ToolDataUpdateRequestCondition">
+        <DisplayName Locale="en">ToolDataUpdateRequestCondition</DisplayName>
+        <Description Locale="en">Events source for tool data update request conditions. Holds an object node for each condition.</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1015</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5022" EventNotifier="1" NodeId="ns=1;i=5032" BrowseName="1:ToolLoadedEvent">
+        <DisplayName Locale="en">ToolLoadedEvent</DisplayName>
+        <Description Locale="en">Event source for tool loaded events</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1018</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5022" EventNotifier="1" NodeId="ns=1;i=5033" BrowseName="1:ToolUnloadedEvent">
+        <DisplayName Locale="en">ToolUnloadedEvent</DisplayName>
+        <Description Locale="en">Event source for tool unloaded events</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5022</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1019</Reference>
         </References>
     </UAObject>
     <UAObject ParentNodeId="ns=1;i=1003" NodeId="ns=1;i=5015" BrowseName="2:Production">
@@ -1192,29 +1560,31 @@
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;i=1003" NodeId="ns=1;i=5001" BrowseName="1:ToolDataInterface">
-        <DisplayName>ToolDataInterface</DisplayName>
+    <UAObject ParentNodeId="ns=1;i=1003" NodeId="ns=1;i=5034" BrowseName="1:ToolDataExchange">
+        <DisplayName>ToolDataExchange</DisplayName>
         <References>
             <Reference ReferenceType="HasComponent">ns=1;i=7004</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=7005</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=1;i=1002</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;i=7008</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=7006</Reference>
-            <Reference ReferenceType="HasModellingRule">i=80</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=7008</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=7010</Reference>
+            <Reference ReferenceType="HasModellingRule">i=80</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=7012</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1003</Reference>
         </References>
     </UAObject>
-    <UAMethod ParentNodeId="ns=1;i=5001" NodeId="ns=1;i=7004" BrowseName="1:AddTool" MethodDeclarationId="ns=1;i=7001">
-        <DisplayName>AddTool</DisplayName>
+    <UAMethod ParentNodeId="ns=1;i=5034" NodeId="ns=1;i=7004" BrowseName="1:AddTool" MethodDeclarationId="ns=1;i=7001">
+        <DisplayName Locale="en">AddTool</DisplayName>
+        <Description Locale="en">Adds a tool to the machines tool table</Description>
         <References>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6015</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5034</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6006</Reference>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6016</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6007</Reference>
         </References>
     </UAMethod>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7004" ValueRank="1" NodeId="ns=1;i=6015" ArrayDimensions="1" BrowseName="InputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7004" ValueRank="1" NodeId="ns=1;i=6006" ArrayDimensions="1" BrowseName="InputArguments">
         <DisplayName>InputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
@@ -1242,7 +1612,7 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7004" ValueRank="1" NodeId="ns=1;i=6016" ArrayDimensions="3" BrowseName="OutputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7004" ValueRank="1" NodeId="ns=1;i=6007" ArrayDimensions="3" BrowseName="OutputArguments">
         <DisplayName>OutputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
@@ -1273,14 +1643,94 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolID</uax:Name>
+                            <uax:Name>errorMessage</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>systemId</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+            </uax:ListOfExtensionObject>
+        </Value>
+    </UAVariable>
+    <UAMethod ParentNodeId="ns=1;i=5034" NodeId="ns=1;i=7005" BrowseName="1:DeleteTool" MethodDeclarationId="ns=1;i=7002">
+        <DisplayName Locale="en">DeleteTool</DisplayName>
+        <Description Locale="en">Deletes a tool from machine tool table</Description>
+        <References>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5034</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6015</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6016</Reference>
+        </References>
+    </UAMethod>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7005" ValueRank="1" NodeId="ns=1;i=6015" ArrayDimensions="1" BrowseName="InputArguments">
+        <DisplayName>InputArguments</DisplayName>
+        <References>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7005</Reference>
+        </References>
+        <Value>
+            <uax:ListOfExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>systemId</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+            </uax:ListOfExtensionObject>
+        </Value>
+    </UAVariable>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7005" ValueRank="1" NodeId="ns=1;i=6016" ArrayDimensions="2" BrowseName="OutputArguments">
+        <DisplayName>OutputArguments</DisplayName>
+        <References>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7005</Reference>
+        </References>
+        <Value>
+            <uax:ListOfExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>state</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=7</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
                             <uax:Description/>
                         </uax:Argument>
                     </uax:Body>
@@ -1304,21 +1754,22 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAMethod ParentNodeId="ns=1;i=5001" NodeId="ns=1;i=7005" BrowseName="1:DeleteTool" MethodDeclarationId="ns=1;i=7002">
-        <DisplayName>DeleteTool</DisplayName>
+    <UAMethod ParentNodeId="ns=1;i=5034" NodeId="ns=1;i=7006" BrowseName="1:GetSystemId" MethodDeclarationId="ns=1;i=7011">
+        <DisplayName Locale="en">GetSystemId</DisplayName>
+        <Description Locale="en">Requests the systemId for a given global tool ID</Description>
         <References>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5034</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6017</Reference>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6018</Reference>
         </References>
     </UAMethod>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7005" ValueRank="1" NodeId="ns=1;i=6017" ArrayDimensions="1" BrowseName="InputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7006" ValueRank="1" NodeId="ns=1;i=6017" ArrayDimensions="1" BrowseName="InputArguments">
         <DisplayName>InputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7005</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7006</Reference>
         </References>
         <Value>
             <uax:ListOfExtensionObject>
@@ -1328,56 +1779,10 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolId</uax:Name>
+                            <uax:Name>globalId</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
-                            <uax:Description/>
-                        </uax:Argument>
-                    </uax:Body>
-                </uax:ExtensionObject>
-            </uax:ListOfExtensionObject>
-        </Value>
-    </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7005" ValueRank="1" NodeId="ns=1;i=6018" ArrayDimensions="2" BrowseName="OutputArguments">
-        <DisplayName>OutputArguments</DisplayName>
-        <References>
-            <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7005</Reference>
-        </References>
-        <Value>
-            <uax:ListOfExtensionObject>
-                <uax:ExtensionObject>
-                    <uax:TypeId>
-                        <uax:Identifier>i=297</uax:Identifier>
-                    </uax:TypeId>
-                    <uax:Body>
-                        <uax:Argument>
-                            <uax:Name>state</uax:Name>
-                            <uax:DataType>
-                                <uax:Identifier>i=7</uax:Identifier>
-                            </uax:DataType>
-                            <uax:ValueRank>-1</uax:ValueRank>
-                            <uax:ArrayDimensions/>
-                            <uax:Description/>
-                        </uax:Argument>
-                    </uax:Body>
-                </uax:ExtensionObject>
-                <uax:ExtensionObject>
-                    <uax:TypeId>
-                        <uax:Identifier>i=297</uax:Identifier>
-                    </uax:TypeId>
-                    <uax:Body>
-                        <uax:Argument>
-                            <uax:Name>errorMesage</uax:Name>
-                            <uax:DataType>
-                                <uax:Identifier>i=15</uax:Identifier>
-                            </uax:DataType>
                             <uax:ValueRank>-1</uax:ValueRank>
                             <uax:ArrayDimensions/>
                             <uax:Description/>
@@ -1387,114 +1792,7 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAMethod ParentNodeId="ns=1;i=5001" NodeId="ns=1;i=7008" BrowseName="1:GetToolData" MethodDeclarationId="ns=1;i=7007">
-        <DisplayName>GetToolData</DisplayName>
-        <References>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6006</Reference>
-            <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6007</Reference>
-        </References>
-    </UAMethod>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7008" ValueRank="1" NodeId="ns=1;i=6006" ArrayDimensions="1" BrowseName="InputArguments">
-        <DisplayName>InputArguments</DisplayName>
-        <References>
-            <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7008</Reference>
-        </References>
-        <Value>
-            <uax:ListOfExtensionObject>
-                <uax:ExtensionObject>
-                    <uax:TypeId>
-                        <uax:Identifier>i=297</uax:Identifier>
-                    </uax:TypeId>
-                    <uax:Body>
-                        <uax:Argument>
-                            <uax:Name>toolId</uax:Name>
-                            <uax:DataType>
-                                <uax:Identifier>i=12</uax:Identifier>
-                            </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
-                            <uax:Description/>
-                        </uax:Argument>
-                    </uax:Body>
-                </uax:ExtensionObject>
-            </uax:ListOfExtensionObject>
-        </Value>
-    </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7008" ValueRank="1" NodeId="ns=1;i=6007" ArrayDimensions="3" BrowseName="OutputArguments">
-        <DisplayName>OutputArguments</DisplayName>
-        <References>
-            <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7008</Reference>
-        </References>
-        <Value>
-            <uax:ListOfExtensionObject>
-                <uax:ExtensionObject>
-                    <uax:TypeId>
-                        <uax:Identifier>i=297</uax:Identifier>
-                    </uax:TypeId>
-                    <uax:Body>
-                        <uax:Argument>
-                            <uax:Name>state</uax:Name>
-                            <uax:DataType>
-                                <uax:Identifier>i=7</uax:Identifier>
-                            </uax:DataType>
-                            <uax:ValueRank>-1</uax:ValueRank>
-                            <uax:ArrayDimensions/>
-                            <uax:Description/>
-                        </uax:Argument>
-                    </uax:Body>
-                </uax:ExtensionObject>
-                <uax:ExtensionObject>
-                    <uax:TypeId>
-                        <uax:Identifier>i=297</uax:Identifier>
-                    </uax:TypeId>
-                    <uax:Body>
-                        <uax:Argument>
-                            <uax:Name>ToolData</uax:Name>
-                            <uax:DataType>
-                                <uax:Identifier>i=15</uax:Identifier>
-                            </uax:DataType>
-                            <uax:ValueRank>-1</uax:ValueRank>
-                            <uax:ArrayDimensions/>
-                            <uax:Description/>
-                        </uax:Argument>
-                    </uax:Body>
-                </uax:ExtensionObject>
-                <uax:ExtensionObject>
-                    <uax:TypeId>
-                        <uax:Identifier>i=297</uax:Identifier>
-                    </uax:TypeId>
-                    <uax:Body>
-                        <uax:Argument>
-                            <uax:Name>errorMessage</uax:Name>
-                            <uax:DataType>
-                                <uax:Identifier>i=15</uax:Identifier>
-                            </uax:DataType>
-                            <uax:ValueRank>-1</uax:ValueRank>
-                            <uax:ArrayDimensions/>
-                            <uax:Description/>
-                        </uax:Argument>
-                    </uax:Body>
-                </uax:ExtensionObject>
-            </uax:ListOfExtensionObject>
-        </Value>
-    </UAVariable>
-    <UAMethod ParentNodeId="ns=1;i=5001" NodeId="ns=1;i=7006" BrowseName="1:GetToolList" MethodDeclarationId="ns=1;i=7003">
-        <DisplayName>GetToolList</DisplayName>
-        <References>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
-            <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6019</Reference>
-        </References>
-    </UAMethod>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7006" ValueRank="1" NodeId="ns=1;i=6019" ArrayDimensions="3" BrowseName="OutputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7006" ValueRank="1" NodeId="ns=1;i=6018" ArrayDimensions="3" BrowseName="OutputArguments">
         <DisplayName>OutputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
@@ -1525,9 +1823,91 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolList</uax:Name>
+                            <uax:Name>errorMessage</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=15</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>systemId</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+            </uax:ListOfExtensionObject>
+        </Value>
+    </UAVariable>
+    <UAMethod ParentNodeId="ns=1;i=5034" NodeId="ns=1;i=7008" BrowseName="1:GetToolData" MethodDeclarationId="ns=1;i=7007">
+        <DisplayName Locale="en">GetToolData</DisplayName>
+        <Description Locale="en">Read the tool data for one specific tool</Description>
+        <References>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5034</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6019</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6021</Reference>
+        </References>
+    </UAMethod>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7008" ValueRank="1" NodeId="ns=1;i=6019" ArrayDimensions="1" BrowseName="InputArguments">
+        <DisplayName>InputArguments</DisplayName>
+        <References>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7008</Reference>
+        </References>
+        <Value>
+            <uax:ListOfExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>systemId</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+            </uax:ListOfExtensionObject>
+        </Value>
+    </UAVariable>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7008" ValueRank="1" NodeId="ns=1;i=6021" ArrayDimensions="3" BrowseName="OutputArguments">
+        <DisplayName>OutputArguments</DisplayName>
+        <References>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7008</Reference>
+        </References>
+        <Value>
+            <uax:ListOfExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>state</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=7</uax:Identifier>
                             </uax:DataType>
                             <uax:ValueRank>-1</uax:ValueRank>
                             <uax:ArrayDimensions/>
@@ -1551,20 +1931,36 @@
                         </uax:Argument>
                     </uax:Body>
                 </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>toolData</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=15</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAMethod ParentNodeId="ns=1;i=5001" NodeId="ns=1;i=7010" BrowseName="1:SetToolData" MethodDeclarationId="ns=1;i=7009">
-        <DisplayName>SetToolData</DisplayName>
+    <UAMethod ParentNodeId="ns=1;i=5034" NodeId="ns=1;i=7010" BrowseName="1:GetToolList" MethodDeclarationId="ns=1;i=7003">
+        <DisplayName Locale="en">GetToolList</DisplayName>
+        <Description Locale="en">Get a list of all tools, containing only a subset of the tools' data</Description>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;i=6025</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5034</Reference>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6027</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6025</Reference>
         </References>
     </UAMethod>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7010" ValueRank="1" NodeId="ns=1;i=6025" ArrayDimensions="2" BrowseName="InputArguments">
-        <DisplayName>InputArguments</DisplayName>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7010" ValueRank="1" NodeId="ns=1;i=6025" ArrayDimensions="3" BrowseName="OutputArguments">
+        <DisplayName>OutputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
@@ -1578,14 +1974,82 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>toolId</uax:Name>
+                            <uax:Name>state</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=7</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>errorMessage</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=15</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>toolList</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=15</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+            </uax:ListOfExtensionObject>
+        </Value>
+    </UAVariable>
+    <UAMethod ParentNodeId="ns=1;i=5034" NodeId="ns=1;i=7012" BrowseName="1:SetToolData" MethodDeclarationId="ns=1;i=7009">
+        <DisplayName Locale="en">SetToolData</DisplayName>
+        <Description Locale="en">Set the parameters for a specific tool</Description>
+        <References>
+            <Reference ReferenceType="HasProperty">ns=1;i=6027</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6089</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5034</Reference>
+        </References>
+    </UAMethod>
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7012" ValueRank="1" NodeId="ns=1;i=6027" ArrayDimensions="2" BrowseName="InputArguments">
+        <DisplayName>InputArguments</DisplayName>
+        <References>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7012</Reference>
+        </References>
+        <Value>
+            <uax:ListOfExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>systemId</uax:Name>
                             <uax:DataType>
                                 <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>1</uax:ValueRank>
-                            <uax:ArrayDimensions>
-                                <uax:UInt32>0</uax:UInt32>
-                            </uax:ArrayDimensions>
+                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ArrayDimensions/>
                             <uax:Description/>
                         </uax:Argument>
                     </uax:Body>
@@ -1609,12 +2073,12 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7010" ValueRank="1" NodeId="ns=1;i=6027" ArrayDimensions="2" BrowseName="OutputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7012" ValueRank="1" NodeId="ns=1;i=6089" ArrayDimensions="2" BrowseName="OutputArguments">
         <DisplayName>OutputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7010</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;i=7012</Reference>
         </References>
         <Value>
             <uax:ListOfExtensionObject>
@@ -1720,6 +2184,7 @@
             <Reference ReferenceType="HasSubtype" IsForward="false">ns=2;i=7</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=6001</Reference>
             <Reference ReferenceType="HasComponent">ns=1;i=5014</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5001</Reference>
         </References>
     </UAObjectType>
     <UAVariable DataType="Boolean" ParentNodeId="ns=1;i=1004" NodeId="ns=1;i=6001" BrowseName="1:EmergencyStopTriggered">
@@ -1736,6 +2201,66 @@
             <Reference ReferenceType="HasTypeDefinition">i=61</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1004</Reference>
             <Reference ReferenceType="HasModellingRule">i=80</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=1004" EventNotifier="1" NodeId="ns=1;i=5001" BrowseName="1:ToolEvents">
+        <DisplayName>ToolEvents</DisplayName>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">ns=1;i=1001</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5018</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5018</Reference>
+            <Reference ReferenceType="HasModellingRule">i=80</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5019</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5019</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=1004</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5020</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5020</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;i=5021</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;i=5021</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5001" EventNotifier="1" NodeId="ns=1;i=5018" BrowseName="1:MissingToolDataCondition">
+        <DisplayName Locale="en">MissingToolDataCondition</DisplayName>
+        <Description Locale="en">Events source for missing tool data conditions. Holds an object node for each condition.</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1014</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5001" EventNotifier="1" NodeId="ns=1;i=5019" BrowseName="1:ToolDataUpdateRequestCondition">
+        <DisplayName Locale="en">ToolDataUpdateRequestCondition</DisplayName>
+        <Description Locale="en">Events source for tool data update request conditions. Holds an object node for each condition.</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1015</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5001" EventNotifier="1" NodeId="ns=1;i=5020" BrowseName="1:ToolLoadedEvent">
+        <DisplayName Locale="en">ToolLoadedEvent</DisplayName>
+        <Description Locale="en">Event source for tool loaded events</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1018</Reference>
+        </References>
+    </UAObject>
+    <UAObject ParentNodeId="ns=1;i=5001" EventNotifier="1" NodeId="ns=1;i=5021" BrowseName="1:ToolUnloadedEvent">
+        <DisplayName Locale="en">ToolUnloadedEvent</DisplayName>
+        <Description Locale="en">Event source for tool unloaded events</Description>
+        <References>
+            <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
+            <Reference ReferenceType="HasModellingRule">i=78</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;i=5001</Reference>
+            <Reference ReferenceType="GeneratesEvent">ns=1;i=1019</Reference>
         </References>
     </UAObject>
     <UAObjectType NodeId="ns=1;i=1010" BrowseName="1:DMGMORI_ProductionActiveProgramType">
@@ -1789,8 +2314,8 @@
             <Reference ReferenceType="HasProperty">ns=1;i=6045</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6046</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6047</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6048</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">i=11715</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;i=6048</Reference>
             <Reference ReferenceType="HasProperty">ns=1;i=6049</Reference>
         </References>
     </UAObject>
@@ -1811,7 +2336,7 @@
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
-            <uax:DateTime>2021-04-06T06:45:04Z</uax:DateTime>
+            <uax:DateTime>2022-08-19T07:36:47Z</uax:DateTime>
         </Value>
     </UAVariable>
     <UAVariable DataType="String" ParentNodeId="ns=1;i=5024" NodeId="ns=1;i=6045" BrowseName="NamespaceUri">
@@ -1831,7 +2356,7 @@
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
-            <uax:String>2.0.11</uax:String>
+            <uax:String>2.0.18</uax:String>
         </Value>
     </UAVariable>
     <UAVariable DataType="IdType" ParentNodeId="ns=1;i=5024" ValueRank="1" NodeId="ns=1;i=6047" ArrayDimensions="0" BrowseName="StaticNodeIdTypes">

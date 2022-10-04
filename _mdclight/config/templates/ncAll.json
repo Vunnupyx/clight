@@ -393,52 +393,52 @@
       "dataPoints": [
         {
           "name": "Operation Duration",
-          "address": "NodeId\tns=7;s=OperationDuration",
+          "address": "Monitoring.MachineTool.OperationDuration",
           "id": "7a79047b-6e79-41ff-9ce5-729d11b3b4e8"
         },
         {
           "name": "Power On Duration",
-          "address": "NodeId\tns=7;s=PowerOnDuration",
+          "address": "Monitoring.MachineTool.PowerOnDuration",
           "id": "873bb4df-d4c8-4aeb-b29f-e23ad5f1bec3"
         },
         {
           "name": "Emergency Stop Triggered",
-          "address": "ns=7;s=EmergencyStopTriggered",
+          "address": "Notification.EmergencyStopTriggered",
           "id": "93456cf7-249d-4edd-9025-f0c822f9b081"
         },
         {
           "name": "Program Path",
-          "address": "ns=7;s=ActiveProgram-ProgramPath",
+          "address": "Production.ActiveProgram.ProgramPath",
           "id": "ca6af0a9-68f7-4585-8699-a5ded85bc95e"
         },
         {
           "name": "Current State",
-          "address": "ns=7;s=ActiveProgram-State-CurrentState",
+          "address": "Production.ActiveProgram.State.CurrentState",
           "id": "f40e3289-7d64-4d0d-b752-55ba09a26de4"
         },
         {
           "name": "Current Run Time",
-          "address": "ns=7;s=ActiveProgram-CurrentRunTime",
+          "address": "Production.ActiveProgram.CurrentRunTime",
           "id": "67f44404-9eb6-45dc-afc3-c61e2a61cdcd"
         },
         {
           "name": "Part Count",
-          "address": "ns=7;s=ActiveProgram-PartCounter",
+          "address": "Production.ActiveProgram.PartCounter",
           "id": "9582b8e8-3bc2-4161-bc20-333fb9943134"
         },
         {
           "name": "Operation Mode",
-          "address": "NodeId\tns=7;s=OperationMode",
+          "address": "Monitoring.MachineTool.OperationMode",
           "id": "a5912bf4-770a-4c79-8a42-f43da2ed881f"
         },
         {
           "name": "Desired Parts",
-          "address": "ns=7;s=ActiveProgram-DesiredParts",
+          "address": "Production.ActiveProgram.DesiredParts",
           "id": "f9978c9a-ea04-4f1f-b3c7-7972bb481ae1"
         },
         {
           "name": "Program Name",
-          "address": "ns=7;s=ActiveProgram-Name",
+          "address": "Production.ActiveProgram.Name",
           "id": "1a468843-e2e2-4831-a111-a6844887586d"
         }
       ],

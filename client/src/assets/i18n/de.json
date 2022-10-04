@@ -89,9 +89,9 @@
     "DeviceInfo": "Geräte Informationen",
     "Language": "Sprache",
     "CELOSLanguage": "CELOS Sprache",
-    "English": "Englisch (English)",
-    "Deutsch": "Deutsch (German)",
-    "Japanese": "Japanisch (日本語)",
+    "English": "English",
+    "Deutsch": "Deutsch",
+    "Japanese": "日本語",
     "Templates": "Vorkonfigurationen",
     "CurrentTemplate": "Aktuell eingestellte Vorkonfiguration",
     "OpenConfigurationWizard": "Vorkonfiguation ändern",
@@ -194,7 +194,7 @@
     "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
-    "SetComparativeValue": "",
+    "SetComparativeValue": "Vergleichswert setzen",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",
@@ -208,7 +208,9 @@
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
     "CurrentLiveValue": "Aktuelwert",
-    "ReturnValueIfTrue": "Wert wenn linke Seite wahr ist"
+    "ReturnValueIfTrue": "Wert wenn linke Seite wahr ist",
+    "SetFormula": "Formel festlegen",
+    "Formula": "Formel"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -222,8 +224,8 @@
     "SmallerEqual": "Kleiner gleich",
     "Equal": "Gleich",
     "Unequal": "Ungleich",
-    "Sum": "Summe",
-    "Enumeration": "Enumeration"
+    "Enumeration": "Enumeration",
+    "Calculation": "Kalkulation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
@@ -305,7 +307,16 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
-    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden"
+    "DuplicatedAddress": "Doppelte Adresse sind nicht erlaubt.",
+    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
+    "OpcUaVariables": "OPC UA Variablen",
+    "UmatiOpcUaVariables": "UMATI OPC UA Variablen",
+    "CustomOpcUaVariables": "Benutzerdefinierte OPC UA Variablen",
+    "AddOpcUaVariable": "Benutzerdefinierte OPC UA Variable hinzufügen",
+    "DataType": "Datentyp",
+    "SetCustomOpcUaVariable": "Benutzerdefinierte OPC UA Variable setzen",
+    "NodeId": "Node ID",
+    "DeleteMessage": "Sind Sie sicher "
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",
@@ -323,9 +334,9 @@
     "LoadError": "Die Mappings konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "BulkSuccess": "Die Änderungen wurden erfolgreich aktualisiert!",
     "BulkError": "Die Änderungen konnten nicht aktualisiert werden. Bitte versuchen Sie es später erneut!",
-    "SourceDisabledTooltip": "",
-    "TargetDisabledTooltip": "",
-    "MappingDisabledTooltip": "",
+    "SourceDisabledTooltip": "Aktivieren Sie die Bezugsdatenquelle, um diese Zuordnung zu erstellen",
+    "TargetDisabledTooltip": "Aktivieren Sie die entsprechende Anwendungsschnittstelle, um diese Zuordnung zu erstellen",
+    "MappingDisabledTooltip": "Das Mapping ist derzeit nicht aktiv, weil entweder die Datenquelle oder die Anwendungsschnittstelle deaktiviert ist.",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen speichern"
   },
@@ -385,5 +396,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
+  },
+  "data-type": {
+    "String": "String",
+    "Double": "Double",
+    "Byte": "Byte",
+    "UInt16": "UInt16",
+    "UInt32": "UInt32",
+    "Boolean": "Boolean"
   }
 }

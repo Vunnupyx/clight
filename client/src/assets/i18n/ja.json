@@ -89,9 +89,9 @@
     "DeviceInfo": "デバイス情報",
     "Language": "言語 (Language)",
     "CELOSLanguage": "CELOSの言語",
-    "English": " (English)",
-    "Deutsch": " (Deutsch)",
-    "Japanese": "日本語 (Japanese)",
+    "English": "English",
+    "Deutsch": "Deutsch",
+    "Japanese": "日本語",
     "Templates": "テンプレート",
     "CurrentTemplate": "選択中のテンプレート",
     "OpenConfigurationWizard": "設定ウィザードを開始する",
@@ -208,7 +208,9 @@
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
-    "ReturnValueIfTrue": "Value if left side is true"
+    "ReturnValueIfTrue": "Value if left side is true",
+    "SetFormula": "Set formula",
+    "Formula": "Formula"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -222,8 +224,8 @@
     "SmallerEqual": "Smaller or Equal",
     "Equal": "Equal",
     "Unequal": "Unequal",
-    "Sum": "Sum",
-    "Enumeration": "Enumeration"
+    "Enumeration": "Enumeration",
+    "Calculation": "Calculation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
@@ -305,7 +307,16 @@
       "Disabled": "無効"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
-    "HasDataMapping": "Datapoint is mapped to a source"
+    "DuplicatedAddress": "You are not allowed to duplicate addresses",
+    "HasDataMapping": "Datapoint is mapped to a source",
+    "OpcUaVariables": "OPC UA Variables",
+    "UmatiOpcUaVariables": "UMATI OPC UA Variables",
+    "CustomOpcUaVariables": "Custom OPC UA Variables",
+    "AddOpcUaVariable": "Add your own OPC UA Variable",
+    "DataType": "Data Type",
+    "SetCustomOpcUaVariable": "Set Custom OPC UA Variable",
+    "NodeId": "Node ID",
+    "DeleteMessage": "本当にデータポイントを削除しますか？"
   },
   "settings-data-mapping": {
     "DataMapping": "データマッピング",
@@ -385,5 +396,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+  },
+  "data-type": {
+    "String": "String",
+    "Double": "Double",
+    "Byte": "Byte",
+    "UInt16": "UInt16",
+    "UInt32": "UInt32",
+    "Boolean": "Boolean"
   }
 }

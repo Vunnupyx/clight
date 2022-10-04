@@ -35,7 +35,7 @@ export class OPCUADataSink extends DataSink {
   constructor(options: IOPCUADataSinkOptions) {
     super(options);
     this.opcuaAdapter = new OPCUAAdapter({
-      config: options.dataSinkConfig,
+      dataSinkConfig: options.dataSinkConfig,
       generalConfig: options.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
@@ -82,17 +82,17 @@ export class OPCUADataSink extends DataSink {
       });
   }
 
-  private setupDataPoints() {
+  private async setupDataPoints() {
     const logPrefix = `${this.name}::setupDataPoints`;
-    this.config.dataPoints.forEach((dp) => {
+    this.config.dataPoints.forEach(async (dp) => {
       winston.debug(`${logPrefix} Setting up node ${dp.address}`);
       try {
-        this.opcuaNodes[dp.address] = this.opcuaAdapter.findNode(
+        this.opcuaNodes[dp.address] = (await this.opcuaAdapter.findNode(
           dp.address
-        ) as UAVariable;
+        )) as UAVariable;
 
         if (typeof dp.initialValue !== 'undefined') {
-          this.setNodeValue(this.opcuaNodes[dp.address], dp.initialValue)
+          this.setNodeValue(this.opcuaNodes[dp.address], dp.initialValue);
         }
       } catch (e) {
         winston.warn(
@@ -101,34 +101,36 @@ export class OPCUADataSink extends DataSink {
       }
     });
 
-    this.setStaticNodes();
+    await this.setStaticNodes();
   }
 
   /**
    * Sets values for static nodes like serial number, model or manufacturer
    */
-  private setStaticNodes() {
-    const serialNumberNode = this.opcuaAdapter.findNode(
-      'ns=7;s=SerialNumber'
-    ) as UAVariable;
+  private async setStaticNodes() {
+    const serialNumberNode = (await this.opcuaAdapter.findNode(
+      'Identification.SerialNumber'
+    )) as UAVariable;
     this.setNodeValue(serialNumberNode, this.generalConfig.serialNumber || '');
 
-    const manufacturerNode = this.opcuaAdapter.findNode(
-      'ns=7;s=Manufacturer'
-    ) as UAVariable;
+    const manufacturerNode = (await this.opcuaAdapter.findNode(
+      'Identification.Manufacturer'
+    )) as UAVariable;
     this.setNodeValue(manufacturerNode, this.generalConfig.manufacturer || '');
 
-    const modelNode = this.opcuaAdapter.findNode('ns=7;s=Model') as UAVariable;
+    const modelNode = (await this.opcuaAdapter.findNode(
+      'Identification.Model'
+    )) as UAVariable;
     this.setNodeValue(modelNode, this.generalConfig.model || '');
 
-    const mdclightId = this.opcuaAdapter.findNode(
-      'ns=7;s=SoftwareIdentification-MDClight-Identifier'
-    ) as UAVariable;
+    const mdclightId = (await this.opcuaAdapter.findNode(
+      'Identification.SoftwareIdentification.MDC.Identifier'
+    )) as UAVariable;
     this.setNodeValue(mdclightId, 'MDCLight');
 
-    const mdclightSoftwareVersion = this.opcuaAdapter.findNode(
-      'ns=7;s=SoftwareIdentification-MDClight-SoftwareRevision'
-    ) as UAVariable;
+    const mdclightSoftwareVersion = (await this.opcuaAdapter.findNode(
+      'Identification.SoftwareIdentification.MDC.SoftwareRevision'
+    )) as UAVariable;
     this.setNodeValue(
       mdclightSoftwareVersion,
       process.env.MDC_LIGHT_RUNTIME_VERSION || 'unknown'

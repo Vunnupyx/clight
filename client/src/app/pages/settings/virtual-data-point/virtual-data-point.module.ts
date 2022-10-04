@@ -11,6 +11,7 @@ import { SetThresholdsModalComponent } from './set-thresholds-modal/set-threshol
 import { VirtualDataPointGuard } from './virtual-data-point.guard';
 import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
 import { PromptDialogModule } from 'app/shared/components/prompt-dialog/prompt-dialog.module';
+import { SetFormulaModalComponent } from './set-formula-modal/set-formula-modal.component';
 
 const routes: Routes = [
   {
@@ -24,7 +25,8 @@ const routes: Routes = [
 const COMPONENTS = [
   VirtualDataPointComponent,
   SetThresholdsModalComponent,
-  SetEnumerationModalComponent
+  SetEnumerationModalComponent,
+  SetFormulaModalComponent
 ];
 
 @NgModule({
@@ -37,7 +39,6 @@ const COMPONENTS = [
     NgxEchartsModule
   ],
   exports: [RouterModule, ...COMPONENTS],
-  entryComponents: [SetThresholdsModalComponent, SetEnumerationModalComponent],
   providers: [VirtualDataPointGuard]
 })
 export class VirtualDataPointModule {}

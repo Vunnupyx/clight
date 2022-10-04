@@ -23,6 +23,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
 import { LayoutModule as MatLayoutModule } from '@angular/cdk/layout';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -64,6 +65,7 @@ import { MdcIconModule } from './mdc-icon/mdc-icon.module';
     MatSlideToggleModule,
     MatStepperModule,
     MatProgressSpinnerModule,
+    MatChipsModule,
     NgxDatatableModule,
     NgxMatSelectSearchModule,
     DragDropModule,

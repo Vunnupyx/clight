@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -29,10 +25,11 @@ import {
   PromptDialogComponent,
   PromptDialogModel
 } from 'app/shared/components/prompt-dialog/prompt-dialog.component';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import {
-  ColumnMode,
-  DatatableComponent
-} from '@swimlane/ngx-datatable';
+  SetFormulaModalComponent,
+  SetFormulaModalData
+} from './set-formula-modal/set-formula-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -94,8 +91,8 @@ export class VirtualDataPointComponent implements OnInit {
       text: 'virtual-data-point-operation-type.Enumeration'
     },
     {
-      value: VirtualDataPointOperationType.SUM,
-      text: 'virtual-data-point-operation-type.Sum'
+      value: VirtualDataPointOperationType.CALCULATION,
+      text: 'virtual-data-point-operation-type.Calculation'
     }
   ];
 
@@ -378,6 +375,33 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  onSetFormula(virtualPoint: VirtualDataPoint) {
+    const dialogRef = this.dialog.open<
+      SetFormulaModalComponent,
+      SetFormulaModalData,
+      SetFormulaModalData
+    >(SetFormulaModalComponent, {
+      data: {
+        formula: virtualPoint.formula,
+        sources: virtualPoint.sources
+      },
+      width: '900px'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.formula = result.formula;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          formula: result.formula
+        });
+      }
+    });
+  }
+
   onSetComparativeValue(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.thresholds) {
       virtualPoint.thresholds = {};
@@ -453,9 +477,9 @@ export class VirtualDataPointComponent implements OnInit {
     return [
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
-      VirtualDataPointOperationType.SUM,
       VirtualDataPointOperationType.ENUMERATION,
-      VirtualDataPointOperationType.THRESHOLDS
+      VirtualDataPointOperationType.THRESHOLDS,
+      VirtualDataPointOperationType.CALCULATION
     ].includes(operationType!);
   }
 

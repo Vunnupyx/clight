@@ -111,12 +111,11 @@
           cellClass="input-cell"
         >
           <ng-template ngx-datatable-header-template let-sort="sortFn">
-            <span class="pointer" (click)="sort()">{{ 'settings-virtual-data-point.Operation' | translate }}</span>
+            <span class="pointer" (click)="sort()">{{
+              'settings-virtual-data-point.Operation' | translate
+            }}</span>
             <a [href]="supportHref" target="_blank">
-              <mat-icon
-                class="doc-btn"
-                svgIcon="mdc:unknown"
-              ></mat-icon>
+              <mat-icon class="doc-btn" svgIcon="mdc:unknown"></mat-icon>
             </a>
           </ng-template>
           <ng-template
@@ -195,12 +194,17 @@
                   }}</ng-container
                 >
                 <ng-container
-                  *ngSwitchCase="VirtualDataPointOperationType.UNEQUAL"
+                  *ngSwitchCase="VirtualDataPointOperationType.CALCULATION"
                   >{{
-                    'virtual-data-point-operation-type.Sum' | translate
+                    'virtual-data-point-operation-type.Calculation' | translate
                   }}</ng-container
                 >
-                <!-- <ng-container *ngSwitchCase="VirtualDataPointOperationType.ENUMERATION">{{ 'virtual-data-point-operation-type.Enumeration' | translate }}</ng-container> -->
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.ENUMERATION"
+                  >{{
+                    'virtual-data-point-operation-type.Enumeration' | translate
+                  }}</ng-container
+                >
                 <ng-container *ngSwitchDefault>{{
                   value | uppercase
                 }}</ng-container>
@@ -362,6 +366,18 @@
                 ><mat-icon svgIcon="mdc:order-group"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
+                *ngIf="
+                  row?.operationType ===
+                  VirtualDataPointOperationType.CALCULATION
+                "
+                (click)="onSetFormula(row); group.value = null"
+                [matTooltip]="
+                  'settings-virtual-data-point.SetFormula' | translate
+                "
+                matTooltipPosition="above"
+                ><mat-icon svgIcon="mdc:system"></mat-icon
+              ></mat-button-toggle>
+              <mat-button-toggle
                 (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
@@ -458,6 +474,31 @@
                   )
                 "
                 ><mat-icon svgIcon="mdc:order-group"></mat-icon
+              ></mat-button-toggle>
+              <mat-button-toggle
+                *ngIf="
+                  unsavedRow?.operationType ===
+                  VirtualDataPointOperationType.CALCULATION
+                "
+                (click)="
+                  unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0 &&
+                    onSetFormula(unsavedRow);
+                  group.value = null
+                "
+                [matTooltip]="
+                  'settings-virtual-data-point.SetFormula' | translate
+                "
+                matTooltipPosition="above"
+                [disabled]="
+                  !(
+                    unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0
+                  )
+                "
+                ><mat-icon svgIcon="mdc:system"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
                 (click)="

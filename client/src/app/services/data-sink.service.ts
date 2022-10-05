@@ -8,7 +8,8 @@ import {
   DataPoint,
   DataSink,
   DataSinkConnection,
-  DataSinkProtocol
+  DataSinkProtocol,
+  PreDefinedDataPoint
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -58,6 +59,18 @@ export class DataSinkService {
       .pipe(map((x) => x.dataSinks));
   }
 
+  get opcDataSink() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(
+        map((x) =>
+          x.dataSinks.find(
+            (dataSink) => dataSink.protocol === DataSinkProtocol.OPC
+          )
+        )
+      );
+  }
+
   get connection() {
     return this._store.state
       .pipe(filter((x) => x.status != Status.NotInitialized))
@@ -84,7 +97,7 @@ export class DataSinkService {
       (x) => x.protocol === protocol
     )!;
 
-    const payload: any = {};
+    const payload: Partial<DataSink> = {};
 
     if (protocol === DataSinkProtocol.MTConnect) {
       payload.enabled = ds.enabled;
@@ -95,6 +108,9 @@ export class DataSinkService {
 
       if (ds.auth) {
         payload.auth = ds.auth;
+      }
+      if (ds.customDataPoints) {
+        payload.customDataPoints = ds.customDataPoints;
       }
     }
 
@@ -170,12 +186,64 @@ export class DataSinkService {
     });
   }
 
-  getPredefinedMtConnectDataPoints(): DataPoint[] {
-    return PREDEFINED_MTCONNECT_DATA_POINTS as any as DataPoint[];
+  addCustomDatapoint(protocol: DataSinkProtocol, obj: PreDefinedDataPoint) {
+    this._store.patchState((state) => {
+      state.dataSinks = state.dataSinks.map((dataSink) => {
+        if (dataSink.protocol != protocol) {
+          return dataSink;
+        }
+        const customDataPoints = dataSink.customDataPoints || [];
+        return {
+          ...dataSink,
+          customDataPoints: [...customDataPoints, obj]
+        };
+      });
+      state.touched = true;
+    });
   }
 
-  getPredefinedOPCDataPoints(): DataPoint[] {
-    return PREDEFINED_OPCUA_DATA_POINTS as any as DataPoint[];
+  updateCustomDatapoint(protocol: DataSinkProtocol, obj: PreDefinedDataPoint) {
+    this._store.patchState((state) => {
+      state.dataSinks = state.dataSinks.map((dataSink) => {
+        if (dataSink.protocol != protocol) {
+          return dataSink;
+        }
+        const customDataPoints = dataSink.customDataPoints || [];
+        return {
+          ...dataSink,
+          customDataPoints: customDataPoints.map((dp) =>
+            dp.address === obj.address ? obj : dp
+          )
+        };
+      });
+      state.touched = true;
+    });
+  }
+
+  deleteCustomDatapoint(protocol: DataSinkProtocol, obj: PreDefinedDataPoint) {
+    this._store.patchState((state) => {
+      state.dataSinks = state.dataSinks.map((dataSink) => {
+        if (dataSink.protocol != protocol) {
+          return dataSink;
+        }
+        const customDataPoints = dataSink.customDataPoints || [];
+        return {
+          ...dataSink,
+          customDataPoints: customDataPoints.filter(
+            (dp) => dp.address !== obj.address
+          )
+        };
+      });
+      state.touched = true;
+    });
+  }
+
+  getPredefinedMtConnectDataPoints() {
+    return PREDEFINED_MTCONNECT_DATA_POINTS;
+  }
+
+  getPredefinedOPCDataPoints() {
+    return PREDEFINED_OPCUA_DATA_POINTS;
   }
 
   private _orderByProtocol(objs: DataSink[]) {

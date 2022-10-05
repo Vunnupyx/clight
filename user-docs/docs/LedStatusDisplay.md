@@ -24,8 +24,8 @@ and three different colors for each LED:
 USER 1 LED displays the current configuration state:
 
 - orange blinking (No Configuration/Not accepted Terms and Conditions)
-- orange (configured but not connected to NC)
-- green (configured and successfully connected to NC)
+- orange (`configured` but not connected to NC)
+- green (`configured` and successfully connected to NC)
 
 ### States of USER 2 LED
 
@@ -34,11 +34,11 @@ USER 2 LED has only 2 states:
 - Off (IoTconnector flex is not running)
 - Green (IoTconnector flex is running)
 
-### What does `configured` means?
+### What does `configured` mean?
 
 The status `configured` is defined as:
 
 - One enabled data source
 - Minimum one active data point at this active source
-- One enabled Application Interface (data sink) with minimum one data point
-- One active mapping between the enabled connected data sink data point and the enabled Application Interface data point
+- One enabled Application Interface with minimum one data point
+- One active mapping between the enabled connected data source data point and the enabled Application Interface data point

@@ -467,11 +467,17 @@ export class S7DataSource extends DataSource {
         winston.warn(`${logPrefix} closing s7 connection timed out after 5s`);
         resolve();
       }, 5000);
-      this.client.dropConnection(() => {
-        winston.info(`${logPrefix} successfully closed s7 connection`);
+      if (this.client) {
+        this.client.dropConnection(() => {
+          winston.info(`${logPrefix} successfully closed s7 connection`);
+          clearTimeout(timeout);
+          resolve();
+        });
+      } else {
+        winston.info(`${logPrefix} s7 not connected. Skipping disconnect.`);
         clearTimeout(timeout);
         resolve();
-      });
+      }
     });
 
     this.client = null;

@@ -81,7 +81,7 @@ export class MessengerConnectionService {
     return this._store.state.pipe(map((x) => x.status));
   }
 
-  get queryStatus() {
+  get isBusy() {
     return this._store.snapshot.isBusy;
   }
 
@@ -181,5 +181,4 @@ export class MessengerConnectionService {
   setMockData(obj: Partial<MessengerConfiguration>) {
     RESPONSE_CONFIG = { ...RESPONSE_CONFIG, ...obj };
   }
-
 }

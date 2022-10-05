@@ -32,7 +32,7 @@ export class RegisterMachineComponent implements OnInit {
   }
 
   get isBusy() {
-    return this.messengerConnectionService.queryStatus;
+    return this.messengerConnectionService.isBusy;
   }
 
   isFormSending = true;

@@ -119,7 +119,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   get isBusy() {
-    return this.messengerConnectionService.queryStatus;
+    return this.messengerConnectionService.isBusy;
   }
 
   constructor(
@@ -394,16 +394,18 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.connection = x;
   }
 
-  async openDMGMoriMessenger() {
-    await this.messengerConnectionService.getMessengerStatus();
-    await this.messengerConnectionService.getMessengerConfig();
-
-    this.dialog.open(MessengerConnectionComponent, {
-      width: '900px',
-      data: {
-        configuration: this.messengerConfiguration,
-        status: this.messengerStatus
-      }
-    });
+  openMessenger() {
+    this.messengerConnectionService
+      .getMessengerStatus()
+      .then(() => this.messengerConnectionService.getMessengerConfig())
+      .then(() => {
+        this.dialog.open(MessengerConnectionComponent, {
+          width: '900px',
+          data: {
+            configuration: this.messengerConfiguration,
+            status: this.messengerStatus
+          }
+        });
+      });
   }
 }

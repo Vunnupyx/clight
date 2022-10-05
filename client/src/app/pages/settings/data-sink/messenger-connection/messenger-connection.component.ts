@@ -29,7 +29,7 @@ export class MessengerConnectionComponent implements OnInit {
   isFormSending = true;
 
   get isBusy() {
-    return this.messengerConnectionService.queryStatus;
+    return this.messengerConnectionService.isBusy;
   }
 
   constructor(
@@ -50,20 +50,17 @@ export class MessengerConnectionComponent implements OnInit {
   onSubmit() {
     this.messengerConnectionService
       .updateNetworkConfig(this.profileForm.value)
+      .then(() => this.messengerConnectionService.getMessengerStatus())
       .then(() => {
-        if (this.data.status.server === ServerStatus.Available) {
-          this.messengerConnectionService.getMessengerConfig().then(() => {
-            if (
-              this.data.status.server === ServerStatus.Available &&
-              this.data.status.registration === RegistrationStatus.Registered
-            ) {
-              this.dialog.open(RegisterMachineComponent, {
-                width: '900px',
-                data: this.data
-              });
-              this.close();
-            }
+        if (
+          this.data.status.server === ServerStatus.Available &&
+          this.data.status.registration === RegistrationStatus.Registered
+        ) {
+          this.dialog.open(RegisterMachineComponent, {
+            width: '900px',
+            data: this.data
           });
+          this.close();
         }
       });
   }

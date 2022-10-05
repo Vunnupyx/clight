@@ -31,7 +31,7 @@ describe('MessengerManager', () => {
     });
   });
 
-  test('initailization without configuration', async () => {
+  test('initialization without configuration', async () => {
     messengerAdapter = new MessengerManager({
       configManager
     });
@@ -40,10 +40,11 @@ describe('MessengerManager', () => {
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(undefined);
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
-    expect(messengerAdapter.serverStatus.server).toEqual('notconfigured');
+    expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
-  test('initailization with empty configuration', async () => {
+  test('initialization with empty configuration', async () => {
     messengerAdapter = new MessengerManager({
       configManager,
       messengerConfig: {}
@@ -53,10 +54,11 @@ describe('MessengerManager', () => {
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual({});
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
-    expect(messengerAdapter.serverStatus.server).toEqual('notconfigured');
+    expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
-  test('initailization with an invalid configuration', async () => {
+  test('initialization with an invalid configuration', async () => {
     mockedFetch.mockResolvedValueOnce(
       Promise.resolve(new Response(JSON.stringify({}), { status: 401 }))
     );
@@ -64,10 +66,10 @@ describe('MessengerManager', () => {
       hostname: 'string',
       username: 'string',
       password: 'string',
-      model: 'string',
+      model: 103,
       name: 'string',
-      organization: 'string',
-      timezone: 'number'
+      organization: 'organizationUnit1',
+      timezone: 1
     };
     messengerAdapter = new MessengerManager({
       configManager,
@@ -78,49 +80,18 @@ describe('MessengerManager', () => {
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
-    expect(messengerAdapter.serverStatus.server).toEqual('invalidauth');
+    expect(messengerAdapter.serverStatus.server).toEqual('invalid_auth');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
-  test('initailization with already set configuration', async () => {
+  test('initialization with already set configuration', async () => {
     mockedFetch
       .mockResolvedValueOnce(
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
-      .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
-      );
-    const messengerConfig = {
-      hostname: 'string',
-      username: 'string',
-      password: 'string',
-      model: 'string',
-      name: 'string',
-      organization: 'string',
-      timezone: 'number'
-    };
-    messengerAdapter = new MessengerManager({
-      configManager,
-      messengerConfig
-    });
-    await messengerAdapter.init();
-
-    expect(messengerAdapter).toBeInstanceOf(MessengerManager);
-    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
-    expect(messengerAdapter.serverStatus.server).toEqual('available');
-  });
-
-  test('Successfully register machine with not yet registered configuration', async () => {
-    mockedFetch
-      .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
-      )
-      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify([]))))
       .mockResolvedValueOnce(
         Promise.resolve(
-          new Response(
-            JSON.stringify({ msg: [{ id: 'machine1' }, { id: 'machine2' }] })
-          )
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
         )
       )
       .mockResolvedValueOnce(
@@ -130,28 +101,27 @@ describe('MessengerManager', () => {
       )
       .mockResolvedValueOnce(
         Promise.resolve(
-          new Response(JSON.stringify({ msg: [{ id: 'organizationUnit1' }] }))
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
         )
       )
       .mockResolvedValueOnce(
         Promise.resolve(
           new Response(
-            JSON.stringify({ msg: { 1: 'timezone1', 2: 'timezone2' } })
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
           )
         )
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify('newMachineID')))
+        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
       );
-
     const messengerConfig = {
       hostname: 'string',
       username: 'string',
       password: 'string',
-      model: 'string',
+      model: 103,
       name: 'string',
-      organization: 'string',
-      timezone: 'number'
+      organization: 'organizationUnit1',
+      timezone: 2
     };
     messengerAdapter = new MessengerManager({
       configManager,
@@ -163,24 +133,49 @@ describe('MessengerManager', () => {
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
     expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
-  test('Unable to successfully register machine with not yet registered configuration', async () => {
+  test('Successfully register machine with not yet registered configuration', async () => {
     mockedFetch
       .mockResolvedValueOnce(
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      )
       .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify([]))))
-      .mockResolvedValueOnce(Promise.reject(new Response(JSON.stringify({}))));
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify('newMachineID')))
+      );
 
     const messengerConfig = {
       hostname: 'string',
       username: 'string',
       password: 'string',
-      model: 'string',
+      model: 103,
       name: 'string',
-      organization: 'string',
-      timezone: 'number'
+      organization: 'organizationUnit1',
+      timezone: 1
     };
     messengerAdapter = new MessengerManager({
       configManager,
@@ -190,8 +185,62 @@ describe('MessengerManager', () => {
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('notregistered');
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
+  });
+
+  test('Unable to successfully register machine due to unknown error but server is available', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      )
+      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify({}))));
+
+    const messengerConfig = {
+      hostname: 'string',
+      username: 'string',
+      password: 'string',
+      model: 103,
+      name: 'string',
+      organization: 'organizationUnit1',
+      timezone: 2
+    };
+    messengerAdapter = new MessengerManager({
+      configManager,
+      messengerConfig
+    });
+    await messengerAdapter.init();
+
+    expect(messengerAdapter).toBeInstanceOf(MessengerManager);
+    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
+    expect(messengerAdapter.serverStatus.registration).toEqual(
+      'not_registered'
+    );
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
   test('Handles config change from already registered to empty config', async () => {
@@ -200,18 +249,39 @@ describe('MessengerManager', () => {
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
       )
-      .mockResolvedValueOnce(Promise.reject(new Response(JSON.stringify({}))));
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+      );
 
     const messengerConfig = {
       hostname: 'string',
       username: 'string',
       password: 'string',
-      model: 'string',
+      model: 103,
       name: 'string',
-      organization: 'string',
-      timezone: 'number'
+      organization: 'organizationUnit1',
+      timezone: 1
     };
     messengerAdapter = new MessengerManager({
       configManager,
@@ -222,24 +292,23 @@ describe('MessengerManager', () => {
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
     expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
 
     configManager.emit('configChange');
 
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
-    expect(messengerAdapter.serverStatus.server).toEqual('notconfigured');
+    expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
-  test('Handles config change from empty config to new valid config and registers it', async () => {
+  test('Handles resubmitting already registered config', async () => {
     mockedFetch
       .mockResolvedValueOnce(
         Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
       )
-      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify([]))))
       .mockResolvedValueOnce(
         Promise.resolve(
-          new Response(
-            JSON.stringify({ msg: [{ id: 'machine1' }, { id: 'machine2' }] })
-          )
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
         )
       )
       .mockResolvedValueOnce(
@@ -249,16 +318,76 @@ describe('MessengerManager', () => {
       )
       .mockResolvedValueOnce(
         Promise.resolve(
-          new Response(JSON.stringify({ msg: [{ id: 'organizationUnit1' }] }))
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
         )
       )
       .mockResolvedValueOnce(
         Promise.resolve(
           new Response(
-            JSON.stringify({ msg: { 1: 'timezone1', 2: 'timezone2' } })
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
           )
         )
       )
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+      );
+
+    const messengerConfig = {
+      hostname: 'string',
+      username: 'string',
+      password: 'string',
+      model: 103,
+      name: 'string',
+      organization: 'organizationUnit1',
+      timezone: 1
+    };
+    messengerAdapter = new MessengerManager({
+      configManager,
+      messengerConfig
+    });
+    await messengerAdapter.init();
+    expect(messengerAdapter).toBeInstanceOf(MessengerManager);
+    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
+
+    configManager.config.messenger = messengerConfig;
+    configManager.emit('configChange');
+
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
+  });
+
+  test('Handles config change from empty config to new valid config and registers it', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      )
+      .mockResolvedValueOnce(Promise.resolve(new Response(JSON.stringify([]))))
       .mockResolvedValueOnce(
         Promise.resolve(new Response(JSON.stringify('newMachineID')))
       );
@@ -271,25 +400,108 @@ describe('MessengerManager', () => {
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual({});
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
-    expect(messengerAdapter.serverStatus.server).toEqual('notconfigured');
+    expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
 
     const messengerConfig = {
       hostname: 'string',
       username: 'string',
       password: 'string',
-      model: 'string',
+      model: 103,
       name: 'string',
-      organization: 'string',
-      timezone: 'number'
+      organization: 'organizationUnit1',
+      timezone: 1
     };
 
-    //@ts-ignore
-    messengerAdapter.messengerConfig = messengerConfig;
-    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
+    configManager.config.messenger = messengerConfig;
+    expect(configManager.config.messenger).toEqual(messengerConfig);
 
     configManager.emit('configChange');
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(messengerAdapter.serverStatus.registration).toEqual('registered');
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
+  });
+
+  test('Handles removed organization unit to an already registered config', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit9' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      );
+    const messengerConfig = {
+      hostname: 'string',
+      username: 'string',
+      password: 'string',
+      model: 103,
+      name: 'string',
+      organization: 'organizationUnit1',
+      timezone: 1
+    };
+    messengerAdapter = new MessengerManager({
+      configManager,
+      messengerConfig
+    });
+    await messengerAdapter.init();
+    expect(messengerAdapter).toBeInstanceOf(MessengerManager);
+    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+
+    //Organization unit is removed from Messenger UI and then resubmitted with that organization unit
+    configManager.config.messenger = messengerConfig;
+    await messengerAdapter.init();
+
+    expect(messengerAdapter.serverStatus.registration).toEqual('error');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(
+      'invalid_organization'
+    );
     expect(messengerAdapter.serverStatus.server).toEqual('available');
   });
 });

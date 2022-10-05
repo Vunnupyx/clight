@@ -103,6 +103,15 @@ export const emptyDefaultConfig: IConfig = {
     x2: {},
     time: {}
   },
+  messenger: {
+    hostname: null,
+    username: null,
+    password: null,
+    model: null,
+    name: null,
+    organization: null,
+    timezone: null
+  },
   dataSources: [],
   dataSinks: [],
   virtualDataPoints: [],

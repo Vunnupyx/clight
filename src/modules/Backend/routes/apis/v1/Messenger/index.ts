@@ -3,12 +3,12 @@
  */
 import { Request, Response } from 'express';
 import winston from 'winston';
-import { DataSinkProtocols } from '../../../../../../common/interfaces';
 
 import { ConfigManager } from '../../../../../ConfigManager';
 import {
   IMessengerServerConfig,
-  IMessengerServerStatus
+  IMessengerServerStatus,
+  IMessengerMetadata
 } from '../../../../../ConfigManager/interfaces';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 
@@ -45,9 +45,7 @@ function messengerConfigurationGetHandler(
   request: Request,
   response: Response
 ): void {
-  const currentConfig = configManager.config.dataSinks?.find(
-    (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
-  )?.messenger;
+  const currentConfig = configManager.config.messenger;
 
   let payload: IMessengerServerConfigResponse;
 
@@ -80,50 +78,59 @@ async function messengerConfigurationPostHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  let incomingMessengerConfig: IMessengerServerConfig = request.body;
+  try {
+    let incomingMessengerConfig: IMessengerServerConfig = request.body;
 
-  if (!incomingMessengerConfig.hostname || !incomingMessengerConfig.username) {
-    response.status(400).json({ message: 'Invalid Body' });
-    return;
-  }
-  const config = configManager.config;
+    if (
+      typeof incomingMessengerConfig.hostname !== 'string' ||
+      incomingMessengerConfig.hostname.length === 0 ||
+      typeof incomingMessengerConfig.username !== 'string' ||
+      incomingMessengerConfig.username.length === 0
+    ) {
+      response.status(400).json({ message: 'Missing hostname or username' });
+      return;
+    }
+    const messengerMetadata =
+      await dataSinksManager.messengerManager.getMetadata();
+    if (
+      (incomingMessengerConfig.model &&
+        !messengerMetadata.models.find(
+          (m) => m.id === incomingMessengerConfig.model
+        )) ||
+      (incomingMessengerConfig.organization &&
+        !messengerMetadata.organizations.find(
+          (o) => o.id === incomingMessengerConfig.organization
+        )) ||
+      (incomingMessengerConfig.timezone &&
+        !messengerMetadata.timezones.find(
+          (t) => t.id === incomingMessengerConfig.timezone
+        ))
+    ) {
+      response.status(400).json({ message: 'Invalid metadata option' });
+      return;
+    }
+    const config = configManager.config;
 
-  let mtConnectSink = config.dataSinks?.find(
-    (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
-  );
-
-  let currentMessengerSettings = mtConnectSink.messenger;
-
-  if (currentMessengerSettings) {
-    //TBD: Will frontend send unchanged values as null or same as old value?
-    currentMessengerSettings = {
-      ...currentMessengerSettings,
+    config.messenger = {
+      ...config.messenger,
       ...incomingMessengerConfig,
       password:
         incomingMessengerConfig.password?.length > 0
           ? incomingMessengerConfig.password
-          : currentMessengerSettings.password
+          : config.messenger.password
     };
-  } else if (mtConnectSink) {
-    mtConnectSink.messenger = incomingMessengerConfig;
-  } else {
-    //if mtconnect sink doesn't exist yet, is it usecase?
-    // TBD
-    config.dataSinks.push({
-      name: '', // TBD!
-      dataPoints: [],
-      enabled: true,
-      protocol: 'mtconnect',
-      messenger: incomingMessengerConfig
-    });
+
+    await configManager.configChangeCompleted();
+
+    response.status(200).json(null);
+  } catch (err) {
+    winston.warn(
+      `messengerConfigurationPostHandler:: Error while processing Post request ${JSON.stringify(
+        err
+      )}`
+    );
+    response.status(500).json(err);
   }
-  configManager.config = config;
-
-  await configManager.configChangeCompleted();
-  // TBD: actually it will automatically checkstatus after configChange event
-  await dataSinksManager.messengerManager.checkStatus();
-
-  response.status(200).json(null);
 }
 
 /**
@@ -156,9 +163,19 @@ async function messengerMetadataGetHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  //TBD
+  try {
+    let payload: IMessengerMetadata =
+      await dataSinksManager.messengerManager.getMetadata();
 
-  response.status(501).json(null);
+    response.status(200).json(payload);
+  } catch (err) {
+    winston.warn(
+      `messengerMetadataGetHandler:: Error while getting Messenger metadata ${JSON.stringify(
+        err
+      )}`
+    );
+    response.status(500).json(err); // TODO
+  }
 }
 
 export const messengerHandlers = {

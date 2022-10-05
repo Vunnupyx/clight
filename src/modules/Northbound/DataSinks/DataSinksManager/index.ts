@@ -119,8 +119,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     if (protocol === DataSinkProtocols.MTCONNECT) {
       this.messengerManager = new MessengerManager({
         configManager: this.configManager,
-        messengerConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT)
-          .messenger
+        messengerConfig: this.configManager.config.messenger
       });
     }
     const sink = this.dataSourceFactory(protocol);

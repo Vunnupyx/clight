@@ -1569,7 +1569,10 @@
         "operationId": "messengerMetadataGetHandler",
         "responses": {
           "200": {
-            "description": "Returns messenger server metadata"
+            "description": "Returns messenger server metadata",
+            "schema": {
+              "$ref": "#/definitions/messengerMetadata"
+            }
           }
         }
       }
@@ -2476,6 +2479,66 @@
         "registration": {
           "type": "string",
           "enum": ["unknown", "notregistered", "registered"]
+        }
+      }
+    },
+    "messengerMetadata": {
+      "type": "object",
+      "required": ["organizations", "timezones", "models"],
+      "properties": {
+        "organizations": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "timezones": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "number"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "number"
+                  }
+                }
+              }
+            ]
+          }
         }
       }
     }

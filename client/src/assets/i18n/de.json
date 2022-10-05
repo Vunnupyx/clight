@@ -203,7 +203,9 @@
     "DefaultValue": "",
     "SelectInput": "",
     "CurrentLiveValue": "",
-    "ReturnValueIfTrue": ""
+    "ReturnValueIfTrue": "",
+    "SetFormula": "",
+    "Formula": ""
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -217,8 +219,8 @@
     "SmallerEqual": "Kleiner gleich",
     "Equal": "Gleich",
     "Unequal": "Ungleich",
-    "Sum": "Summe",
-    "Enumeration": "Enumeration"
+    "Enumeration": "Enumeration",
+    "Calculation": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
@@ -307,6 +309,16 @@
     "Status":"",
     "Registration":"",
     "Password":"",
+    "DuplicatedAddress":"",
+    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
+    "OpcUaVariables": "",
+    "UmatiOpcUaVariables": "",
+    "CustomOpcUaVariables": "",
+    "AddOpcUaVariable": "",
+    "DataType": "",
+    "SetCustomOpcUaVariable": "",
+    "NodeId": "",
+    "DeleteMessage": ""
     "Username":"",
     "Hostname":"",
     "ServerStatus":"",
@@ -401,5 +413,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
+  },
+  "data-type": {
+    "String": "",
+    "Double": "",
+    "Byte": "",
+    "UInt16": "",
+    "UInt32": "",
+    "Boolean": ""
   }
 }

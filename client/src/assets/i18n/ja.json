@@ -203,7 +203,9 @@
     "DefaultValue": "",
     "SelectInput": "",
     "CurrentLiveValue": "",
-    "ReturnValueIfTrue": ""
+    "ReturnValueIfTrue": "",
+    "SetFormula": "",
+    "Formula": ""
   },
   "virtual-data-point-operation-type": {
     "And": "",
@@ -217,8 +219,8 @@
     "SmallerEqual": "",
     "Equal": "",
     "Unequal": "",
-    "Sum": "",
-    "Enumeration": ""
+    "Enumeration": "",
+    "Calculation": ""
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
@@ -307,6 +309,16 @@
     "Status":"",
     "Registration":"",
     "Password":"",
+    "DuplicatedAddress":"",
+    "HasDataMapping": "Datapoint is mapped to a source",
+    "OpcUaVariables": "",
+    "UmatiOpcUaVariables": "",
+    "CustomOpcUaVariables": "",
+    "AddOpcUaVariable": "",
+    "DataType": "",
+    "SetCustomOpcUaVariable": "",
+    "NodeId": "",
+    "DeleteMessage": "本当にデータポイントを削除しますか？"
     "Username":"",
     "Hostname":"",
     "ServerStatus":"",
@@ -401,5 +413,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+  },
+  "data-type": {
+    "String": "",
+    "Double": "",
+    "Byte": "",
+    "UInt16": "",
+    "UInt32": "",
+    "Boolean": ""
   }
 }

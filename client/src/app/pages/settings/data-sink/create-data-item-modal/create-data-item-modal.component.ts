@@ -2,10 +2,9 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 import {DataSinkService} from '../../../../services';
-import {DataPoint, DataSinkProtocol} from '../../../../models';
+import {DataSinkProtocol, PreDefinedDataPoint} from '../../../../models';
 
 export interface CreateDataItemModalData {
-  selection: string;
   dataSinkProtocol: DataSinkProtocol;
   existingAddresses: string[];
 }
@@ -15,32 +14,23 @@ export interface CreateDataItemModalData {
   templateUrl: 'create-data-item-modal.component.html'
 })
 export class CreateDataItemModalComponent implements OnInit {
-  rows: DataPoint[] = [];
+  rows: PreDefinedDataPoint[] = [];
   DataSinkProtocol = DataSinkProtocol;
 
   constructor(
     private dataSinkService: DataSinkService,
-    private dialogRef: MatDialogRef<CreateDataItemModalComponent>,
+    private dialogRef: MatDialogRef<CreateDataItemModalComponent, PreDefinedDataPoint>,
     @Inject(MAT_DIALOG_DATA) public data: CreateDataItemModalData
   ) {}
 
   ngOnInit() {
-    switch (this.data.dataSinkProtocol) {
-      case DataSinkProtocol.MTConnect:
-        this.rows = this.dataSinkService.getPredefinedMtConnectDataPoints();
-        break;
-      case DataSinkProtocol.OPC:
-        this.rows = this.dataSinkService.getPredefinedOPCDataPoints();
-        break;
-      case DataSinkProtocol.DH:
-        break;
-      default:
-        break;
+    if (this.data.dataSinkProtocol === DataSinkProtocol.MTConnect) {
+      this.rows = this.dataSinkService.getPredefinedMtConnectDataPoints();
     }
   }
 
-  onSelect({ selected }) {
-    this.dialogRef.close(selected[0]);
+  onSelect(selected: PreDefinedDataPoint) {
+    this.dialogRef.close(selected);
   }
 
   onClose() {

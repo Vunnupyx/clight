@@ -40,7 +40,6 @@ export interface MessengerStore {
   configuration: MessengerConfiguration;
 }
 
-
 // TODO: Connect to API
 let RESPONSE_CONFIG: MessengerConfiguration = {
   // hostname: 'Test',

@@ -6,17 +6,33 @@ title: 'Data source: Sinumerik 840D SL'
 
 With this data source you can connect Siemens Sinumerik 840D SL controls. You can read data points from the NCK and the PLC part of the 840D.
 
+On the top of the page you find the main settings for the data source: Enabling, entering IP address and selecting the type.
+
+## Changing the type of the Siemens data source
+
+You can use the Type dropdown menu on the top of the page to change select which type of ioshield you are using.
+
+![Siemens Type Options](../static/img/datasource/siemens_types.png)
+
 ## Adding new Data Points
 
-To add a new NCK data point click on the "+"-button on the top left. In the new data point row, you can select between "NCK" and "PLC" variables.
+![Siemens add new data point](../static/img/datasource/add.png)
+
+To add a new NCK data point click on the blue `Add Data Point` button ![data source add new button](../static/img/datasource/addbutton.png) on the top left of the table.
+
+New data point is added to the end of the list. In the new data point, give a name and you can select between "NCK" and "PLC" variables. You will need to provide the address of the data point when you choose PLC as type or select a variable when you choose NCK as type. After you are done, click green Save button at the end of the row. To apply all variable changes you made, please click `Apply Changes` button on the top right side of the page.
 
 ### NCK Data Points
 
-For NCK you can select from a list of BTSS string like variable addresses, by clicking on the "->"-Button. After you added or changed a variable, it's value is available in the runtime.
+![NCK new data point row](../static/img/datasource/nck.png)
+
+For NCK you can select from a list of BTSS string like variable addresses, under the Address column by using `Select` button ![NCK select button](../static/img/datasource/nckselectbutton.png), as seen in the image above. After you added or changed a variable, its value is available in the runtime.
 
 ### PLC Data Points
 
-The data point addresses are slightly different than the variable addresses used in Step 7 or TIA Portal. The main difference is that the data point address includes the data type, so that the IoT connector flex can decode the raw bytes properly. You can enter a data point address string in the text field on the data point line.
+![PLC new data point row](../static/img/datasource/plc.png)
+
+The data point addresses are slightly different than the variable addresses used in Step 7 or TIA Portal. The main difference is that the data point address includes the data type, so that the IoT connector flex can decode the raw bytes properly. You can enter a data point address string in the text field under Address column on the data point row.
 
 Here are some examples to guide you in addressing your variables:
 

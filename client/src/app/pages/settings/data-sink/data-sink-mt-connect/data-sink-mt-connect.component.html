@@ -411,28 +411,6 @@
           >
             {{ value }}
           </div>
-<<<<<<< HEAD
-          <mat-select
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
-            [ngModel]="value"
-            (ngModelChange)="unsavedRow && (unsavedRow.address = $event)"
-          >
-            <mat-option>
-              <ngx-mat-select-search
-                placeholderLabel="Search..."
-                noEntriesFoundLabel="No results found"
-                [(ngModel)]="filterAddressStr"
-              ></ngx-mat-select-search>
-            </mat-option>
-            <mat-option
-              *ngFor="let item of addressesOrDataItems"
-              [value]="item.address"
-              [disabled]="isExistingDataPointAddress(item.address!)"
-            >
-              {{ item.name }}
-            </mat-option>
-          </mat-select>
-=======
           <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
             <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
               <mat-select [ngModel]="value"
@@ -451,7 +429,6 @@
               <input type="text" class="w-100" [ngModel]="value" readonly />
             </ng-container>
           </ng-container>
->>>>>>> bb/develop
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column

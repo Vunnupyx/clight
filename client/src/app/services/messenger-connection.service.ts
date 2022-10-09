@@ -7,14 +7,14 @@ import { ToastrService } from 'ngx-toastr';
 import { map } from 'rxjs/operators';
 
 export enum ServerStatus {
-  Invalidhost = 'invalidhost',
-  NotConfigured = 'notconfigured',
-  Invalidauth = 'invalidauth',
+  Invalidhost = 'invalid_host',
+  NotConfigured = 'not_configured',
+  Invalidauth = 'invalid_auth',
   Available = 'available'
 }
 
 export enum RegistrationStatus {
-  Notregistered = 'notregistered',
+  Notregistered = 'not_registered',
   Registered = 'registered',
   Unknown = 'unknown'
 }

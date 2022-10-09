@@ -53,6 +53,7 @@ export class MessengerConnectionComponent implements OnInit {
     this.messengerConnectionService
       .updateNetworkConfig(this.profileForm.value)
       .then(() => this.messengerConnectionService.getMessengerStatus())
+      .then(() => this.messengerConnectionService.getMessengerMetadata())
       .then(() => {
         if (
           this.data.status.server === ServerStatus.Available &&

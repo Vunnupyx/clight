@@ -43,28 +43,42 @@ export interface MessengerStatus {
   registrationErrorReason: RegistrationErrorReasonStatus;
 }
 
+export interface MessengerMetadata {
+  organizations: [{name: string, id: string}],
+  timezones: [{name: string, id: number}],
+  models: [{name: string, id: number}]
+}
+
 export interface MessengerStore {
   isBusy: boolean;
   status: MessengerStatus;
   configuration: MessengerConfiguration;
+  metadata: MessengerMetadata;
 }
 
 // TODO: Connect to API
 let RESPONSE_CONFIG: MessengerConfiguration = {
-  // hostname: 'Test',
-  // username: 'Teest',
-  // password: true,
-  // model: 'Test',
-  // name: 'Test',
-  // organization: 'Test',
-  // timezone: 8
+  hostname: 'Test',
+  username: 'Teest',
+  password: true,
+  model: 'Test',
+  name: 'Test',
+  organization: 'Test',
+  timezone: 8
 } as any;
 
 // TODO: Connect to API
 const RESPONSE_STATUS: MessengerStatus = {
-  // server: ServerStatus.Available,
-  // registration: RegistrationStatus.Error,
-  // registrationErrorReason: RegistrationErrorReasonStatus.InvalidOrganization,
+  server: ServerStatus.Available,
+  registration: RegistrationStatus.Registered,
+  registrationErrorReason: null,
+} as any;
+
+// TODO: Connect to API
+const RESPONSE_METADATA: MessengerMetadata = {
+  organizations: [{name: 'Test', id: '1'}, {name: 'Second', id: '3'}],
+  timezones: [{name: 'Europe', id: 1}, {name: 'Africa', id: 8}],
+  models: [{name: 'Test', id: 1}, {name: 'Last', id: 1}]
 } as any;
 
 @Injectable({
@@ -88,6 +102,10 @@ export class MessengerConnectionService {
 
   get status() {
     return this._store.state.pipe(map((x) => x.status));
+  }
+
+  get metadata() {
+    return this._store.state.pipe(map((x) => x.metadata));
   }
 
   get isBusy() {
@@ -168,6 +186,29 @@ export class MessengerConnectionService {
     }
   }
 
+  async getMessengerMetadata() {
+    this._store.patchState((state) => {
+      state.isBusy = true;
+    });
+    try {
+      const response = await this.httpService.get<MessengerMetadata>(
+        `/messenger/metadata`,
+        undefined,
+        RESPONSE_METADATA
+      );
+      this._store.patchState((state) => {
+        state.metadata = response;
+        state.isBusy = false;
+      });
+    } catch (err) {
+      this._store.patchState((state) => {
+        state.isBusy = false;
+      });
+      this.toastr.error(this.translate.instant('settings-data-sink.LoadError'));
+      errorHandler(err);
+    }
+  }
+
   private _emptyState() {
     return <MessengerStore>{
       configuration: {
@@ -181,7 +222,13 @@ export class MessengerConnectionService {
       },
       status: {
         server: ServerStatus.NotConfigured,
-        registration: RegistrationStatus.Unknown
+        registration: RegistrationStatus.Unknown,
+        registrationErrorReason: null
+      },
+      metadata: {
+        organizations: [{name: '', id: ''}],
+        models: [{name: '', id: 0}],
+        timezones: [{name: '', id: 0}]
       },
       isBusy: false
     };

@@ -13,7 +13,22 @@
         </div>
         <div class="col">
           <mat-form-field>
-            <input type="text" matInput formControlName="model" />
+            <mat-select name="model" required formControlName="model">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="modelOptionKeyphrase"
+                  [ngModelOptions]="{ standalone: true }"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="let opt of optionsSearchResults(this.messengerMetadata?.models, modelOptionKeyphrase)"
+                [value]="opt.name"
+              >
+                {{ opt.name }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
       </div>
@@ -33,7 +48,22 @@
         </div>
         <div class="col">
           <mat-form-field>
-            <input type="text" matInput formControlName="organization" />
+            <mat-select name="organization" required formControlName="organization">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="organizationOptionKeyphrase"
+                  [ngModelOptions]="{ standalone: true }"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="let opt of optionsSearchResults(this.messengerMetadata?.organizations, organizationOptionKeyphrase)"
+                [value]="opt.name"
+              >
+                {{ opt.name }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
       </div>
@@ -53,10 +83,10 @@
                 ></ngx-mat-select-search>
               </mat-option>
               <mat-option
-                *ngFor="let opt of timezoneOptionsSearchResults"
-                [value]="opt"
+                *ngFor="let opt of optionsSearchResults(this.messengerMetadata?.timezones, timezoneOptionKeyphrase)"
+                [value]="opt.id"
               >
-                {{ opt }}
+                {{ opt.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>

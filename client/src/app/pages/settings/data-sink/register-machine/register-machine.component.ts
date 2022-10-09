@@ -1,11 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {
-  MessengerConnectionService,
-  MessengerStore
-} from 'app/services/messenger-connection.service';
-import * as moment from 'moment';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MessengerConnectionService, MessengerMetadata, MessengerStore } from 'app/services/messenger-connection.service';
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-register-machine',
@@ -17,27 +14,14 @@ export class RegisterMachineComponent implements OnInit {
     model: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),
     organization: new FormControl('', Validators.required),
-    timezone: new FormControl('', Validators.required)
+    timezone: new FormControl(0, Validators.required)
   });
-
-  get timezoneOptionsSearchResults() {
-    if (!this.timezoneOptions || !this.timezoneOptionKeyphrase) {
-      return this.timezoneOptions;
-    }
-    return this.timezoneOptions.filter((x) =>
-      x
-        .toLocaleLowerCase()
-        .includes(this.timezoneOptionKeyphrase.toLocaleLowerCase())
-    );
-  }
-
-  get isBusy() {
-    return this.messengerConnectionService.isBusy;
-  }
-
   isFormSending = true;
-  timezoneOptions!: string[];
   timezoneOptionKeyphrase = '';
+  organizationOptionKeyphrase = '';
+  modelOptionKeyphrase = '';
+  messengerMetadata: MessengerMetadata;
+  sub = new Subscription();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Partial<MessengerStore>,
@@ -45,13 +29,35 @@ export class RegisterMachineComponent implements OnInit {
     private messengerConnectionService: MessengerConnectionService
   ) {}
 
+  get optionsSearchResults() {
+    return (items: any[], searchKeyphrase: string) => {
+      if (!items || !searchKeyphrase) {
+        return items;
+      }
+      return items.filter((x) =>
+        x.name
+          .toLocaleLowerCase()
+          .includes(searchKeyphrase.toLocaleLowerCase())
+      );
+    }
+
+  }
+
+  get isBusy() {
+    return this.messengerConnectionService.isBusy;
+  }
+
   ngOnInit(): void {
-    this.timezoneOptions = this._getTimezoneOptions();
+    this.sub.add(
+      this.messengerConnectionService.metadata.subscribe(
+        (v) => (this.messengerMetadata = v)
+      )
+    );
     this.profileForm.patchValue({
       model: this.data.configuration.model,
       name: this.data.configuration.name,
       organization: this.data.configuration.organization,
-      timezone: this.timezoneOptions[this.data.configuration.timezone]
+      timezone: this.data.configuration.timezone
     });
   }
 
@@ -60,29 +66,10 @@ export class RegisterMachineComponent implements OnInit {
       model: this.profileForm.value.model,
       name: this.profileForm.value.name,
       organization: this.profileForm.value.organization,
-      timezone: this.timezoneOptions.indexOf(this.profileForm.value.timezone)
+      timezone: Number(this.profileForm.value.timezone)
     };
     this.messengerConnectionService.updateNetworkConfig(obj);
     this.close();
-  }
-
-  private _getTimezoneOptions() {
-    return moment.tz
-      .names()
-      .filter((name) =>
-        [
-          'Universal',
-          'Africa/',
-          'America/',
-          'Antarctica/',
-          'Arctic/',
-          'Asia/',
-          'Australia/',
-          'Europe/',
-          'Indian/',
-          'Pacific/'
-        ].find((x) => name.startsWith(x))
-      );
   }
 
   close() {

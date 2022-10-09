@@ -9,7 +9,8 @@ import {
   MessengerConnectionService,
   MessengerStore,
   RegistrationStatus,
-  ServerStatus
+  ServerStatus,
+  RegistrationErrorReasonStatus
 } from 'app/services/messenger-connection.service';
 import { RegisterMachineComponent } from '../register-machine/register-machine.component';
 
@@ -26,6 +27,7 @@ export class MessengerConnectionComponent implements OnInit {
   });
   ServerStatus = ServerStatus;
   RegistrationStatus = RegistrationStatus;
+  RegistrationErrorReasonStatus = RegistrationErrorReasonStatus;
   isFormSending = true;
 
   get isBusy() {

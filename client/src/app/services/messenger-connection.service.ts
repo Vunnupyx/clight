@@ -16,7 +16,15 @@ export enum ServerStatus {
 export enum RegistrationStatus {
   Notregistered = 'not_registered',
   Registered = 'registered',
-  Unknown = 'unknown'
+  Unknown = 'unknown',
+  Error = 'error'
+}
+export enum RegistrationErrorReasonStatus {
+  UnexpectedError  = 'unexpected_error',
+  InvalidOrganization = 'invalid_organization ',
+  InvalidTimezone = 'invalid_timezone',
+  InvalidModel = 'invalid_model',
+  Duplicated = 'duplicated'
 }
 
 export interface MessengerConfiguration {
@@ -32,6 +40,7 @@ export interface MessengerConfiguration {
 export interface MessengerStatus {
   server: ServerStatus;
   registration: RegistrationStatus;
+  registrationErrorReason: RegistrationErrorReasonStatus;
 }
 
 export interface MessengerStore {
@@ -54,7 +63,8 @@ let RESPONSE_CONFIG: MessengerConfiguration = {
 // TODO: Connect to API
 const RESPONSE_STATUS: MessengerStatus = {
   // server: ServerStatus.Available,
-  // registration: RegistrationStatus.Registered
+  // registration: RegistrationStatus.Error,
+  // registrationErrorReason: RegistrationErrorReasonStatus.InvalidOrganization,
 } as any;
 
 @Injectable({

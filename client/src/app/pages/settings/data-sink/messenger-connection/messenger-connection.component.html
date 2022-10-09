@@ -78,19 +78,48 @@
             <ng-container [ngSwitch]="data.status.registration">
               <ng-container *ngSwitchCase="RegistrationStatus.Registered">
                 {{
-                  'settings-data-sink.RegistrationStatus.Registered' | translate
+                'settings-data-sink.RegistrationStatus.Registered' | translate
                 }}
               </ng-container>
               <ng-container *ngSwitchCase="RegistrationStatus.Notregistered">
                 {{
-                  'settings-data-sink.RegistrationStatus.Notregistered'
-                    | translate
+                'settings-data-sink.RegistrationStatus.Notregistered'
+                  | translate
                 }}
               </ng-container>
               <ng-container *ngSwitchCase="RegistrationStatus.Unknown">
                 {{
-                  'settings-data-sink.RegistrationStatus.Unknown' | translate
+                'settings-data-sink.RegistrationStatus.Unknown' | translate
                 }}
+              </ng-container>
+              <ng-container *ngSwitchCase="RegistrationStatus.Error">
+                <ng-container [ngSwitch]="data.status.registrationErrorReason">
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.UnexpectedError">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.UnexpectedError' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidOrganization">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.InvalidOrganization' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidTimezone">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.InvalidTimezone' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidModel">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.InvalidModel' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.Duplicated">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.Duplicated' | translate
+                    }}
+                  </ng-container>
+                </ng-container>
               </ng-container>
             </ng-container>
           </p>

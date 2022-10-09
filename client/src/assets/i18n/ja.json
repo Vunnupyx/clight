@@ -318,7 +318,7 @@
     "DataType": "",
     "SetCustomOpcUaVariable": "",
     "NodeId": "",
-    "DeleteMessage": "本当にデータポイントを削除しますか？"
+    "DeleteMessage": "本当にデータポイントを削除しますか？",
     "Username":"",
     "Hostname":"",
     "ServerStatus":"",
@@ -333,6 +333,13 @@
       "NotConfigured": "",
       "Invalidauth": "",
       "Available": ""
+    },
+    "RegistrationErrorReason": {
+      "UnexpectedError": "",
+      "InvalidOrganization": "",
+      "InvalidTimezone": "",
+      "InvalidModel": "",
+      "Duplicated": ""
     }
   },
   "settings-data-mapping": {

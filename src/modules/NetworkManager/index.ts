@@ -1,6 +1,4 @@
 import { isNil, isUndefined } from 'lodash';
-import { JsonDataSetMessageContentMask } from 'node-opcua-types';
-import { stderr } from 'process';
 import winston from 'winston';
 import SshService from '../SshService';
 import { NetworkInterfaceInfo } from './interfaces';

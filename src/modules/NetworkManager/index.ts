@@ -65,6 +65,8 @@ export default class NetworkManagerCliController {
     config: NetworkInterfaceInfo
   ): Promise<void> {
     const logPrefix = `${NetworkManagerCliController.name}::setConfiguration`;
+    winston.debug(`${logPrefix} called.`);
+
     const oldConfig = await this.getConfiguration(networkInterface);
 
     if (!NetworkManagerCliController.checkConfigChanged(config, oldConfig)) {
@@ -73,6 +75,7 @@ export default class NetworkManagerCliController {
     }
 
     let ipAddress = '';
+    // if IP is set in config
     if (
       !(
         isNil(config.ipAddress) ||
@@ -218,19 +221,28 @@ export default class NetworkManagerCliController {
    * Create NetworkInterfaceInfo object from parsed cli output.
    */
   private static decodeNmCliData(data): NetworkInterfaceInfo {
-    const ip = data['ipv4.addresses'] || data['IP4.ADDRESS[1]'];
-    const ipParts = ip.split('/'); // Example value: 10.202.55.150/24
-    let ipAddress = ipParts[0];
-    const cidr = parseInt(ipParts[1], 10);
-    let subnetMask = NetworkManagerCliController.cidrToNetmask(cidr);
-    if (ipAddress === '--' || ipAddress === '') {
+    const logPrefix = `NetworkManagerCliController::decodeNmCliData`;
+    winston.debug(`${logPrefix} decoding started.`);
+    const ipCidrString: string =
+      data['ipv4.addresses'] || data['IP4.ADDRESS[1]'] || '';
+    let ipAddress;
+    let subnetMask;
+    if (ipCidrString.length !== 0) {
+      const ipParts = ipCidrString.split('/'); // Example value: 10.202.55.150/24
+      ipAddress = ipParts[0];
+      const cidr = parseInt(ipParts[1], 10);
+      subnetMask = NetworkManagerCliController.cidrToNetmask(cidr);
+    } else {
+      winston.debug(
+        `${logPrefix} no valid IP address found. Set IP and Subnetmask to 'null'`
+      );
       ipAddress = null;
       subnetMask = null;
     }
-    let gateway = data['ipv4.gateway'] || data['IP4.GATEWAY'];
+    let gateway = data['ipv4.gateway'] || data['IP4.GATEWAY'] || '';
     if (gateway === '--') gateway = null;
     if (gateway === '') gateway = '0.0.0.0';
-    let dns = data['ipv4.dns'] || data['IP4.DNS[1]'];
+    let dns = data['ipv4.dns'] || data['IP4.DNS[1]'] || '';
     if (dns === '--' || dns === '') dns = null;
     let activated = false;
     let state = data['GENERAL.STATE'];

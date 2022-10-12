@@ -112,6 +112,14 @@ async function messengerConfigurationPostHandler(
     }
     const config = configManager.config;
 
+    if (
+      incomingMessengerConfig.hostname.length > 5 &&
+      (!incomingMessengerConfig.hostname.startsWith('http://') ||
+        !incomingMessengerConfig.hostname.startsWith('https://'))
+    ) {
+      incomingMessengerConfig.hostname = `http://${incomingMessengerConfig.hostname}`;
+    }
+
     config.messenger = {
       ...config.messenger,
       ...incomingMessengerConfig,

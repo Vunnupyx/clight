@@ -26,7 +26,8 @@ import {
   isDataPointMapping,
   IAuthUser,
   IAuthUsersConfig,
-  IDefaultTemplate
+  IDefaultTemplate,
+  IMessengerServerConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -732,6 +733,34 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         (dp) => !deleted.includes(dp.id)
       );
     }
+
+    await this.saveConfigToFile();
+  }
+
+  /**
+   * Update messenger config
+   */
+  public async updateMessengerConfig(
+    incomingMessengerConfig: IMessengerServerConfig
+  ): Promise<void> {
+    const config = this._config;
+
+    if (
+      incomingMessengerConfig.hostname.length > 5 &&
+      !incomingMessengerConfig.hostname.startsWith('http://') &&
+      !incomingMessengerConfig.hostname.startsWith('https://')
+    ) {
+      incomingMessengerConfig.hostname = `http://${incomingMessengerConfig.hostname}`;
+    }
+
+    config.messenger = {
+      ...config.messenger,
+      ...incomingMessengerConfig,
+      password:
+        incomingMessengerConfig.password?.length > 0
+          ? incomingMessengerConfig.password
+          : config.messenger.password
+    };
 
     await this.saveConfigToFile();
   }

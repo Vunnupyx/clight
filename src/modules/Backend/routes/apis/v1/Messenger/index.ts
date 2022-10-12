@@ -89,20 +89,27 @@ async function messengerConfigurationPostHandler(
       return;
     }
     //If host is already known and model/organization/timezone changes, check if the new values are correct
-    if (configManager.config.messenger?.hostname) {
+    if (
+      configManager.config.messenger?.hostname &&
+      incomingMessengerConfig.hostname ===
+        configManager.config.messenger?.hostname &&
+      (incomingMessengerConfig.model ||
+        incomingMessengerConfig.organization ||
+        incomingMessengerConfig.timezone)
+    ) {
       const messengerMetadata =
         await dataSinksManager.messengerManager.getMetadata();
       if (
         (incomingMessengerConfig.model &&
-          !messengerMetadata.models.find(
+          !messengerMetadata?.models?.find(
             (m) => m.id === incomingMessengerConfig.model
           )) ||
         (incomingMessengerConfig.organization &&
-          !messengerMetadata.organizations.find(
+          !messengerMetadata?.organizations?.find(
             (o) => o.id === incomingMessengerConfig.organization
           )) ||
         (incomingMessengerConfig.timezone &&
-          !messengerMetadata.timezones.find(
+          !messengerMetadata?.timezones?.find(
             (t) => t.id === incomingMessengerConfig.timezone
           ))
       ) {
@@ -110,25 +117,8 @@ async function messengerConfigurationPostHandler(
         return;
       }
     }
-    const config = configManager.config;
 
-    if (
-      incomingMessengerConfig.hostname.length > 5 &&
-      (!incomingMessengerConfig.hostname.startsWith('http://') ||
-        !incomingMessengerConfig.hostname.startsWith('https://'))
-    ) {
-      incomingMessengerConfig.hostname = `http://${incomingMessengerConfig.hostname}`;
-    }
-
-    config.messenger = {
-      ...config.messenger,
-      ...incomingMessengerConfig,
-      password:
-        incomingMessengerConfig.password?.length > 0
-          ? incomingMessengerConfig.password
-          : config.messenger.password
-    };
-
+    await configManager.updateMessengerConfig(incomingMessengerConfig);
     await configManager.configChangeCompleted();
     await dataSinksManager.messengerManager.handleConfigChange();
 

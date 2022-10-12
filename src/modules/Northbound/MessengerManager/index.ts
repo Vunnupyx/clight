@@ -98,6 +98,7 @@ export class MessengerManager {
       !this.messengerConfig?.password
     ) {
       this.serverStatus.server = 'not_configured';
+      winston.debug(`${logPrefix} Not configured`);
       return;
     }
 
@@ -113,6 +114,7 @@ export class MessengerManager {
     ) {
       this.serverStatus.registration = 'error';
       this.serverStatus.registrationErrorReason = 'invalid_model';
+      winston.debug(`${logPrefix} Invalid model`);
     }
     if (
       this.messengerConfig.organization &&
@@ -122,6 +124,7 @@ export class MessengerManager {
     ) {
       this.serverStatus.registration = 'error';
       this.serverStatus.registrationErrorReason = 'invalid_organization';
+      winston.debug(`${logPrefix} Invalid organization`);
     }
     if (
       this.messengerConfig.timezone &&
@@ -129,6 +132,7 @@ export class MessengerManager {
     ) {
       this.serverStatus.registration = 'error';
       this.serverStatus.registrationErrorReason = 'invalid_timezone';
+      winston.debug(`${logPrefix} Invalid timezone`);
     }
 
     if (this.serverStatus.registration === 'error') {
@@ -255,11 +259,13 @@ export class MessengerManager {
             clearTimeout(timer);
             resolve();
           } catch (err) {
+            if (err.message?.includes('ECONNREFUSED')) {
+              this.serverStatus.server = 'invalid_host';
+            }
             winston.warn(
               `${logPrefix} Error with login request: ${err.message}`
             );
             reject();
-            throw err;
           }
         })
       ]);
@@ -273,8 +279,10 @@ export class MessengerManager {
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalid_auth';
+          winston.debug(`${logPrefix} Invalid Auth`);
         } else if (response.status === 404) {
           this.serverStatus.server = 'invalid_host';
+          winston.debug(`${logPrefix} Invalid Host`);
         } else {
           winston.warn(
             `${logPrefix}  Unhandled response status ${response.status} ${response.statusText} ${response}`
@@ -297,160 +305,169 @@ export class MessengerManager {
     if (!this.loginToken) {
       await this.getLoginToken();
     }
-    await Promise.all([
-      new Promise<void>(async (resolve, reject) => {
-        //Read MachineCatalog
-        try {
-          const response = await fetch(
-            `${this.messengerConfig?.hostname}/adm/api/machinecatalog`,
-            {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.loginToken}`
+    try {
+      await Promise.all([
+        new Promise<void>(async (resolve, reject) => {
+          //Read MachineCatalog
+          try {
+            const response = await fetch(
+              `${this.messengerConfig?.hostname}/adm/api/machinecatalog`,
+              {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.loginToken}`
+                }
               }
-            }
-          );
-          if (response.ok) {
-            const data = await response?.json();
-            if (data.err || data.erd) {
-              winston.warn(
-                `${logPrefix} Error reading machine catalog. data.err:${data.err} data.erd:${data.erd}`
-              );
-              //TBD
-            }
-            this.machineCatalog = data.msg.map((machine) => ({
-              name: machine.Name,
-              id: machine.Id,
-              imageFileMame: machine.ImageFileName
-            }));
-            winston.debug(`${logPrefix} Machine Catalog read successfully.`);
-          } else {
-            await this.errorHandler(
-              response,
-              `${logPrefix} [Read MachineCatalog]`
             );
-          }
-          resolve();
-        } catch (err) {
-          winston.warn(`${logPrefix} Cannot read machine catalog ${err}`);
-          reject();
-        }
-      }),
-      new Promise<void>(async (resolve, reject) => {
-        //Read MachineObject for TimezoneID
-        try {
-          const response = await fetch(
-            `${this.messengerConfig?.hostname}/adm/api/machines/new`,
-            {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.loginToken}`
+            if (response.ok) {
+              const data = await response?.json();
+              if (data.err || data.erd) {
+                winston.warn(
+                  `${logPrefix} Error reading machine catalog. data.err:${data.err} data.erd:${data.erd}`
+                );
+                //TBD
               }
-            }
-          );
-
-          if (response.ok) {
-            const data = await response?.json();
-            if (data.err || data.erd) {
-              winston.warn(
-                `${logPrefix} Error reading machine object. data.err:${data.err} data.erd:${data.erd}`
+              this.machineCatalog = data.msg.map((machine) => ({
+                name: machine.Name,
+                id: machine.Id,
+                imageFileMame: machine.ImageFileName
+              }));
+              winston.debug(`${logPrefix} Machine Catalog read successfully.`);
+            } else {
+              await this.errorHandler(
+                response,
+                `${logPrefix} [Read MachineCatalog]`
               );
-              //TBD
             }
-            const machineObject = data.msg;
-            this.defaultTimezoneId = Number(machineObject.TimeZoneId);
-            winston.debug(`${logPrefix} Machine Object read successfully.`);
-          } else {
-            await this.errorHandler(
-              response,
-              `${logPrefix} [Read MachineObject]`
+            resolve();
+          } catch (err) {
+            winston.warn(`${logPrefix} Cannot read machine catalog ${err}`);
+            reject();
+          }
+        }),
+        new Promise<void>(async (resolve, reject) => {
+          //Read MachineObject for TimezoneID
+          try {
+            const response = await fetch(
+              `${this.messengerConfig?.hostname}/adm/api/machines/new`,
+              {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.loginToken}`
+                }
+              }
             );
-          }
-          resolve();
-        } catch (err) {
-          winston.warn(`${logPrefix} Cannot read machine object ${err}`);
-          reject();
-        }
-      }),
-      new Promise<void>(async (resolve, reject) => {
-        // Read organization units
-        try {
-          const response = await fetch(
-            `${this.messengerConfig?.hostname}/adm/api/orgunits`,
-            {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.loginToken}`
+
+            if (response.ok) {
+              const data = await response?.json();
+              if (data.err || data.erd) {
+                winston.warn(
+                  `${logPrefix} Error reading machine object. data.err:${data.err} data.erd:${data.erd}`
+                );
+                //TBD
               }
-            }
-          );
-
-          if (response.ok) {
-            const data = await response?.json();
-            if (data.err || data.erd) {
-              winston.warn(
-                `${logPrefix} Error reading organization units. data.err:${data.err} data.erd:${data.erd}`
+              const machineObject = data.msg;
+              this.defaultTimezoneId = Number(machineObject.TimeZoneId);
+              winston.debug(`${logPrefix} Machine Object read successfully.`);
+            } else {
+              await this.errorHandler(
+                response,
+                `${logPrefix} [Read MachineObject]`
               );
-              //TBD
             }
-            this.organizationUnits = data.msg.map((org) => ({
-              name: org.Name,
-              id: org.Id
-            }));
-
-            winston.debug(`${logPrefix} Organization Units read successfully.`);
-          } else {
-            await this.errorHandler(
-              response,
-              `${logPrefix} [Get OrganizationUnits]`
+            resolve();
+          } catch (err) {
+            winston.warn(`${logPrefix} Cannot read machine object ${err}`);
+            reject();
+          }
+        }),
+        new Promise<void>(async (resolve, reject) => {
+          // Read organization units
+          try {
+            const response = await fetch(
+              `${this.messengerConfig?.hostname}/adm/api/orgunits`,
+              {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.loginToken}`
+                }
+              }
             );
-          }
-          resolve();
-        } catch (err) {
-          winston.warn(`${logPrefix} Cannot read organization units ${err}`);
-          reject();
-        }
-      }),
-      new Promise<void>(async (resolve, reject) => {
-        // Read timezones
-        try {
-          const response = await fetch(
-            `${this.messengerConfig?.hostname}/adm/api/classifiers/timezones`,
-            {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.loginToken}`
+
+            if (response.ok) {
+              const data = await response?.json();
+              if (data.err || data.erd) {
+                winston.warn(
+                  `${logPrefix} Error reading organization units. data.err:${data.err} data.erd:${data.erd}`
+                );
+                //TBD
               }
-            }
-          );
-          if (response.ok) {
-            const data = await response?.json();
-            if (data.err || data.erd) {
-              winston.warn(
-                `${logPrefix} Error reading timezones. data.err:${data.err} data.erd:${data.erd}`
+              this.organizationUnits = data.msg.map((org) => ({
+                name: org.Name,
+                id: org.Id
+              }));
+
+              winston.debug(
+                `${logPrefix} Organization Units read successfully.`
               );
-              //TBD
+            } else {
+              await this.errorHandler(
+                response,
+                `${logPrefix} [Get OrganizationUnits]`
+              );
             }
-            this.timezones = data.msg;
-            winston.debug(`${logPrefix} Timezones read successfully.`);
-          } else {
-            await this.errorHandler(response, `${logPrefix} [Read Timezones]`);
+            resolve();
+          } catch (err) {
+            winston.warn(`${logPrefix} Cannot read organization units ${err}`);
+            reject();
           }
-          resolve();
-        } catch (err) {
-          winston.warn(`${logPrefix} Cannot read timezones ${err}`);
-          reject();
-        }
-      })
-    ]);
+        }),
+        new Promise<void>(async (resolve, reject) => {
+          // Read timezones
+          try {
+            const response = await fetch(
+              `${this.messengerConfig?.hostname}/adm/api/classifiers/timezones`,
+              {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.loginToken}`
+                }
+              }
+            );
+            if (response.ok) {
+              const data = await response?.json();
+              if (data.err || data.erd) {
+                winston.warn(
+                  `${logPrefix} Error reading timezones. data.err:${data.err} data.erd:${data.erd}`
+                );
+                //TBD
+              }
+              this.timezones = data.msg;
+              winston.debug(`${logPrefix} Timezones read successfully.`);
+            } else {
+              await this.errorHandler(
+                response,
+                `${logPrefix} [Read Timezones]`
+              );
+            }
+            resolve();
+          } catch (err) {
+            winston.warn(`${logPrefix} Cannot read timezones ${err}`);
+            reject();
+          }
+        })
+      ]);
+    } catch (err) {
+      winston.warn(`${logPrefix} Error reading metadata from server ${err}`);
+    }
   }
   /**
    * Updates the registration to Messenger

@@ -299,6 +299,16 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
+    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
+    "TimeZone":"",
+    "Organization":"",
+    "Model":"",
+    "ServerConfiguration":"",
+    "Messenger":"",
+    "Register":"",
+    "Status":"",
+    "Registration":"",
+    "Password":"",
     "DuplicatedAddress":"",
     "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
     "OpcUaVariables": "",
@@ -308,7 +318,29 @@
     "DataType": "",
     "SetCustomOpcUaVariable": "",
     "NodeId": "",
-    "DeleteMessage": ""
+    "DeleteMessage": "",
+    "Username":"",
+    "Hostname":"",
+    "ServerStatus":"",
+    "RegisterMachine":"",
+    "RegistrationStatus": {
+      "Notregistered": "",
+      "Registered": "",
+      "Unknown": ""
+    },
+    "ServerStatusValues": {
+      "Invalidhost": "",
+      "NotConfigured": "",
+      "Invalidauth": "",
+      "Available": ""
+    },
+    "RegistrationErrorReason": {
+      "UnexpectedError": "",
+      "InvalidOrganization": "",
+      "InvalidTimezone": "",
+      "InvalidModel": "",
+      "Duplicated": ""
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",

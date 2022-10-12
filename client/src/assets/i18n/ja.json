@@ -299,6 +299,16 @@
       "Disabled": "無効"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "HasDataMapping": "Datapoint is mapped to a source",
+    "TimeZone":"",
+    "Organization":"",
+    "Model":"",
+    "ServerConfiguration":"",
+    "Messenger":"",
+    "Register":"",
+    "Status":"",
+    "Registration":"",
+    "Password":"",
     "DuplicatedAddress":"",
     "HasDataMapping": "Datapoint is mapped to a source",
     "OpcUaVariables": "",
@@ -308,7 +318,29 @@
     "DataType": "",
     "SetCustomOpcUaVariable": "",
     "NodeId": "",
-    "DeleteMessage": "本当にデータポイントを削除しますか？"
+    "DeleteMessage": "本当にデータポイントを削除しますか？",
+    "Username":"",
+    "Hostname":"",
+    "ServerStatus":"",
+    "RegisterMachine":"",
+    "RegistrationStatus": {
+      "Notregistered": "",
+      "Registered": "",
+      "Unknown": ""
+    },
+    "ServerStatusValues": {
+      "Invalidhost": "",
+      "NotConfigured": "",
+      "Invalidauth": "",
+      "Available": ""
+    },
+    "RegistrationErrorReason": {
+      "UnexpectedError": "",
+      "InvalidOrganization": "",
+      "InvalidTimezone": "",
+      "InvalidModel": "",
+      "Duplicated": ""
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "データマッピング",

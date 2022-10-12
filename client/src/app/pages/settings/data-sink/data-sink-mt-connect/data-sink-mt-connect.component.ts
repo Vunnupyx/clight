@@ -24,7 +24,11 @@ import {
   DataSinkProtocol,
   PreDefinedDataPoint
 } from 'app/models';
-import { DataMappingService, DataPointService, DataSinkService } from 'app/services';
+import {
+  DataMappingService,
+  DataPointService,
+  DataSinkService
+} from 'app/services';
 import { arrayToMap, clone } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
@@ -34,8 +38,15 @@ import { CreateDataItemModalComponent, CreateDataItemModalData } from '../create
 import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
 import { Status } from 'app/shared/state';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { MessengerConnectionComponent } from '../messenger-connection/messenger-connection.component';
+import {
+  MessengerConfiguration,
+  MessengerConnectionService,
+  MessengerStatus
+} from 'app/services/messenger-connection.service';
 import { SelectOpcUaVariableModalComponent, SelectOpcUaVariableModalData } from '../select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
 import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -53,6 +64,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   MTConnectItems: PreDefinedDataPoint[] = [];
   OPCUAAddresses: PreDefinedDataPoint[] = [];
   DataSinkConnectionStatus = DataSinkConnectionStatus;
+  messengerConfiguration: MessengerConfiguration;
+  messengerStatus: MessengerStatus;
 
   @Input() dataSink?: DataSink;
   @Output() dataPointsChange = new EventEmitter<DataPoint[]>();
@@ -76,7 +89,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   statusSub!: Subscription;
 
   filterAddressStr = '';
-
   dsFormValid: boolean = false;
 
   @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
@@ -106,11 +118,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     return `http://${window.location.hostname}:15404/current`;
   }
 
+  get isBusy() {
+    return this.messengerConnectionService.isBusy;
+  }
+
   constructor(
     private dataPointService: DataPointService,
     private dataSinkService: DataSinkService,
     private dataMappingService: DataMappingService,
     private dialog: MatDialog,
+    private messengerConnectionService: MessengerConnectionService,
+    private toastr: ToastrService,
     private translate: TranslateService
   ) {}
 
@@ -129,11 +147,23 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.sub.add(
       combineLatest([
         this.dataPointService.dataPoints,
-        this.dataMappingService.dataMappings,
-      ]).subscribe(([dataPoints, dataMappings]) => this.onDataPoints(dataPoints, dataMappings))
+        this.dataMappingService.dataMappings
+      ]).subscribe(([dataPoints, dataMappings]) => 
+        this.onDataPoints(dataPoints, dataMappings)
+      )
     );
     this.sub.add(
       this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
+    );
+    this.sub.add(
+      this.messengerConnectionService.config.subscribe(
+        (v) => (this.messengerConfiguration = v)
+      )
+    );
+    this.sub.add(
+      this.messengerConnectionService.status.subscribe(
+        (v) => (this.messengerStatus = v)
+      )
     );
   }
 
@@ -152,7 +182,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngAfterViewInit() {
     this.ngxDatatable.columnMode = ColumnMode.force;
   }
-  
+
   onDiscard() {
     return this.dataPointService.revert();
   }
@@ -203,7 +233,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   onDataPoints(dataPoints: DataPoint[], dataMappings: DataMapping[]) {
     for (const datapoint of dataPoints) {
-      datapoint['dataMapping'] = dataMappings.find(x => datapoint.id == x.target);
+      datapoint['dataMapping'] = dataMappings.find(
+        (x) => datapoint.id == x.target
+      );
     }
     this.datapointRows = dataPoints;
     this.dataPointsChange.emit(dataPoints);
@@ -402,5 +434,20 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   private onConnection(x: DataSinkConnection | undefined) {
     this.connection = x;
+  }
+
+  openMessenger() {
+    this.messengerConnectionService
+      .getMessengerStatus()
+      .then(() => this.messengerConnectionService.getMessengerConfig())
+      .then(() => {
+        this.dialog.open(MessengerConnectionComponent, {
+          width: '900px',
+          data: {
+            configuration: this.messengerConfiguration,
+            status: this.messengerStatus
+          }
+        });
+      });
   }
 }

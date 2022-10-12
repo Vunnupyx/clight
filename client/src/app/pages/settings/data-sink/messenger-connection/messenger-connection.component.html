@@ -1,0 +1,149 @@
+<h2 mat-dialog-title>
+  {{ 'settings-data-sink.Messenger' | translate }}
+</h2>
+<form
+  [formGroup]="profileForm"
+  (ngSubmit)="profileForm.valid && isFormSending && !data.isBusy && onSubmit()"
+>
+  <mat-spinner *ngIf="isBusy"></mat-spinner>
+  <mat-dialog-content *ngIf="!isBusy">
+    <h3>{{ 'settings-data-sink.ServerConfiguration' | translate }}</h3>
+    <div class="row">
+      <div class="col">
+        <h5>{{ 'settings-data-sink.Server' | translate }}</h5>
+      </div>
+      <div class="col">
+        <h5
+          [style.color]="data.status.server === 'available' ? 'green' : 'red'"
+        >
+          <ng-container [ngSwitch]="data.status.server">
+            <ng-container *ngSwitchCase="ServerStatus.Invalidhost">
+              {{ 'settings-data-sink.ServerStatus.Invalidhost' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="ServerStatus.Available">
+              {{ 'settings-data-sink.ServerStatus.Available' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="ServerStatus.Invalidauth">
+              {{ 'settings-data-sink.ServerStatus.Invalidauth' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="ServerStatus.NotConfigured">
+              {{ 'settings-data-sink.ServerStatus.NotConfigured' | translate }}
+            </ng-container>
+          </ng-container>
+        </h5>
+      </div>
+    </div>
+    <div [formGroup]="profileForm">
+      <div class="row">
+        <div class="col">
+          <h5>{{ 'settings-data-sink.Hostname' | translate }}</h5>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <input type="text" matInput formControlName="hostname" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <h5>{{ 'settings-data-sink.Username' | translate }}</h5>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <input type="text" matInput formControlName="username" #username />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.Password' | translate }}</p>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <input type="password" matInput formControlName="password" />
+          </mat-form-field>
+        </div>
+      </div>
+      <h3>{{ 'settings-data-sink.Registration' | translate }}</h3>
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.Status' | translate }}</p>
+        </div>
+        <div class="col">
+          <p
+            [style.color]="
+              data.status.registration !== 'registered' ? 'red' : 'green'
+            "
+          >
+            <ng-container [ngSwitch]="data.status.registration">
+              <ng-container *ngSwitchCase="RegistrationStatus.Registered">
+                {{
+                'settings-data-sink.RegistrationStatus.Registered' | translate
+                }}
+              </ng-container>
+              <ng-container *ngSwitchCase="RegistrationStatus.Notregistered">
+                {{
+                'settings-data-sink.RegistrationStatus.Notregistered'
+                  | translate
+                }}
+              </ng-container>
+              <ng-container *ngSwitchCase="RegistrationStatus.Unknown">
+                {{
+                'settings-data-sink.RegistrationStatus.Unknown' | translate
+                }}
+              </ng-container>
+              <ng-container *ngSwitchCase="RegistrationStatus.Error">
+                <ng-container [ngSwitch]="data.status.registrationErrorReason">
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.UnexpectedError">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.UnexpectedError' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidOrganization">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.InvalidOrganization' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidTimezone">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.InvalidTimezone' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidModel">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.InvalidModel' | translate
+                    }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.Duplicated">
+                    {{
+                    'settings-data-sink.RegistrationErrorReason.Duplicated' | translate
+                    }}
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </p>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <div>
+    <mat-dialog-actions
+      *ngIf="!isBusy"
+      class="d-flex justify-content-end pr-10"
+    >
+      <button
+        mat-button
+        color="primary"
+        [disabled]="profileForm.invalid"
+        type="submit"
+        class="order-2"
+      >
+        {{ 'settings-data-sink.Register' | translate }}
+      </button>
+      <button mat-button class="btn btn-light order-1 mr-10" (click)="close()">
+        {{ 'settings-data-sink.Cancel' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>

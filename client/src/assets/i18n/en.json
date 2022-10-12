@@ -299,7 +299,6 @@
       "Disabled": "Disabled"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
-    "HasDataMapping": "Datapoint is mapped to a source",
     "TimeZone": "Time zone",
     "Organization": "Organization",
     "Model": "Model",
@@ -309,7 +308,7 @@
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Password",
-    "DuplicatedAddress":"You are not allowed to duplicate addresses",
+    "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "HasDataMapping": "Datapoint is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",
     "UmatiOpcUaVariables": "UMATI OPC UA Variables",

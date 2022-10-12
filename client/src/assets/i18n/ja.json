@@ -299,17 +299,16 @@
       "Disabled": "無効"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
-    "HasDataMapping": "Datapoint is mapped to a source",
-    "TimeZone":"",
-    "Organization":"",
-    "Model":"",
-    "ServerConfiguration":"",
-    "Messenger":"",
-    "Register":"",
-    "Status":"",
-    "Registration":"",
-    "Password":"",
-    "DuplicatedAddress":"",
+    "TimeZone": "Time zone",
+    "Organization": "Organization",
+    "Model": "Model",
+    "ServerConfiguration": "Server configuration",
+    "Messenger": "DMG MORI Messenger",
+    "Register": "Register",
+    "Status": "Status",
+    "Registration": "Registration",
+    "Password": "Password",
+    "DuplicatedAddress": "",
     "HasDataMapping": "Datapoint is mapped to a source",
     "OpcUaVariables": "",
     "UmatiOpcUaVariables": "",
@@ -319,27 +318,27 @@
     "SetCustomOpcUaVariable": "",
     "NodeId": "",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
-    "Username":"",
-    "Hostname":"",
-    "ServerStatus":"",
-    "RegisterMachine":"",
+    "Username": "Username",
+    "Hostname": "Hostname",
+    "Server": "Server Status",
+    "RegisterMachine": "Register Machine",
     "RegistrationStatus": {
-      "Notregistered": "",
-      "Registered": "",
-      "Unknown": ""
+      "Notregistered": "You are not registered",
+      "Registered": "Your machine is registered",
+      "Unknown": "Registration status is unknown"
     },
-    "ServerStatusValues": {
-      "Invalidhost": "",
-      "NotConfigured": "",
-      "Invalidauth": "",
-      "Available": ""
+    "ServerStatus": {
+      "Invalidhost": "Server host is invalid",
+      "NotConfigured": "Server is not configured",
+      "Invalidauth": "Server authentication is invalid",
+      "Available": "Server is available"
     },
     "RegistrationErrorReason": {
-      "UnexpectedError": "",
-      "InvalidOrganization": "",
-      "InvalidTimezone": "",
-      "InvalidModel": "",
-      "Duplicated": ""
+      "UnexpectedError": "An unexpected error occurred, that could not be specified",
+      "InvalidOrganization": "Organization does not exist",
+      "InvalidTimezone": "Timezone does not exist",
+      "InvalidModel": "Model does not exist",
+      "Duplicated": "A machine with the same serial number and different MTConnect URL is registered"
     }
   },
   "settings-data-mapping": {

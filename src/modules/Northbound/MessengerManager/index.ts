@@ -197,6 +197,7 @@ export class MessengerManager {
           ) {
             this.serverStatus.registration = 'registered';
             this.serverStatus.registrationErrorReason = null;
+            winston.debug(`${logPrefix} machine is registered`);
           }
         }
       } else {
@@ -236,22 +237,30 @@ export class MessengerManager {
           }, 10000);
         }),
         new Promise<void>(async (resolve, reject) => {
-          response = await fetch(
-            `${this.messengerConfig?.hostname}/adm/api/auth/login`,
-            {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                User: this.messengerConfig.username,
-                Pass: this.messengerConfig.password
-              })
-            }
-          );
-          clearTimeout(timer);
-          resolve();
+          try {
+            response = await fetch(
+              `${this.messengerConfig?.hostname}/adm/api/auth/login`,
+              {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  User: this.messengerConfig.username,
+                  Pass: this.messengerConfig.password
+                })
+              }
+            );
+            clearTimeout(timer);
+            resolve();
+          } catch (err) {
+            winston.warn(
+              `${logPrefix} Error with login request: ${err.message}`
+            );
+            reject();
+            throw err;
+          }
         })
       ]);
 
@@ -556,7 +565,7 @@ export class MessengerManager {
   /**
    * Handles changes in config
    */
-  private async handleConfigChange() {
+  public async handleConfigChange() {
     const logPrefix = `${this.name}::handleConfigChange`;
     const newMessengerConfig = this.configManager.config.messenger;
 

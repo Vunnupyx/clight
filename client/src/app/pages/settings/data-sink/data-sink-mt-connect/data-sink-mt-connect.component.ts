@@ -40,9 +40,7 @@ import { Status } from 'app/shared/state';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { MessengerConnectionComponent } from '../messenger-connection/messenger-connection.component';
 import {
-  MessengerConfiguration,
-  MessengerConnectionService,
-  MessengerStatus
+  MessengerConnectionService
 } from 'app/services/messenger-connection.service';
 import { SelectOpcUaVariableModalComponent, SelectOpcUaVariableModalData } from '../select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
 import { TranslateService } from '@ngx-translate/core';

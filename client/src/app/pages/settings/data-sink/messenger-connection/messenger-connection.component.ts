@@ -1,19 +1,17 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA
+  MatDialogRef
 } from '@angular/material/dialog';
 import {
   MessengerConnectionService,
-  MessengerStore,
   RegistrationStatus,
   ServerStatus,
   RegistrationErrorReasonStatus, MessengerConfiguration, MessengerStatus
 } from 'app/services/messenger-connection.service';
 import { RegisterMachineComponent } from '../register-machine/register-machine.component';
-import {Subscription} from "rxjs";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-messenger-connection',
@@ -58,7 +56,7 @@ export class MessengerConnectionComponent implements OnInit {
     this.profileForm.patchValue({
       hostname: this.messengerConfiguration.hostname,
       username: this.messengerConfiguration.username,
-      password: this.getPassword(this.messengerConfiguration.password)
+      password: this.messengerConfiguration.password
     });
   }
 
@@ -90,10 +88,5 @@ export class MessengerConnectionComponent implements OnInit {
   close() {
     this.isFormSending = false;
     this.dialogRef.close();
-  }
-
-  getPassword(v: boolean | string) {
-    if (v) return '00000000';
-    return '';
   }
 }

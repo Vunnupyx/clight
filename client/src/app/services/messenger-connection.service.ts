@@ -1,6 +1,6 @@
-import { Injectable, Optional } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { HttpMockupService, HttpService } from 'app/shared';
+import { HttpService } from 'app/shared';
 import { Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
 import { ToastrService } from 'ngx-toastr';
@@ -21,7 +21,7 @@ export enum RegistrationStatus {
 }
 export enum RegistrationErrorReasonStatus {
   UnexpectedError  = 'unexpected_error',
-  InvalidOrganization = 'invalid_organization ',
+  InvalidOrganization = 'invalid_organization',
   InvalidTimezone = 'invalid_timezone',
   InvalidModel = 'invalid_model',
   Duplicated = 'duplicated'
@@ -30,7 +30,7 @@ export enum RegistrationErrorReasonStatus {
 export interface MessengerConfiguration {
   hostname: string | null;
   username: string | null;
-  password: boolean | string;
+  password: string | null;
   model: string | null;
   name: string | null;
   organization: string | null;
@@ -56,31 +56,6 @@ export interface MessengerStore {
   metadata: MessengerMetadata;
 }
 
-// TODO: Connect to API
-let RESPONSE_CONFIG: MessengerConfiguration = {
-  hostname: 'Test',
-  username: 'Teest',
-  password: true,
-  model: 'Test',
-  name: 'Test',
-  organization: 'Test',
-  timezone: 8
-} as any;
-
-// TODO: Connect to API
-const RESPONSE_STATUS: MessengerStatus = {
-  server: ServerStatus.Available,
-  registration: RegistrationStatus.Registered,
-  registrationErrorReason: null,
-} as any;
-
-// TODO: Connect to API
-const RESPONSE_METADATA: MessengerMetadata = {
-  organizations: [{name: 'Test', id: '1'}, {name: 'Second', id: '3'}],
-  timezones: [{name: 'Europe', id: 1}, {name: 'Africa', id: 8}],
-  models: [{name: 'Test', id: 1}, {name: 'Last', id: 1}]
-} as any;
-
 @Injectable({
   providedIn: 'root'
 })
@@ -89,7 +64,7 @@ export class MessengerConnectionService {
 
   constructor(
     storeFactory: StoreFactory<MessengerStore>,
-    private httpService: HttpMockupService,
+    private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -120,7 +95,6 @@ export class MessengerConnectionService {
       const response = await this.httpService.get<MessengerConfiguration>(
         `/messenger/configuration`,
         undefined,
-        RESPONSE_CONFIG
       );
       this._store.patchState((state) => {
         state.configuration = response;
@@ -143,7 +117,6 @@ export class MessengerConnectionService {
       const response = await this.httpService.get<MessengerStatus>(
         `/messenger/status`,
         undefined,
-        RESPONSE_STATUS
       );
       this._store.patchState((state) => {
         state.status = response;
@@ -163,12 +136,10 @@ export class MessengerConnectionService {
       state.isBusy = true;
     });
     try {
-      this.setMockData(obj);
       const response = await this.httpService.post<any>(
         `/messenger/configuration`,
         obj,
         undefined,
-        RESPONSE_CONFIG
       );
       this._store.patchState((state) => {
         state.configuration = response;
@@ -194,7 +165,6 @@ export class MessengerConnectionService {
       const response = await this.httpService.get<MessengerMetadata>(
         `/messenger/metadata`,
         undefined,
-        RESPONSE_METADATA
       );
       this._store.patchState((state) => {
         state.metadata = response;
@@ -214,7 +184,7 @@ export class MessengerConnectionService {
       configuration: {
         hostname: null,
         username: null,
-        password: false,
+        password: null,
         model: null,
         name: null,
         organization: null,
@@ -232,9 +202,5 @@ export class MessengerConnectionService {
       },
       isBusy: false
     };
-  }
-
-  setMockData(obj: Partial<MessengerConfiguration>) {
-    RESPONSE_CONFIG = { ...RESPONSE_CONFIG, ...obj };
   }
 }

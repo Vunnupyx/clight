@@ -299,17 +299,16 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
-    "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
-    "TimeZone":"",
-    "Organization":"",
-    "Model":"",
-    "ServerConfiguration":"",
-    "Messenger":"",
-    "Register":"",
-    "Status":"",
-    "Registration":"",
-    "Password":"",
-    "DuplicatedAddress":"",
+    "TimeZone": "Zeitzone",
+    "Organization": "Organisation",
+    "Model": "Modell",
+    "ServerConfiguration": "Server Konfiguration",
+    "Messenger": "Messenger",
+    "Register": "Registrieren",
+    "Status": "Status",
+    "Registration": "Registration",
+    "Password": "Passwort",
+    "DuplicatedAddress": "",
     "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
     "OpcUaVariables": "",
     "UmatiOpcUaVariables": "",
@@ -319,27 +318,27 @@
     "SetCustomOpcUaVariable": "",
     "NodeId": "",
     "DeleteMessage": "",
-    "Username":"",
-    "Hostname":"",
-    "ServerStatus":"",
-    "RegisterMachine":"",
+    "Username": "Benutzername",
+    "Hostname": "Hostname",
+    "Server": "Server Status",
+    "RegisterMachine": "Machine Registrieren",
     "RegistrationStatus": {
-      "Notregistered": "",
-      "Registered": "",
-      "Unknown": ""
+      "Notregistered": "Nicht registriert",
+      "Registered": "Registriert",
+      "Unknown": "Unbekannt"
     },
-    "ServerStatusValues": {
-      "Invalidhost": "",
-      "NotConfigured": "",
-      "Invalidauth": "",
-      "Available": ""
+    "ServerStatus": {
+      "Invalidhost": "Invalider Host",
+      "NotConfigured": "Nicht konfiguriert",
+      "Invalidauth": "Invalid Auth",
+      "Available": "Verfügbar"
     },
     "RegistrationErrorReason": {
-      "UnexpectedError": "",
-      "InvalidOrganization": "",
-      "InvalidTimezone": "",
-      "InvalidModel": "",
-      "Duplicated": ""
+      "UnexpectedError": "Unbekannter Fehler",
+      "InvalidOrganization": "Unbekannte Organisation",
+      "InvalidTimezone": "Invalide Zeitzone",
+      "InvalidModel": "Invalides Modell",
+      "Duplicated": "Eine Machine mit gleicher Serialnummer und unterschiedliche MTConnect URL wurde schon registriert."
     }
   },
   "settings-data-mapping": {

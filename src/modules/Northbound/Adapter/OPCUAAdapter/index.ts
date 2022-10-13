@@ -45,6 +45,7 @@ export class OPCUAAdapter {
 
   private userManager: UserManagerOptions;
   private serverCertificateManager: OPCUACertificateManager;
+  private system: System;
 
   static readonly className = OPCUAAdapter.name;
   private static shutdownTimeoutMs = 1000;
@@ -53,6 +54,7 @@ export class OPCUAAdapter {
     this.opcuaRuntimeConfig = options.runtimeConfig;
     this.dataSinkConfig = options.dataSinkConfig;
     this.generalConfig = options.generalConfig;
+    this.system = new System();
 
     if (!this.dataSinkConfig.auth) {
       // Enable anonymous if no auth infos are found
@@ -132,7 +134,7 @@ export class OPCUAAdapter {
         });
         let xmlFileReadMachineNameFixed = xmlFileRead.replace(
           new RegExp('DummyMachineToolName', 'g'),
-          await this.getHostname()
+          await this.system.getHostname()
         );
 
         const xmlFileReadParsed = create(xmlFileReadMachineNameFixed);
@@ -159,7 +161,7 @@ export class OPCUAAdapter {
             .map((x) => x['UAVariable'])
             .flat();
 
-          const hostname = await this.getHostname();
+          const hostname = await this.system.getHostname();
           for (const customConfig of this.dataSinkConfig.customDataPoints) {
             let isExistingNodeId = allUAVariables.find((x) =>
               x['@NodeId'].endsWith(customConfig.address)
@@ -215,13 +217,6 @@ export class OPCUAAdapter {
     return fullFiles;
   }
 
-  private async getHostname(): Promise<string> {
-    const macAddress =
-      (await new System().readMacAddress('eth0')) || '000000000000';
-    const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
-    return `DM${formattedMacAddress}`;
-  }
-
   /**
    * Start Adapter
    *
@@ -241,7 +236,7 @@ export class OPCUAAdapter {
     }
     this.server
       .start()
-      .then(() => this.getHostname())
+      .then(() => this.system.getHostname())
       .then((hostname) => {
         this._running = true;
         winston.info(
@@ -274,7 +269,7 @@ export class OPCUAAdapter {
       return this;
     }
 
-    const hostname = await this.getHostname();
+    const hostname = await this.system.getHostname();
 
     const applicationUri = `urn:${hostname}`;
     const certificateFolder = path.join(
@@ -419,7 +414,7 @@ export class OPCUAAdapter {
 
   public async findNode(nodeIdentifier: NodeIdLike): Promise<BaseNode | null> {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
-    const nodeIdentifierWithHostname = `ns=7;s=${await this.getHostname()}.${nodeIdentifier}`;
+    const nodeIdentifierWithHostname = `ns=7;s=${await this.system.getHostname()}.${nodeIdentifier}`;
     const node = this.server.engine.addressSpace.findNode(
       nodeIdentifierWithHostname
     );

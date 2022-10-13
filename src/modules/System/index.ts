@@ -52,6 +52,16 @@ export class System {
       return '';
     }
   }
+  /**
+   * Gets the hostname based on MAC address
+   * @async
+   * @returns {Promise<string>}
+   */
+  public async getHostname() {
+    const macAddress = (await this.readMacAddress('eth0')) || '000000000000';
+    const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
+    return `DM${formattedMacAddress}`;
+  }
 
   /**
    * Restarts device

@@ -1,5 +1,6 @@
-import { IMTConnectConfig } from '../../../ConfigManager/interfaces';
+import winston from 'winston';
 
+import { IMTConnectConfig } from '../../../ConfigManager/interfaces';
 import { MTConnectAdapter } from '../../Adapter/MTConnectAdapter';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import {
@@ -15,8 +16,8 @@ import {
   Condition,
   Sample
 } from '../../Adapter/MTConnectAdapter/DataItem';
-import winston from 'winston';
 import { SynchronousIntervalScheduler } from '../../../SyncScheduler';
+import { MessengerManager } from '../../MessengerManager';
 
 type DataItemDict = {
   [key: string]: DataItem;
@@ -24,6 +25,7 @@ type DataItemDict = {
 
 export interface IMTConnectDataSinkOptions extends IDataSinkOptions {
   mtConnectConfig: IMTConnectConfig;
+  messengerManager: MessengerManager;
 }
 
 /**
@@ -34,6 +36,7 @@ export class MTConnectDataSink extends DataSink {
   private static scheduler: SynchronousIntervalScheduler;
   private static schedulerListenerId: number = null;
   private dataItems: DataItemDict = {};
+  private messengerManager: MessengerManager;
   protected _protocol = DataSinkProtocols.MTCONNECT;
   protected name = MTConnectDataSink.name;
 
@@ -50,6 +53,7 @@ export class MTConnectDataSink extends DataSink {
   constructor(options: IMTConnectDataSinkOptions) {
     super(options);
     this.mtcAdapter = new MTConnectAdapter(options.mtConnectConfig);
+    this.messengerManager = options.messengerManager;
     MTConnectDataSink.scheduler = SynchronousIntervalScheduler.getInstance();
   }
 
@@ -83,6 +87,8 @@ export class MTConnectDataSink extends DataSink {
       );
       return this;
     }
+
+    this.messengerManager.init();
 
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
     this.setupDataItems(); // TODO: Unsupported Datatype crash init -> where catched?

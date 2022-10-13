@@ -64,8 +64,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   MTConnectItems: PreDefinedDataPoint[] = [];
   OPCUAAddresses: PreDefinedDataPoint[] = [];
   DataSinkConnectionStatus = DataSinkConnectionStatus;
-  messengerConfiguration: MessengerConfiguration;
-  messengerStatus: MessengerStatus;
 
   @Input() dataSink?: DataSink;
   @Output() dataPointsChange = new EventEmitter<DataPoint[]>();
@@ -139,7 +137,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.MTConnectItems =
       this.dataSinkService.getPredefinedMtConnectDataPoints();
-    this.OPCUAAddresses = 
+    this.OPCUAAddresses =
       [
         ...this.dataSinkService.getPredefinedOPCDataPoints(),
         ...(this.dataSink.customDataPoints || [])
@@ -148,22 +146,12 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       combineLatest([
         this.dataPointService.dataPoints,
         this.dataMappingService.dataMappings
-      ]).subscribe(([dataPoints, dataMappings]) => 
+      ]).subscribe(([dataPoints, dataMappings]) =>
         this.onDataPoints(dataPoints, dataMappings)
       )
     );
     this.sub.add(
       this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
-    );
-    this.sub.add(
-      this.messengerConnectionService.config.subscribe(
-        (v) => (this.messengerConfiguration = v)
-      )
-    );
-    this.sub.add(
-      this.messengerConnectionService.status.subscribe(
-        (v) => (this.messengerStatus = v)
-      )
     );
   }
 
@@ -320,7 +308,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   setDataPointAddress(obj: DataPoint, value: string) {
     obj.address = value;
-    
+
     const customDataPoint = this.getCustomDataPointByAddress(obj.address);
     if (customDataPoint?.dataType) {
       obj.dataType = customDataPoint.dataType;
@@ -442,11 +430,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       .then(() => this.messengerConnectionService.getMessengerConfig())
       .then(() => {
         this.dialog.open(MessengerConnectionComponent, {
-          width: '900px',
-          data: {
-            configuration: this.messengerConfiguration,
-            status: this.messengerStatus
-          }
+          width: '900px'
         });
       });
   }

@@ -249,50 +249,50 @@
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Sensor1</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Sensor2</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable1</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable2</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable3</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable4</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Sensor1</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Sensor2</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable1</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable2</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable3</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable4</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Sensor1" BrowseName="2:Sensor1">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Sensor1" BrowseName="2:Sensor1">
         <DisplayName>Sensor1</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Sensor2" BrowseName="2:Sensor2">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Sensor2" BrowseName="2:Sensor2">
         <DisplayName>Sensor2</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Variable1" BrowseName="2:Variable1" AccessLevel="3">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Variable1" BrowseName="2:Variable1" AccessLevel="3">
         <DisplayName>Variable1</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Variable2" BrowseName="2:Variable2" AccessLevel="3">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Variable2" BrowseName="2:Variable2" AccessLevel="3">
         <DisplayName>Variable2</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Variable3" BrowseName="1:Variable3" AccessLevel="3">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Variable3" BrowseName="1:Variable3" AccessLevel="3">
         <DisplayName>Variable3</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="UInt16" NodeId="ns=1;s=Variable4" BrowseName="1:Variable4" AccessLevel="3">
+    <UAVariable DataType="UInt16" NodeId="ns=1;s=DummyMachineToolName.Variable4" BrowseName="1:Variable4" AccessLevel="3">
         <DisplayName>Variable4</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>

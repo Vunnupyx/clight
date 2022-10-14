@@ -100,5 +100,8 @@
       }
     }
   },
-  "defaultProject": "mdc-light-client"
+  "defaultProject": "mdc-light-client",
+  "cli": {
+    "analytics": false
+  }
 }

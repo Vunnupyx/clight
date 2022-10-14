@@ -1,7 +1,7 @@
 {
   "common": {
-    "OK": "",
-    "Cancel": ""
+    "OK": "OK",
+    "Cancel": "Abbrechen"
   },
   "layout": {
     "Settings": "Einstellungen",
@@ -13,14 +13,15 @@
     "DataSinks": "Anwendungs Schnittstellen",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen",
-    "ChangePassword": "",
-    "Logout": "Logout"
+    "ChangePassword": "Passwort Ändern",
+    "Logout": "Ausloggen"
   },
   "auth-login": {
-    "Username": "Username",
-    "Password": "Password",
-    "SignIn": "Login",
-    "ForgotPassword": "Forgot your password?"
+    "Username": "Benutzername",
+    "Password": "Passwort",
+    "SignIn": "Einloggen",
+    "ForgotPassword": "Passwort vergessen?",
+    "WhereToFindPassword": "Wo finde ich mein Passwort?"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Passwort Änderung",
@@ -34,21 +35,24 @@
     "TermsAndConditions": "Allgemeine Geschäftsbedingungen",
     "Accept": "Akzeptieren",
     "Language": "Wählen Sie Ihre Sprache",
+    "WhatIsTemplate": "Was ist eine Vorkonfiguration?",
     "SelectTemplate": "Vorkonfiguration",
     "SelectSource": "Datenquellen",
-    "SelectApplicationInterfaces": "Application Interfaces",
-    "SkipMessage": "Möchten Sie wirklich ohne eine Vorkonfiguration fortfahren?",
-    "Attention": "Achtung",
-    "AttentionMessage": "Beim Speichern wird die aktuelle Konfiguration überschrieben. Möchtest du trotzdem fortfahren?",
-    "LoadError": "Error",
+    "SelectApplicationInterfaces": "Anwendungsschnittstelle auswählen",
+    "LoadError": "Fehler beim Laden. Bitte versuchen Sie es später erneut.",
+    "TermsLoadError": "AGB konnten nicht geladen werden.  Bitte versuchen Sie es später erneut.",
+    "AcceptError": "Fehler beim Akzeptieren der AGB.  Bitte versuchen Sie es später erneut.",
     "Next": "Weiter",
     "Save": "Speichern",
     "Yes": "Ja",
     "No": "Nein",
     "ContinueWithoutTemplate": "Ohne eine Vorkonfiguration fortfahren",
+    "Attention": "Achtung",
+    "AttentionMessage": "Beim Speichern wird die aktuelle Konfiguration überschrieben. Möchten Sie trotzdem fortfahren?",
+    "SkipMessage": "Möchten Sie wirklich ohne eine Vorkonfiguration fortfahren?",
     "DataSources": {
       "ioshield": {
-        "name": "Input Modul",
+        "name": "Eingangsmodul",
         "description": "Ermöglicht die Anbindung analoger oder digitaler Signale, wie z.B. Stomzangen."
       },
       "s7": {
@@ -81,12 +85,12 @@
   "settings-general": {
     "General": "Allgemein",
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut oder kontaktiere den Support.",
-    "Language": "Language",
     "DeviceInfo": "Geräte Informationen",
-    "CELOSLanguage": "CELOS Language",
+    "Language": "Sprache",
+    "CELOSLanguage": "CELOS Sprache",
     "English": "English",
     "Deutsch": "Deutsch",
-    "Japanese": "Japanaisch",
+    "Japanese": "日本語",
     "Templates": "Vorkonfigurationen",
     "CurrentTemplate": "Aktuell eingestellte Vorkonfiguration",
     "OpenConfigurationWizard": "Vorkonfiguation ändern",
@@ -149,7 +153,7 @@
     "LiveData": "Aktualwert",
     "Actions": "Aktionen",
     "SoftwareVersion": "Software Version",
-    "BTTSString": "BTSS String",
+    "BTSSString": "BTSS String",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
@@ -184,28 +188,28 @@
     "CounterResetError": "Zähler '{{NAME}}' zurücksetzen gescheitert.",
     "Cancel": "Abbrechen",
     "SetThreshold": "Grenzwerte setzen",
-    "LiveData": "Aktuelwert",
+    "LiveData": "Aktualwert",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
-    "SetComparativeValue": "",
+    "SetComparativeValue": "Vergleichswert setzen",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",
     "AddThreshold": "Grenzwert hinzufügen",
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert.",
-    "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Bitte versuche es später erneut!",
+    "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Bitte versuchen Sie es später erneut!",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen übernehmen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
-    "SetEnumeration": "",
-    "DefaultValue": "",
-    "SelectInput": "",
-    "CurrentLiveValue": "",
-    "ReturnValueIfTrue": "",
-    "SetFormula": "",
-    "Formula": ""
+    "SetEnumeration": "Enumeration speichern",
+    "DefaultValue": "Standardwert",
+    "SelectInput": "Input auswählen",
+    "CurrentLiveValue": "Aktualwert",
+    "ReturnValueIfTrue": "Rückgabewert",
+    "SetFormula": "Formel festlegen",
+    "Formula": "Formel"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -220,11 +224,12 @@
     "Equal": "Gleich",
     "Unequal": "Ungleich",
     "Enumeration": "Enumeration",
-    "Calculation": ""
+    "Calculation": "Kalkulation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
-    "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuche es später erneut!",
+    "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuchen Sie es bitte später erneut!",
+    "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es bitte später erneut!",
     "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
     "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
   },
@@ -251,7 +256,7 @@
     "AddDataPoint": "Datenpunkt hinzufügen",
     "Name": "Name",
     "Type": "Typ",
-    "DataItem": "Data Item",
+    "DataItem": "Datenpunkt",
     "Address": "Addresse",
     "InitialValue": "Standardwert",
     "Map": "Map",
@@ -261,12 +266,13 @@
     "Delete": "Löschen",
     "Save": "Speichern",
     "Cancel": "Abbrechen",
+    "Close": "Schließen",
     "Event": "Event",
     "Condition": "Condition",
     "SelectAVariable": "Datenpunktauswahl",
     "CreateDataPoint": "Datenpunkt erstellen",
     "SelectVariable": "Variable auswählen",
-    "Mapping": "Mapping",
+    "Mapping": "Zuordnung",
     "From": "Von",
     "To": "Zu",
     "AddMapping": "Mapping hinzufügen",
@@ -277,16 +283,17 @@
     "AlreadyExistDataPoint": "Der Datenpunkt ist bereits vorhanden.",
     "AuthenticationLevels": {
       "anonymous": "Anonym",
-      "user/pass": "User/Passwort"
+      "user/pass": "Benutzername/Passwort"
     },
     "Tabs": {
       "mtconnect": "MTConnect",
       "opcua": "OPC UA",
       "datahub": "CELOS Xchange"
     },
-    "OPCUAAuthenticationLevel": "OPC UA Authentifizierungs Level",
-    "OPCUAServerUsername": "OPC UA Server Username",
+    "OPCUAAuthenticationLevel": "OPC UA Authentifizierungsgrad",
+    "OPCUAServerUsername": "OPC UA Server Benutzername",
     "OPCUAServerPassword": "OPC UA Server Passwort",
+    "NoData": "Kein Data",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "OpenMTConnectStream": "MTConnect Stream öffnen",
     "BulkSuccess": "Die Änderungen wurden erfolgreich gespeichert!",
@@ -299,16 +306,16 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
-    "DuplicatedAddress":"",
+    "DuplicatedAddress": "Doppelte Adresse sind nicht erlaubt.",
     "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
-    "OpcUaVariables": "",
-    "UmatiOpcUaVariables": "",
-    "CustomOpcUaVariables": "",
-    "AddOpcUaVariable": "",
-    "DataType": "",
-    "SetCustomOpcUaVariable": "",
-    "NodeId": "",
-    "DeleteMessage": ""
+    "OpcUaVariables": "OPC UA Variablen",
+    "UmatiOpcUaVariables": "UMATI OPC UA Variablen",
+    "CustomOpcUaVariables": "Benutzerdefinierte OPC UA Variablen",
+    "AddOpcUaVariable": "Benutzerdefinierte OPC UA Variable hinzufügen",
+    "DataType": "Datentyp",
+    "SetCustomOpcUaVariable": "Benutzerdefinierte OPC UA Variable setzen",
+    "NodeId": "Node ID",
+    "DeleteMessage": "Sind Sie sicher "
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",
@@ -326,9 +333,9 @@
     "LoadError": "Die Mappings konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "BulkSuccess": "Die Änderungen wurden erfolgreich aktualisiert!",
     "BulkError": "Die Änderungen konnten nicht aktualisiert werden. Bitte versuchen Sie es später erneut!",
-    "SourceDisabledTooltip": "",
-    "TargetDisabledTooltip": "",
-    "MappingDisabledTooltip": "",
+    "SourceDisabledTooltip": "Aktivieren Sie die Bezugsdatenquelle, um diese Zuordnung zu erstellen",
+    "TargetDisabledTooltip": "Aktivieren Sie die entsprechende Anwendungsschnittstelle, um diese Zuordnung zu erstellen",
+    "MappingDisabledTooltip": "Das Mapping ist derzeit nicht aktiv, weil entweder die Datenquelle oder die Anwendungsschnittstelle deaktiviert ist.",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen speichern"
   },
@@ -366,7 +373,7 @@
   },
   "system-information": {
     "SystemInformation": "System Informationen",
-    "UpdateSystem": "Systemupdate",
+    "UpdateSystem": "Systemaktualisierung",
     "UpdateNow": "Jetzt updaten",
     "YourSystemUpToDate": "Dein System ist auf dem neusten Stand",
     "YourSystemUpdateSuccess": "Das Update war erfolgreich",
@@ -379,9 +386,9 @@
     "UpdateFailed-error_no_network": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "UpdateFailedCheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
-    "MaterialThemeVersion": "",
-    "SoftwareComponent": "",
-    "LoadError": "System Informationen konnten nicht geladen werden. Verusche es später erneut"
+    "MaterialThemeVersion": "CELOS X Material Themaversion",
+    "SoftwareComponent": "Software Komponent",
+    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"
@@ -390,11 +397,11 @@
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
   },
   "data-type": {
-    "String": "",
-    "Double": "",
-    "Byte": "",
-    "UInt16": "",
-    "UInt32": "",
-    "Boolean": ""
+    "String": "String",
+    "Double": "Double",
+    "Byte": "Byte",
+    "UInt16": "UInt16",
+    "UInt32": "UInt32",
+    "Boolean": "Boolean"
   }
 }

@@ -1,18 +1,17 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA
+  MatDialogRef
 } from '@angular/material/dialog';
 import {
   MessengerConnectionService,
-  MessengerStore,
   RegistrationStatus,
   ServerStatus,
-  RegistrationErrorReasonStatus
+  RegistrationErrorReasonStatus, MessengerConfiguration, MessengerStatus
 } from 'app/services/messenger-connection.service';
 import { RegisterMachineComponent } from '../register-machine/register-machine.component';
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-messenger-connection',
@@ -29,24 +28,40 @@ export class MessengerConnectionComponent implements OnInit {
   RegistrationStatus = RegistrationStatus;
   RegistrationErrorReasonStatus = RegistrationErrorReasonStatus;
   isFormSending = true;
+  sub = new Subscription();
+  messengerConfiguration: MessengerConfiguration;
+  messengerStatus: MessengerStatus;
 
   get isBusy() {
     return this.messengerConnectionService.isBusy;
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: Partial<MessengerStore>,
     public dialogRef: MatDialogRef<MessengerConnectionComponent>,
     private dialog: MatDialog,
     private messengerConnectionService: MessengerConnectionService
   ) {}
 
   ngOnInit(): void {
+    this.sub.add(
+      this.messengerConnectionService.config.subscribe(
+        (v) => (this.messengerConfiguration = v)
+      )
+    );
+    this.sub.add(
+      this.messengerConnectionService.status.subscribe(
+        (v) => (this.messengerStatus = v)
+      )
+    );
     this.profileForm.patchValue({
-      hostname: this.data.configuration.hostname,
-      username: this.data.configuration.username,
-      password: this.getPassword(this.data.configuration.password)
+      hostname: this.messengerConfiguration.hostname,
+      username: this.messengerConfiguration.username,
+      password: this.messengerConfiguration.password
     });
+  }
+
+  ngOnDestroy() {
+    this.sub && this.sub.unsubscribe();
   }
 
   onSubmit() {
@@ -56,12 +71,14 @@ export class MessengerConnectionComponent implements OnInit {
       .then(() => this.messengerConnectionService.getMessengerMetadata())
       .then(() => {
         if (
-          this.data.status.server === ServerStatus.Available &&
-          this.data.status.registration === RegistrationStatus.Registered
+          this.messengerStatus.server === ServerStatus.Available &&
+          this.messengerStatus.registration === RegistrationStatus.Registered
         ) {
           this.dialog.open(RegisterMachineComponent, {
             width: '900px',
-            data: this.data
+            data: {
+              configuration: this.messengerConfiguration
+            }
           });
           this.close();
         }
@@ -71,10 +88,5 @@ export class MessengerConnectionComponent implements OnInit {
   close() {
     this.isFormSending = false;
     this.dialogRef.close();
-  }
-
-  getPassword(v: boolean | string) {
-    if (v) return '00000000';
-    return '';
   }
 }

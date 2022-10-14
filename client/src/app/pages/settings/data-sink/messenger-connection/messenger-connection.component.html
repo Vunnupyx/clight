@@ -3,7 +3,7 @@
 </h2>
 <form
   [formGroup]="profileForm"
-  (ngSubmit)="profileForm.valid && isFormSending && !data.isBusy && onSubmit()"
+  (ngSubmit)="profileForm.valid && isFormSending && !isBusy && onSubmit()"
 >
   <mat-spinner *ngIf="isBusy"></mat-spinner>
   <mat-dialog-content *ngIf="!isBusy">
@@ -14,9 +14,9 @@
       </div>
       <div class="col">
         <h5
-          [style.color]="data.status.server === 'available' ? 'green' : 'red'"
+          [style.color]="messengerStatus.server === 'available' ? 'green' : 'red'"
         >
-          <ng-container [ngSwitch]="data.status.server">
+          <ng-container [ngSwitch]="messengerStatus.server">
             <ng-container *ngSwitchCase="ServerStatus.Invalidhost">
               {{ 'settings-data-sink.ServerStatus.Invalidhost' | translate }}
             </ng-container>
@@ -72,10 +72,10 @@
         <div class="col">
           <p
             [style.color]="
-              data.status.registration !== 'registered' ? 'red' : 'green'
+              messengerStatus.registration !== 'registered' ? 'red' : 'green'
             "
           >
-            <ng-container [ngSwitch]="data.status.registration">
+            <ng-container [ngSwitch]="messengerStatus.registration">
               <ng-container *ngSwitchCase="RegistrationStatus.Registered">
                 {{
                 'settings-data-sink.RegistrationStatus.Registered' | translate
@@ -93,7 +93,7 @@
                 }}
               </ng-container>
               <ng-container *ngSwitchCase="RegistrationStatus.Error">
-                <ng-container [ngSwitch]="data.status.registrationErrorReason">
+                <ng-container [ngSwitch]="messengerStatus.registrationErrorReason">
                   <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.UnexpectedError">
                     {{
                     'settings-data-sink.RegistrationErrorReason.UnexpectedError' | translate

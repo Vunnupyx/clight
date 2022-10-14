@@ -76,4 +76,8 @@ export class RegisterMachineComponent implements OnInit {
     this.isFormSending = false;
     this.dialogRef.close();
   }
+
+  ngOnDestroy() {
+    this.sub && this.sub.unsubscribe();
+  }
 }

@@ -117,8 +117,9 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     // It must be pushed before initialization, to prevent double initialization
     this.dataSinks.push(sink);
 
-    this.connectDataSinksToBus(sink);
     await sink.init();
+
+    this.connectDataSinksToBus(sink);
     winston.info(`${logPrefix} created.`);
   }
 

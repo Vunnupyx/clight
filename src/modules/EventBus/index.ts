@@ -52,7 +52,9 @@ export class EventBus<TEventType> {
     const index = this.callbacks.findIndex((_cb) => {
       _cb === cb;
     });
-    if (index) this.callbacks.splice(index, 1);
+    if (index) {
+      this.callbacks = this.callbacks.splice(index, 1);
+    }
   }
 
   /**

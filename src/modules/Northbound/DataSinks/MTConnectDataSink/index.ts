@@ -91,7 +91,7 @@ export class MTConnectDataSink extends DataSink {
     this.messengerManager.init();
 
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
-    this.setupDataItems(); // TODO: Unsupported Datatype crash init -> where catched?
+    this.setupDataItems(); // TODO: Unsupported Datatype crash init -> where caught?
 
     this.mtcAdapter.start();
 
@@ -129,7 +129,7 @@ export class MTConnectDataSink extends DataSink {
           dataItem = new Event(dp.address);
           break;
         case MTConnectDataItemTypes.SAMPLE:
-          dataItem = new Event(dp.address);
+          dataItem = new Sample(dp.address);
           break;
         case MTConnectDataItemTypes.CONDITION:
           dataItem = new Condition(dp.address);

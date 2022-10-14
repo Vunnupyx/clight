@@ -482,8 +482,6 @@ export class MessengerManager {
     }
 
     if (
-      !this.messengerConfig.license ||
-      this.messengerConfig.license === '' ||
       !this.messengerConfig.name ||
       this.messengerConfig.name === '' ||
       !this.messengerConfig.organization ||
@@ -508,7 +506,7 @@ export class MessengerManager {
       const newMachineConfig = JSON.stringify({
         MachineName: this.messengerConfig.name,
         SerialNumber: this.configManager.config.general.serialNumber,
-        LicenseNumber: this.messengerConfig.license,
+        LicenseNumber: this.configManager.config.general.serialNumber,
         MachineCatalogId: this.messengerConfig.model,
         MachineImage: `/adm/api/machinecatalog/image/${
           this.machineCatalog.find(

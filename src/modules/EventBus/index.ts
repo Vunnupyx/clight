@@ -63,8 +63,17 @@ export class EventBus<TEventType> {
   // TODO Rename
   public async push(event: TEventType): Promise<void> {
     // TODO These are not promises
+    const logPrefix = `${EventBus.name}::push`;
+
     const promises = this.callbacks.map((cb) => cb(event));
-    await Promise.all(promises);
+    await Promise.allSettled(promises).then((results) => {
+      results.forEach((result) => {
+        if (result.status === 'rejected')
+          winston.error(
+            `${logPrefix} error while processing Event: ${result.reason}`
+          );
+      });
+    });
   }
 }
 

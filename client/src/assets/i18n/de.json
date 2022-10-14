@@ -21,8 +21,7 @@
     "Password": "Passwort",
     "SignIn": "Einloggen",
     "ForgotPassword": "Passwort vergessen?",
-    "WhereToFindPassword": "Wo finde ich mein Passwort?",
-    "ResetEmailSentSuccess": "E-Mail zum Passwortzurücksetzen wurde erfolgreich gesendet!"
+    "WhereToFindPassword": "Wo finde ich mein Passwort?"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Passwort Änderung",
@@ -49,7 +48,7 @@
     "No": "Nein",
     "ContinueWithoutTemplate": "Ohne eine Vorkonfiguration fortfahren",
     "Attention": "Achtung",
-    "AttentionMessage": "Beim Speichern wird die aktuelle Konfiguration überschrieben. Möchtest du trotzdem fortfahren?",
+    "AttentionMessage": "Beim Speichern wird die aktuelle Konfiguration überschrieben. Möchten Sie trotzdem fortfahren?",
     "SkipMessage": "Möchten Sie wirklich ohne eine Vorkonfiguration fortfahren?",
     "DataSources": {
       "ioshield": {
@@ -154,7 +153,7 @@
     "LiveData": "Aktualwert",
     "Actions": "Aktionen",
     "SoftwareVersion": "Software Version",
-    "BTTSString": "BTTS String",
+    "BTSSString": "BTSS String",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
@@ -189,7 +188,7 @@
     "CounterResetError": "Zähler '{{NAME}}' zurücksetzen gescheitert.",
     "Cancel": "Abbrechen",
     "SetThreshold": "Grenzwerte setzen",
-    "LiveData": "Aktuelwert",
+    "LiveData": "Aktualwert",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
@@ -207,8 +206,8 @@
     "SetEnumeration": "Enumeration speichern",
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
-    "CurrentLiveValue": "Aktuelwert",
-    "ReturnValueIfTrue": "Wert wenn linke Seite wahr ist",
+    "CurrentLiveValue": "Aktualwert",
+    "ReturnValueIfTrue": "Rückgabewert",
     "SetFormula": "Formel festlegen",
     "Formula": "Formel"
   },
@@ -269,7 +268,7 @@
     "Cancel": "Abbrechen",
     "Close": "Schließen",
     "Event": "Event",
-    "Condition": "Kondition",
+    "Condition": "Condition",
     "SelectAVariable": "Datenpunktauswahl",
     "CreateDataPoint": "Datenpunkt erstellen",
     "SelectVariable": "Variable auswählen",

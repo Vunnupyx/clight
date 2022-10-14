@@ -21,8 +21,7 @@
     "Password": "パスワード",
     "SignIn": "サインイン",
     "ForgotPassword": "パスワードを忘れた場合",
-    "WhereToFindPassword": "Where do I find my login password?",
-    "ResetEmailSentSuccess": "Password reset email has been sent successfully!"
+    "WhereToFindPassword": "Where do I find my login password?"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "パスワード変更",
@@ -154,7 +153,7 @@
     "LiveData": "ライブデータ",
     "Actions": "動作",
     "SoftwareVersion": "ソフトウェアバージョン",
-    "BTTSString": "BTTS文字列",
+    "BTSSString": "BTSS文字列",
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再度試してください。",
     "Tabs": {
       "s7": "SINUMERIK 840D sl",
@@ -208,7 +207,7 @@
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
-    "ReturnValueIfTrue": "Value if left side is true",
+    "ReturnValueIfTrue": "Return Value",
     "SetFormula": "Set formula",
     "Formula": "Formula"
   },

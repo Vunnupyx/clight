@@ -21,8 +21,7 @@
     "Password": "Password",
     "SignIn": "Sign in",
     "ForgotPassword": "Forgot your password?",
-    "WhereToFindPassword": "Where do I find my login password?",
-    "ResetEmailSentSuccess": "Password reset email has been sent successfully!"
+    "WhereToFindPassword": "Where do I find my login password?"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",
@@ -154,7 +153,7 @@
     "LiveData": "Live Data",
     "Actions": "Actions",
     "SoftwareVersion": "Software Version",
-    "BTTSString": "BTTS String",
+    "BTSSString": "BTSS String",
     "LoadError": "Failed to load data sources. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
@@ -208,7 +207,7 @@
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
-    "ReturnValueIfTrue": "Value if left side is true",
+    "ReturnValueIfTrue": "Return Value",
     "SetFormula": "Set formula",
     "Formula": "Formula"
   },

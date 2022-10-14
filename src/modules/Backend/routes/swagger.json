@@ -2453,6 +2453,7 @@
         "hostname",
         "username",
         "password",
+        "license",
         "model",
         "name",
         "organization",
@@ -2462,6 +2463,7 @@
         "hostname": { "type": "string" },
         "username": { "type": "string" },
         "password": { "type": "boolean" },
+        "license": { "type": "string" },
         "model": { "type": "string" },
         "name": { "type": "string" },
         "organization": { "type": "string" },
@@ -2474,11 +2476,26 @@
       "properties": {
         "server": {
           "type": "string",
-          "enum": ["notconfigured", "invalidhost", "invalidauth", "available"]
+          "enum": [
+            "not_configured",
+            "invalid_host",
+            "invalid_auth",
+            "available"
+          ]
         },
         "registration": {
           "type": "string",
-          "enum": ["unknown", "notregistered", "registered"]
+          "enum": ["unknown", "not_registered", "registered", "error"]
+        },
+        "registrationErrorReason": {
+          "type": "string",
+          "enum": [
+            "unexpected_error",
+            "invalid_organization",
+            "invalid_timezone",
+            "invalid_model",
+            "duplicated"
+          ]
         }
       }
     },

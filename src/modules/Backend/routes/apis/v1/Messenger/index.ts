@@ -51,6 +51,7 @@ function messengerConfigurationGetHandler(
     hostname: null,
     username: null,
     password: false,
+    license: null,
     model: null,
     name: null,
     organization: null,

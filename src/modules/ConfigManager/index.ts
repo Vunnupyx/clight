@@ -108,6 +108,7 @@ export const emptyDefaultConfig: IConfig = {
     hostname: null,
     username: null,
     password: null,
+    license: null,
     model: null,
     name: null,
     organization: null,

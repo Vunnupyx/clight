@@ -30,7 +30,8 @@ export enum RegistrationErrorReasonStatus {
 export interface MessengerConfiguration {
   hostname: string | null;
   username: string | null;
-  password: string | null;
+  password: string | boolean | null;
+  license: string;
   model: string | null;
   name: string | null;
   organization: string | null;
@@ -184,7 +185,8 @@ export class MessengerConnectionService {
       configuration: {
         hostname: null,
         username: null,
-        password: null,
+        password: false,
+        license: '',
         model: null,
         name: null,
         organization: null,

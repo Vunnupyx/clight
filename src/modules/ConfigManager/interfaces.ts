@@ -138,8 +138,8 @@ export interface IMessengerServerConfig {
   hostname: string | null;
   username: string | null;
   password: string | null;
-  model: number | null;
   name: string | null;
+  model: number | null;
   organization: string | null;
   timezone: number | null;
 }

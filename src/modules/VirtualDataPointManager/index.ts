@@ -188,7 +188,7 @@ export class VirtualDataPointManager {
       ) {
         this.addSummaryLog(
           'warn',
-          `${logPrefix} Unexpcted value while calculating formula: ${config.formula}. With replaced values: ${variableReplacedFormula}`
+          `${logPrefix} Unexpected value while calculating formula: ${config.formula}. With replaced values: ${variableReplacedFormula}`
         );
 
         return null;

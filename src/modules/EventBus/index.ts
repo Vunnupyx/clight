@@ -15,7 +15,7 @@ export class EventBus<TEventType> {
     this.logLevel = logLevel;
 
     if (this.logLevel) {
-      this.onEvent(this.log.bind(this));
+      this.addEventListener(this.log.bind(this));
     }
   }
 
@@ -42,13 +42,17 @@ export class EventBus<TEventType> {
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  public onEvent(cb: TSubscriberFn<TEventType>): void {
+  public addEventListener(cb: TSubscriberFn<TEventType>): void {
     if (!this.callbacks.some((_cb) => _cb === cb)) {
       this.callbacks.push(cb);
     }
   }
 
-  public offEvent(cb: TSubscriberFn<TEventType>): void {
+  /**
+   * Removes a call back from the event bus
+   * @param cb The callback that should be removed
+   */
+  public removeEventListener(cb: TSubscriberFn<TEventType>): void {
     const index = this.callbacks.findIndex((_cb) => {
       _cb === cb;
     });

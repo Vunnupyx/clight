@@ -133,8 +133,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    * Provide events for data sinks
    */
   private connectDataSinksToBus(sink: DataSink): void {
-    this.measurementsBus.onEvent(sink.onMeasurements.bind(sink));
-    this.lifecycleBus.onEvent(sink.onLifecycleEvent.bind(sink));
+    this.measurementsBus.addEventListener(sink.onMeasurements.bind(sink));
+    this.lifecycleBus.addEventListener(sink.onLifecycleEvent.bind(sink));
   }
 
   /**
@@ -143,8 +143,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private disconnectDataSinkFromBus(sink: DataSink): void {
     const logPrefix = `${DataSinksManager.name}::disconnectDataSinkFromBus`;
     winston.info(`${logPrefix} disconnecting sink from bus`);
-    this.measurementsBus.offEvent(sink.onMeasurements);
-    this.lifecycleBus.offEvent(sink.onLifecycleEvent);
+    this.measurementsBus.removeEventListener(sink.onMeasurements);
+    this.lifecycleBus.removeEventListener(sink.onLifecycleEvent);
   }
 
   private dataSourceFactory(protocol): DataSink {

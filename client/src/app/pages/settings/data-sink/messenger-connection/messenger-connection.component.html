@@ -59,8 +59,9 @@
           <p>{{ 'settings-data-sink.Password' | translate }}</p>
         </div>
         <div class="col">
-          <mat-form-field>
-            <input type="password" matInput formControlName="password" />
+          <mat-form-field  class="messenger-password" [hideRequiredMarker]="true" [floatLabel]="'always'">
+            <mat-label></mat-label>
+            <input type="password" matInput formControlName="password" placeholder="{{this.messengerConfiguration.password ? '••••••••' : ''}}"/>
           </mat-form-field>
         </div>
       </div>

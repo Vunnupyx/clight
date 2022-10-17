@@ -56,7 +56,7 @@ export class MessengerConnectionComponent implements OnInit {
     this.profileForm.patchValue({
       hostname: this.messengerConfiguration.hostname,
       username: this.messengerConfiguration.username,
-      password: this.messengerConfiguration.password
+      password: this.getPassword(this.messengerConfiguration.password)
     });
   }
 
@@ -65,6 +65,7 @@ export class MessengerConnectionComponent implements OnInit {
   }
 
   onSubmit() {
+    this.sanitizeDataBeforeSendToServer();
     this.messengerConnectionService
       .updateNetworkConfig(this.profileForm.value)
       .then(() => this.messengerConnectionService.getMessengerStatus())
@@ -88,5 +89,23 @@ export class MessengerConnectionComponent implements OnInit {
   close() {
     this.isFormSending = false;
     this.dialogRef.close();
+  }
+
+  getPassword(v: boolean | string) {
+    const control = this.profileForm.get('password');
+    if (v)
+      control.removeValidators(Validators.required);
+    else
+      control.setValidators(Validators.required);
+
+    return null;
+  }
+
+  sanitizeDataBeforeSendToServer(): void {
+    const control = this.profileForm.get('password');
+
+    if ((control.value as string)?.trim() === '') {
+      control.setValue(null);
+    }
   }
 }

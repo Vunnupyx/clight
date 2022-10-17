@@ -15,9 +15,9 @@ describe('Test EventBus', () => {
 
     const bus = new EventBus<TestEvent>();
 
-    bus.onEvent(testCb1);
-    bus.onEvent(testCb2);
-    bus.onEvent(testCb2);
+    bus.addEventListener(testCb1);
+    bus.addEventListener(testCb2);
+    bus.addEventListener(testCb2);
 
     await bus.push(event);
 

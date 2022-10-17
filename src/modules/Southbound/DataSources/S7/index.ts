@@ -116,6 +116,7 @@ export class S7DataSource extends DataSource {
 
     this.nckEnabled =
       this.config.type === 'nck' || this.config.type === 'nck-pl';
+
     winston.info(`NC enabled: ${this.nckEnabled}`);
 
     const nckDataPointsConfigured =
@@ -331,18 +332,19 @@ export class S7DataSource extends DataSource {
         )
           continue;
 
+        // Prevent to add nck data point with an undefined value in case we have no nck connection
+        if (dp.type === 'nck' && !this.nckEnabled) continue;
+
         let value,
           error = null;
         if (dp.type === 's7') {
           value = plcResults.datapoints[dp.address];
           error = this.checkError(plcResults.error, value);
-        } else if (dp.type === 'nck' && this.nckEnabled) {
+        } else if (dp.type === 'nck') {
           const index = nckDataPointsToRead.indexOf(dp.address);
           const result = nckResults[index];
           value = result.value;
           error = result.error;
-        } else if (dp.type === 'nck' && this.nckEnabled) {
-          error = true;
         }
 
         const measurement: IMeasurement = {

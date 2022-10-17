@@ -16,7 +16,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row.address)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -29,7 +35,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row.address)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -42,7 +54,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row.address)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -55,7 +73,13 @@
         let-value="value"
         let-row="row"
       >
-        <div class="text-ellipsis" [class.color-disabled]="isExisting(row.address)" [title]="value">{{ value }}</div>
+        <div
+          class="text-ellipsis"
+          [class.color-disabled]="isExisting(row.address)"
+          [title]="value"
+        >
+          {{ value }}
+        </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
@@ -72,7 +96,9 @@
         <mat-button-toggle-group [disabled]="">
           <mat-button-toggle
             *ngIf="isExisting(row.address)"
-            [matTooltip]="'settings-data-sink.AlreadyExistDataPoint' | translate"
+            [matTooltip]="
+              'settings-data-sink.AlreadyExistDataPoint' | translate
+            "
             matTooltipPosition="above"
             [disabled]="true"
             ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
@@ -82,7 +108,7 @@
             [matTooltip]="'settings-data-sink.SelectVariable' | translate"
             matTooltipPosition="above"
             (click)="onSelect(row)"
-          ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
+            ><mat-icon svgIcon="mdc:arrow-right"></mat-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>
       </ng-template>
@@ -91,6 +117,11 @@
 </div>
 <div mat-dialog-actions class="d-flex align-items-center justify-content-end">
   <button type="submit" mat-button (click)="onClose()">
-    {{ 'settings-data-sink.Cancel' | translate }}
+    {{
+      (data.dataSinkProtocol === DataSinkProtocol.OPC
+        ? 'settings-data-sink.Close'
+        : 'settings-data-sink.Cancel'
+      ) | translate
+    }}
   </button>
 </div>

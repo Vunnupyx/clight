@@ -1,17 +1,21 @@
 # MDC Flex Flasher User Guide
-## Versions
----
-Device | Flasher Version | MDC Connector Flex version | Firmware version
---- | --- | --- | ---
-IoT2050 **FS04** | 1.0.1 | 2.1.0 developer preview | none
 
+## Versions
+
+---
+
+| Device           | Flasher Version | MDC Connector Flex version | Firmware version |
+| ---------------- | --------------- | -------------------------- | ---------------- |
+| IoT2050 **FS04** | 1.0.2           | 2.3.0                      | none             |
 
 ## Description
+
 ---
 
 This bootable image of _MDC Flasher_ flashes the above version to internal eMMC of the IOT2050 and update the firmware version to if necessary.
 
 ## How to flash to USB device:
+
 ---
 
 1. Download MDC_LITE_INSTALLER-<MDCVERSION>-<FIRMWARE_VERSION>.zip from AWS
@@ -24,6 +28,7 @@ This bootable image of _MDC Flasher_ flashes the above version to internal eMMC 
 6. After the command or balena Etcher is finished your USB device is ready to install mdc lite and upgrade firmware version of IOT2050.
 
 ## How to install on IoT2050 via USB storage:
+
 ---
 
 0. Shutdown Iot2050 if it is running.
@@ -39,13 +44,16 @@ This bootable image of _MDC Flasher_ flashes the above version to internal eMMC 
 10. The IoT2050 device now is booting from internal eMMC
 
 ### LED states
+
 User 1 Led represent the state of the installer.
 
 User 2 Led repesent the state of firmware updater.
 
 ## Error codes
+
 ---
-LED User1 | LED USER2 | Description
-:------: | :------: | -----
-red   | red | Installation image corrupted. Please retry installation with a new flashed USB device. If this also fails please contact support
-green | red | Installation succeeded but firmware update failed. Please contact support
+
+| LED User1 | LED USER2 | Description                                                                                                                      |
+| :-------: | :-------: | -------------------------------------------------------------------------------------------------------------------------------- |
+|    red    |    red    | Installation image corrupted. Please retry installation with a new flashed USB device. If this also fails please contact support |
+|   green   |    red    | Installation succeeded but firmware update failed. Please contact support                                                        |

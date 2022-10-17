@@ -56,7 +56,7 @@ export class MessengerConnectionComponent implements OnInit {
     this.profileForm.patchValue({
       hostname: this.messengerConfiguration.hostname,
       username: this.messengerConfiguration.username,
-      password: this.messengerConfiguration.password
+      password: this.getPassword(this.messengerConfiguration.password)
     });
   }
 
@@ -88,5 +88,10 @@ export class MessengerConnectionComponent implements OnInit {
   close() {
     this.isFormSending = false;
     this.dialogRef.close();
+  }
+
+  getPassword(v: boolean | string) {
+    if (v) return null;
+    return '';
   }
 }

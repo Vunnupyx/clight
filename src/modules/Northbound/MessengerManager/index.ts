@@ -596,6 +596,7 @@ export class MessengerManager {
     this.messengerConfig = newMessengerConfig;
     this.serverStatus.registration = 'unknown';
     this.serverStatus.server = 'not_configured';
+    this.loginToken = null;
     this.serverStatus.registrationErrorReason = null;
 
     await this.init();

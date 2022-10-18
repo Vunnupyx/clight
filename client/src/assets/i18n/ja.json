@@ -331,8 +331,8 @@
     "Server": "Server Status",
     "RegisterMachine": "Register Machine",
     "RegistrationStatus": {
-      "Notregistered": "You are not registered",
-      "Registered": "Your machine is registered",
+      "Notregistered": "Machine is not registered",
+      "Registered": "Machine is registered",
       "Unknown": "Registration status is unknown"
     },
     "ServerStatus": {

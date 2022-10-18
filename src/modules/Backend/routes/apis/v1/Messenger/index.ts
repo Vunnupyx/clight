@@ -95,6 +95,9 @@ async function messengerConfigurationPostHandler(
       configManager.config.messenger?.hostname &&
       incomingMessengerConfig.hostname ===
         configManager.config.messenger?.hostname &&
+      incomingMessengerConfig.username ===
+        configManager.config.messenger?.username &&
+      incomingMessengerConfig.password === null &&
       (incomingMessengerConfig.model ||
         incomingMessengerConfig.organization ||
         incomingMessengerConfig.timezone)
@@ -124,7 +127,6 @@ async function messengerConfigurationPostHandler(
 
     await configManager.updateMessengerConfig(incomingMessengerConfig);
     await configManager.configChangeCompleted();
-    await dataSinksManager.messengerManager.handleConfigChange();
 
     response.status(200).json(null);
   } catch (err) {

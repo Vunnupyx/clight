@@ -331,9 +331,9 @@
     "Server": "Server Status",
     "RegisterMachine": "Machine Registrieren",
     "RegistrationStatus": {
-      "Notregistered": "Nicht registriert",
-      "Registered": "Registriert",
-      "Unknown": "Unbekannt"
+      "Notregistered": "Machine ist nicht registriert",
+      "Registered": "Machine ist registriert",
+      "Unknown": "Registrationstatus ist unbekannt"
     },
     "ServerStatus": {
       "Invalidhost": "Invalider Host",

@@ -85,7 +85,9 @@ async function messengerConfigurationPostHandler(
       typeof incomingMessengerConfig.username !== 'string' ||
       incomingMessengerConfig.username.length === 0
     ) {
-      response.status(400).json({ message: 'Missing hostname or username' });
+      response
+        .status(400)
+        .json({ error: { message: 'Missing hostname or username' } });
       return;
     }
     //If host is already known and model/organization/timezone changes, check if the new values are correct
@@ -113,7 +115,9 @@ async function messengerConfigurationPostHandler(
             (t) => t.id === incomingMessengerConfig.timezone
           ))
       ) {
-        response.status(400).json({ message: 'Invalid metadata option' });
+        response
+          .status(400)
+          .json({ error: { message: 'Invalid metadata option' } });
         return;
       }
     }
@@ -129,7 +133,11 @@ async function messengerConfigurationPostHandler(
         err
       )}`
     );
-    response.status(500).json(err);
+    response.status(500).json({
+      error: {
+        message: 'Unexpected error occurred. Please try again later.'
+      }
+    });
   }
 }
 
@@ -152,7 +160,11 @@ async function messengerStatusGetHandler(request: Request, response: Response) {
         err
       )}`
     );
-    response.status(500).json(err); //TODO
+    response.status(500).json({
+      error: {
+        message: 'Unexpected error occurred. Please try again later.'
+      }
+    });
   }
 }
 
@@ -174,7 +186,11 @@ async function messengerMetadataGetHandler(
         err
       )}`
     );
-    response.status(500).json(err); // TODO
+    response.status(500).json({
+      error: {
+        msg: 'Unexpected  error occurred. Please try again later.'
+      }
+    });
   }
 }
 

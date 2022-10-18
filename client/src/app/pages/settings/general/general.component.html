@@ -80,7 +80,7 @@
             <span
               ><app-doc-btn
                 link="/help/docs/#configuration-wizard"
-                tooltip="What is a template?"
+                tooltip="{{ 'quick-start.WhatIsTemplate' | translate }}"
               ></app-doc-btn
             ></span>
           </mat-panel-title>
@@ -91,11 +91,7 @@
             {{ 'settings-general.CurrentTemplate' | translate }}:
             {{ currentTemplate | async }}
           </p>
-          <button
-            mat-button
-            color="secondary"
-            [routerLink]="['/quick-start']"
-          >
+          <button mat-button color="secondary" [routerLink]="['/quick-start']">
             {{ 'settings-general.OpenConfigurationWizard' | translate }}
           </button>
         </div>

@@ -212,7 +212,7 @@ export class OPCUADataSink extends DataSink {
   }
 
   public async disconnect() {
-    this.opcuaAdapter.stop();
+    await this.opcuaAdapter.stop();
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 

@@ -30,8 +30,8 @@ export enum RegistrationErrorReasonStatus {
 export interface MessengerConfiguration {
   hostname: string | null;
   username: string | null;
-  password: string | null;
-  model: string | null;
+  password: string | null | boolean;
+  model: number | null;
   name: string | null;
   organization: string | null;
   timezone: number | null;
@@ -131,7 +131,7 @@ export class MessengerConnectionService {
     }
   }
 
-  async updateNetworkConfig(obj: Partial<MessengerConfiguration>) {
+  async updateNetworkConfig(obj: MessengerConfiguration) {
     this._store.patchState((state) => {
       state.isBusy = true;
     });
@@ -142,7 +142,6 @@ export class MessengerConnectionService {
         undefined,
       );
       this._store.patchState((state) => {
-        state.configuration = response;
         state.isBusy = false;
       });
       this.toastr.success(
@@ -184,7 +183,7 @@ export class MessengerConnectionService {
       configuration: {
         hostname: null,
         username: null,
-        password: null,
+        password: false,
         model: null,
         name: null,
         organization: null,

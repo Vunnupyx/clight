@@ -11,7 +11,7 @@ import { Subscription } from "rxjs";
 })
 export class RegisterMachineComponent implements OnInit {
   profileForm = new FormGroup({
-    model: new FormControl('', Validators.required),
+    model: new FormControl(0, Validators.required),
     name: new FormControl('', Validators.required),
     organization: new FormControl('', Validators.required),
     timezone: new FormControl(0, Validators.required)
@@ -62,13 +62,7 @@ export class RegisterMachineComponent implements OnInit {
   }
 
   save() {
-    const obj = {
-      model: this.profileForm.value.model,
-      name: this.profileForm.value.name,
-      organization: this.profileForm.value.organization,
-      timezone: Number(this.profileForm.value.timezone)
-    };
-    this.messengerConnectionService.updateNetworkConfig(obj);
+    this.messengerConnectionService.updateNetworkConfig({...this.data.configuration, ...this.profileForm.value, ...{password: null}});
     this.close();
   }
 

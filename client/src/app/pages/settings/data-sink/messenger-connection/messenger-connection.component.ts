@@ -65,6 +65,7 @@ export class MessengerConnectionComponent implements OnInit {
   }
 
   onSubmit() {
+    this.sanitizeDataBeforeSendToServer();
     this.messengerConnectionService
       .updateNetworkConfig(this.profileForm.value)
       .then(() => this.messengerConnectionService.getMessengerStatus())
@@ -91,7 +92,20 @@ export class MessengerConnectionComponent implements OnInit {
   }
 
   getPassword(v: boolean | string) {
-    if (v) return null;
-    return '';
+    const control = this.profileForm.get('password');
+    if (v)
+      control.removeValidators(Validators.required);
+    else
+      control.setValidators(Validators.required);
+
+    return null;
+  }
+
+  sanitizeDataBeforeSendToServer(): void {
+    const control = this.profileForm.get('password');
+
+    if ((control.value as string)?.trim() === '') {
+      control.setValue(null);
+    }
   }
 }

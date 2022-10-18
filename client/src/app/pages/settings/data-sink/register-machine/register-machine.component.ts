@@ -11,7 +11,6 @@ import { Subscription } from "rxjs";
 })
 export class RegisterMachineComponent implements OnInit {
   profileForm = new FormGroup({
-    license: new FormControl('', Validators.required),
     model: new FormControl('', Validators.required),
     name: new FormControl('', Validators.required),
     organization: new FormControl('', Validators.required),
@@ -55,7 +54,6 @@ export class RegisterMachineComponent implements OnInit {
       )
     );
     this.profileForm.patchValue({
-      license: this.data.configuration.license,
       model: this.data.configuration.model,
       name: this.data.configuration.name,
       organization: this.data.configuration.organization,
@@ -65,7 +63,6 @@ export class RegisterMachineComponent implements OnInit {
 
   save() {
     const obj = {
-      license: this.profileForm.value.license,
       model: this.profileForm.value.model,
       name: this.profileForm.value.name,
       organization: this.profileForm.value.organization,

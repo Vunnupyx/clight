@@ -61,7 +61,7 @@
         <div class="col">
           <mat-form-field  class="messenger-password" [hideRequiredMarker]="true" [floatLabel]="'always'">
             <mat-label></mat-label>
-            <input type="password" matInput formControlName="password" placeholder="{{this.messengerConfiguration.password ? '••••••••' : ''}}"/>
+            <input type="password" matInput formControlName="password" placeholder="{{this.messengerConfiguration?.password ? '••••••••' : ''}}"/>
           </mat-form-field>
         </div>
       </div>

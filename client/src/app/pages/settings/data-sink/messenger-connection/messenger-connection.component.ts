@@ -67,14 +67,11 @@ export class MessengerConnectionComponent implements OnInit {
   onSubmit() {
     this.sanitizeDataBeforeSendToServer();
     this.messengerConnectionService
-      .updateNetworkConfig(this.profileForm.value)
+      .updateNetworkConfig({...this.messengerConfiguration, ...this.profileForm.value})
       .then(() => this.messengerConnectionService.getMessengerStatus())
       .then(() => this.messengerConnectionService.getMessengerMetadata())
       .then(() => {
-        if (
-          this.messengerStatus.server === ServerStatus.Available &&
-          this.messengerStatus.registration === RegistrationStatus.Registered
-        ) {
+        if (this.messengerStatus.server === ServerStatus.Available) {
           this.dialog.open(RegisterMachineComponent, {
             width: '900px',
             data: {
@@ -97,8 +94,7 @@ export class MessengerConnectionComponent implements OnInit {
       control.removeValidators(Validators.required);
     else
       control.setValidators(Validators.required);
-
-    return null;
+    return '';
   }
 
   sanitizeDataBeforeSendToServer(): void {

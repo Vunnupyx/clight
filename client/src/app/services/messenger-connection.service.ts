@@ -142,6 +142,7 @@ export class MessengerConnectionService {
         undefined,
       );
       this._store.patchState((state) => {
+        state.configuration = obj;
         state.isBusy = false;
       });
       this.toastr.success(

@@ -64,6 +64,14 @@ export class MessengerConnectionComponent implements OnInit {
     this.sub && this.sub.unsubscribe();
   }
 
+  onSaveConfiguration() {
+    this.sanitizeDataBeforeSendToServer();
+    this.messengerConnectionService
+      .updateNetworkConfig({...this.messengerConfiguration, ...this.profileForm.value})
+      .then(() => this.messengerConnectionService.getMessengerStatus())
+      .then(() => this.messengerConnectionService.getMessengerConfig())
+  }
+
   onSubmit() {
     this.sanitizeDataBeforeSendToServer();
     this.messengerConnectionService

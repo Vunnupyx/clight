@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MessengerConnectionService, MessengerMetadata, MessengerStore } from 'app/services/messenger-connection.service';
 import { Subscription } from "rxjs";
+import { MessengerConnectionComponent } from '../messenger-connection/messenger-connection.component';
 
 @Component({
   selector: 'app-register-machine',
@@ -25,6 +26,7 @@ export class RegisterMachineComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Partial<MessengerStore>,
+    private dialog: MatDialog,
     public dialogRef: MatDialogRef<RegisterMachineComponent>,
     private messengerConnectionService: MessengerConnectionService
   ) {}
@@ -62,11 +64,20 @@ export class RegisterMachineComponent implements OnInit {
   }
 
   save() {
-    this.messengerConnectionService.updateNetworkConfig({...this.data.configuration, ...this.profileForm.value, ...{password: null}});
-    this.close();
+    this.messengerConnectionService.updateNetworkConfig({...this.data.configuration, ...this.profileForm.value, ...{password: null}}).then(() => {
+      this.close()
+    });
   }
 
   close() {
+    this.messengerConnectionService
+      .getMessengerStatus()
+      .then(() => this.messengerConnectionService.getMessengerConfig())
+      .then(() => {
+        this.dialog.open(MessengerConnectionComponent, {
+          width: '900px'
+        });
+      });
     this.isFormSending = false;
     this.dialogRef.close();
   }

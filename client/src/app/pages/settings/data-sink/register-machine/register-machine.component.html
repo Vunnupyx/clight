@@ -1,9 +1,9 @@
 <h2 mat-dialog-title>{{ 'settings-data-sink.RegisterMachine' | translate }}</h2>
-<mat-spinner *ngIf="isBusy"></mat-spinner>
 <form
   [formGroup]="profileForm"
   (ngSubmit)="profileForm.valid && !isBusy && isFormSending && save()"
 >
+  <mat-spinner *ngIf="isBusy"></mat-spinner>
   <mat-dialog-content *ngIf="!isBusy">
     <h3>{{ 'settings-data-sink.ServerConfiguration' | translate }}</h3>
     <div [formGroup]="profileForm">

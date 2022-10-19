@@ -1,7 +1,30 @@
+:host {
+  & .mat-dialog-actions {
+    padding: 0;
+    margin: 0;
+  }
+  & .mat-dialog-content {
+    max-height: 80vh;
+  }
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  & .dialog-close {
+    padding: 0 20px;
+    font-family: none, serif;
+    font-size: 52px;
+    line-height: 32px;
+    cursor: pointer;
+  }
+}
 .row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+  &:last-of-type {
+    grid-template-columns: 1fr 2fr 0.5fr;
+  }
 }
 mat-spinner {
   margin-top: 30px;

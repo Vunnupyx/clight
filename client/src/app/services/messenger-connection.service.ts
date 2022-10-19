@@ -136,7 +136,7 @@ export class MessengerConnectionService {
       state.isBusy = true;
     });
     try {
-      const response = await this.httpService.post<any>(
+      await this.httpService.post<any>(
         `/messenger/configuration`,
         obj,
         undefined,

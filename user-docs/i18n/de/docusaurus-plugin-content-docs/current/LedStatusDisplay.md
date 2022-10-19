@@ -4,41 +4,41 @@ title: Status LEDs
 
 # Status LEDs
 
-## Introduction
+## Einleitung
 
-The current runtime status of IoT connector flex is also directly visible on the `Siemens™ SIMATIC IoT2050™` device and displayed by different LEDs and with different colors.
+Der aktuelle Laufzeitstatus des IoT connector flex ist auch direkt auf dem Siemens™ SIMATIC IoT2050™`-Gerät sichtbar und wird durch verschiedene LEDs und mit unterschiedlichen Farben angezeigt.
 
-There are two different LEDs on the `Siemens™ SIMATIC IoT2050™` device:
+Es gibt zwei verschiedene LEDs auf dem Siemens™ SIMATIC IoT2050™`-Gerät:
 
 - USER 1
 - USER 2
 
-and three different colors for each LED:
+und drei verschiedene Farben für jede LED:
 
-- Green
-- Red
+- Grün
+- Rot
 - Orange
 
-### States of USER 1 LED
+### Zustände der USER 1 LED
 
-USER 1 LED displays the current configuration state:
+Die USER 1 LED zeigt den aktuellen Konfigurationsstatus an:
 
-- orange blinking (No Configuration/Not accepted Terms and Conditions)
-- orange (`configured` but not connected to NC)
-- green (`configured` and successfully connected to NC)
+- orange blinkend (Keine Konfiguration/Nicht akzeptierte Bedingungen)
+- orange (`konfiguriert` aber nicht mit NC verbunden)
+- grün (`konfiguriert` und erfolgreich mit der NC verbunden)
 
-### States of USER 2 LED
+### Zustände der USER 2 LED
 
-USER 2 LED has only 2 states:
+Die USER 2 LED hat nur 2 Zustände:
 
-- Off (IoTconnector flex is not running)
-- Green (IoTconnector flex is running)
+- Aus (IoTconnector flex ist nicht in Betrieb)
+- Grün (IoTconnector flex ist in Betrieb)
 
-### What does `configured` mean?
+### Was bedeutet `konfiguriert`?
 
-The status `configured` is defined as:
+Der Status `configured` ist definiert als:
 
-- One enabled data source
-- Minimum one active data point at this active source
-- One enabled Application Interface with minimum one data point
-- One active mapping between the enabled connected data source data point and the enabled Application Interface data point
+- Eine aktivierte Datenquelle
+- Mindestens ein aktiver Datenpunkt an dieser aktiven Quelle
+- Eine aktivierte Anwendungsschnittstelle mit mindestens einem Datenpunkt
+- Ein aktives Mapping zwischen dem Datenpunkt der aktivierten verbundenen Datenquelle und dem Datenpunkt der aktivierten Anwendungsschnittstelle

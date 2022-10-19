@@ -1,6 +1,6 @@
 ---
-title: Data Flow Configuration
+title: Datenfluss Konfiguration
 ---
 
-- Extending a template by updating the configuration or adding new data points.
-- Working without a template. What to do?
+- Erweitern einer Vorlage durch Aktualisieren der Konfiguration oder Hinzufügen neuer Datenpunkte.
+- Arbeiten ohne Vorlage. Was ist zu tun?

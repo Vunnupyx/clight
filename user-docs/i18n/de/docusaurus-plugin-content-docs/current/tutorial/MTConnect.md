@@ -1,7 +1,7 @@
 ---
-title: Connecting MTConnect
+title: MTConnect Verbinden
 ---
 
-- The MTConnect endpoint is exposed on port `15404` on both network interfaces
-- Checkout the "Network Settings"-Tab to see which IP addresses are configured for your device
-- You can use the "Open MTConnect Stream" button on the Application Interfaces/MTConnect page to see the current values in MTConnect
+- Der MTConnect-Endpunkt ist auf Port `15404` auf beiden Netzwerkschnittstellen verfügbar.
+- Überprüfen Sie auf der Registerkarte "Netzwerkeinstellungen", welche IP-Adressen für Ihr Gerät konfiguriert sind.
+- Sie können die Schaltfläche "Open MTConnect Stream" auf der Seite "Application Interfaces/MTConnect" verwenden, um die aktuellen Werte in MTConnect zu sehen

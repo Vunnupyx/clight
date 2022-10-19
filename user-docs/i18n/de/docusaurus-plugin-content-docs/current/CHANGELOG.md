@@ -1,225 +1,226 @@
 ---
-title: Changelog
+title: Änderungsliste
 ---
 
-# Changelog
+# Änderungsliste
 
 ## [2.3.0]
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) Reconnecting to Sinumeriks now works also when no PLC is connected and prevent runtime crash if NC variables are read when only connecting to PLC
-- [DIGMDCLGHT-178](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-178) and [DIGMDCLGHT-189](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-189) IP addresses could not be set if the device has no ip address set
-- [DIGMDCLGHT-188](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-188) Enum virtual data point could'nt be set sometimes
-- Fixed MTConnect id's
+- [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) Reconnecting zu Sinumeriks funktioniert nun auch, wenn keine PLC angeschlossen ist und verhindert Laufzeitabsturz, wenn NC-Variablen gelesen werden, wenn nur eine Verbindung zur PLC besteht
+- [DIGMDCLGHT-178](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-178) und [DIGMDCLGHT-189](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-189) IP-Adressen konnten nicht gesetzt werden, wenn das Gerät keine IP-Adresse gesetzt hat
+- [DIGMDCLGHT-188](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-188) Enum virtual data point konnte manchmal nicht gesetzt werden
+- MTConnect-IDs korrigiert
 
-### Added
+### Hinzugefügt
 
-- [DIGMDCLGHT-129](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-129) Added support for custom data points.
-- [DIGMDCLGHT-175](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-175) Added support for OPC UA schema version 2.0.18. Supports usage of config file between different machines. Ignores if custom given node id matches existing one.
-- [DIGMDCLGHT-103](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-103) Added support for custom mathematical expressions for virtual data points
+- [DIGMDCLGHT-197](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-197) Benutzerdokumentation unterstützt die Sprachen Deutsch und Japanisch
+- [DIGMDCLGHT-129](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-129) Unterstützung für benutzerdefinierte Datenpunkte wurde hinzugefügt.
+- [DIGMDCLGHT-175](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-175) Unterstützung für OPC UA Schema Version 2.0.18 wurde hinzugefügt. Unterstützt die Verwendung der Konfigurationsdatei zwischen verschiedenen Rechnern. Ignoriert, wenn die benutzerdefinierte Knoten-ID mit einer bestehenden übereinstimmt.
+- [DIGMDCLGHT-103](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-103) Unterstützung für benutzerdefinierte mathematische Ausdrücke für virtuelle Datenpunkte wurde hinzugefügt.
 
-### Changed
+### Geändert
 
-- [DIGMDCLGHT-190](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-190) Updated user documentation
+- [DIGMDCLGHT-190](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-190) Aktualisierte Benutzerdokumentation
 
 ## [2.2.1]
 
-### Added
+### Hinzugefügt
 
-- [DIGMDCLGHT-5](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-5) Added new virtual data point types. Compare operations where already added previously. Scheduling of counter resets was added.
-- [DIGMDCLGHT-170](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-170) Added new custom data points to the opc ua interface
+- [DIGMDCLGHT-5](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-5) Neue virtuelle Datenpunkttypen hinzugefügt. Vergleichsoperationen wurden bereits vorher hinzugefügt. Die Planung von Zählerrückstellungen wurde hinzugefügt.
+- [DIGMDCLGHT-170](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-170) Neue benutzerdefinierte Datenpunkte zur opc ua Schnittstelle hinzugefügt.
 
-### Changed
+### Geändert
 
-- [DIGMDCLGHT-77](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-77) Reworked UX. Moved "System Update" to system information and changed buttons on generals page
-- [DIGMDCLGHT-76](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-76) Updated icons
+- [DIGMDCLGHT-77](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-77) UX überarbeitet. System-Update" zu den Systeminformationen verschoben und Schaltflächen auf der allgemeinen Seite geändert
+- [DIGMDCLGHT-76](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-76) Ikonen aktualisiert
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-177](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-177) Fixed some misconfigured NC addresses
+- [DIGMDCLGHT-177](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-177) Einige falsch konfigurierte NC-Adressen behoben
 
 ## [2.1.3]
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-130](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-130) An misconfigured nck data point crashed the MTconnect agent, due to an invalid character
-- [DIGMDCLGHT-131](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-131) DNS lookup errors when testing ntp servers caused the runtime to crash
-- [DIGMDCLGHT-122](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-122) Minor issue where pressing "ESC" inside the menu caused the menu to disappear forever
+- [DIGMDCLGHT-130](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-130) Ein falsch konfigurierter nck-Datenpunkt brachte den MTconnect-Agenten wegen eines ungültigen Zeichens zum Absturz
+- [DIGMDCLGHT-131](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-131) DNS-Lookup-Fehler beim Testen von ntp-Servern führten zum Absturz der Runtime
+- [DIGMDCLGHT-122](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-122) Kleines Problem, bei dem das Drücken von "ESC" innerhalb des Menüs dazu führte, dass das Menü für immer verschwand
 
 ## [2.1.2]
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-124](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-124) Device now only keeps one IPv4 address if dhcp is enabled
-- [DIGMDCLGHT-127](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-127) Fixed memory leak when reading PLC variables
-- It was not possible to add multiple input sources to the threshold vdp
-- [DIGMDCLGHT-125] At network settings, the time preference is transferred and displayed correctly
-- [DIGMDCLGHT-126] Clock at the header now is being updated when user changes time preferences
-- [DIGMDCLGHT-72](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-72) Now columns of tables can be resized
-- [DIGMDCLGHT-94](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-94) When creating a data source, already used addresses a disabled and greyed out.
+- [DIGMDCLGHT-124](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-124) Gerät behält jetzt nur noch eine IPv4-Adresse, wenn dhcp aktiviert ist
+- [DIGMDCLGHT-127](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-127) Speicherleck beim Lesen von SPS-Variablen behoben
+- Es war nicht möglich, mehrere Eingangsquellen zum Schwellwert vdp hinzuzufügen
+- [DIGMDCLGHT-125] Bei Netzwerkeinstellungen wird die Zeiteinstellung korrekt übertragen und angezeigt
+- DIGMDCLGHT-126] Die Uhr in der Kopfzeile wird jetzt aktualisiert, wenn der Benutzer die Zeiteinstellungen ändert
+- [DIGMDCLGHT-72](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-72) Tabellenspalten können nun in der Grösse angepasst werden
+- [DIGMDCLGHT-94](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-94) Beim Erstellen einer Datenquelle sind bereits verwendete Adressen deaktiviert und ausgegraut.
 
 ## [2.1.1]
 
-### Added
+### Hinzugefügt
 
-- [DIGMDCLGHT-4](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-4) Added enum virtual data point
-- Improved logs: Printing logs while processing data points only once in 15min
+- [DIGMDCLGHT-4](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-4) Enum virtueller Datenpunkt hinzugefügt
+- Verbesserte Protokolle: Drucken von Protokollen bei der Verarbeitung von Datenpunkten nur noch einmal in 15min
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-99](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-99) Timeserver now is set correctly
-- [DIGMDCLGHT-93](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-93) Fixed connection issues from time to time
-- [DIGMDCLGHT-98](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-98) Automatically bumping versions in pipeline that are shown inside the UI
-- [DIGMDCLGHT-87](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-87) The device didn't restart after a factory reset
+- [DIGMDCLGHT-99](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-99) Timeserver wird nun korrekt gesetzt
+- [DIGMDCLGHT-93](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-93) Verbindungsprobleme von Zeit zu Zeit behoben
+- [DIGMDCLGHT-98](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-98) Automatisches Bumping von Versionen in der Pipeline, die in der UI angezeigt werden
+- [DIGMDCLGHT-87](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-87) Das Gerät startete nach einem Factory Reset nicht neu
 
 ## [2.1.0]
 
-## Added
+## Hinzugefügt
 
-- [DIGMDCLGHT-18](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-18) Counter can now be resetted via the web UI
-- [DIGMDCLGHT-9](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-9) Ping NC from UI to check connection configuration
-- [DIGMDCLGHT-24](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-24) Added ntp server connection state to ntp settings
+- [DIGMDCLGHT-18](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-18) Zähler kann jetzt über die Web-UI zurückgesetzt werden
+- [DIGMDCLGHT-9](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-9) Ping NC von UI zur Überprüfung der Verbindungskonfiguration
+- [DIGMDCLGHT-24](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-24) Ntp-Server-Verbindungsstatus zu den Ntp-Einstellungen hinzugefügt
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-3](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Pulling updated containers failed sometimes.
+- [DIGMDCLGHT-3](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Das Ziehen von aktualisierten Containern ist manchmal fehlgeschlagen.
 
-### Changed
+### Geändert
 
-- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Renamed IoTconnector Light to IoTconnector Lite
-- [MDCL-218](https://codestryke.atlassian.net/browse/MDCL-217) Switched CELOS logo to DMG Connectivity logo
-- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Removed step 3 and 4 from configuration wizard. The "enabled" flag of datasources and datasinks are now only controlled by the templates
-- [DIGMDCLGHT-27](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-27) Add a feature to change current staging environment. **RESTRICTION:** Back switch to _prod_ from _stag_ or _dev_ is not possible if there is no newer _prod_ image on registry.
-- [DIGMDCLGHT-2](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-2) Adjusted log file naming to DM{MAC}-{YYYY}-{MM}-{DD}-{HH}-{mm}-{ss}
-- [DIGMDCLGHT-11](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-11) Update NC variable set
-- [DIGMDCLGHT-15](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Renamed IoT connector light to IoT connector flex
+- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Umbenennung von IoTconnector Light in IoTconnector Lite
+- [MDCL-218](https://codestryke.atlassian.net/browse/MDCL-217) Das CELOS-Logo wurde durch das DMG Connectivity-Logo ersetzt.
+- [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Schritt 3 und 4 wurden aus dem Konfigurationsassistenten entfernt. Das "enabled"-Flag von Datenquellen und Datensenken wird jetzt nur noch von den Templates gesteuert
+- [DIGMDCLGHT-27](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-27) Hinzufügen einer Funktion zum Ändern der aktuellen Staging-Umgebung. **EINSCHRÄNKUNG:** Zurückschalten auf _prod_ von _stag_ oder _dev_ ist nicht möglich, wenn es kein neueres _prod_ Image in der Registry gibt.
+- [DIGMDCLGHT-2](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-2) Angepasste Benennung der Logdatei in DM{MAC}-{YYYY}-{MM}-{DD}-{HH}-{mm}-{ss}
+- [DIGMDCLGHT-11](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-11) NC-Variablensatz aktualisieren
+- [DIGMDCLGHT-15](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Umbenennung des IoT-Anschlusses light in IoT-Anschluss flex
 
 ## [1.7.4]
 
-### Added
+### Hinzugefügt
 
-- Support for SINUMERIK 840D pl with a static read frequency of 5 seconds
-- Improved data source logs
+- Unterstützung für SINUMERIK 840D pl mit einer statischen Lesefrequenz von 5 Sekunden
+- Verbesserte Datenquellenprotokolle
 
-### Fixed
+### Behoben
 
-- Fixed memory leak which leads to the crash of some containers
+- Speicherleck behoben, das zum Absturz einiger Container führte
 
 ## [1.7.3]
 
-### Added
+### Hinzugefügt
 
-- Updated user facing documentation
+- Aktualisierte Dokumentation für Benutzer
 
-### Fixed
+### Behoben
 
-- Fixed USER1 & USER2 LED statuses and added documentation
-- Fixed bug where old log archives weren't deleted after failures
-- Fixed flash service and improved documentation
-- IoTConnector lite software version is now correctly shown in opc ua
-- Invalid NTP-Server configuration only returns error once which prevents error if saving on other network tabs when a wrong ntp server is set
+- LED-Status von USER1 und USER2 korrigiert und Dokumentation hinzugefügt
+- Fehler behoben, bei dem alte Log-Archive nach Fehlern nicht gelöscht wurden
+- Flash-Dienst korrigiert und Dokumentation verbessert
+- IoTConnector lite Software Version wird nun korrekt in opc ua angezeigt
+- Ungültige NTP-Server-Konfiguration gibt nur noch einmal einen Fehler zurück, was einen Fehler beim Speichern auf anderen Netzwerk-Tabs verhindert, wenn ein falscher NTP-Server eingestellt ist
 
 ## [1.7.2]
 
-### Added
+### Hinzugefügt
 
-- Automatically including the current version inside the runtime (displayed in UI or OPC UA)
-- Included changelog in docusaurus
-- Added first version of japanese translation (some texts ares still english)
+- Automatisches Einbinden der aktuellen Version in die Runtime (Anzeige im UI oder OPC UA)
+- Änderungsprotokoll in Dokusaurus eingefügt
+- Erste Version der japanischen Übersetzung hinzugefügt (einige Texte sind noch englisch)
 
-### Fixed
+### Behoben
 
-- Removed "time difference" warning, in case of an unsuccessful request
-- Invalid NTP-Server configuration only returns error once.
+- Die Warnung "Zeitdifferenz" bei einer erfolglosen Anfrage wurde entfernt
+- Ungültige NTP-Server-Konfiguration wird nur noch einmal als Fehler gemeldet.
 
 ## [1.7.1]
 
-### Added
+### Hinzugefügt
 
-- Added "Time Error" connection status
-- [MDCL-186](https://codestryke.atlassian.net/browse/MDCL-186) Added default MTConnect item, that can't be deleted
-- Provided general device info inside OPC UA server
+- Verbindungsstatus "Zeitfehler" hinzugefügt
+- [MDCL-186](https://codestryke.atlassian.net/browse/MDCL-186) Standard MTConnect Element hinzugefügt, das nicht gelöscht werden kann
+- Allgemeine Geräteinformationen innerhalb des OPC UA Servers zur Verfügung gestellt
 
-### Fixed
+### Behoben
 
-- Fixed bug where deleting a mapping doesn't delete the mapping inside the runtime until the next restart
-- Improved error handling, that fix a bug where data sinks doesn't start after applying a new configuration
+- Fehler behoben, bei dem das Löschen eines Mappings das Mapping innerhalb der Laufzeit bis zum nächsten Neustart nicht löscht
+- Verbesserte Fehlerbehandlung, die einen Fehler behebt, bei dem Datensenken nach der Anwendung einer neuen Konfiguration nicht gestartet werden
 
 ## [1.7.0]
 
-### Added
+### Hinzugefügt
 
-- [MDCL-152](https://codestryke.atlassian.net/browse/MDCL-152) Setting device hostname to "DM{MAC_ADDRESS}" on startup. Eg: DM8CF3191EBD22
-- A summary of the read data points per data source is logged periodically
-- [MDCL-163](https://codestryke.atlassian.net/browse/MDCL-163) Added status led's
-- [MDCL-133](https://codestryke.atlassian.net/browse/MDCL-133) Added time configuration
-- Added healthchecks and an autoheal mechanism to restart unhealthy containers
-- [MDCL-149](https://codestryke.atlassian.net/browse/MDCL-149) Added support for opcua encryption
+- [MDCL-152](https://codestryke.atlassian.net/browse/MDCL-152) Setzt den Geräte-Hostnamen beim Start auf "DM{MAC_ADDRESS}". Beispiel: DM8CF3191EBD22
+- Eine Zusammenfassung der gelesenen Datenpunkte pro Datenquelle wird periodisch protokolliert
+- [MDCL-163](https://codestryke.atlassian.net/browse/MDCL-163) Status-LEDs hinzugefügt
+- [MDCL-133](https://codestryke.atlassian.net/browse/MDCL-133) Zeitkonfiguration hinzugefügt
+- Healthchecks und ein Autoheal-Mechanismus zum Neustart ungesunder Container wurden hinzugefügt
+- [MDCL-149](https://codestryke.atlassian.net/browse/MDCL-149) Unterstützung für opcua-Verschlüsselung hinzugefügt
 
 ## [1.6.2]
 
-### Added
+### Hinzugefügt
 
-- [MDCL-187](https://codestryke.atlassian.net/browse/MDCL-187) Added log file export
-- [MDCL-185](https://codestryke.atlassian.net/browse/MDCL-185) Added green check mark for data points of data sinks if they are already mapped
+- [MDCL-187](https://codestryke.atlassian.net/browse/MDCL-187) Export von Protokolldateien hinzugefügt
+- [MDCL-185](https://codestryke.atlassian.net/browse/MDCL-185) Grünes Häkchen für Datenpunkte von Datensenken hinzugefügt, wenn diese bereits zugeordnet sind
 
-### Changed
+### Geändert
 
-- Improvement of the stability of the s7 and nck connector
-- Change log level to debug and removed unnecessary logs
+- Verbesserung der Stabilität des s7- und nck-Anschlusses
+- Änderung des Loglevels auf Debug und Entfernung unnötiger Logs
 
-### Fixed
+### Behoben
 
-- [MDCL-198](https://codestryke.atlassian.net/browse/MDCL-198) Fixed usage of wrong ip address for PLC connections
-- [MDCL-200](https://codestryke.atlassian.net/browse/MDCL-200) Fixed a bug that crashes the runtime when writing data to the mtconnect agent while it is shutting down.
+- [MDCL-198](https://codestryke.atlassian.net/browse/MDCL-198) Die Verwendung einer falschen IP-Adresse für SPS-Verbindungen wurde korrigiert.
+- [MDCL-200](https://codestryke.atlassian.net/browse/MDCL-200) Fehler behoben, der zum Absturz der Runtime führte, wenn Daten in den mtconnect-Agenten geschrieben wurden, während dieser heruntergefahren wurde.
 
 ## [1.6.1]
 
-### Added
+### Hinzugefügt
 
-- [MDCL-154](https://codestryke.atlassian.net/browse/MDCL-154) Added factory reset via "USER" button incl. documentation
+- [MDCL-154](https://codestryke.atlassian.net/browse/MDCL-154) Werksreset über "USER"-Taste inkl. Dokumentation hinzugefügt
 
-### Changed
+### Geändert
 
-- Update data hub provisioning timeout behavior and removed timeout after 10 seconds
+- Aktualisierung des Timeout-Verhaltens bei der Datenhub-Bereitstellung und Entfernung des Timeouts nach 10 Sekunden
 
-### Fixed
+### Behoben
 
-- [MDCL-197](https://codestryke.atlassian.net/browse/MDCL-197) Fixed bug that made it impossible to update the general device info
+- [MDCL-197](https://codestryke.atlassian.net/browse/MDCL-197) Fehler behoben, der es unmöglich machte, die allgemeinen Geräteinformationen zu aktualisieren
 
 ## [1.6.0]
 
-### Added
+### Hinzugefügt
 
-- Added changelog
-- [MDCL-96](https://codestryke.atlassian.net/browse/MDCL-96) Added io shield templates for di10 and ai2+di5 boards
-- [MDCL-52](https://codestryke.atlassian.net/browse/MDCL-52) Finished data hub implementation
-  - Show adapter state inside ui
-  - Added data point enums
-- [MDCL-177](https://codestryke.atlassian.net/browse/MDCL-177) It's now required to confirm agb's inside the configuration wizard to start the southbound and northbound adapters
-- [MDCL-176](https://codestryke.atlassian.net/browse/MDCL-176) Added "forgot password" link on login page (documentation page still missing)
+- Changelog hinzugefügt
+- [MDCL-96](https://codestryke.atlassian.net/browse/MDCL-96) io shield Vorlagen für di10 und ai2+di5 Boards hinzugefügt
+- [MDCL-52](https://codestryke.atlassian.net/browse/MDCL-52) Datenhub-Implementierung fertiggestellt
+  - Anzeige des Adapterstatus in der Benutzeroberfläche
+  - Datenpunkt-Enums hinzugefügt
+- [MDCL-177](https://codestryke.atlassian.net/browse/MDCL-177) Es ist nun erforderlich, agb's im Konfigurationsassistenten zu bestätigen, um die süd- und nordgerichteten Adapter zu starten
+- [MDCL-176](https://codestryke.atlassian.net/browse/MDCL-176) Link "Passwort vergessen" auf Login-Seite hinzugefügt (Dokumentationsseite fehlt noch)
 
-### Changed
+### Geändert
 
-- [MDCL-194](https://codestryke.atlassian.net/browse/MDCL-194) Prevent duplicated northbound connector mappings
-- [MDCL-183](https://codestryke.atlassian.net/browse/MDCL-183) Prevent creation of duplicated virtual data points
-- [MDCL-184](https://codestryke.atlassian.net/browse/MDCL-184) Prevent creation of southbound data points with duplicated name or address
-- [MDCL-181](https://codestryke.atlassian.net/browse/MDCL-181) Hide mappings of disabled data sources
-- [MDCL-166](https://codestryke.atlassian.net/browse/MDCL-166) Data source status is now refreshing every 2 seconds
-- [MDCL-172](https://codestryke.atlassian.net/browse/MDCL-166) [MDCL-173](https://codestryke.atlassian.net/browse/MDCL-166) [MDCL-174](https://codestryke.atlassian.net/browse/MDCL-166) Layout adjustments on the login page
-- [MDCL-155](https://codestryke.atlassian.net/browse/MDCL-155) The user is now able to select his type of siemens device he wants to connect
-- [MDCL-169](https://codestryke.atlassian.net/browse/MDCL-169) The user is now able to select his type of input board he wants to connect
-- [MDCL-157](https://codestryke.atlassian.net/browse/MDCL-157) The template wizard now displays more context information about every single step
-- [MDCL-139](https://codestryke.atlassian.net/browse/MDCL-139) There are now quick links to access the documentation where the user needs some information about what he has to do. More links to be added.
-- [MDCL-179](https://codestryke.atlassian.net/browse/MDCL-179) Increased default sampling rate of io shield data points to have a threshold chart with higher resolution
-- [MDCL-180](https://codestryke.atlassian.net/browse/MDCL-180) Increased chart data series from 30 seconds to 5 minutes
-- Changed production log level from debug to info
-- Updated login documentation the new user and password format (username: User, password: {Mac Address})
+- [MDCL-194](https://codestryke.atlassian.net/browse/MDCL-194) Verhinderung doppelter Zuordnungen von Konnektoren in nördlicher Richtung
+- [MDCL-183](https://codestryke.atlassian.net/browse/MDCL-183) Verhinderung der Erstellung von doppelten virtuellen Datenpunkten
+- [MDCL-184](https://codestryke.atlassian.net/browse/MDCL-184) Verhinderung der Erstellung von südlichen Datenpunkten mit doppeltem Namen oder Adresse
+- [MDCL-181](https://codestryke.atlassian.net/browse/MDCL-181) Ausblenden von Zuordnungen von deaktivierten Datenquellen
+- [MDCL-166](https://codestryke.atlassian.net/browse/MDCL-166) Der Datenquellenstatus wird nun alle 2 Sekunden aktualisiert
+- [MDCL-172](https://codestryke.atlassian.net/browse/MDCL-166) [MDCL-173](https://codestryke.atlassian.net/browse/MDCL-166) [MDCL-174](https://codestryke.atlassian.net/browse/MDCL-166) Layout-Anpassungen auf der Login-Seite
+- [MDCL-155](https://codestryke.atlassian.net/browse/MDCL-155) Der Benutzer kann nun den Typ des Siemens-Geräts auswählen, mit dem er sich verbinden möchte
+- [MDCL-169](https://codestryke.atlassian.net/browse/MDCL-169) Der Benutzer kann nun den Typ der Eingangskarte auswählen, die er anschließen möchte
+- [MDCL-157](https://codestryke.atlassian.net/browse/MDCL-157) Der Vorlagenassistent zeigt nun mehr Kontextinformationen zu jedem einzelnen Schritt an
+- [MDCL-139](https://codestryke.atlassian.net/browse/MDCL-139) Es gibt jetzt schnelle Links, um auf die Dokumentation zuzugreifen, wenn der Benutzer Informationen darüber benötigt, was er zu tun hat. Weitere Links sollen hinzugefügt werden.
+- [MDCL-179](https://codestryke.atlassian.net/browse/MDCL-179) Die Standardabtastrate der io shield Datenpunkte wurde erhöht, um ein Schwellwertdiagramm mit höherer Auflösung zu erhalten.
+- [MDCL-180](https://codestryke.atlassian.net/browse/MDCL-180) Die Diagrammdatenreihe wurde von 30 Sekunden auf 5 Minuten erhöht.
+- Die Produktionsprotokollebene wurde von Debug auf Info geändert.
+- Die Anmeldedokumentation wurde an das neue Benutzer- und Passwortformat angepasst (Benutzername: Benutzer, Passwort: {Mac-Adresse})
 
-### Fixed
+### Behoben
 
-- [MDCL-129](https://codestryke.atlassian.net/browse/MDCL-129) Fixed digital io shield inputs that were unable to switch from blinking to on
-- [MDCL-156](https://codestryke.atlassian.net/browse/MDCL-156) Fixed minor frontend responsibility fixes
-- [MDCL-178](https://codestryke.atlassian.net/browse/MDCL-178) Fixed bug where configuration wizard doesn't open automatically after first login
-- [MDCL-168](https://codestryke.atlassian.net/browse/MDCL-168) Live reloading doesn't break the mtconnect connector anymore
+- [MDCL-129](https://codestryke.atlassian.net/browse/MDCL-129) Behebung von digitalen Io-Shield-Eingängen, die nicht von Blinken auf Ein schalten konnten
+- [MDCL-156](https://codestryke.atlassian.net/browse/MDCL-156) Kleinere Korrekturen der Frontend-Verantwortung behoben
+- [MDCL-178](https://codestryke.atlassian.net/browse/MDCL-178) Fehler behoben, bei dem sich der Konfigurationsassistent nach dem ersten Login nicht automatisch öffnete
+- [MDCL-168](https://codestryke.atlassian.net/browse/MDCL-168) Live-Reloading unterbricht den mtconnect-Anschluss nicht mehr

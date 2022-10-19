@@ -2,147 +2,149 @@
 title: Virtual Data Points
 ---
 
-# Virtual Data Points (VDPs)
+# Virtuelle Datenpunkte (VDPs)
 
 ## Introduction
 
-Virtual Data Point (VDP) is a feature to create a calculated data point from one or more real data points. A previously defined virtual data point can also be used as an input to a VDP. There are many linking operations available.
+## Einführung
 
-Important: If a virtual data point is defined as source of another virtual data point, the source virtual data point must be defined before it is used!
+Virtueller Datenpunkt (VDP) ist eine Funktion zur Erstellung eines berechneten Datenpunkts aus einem oder mehreren realen Datenpunkten. Ein zuvor definierter virtueller Datenpunkt kann auch als Eingabe für einen VDP verwendet werden. Es sind viele Verknüpfungsoperationen möglich.
 
-Note: All operations except `Calculation` convert the source value into true/false (boolean) while evaluating for the VDP:
+Wichtig: Wenn ein virtueller Datenpunkt als Quelle eines anderen virtuellen Datenpunkts definiert wird, muss der virtuelle Quelldatenpunkt definiert werden, bevor er verwendet wird!
 
-- If the source value is a number: Any value above 0 is interpreted as `true` and 0 value is interpreted as `false`
-- If the source value is not number but a text: Any text length above 0 characters is interpreted as `true` whereas empty text "" becomes `false`
+Hinweis: Alle Operationen außer `Berechnung` wandeln den Quellwert in wahr/falsch (boolesch) um, während sie für den VDP ausgewertet werden:
 
-### How to Add a Virtual Data Point
+- Wenn der Quellwert eine Zahl ist: Jeder Wert über 0 wird als `wahr` und der Wert 0 wird als `falsch` interpretiert.
+- Wenn der Quellwert keine Zahl, sondern ein Text ist: Jede Textlänge über 0 Zeichen wird als `wahr` interpretiert, während ein leerer Text "" zu `falsch` wird.
 
-![Adding new virtual data points](/img/vdp/add_vdp.png)
+### Hinzufügen eines virtuellen Datenpunkts
 
-1. Click the blue button with the white plus icon. A new line is added to the list of Virtual Data Points table.
-2. Enter a name for your new generated VDP
-3. Select an operator
-4. Select one or multiple sources
-   ![Choosing sources](/img/vdp/choose_source.png)
-5. For operator specific details and settings see relevant operator's description below. For some operators you must provide extra information to be able to save.
-6. Click the green check button on the right in `Actions` column to save and stop editing or click the red cross to discard your entry.
-7. Click the `Apply Changes` button on top right of the page to send your new data point the the device.
+![ Hinzufügen eines virtuellen Datenpunkts](/img/vdp/add_vdp.png)
 
-### Available Operators
+1. Klicken Sie auf die blaue Schaltfläche mit dem weißen Plus-Symbol. Eine neue Zeile wird in der Liste der virtuellen Datenpunkte hinzugefügt.
+2. Geben Sie einen Namen für Ihren neu erzeugten VDP ein.
+3. Wählen Sie einen Operator
+4. Wählen Sie eine oder mehrere Quellen
+   ![Auswahl der Quellen](/img/vdp/choose_source.png)
+5. Spezifische Details und Einstellungen zu den Betreibern finden Sie in der Beschreibung des jeweiligen Betreibers weiter unten. Bei einigen Betreibern müssen Sie zusätzliche Informationen angeben, um speichern zu können.
+6. Klicken Sie auf die grüne Schaltfläche rechts in der Spalte `Aktionen`, um zu speichern und die Bearbeitung zu beenden, oder klicken Sie auf das rote Kreuz, um Ihre Eingabe zu verwerfen.
+7. Klicken Sie auf die Schaltfläche `Änderungen übernehmen` oben rechts auf der Seite, um Ihren neuen Datenpunkt an das Gerät zu senden.
 
-Note: If you need a combination of operations please read the `Combine Operations` section.
+### Verfügbare Operatoren
 
-##### AND
+Hinweis: Wenn Sie eine Kombination von Operationen benötigen, lesen Sie bitte den Abschnitt `Kombinieren von Operationen`.
 
-_Logical AND:_ returns true if all selected data points values are true
-Multiple selection of sources is possible.
+##### UND
 
-##### OR
+_Logisches UND:_ gibt wahr zurück, wenn alle ausgewählten Datenpunktwerte wahr sind
+Eine Mehrfachauswahl von Quellen ist möglich.
 
-_Logical OR:_ Returns true if at least one selected data point value is true
-Multiple selection of sources is possible.
+##### ODER
 
-##### NOT
+_Logisches ODER:_ Gibt wahr zurück, wenn mindestens ein ausgewählter Datenpunktwert wahr ist.
+Eine Mehrfachauswahl von Quellen ist möglich.
 
-_Logical NEGATION:_ Returns false if the data point value is true and vice versa
-Only one source can be selected.
+##### NICHT
 
-##### COUNT
+_Logische NICHT:_ Gibt falsch zurück, wenn der Datenpunktwert true ist und umgekehrt
+Es kann nur eine Quelle ausgewählt werden.
 
-Counts every state change (rising flag of the source) of a data point and shows as a number.
+##### ZÄHLER
 
-Counters are persistent across reboots. If you need to reset counters, you must delete the file where there are stored.
+Zählt jede Zustandsänderung (steigende Flagge der Quelle) eines Datenpunkts und zeigt sie als Zahl an.
 
-Only one source can be selected for counting.
+Die Zähler bleiben über Neustarts hinweg bestehen. Wenn Sie die Zähler zurücksetzen müssen, müssen Sie die Datei, in der sie gespeichert sind, löschen.
 
-##### THRESHOLDS
+Es kann nur eine Quelle für die Zählung ausgewählt werden.
 
-Returns defined value if threshold is exceeded, multiple thresholds are possible for one data point.
+##### Schwellwerte
 
-While adding the variable choose Set Threshold button on the right to add threshold levels:
-![Setting thresholds](/img/vdp/set_threshold.png)
-Enter desired thresholds and corresponding `value` which will be the value of the VDP if given threshold is exceeded.
-![Adding threshold](/img/vdp/add_threshold.png)
-In the example above, the virtual data point called `Tank Status` is connected to `[AI] Tank Level` data source which has currently value 8.23 and with the given thresholds, the virtual data point's value will be `NORMAL`.
+Gibt den definierten Wert zurück, wenn der Schwellenwert überschritten wird. Es sind mehrere Schwellenwerte für einen Datenpunkt möglich.
+
+Wählen Sie beim Hinzufügen der Variablen die Schaltfläche Schwellenwert setzen auf der rechten Seite, um Schwellenwerte hinzuzufügen:
+![Schwellenwerte setzen](/img/vdp/set_threshold.png)
+Geben Sie die gewünschten Schwellenwerte und den entsprechenden `Wert` ein, der der Wert des VDP sein wird, wenn der gegebene Schwellenwert überschritten wird.
+![Schwellenwert hinzufügen](/img/vdp/add_threshold.png)
+Im obigen Beispiel ist der virtuelle Datenpunkt mit der Bezeichnung `Tankstatus` mit der Datenquelle `[AI] Tankstatus` verbunden, die derzeit den Wert 8,23 hat, und mit den angegebenen Schwellenwerten wird der Wert des virtuellen Datenpunkts `NORMAL´ sein.
 
 ##### ENUMERATION
 
-Returns a text that is matching to the value of the source. These are provided via the `Set Enumeration` button on `Action` column as seen below.
+Gibt einen Text zurück, der mit dem Wert der Quelle übereinstimmt. Diese werden über die Schaltfläche `Enumeration festlegen` in der Spalte `Aktion` bereitgestellt (siehe unten).
 
-In Set Enumeration view, you can give a default value, which will be showed if none of the defined conditions are met
-![Add enum modal](/img/vdp/set_enum_default.png)
+In der Ansicht "Set Enumeration" können Sie einen Standardwert angeben, der angezeigt wird, wenn keine der definierten Bedingungen erfüllt ist
+![Enumeration modal hinzufügen](/img/vdp/set_enum_default.png)
 
-By clicking blue plus sign, you can add new conditions. For each such conditions, you need to choose a variable to be observed and the text to be shown if the source value becomes `true` by typing it under "Value if left side is true" column.
-![Adding enumerations](/img/vdp/set_enum_row.png)
+Wenn Sie auf das blaue Pluszeichen klicken, können Sie neue Bedingungen hinzufügen. Für jede dieser Bedingungen müssen Sie eine Variable wählen, die beobachtet werden soll, und den Text, der angezeigt werden soll, wenn der Quellwert `wahr` wird, indem Sie ihn in die Spalte "Wert, wenn die linke Seite wahr ist" eingeben.
+[Enumeration hinzufügen](/img/vdp/set_enum_row.png)
 
-An example with certain values can be seen here:
-![Example of adding enumerations](/img/vdp/set_enum_example.png)
+Ein Beispiel mit bestimmten Werten ist hier zu sehen:
+![Beispiel für das Hinzufügen von Enumeration](/img/vdp/set_enum_example.png)
 
-##### GREATER
+##### GRÖSSER
 
-Returns true if the data point value is greater than the other compared data point value.
+Gibt wahr zurück, wenn der Datenpunktwert größer ist als der andere verglichene Datenpunktwert.
 
-If you need true when it is equal as well, please use `Greater Equal` operator.
+Wenn Sie wahr benötigen, wenn er auch gleich ist, verwenden Sie bitte den Operator `Größer Gleich`.
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+Um den Vergleichswert anzugeben, verwenden Sie die Schaltfläche `Vergleichswert setzen` in der Spalte `Aktion` der Zeile.
 
-##### GREATER EQUAL
+##### GRÖSSER GLEICH
 
-Returns true if the data point value is greater than or equal to the other compared data point value.
+Gibt wahr zurück, wenn der Datenpunktwert größer oder gleich dem anderen verglichenen Datenpunktwert ist.
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+Um den Vergleichswert anzugeben, verwenden Sie die Schaltfläche `Vergleichswert setzen` in der Spalte `Aktion` der Zeile.
 
-##### SMALLER
+##### KLEINER
 
-Returns true if the data point value is smaller than the other compared data point value.
+Gibt wahr zurück, wenn der Datenpunktwert kleiner ist als der andere verglichene Datenpunktwert.
 
-If you need true when it is equal as well, please use `Smaller Equal` operator
+Wenn Sie wahr brauchen, wenn er auch gleich ist, verwenden Sie bitte den Operator `Kleiner Gleich`.
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+Um den Vergleichswert anzugeben, verwenden Sie die Schaltfläche `Vergleichswert setzen` in der Spalte `Aktion` der Zeile.
 
-##### SMALLER EQUAL
+##### KLEINER GLEICH
 
-Returns true if the data point value is less than or equal to the other compared data point value.
+Gibt wahr zurück, wenn der Datenpunktwert kleiner oder gleich dem anderen verglichenen Datenpunktwert ist.
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+Um den Vergleichswert anzugeben, verwenden Sie die Schaltfläche `Vergleichswert setzen` in der Spalte `Aktion` der Zeile.
 
-##### EQUAL
+##### GLEICH
 
-Returns true if the data point value is equal to the other compared data point value.
+Gibt wahr zurück, wenn der Datenpunktwert gleich dem anderen verglichenen Datenpunktwert ist.
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+Um den Vergleichswert anzugeben, verwenden Sie die Schaltfläche `Vergleichswert setzen` in der Spalte `Aktion` der Zeile.
 
-##### UNEQUAL
+##### UNGLEICH
 
-Returns true if the data point value is _not_ equal to the other compared data point value.
+Gibt wahr zurück, wenn der Datenpunktwert _nicht_ gleich dem anderen verglichenen Datenpunktwert ist.
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+Um den Vergleichswert anzugeben, verwenden Sie die Schaltfläche `Vergleichswert setzen` in der Spalte `Aktion` der Zeile.
 
-##### CALCULATION
+##### KALKULATION
 
-Custom mathematical expression using variable names and manually typing the mathematical equations. It is useful when several data points need to be combined and in more complex mathematical operations.
+Benutzerdefinierter mathematischer Ausdruck unter Verwendung von Variablennamen und manueller Eingabe der mathematischen Gleichungen. Es ist nützlich, wenn mehrere Datenpunkte kombiniert werden müssen und bei komplexeren mathematischen Operationen.
 
-Example to be provided.
+Ein Beispiel ist zu folgen.
 
-### Combined Operations
+### Kombinieren von Operationen
 
-There are two ways to create combined operations:
+Es gibt zwei Möglichkeiten, kombinierte Operationen zu erstellen:
 
-- Using `Calculation`:
+- Mit `Kalkulation`:
 
-Please refer the explanation above.
+Bitte beachten Sie die obige Erklärung.
 
-- Creating new VDPs and combining these:
+- Erstellen neuer VDPs und Kombinieren dieser:
 
-For example, to create following equation with multiple VDPs: _DP1 & DP2 & !DP3_
+Zum Beispiel, um die folgende Gleichung mit mehreren VDPs zu erstellen: _DP1 & DP2 & !DP3_
 
-1. Create a first VDP1 with DP1 and DP2, AND operation
-2. Create a second VDP2 with DP3, NOT operation
-3. Create a third final VDP3 with VDP1, VDP2, AND operation
-4. The result will be equal to the VDP3 value
+1. Erstellen Sie einen ersten VDP1 mit DP1 und DP2, UND-Verknüpfung
+2. Erstellen Sie ein zweites VDP2 mit DP3, NOT-Operation
+3. Erstelle ein drittes endgültiges VDP3 mit VDP1, VDP2, UND-Verknüpfung
+4. Das Ergebnis ist gleich dem VDP3-Wert
 
-### How to Delete a Virtual Data Point
+### So löschen Sie einen virtuellen Datenpunkt
 
-1. Click on right side of the entry you want to delete in `Actions` column the garbage icon
-2. Select Yes in the popped up overlay with the question: "Are you sure you want to delete data point [datapoint name]?"
-3. Click the `Apply Changes` button to send the change to the backend
+1. Klicken Sie auf der rechten Seite des zu löschenden Eintrags in der Spalte `Aktionen` auf das Müllsymbol
+2. Wählen Sie "Ja" in dem sich öffnenden Overlay mit der Frage: "Sind Sie sicher, dass Sie den Datenpunkt [Datenpunktname] löschen möchten?"
+3. Klicken Sie auf die Schaltfläche `Änderungen übernehmen`, um die Änderung an das Backend zu senden.

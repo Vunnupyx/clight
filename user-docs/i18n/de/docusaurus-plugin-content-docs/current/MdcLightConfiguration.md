@@ -1,183 +1,183 @@
 ---
-title: Configuration File
+title: Konfigurationsdatei
 ---
 
-# Configuration File
+# Konfigurationsdatei
 
-The configuration file is a JSON file that stores various information and settings about the runtime. It has the following structure:
+Die Konfigurationsdatei ist eine JSON-Datei, in der verschiedene Informationen und Einstellungen über die Laufzeit gespeichert werden. Sie hat die folgende Struktur:
 
 ```json
 {
   "general": {
-    // Information about the device
+    // Informationen über das Gerät
   },
   "networkConfig": {
-    // Configuration of network interfaces, proxy and time
+    // Konfiguration von Netzwerkschnittstellen, Proxy und Zeit
   },
   "dataSources": {
-    // A list of southbound data sources (currently supported: Siemens S7, ioshield)
+    // Eine Liste der südlichen Datenquellen (derzeit unterstützt: Siemens S7, ioshield)
   },
   "dataSinks": {
-    // A list of application interfaces (currently supported: MTConnect, OPC UA, CELOS Exchange)
+    // Eine Liste von Anwendungsschnittstellen (derzeit unterstützt: MTConnect, OPC UA, CELOS Exchange)
   },
   "virtualDataPoints": {
-    //A list of virtual data points to link multiple source data points together
+    //A Liste der virtuellen Datenpunkte, um mehrere Quelldatenpunkte miteinander zu verbinden
   },
   "mapping": {
-    // A list of connections for data points of the data source and application interface
+    // Eine Liste von Verbindungen für Datenpunkte der Datenquelle und Anwendungsschnittstelle
   },
   "quickStart": {
-    // Status of quick start procedure
+    // Status des Schnellstartverfahrens
   },
   "env": {
-    // Tags of the software versions to be used
+    // Tags der zu verwendenden Softwareversionen
   }
 }
 ```
 
-There are two example configuration inside the folder: `_mdclight/config/`
+Im Ordner befinden sich zwei Beispielkonfigurationen: `_mdclight/config/`
 
-## Data sources
+## Datenquellen
 
-There are two types of data sources: The S7-Com PLC data source "s7" and the digital input shield "ioshield".
+Es gibt zwei Arten von Datenquellen: Die S7-Com PLC Datenquelle "s7" und das digitale Eingangsschild "ioshield".
 
-Note : Minumum data source reading frequency is 500 milliseconds.
+Hinweis: Die minimale Lesefrequenz der Datenquelle beträgt 500 Millisekunden.
 
-- **S7**: With the S7 data source you can read data from S7 PLCs. Reading DBs, Inputs, Outputs and memory data ("Merkers") is supported.
+- **S7**: Mit der S7-Datenquelle können Sie Daten von S7-SPSen lesen. Das Lesen von DBs, Eingängen, Ausgängen und Speicherdaten ("Merker") wird unterstützt.
 
-Structure for S7 Type:
+Struktur für S7 Typ:
 
 ```json
 {
-  // Data source protocol
+  // Protokoll der Datenquelle
   "protocol": "s7",
-  // Whether this data source is enabled
+  // Ob diese Datenquelle aktiviert ist
   "enabled": true,
-  // The data sources connection info
+  // Die Verbindungsinformationen der Datenquellen
   "connection": {
-    // Ip Address
+    // IP Adresse
     "ipAddr": "192.168.0.114",
-    // Port. Default for protocol "s7": 102
+    // Anschluss. Standard für Protokoll "s7": 102
     "port": 102,
-    // Rack.
-    // For S7 300, S7 1200 and S7 1500: Always 0
-    // For S7 400: The rack, where the S7 CPU is mounted
+    // Gestell.
+    // Für S7 300, S7 1200 und S7 1500: Immer 0
+    // Für S7 400: Das Rack, in dem die S7-CPU montiert ist
     "rack": 0,
-    // Slot.
-    // For S7 300: Always 2
-    // For S7 1200 and S7 1500: Always 1
-    // For S7 400: The slot, where the S7 CPU is mounted on the rack
+    // Steckplatz.
+    // Für S7 300: Immer 2
+    // Für S7 1200 und S7 1500: Immer 1
+    // Für S7 400: Der Steckplatz, auf dem die S7-CPU im Rack montiert ist
     "slot": 2
   },
-  // A list of data points
+  // Eine Liste von Datenpunkten
   "dataPoints": [
     {
-      // Id of data point. MUST be unique (across all data sources)
+      // Id des Datenpunkts. MUSS eindeutig sein (über alle Datenquellen hinweg)
       "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b",
-      // Type can be "nck" or "s7" for PLC inputs
+      // Typ kann "nck" oder "s7" für SPS-Eingänge sein
       "type": "nck",
-      // A descriptive name
-      "name": "Emergency Stop",
-      // Data point address
-      // Some examples for protocol "s7":
-      // Reading an input bit: "I0.0"
-      // Reading an input bit: "Q0.0"
-      // Reading an memory bit: "M50.0"
-      // Reading a boolean value: "DB93,X0.0"
-      // Reading an integer value: "DB93,INT44"
-      // Reading a real value: "DB93,REAL100"
-      // Reading a string value with an length of 10: "DB100,S0.10"
-      // Reading a string value with an length of 255: "DB100,S0.255"
-      // Reading a DWORD: "DB25,DWORD4"
-      // Reading a Byte: "DB340,BYTE60"
+      // Ein beschreibender Name
+      "name": "Not Aus",
+      // Datenpunktadresse
+      // Einige Beispiele für das Protokoll "s7":
+      // Lesen eines Eingangsbits: "I0.0"
+      // Lesen eines Eingangsbits: "Q0.0"
+      // Lesen eines Speicherbits: "M50.0"
+      // Lesen eines booleschen Wertes: "DB93,X0.0"
+      // Lesen eines Integer-Wertes: "DB93,INT44"
+      // Lesen eines reellen Wertes: "DB93,REAL100"
+      // Lesen eines String-Wertes mit der Länge 10: "DB100,S0.10"
+      // Lesen eines Stringwerts mit der Länge 255: "DB100,S0.255"
+      // Lesen eines DWORD: "DB25,DWORD4"
+      // Lesen eines Bytes: "DB340,BYTE60"
       "address": "DB93,X0.0",
-      // Read frequency in ms
+      // Lesefrequenz in ms
       "readFrequency": 1200
     }
   ]
 }
 ```
 
-- **IO-Shield**: With the IO-Shield you can read data from digital inputs, wired directly to the IoT2050. Each digital input of the IO-Shield is one data point on the data source. Each data point can have three different states: 0 - off (Low, 0V), 1 - on (High, 24V) or 2 - blinking, the
-  output is changing state with a minimum frequency of 2Hz (the maximum frequency is 10Hz).
+- **IO-Shield**: Mit dem IO-Shield können Sie Daten von digitalen Eingängen lesen, die direkt mit dem IoT2050 verdrahtet sind. Jeder digitale Eingang des IO-Shields ist ein Datenpunkt auf der Datenquelle. Jeder Datenpunkt kann drei verschiedene Zustände haben: 0 - aus (Low, 0V), 1 - an (High, 24V) oder 2 - blinkend, der
+  Ausgang ändert seinen Zustand mit einer Mindestfrequenz von 2Hz (die Höchstfrequenz beträgt 10Hz).
 
-Structure for IO Shield:
+Struktur für IO Shield:
 
 ```json
 {
-  // Data source protocol
+  // Protokoll der Datenquelle
   "protocol": "ioshield",
-  // Whether this data source is enabled
+  // Ob diese Datenquelle aktiviert ist
   "enabled": true,
-  // Type of the IO Shield
+  // Typ des IO Shield
   "type": "ai-150+5di",
-  // A list of data points
+  // Eine Liste von Datenpunkten
   "dataPoints": [
     {
-      // Id of data point. MUST be unique (across all data sources)
+      // Id des Datenpunkts. MUSS eindeutig sein (über alle Datenquellen hinweg)
       "id": "a6cc9e0e-34a8-456a-85ac-f8780b6dd52b",
-      // A descriptive name
-      "name": "Emergency Stop",
-      // Type must be null for ioshield
+      // Ein beschreibender Name
+      "name": "Not Aus",
+      // Typ muss für ioshield null sein
       "type": null,
-      // Data point address, for example reading inputs "DI0" - "DI9"
+      // Datenpunktadresse, z. B. Leseeingänge "DI0" - "DI9"
       "address": "DI2"
     }
   ]
 }
 ```
 
-#### Sinumerik 840D 4.5 PLC Interface - S7 Addresses for MTConnect Values
+#### Sinumerik 840D 4.5 PLC Schnittstelle - S7 Adresse für MTConnect Werte
 
 EXECUTION
 
-- ACTIVE - DB21,X35.5 (BOOL) - E_ChanActive // Channel active
-- OPERIONAL_STOP - DB21,X35.6 (BOOL) E_ChanInterrupt // Channel interrupted
-- PROGRAM_COMPLETED - DB21,X35.7 (BOOL) E_ChanReset // Channel reset
-- READY - DB21,X36.5 (BOOL) - E_ChanRO // Channel ready for operation
+- ACTIVE - DB21,X35.5 (BOOL) - E_ChanActive // Kanal aktiv
+- OPERIONAL_STOP - DB21,X35.6 (BOOL) E_ChanInterrupt // Kanal unterbrochen
+- PROGRAM_COMPLETED - DB21,X35.7 (BOOL) E_ChanReset // Kanalreset
+- READY - DB21,X36.5 (BOOL) - E_ChanRO // Kanal betriebsbereit
 
 CONTROLLER_MODE
 
-- AUTOMATIC - DB11,X6.0 (BOOL) - „BAG”.E_AUTO // Auto active
-- MANUAL_DATA_INPUT DB11,X6.1 - „BAG”.E_MDA // MDA active
-- MANUAL - DB11,DBX6.2 - „BAG”.E_JOG // Jog active
+- AUTOMATIC - DB11,X6.0 (BOOL) - „BAG”.E_AUTO // Auto aktiv
+- MANUAL_DATA_INPUT DB11,X6.1 - „BAG”.E_MDA // MDA aktiv
+- MANUAL - DB11,DBX6.2 - „BAG”.E_JOG // Jog aktiv
 
-TOOL_NUMBER - %DB1072.DBW28 (INT) // Tool Ident
+TOOL_NUMBER - %DB1072.DBW28 (INT) // Werkzeug Ident
 
-## Virtual data points
+## Virtuelle Datenpunkte
 
-Virtual data points must consist out of one or more sources (id's of data points from real data sources or id's of other virtual data points), a unique id (across all data points) and the type of operation for calculating the value.
+Virtuelle Datenpunkte müssen aus einer oder mehreren Quellen (IDs von Datenpunkten aus realen Datenquellen oder IDs anderer virtueller Datenpunkte), einer eindeutigen ID (über alle Datenpunkte hinweg) und der Art der Operation zur Berechnung des Wertes bestehen.
 
-Important: If a virtual data point is defined as source of another virtual data point, the source virtual data point must be defined before it is used!
+Wichtig: Wenn ein virtueller Datenpunkt als Quelle eines anderen virtuellen Datenpunkts definiert ist, muss der virtuelle Quelldatenpunkt definiert werden, bevor er verwendet wird!
 
-Currently supported VDP operation type values: `and`, `or`, `not`, `counter`,`thresholds`, `greater`, `greaterEqual`, `smaller`, `smallerEqual`, `equal`,`unequal`, `enumeration`, `calculation`
+Derzeit unterstützte VDP-Operationstyp-Werte: `and`, `or`, `not`, `counter`,`thresholds`, `greater`, `greaterEqual`, `smaller`, `smallerEqual`, `equal`, `unequal`, `enumeration`, `calculation`
 
-Format of a VDP in configuration file (this inclues all possible operation specific settings as well, which are only used if that operation is chosen):
+Format eines VDP in der Konfigurationsdatei (dies beinhaltet auch alle möglichen operationsspezifischen Einstellungen, die nur verwendet werden, wenn diese Operation gewählt wird):
 
 ```json
 {
-  // Unique ID of the VDP
+  // Eindeutige ID des VDP
   "id": "9d62359b-c48b-4084-825f-1ce56c93e202",
-  // Name given for the VDP
-  "name": "my calculation",
-  // Unique IDs of the data sources. It must contain at least 1 source. For and/or operation there must be at least 2 sources. Data sources must include all data points used in the operation/formula/enumeration below.
+  // Name für den VDP
+  "name": "meine Berechnung",
+  // Eindeutige IDs der Datenquellen. Sie muss mindestens 1 Quelle enthalten. Für und/oder eine Operation müssen mindestens 2 Quellen vorhanden sein. Die Datenquellen müssen alle Datenpunkte enthalten, die in der nachstehenden Operation/Formel/Enumeration verwendet werden.
   "sources": ["dd88cdb9-994c-40ce-be60-1d37f3aa755a", "fda5000e-0942-4605-a995-9c49bd1e99d6"],
-  // Type can be one of the types mentioned above
+  // Typ kann einer der oben genannten Typen sein
   "operationType": "and",
-  //Only for thresholds operation:
+  //Nur für die Operation Schwellenwerte:
   "thresholds": {
         "0": 0,
         "1": 40
       },
-  // Only for comparison operations:
+  // Nur für Vergleichsoperationen:
   "comparativeValue": "100",
-  // Only for calculation operation:
+  // Nur für Rechenoperationen:
   "formula": "(dd88cdb9-994c-40ce-be60-1d37f3aa755a + fda5000e-0942-4605-a995-9c49bd1e99d6) / 100",
-  // Only for enumeration operation:
+  // Nur für Enumerationoperationen:
   "enumeration": {
-    // Optional default value if no others match
+    // Optionaler Standardwert, wenn keine anderen übereinstimmen
     "defaultValue": "TEST",
-    // List of enumeration items
+    // Liste der Enumerationpunkte
     "items": [
           {
             "source": "dd88cdb9-994c-40ce-be60-1d37f3aa755a",
@@ -197,111 +197,111 @@ Format of a VDP in configuration file (this inclues all possible operation speci
 
 ## Mapping
 
-A single mapping supports the following configuration items:
+Ein einzelnes Mapping unterstützt die folgenden Konfigurationselemente:
 
 ```json
 {
-  // Unique ID of source data point
+  // Eindeutige ID des Quelldatenpunkts
   "source": "55455122-9e2b-4473-b6e9-8463089cd299",
-  // Unique ID of target data point
+  // Eindeutige ID des Zieldatenpunkts
   "target": "1a468843-e2e1-4835-a111-a6844589526d",
-  // Unique id of the mapping
+  // Eindeutige ID des Mappings
   "id": "03b9488e-364e-4fed-8713-33a8eb005d18"
 }
 ```
 
-## Application Interface
+## Anwendungsschnittstelle
 
-In the configuration file this settings is under `dataSinks` key.
+In der Konfigurationsdatei befinden sich diese Einstellungen unter dem Schlüssel `dataSinks`.
 
-A single application interface supports the following configuration items:
+Eine einzelne Anwendungsschnittstelle unterstützt die folgenden Konfigurationspunkte:
 
-- Note: There should be only one application interface configured
+- Hinweis: Es sollte nur eine Anwendungsschnittstelle konfiguriert werden
 
 ```json
 {
-  // Data source protocol. Supported protocols are: "mtconnect", "opcua" and "datahub"
+  // Protokoll der Datenquelle. Unterstützte Protokolle sind: "mtconnect", "opcua" und "datahub"
   "protocol": "mtconnect",
-  // Whether the application interface is enabled
+  // Ob die Anwendungsschnittstelle aktiviert ist
   "enabled": true,
-  // Authentication option if required, only for "opcua" protocol
+  // Authentifizierungsoption, falls erforderlich, nur für das "opcua"-Protokoll
   "auth": {
     "type": "anonymous"
   },
-  // For "datahub" protocol only:
+  // Nur für das "datahub"-Protokoll:
   "datahub1": {
-    //Host name for provisioning
+    //Hostname für die Bereitstellung
     "provisioningHost": "",
     "scopeId": "",
     "regId": "",
     "symKey": ""
   },
-  // A list of data points
+  // Eine Liste von Datenpunkten
   "dataPoints": [
     {
-      // Id of datapoint. MUST be unique (across all data sources)
-      // For the protocol MTconnect, that id will be associated with the id of a MTConnect data item
+      // Id des Datenpunktes. MUSS eindeutig sein (über alle Datenquellen hinweg)
+      // Für das Protokoll MTconnect wird diese Kennung mit der Kennung eines MTConnect-Datenpunkts verknüpft
       "id": "0c24235c-f56d-435b-a560-6874079effb4",
-      // A descriptive name
+      // Ein beschreibender Name
       "name": "Emergency Stop",
-      // The type of the mtcoonect data item. Currently supported: "event".
-      // Required for protocol "mtconnect".
+      // Der Typ des mtcoonect-Datenelements. Derzeit unterstützt: "event".
+      // Erforderlich für Protokoll "mtconnect".
       "type": "event",
-      // A mapping for mtconnect data element.
-      // Boolean values can be mapped to string values. For example, the emergency stop could be mapped to the corresponding mtconnect value "TRIGGERED" or "ARMED".
-      // If more than two string values are needed, either integer values can be used or the values can be set by separate boolean values by setting "mapValues" must be set in the mapping. If more than one boolean value is "true", then the lowest active value is used.
-      // Optional for the protocol "mtconnect".
+      // Eine Zuordnung für das Datenelement "mtconnect".
+      // Boolesche Werte können auf String-Werte abgebildet werden. Zum Beispiel könnte der Notausschalter auf den entsprechenden mtconnect-Wert "TRIGGERED" oder "ARMED" abgebildet werden.
+      // Wenn mehr als zwei String-Werte benötigt werden, können entweder Integer-Werte verwendet werden oder die Werte können durch separate boolesche Werte gesetzt werden, indem "mapValues" in der Zuordnung gesetzt werden muss. Wenn mehr als ein boolescher Wert "true" ist, wird der niedrigste aktive Wert verwendet.
+      // Optional für das Protokoll "mtconnect".
       "map": {
-        // Booleans
+        // Boolesche Werte
         "true": "TRIGGERED",
         "false": "ARMED",
-        // Integer or "mapValues"
+        // Ganzzahl oder "mapValues"
         "0": "AUTOMATIC",
         "1": "MANUAL_DATA_INPUT",
         "2": "SEMI_AUTOMATIC",
-        // IO-Shield full mapping
+        // IO-Shield vollständige Mapping
         "0": "ON",
         "1": "OFF",
         "2": "BLINKING"
       },
-      // Optional - Initial value, can also be used to set a constant value. Is overwritten as soon as data is read
+      // Optional - Anfangswert, kann auch zum Setzen eines konstanten Wertes verwendet werden. Wird überschrieben, sobald Daten gelesen werden
       "initialValue": "TRIGGERED"
     }
   ]
 }
 ```
 
-## Frequently Asked Questions
+## Häufig gestellte Fragen
 
-1. _Can I use the same id for a data point of a data source and a data point of an application interface?_
-   Yes, data point ids only have to be unique within all data sources and separately within all application interfaces.
-   Virtual data points also count as data source data points.
+1. _Kann ich für einen Datenpunkt einer Datenquelle und einen Datenpunkt einer Anwendungsschnittstelle die gleiche ID verwenden?_
+   Ja, Datenpunkt-IDs müssen nur innerhalb aller Datenquellen und getrennt innerhalb aller Anwendungsschnittstellen eindeutig sein.
+   Virtuelle Datenpunkte zählen auch als Datenquellen-Datenpunkte.
 
-For example, the following would be valid:
+Zum Beispiel wäre folgendes gültig:
 
 ```json
 {
-  // Identical source and target
+  // Identische Quelle und identisches Ziel
   "source": "10456f7b-6d0c-4488-8d19-71de07754305",
   "target": "10456f7b-6d0c-4488-8d19-71de07754305",
-  // a unique id of the mapping across all data points
+  // eine eindeutige Kennung der Zuordnung über alle Datenpunkte hinweg
   "id": "0c24235c-f56d-435b-a560-6874079effb4"
 }
 ```
 
-2. _Can I set a constant value in a application interface?_
-   Yes, just configure an enumeration data point with an initial value and no real or virtual data point mapped to it.
-   For example:
+2. _Kann ich einen konstanten Wert in einer Anwendungsschnittstelle festlegen?_
+   Ja, konfigurieren Sie einfach einen Enumerationdatenpunkt mit einem Anfangswert, dem kein realer oder virtueller Datenpunkt zugeordnet ist.
+   Zum Beispiel:
 
 ```json
 {
-  // Unique id across data points
+  // Eindeutige ID für alle Datenpunkte
   "id": "d8090a1a-9e7f-494b-a695-ff077f4df75a",
   "sources": [],
   "operationType": "enumeration",
   "name": "MyConstant",
   "enumeration": {
-    // Your constant here
+    // Ihr Konstantenwert hier
     "defaultValue": "46.149"
   }
 }

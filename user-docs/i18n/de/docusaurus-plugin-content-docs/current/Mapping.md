@@ -4,30 +4,30 @@ title: Mapping
 
 # Mapping
 
-## Introduction
+## Einleitung
 
-Mapping describe the relation between source data points (NC/VDP/DI) and the destination data points (`MTConnect`/`OPC UA`). It is necessary to forward the source data value to the destination data points for different `Application Interfaces`.
+Mapping beschreibt die Beziehung zwischen Quelldatenpunkten (NC/VDP/DI) und den Zieldatenpunkten (`MTConnect`/`OPC UA`). Es ist erforderlich, den Quelldatenwert an die Zieldatenpunkte für verschiedene `Anwendungsschnittstellen` weiterzuleiten.
 
-### Add a mapping
+### Mapping hinzufügen
 
-![Mapping adding new data mapping](/img/mapping/adding.png)
+![Neu Mapping hinzufügen](/img/mapping/adding.png)
 
-1. Click the blue button with the white plus icon ![Mapping add new button](/img/mapping/mapping_addbutton.png)
-2. The new item is added to the end of the table.
-3. Select the desired source point from the dropdown menu on the Source column.
-4. Select the desired target point for the desired `Application Interface` on Target column.
-5. Click the green check button to leave the edit state or click the red cross to discard your entry.
-6. Click the `Apply Changes` button to send your new data point the the device.
+1. Klicken Sie auf die blaue Schaltfläche mit dem weißen Plus-Symbol ![Neu Mapping hinzufügen](/img/mapping/mapping_addbutton.png)
+2. Das neue Element wird am Ende der Tabelle hinzugefügt.
+3. Wählen Sie den gewünschten Quellpunkt aus dem Dropdown-Menü in der Spalte Quelle.
+4. Wählen Sie den gewünschten Zielpunkt für die gewünschte `Anwendungsschnittstelle` in der Spalte "Ziel".
+5. Klicken Sie auf die grüne Schaltfläche, um den Bearbeitungsstatus zu verlassen, oder klicken Sie auf das rote Kreuz, um Ihre Eingabe zu verwerfen.
+6. Klicken Sie auf die Schaltfläche `Änderungen übernehmen`, um Ihren neuen Datenpunkt an das Gerät zu senden.
 
-### Delete a mapping
+### Löschen einer Zuordnung
 
-1. Click on right side of the entry you want to delete in `Actions` section the garbage icon
-2. Select Yes in the popped up overlay with the question: "Are you sure you want to delete data point [datapoint name]?"
-3. Click the `Apply Changes` button to send the change to the backend
+1. Klicken Sie auf der rechten Seite des zu löschenden Eintrags im Abschnitt `Aktionen` auf das Müllsymbol
+2. Wählen Sie Ja in dem sich öffnenden Overlay mit der Frage: "Sind Sie sicher, dass Sie den Datenpunkt [Datenpunktname] löschen möchten?"
+3. Klicken Sie auf die Schaltfläche `Änderungen übernehmen`, um die Änderung an das Backend zu senden.
 
-### Edit a mapping
+### Mapping bearbeiten
 
-1. Click on right side of the entry you want to delete in `Actions` section the pencil icon
-2. The list entry is now editable like a new generated data point (see above documentation `Add a new data point`: Step 3 and further ).
-3. After last changes click the green check button to leave the edit state or click the red cross to discard your entry.
-4. Click the `Apply Changes` button to send your new data point the the device.
+1. Klicken Sie auf der rechten Seite des zu löschenden Eintrags im Abschnitt `Aktionen` auf das Bleistiftsymbol
+2. Der Listeneintrag ist nun wie ein neu erzeugter Datenpunkt editierbar (siehe oben Dokumentation `Neuen Datenpunkt hinzufügen`: Schritt 3 und weiter).
+3. Nach den letzten Änderungen klicken Sie auf den grünen Haken, um den Bearbeitungszustand zu verlassen oder klicken Sie auf das rote Kreuz, um Ihren Eintrag zu verwerfen.
+4. Klicken Sie auf die Schaltfläche `Änderungen übernehmen`, um Ihren neuen Datenpunkt an das Gerät zu senden.

@@ -1,33 +1,33 @@
 ---
-title: Base Image Changelog
+title: Changelog des Basisbildes
 ---
 
-# Base Image Changelog
+# Changelog des Basisbildes
 
 ## 2.3.0
 
-### Updated
+### Aktualisiert
 
-- Update frontend/webserver container image to 2.3.0
+- Aktualisierung des Frontend/Webserver-Container-Images auf 2.3.0
 
 ## 2.1.3
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-133](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-133) Fix whitespace bug in container ssh key service.
+- [DIGMDCLGHT-133](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-133) Behebung eines Leerzeichen-Fehlers im Container ssh-Schlüsseldienst.
 
-### Updated
+### Aktualisiert
 
-- Increase OS base image version to 2.0.1
-- Update MDC Flex runtime container image to 2.1.3
-- Update frontend/webserver container image to 2.1.3
+- Erhöhung der OS-Basis-Image-Version auf 2.0.1
+- Aktualisierung des MDC Flex-Laufzeit-Container-Images auf 2.1.3
+- Aktualisierung des Frontend/Webserver-Container-Images auf 2.1.3
 
 ## 2.0.0
 
-### Added
+### Hinzugefügt
 
-- Added '/etc/mdcflex-os-release' volume inside docker-compose file
+- Volume "/etc/mdcflex-os-release" in der Datei docker-compose hinzugefügt
 
-### Fixed
+### Behoben
 
-- [DIGMDCLGHT-97](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-97) Fix IPv6 address collisions if to many MDC Flex devices are in the same network.
+- [DIGMDCLGHT-97](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-97) Behebung von IPv6-Adresskollisionen, wenn sich zu viele MDC Flex-Geräte im selben Netzwerk befinden.

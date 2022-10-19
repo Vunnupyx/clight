@@ -1,36 +1,36 @@
 ---
-title: 'Data source: IO-Shield'
+title: 'Datenquelle: IO-Shield'
 ---
 
-## Introduction
+## Einleitung
 
-With this data source you can connect electrical signals to your IoT connector flex device. The signals can either be digital (Sink or Source, 0V/24V) or analog inputs (0-10V or 0-20mA). This is especially useful if you want to connect older equipment without a digital control or a machine where access to the control is not possible.
+Mit dieser Datenquelle können Sie elektrische Signale an Ihr IoT connector flex Gerät anschließen. Die Signale können entweder digital (Sink oder Source, 0V/24V) oder analog (0-10V oder 0-20mA) sein. Dies ist besonders nützlich, wenn Sie ältere Geräte ohne digitale Steuerung anschließen wollen oder eine Maschine, bei der der Zugriff auf die Steuerung nicht möglich ist.
 
-On the top of the page you find the main settings for the data source: Enabling and selecting the type.
+Oben auf der Seite finden Sie die wichtigsten Einstellungen für die Datenquelle: Aktivieren und Auswählen des Typs.
 
-## Changing the type of the ioshield
+## Ändern des Typs des IO-Shield
 
-You can use the Type dropdown menu on the top of the page to change select which type of ioshield you are using.
+Sie können das Dropdown-Menü Typ oben auf der Seite verwenden, um den Typ des IO-Shield auszuwählen, den Sie verwenden.
 
-![Input Board Types](/img/datasource/ioshield_types.png)
+![Eingabefeld-Typen](/img/datasource/ioshield_types.png)
 
-## Default Configuration
+## Standardkonfiguration
 
-By default the Data Source is configured the following way:
+Standardmäßig ist die Datenquelle wie folgt konfiguriert:
 
-- DI0 - Emergency Stop
-- DI1 - Stack Light: Red
-- DI2 - Stack Light: Yellow
-- DI3 - Stack Light: Green
-- DI4 - Stack Light: Blue
-- DI5 - Machine Available
-- AI0 - Current Sensor
-- AI1 - Not used
+- DI0 - Not-Aus
+- DI1 - Stapelleuchte: Rot
+- DI2 - Stack-Licht: Gelb
+- DI3 - Stack-Leuchte: Grün
+- DI4 - Stack-Leuchte: Blau
+- DI5 - Maschine verfügbar
+- AI0 - Stromsensor
+- AI1 - Nicht verwendet
 
-## Adding Data Points
+## Hinzufügen von Datenpunkten
 
-![Input Board Add Data Point](/img/datasource/ioshield_add.png)
+![Eingabekarte Datenpunkt hinzufügen](/img/datasource/ioshield_add.png)
 
-To add a data point, click on the blue `Add Data Point` button ![Add data point button](/img/datasource/addbutton.png).
+Um einen Datenpunkt hinzuzufügen, klicken Sie auf die blaue Schaltfläche `Datenpunkte hinzufügen` ![Datenpunkte hinzufügen](/img/datasource/addbutton.png).
 
-Newly added data points are shown at the bottom of the table. You need to give a name and select the address of the data point and save it. After all changes please click `Apply Changes` on the top right of the page.
+Neu hinzugefügte Datenpunkte werden am unteren Rand der Tabelle angezeigt. Geben Sie einen Namen ein, wählen Sie die Adresse des Datenpunktes und speichern Sie ihn. Nach allen Änderungen klicken Sie bitte auf `Änderungen übernehmen` oben rechts auf der Seite.

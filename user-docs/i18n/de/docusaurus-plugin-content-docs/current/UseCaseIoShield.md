@@ -1,9 +1,9 @@
 ---
-title: Use Case Input Board
+title: Anwendungsfall Input Board
 ---
 
 ## TODO
 
-- What use cases can be done with the input board?
-- Connect digital input, what states are there (on off blinking)
-- Connect analogue inputs. Explain virtual data points of type threshods, chart, ...
+- Welche Anwendungsfälle können mit der Eingabekarte realisiert werden?
+- Digitale Eingänge anschließen, welche Zustände gibt es (an aus blinkend)
+- Analoge Eingänge anschließen. Erläutern Sie virtuelle Datenpunkte vom Typ Schwellenwerte, Diagramm, ...

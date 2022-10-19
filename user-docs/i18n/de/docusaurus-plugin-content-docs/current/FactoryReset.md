@@ -1,18 +1,18 @@
 ---
-title: Factory Reset
+title: Werkeinstellungen Zurücksetzen
 ---
 
-To reset the IoT connector flex to factory, settings you can press and hold the "USER" button for 5 seconds.
+Um den IoT-Anschluss flex auf die Werkseinstellungen zurückzusetzen, können Sie die Taste "USER" 5 Sekunden lang gedrückt halten.
 
-![IOT2050 User Button](/content/IoT2050UserButton.png)
+![IOT2050 USER Taste](/content/IoT2050UserButton.png)
 
-The factory settings resets:
+Die Werkseinstellungen werden zurückgesetzt:
 
-- The login password you set
-- All other device settings
+- Das von Ihnen festgelegte Anmeldekennwort
+- Alle anderen Geräteeinstellungen
 
-The factory reset does not reset:
+Das Zurücksetzen auf die Werkseinstellungen setzt nicht zurück:
 
-- Log files
+- Protokolldateien
 
-After the reset, you can login using the default password (See: [Login](tutorial/GettingStarted.md#Login)) and you will be asked to set a new password and complete the configuration wizard again.
+Nach dem Zurücksetzen können Sie sich mit dem Standardpasswort anmelden (siehe: [Login](tutorial/GettingStarted.md#Login)). Sie werden dann aufgefordert, ein neues Passwort festzulegen und den Konfigurationsassistenten erneut zu durchlaufen.

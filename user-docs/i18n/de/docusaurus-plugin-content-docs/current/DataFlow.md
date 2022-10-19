@@ -1,8 +1,9 @@
 ---
-title: Data Flow
+title: Datenfluss
 ---
 
-The IoT connector flex enables you to read data from various data sources, create new data points and send data points to different application interfaces.
-The data flow works as follows:
+Der IoT-Connector flex ermöglicht es Ihnen, Daten aus verschiedenen Datenquellen zu lesen, neue Datenpunkte zu erstellen und Datenpunkte an verschiedene Anwendungsschnittstellen zu senden.
 
-`"Data Source" -> "Virtual Data Points" -> "Data Mapping" -> "Application Interfaces"`
+Der Datenfluss funktioniert wie folgt:
+
+`"Datenquelle" -> "Virtuelle Datenpunkte" -> "Datenmapping" -> "Anwendungsschnittstellen"`

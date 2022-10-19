@@ -1,32 +1,32 @@
 ---
-title: Network
+title: Netzwerk
 ---
 
 ## Ethernet X1 P1 & X1 P2
 
-On the "Ethernet X1" & "Ethernet X2" tabs you can configure the corresponding ethernet interfaces. In general X1 P1 should be used for the company network and X1 P2 should be used for the Machine network. If the input board is the only data source, X1 P2 can be unused.
+Auf den Registerkarten "Ethernet X1" & "Ethernet X2" können Sie die entsprechenden Ethernet-Schnittstellen konfigurieren. Im Allgemeinen sollte X1 P1 für das Firmennetzwerk und X1 P2 für das Maschinennetzwerk verwendet werden. Wenn die Input Board die einzige Datenquelle ist, kann X1 P2 unbenutzt bleiben.
 
-In the "Adapter Settings" section you can use the "Assign IP address manually (do not use DHCP)" switch to enable manual configuration of this particular network interface.
-If the switch is set to off, the device will use the DHCP for the network configuration, if a DHCP server is available. As soon as the DHCP server provides a network configuration, it will be displayed in the corresponding fields ("IP address", "Netmask", "Default Gateway" & "DNS Server").
-If the switch is set to on, you can enter the "IP address", "Netmask", "Default Gateway" & "DNS Server" manually.
+Im Abschnitt "Adaptereinstellungen" können Sie den Schalter "IP-Adresse manuell zuweisen (kein DHCP verwenden)" verwenden, um die manuelle Konfiguration dieser speziellen Netzwerkschnittstelle zu aktivieren.
+Ist der Schalter ausgeschaltet, verwendet das Gerät DHCP für die Netzwerkkonfiguration, wenn ein DHCP-Server verfügbar ist. Sobald der DHCP-Server eine Netzwerkkonfiguration bereitstellt, wird diese in den entsprechenden Feldern ("IP-Adresse", "Netzmaske", "Standard-Gateway" & "DNS-Server") angezeigt.
+Wenn der Schalter auf on steht, können Sie die "IP-Adresse", "Netzmaske", "Standard-Gateway" und "DNS-Server" manuell eingeben.
 
-After you have configured a network interface, use the "Apply" button to apply the changes to the device.
+Nachdem Sie eine Netzwerkschnittstelle konfiguriert haben, verwenden Sie die Schaltfläche "Übernehmen", um die Änderungen für das Gerät zu übernehmen.
 
 ## Proxy
 
-If your company's network requires a proxy for internet access you can configure it on the "Proxy" tab.
+Wenn das Netzwerk Ihres Unternehmens einen Proxy für den Internetzugang erfordert, können Sie ihn auf der Registerkarte "Proxy" konfigurieren.
 
-Using the "Use Proxy" switch you can switch the proxy settings on and off - if it is set to on you can configure the proxy server
+Mit dem Schalter "Proxy verwenden" können Sie die Proxy-Einstellungen ein- und ausschalten - wenn er auf "Ein" gesetzt ist, können Sie den Proxy-Server konfigurieren
 
-- **Type** - Select the type of proxy your company is using. You can choose between "http" and "socks5"
-- **Host** - Enter the IP address or hostname of your proxy server
-- **Port** - Enter the port of your proxy server
-- **Username** - (optional) Enter a username for authentication with the proxy server
-- **Password** - (optional) Enter a password for authentication with the proxy server
+- **Typ** - Wählen Sie den Proxy-Typ, den Ihr Unternehmen verwendet. Sie können zwischen "http" und "socks5" wählen.
+- **Host** - Geben Sie die IP-Adresse oder den Hostnamen Ihres Proxyservers ein
+- **Port** - Geben Sie den Port Ihres Proxy-Servers ein
+- **Benutzername** - (optional) Geben Sie einen Benutzernamen für die Authentifizierung beim Proxy-Server ein
+- **Passwort** - (optional) Geben Sie ein Passwort für die Authentifizierung beim Proxyserver ein
 
-## Time (NTP)
+## Zeit (NTP)
 
-On the "Time" tab you can configure the server for time synchronization. It is required that time synchronization always working correctly, so that all services of the IoT connector flex are working properly.
+Auf der Registerkarte "Zeit" können Sie den Server für die Zeitsynchronisation konfigurieren. Es ist erforderlich, dass die Zeitsynchronisation immer korrekt funktioniert, damit alle Dienste des IoT Connectors flex ordnungsgemäß funktionieren.
 
-With the "Use NTP Server" switch you can enable or disable NTP synchronization. If the switch is set to active you can specify an NTP server.
-Enter the IP address or hostname of your NTP server.
+Mit dem Schalter "NTP-Server verwenden" können Sie die NTP-Synchronisation aktivieren oder deaktivieren. Wenn der Schalter auf aktiv gesetzt ist, können Sie einen NTP-Server angeben.
+Geben Sie die IP-Adresse oder den Hostnamen Ihres NTP-Servers ein.

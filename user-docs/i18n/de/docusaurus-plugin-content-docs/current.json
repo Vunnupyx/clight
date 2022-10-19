@@ -1,26 +1,26 @@
 {
   "version.label": {
-    "message": "Next",
+    "message": "Nächste",
     "description": "The label for version current"
   },
   "sidebar.docs.category.Introduction": {
-    "message": "Introduction",
+    "message": "Einführung",
     "description": "The label for category Introduction in sidebar docs"
   },
   "sidebar.docs.category.Components": {
-    "message": "Components",
+    "message": "Komponenten",
     "description": "The label for category Components in sidebar docs"
   },
   "sidebar.docs.category.Use Cases": {
-    "message": "Use Cases",
+    "message": "Anwendungsfälle",
     "description": "The label for category Use Cases in sidebar docs"
   },
   "sidebar.docs.category.Advanced": {
-    "message": "Advanced",
+    "message": "Fortgeschrittene",
     "description": "The label for category Advanced in sidebar docs"
   },
   "sidebar.docs.category.Other": {
-    "message": "Other",
+    "message": "Sonstige",
     "description": "The label for category Other in sidebar docs"
   }
 }

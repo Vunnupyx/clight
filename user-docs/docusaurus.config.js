@@ -1,6 +1,6 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  title: 'IoTconnector lite Documentation',
+  title: 'IoTconnector lite',
   tagline: '',
   url: 'https://dmgmori.com',
   baseUrl: '/help/',

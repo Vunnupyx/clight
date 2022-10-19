@@ -1,5 +1,5 @@
 ---
-title: Open Source Attributions
+title: Open Source Attribute
 ---
 
 ## MDC Lite

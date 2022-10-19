@@ -28,5 +28,26 @@ export const sleep = (ms: number): Promise<void> => {
  * @returns
  */
 export function unique<T>(array: T[], selector: (item: T) => any): T[] {
-  return [...new Map(array.map(item => [selector(item), item])).values()];
+  return [...new Map(array.map((item) => [selector(item), item])).values()];
+}
+
+/**
+ * Compares whether contents of two objects are same
+ * @param object1
+ * @param object2
+ * @param ignoreKeys array of keys to ignore, optional
+ * @returns boolean
+ */
+export function areObjectsEqual(
+  object1: object,
+  object2: object,
+  ignoreKeys: string[] = []
+): boolean {
+  let hasChange = false;
+  for (const key in object1) {
+    if (!ignoreKeys.includes(key) && object2[key] !== object1[key]) {
+      hasChange = true;
+    }
+  }
+  return !hasChange;
 }

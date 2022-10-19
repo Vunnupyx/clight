@@ -34,6 +34,7 @@ import winston from 'winston';
 import { System } from '../System';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
+import { areObjectsEqual } from '../Utilities';
 
 const promisifiedGenerateKeyPair = promisify(generateKeyPair);
 
@@ -743,17 +744,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public async updateMessengerConfig(
     incomingMessengerConfig: IMessengerServerConfig
   ): Promise<void> {
+    const logPrefix = `${ConfigManager.name}::updateMessengerConfig`;
     const config = this._config;
-
-    if (
-      incomingMessengerConfig.hostname.length > 5 &&
-      !incomingMessengerConfig.hostname.startsWith('http://') &&
-      !incomingMessengerConfig.hostname.startsWith('https://')
-    ) {
-      incomingMessengerConfig.hostname = `http://${incomingMessengerConfig.hostname}`;
-    }
-
-    config.messenger = {
+    let newMessengerConfig = {
       ...config.messenger,
       ...incomingMessengerConfig,
       password:
@@ -761,7 +754,21 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           ? incomingMessengerConfig.password
           : config.messenger.password
     };
+    if (
+      newMessengerConfig.hostname.length > 5 &&
+      !newMessengerConfig.hostname.startsWith('http://') &&
+      !newMessengerConfig.hostname.startsWith('https://')
+    ) {
+      newMessengerConfig.hostname = `http://${incomingMessengerConfig.hostname}`;
+    }
+    if (areObjectsEqual(newMessengerConfig, config.messenger)) {
+      winston.debug(
+        `${logPrefix} Config change has no update to messenger configuration`
+      );
+      return;
+    }
 
+    config.messenger = newMessengerConfig;
     await this.saveConfigToFile();
   }
 

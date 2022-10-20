@@ -40,12 +40,22 @@ export class MessengerManager {
   private defaultTimezoneId: number;
   private organizationUnits: Array<IOrganizationUnit>;
   private timezones: ITimezone;
+  private ipAddress: string;
   protected name = MessengerManager.name;
 
   constructor(options) {
     this.messengerConfig = options.messengerConfig;
     this.configManager = options.configManager;
     this.configManager.on('configChange', this.handleConfigChange.bind(this));
+    this.getIpAddress();
+  }
+
+  private async getIpAddress() {
+    this.ipAddress =
+      process.env.NODE_ENV === 'development'
+        ? 'localhost'
+        : (await NetworkManagerCliController.getConfiguration('eth0'))
+            ?.ipAddress;
   }
 
   /**
@@ -112,6 +122,14 @@ export class MessengerManager {
       return;
     }
     await this.readMetadataFromMessenger();
+    if (
+      this.configManager.config.general.serialNumber === '' ||
+      !this.configManager.config.general.serialNumber
+    ) {
+      this.serverStatus.registration = 'error';
+      this.serverStatus.registrationErrorReason = 'missing_serial';
+      winston.debug(`${logPrefix} Missing serial number`);
+    }
     if (
       this.messengerConfig.model &&
       !this.machineCatalog.find((m) => m.id === this.messengerConfig.model)
@@ -195,21 +213,69 @@ export class MessengerManager {
       if (response.ok) {
         this.serverStatus.registration = 'not_registered';
         this.serverStatus.registrationErrorReason = null;
-        const data = await response?.json();
-        if (data) {
-          let listOfRegisteredMachinesInMessenger = data;
-          const thisRegisteredMachineFromMessenger =
+        const machinesList = await response?.json();
+        if (machinesList) {
+          let listOfRegisteredMachinesInMessenger = machinesList;
+          const matchingRegisteredMachineFromMessenger =
             listOfRegisteredMachinesInMessenger.find?.(
               (registeredMachine) =>
                 registeredMachine.SerialNumber ===
                 this.configManager.config.general.serialNumber
             );
 
-          if (thisRegisteredMachineFromMessenger) {
-            this.serverStatus.registration = 'registered';
-            this.serverStatus.registrationErrorReason = null;
-            this.registeredMachineId = thisRegisteredMachineFromMessenger.Id;
-            winston.debug(`${logPrefix} machine is registered`);
+          if (matchingRegisteredMachineFromMessenger) {
+            //Check detail info with secondary API call to verify if they are the same or duplicate
+            try {
+              let response = await fetch(
+                `${this.messengerConfig?.hostname}/adm/api/machines/${matchingRegisteredMachineFromMessenger.Id}`,
+                {
+                  method: 'GET',
+                  headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${this.loginToken}`
+                  }
+                }
+              );
+              if (response.ok) {
+                const matchingMachineDetailInfo = (await response?.json())?.msg;
+                if (
+                  matchingMachineDetailInfo.err ||
+                  matchingMachineDetailInfo.erd
+                ) {
+                  winston.warn(
+                    `${logPrefix} Error reading machine catalog. machineDetailResponseData.err:${matchingMachineDetailInfo.err} machineDetailResponseData.erd:${matchingMachineDetailInfo.erd}`
+                  );
+                  //TBD
+                }
+                const isManagedMode =
+                  matchingMachineDetailInfo.MTConnectAgentManagementMode ===
+                  'NA';
+
+                // To be same machine: IP and Port must match with managed mode OR MTConnect URL must match with not managed mode
+                if (
+                  (!isManagedMode &&
+                    matchingMachineDetailInfo.MTConnectUrl?.includes(
+                      this.ipAddress //TBD: is hostname usable instead?
+                    )) ||
+                  (isManagedMode &&
+                    matchingMachineDetailInfo.IpAddress === this.ipAddress &&
+                    matchingMachineDetailInfo.Port === 7878)
+                ) {
+                  this.serverStatus.registration = 'registered';
+                  this.serverStatus.registrationErrorReason = null;
+                  this.registeredMachineId = matchingMachineDetailInfo.Id;
+                  winston.debug(`${logPrefix} machine is registered`);
+                } else {
+                  this.serverStatus.registration = 'error';
+                  this.serverStatus.registrationErrorReason = 'duplicated';
+                }
+              }
+            } catch (err) {
+              winston.warn(
+                `${logPrefix} Error getting detail info for matching machine: ${err.message}`
+              );
+            }
           }
         }
       } else {
@@ -534,10 +600,6 @@ export class MessengerManager {
 
     //Create machine
     try {
-      const ipAddress = (
-        await NetworkManagerCliController.getConfiguration('eth0')
-      )?.ipAddress;
-
       const newMachineConfig = JSON.stringify({
         Id: isUpdating ? this.registeredMachineId : undefined,
         ChannelNumber: 1, // By default 0, but then Messenger UI doesn't let user to update anything because Messenger UI always sends channel id 1 and ids mismatch.
@@ -551,8 +613,8 @@ export class MessengerManager {
           )?.imageFileName
         }`,
         TimeZoneId: this.messengerConfig.timezone ?? this.defaultTimezoneId,
-        MTConnectAgentManagementMode: null,
-        IpAddress: ipAddress,
+        MTConnectAgentManagementMode: 'NA', // NA = managed mode, UA = not managed mode
+        IpAddress: this.ipAddress, // TBD: is hostname usable instead?
         Port: 7878,
         OrgUnitId: this.messengerConfig.organization,
         IsHidden: false,
@@ -600,6 +662,8 @@ export class MessengerManager {
       }
     } catch (err) {
       winston.warn(`${logPrefix} Cannot create machine ${err}`);
+      this.serverStatus.registration = 'error';
+      this.serverStatus.registrationErrorReason = 'unexpected_error';
     }
   }
 
@@ -621,6 +685,9 @@ export class MessengerManager {
         this.loginToken = null;
         await this.getLoginToken();
       }
+    } else {
+      this.serverStatus.registration = 'error';
+      this.serverStatus.registrationErrorReason = 'unexpected_error';
     }
   }
 

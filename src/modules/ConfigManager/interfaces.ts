@@ -152,6 +152,7 @@ export interface IMessengerServerStatus {
     | 'invalid_organization'
     | 'invalid_timezone'
     | 'invalid_model'
+    | 'missing_serial'
     | 'duplicated';
 }
 export enum ICustomDataPointDataType {

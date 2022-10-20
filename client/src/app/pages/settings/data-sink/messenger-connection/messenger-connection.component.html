@@ -17,7 +17,9 @@
       </div>
       <div class="col">
         <h5
-          [style.color]="messengerStatus.server === 'available' ? 'green' : 'red'"
+          [style.color]="
+            messengerStatus.server === 'available' ? 'green' : 'red'
+          "
         >
           <ng-container [ngSwitch]="messengerStatus.server">
             <ng-container *ngSwitchCase="ServerStatus.Invalidhost">
@@ -62,9 +64,20 @@
           <p>{{ 'settings-data-sink.Password' | translate }}</p>
         </div>
         <div class="col">
-          <mat-form-field  class="messenger-password" [hideRequiredMarker]="true" [floatLabel]="'always'">
+          <mat-form-field
+            class="messenger-password"
+            [hideRequiredMarker]="true"
+            [floatLabel]="'always'"
+          >
             <mat-label></mat-label>
-            <input type="password" matInput formControlName="password" placeholder="{{this.messengerConfiguration?.password ? '••••••••' : ''}}"/>
+            <input
+              type="password"
+              matInput
+              formControlName="password"
+              placeholder="{{
+                this.messengerConfiguration?.password ? '••••••••' : ''
+              }}"
+            />
           </mat-form-field>
         </div>
       </div>
@@ -97,45 +110,76 @@
             <ng-container [ngSwitch]="messengerStatus.registration">
               <ng-container *ngSwitchCase="RegistrationStatus.Registered">
                 {{
-                'settings-data-sink.RegistrationStatus.Registered' | translate
+                  'settings-data-sink.RegistrationStatus.Registered' | translate
                 }}
               </ng-container>
               <ng-container *ngSwitchCase="RegistrationStatus.Notregistered">
                 {{
-                'settings-data-sink.RegistrationStatus.Notregistered'
-                  | translate
+                  'settings-data-sink.RegistrationStatus.Notregistered'
+                    | translate
                 }}
               </ng-container>
               <ng-container *ngSwitchCase="RegistrationStatus.Unknown">
                 {{
-                'settings-data-sink.RegistrationStatus.Unknown' | translate
+                  'settings-data-sink.RegistrationStatus.Unknown' | translate
                 }}
               </ng-container>
               <ng-container *ngSwitchCase="RegistrationStatus.Error">
-                <ng-container [ngSwitch]="messengerStatus.registrationErrorReason">
-                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.UnexpectedError">
+                <ng-container
+                  [ngSwitch]="messengerStatus.registrationErrorReason"
+                >
+                  <ng-container
+                    *ngSwitchCase="
+                      RegistrationErrorReasonStatus.UnexpectedError
+                    "
+                  >
                     {{
-                    'settings-data-sink.RegistrationErrorReason.UnexpectedError' | translate
+                      'settings-data-sink.RegistrationErrorReason.UnexpectedError'
+                        | translate
                     }}
                   </ng-container>
-                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidOrganization">
+                  <ng-container
+                    *ngSwitchCase="
+                      RegistrationErrorReasonStatus.InvalidOrganization
+                    "
+                  >
                     {{
-                    'settings-data-sink.RegistrationErrorReason.InvalidOrganization' | translate
+                      'settings-data-sink.RegistrationErrorReason.InvalidOrganization'
+                        | translate
                     }}
                   </ng-container>
-                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidTimezone">
+                  <ng-container
+                    *ngSwitchCase="
+                      RegistrationErrorReasonStatus.InvalidTimezone
+                    "
+                  >
                     {{
-                    'settings-data-sink.RegistrationErrorReason.InvalidTimezone' | translate
+                      'settings-data-sink.RegistrationErrorReason.InvalidTimezone'
+                        | translate
                     }}
                   </ng-container>
-                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.InvalidModel">
+                  <ng-container
+                    *ngSwitchCase="RegistrationErrorReasonStatus.InvalidModel"
+                  >
                     {{
-                    'settings-data-sink.RegistrationErrorReason.InvalidModel' | translate
+                      'settings-data-sink.RegistrationErrorReason.InvalidModel'
+                        | translate
                     }}
                   </ng-container>
-                  <ng-container *ngSwitchCase="RegistrationErrorReasonStatus.Duplicated">
+                  <ng-container
+                    *ngSwitchCase="RegistrationErrorReasonStatus.MissingSerial"
+                  >
                     {{
-                    'settings-data-sink.RegistrationErrorReason.Duplicated' | translate
+                      'settings-data-sink.RegistrationErrorReason.MissingSerial'
+                        | translate
+                    }}
+                  </ng-container>
+                  <ng-container
+                    *ngSwitchCase="RegistrationErrorReasonStatus.Duplicated"
+                  >
+                    {{
+                      'settings-data-sink.RegistrationErrorReason.Duplicated'
+                        | translate
                     }}
                   </ng-container>
                 </ng-container>

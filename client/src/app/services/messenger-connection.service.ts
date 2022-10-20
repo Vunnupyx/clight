@@ -20,10 +20,11 @@ export enum RegistrationStatus {
   Error = 'error'
 }
 export enum RegistrationErrorReasonStatus {
-  UnexpectedError  = 'unexpected_error',
+  UnexpectedError = 'unexpected_error',
   InvalidOrganization = 'invalid_organization',
   InvalidTimezone = 'invalid_timezone',
   InvalidModel = 'invalid_model',
+  MissingSerial = 'missing_serial',
   Duplicated = 'duplicated'
 }
 
@@ -44,9 +45,9 @@ export interface MessengerStatus {
 }
 
 export interface MessengerMetadata {
-  organizations: [{name: string, id: string}],
-  timezones: [{name: string, id: number}],
-  models: [{name: string, id: number}]
+  organizations: [{ name: string; id: string }];
+  timezones: [{ name: string; id: number }];
+  models: [{ name: string; id: number }];
 }
 
 export interface MessengerStore {
@@ -94,7 +95,7 @@ export class MessengerConnectionService {
     try {
       const response = await this.httpService.get<MessengerConfiguration>(
         `/messenger/configuration`,
-        undefined,
+        undefined
       );
       this._store.patchState((state) => {
         state.configuration = response;
@@ -116,7 +117,7 @@ export class MessengerConnectionService {
     try {
       const response = await this.httpService.get<MessengerStatus>(
         `/messenger/status`,
-        undefined,
+        undefined
       );
       this._store.patchState((state) => {
         state.status = response;
@@ -139,7 +140,7 @@ export class MessengerConnectionService {
       await this.httpService.post<any>(
         `/messenger/configuration`,
         obj,
-        undefined,
+        undefined
       );
       this._store.patchState((state) => {
         state.configuration = obj;
@@ -164,7 +165,7 @@ export class MessengerConnectionService {
     try {
       const response = await this.httpService.get<MessengerMetadata>(
         `/messenger/metadata`,
-        undefined,
+        undefined
       );
       this._store.patchState((state) => {
         state.metadata = response;
@@ -196,9 +197,9 @@ export class MessengerConnectionService {
         registrationErrorReason: null
       },
       metadata: {
-        organizations: [{name: '', id: ''}],
-        models: [{name: '', id: 0}],
-        timezones: [{name: '', id: 0}]
+        organizations: [{ name: '', id: '' }],
+        models: [{ name: '', id: 0 }],
+        timezones: [{ name: '', id: 0 }]
       },
       isBusy: false
     };

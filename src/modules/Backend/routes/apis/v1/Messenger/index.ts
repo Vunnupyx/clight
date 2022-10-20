@@ -90,40 +90,6 @@ async function messengerConfigurationPostHandler(
         .json({ error: { message: 'Missing hostname or username' } });
       return;
     }
-    //If host is already known and model/organization/timezone changes, check if the new values are correct
-    if (
-      configManager.config.messenger?.hostname &&
-      incomingMessengerConfig.hostname ===
-        configManager.config.messenger?.hostname &&
-      incomingMessengerConfig.username ===
-        configManager.config.messenger?.username &&
-      incomingMessengerConfig.password === null &&
-      (incomingMessengerConfig.model ||
-        incomingMessengerConfig.organization ||
-        incomingMessengerConfig.timezone)
-    ) {
-      const messengerMetadata =
-        await dataSinksManager.messengerManager.getMetadata();
-      if (
-        (incomingMessengerConfig.model &&
-          !messengerMetadata?.models?.find(
-            (m) => m.id === incomingMessengerConfig.model
-          )) ||
-        (incomingMessengerConfig.organization &&
-          !messengerMetadata?.organizations?.find(
-            (o) => o.id === incomingMessengerConfig.organization
-          )) ||
-        (incomingMessengerConfig.timezone &&
-          !messengerMetadata?.timezones?.find(
-            (t) => t.id === incomingMessengerConfig.timezone
-          ))
-      ) {
-        response
-          .status(400)
-          .json({ error: { message: 'Invalid metadata option' } });
-        return;
-      }
-    }
 
     await configManager.updateMessengerConfig(incomingMessengerConfig);
     await configManager.configChangeCompleted();

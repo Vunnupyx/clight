@@ -346,7 +346,8 @@
       "InvalidOrganization": "Unbekannte Organisation",
       "InvalidTimezone": "Invalide Zeitzone",
       "InvalidModel": "Invalides Modell",
-      "Duplicated": "Eine Machine mit gleicher Serialnummer und unterschiedliche MTConnect URL wurde schon registriert."
+      "MissingSerial": "Serialnummer fehlt",
+      "Duplicated": "Eine Machine mit gleicher Serialnummer und unterschiedliche Konfiguration wurde schon registriert."
     }
   },
   "settings-data-mapping": {

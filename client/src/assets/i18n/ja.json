@@ -346,7 +346,8 @@
       "InvalidOrganization": "Organization does not exist",
       "InvalidTimezone": "Timezone does not exist",
       "InvalidModel": "Model does not exist",
-      "Duplicated": "A machine with the same serial number and different MTConnect URL is registered"
+      "MissingSerial": "Serial number is missing",
+      "Duplicated": "A machine with the same serial number and different configuration is registered"
     }
   },
   "settings-data-mapping": {

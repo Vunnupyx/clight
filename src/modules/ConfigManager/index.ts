@@ -761,7 +761,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     ) {
       newMessengerConfig.hostname = `http://${incomingMessengerConfig.hostname}`;
     }
-    if (areObjectsEqual(newMessengerConfig, config.messenger)) {
+    if (
+      areObjectsEqual(newMessengerConfig, config.messenger) &&
+      this._dataSinksManager.messengerManager.serverStatus.registration ===
+        'registered'
+    ) {
       winston.debug(
         `${logPrefix} Config change has no update to messenger configuration`
       );

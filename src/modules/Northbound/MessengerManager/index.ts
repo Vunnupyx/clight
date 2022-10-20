@@ -107,6 +107,7 @@ export class MessengerManager {
     await this.getLoginToken();
 
     if (!this.loginToken || this.serverStatus.server === 'invalid_host') {
+      this.serverStatus.registration = 'unknown';
       return;
     }
     await this.readMetadataFromMessenger();
@@ -213,6 +214,7 @@ export class MessengerManager {
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalid_auth';
+          this.serverStatus.registration = 'unknown';
         } else {
           winston.warn(
             `${logPrefix} Unhandled response status ${response.status} ${response.statusText} ${response}`
@@ -268,6 +270,7 @@ export class MessengerManager {
             clearTimeout(timer);
             if (err.message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
+              this.serverStatus.registration = 'unknown';
             }
             winston.warn(
               `${logPrefix} Error with login request: ${err.message}`
@@ -286,9 +289,11 @@ export class MessengerManager {
       } else {
         if (response.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalid_auth';
+          this.serverStatus.registration = 'unknown';
           winston.debug(`${logPrefix} Invalid Auth`);
         } else if (response.status === 404) {
           this.serverStatus.server = 'invalid_host';
+          this.serverStatus.registration = 'unknown';
           winston.debug(`${logPrefix} Invalid Host`);
         } else {
           winston.warn(
@@ -298,6 +303,7 @@ export class MessengerManager {
       }
     } catch (err) {
       this.serverStatus.server = 'invalid_host';
+      this.serverStatus.registration = 'unknown';
       winston.warn(
         `${logPrefix} Error getting login token error:${err}, server:${this.serverStatus.server}`
       );
@@ -354,6 +360,7 @@ export class MessengerManager {
           } catch (err) {
             if (err.message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
+              this.serverStatus.registration = 'unknown';
             }
             winston.warn(`${logPrefix} Cannot read machine catalog ${err}`);
             reject();
@@ -395,6 +402,7 @@ export class MessengerManager {
           } catch (err) {
             if (err.message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
+              this.serverStatus.registration = 'unknown';
             }
             winston.warn(`${logPrefix} Cannot read machine object ${err}`);
             reject();
@@ -441,6 +449,7 @@ export class MessengerManager {
           } catch (err) {
             if (err.message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
+              this.serverStatus.registration = 'unknown';
             }
             winston.warn(`${logPrefix} Cannot read organization units ${err}`);
             reject();
@@ -480,6 +489,7 @@ export class MessengerManager {
           } catch (err) {
             if (err.message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
+              this.serverStatus.registration = 'unknown';
             }
             winston.warn(`${logPrefix} Cannot read timezones ${err}`);
             reject();
@@ -601,6 +611,7 @@ export class MessengerManager {
 
     if (response.status === 401 || response.status === 403) {
       this.serverStatus.server = 'invalid_auth';
+      this.serverStatus.registration = 'unknown';
       if (response.status === 401 && this.loginToken) {
         //Potentially login token expired
         this.loginToken = null;

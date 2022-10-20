@@ -6,6 +6,7 @@ import {
   IMessengerServerConfig,
   IMessengerServerStatus
 } from '../../ConfigManager/interfaces';
+import NetworkManagerCliController from '../../NetworkManager';
 import { System } from '../../System';
 import { areObjectsEqual } from '../../Utilities';
 
@@ -533,7 +534,9 @@ export class MessengerManager {
 
     //Create machine
     try {
-      const hostname = await new System().getHostname();
+      const ipAddress = (
+        await NetworkManagerCliController.getConfiguration('eth0')
+      )?.ipAddress;
 
       const newMachineConfig = JSON.stringify({
         Id: isUpdating ? this.registeredMachineId : undefined,
@@ -548,8 +551,9 @@ export class MessengerManager {
           )?.imageFileName
         }`,
         TimeZoneId: this.messengerConfig.timezone ?? this.defaultTimezoneId,
-        MTConnectAgentManagementMode: 'UA',
-        MTConnectUrl: `http://${hostname}:15404`,
+        MTConnectAgentManagementMode: null,
+        IpAddress: ipAddress,
+        Port: 7878,
         OrgUnitId: this.messengerConfig.organization,
         IsHidden: false,
         DisplayInMessenger: true,

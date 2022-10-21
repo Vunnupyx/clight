@@ -6,7 +6,6 @@ import {
   IMessengerServerConfig,
   IMessengerServerStatus
 } from '../../ConfigManager/interfaces';
-import NetworkManagerCliController from '../../NetworkManager';
 import { System } from '../../System';
 import { areObjectsEqual } from '../../Utilities';
 
@@ -40,22 +39,13 @@ export class MessengerManager {
   private defaultTimezoneId: number;
   private organizationUnits: Array<IOrganizationUnit>;
   private timezones: ITimezone;
-  private ipAddress: string;
+  private hostname: string;
   protected name = MessengerManager.name;
 
   constructor(options) {
     this.messengerConfig = options.messengerConfig;
     this.configManager = options.configManager;
     this.configManager.on('configChange', this.handleConfigChange.bind(this));
-    this.getIpAddress();
-  }
-
-  private async getIpAddress() {
-    this.ipAddress =
-      process.env.NODE_ENV === 'development'
-        ? 'localhost'
-        : (await NetworkManagerCliController.getConfiguration('eth0'))
-            ?.ipAddress;
   }
 
   /**
@@ -63,7 +53,9 @@ export class MessengerManager {
    */
   public async init() {
     const logPrefix = `${this.name}::init`;
-
+    if (!this.hostname) {
+      this.hostname = await new System().getHostname();
+    }
     winston.debug(`${logPrefix} Messenger Manager is initializing`);
 
     if (
@@ -157,7 +149,10 @@ export class MessengerManager {
       winston.debug(`${logPrefix} Invalid timezone`);
     }
 
-    if (this.serverStatus.registration === 'error') {
+    if (
+      this.serverStatus.registration === 'error' &&
+      this.serverStatus.registrationErrorReason !== 'duplicated'
+    ) {
       return;
     }
 
@@ -256,10 +251,10 @@ export class MessengerManager {
                 if (
                   (!isManagedMode &&
                     matchingMachineDetailInfo.MTConnectUrl?.includes(
-                      this.ipAddress //TBD: is hostname usable instead?
+                      this.hostname
                     )) ||
                   (isManagedMode &&
-                    matchingMachineDetailInfo.IpAddress === this.ipAddress &&
+                    matchingMachineDetailInfo.IpAddress === this.hostname &&
                     matchingMachineDetailInfo.Port === 7878)
                 ) {
                   this.serverStatus.registration = 'registered';
@@ -269,6 +264,7 @@ export class MessengerManager {
                 } else {
                   this.serverStatus.registration = 'error';
                   this.serverStatus.registrationErrorReason = 'duplicated';
+                  winston.debug(`${logPrefix} a duplicate machine is detected`);
                 }
               }
             } catch (err) {
@@ -614,7 +610,7 @@ export class MessengerManager {
         }`,
         TimeZoneId: this.messengerConfig.timezone ?? this.defaultTimezoneId,
         MTConnectAgentManagementMode: 'NA', // NA = managed mode, UA = not managed mode
-        IpAddress: this.ipAddress, // TBD: is hostname usable instead?
+        IpAddress: this.hostname,
         Port: 7878,
         OrgUnitId: this.messengerConfig.organization,
         IsHidden: false,

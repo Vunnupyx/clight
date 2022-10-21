@@ -9,6 +9,16 @@
     <div [formGroup]="profileForm">
       <div class="row">
         <div class="col">
+          <p>{{ 'settings-data-sink.Name' | translate }}</p>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <input type="text" matInput formControlName="name" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
           <p>{{ 'settings-data-sink.Model' | translate }}</p>
         </div>
         <div class="col">
@@ -23,7 +33,12 @@
                 ></ngx-mat-select-search>
               </mat-option>
               <mat-option
-                *ngFor="let opt of optionsSearchResults(this.messengerMetadata?.models, modelOptionKeyphrase)"
+                *ngFor="
+                  let opt of optionsSearchResults(
+                    this.messengerMetadata?.models,
+                    modelOptionKeyphrase
+                  )
+                "
                 [value]="opt.id"
               >
                 {{ opt.name }}
@@ -34,21 +49,15 @@
       </div>
       <div class="row">
         <div class="col">
-          <p>{{ 'settings-data-sink.Name' | translate }}</p>
-        </div>
-        <div class="col">
-          <mat-form-field>
-            <input type="text" matInput formControlName="name" />
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
           <p>{{ 'settings-data-sink.Organization' | translate }}</p>
         </div>
         <div class="col">
           <mat-form-field>
-            <mat-select name="organization" required formControlName="organization">
+            <mat-select
+              name="organization"
+              required
+              formControlName="organization"
+            >
               <mat-option>
                 <ngx-mat-select-search
                   placeholderLabel="Search..."
@@ -58,7 +67,12 @@
                 ></ngx-mat-select-search>
               </mat-option>
               <mat-option
-                *ngFor="let opt of optionsSearchResults(this.messengerMetadata?.organizations, organizationOptionKeyphrase)"
+                *ngFor="
+                  let opt of optionsSearchResults(
+                    this.messengerMetadata?.organizations,
+                    organizationOptionKeyphrase
+                  )
+                "
                 [value]="opt.id"
               >
                 {{ opt.name }}
@@ -83,7 +97,12 @@
                 ></ngx-mat-select-search>
               </mat-option>
               <mat-option
-                *ngFor="let opt of optionsSearchResults(this.messengerMetadata?.timezones, timezoneOptionKeyphrase)"
+                *ngFor="
+                  let opt of optionsSearchResults(
+                    this.messengerMetadata?.timezones,
+                    timezoneOptionKeyphrase
+                  )
+                "
                 [value]="opt.id"
               >
                 {{ opt.name }}

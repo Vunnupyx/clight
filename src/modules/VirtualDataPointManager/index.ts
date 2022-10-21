@@ -590,7 +590,7 @@ export class VirtualDataPointManager {
   private thresholds(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
-  ): number | null {
+  ): number | string | null {
     if (sourceEvents.length !== 1) {
       this.addSummaryLog(
         'warn',
@@ -613,8 +613,16 @@ export class VirtualDataPointManager {
     const value = (Object.keys(config.thresholds) || []).find(
       (key) => config.thresholds[key] === activeThreshold
     );
+    if (typeof value === 'undefined') {
+      return null;
+    }
+    const parsedValue = parseFloat(value);
 
-    return typeof value !== 'undefined' ? parseInt(value, 10) : null;
+    if (isNaN(parsedValue)) {
+      return value;
+    } else {
+      return parsedValue;
+    }
   }
 
   /**

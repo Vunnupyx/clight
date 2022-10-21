@@ -88,7 +88,10 @@
         <button
           mat-button
           color="primary"
-          [disabled]="profileForm.invalid"
+          [disabled]="
+            profileForm.invalid ||
+            (messengerStatus.server === 'available' && profileForm.pristine)
+          "
           type="button"
           class="order-2"
           (click)="onSaveConfiguration()"
@@ -195,7 +198,11 @@
             <button
               mat-button
               color="primary"
-              [disabled]="profileForm.invalid"
+              [disabled]="
+                profileForm.invalid ||
+                messengerStatus.server !== 'available' ||
+                !profileForm.pristine
+              "
               type="submit"
               class="order-2"
             >

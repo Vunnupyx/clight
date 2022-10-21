@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import {
-  MatDialog,
-  MatDialogRef
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   MessengerConnectionService,
   RegistrationStatus,
   ServerStatus,
-  RegistrationErrorReasonStatus, MessengerConfiguration, MessengerStatus
+  RegistrationErrorReasonStatus,
+  MessengerConfiguration,
+  MessengerStatus
 } from 'app/services/messenger-connection.service';
 import { RegisterMachineComponent } from '../register-machine/register-machine.component';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-messenger-connection',
@@ -66,16 +65,23 @@ export class MessengerConnectionComponent implements OnInit {
 
   onSaveConfiguration() {
     this.sanitizeDataBeforeSendToServer();
+    this.profileForm.markAsPristine();
     this.messengerConnectionService
-      .updateNetworkConfig({...this.messengerConfiguration, ...this.profileForm.value})
+      .updateNetworkConfig({
+        ...this.messengerConfiguration,
+        ...this.profileForm.value
+      })
       .then(() => this.messengerConnectionService.getMessengerStatus())
-      .then(() => this.messengerConnectionService.getMessengerConfig())
+      .then(() => this.messengerConnectionService.getMessengerConfig());
   }
 
   onSubmit() {
     this.sanitizeDataBeforeSendToServer();
     this.messengerConnectionService
-      .updateNetworkConfig({...this.messengerConfiguration, ...this.profileForm.value})
+      .updateNetworkConfig({
+        ...this.messengerConfiguration,
+        ...this.profileForm.value
+      })
       .then(() => this.messengerConnectionService.getMessengerStatus())
       .then(() => this.messengerConnectionService.getMessengerMetadata())
       .then(() => {
@@ -98,10 +104,8 @@ export class MessengerConnectionComponent implements OnInit {
 
   getPassword(v: boolean | string) {
     const control = this.profileForm.get('password');
-    if (v)
-      control.removeValidators(Validators.required);
-    else
-      control.setValidators(Validators.required);
+    if (v) control.removeValidators(Validators.required);
+    else control.setValidators(Validators.required);
     return '';
   }
 

@@ -10,17 +10,15 @@ title: Changelog
 
 - [DIGMDCLGHT-208](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-208) Messenger UI buttons are conditionally enabled to make it easier to choose the next action needed
 
-## [2.3.0]
-
 ### Fixed
 
 - [DIGMDCLGHT-205](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-205) Fixes issue with text threshold values with VDPs and prevents selection of multiple data points
+- [DIGMDCLGHT-206](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-206) Value setting buttons such as "Set Comparative Value" in VDPs are disabled during edit mode, as they should be used out of edit mode
 
 ## [2.3.0]
 
 ### Fixed
 
-- [DIGMDCLGHT-206](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-206) Value setting buttons such as "Set Comparative Value" in VDPs are disabled during edit mode, as they should be used out of edit mode
 - [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) Reconnecting to Sinumeriks now works also when no PLC is connected and prevent runtime crash if NC variables are read when only connecting to PLC
 - [DIGMDCLGHT-178](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-178) and [DIGMDCLGHT-189](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-189) IP addresses could not be set if the device has no ip address set
 - [DIGMDCLGHT-188](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-188) Enum virtual data point could'nt be set sometimes

@@ -527,7 +527,7 @@ export class VirtualDataPointManager {
       return this.counters.increment(config.id);
     }
 
-    return null;
+    return this.counters.getValue(config.id);
   }
 
   /**

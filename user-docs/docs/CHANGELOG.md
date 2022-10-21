@@ -4,6 +4,12 @@ title: Changelog
 
 # Changelog
 
+## [2.4.0]
+
+### Added
+
+- [DIGMDCLGHT-208](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-208) Messenger UI buttons are conditionally enabled to make it easier to choose the next action needed
+
 ## [2.3.0]
 
 ### Fixed
@@ -15,7 +21,6 @@ title: Changelog
 
 ### Added
 
-- [DIGMDCLGHT-208](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-208) Messenger UI buttons are conditionally enabled to make it easier to choose the next action needed
 - [DIGMDCLGHT-129](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-129) Added support for custom data points.
 - [DIGMDCLGHT-175](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-175) Added support for OPC UA schema version 2.0.18. Supports usage of config file between different machines. Ignores if custom given node id matches existing one.
 - [DIGMDCLGHT-103](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-103) Added support for custom mathematical expressions for virtual data points

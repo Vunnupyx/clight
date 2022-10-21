@@ -8,7 +8,6 @@ title: Changelog
 
 ### Fixed
 
-- [DIGMDCLGHT-208](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-208) Messenger UI buttons are conditionally enabled to make it easier to choose the next action needed
 - [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) Reconnecting to Sinumeriks now works also when no PLC is connected and prevent runtime crash if NC variables are read when only connecting to PLC
 - [DIGMDCLGHT-178](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-178) and [DIGMDCLGHT-189](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-189) IP addresses could not be set if the device has no ip address set
 - [DIGMDCLGHT-188](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-188) Enum virtual data point could'nt be set sometimes
@@ -16,6 +15,7 @@ title: Changelog
 
 ### Added
 
+- [DIGMDCLGHT-208](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-208) Messenger UI buttons are conditionally enabled to make it easier to choose the next action needed
 - [DIGMDCLGHT-129](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-129) Added support for custom data points.
 - [DIGMDCLGHT-175](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-175) Added support for OPC UA schema version 2.0.18. Supports usage of config file between different machines. Ignores if custom given node id matches existing one.
 - [DIGMDCLGHT-103](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-103) Added support for custom mathematical expressions for virtual data points

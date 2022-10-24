@@ -524,6 +524,7 @@ export class VirtualDataPointManager {
       this.toBoolean(measurement.value) &&
       this.cache.hasChanged(measurement.id)
     ) {
+      // NOTE: The counter is incremented after each restart as against the cache the value has changed.
       return this.counters.increment(config.id);
     }
 

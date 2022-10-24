@@ -33,6 +33,7 @@ USER 2 LED has only 2 states:
 
 - Off (IoTconnector flex is not running)
 - Green (IoTconnector flex is running)
+- Red blinking (License is missing)
 
 ### What does `configured` mean?
 

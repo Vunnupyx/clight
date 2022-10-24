@@ -34,6 +34,7 @@ export class MessengerManager {
 
   private configManager: ConfigManager;
   private loginToken: string;
+  private invalidHostTimer: NodeJS.Timer;
   private registeredMachineId: string;
   private machineCatalog: Array<IMachineCatalog>;
   private defaultTimezoneId: number;
@@ -218,6 +219,21 @@ export class MessengerManager {
                 this.configManager.config.general.serialNumber
             );
 
+          const otherMachinesWithSameIP =
+            listOfRegisteredMachinesInMessenger.find?.(
+              (registeredMachine) =>
+                registeredMachine.IpAddress === this.hostname
+            );
+
+          if (
+            !matchingRegisteredMachineFromMessenger &&
+            otherMachinesWithSameIP
+          ) {
+            this.serverStatus.registration = 'error';
+            this.serverStatus.registrationErrorReason = 'duplicated';
+            winston.debug(`${logPrefix} a duplicate machine is detected`);
+          }
+
           if (matchingRegisteredMachineFromMessenger) {
             //Check detail info with secondary API call to verify if they are the same or duplicate
             try {
@@ -301,15 +317,16 @@ export class MessengerManager {
 
     try {
       let response;
-      let timer;
       await Promise.race([
         new Promise<void>(async (resolve, reject) => {
-          timer = setTimeout(() => {
-            winston.warn(
-              `${logPrefix} timed out while waiting for server response`
-            );
-            reject();
-          }, 10000);
+          if (!this.invalidHostTimer) {
+            this.invalidHostTimer = setTimeout(() => {
+              winston.warn(
+                `${logPrefix} timed out while waiting for server response`
+              );
+              reject();
+            }, 10000);
+          }
         }),
         new Promise<void>(async (resolve, reject) => {
           try {
@@ -327,10 +344,12 @@ export class MessengerManager {
                 })
               }
             );
-            clearTimeout(timer);
+            clearTimeout(this.invalidHostTimer);
+            this.invalidHostTimer = null;
             resolve();
           } catch (err) {
-            clearTimeout(timer);
+            clearTimeout(this.invalidHostTimer);
+            this.invalidHostTimer = null;
             if (err.message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
               this.serverStatus.registration = 'unknown';
@@ -694,11 +713,20 @@ export class MessengerManager {
     const logPrefix = `${this.name}::handleConfigChange`;
     const newMessengerConfig = this.configManager.config.messenger;
 
-    if (areObjectsEqual(newMessengerConfig, this.messengerConfig)) {
+    if (
+      areObjectsEqual(newMessengerConfig, this.messengerConfig) &&
+      this.serverStatus.registrationErrorReason !== 'missing_serial'
+    ) {
       winston.debug(
         `${logPrefix} Config change has no update to messenger configuration`
       );
-      if (this.serverStatus.registration === 'not_registered') {
+
+      if (this.serverStatus.server !== 'available') {
+        winston.debug(
+          `${logPrefix} Same config is resubmitted although server is not available. Trying again with same login in case it was unexpected login problem`
+        );
+        await this.checkStatus();
+      } else if (this.serverStatus.registration === 'not_registered') {
         winston.debug(
           `${logPrefix} Machine is not registered and same configuration resubmitted, trying to register the machine`
         );
@@ -714,6 +742,8 @@ export class MessengerManager {
       this.messengerConfig.password !== newMessengerConfig.password
     ) {
       // status must be reset
+      clearTimeout(this.invalidHostTimer);
+      this.invalidHostTimer = null;
       this.serverStatus.registration = 'unknown';
       this.serverStatus.server = 'not_configured';
       this.loginToken = null;
@@ -724,7 +754,10 @@ export class MessengerManager {
     } else {
       // User is updating the config
       this.messengerConfig = newMessengerConfig;
-      await this.registerMachine();
+      await this.checkRegistration();
+      if (this.serverStatus.registration === 'not_registered') {
+        await this.registerMachine();
+      }
     }
   }
 }

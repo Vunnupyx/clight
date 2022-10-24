@@ -774,6 +774,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     config.messenger = newMessengerConfig;
     await this.saveConfigToFile();
+    await this.configChangeCompleted();
   }
 
   /**

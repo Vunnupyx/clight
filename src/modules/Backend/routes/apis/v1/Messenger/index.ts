@@ -92,7 +92,6 @@ async function messengerConfigurationPostHandler(
     }
 
     await configManager.updateMessengerConfig(incomingMessengerConfig);
-    await configManager.configChangeCompleted();
 
     response.status(200).json(null);
   } catch (err) {

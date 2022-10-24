@@ -333,6 +333,17 @@
               #group="matButtonToggleGroup"
             >
               <mat-button-toggle
+                *ngIf="
+                  row?.operationType ===
+                  VirtualDataPointOperationType.COUNTER
+                "
+                (click)="onSetSchedule(row); group.value = null"
+                [matTooltip]="
+                  'settings-virtual-data-point.SetSchedules' | translate
+                "
+                matTooltipPosition="above"
+              ><mat-icon svgIcon="mdc:calendar"></mat-icon></mat-button-toggle>
+              <mat-button-toggle
                 *ngIf="canSetComparativeValue(row?.operationType)"
                 (click)="onSetComparativeValue(row); group.value = null"
                 [matTooltip]="

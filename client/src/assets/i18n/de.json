@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Abbrechen"
+    "Cancel": "Abbrechen",
+    "Language": "/de"
   },
   "layout": {
     "Settings": "Einstellungen",

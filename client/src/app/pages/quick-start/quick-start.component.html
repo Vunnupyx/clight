@@ -26,7 +26,7 @@
           <p>
             {{ 'quick-start.Descriptions.Step1' | translate }}
           </p>
-          <a href="/help/docs/#configuration-wizard" target="_blank">
+          <a href="/help{{ 'common.Language' | translate }}/docs/#configuration-wizard" target="_blank">
             {{ 'quick-start.Descriptions.ReadMore' | translate }}
           </a>
         </div>
@@ -42,7 +42,7 @@
           </div>
 
           <div>
-            <mat-checkbox 
+            <mat-checkbox
               [(ngModel)]="termsAccepted"
               >{{ 'quick-start.Accept' | translate }}</mat-checkbox
             >

@@ -336,8 +336,9 @@ export class VirtualDataPointComponent implements OnInit {
       SetSchedulesModalComponent,
       {
         data: {
-          schedules: virtualPoint.resetSchedules!.slice(),
+          schedules: virtualPoint.resetSchedules || [],
         },
+        width: "900px"
       });
 
     dialogRef.afterClosed().subscribe((result) => {

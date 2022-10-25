@@ -203,6 +203,18 @@
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
     "DuplicatedName": "You are not allowed to duplicate names",
+    "SetSchedules": "Set Schedules",
+    "AddSchedule": "Add Schedule",
+    "ScheduleName": "Schedule Name",
+    "DayDate": "Day/Date",
+    "Month": "Month",
+    "Hour": "Hour",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "SetScheduledReset": "Set scheduled reset",
+    "ScheduleEvery": "Every",
+    "Day": "Day",
+    "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
@@ -403,5 +415,28 @@
     "UInt16": "UInt16",
     "UInt32": "UInt32",
     "Boolean": "Boolean"
+  },
+  "days-of-week": {
+    "Monday": "",
+    "Tuesday": "",
+    "Wednesday": "",
+    "Thursday": "",
+    "Friday": "",
+    "Saturday": "",
+    "Sunday": ""
+  },
+  "month": {
+    "Jan": "",
+    "Feb": "",
+    "Mar": "",
+    "Apr": "",
+    "May": "",
+    "Jun": "",
+    "Jul": "",
+    "Aug": "",
+    "Sep": "",
+    "Oct": "",
+    "Nov": "",
+    "Dec": ""
   }
 }

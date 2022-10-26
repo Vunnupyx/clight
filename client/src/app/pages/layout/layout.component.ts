@@ -23,7 +23,9 @@ export class LayoutComponent {
   resetPasswordLayout = false;
 
   get supportHref() {
-    return `${window.location.protocol}//${window.location.hostname}/help${this.translate.instant('common.Language')}/docs/`;
+    return `${window.location.protocol}//${
+      window.location.hostname
+    }/help${this.translate.instant('common.LanguageDocumentationPath')}/docs/`;
   }
 
   subs = new Subscription();
@@ -35,20 +37,24 @@ export class LayoutComponent {
     private auth: AuthService,
     private readonly translate: TranslateService
   ) {
-    this.subs.add(this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map(() => this.route),
-      mergeMap((route) => {
-        if (route.firstChild) {
-          return route.firstChild!.data;
-        }
+    this.subs.add(
+      this.router.events
+        .pipe(
+          filter((event) => event instanceof NavigationEnd),
+          map(() => this.route),
+          mergeMap((route) => {
+            if (route.firstChild) {
+              return route.firstChild!.data;
+            }
 
-        return of({});
-      })
-    ).subscribe(({resetPasswordLayout, noLayout}) => {
-      this.resetPasswordLayout = resetPasswordLayout;
-      this.noLayout = noLayout;
-    }));
+            return of({});
+          })
+        )
+        .subscribe(({ resetPasswordLayout, noLayout }) => {
+          this.resetPasswordLayout = resetPasswordLayout;
+          this.noLayout = noLayout;
+        })
+    );
   }
 
   async logout() {

@@ -628,8 +628,8 @@ export class MessengerManager {
           )?.imageFileName
         }`,
         TimeZoneId: this.messengerConfig.timezone ?? this.defaultTimezoneId,
-        MTConnectAgentManagementMode: 'NA', // NA = managed mode, UA = not managed mode
-        IpAddress: this.hostname,
+        MTConnectAgentManagementMode: 'NA', // NA = managed mode, UA = unmanaged mode
+        IpAddress: this.hostname?.toLowerCase(),
         Port: 7878,
         OrgUnitId: this.messengerConfig.organization,
         IsHidden: false,

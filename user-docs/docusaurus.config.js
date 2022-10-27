@@ -1,6 +1,6 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  title: 'IoTconnector lite',
+  title: 'IoTconnector flex',
   tagline: '',
   url: 'https://dmgmori.com',
   baseUrl: '/help/',
@@ -30,9 +30,9 @@ module.exports = {
     //   content:""
     // },
     navbar: {
-      title: 'IoTconnector lite',
+      title: 'IoTconnector flex',
       logo: {
-        alt: 'DMG Mori',
+        alt: 'DMG MORI',
         src: 'img/logo-connectivity-white.png'
       },
       items: [
@@ -98,7 +98,7 @@ module.exports = {
         //   title: 'More',
         //   items: [
         //     {
-        //       label: 'DMG Mori',
+        //       label: 'DMG MORI',
         //       href: 'https://dmgmori.de',
         //     },
         //   ],

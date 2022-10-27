@@ -5,7 +5,7 @@
 1. Clone the repository `git clone https://github.com/siemens/meta-iot2050`
 2. Checkout the base commit for this documentation (other commits, the newest version might work) `git checkout 3bdaf2226cb4034530caf9cf91985c68e1a2b9b4`
 3. Build this image `./kas-container build kas-iot2050-example.yml`
-4. After that flash the image to an SD Card or the internal Memory on an IoT2050 Advanced
+4. After that flash the image to an SD Card or the internal Memory on an IOT2050 Advanced
 
 ## Image configuration
 
@@ -51,8 +51,9 @@ adduser mdclite
 ```
 
 9. Login to mdclite account
-10. Login to docker image registrys: *is part of deploy:all*
-11. Start containers: 
+10. Login to docker image registrys: _is part of deploy:all_
+11. Start containers:
+
 ```
 DOCKER_REGISTRY=<PATH_TO_PROD_REPO> DOCKER_WEBSERVER_TAG=<TAG> DOCKER_MDC_TAG=<TAG> DOCKER_MTC_TAG=<TAG> docker-compose -d up
 ```

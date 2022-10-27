@@ -58,7 +58,7 @@
       },
       "s7": {
         "name": "Siemens",
-        "description": "Allows connection to Siemens devices, such as SINUMERIK or S7"
+        "description": "Allows connection to Siemens devices, such as SIEMENS SINUMERIK or SIEMENS S7"
       }
     },
     "DataSinks": {
@@ -236,7 +236,7 @@
     "HostUnreachable": "Host unreachable please check IP configuration"
   },
   "settings-data-sink": {
-    "DataSink": "Data Sink",
+    "DataSink": "Application Interface",
     "Enabled": "Enabled",
     "Connection": "Connection",
     "Running": "Running",
@@ -314,12 +314,13 @@
     "License": "License",
     "ServerConfiguration": "Server configuration",
     "Messenger": "DMG MORI Messenger",
+    "ConnectMessengerButton": "Connect DMG MORI Messenger",
     "Register": "Register",
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Password",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "HasDataMapping": "Datapoint is mapped to a source",
+    "HasDataMapping": "Data point is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",
     "UmatiOpcUaVariables": "UMATI OPC UA Variables",
     "CustomOpcUaVariables": "Custom OPC UA Variables",
@@ -338,7 +339,7 @@
       "Unknown": "Registration status is unknown"
     },
     "ServerStatus": {
-      "Invalidhost": "Server host is invalid",
+      "Invalidhost": "Server host is unreachable",
       "NotConfigured": "Server is not configured",
       "Invalidauth": "Server authentication is invalid",
       "Available": "Server is available"

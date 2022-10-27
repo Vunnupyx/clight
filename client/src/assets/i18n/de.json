@@ -58,7 +58,7 @@
       },
       "s7": {
         "name": "Siemens",
-        "description": "Ermöglicht die Anbindung von Siemens Steuerungen, wie z.B. SINUMERIK oder S7 Steuerungen."
+        "description": "Ermöglicht die Anbindung von Siemens Steuerungen, wie z.B. SIEMENS SINUMERIK oder S7 Steuerungen."
       }
     },
     "DataSinks": {
@@ -236,7 +236,7 @@
     "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
   },
   "settings-data-sink": {
-    "DataSink": "Applikations Interfaces",
+    "DataSink": "Anwendungsschnittstelle",
     "Enabled": "Aktiviert",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
@@ -314,6 +314,7 @@
     "License": "",
     "ServerConfiguration": "Server Konfiguration",
     "Messenger": "Messenger",
+    "ConnectMessengerButton": "DMG MORI Messenger Verbinden",
     "Register": "Registrieren",
     "Status": "Status",
     "Registration": "Registration",
@@ -338,7 +339,7 @@
       "Unknown": "Registrationstatus ist unbekannt"
     },
     "ServerStatus": {
-      "Invalidhost": "Invalider Host",
+      "Invalidhost": "Host nicht erreichbar",
       "NotConfigured": "Nicht konfiguriert",
       "Invalidauth": "Invalid Auth",
       "Available": "Verfügbar"

@@ -6,12 +6,14 @@ title: Status LEDs
 
 ## Introduction
 
-The current runtime status of IoT connector flex is also directly visible on the `Siemens™ SIMATIC IoT2050™` device and displayed by different LEDs and with different colors.
+The current runtime status of IoTconnector flex is also directly visible on the `SIEMENS SIMATIC IOT2050` device and displayed by different LEDs and with different colors.
 
-There are two different LEDs on the `Siemens™ SIMATIC IoT2050™` device:
+There are two different LEDs on the `SIEMENS SIMATIC IOT2050` device:
 
 - USER 1
 - USER 2
+
+![SIEMENS SIMATIC IOT2050 LEDs](/img/IoT2050Leds.png)
 
 and three different colors for each LED:
 
@@ -24,8 +26,8 @@ and three different colors for each LED:
 USER 1 LED displays the current configuration state:
 
 - orange blinking (No Configuration/Not accepted Terms and Conditions)
-- orange (`configured` but not connected to NC)
-- green (`configured` and successfully connected to NC)
+- orange ([`configured`](LedStatusDisplay.md#what-does-configured-mean) but not connected to NC)
+- green ([`configured`](LedStatusDisplay.md#what-does-configured-mean) and successfully connected to NC)
 
 ### States of USER 2 LED
 
@@ -33,6 +35,7 @@ USER 2 LED has only 2 states:
 
 - Off (IoTconnector flex is not running)
 - Green (IoTconnector flex is running)
+- Red blinking (License is missing)
 
 ### What does `configured` mean?
 

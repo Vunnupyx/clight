@@ -6,28 +6,30 @@ title: Mapping
 
 ## Einleitung
 
-Mapping beschreibt die Beziehung zwischen Quelldatenpunkten (NC/VDP/DI) und den Zieldatenpunkten (`MTConnect`/`OPC UA`). Es ist erforderlich, den Quelldatenwert an die Zieldatenpunkte für verschiedene `Anwendungsschnittstellen` weiterzuleiten.
+Mapping beschreibt die Beziehung zwischen Quelldatenpunkten (`NC`/`DI`/`AI`/`VDP`) und den Zieldatenpunkten (`MTConnect`/`OPC UA`). Es ist notwendig, den Quelldatenwert an die Zieldatenpunkte für verschiedene [`Anwendungsschnittstellen`](ApplicationInterface.md) weiterzuleiten.
 
-### Mapping hinzufügen
+**Hinweis:** Die Zieldatenpunkte in [`Anwendungsschnittstellen`](ApplicationInterface.md) müssen vorher definiert sein, bevor Sie ein Mapping erstellen können, da Sie diesen Zieldatenpunkt bei der Erstellung des VDPs auswählen müssen.
 
-![Neu Mapping hinzufügen](/img/mapping/adding.png)
+### Hinzufügen eines Mappings
 
-1. Klicken Sie auf die blaue Schaltfläche mit dem weißen Plus-Symbol ![Neu Mapping hinzufügen](/img/mapping/mapping_addbutton.png)
-2. Das neue Element wird am Ende der Tabelle hinzugefügt.
+![Mapping neue Datenzuordnung hinzufügen](/img/mapping/adding.png)
+
+1. Klicken Sie auf die blaue Schaltfläche mit dem weißen Plus-Symbol ![Mapping neue Schaltfläche hinzufügen](/img/mapping/mapping_addbutton.png)
+2. Die neue Zeile wird am Ende der Tabelle hinzugefügt.
 3. Wählen Sie den gewünschten Quellpunkt aus dem Dropdown-Menü in der Spalte Quelle.
-4. Wählen Sie den gewünschten Zielpunkt für die gewünschte `Anwendungsschnittstelle` in der Spalte "Ziel".
-5. Klicken Sie auf die grüne Schaltfläche, um den Bearbeitungsstatus zu verlassen, oder klicken Sie auf das rote Kreuz, um Ihre Eingabe zu verwerfen.
+4. Wählen Sie den gewünschten Zieldatenpunkt (für die gewünschte [`Application Interface`](ApplicationInterface.md)) in der Spalte Target.
+5. Klicken Sie auf die grüne Schaltfläche zum Speichern oder auf das rote Kreuz, um Ihre Eingabe zu verwerfen.
 6. Klicken Sie auf die Schaltfläche `Änderungen übernehmen`, um Ihren neuen Datenpunkt an das Gerät zu senden.
 
 ### Löschen einer Zuordnung
 
-1. Klicken Sie auf der rechten Seite des zu löschenden Eintrags im Abschnitt `Aktionen` auf das Müllsymbol
-2. Wählen Sie Ja in dem sich öffnenden Overlay mit der Frage: "Sind Sie sicher, dass Sie den Datenpunkt [Datenpunktname] löschen möchten?"
+1. Klicken Sie für das zu löschende Mapping auf das Müllsymbol rechts in der Spalte `Aktionen`.
+2. Wählen Sie im Dialog mit der Frage Ja: "Sind Sie sicher, dass Sie einen Datenpunkt löschen wollen?"
 3. Klicken Sie auf die Schaltfläche `Änderungen übernehmen`, um die Änderung an das Backend zu senden.
 
 ### Mapping bearbeiten
 
 1. Klicken Sie auf der rechten Seite des zu löschenden Eintrags im Abschnitt `Aktionen` auf das Bleistiftsymbol
-2. Der Listeneintrag ist nun wie ein neu erzeugter Datenpunkt editierbar (siehe oben Dokumentation `Neuen Datenpunkt hinzufügen`: Schritt 3 und weiter).
-3. Nach den letzten Änderungen klicken Sie auf den grünen Haken, um den Bearbeitungszustand zu verlassen oder klicken Sie auf das rote Kreuz, um Ihren Eintrag zu verwerfen.
+2. Der Listeneintrag kann nun wie ein neu erzeugter Datenpunkt bearbeitet werden (siehe Abschnitt [Mapping hinzufügen](Mapping.md#add-a-mapping) oben, beginnen Sie mit Schritt 3 und fahren Sie fort).
+3. Klicken Sie nach Ihren Änderungen auf die grüne Schaltfläche zum Speichern oder auf das rote Kreuz, um Ihren Eintrag zu verwerfen.
 4. Klicken Sie auf die Schaltfläche `Änderungen übernehmen`, um Ihren neuen Datenpunkt an das Gerät zu senden.

@@ -1,0 +1,134 @@
+<h2 mat-dialog-title>{{ 'settings-data-sink.RegisterMachine' | translate }}</h2>
+<form
+  [formGroup]="profileForm"
+  (ngSubmit)="profileForm.valid && !isBusy && isFormSending && save()"
+>
+  <mat-spinner *ngIf="isBusy"></mat-spinner>
+  <mat-dialog-content *ngIf="!isBusy">
+    <h3>{{ 'settings-data-sink.ServerConfiguration' | translate }}</h3>
+    <div [formGroup]="profileForm">
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.Name' | translate }}</p>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <input type="text" matInput formControlName="name" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.Model' | translate }}</p>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <mat-select name="model" required formControlName="model">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="modelOptionKeyphrase"
+                  [ngModelOptions]="{ standalone: true }"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="
+                  let opt of optionsSearchResults(
+                    this.messengerMetadata?.models,
+                    modelOptionKeyphrase
+                  )
+                "
+                [value]="opt.id"
+              >
+                {{ opt.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.Organization' | translate }}</p>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <mat-select
+              name="organization"
+              required
+              formControlName="organization"
+            >
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="organizationOptionKeyphrase"
+                  [ngModelOptions]="{ standalone: true }"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="
+                  let opt of optionsSearchResults(
+                    this.messengerMetadata?.organizations,
+                    organizationOptionKeyphrase
+                  )
+                "
+                [value]="opt.id"
+              >
+                {{ opt.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.TimeZone' | translate }}</p>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <mat-select name="timezone" required formControlName="timezone">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search..."
+                  noEntriesFoundLabel="No results found"
+                  [(ngModel)]="timezoneOptionKeyphrase"
+                  [ngModelOptions]="{ standalone: true }"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="
+                  let opt of optionsSearchResults(
+                    this.messengerMetadata?.timezones,
+                    timezoneOptionKeyphrase
+                  )
+                "
+                [value]="opt.id"
+              >
+                {{ opt.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions
+    *ngIf="!isBusy"
+    class="d-flex justify-content-end padding pr-10"
+  >
+    <input [style.display]="'none'" type="submit" />
+    <button mat-button class="btn btn-light" (click)="close()">
+      {{ 'settings-data-sink.Cancel' | translate }}
+    </button>
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      [disabled]="profileForm.invalid"
+    >
+      {{ 'settings-data-sink.Save' | translate }}
+    </button>
+  </mat-dialog-actions>
+</form>

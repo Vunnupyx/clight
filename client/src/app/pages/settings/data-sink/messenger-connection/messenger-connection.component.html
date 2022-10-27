@@ -1,0 +1,216 @@
+<div class="header">
+  <h2 mat-dialog-title>
+    {{ 'settings-data-sink.Messenger' | translate }}
+  </h2>
+  <div class="dialog-close" (click)="close()">×</div>
+</div>
+<form
+  [formGroup]="profileForm"
+  (ngSubmit)="profileForm.valid && isFormSending && !isBusy && onSubmit()"
+>
+  <mat-spinner *ngIf="isBusy"></mat-spinner>
+  <mat-dialog-content *ngIf="!isBusy">
+    <h3>{{ 'settings-data-sink.ServerConfiguration' | translate }}</h3>
+    <div class="row">
+      <div class="col">
+        <h5>{{ 'settings-data-sink.Server' | translate }}</h5>
+      </div>
+      <div class="col">
+        <h5
+          [style.color]="
+            messengerStatus.server === 'available' ? 'green' : 'red'
+          "
+        >
+          <ng-container [ngSwitch]="messengerStatus.server">
+            <ng-container *ngSwitchCase="ServerStatus.Invalidhost">
+              {{ 'settings-data-sink.ServerStatus.Invalidhost' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="ServerStatus.Available">
+              {{ 'settings-data-sink.ServerStatus.Available' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="ServerStatus.Invalidauth">
+              {{ 'settings-data-sink.ServerStatus.Invalidauth' | translate }}
+            </ng-container>
+            <ng-container *ngSwitchCase="ServerStatus.NotConfigured">
+              {{ 'settings-data-sink.ServerStatus.NotConfigured' | translate }}
+            </ng-container>
+          </ng-container>
+        </h5>
+      </div>
+    </div>
+    <div [formGroup]="profileForm">
+      <div class="row">
+        <div class="col">
+          <h5>{{ 'settings-data-sink.Hostname' | translate }}</h5>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <input type="text" matInput formControlName="hostname" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <h5>{{ 'settings-data-sink.Username' | translate }}</h5>
+        </div>
+        <div class="col">
+          <mat-form-field>
+            <input type="text" matInput formControlName="username" #username />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.Password' | translate }}</p>
+        </div>
+        <div class="col">
+          <mat-form-field
+            class="messenger-password"
+            [hideRequiredMarker]="true"
+            [floatLabel]="'always'"
+          >
+            <mat-label></mat-label>
+            <input
+              type="password"
+              matInput
+              formControlName="password"
+              placeholder="{{
+                this.messengerConfiguration?.password ? '••••••••' : ''
+              }}"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-dialog-actions
+        *ngIf="!isBusy"
+        class="d-flex justify-content-end pr-10"
+      >
+        <button
+          mat-button
+          color="primary"
+          [disabled]="
+            profileForm.invalid ||
+            (messengerStatus.server === 'available' && profileForm.pristine)
+          "
+          type="button"
+          class="order-2"
+          (click)="onSaveConfiguration()"
+        >
+          Save Server Configuration
+        </button>
+      </mat-dialog-actions>
+      <h3>{{ 'settings-data-sink.Registration' | translate }}</h3>
+      <div class="row">
+        <div class="col">
+          <p>{{ 'settings-data-sink.Status' | translate }}</p>
+        </div>
+        <div class="col">
+          <p
+            [style.color]="
+              messengerStatus.registration !== 'registered' ? 'red' : 'green'
+            "
+          >
+            <ng-container [ngSwitch]="messengerStatus.registration">
+              <ng-container *ngSwitchCase="RegistrationStatus.Registered">
+                {{
+                  'settings-data-sink.RegistrationStatus.Registered' | translate
+                }}
+              </ng-container>
+              <ng-container *ngSwitchCase="RegistrationStatus.Notregistered">
+                {{
+                  'settings-data-sink.RegistrationStatus.Notregistered'
+                    | translate
+                }}
+              </ng-container>
+              <ng-container *ngSwitchCase="RegistrationStatus.Unknown">
+                {{
+                  'settings-data-sink.RegistrationStatus.Unknown' | translate
+                }}
+              </ng-container>
+              <ng-container *ngSwitchCase="RegistrationStatus.Error">
+                <ng-container
+                  [ngSwitch]="messengerStatus.registrationErrorReason"
+                >
+                  <ng-container
+                    *ngSwitchCase="
+                      RegistrationErrorReasonStatus.UnexpectedError
+                    "
+                  >
+                    {{
+                      'settings-data-sink.RegistrationErrorReason.UnexpectedError'
+                        | translate
+                    }}
+                  </ng-container>
+                  <ng-container
+                    *ngSwitchCase="
+                      RegistrationErrorReasonStatus.InvalidOrganization
+                    "
+                  >
+                    {{
+                      'settings-data-sink.RegistrationErrorReason.InvalidOrganization'
+                        | translate
+                    }}
+                  </ng-container>
+                  <ng-container
+                    *ngSwitchCase="
+                      RegistrationErrorReasonStatus.InvalidTimezone
+                    "
+                  >
+                    {{
+                      'settings-data-sink.RegistrationErrorReason.InvalidTimezone'
+                        | translate
+                    }}
+                  </ng-container>
+                  <ng-container
+                    *ngSwitchCase="RegistrationErrorReasonStatus.InvalidModel"
+                  >
+                    {{
+                      'settings-data-sink.RegistrationErrorReason.InvalidModel'
+                        | translate
+                    }}
+                  </ng-container>
+                  <ng-container
+                    *ngSwitchCase="RegistrationErrorReasonStatus.MissingSerial"
+                  >
+                    {{
+                      'settings-data-sink.RegistrationErrorReason.MissingSerial'
+                        | translate
+                    }}
+                  </ng-container>
+                  <ng-container
+                    *ngSwitchCase="RegistrationErrorReasonStatus.Duplicated"
+                  >
+                    {{
+                      'settings-data-sink.RegistrationErrorReason.Duplicated'
+                        | translate
+                    }}
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </p>
+        </div>
+        <div class="col">
+          <mat-dialog-actions
+            *ngIf="!isBusy"
+            class="d-flex justify-content-end pr-10"
+          >
+            <button
+              mat-button
+              color="primary"
+              [disabled]="
+                profileForm.invalid ||
+                messengerStatus.server !== 'available' ||
+                !profileForm.pristine
+              "
+              type="submit"
+              class="order-2"
+            >
+              {{ 'settings-data-sink.Register' | translate }}
+            </button>
+          </mat-dialog-actions>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+</form>

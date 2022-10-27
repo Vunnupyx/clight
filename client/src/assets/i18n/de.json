@@ -306,6 +306,16 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
+    "TimeZone": "Zeitzone",
+    "Organization": "Organisation",
+    "Model": "Modell",
+    "License": "",
+    "ServerConfiguration": "Server Konfiguration",
+    "Messenger": "Messenger",
+    "Register": "Registrieren",
+    "Status": "Status",
+    "Registration": "Registration",
+    "Password": "Passwort",
     "DuplicatedAddress": "Doppelte Adresse sind nicht erlaubt.",
     "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
     "OpcUaVariables": "OPC UA Variablen",
@@ -315,7 +325,30 @@
     "DataType": "Datentyp",
     "SetCustomOpcUaVariable": "Benutzerdefinierte OPC UA Variable setzen",
     "NodeId": "Node ID",
-    "DeleteMessage": "Sind Sie sicher "
+    "DeleteMessage": "Sind Sie sicher ",
+    "Username": "Benutzername",
+    "Hostname": "Hostname",
+    "Server": "Server Status",
+    "RegisterMachine": "Machine Registrieren",
+    "RegistrationStatus": {
+      "Notregistered": "Machine ist nicht registriert",
+      "Registered": "Machine ist registriert",
+      "Unknown": "Registrationstatus ist unbekannt"
+    },
+    "ServerStatus": {
+      "Invalidhost": "Invalider Host",
+      "NotConfigured": "Nicht konfiguriert",
+      "Invalidauth": "Invalid Auth",
+      "Available": "Verfügbar"
+    },
+    "RegistrationErrorReason": {
+      "UnexpectedError": "Unbekannter Fehler",
+      "InvalidOrganization": "Unbekannte Organisation",
+      "InvalidTimezone": "Invalide Zeitzone",
+      "InvalidModel": "Invalides Modell",
+      "MissingSerial": "Serialnummer fehlt",
+      "Duplicated": "Eine Machine mit gleicher Serialnummer und unterschiedliche Konfiguration wurde schon registriert."
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",

@@ -6,6 +6,10 @@ title: Changelog
 
 ## [2.4.0]
 
+### Fixed
+
+- [DIGMDCLGHT-205](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-205) Fixes issue with text threshold values with VDPs and prevents selection of multiple data points
+
 ### Changed
 
 - [DIGMDCLGHT-206](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-206) Value setting buttons such as "Set Comparative Value" in VDPs are disabled during edit mode, as they should be used outside of edit mode

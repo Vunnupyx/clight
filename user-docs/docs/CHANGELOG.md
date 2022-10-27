@@ -4,6 +4,12 @@ title: Changelog
 
 # Changelog
 
+## [2.4.0]
+
+### Added
+
+- [DIGMDCLGHT-212](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-212) Counters are initialized with value 0
+
 ## [2.3.0]
 
 ### Fixed

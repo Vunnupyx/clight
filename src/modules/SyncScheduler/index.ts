@@ -2,7 +2,7 @@ type SubscriberById = { [key: number]: (id: number) => void };
 type SubscribersForInterval = { [key: number]: SubscriberById };
 
 /**
- * Implements a (globally) syncronous interval scheduler
+ * Implements a (globally) synchronous interval scheduler
  */
 export class SynchronousIntervalScheduler {
   private static instance: SynchronousIntervalScheduler;
@@ -64,7 +64,7 @@ export class SynchronousIntervalScheduler {
   }
 
   /**
-   * Remove a listener callback from schduling
+   * Remove a listener callback from scheduling
    * @param subscriberId The id of the listener/subscription
    */
   public removeListener(subscriberId: number) {

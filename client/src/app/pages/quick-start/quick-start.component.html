@@ -26,7 +26,12 @@
           <p>
             {{ 'quick-start.Descriptions.Step1' | translate }}
           </p>
-          <a href="/help{{ 'common.Language' | translate }}/docs/#configuration-wizard" target="_blank">
+          <a
+            href="/help{{
+              'common.LanguageDocumentationPath' | translate
+            }}/docs/#configuration-wizard"
+            target="_blank"
+          >
             {{ 'quick-start.Descriptions.ReadMore' | translate }}
           </a>
         </div>
@@ -42,10 +47,9 @@
           </div>
 
           <div>
-            <mat-checkbox
-              [(ngModel)]="termsAccepted"
-              >{{ 'quick-start.Accept' | translate }}</mat-checkbox
-            >
+            <mat-checkbox [(ngModel)]="termsAccepted">{{
+              'quick-start.Accept' | translate
+            }}</mat-checkbox>
           </div>
         </mat-expansion-panel>
 
@@ -55,7 +59,8 @@
           </button>
 
           <button
-            mat-button color="primary"
+            mat-button
+            color="primary"
             matStepperNext
             (click)="onAcceptClicked()"
             [disabled]="!termsAccepted"

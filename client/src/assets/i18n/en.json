@@ -2,7 +2,7 @@
   "common": {
     "OK": "OK",
     "Cancel": "Cancel",
-    "Language": ""
+    "LanguageDocumentationPath": ""
   },
   "layout": {
     "Settings": "Settings",

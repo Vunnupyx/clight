@@ -287,6 +287,24 @@
       </button>
     </div>
     <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
+    <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
+      <div style="display: flex; width: 100%">
+        <button
+          mat-button
+          type="button"
+          class="btn-sm"
+          color="secondary"
+          style="margin-left: auto"
+          (click)="openMessenger()"
+          [disabled]="
+            isBusy || connection?.status !== DataSinkConnectionStatus.Connected
+          "
+        >
+          <mat-spinner *ngIf="isBusy" diameter="25"></mat-spinner>
+          {{ 'Connect Messenger' | translate }}
+        </button>
+      </div>
+    </div>
 
     <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
       <div style="display: flex; width: 100%">

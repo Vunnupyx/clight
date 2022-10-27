@@ -26,13 +26,15 @@ import {
   isDataPointMapping,
   IAuthUser,
   IAuthUsersConfig,
-  IDefaultTemplate
+  IDefaultTemplate,
+  IMessengerServerConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
 import { System } from '../System';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
+import { areObjectsEqual } from '../Utilities';
 
 const promisifiedGenerateKeyPair = promisify(generateKeyPair);
 
@@ -102,6 +104,15 @@ export const emptyDefaultConfig: IConfig = {
     x1: {},
     x2: {},
     time: {}
+  },
+  messenger: {
+    hostname: null,
+    username: null,
+    password: null,
+    model: null,
+    name: null,
+    organization: null,
+    timezone: null
   },
   dataSources: [],
   dataSinks: [],
@@ -725,6 +736,45 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     }
 
     await this.saveConfigToFile();
+  }
+
+  /**
+   * Update messenger config
+   */
+  public async updateMessengerConfig(
+    incomingMessengerConfig: IMessengerServerConfig
+  ): Promise<void> {
+    const logPrefix = `${ConfigManager.name}::updateMessengerConfig`;
+    const config = this._config;
+    let newMessengerConfig = {
+      ...config.messenger,
+      ...incomingMessengerConfig,
+      password:
+        incomingMessengerConfig.password?.length > 0
+          ? incomingMessengerConfig.password
+          : config.messenger.password
+    };
+    if (
+      newMessengerConfig.hostname.length > 5 &&
+      !newMessengerConfig.hostname.startsWith('http://') &&
+      !newMessengerConfig.hostname.startsWith('https://')
+    ) {
+      newMessengerConfig.hostname = `http://${incomingMessengerConfig.hostname}`;
+    }
+    if (
+      areObjectsEqual(newMessengerConfig, config.messenger) &&
+      this._dataSinksManager.messengerManager.serverStatus.registration ===
+        'registered'
+    ) {
+      winston.debug(
+        `${logPrefix} Config change has no update to messenger configuration`
+      );
+      return;
+    }
+
+    config.messenger = newMessengerConfig;
+    await this.saveConfigToFile();
+    await this.configChangeCompleted();
   }
 
   /**

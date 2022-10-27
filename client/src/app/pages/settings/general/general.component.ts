@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import {
   BackupService,
   SystemInformationService,
-  TemplateService,
+  TemplateService
 } from 'app/services';
 import { LocalStorageService } from 'app/shared';
 import {
@@ -100,11 +100,19 @@ export class GeneralComponent implements OnInit {
   async onRestoreFileChange(event: any) {
     if (event.target.files[0]) {
       const file = event.target.files[0];
-      await this.backupService.upload(file);
-      this.toastr.success(
-        this.translate.instant('settings-general.BackupHasBeenUploaded')
-      );
-      event.target.value = null;
+
+      try {
+        const parsedJSON = JSON.parse(await file.text());
+        await this.backupService.upload(file);
+        this.toastr.success(
+          this.translate.instant('settings-general.BackupHasBeenUploaded')
+        );
+        event.target.value = null;
+      } catch (e) {
+        this.toastr.error(
+          this.translate.instant('settings-general.BackupFileInvalid')
+        );
+      }
     }
   }
 }

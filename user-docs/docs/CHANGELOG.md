@@ -6,9 +6,10 @@ title: Changelog
 
 ## [2.4.0]
 
-### Added
+### Changed
 
-- [DIGMDCLGHT-206](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-206) Value setting buttons such as "Set Comparative Value" in VDPs are disabled during edit mode, as they should be used out of edit mode
+- [DIGMDCLGHT-206](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-206) Value setting buttons such as "Set Comparative Value" in VDPs are disabled during edit mode, as they should be used outside of edit mode
+- [DIGMDCLGHT-212](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-212) Counters are now initialized with value 0 on creation
 
 ## [2.3.0]
 

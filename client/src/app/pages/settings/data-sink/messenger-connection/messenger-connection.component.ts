@@ -65,6 +65,7 @@ export class MessengerConnectionComponent implements OnInit {
 
   onSaveConfiguration() {
     this.sanitizeDataBeforeSendToServer();
+    this.profileForm.markAsPristine();
     this.messengerConnectionService
       .updateNetworkConfig({
         ...this.messengerConfiguration,

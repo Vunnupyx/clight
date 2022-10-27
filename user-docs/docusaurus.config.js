@@ -1,6 +1,6 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  title: 'IoTconnector lite Documentation',
+  title: 'IoTconnector lite',
   tagline: '',
   url: 'https://dmgmori.com',
   baseUrl: '/help/',
@@ -11,10 +11,16 @@ module.exports = {
   projectName: 'mdc-light', // Usually your repo name.
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'de', 'jp'],
     localeConfigs: {
       en: {
         label: 'English'
+      },
+      de: {
+        label: 'Deutsch'
+      },
+      jp: {
+        label: '日本語'
       }
     }
   },
@@ -39,6 +45,10 @@ module.exports = {
           activeBasePath: 'docs',
           label: 'Documentation',
           position: 'left'
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right'
         }
         // {
         //   type: 'localeDropdown',

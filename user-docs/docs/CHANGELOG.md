@@ -9,6 +9,7 @@ title: Changelog
 ### Added
 
 - [DIGMDCLGHT-208](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-208) Messenger UI buttons are conditionally enabled to make it easier to choose the next action needed
+- [DIGMDCLGHT-197](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-197) User documentation supports German and Japanese languages
 
 ### Fixed
 

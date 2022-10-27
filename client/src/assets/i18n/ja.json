@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "Language": "/jp"
   },
   "layout": {
     "Settings": "設定",

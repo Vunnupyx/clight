@@ -152,7 +152,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   get supportHref() {
-    return `${window.location.protocol}//${window.location.hostname}/help/docs/VirtualDataPoints`;
+    return `${window.location.protocol}//${window.location.hostname}/help${this.translate.instant('common.Language')}/docs/VirtualDataPoints`;
   }
 
   constructor(

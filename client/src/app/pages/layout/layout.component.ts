@@ -4,6 +4,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { filter, map, mergeMap, shareReplay } from 'rxjs/operators';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../shared';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-layer',
@@ -22,7 +23,7 @@ export class LayoutComponent {
   resetPasswordLayout = false;
 
   get supportHref() {
-    return `${window.location.protocol}//${window.location.hostname}/help/docs/`;
+    return `${window.location.protocol}//${window.location.hostname}/help${this.translate.instant('common.Language')}/docs/`;
   }
 
   subs = new Subscription();
@@ -31,7 +32,8 @@ export class LayoutComponent {
     private breakpointObserver: BreakpointObserver,
     private router: Router,
     private route: ActivatedRoute,
-    private auth: AuthService
+    private auth: AuthService,
+    private readonly translate: TranslateService
   ) {
     this.subs.add(this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -40,7 +42,7 @@ export class LayoutComponent {
         if (route.firstChild) {
           return route.firstChild!.data;
         }
-  
+
         return of({});
       })
     ).subscribe(({resetPasswordLayout, noLayout}) => {

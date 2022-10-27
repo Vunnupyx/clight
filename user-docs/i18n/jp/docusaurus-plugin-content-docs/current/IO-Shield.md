@@ -23,6 +23,7 @@ By default the Data Source is configured the following way:
 - DI2 - Stack Light: Yellow
 - DI3 - Stack Light: Green
 - DI4 - Stack Light: Blue
+- DI5 - Machine Available
 - AI0 - Current Sensor
 - AI1 - Not used
 

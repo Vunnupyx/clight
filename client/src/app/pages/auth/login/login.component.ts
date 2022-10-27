@@ -71,6 +71,6 @@ export class LoginComponent implements OnInit {
   }
 
   openForgotPassword() {
-    window.open('/help/docs/FactoryReset', '_blank');
+    window.open(`/help${this.translate.instant('common.Language')}/docs/FactoryReset`, '_blank');
   }
 }

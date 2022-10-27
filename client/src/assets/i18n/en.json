@@ -99,7 +99,7 @@
     "RestoreConfiguration": "Restore Configuration",
     "LogDownloadError": "Could not download logs. Please try again!",
     "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
-    "BackupFileInvalid": "Backup configuration file is invalid. Please try again!",
+    "BackupFileInvalid": "The configuration file has an invalid format. Please check your files syntax using a JSON validator and try again.",
     "RestartDevice": "Restart device",
     "RestartNow": "Restart now",
     "RestartDeviceTitle": "Restart device",

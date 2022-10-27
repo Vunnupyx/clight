@@ -99,7 +99,7 @@
     "RestoreConfiguration": "設定の読み込み",
     "LogDownloadError": "Could not download logs. Please try again!",
     "BackupHasBeenUploaded": "バックアップをアップロードしました。",
-    "BackupFileInvalid": "Backup configuration file is invalid. Please try again!",
+    "BackupFileInvalid": "The configuration file has an invalid format. Please check your files syntax using a JSON validator and try again.",
     "RestartDevice": "デバイス初期化",
     "RestartNow": "再起動",
     "RestartDeviceTitle": "デバイス再起動",

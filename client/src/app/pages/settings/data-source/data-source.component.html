@@ -3,12 +3,16 @@
     {{ 'settings-data-source.DataSource' | translate }}
   </h2>
   <div class="layout-header__tabs">
-    <mat-tab-group mat-align-tabs="center" #tabs
+    <mat-tab-group
+      mat-align-tabs="center"
+      #tabs
       [selectedIndex]="dataSourceIndex"
-      (selectedIndexChange)="onDataSourceIndexChange($event)">
-      <mat-tab *ngFor="let item of dataSourceList"
+      (selectedIndexChange)="onDataSourceIndexChange($event)"
+    >
+      <mat-tab
+        *ngFor="let item of dataSourceList"
         [label]="'settings-data-source.Tabs.' + item.protocol | translate"
-        ></mat-tab>
+      ></mat-tab>
     </mat-tab-group>
   </div>
 </div>
@@ -22,8 +26,11 @@
         <div class="col-6 col-lg-5">
           {{ 'settings-data-source.Enabled' | translate }}
         </div>
-        <mat-slide-toggle class="col-6 col-lg-4" [ngModel]="dataSource?.enabled"
-          (ngModelChange)="updateEnabled($event)"></mat-slide-toggle>
+        <mat-slide-toggle
+          class="col-6 col-lg-4"
+          [ngModel]="dataSource?.enabled"
+          (ngModelChange)="updateEnabled($event)"
+        ></mat-slide-toggle>
       </div>
 
       <div>
@@ -38,8 +45,15 @@
               <form #form="ngForm" class="col-12 col-md-7">
                 <div>
                   <mat-form-field>
-                    <input matInput name="ipAddress" #ipAddr="ngModel" [ngModel]="dataSource?.connection?.ipAddr"
-                      [pattern]="ipRegex" [required]="true" (ngModelChange)="updateIpAddress(form.valid, $event)" />
+                    <input
+                      matInput
+                      name="ipAddress"
+                      #ipAddr="ngModel"
+                      [ngModel]="dataSource?.connection?.ipAddr"
+                      [pattern]="ipRegex"
+                      [required]="true"
+                      (ngModelChange)="updateIpAddress(form.valid, $event)"
+                    />
                   </mat-form-field>
                 </div>
               </form>
@@ -49,15 +63,26 @@
                 <div class="col-12 col-md-5">
                   <label>{{
                     'settings-data-source.ControllerType' | translate
-                    }}</label>
+                  }}</label>
                 </div>
                 <div class="col-12 col-md-7">
                   <mat-form-field>
-                    <mat-select [ngModel]="dataSource?.type" (ngModelChange)="updateControllerType($event)">
-                      <mat-option [value]="S7Types.SinumerikSl">Sinumerik 840D sl</mat-option>
-                      <mat-option [value]="S7Types.SinumerikPl">Sinumerik 840D pl</mat-option>
-                      <mat-option [value]="S7Types.S7_300_400">S7-300/400</mat-option>
-                      <mat-option [value]="S7Types.S7_1200_1500">S7-1200/1500</mat-option>
+                    <mat-select
+                      [ngModel]="dataSource?.type"
+                      (ngModelChange)="updateControllerType($event)"
+                    >
+                      <mat-option [value]="S7Types.SinumerikSl"
+                        >Sinumerik 840D sl</mat-option
+                      >
+                      <mat-option [value]="S7Types.SinumerikPl"
+                        >Sinumerik 840D pl</mat-option
+                      >
+                      <mat-option [value]="S7Types.S7_300_400"
+                        >S7-300/400</mat-option
+                      >
+                      <mat-option [value]="S7Types.S7_1200_1500"
+                        >S7-1200/1500</mat-option
+                      >
                     </mat-select>
                   </mat-form-field>
                 </div>
@@ -70,14 +95,23 @@
                 <div class="col-12 col-md-5">
                   <label>{{
                     'settings-data-source.ControllerType' | translate
-                    }}</label>
+                  }}</label>
                 </div>
                 <div class="col-12 col-md-7">
                   <mat-form-field>
-                    <mat-select [ngModel]="dataSource?.type" (ngModelChange)="updateControllerType($event)">
-                      <mat-option [value]="IOShieldTypes.DI_10">10 Digital Inputs</mat-option>
-                      <mat-option [value]="IOShieldTypes.AI_100_5di">Sensor 100A + 5 Digital Input</mat-option>
-                      <mat-option [value]="IOShieldTypes.AI_150_5di">Sensor 150A + 5 Digital Input</mat-option>
+                    <mat-select
+                      [ngModel]="dataSource?.type"
+                      (ngModelChange)="updateControllerType($event)"
+                    >
+                      <mat-option [value]="IOShieldTypes.DI_10"
+                        >10 Digital Inputs</mat-option
+                      >
+                      <mat-option [value]="IOShieldTypes.AI_100_5di"
+                        >Sensor 100A + 5 Digital Input</mat-option
+                      >
+                      <mat-option [value]="IOShieldTypes.AI_150_5di"
+                        >Sensor 150A + 5 Digital Input</mat-option
+                      >
                     </mat-select>
                   </mat-form-field>
                 </div>
@@ -91,12 +125,19 @@
             <div class="col-12 col-md-5">
               <label>{{
                 'settings-data-source.SoftwareVersion' | translate
-                }}</label>
+              }}</label>
             </div>
             <div class="col-12 col-md-7">
               <mat-form-field>
-                <mat-select [ngModel]="dataSource?.softwareVersion" (ngModelChange)="updateSoftwareVersion($event)">
-                  <mat-option *ngFor="let version of SoftwareVersions" [value]="version">{{ version }}</mat-option>
+                <mat-select
+                  [ngModel]="dataSource?.softwareVersion"
+                  (ngModelChange)="updateSoftwareVersion($event)"
+                >
+                  <mat-option
+                    *ngFor="let version of SoftwareVersions"
+                    [value]="version"
+                    >{{ version }}</mat-option
+                  >
                 </mat-select>
               </mat-form-field>
             </div>
@@ -106,129 +147,212 @@
     </div>
     <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">
       <div class="d-flex align-items-center justify-content-end">
-        <button mat-button type="button" class="btn-sm mr-10" *ngIf="isTouchedTable && !isLoading"
-          (click)="onDiscard()">
+        <button
+          mat-button
+          type="button"
+          class="btn-sm mr-10"
+          *ngIf="isTouchedTable && !isLoading"
+          (click)="onDiscard()"
+        >
           {{ 'settings-data-source.DiscardChanges' | translate }}
         </button>
 
-        <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
+        <mat-spinner
+          diameter="20"
+          *ngIf="isLoading"
+          class="mr-10"
+        ></mat-spinner>
 
-        <button mat-button color="primary" type="button" class="btn-sm" [disabled]="!isTouchedTable || isLoading || !dsFormValid"
-          (click)="onApply()">
+        <button
+          mat-button
+          color="primary"
+          type="button"
+          class="btn-sm"
+          [disabled]="!isTouchedTable || isLoading || !dsFormValid"
+          (click)="onApply()"
+        >
           {{ 'settings-data-source.ApplyChanges' | translate }}
         </button>
       </div>
-      <div class="connection-block" *ngIf="connection && dataSource?.protocol !== Protocol.IOShield">
+      <div
+        class="connection-block"
+        *ngIf="connection && dataSource?.protocol !== Protocol.IOShield"
+      >
         <div class="mt-25">
           {{ 'settings-data-source.Connection' | translate }}
         </div>
 
-        <div class="mt-10 d-flex align-items-center justify-content-between"
-          style="border: 1px solid #ccc; padding: 10px; border-radius: 6px">
+        <div
+          class="mt-10 d-flex align-items-center justify-content-between"
+          style="border: 1px solid #ccc; padding: 10px; border-radius: 6px"
+        >
           <div>
             <div style="font-weight: 600">
               <ng-container [ngSwitch]="connection.status">
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disabled">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Disabled"
+                >
                   {{ 'settings-data-source.Disabled' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.NotConfigured">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.NotConfigured"
+                >
                   {{ 'settings-data-source.NotConfigured' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.Provisioning">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Provisioning"
+                >
                   {{ 'settings-data-source.Provisioning' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed"
+                >
                   {{ 'settings-data-source.ProvisioningFailed' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.NoNetwork">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.NoNetwork"
+                >
                   {{ 'settings-data-source.NoNetwork' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connecting">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Connecting"
+                >
                   {{ 'settings-data-source.Connecting' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connected">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Connected"
+                >
                   {{ 'settings-data-source.Running' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disconnected">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
+                >
                   {{ 'settings-data-source.Disconnected' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.Reconnecting">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Reconnecting"
+                >
                   {{ 'settings-data-source.Reconnecting' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.NoLicense">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.NoLicense"
+                >
                   {{ 'settings-data-source.NoLicense' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.ConnectionError">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
+                >
                   {{ 'settings-data-source.ConnectionError' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="DataSourceConnectionStatus.Unavailable">
+                <ng-container
+                  *ngSwitchCase="DataSourceConnectionStatus.Unavailable"
+                >
                   {{ 'settings-data-source.Unavailable' | translate }}
                 </ng-container>
-                <ng-container *ngSwitchCase="
+                <ng-container
+                  *ngSwitchCase="
                     DataSourceConnectionStatus.TermsAndConditionsNotAccepted
-                  ">
+                  "
+                >
                   {{
-                  'settings-data-source.TermsAndConditionsNotAccepted'
-                  | translate
+                    'settings-data-source.TermsAndConditionsNotAccepted'
+                      | translate
                   }}
                 </ng-container>
               </ng-container>
             </div>
             <small style="color: #999">{{
               'settings-data-source.ServiceState' | translate
-              }}</small>
+            }}</small>
           </div>
           <div class="mr-10">
             <ng-container [ngSwitch]="connection.status">
               <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disabled">
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.NotConfigured">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NotConfigured"
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Provisioning">
-                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Provisioning"
+              >
+                <mat-icon
+                  class="color-success"
+                  svgIcon="mdc:success"
+                ></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.ProvisioningFailed"
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.NoNetwork">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NoNetwork"
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connecting">
-                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Connecting"
+              >
+                <mat-icon
+                  class="color-success"
+                  svgIcon="mdc:success"
+                ></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Connected">
-                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Connected"
+              >
+                <mat-icon
+                  class="color-success"
+                  svgIcon="mdc:success"
+                ></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Disconnected">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Disconnected"
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Reconnecting">
-                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Reconnecting"
+              >
+                <mat-icon
+                  class="color-success"
+                  svgIcon="mdc:success"
+                ></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.NoLicense">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.NoLicense"
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.ConnectionError">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="DataSourceConnectionStatus.Unavailable">
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.Unavailable"
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
-              <ng-container *ngSwitchCase="
+              <ng-container
+                *ngSwitchCase="
                   DataSourceConnectionStatus.TermsAndConditionsNotAccepted
-                ">
+                "
+              >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
             </ng-container>
           </div>
         </div>
       </div>
-      <div 
-      *ngIf="dataSource?.protocol !== Protocol.IOShield"
-      class="d-flex align-items-center justify-content-end markustesting" style="margin-top: 25px">
-
+      <div
+        *ngIf="dataSource?.protocol !== Protocol.IOShield"
+        class="d-flex align-items-center justify-content-end markustesting"
+        style="margin-top: 25px"
+      >
         <mat-spinner
           diameter="20"
           *ngIf="isLoading"
@@ -255,57 +379,117 @@
         <div class="col-12 col-md-6">
           <div class="d-flex align-items-center">
             <h3>{{ 'settings-data-source.DataPoints' | translate }}</h3>
-            <button type="button" [disabled]="isEditing" mat-mini-fab color="primary" class="wh-32 border-round ml-15"
-              (click)="onAdd()" [matTooltip]="'settings-data-source.AddDataPoint' | translate"
-              matTooltipPosition="above">
+            <button
+              type="button"
+              [disabled]="isEditing"
+              mat-mini-fab
+              color="primary"
+              class="wh-32 border-round ml-15"
+              (click)="onAdd()"
+              [matTooltip]="'settings-data-source.AddDataPoint' | translate"
+              matTooltipPosition="above"
+            >
               <mat-icon svgIcon="mdc:order-add"></mat-icon>
             </button>
           </div>
         </div>
       </div>
 
-      <ngx-datatable [headerHeight]="50" [rows]="datapointRows" rowHeight="auto" columnMode="flex">
-        <ngx-datatable-column [name]="'settings-data-source.Name' | translate" prop="name" [flexGrow]="1"
-          cellClass="input-cell">
-          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-            <div *ngIf="unsavedRowIndex !== rowIndex" class="text-ellipsis" [title]="value">
+      <ngx-datatable
+        [headerHeight]="50"
+        [rows]="datapointRows"
+        rowHeight="auto"
+        columnMode="flex"
+      >
+        <ngx-datatable-column
+          [name]="'settings-data-source.Name' | translate"
+          prop="name"
+          [flexGrow]="1"
+          cellClass="input-cell"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <div
+              *ngIf="unsavedRowIndex !== rowIndex"
+              class="text-ellipsis"
+              [title]="value"
+            >
               {{ getDataSourceDataPointPrefix(row.id) }} {{ value }}
             </div>
-            <input *ngIf="unsavedRow && unsavedRowIndex === rowIndex" type="text" class="w-100" [ngModel]="value"
+            <input
+              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              type="text"
+              class="w-100"
+              [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
-              [matTooltip]="'settings-data-source.DuplicatedName' | translate" matTooltipPosition="above"
-              [matTooltipDisabled]="!isDuplicatingField('name')" [class.border-danger]="isDuplicatingField('name')"
-              autofocus />
+              [matTooltip]="'settings-data-source.DuplicatedName' | translate"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!isDuplicatingField('name')"
+              [class.border-danger]="isDuplicatingField('name')"
+              autofocus
+            />
           </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column *ngIf="dataSource?.protocol != Protocol.IOShield"
-          [name]="'settings-data-source.Type' | translate" prop="type" [flexGrow]="1" cellClass="input-cell">
-          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+        <ngx-datatable-column
+          *ngIf="dataSource?.protocol != Protocol.IOShield"
+          [name]="'settings-data-source.Type' | translate"
+          prop="type"
+          [flexGrow]="1"
+          cellClass="input-cell"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
             <span *ngIf="unsavedRowIndex !== rowIndex">
               <ng-container [ngSwitch]="value">
-                <ng-container *ngSwitchCase="SourceDataPointType.PLC">PLC</ng-container>
-                <ng-container *ngSwitchCase="SourceDataPointType.NCK">NCK</ng-container>
+                <ng-container *ngSwitchCase="SourceDataPointType.PLC"
+                  >PLC</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.NCK"
+                  >NCK</ng-container
+                >
               </ng-container>
             </span>
-            <mat-select *ngIf="unsavedRow && unsavedRowIndex === rowIndex" [ngModel]="value"
-              (ngModelChange)="unsavedRow && (unsavedRow.type = $event)">
+            <mat-select
+              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              [ngModel]="value"
+              (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
+            >
               <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
               <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column [name]="'settings-data-source.LiveData' | translate" prop="livedata" [flexGrow]="1">
-          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+        <ngx-datatable-column
+          [name]="'settings-data-source.LiveData' | translate"
+          prop="livedata"
+          [flexGrow]="1"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
             <span *ngIf="liveData && liveData[row.id]; else noLiveData">
               <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
-                <ng-container *ngIf="row.address?.startsWith('DI'); else noTranslate">{{
-                  'settings-data-source.Livedata.ioshield.' +
-                  liveData[row.id].value | translate
+                <ng-container
+                  *ngIf="row.address?.startsWith('DI'); else noTranslate"
+                  >{{
+                    'settings-data-source.Livedata.ioshield.' +
+                      liveData[row.id].value | translate
                   }}
                 </ng-container>
                 <ng-template #noTranslate>{{
                   liveData[row.id].value
-                  }}</ng-template>
+                }}</ng-template>
               </ng-container>
 
               <ng-container *ngIf="dataSource?.protocol != Protocol.IOShield">
@@ -315,81 +499,153 @@
             <ng-template #noLiveData>-</ng-template>
           </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column [name]="'settings-data-source.Address' | translate" prop="address" [flexGrow]="3"
-          cellClass="input-cell address-cell">
-          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+        <ngx-datatable-column
+          [name]="'settings-data-source.Address' | translate"
+          prop="address"
+          [flexGrow]="3"
+          cellClass="input-cell address-cell"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
               <div class="text-ellipsis" [title]="value">
                 {{ mapAddressLabel(value) }}
               </div>
             </ng-container>
-            <div *ngIf="unsavedRowIndex === rowIndex" class="d-flex align-items-center"
-              [class.address-nck]="unsavedRow!.type === SourceDataPointType.NCK">
+            <div
+              *ngIf="unsavedRowIndex === rowIndex"
+              class="d-flex align-items-center"
+              [class.address-nck]="unsavedRow!.type === SourceDataPointType.NCK"
+            >
               <ng-container [ngSwitch]="unsavedRow!.type">
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK">
                   <div>{{ unsavedRow?.address }}</div>
-                  <mat-button-toggle-group class="mt-0 ml-10" #group="matButtonToggleGroup">
-                    <mat-button-toggle class="small-button" (click)="
+                  <mat-button-toggle-group
+                    class="mt-0 ml-10"
+                    #group="matButtonToggleGroup"
+                  >
+                    <mat-button-toggle
+                      class="small-button"
+                      (click)="
                         unsavedRow && onAddressSelect(unsavedRow);
                         group.value = null
-                      " [matTooltip]="'settings-data-source.Select' | translate" matTooltipPosition="above">
+                      "
+                      [matTooltip]="'settings-data-source.Select' | translate"
+                      matTooltipPosition="above"
+                    >
                       <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
                     </mat-button-toggle>
                   </mat-button-toggle-group>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
-                  <mat-select *ngIf="
+                  <mat-select
+                    *ngIf="
                       dataSource?.protocol === Protocol.IOShield;
                       else s7InputAddress
-                    " [ngModel]="value" (ngModelChange)="
+                    "
+                    [ngModel]="value"
+                    (ngModelChange)="
                       unsavedRow && (unsavedRow.address = $event)
-                    " [matTooltip]="
+                    "
+                    [matTooltip]="
                       'settings-data-source.DuplicatedAddress' | translate
-                    " matTooltipPosition="above" [matTooltipDisabled]="!isDuplicatingField('address')"
-                    [class.border-danger]="isDuplicatingField('address')">
+                    "
+                    matTooltipPosition="above"
+                    [matTooltipDisabled]="!isDuplicatingField('address')"
+                    [class.border-danger]="isDuplicatingField('address')"
+                  >
                     <mat-option>
-                      <ngx-mat-select-search placeholderLabel="Search..." noEntriesFoundLabel="No results found"
-                        [(ngModel)]="filterDigitalInputAddressStr"></ngx-mat-select-search>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search..."
+                        noEntriesFoundLabel="No results found"
+                        [(ngModel)]="filterDigitalInputAddressStr"
+                      ></ngx-mat-select-search>
                     </mat-option>
-                    <mat-option *ngFor="let address of ioshieldAddresses" [value]="address">{{ mapAddressLabel(address)
-                      }}</mat-option>
+                    <mat-option
+                      *ngFor="let address of ioshieldAddresses"
+                      [value]="address"
+                      >{{ mapAddressLabel(address) }}</mat-option
+                    >
                   </mat-select>
                   <ng-template #s7InputAddress>
-                    <input *ngIf="unsavedRow && unsavedRowIndex === rowIndex" type="text" class="w-100"
-                      [ngModel]="value" (ngModelChange)="unsavedRow.address = $event" [matTooltip]="
+                    <input
+                      *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+                      type="text"
+                      class="w-100"
+                      [ngModel]="value"
+                      (ngModelChange)="unsavedRow.address = $event"
+                      [matTooltip]="
                         'settings-data-source.DuplicatedAddress' | translate
-                      " matTooltipPosition="above" [matTooltipDisabled]="!isDuplicatingField('address')"
-                      [class.border-danger]="isDuplicatingField('address')" />
+                      "
+                      matTooltipPosition="above"
+                      [matTooltipDisabled]="!isDuplicatingField('address')"
+                      [class.border-danger]="isDuplicatingField('address')"
+                    />
                   </ng-template>
                 </ng-container>
               </ng-container>
             </div>
           </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column [name]="'settings-data-source.Actions' | translate" [flexGrow]="1" cellClass="button-cell"
-          [sortable]="false">
-          <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
-            <mat-button-toggle-group *ngIf="unsavedRowIndex !== rowIndex" #group="matButtonToggleGroup">
-              <mat-button-toggle (click)="onEditStart(rowIndex, row); group.value = null"
-                [matTooltip]="'settings-data-source.Edit' | translate" matTooltipPosition="above">
+        <ngx-datatable-column
+          [name]="'settings-data-source.Actions' | translate"
+          [flexGrow]="1"
+          cellClass="button-cell"
+          [sortable]="false"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex !== rowIndex"
+              #group="matButtonToggleGroup"
+            >
+              <mat-button-toggle
+                (click)="onEditStart(rowIndex, row); group.value = null"
+                [matTooltip]="'settings-data-source.Edit' | translate"
+                matTooltipPosition="above"
+              >
                 <mat-icon svgIcon="mdc:edit"></mat-icon>
               </mat-button-toggle>
-              <mat-button-toggle (click)="onDelete(row); group.value = null"
-                [matTooltip]="'settings-data-source.Delete' | translate" matTooltipPosition="above">
+              <mat-button-toggle
+                (click)="onDelete(row); group.value = null"
+                [matTooltip]="'settings-data-source.Delete' | translate"
+                matTooltipPosition="above"
+              >
                 <mat-icon svgIcon="mdc:delete"></mat-icon>
               </mat-button-toggle>
             </mat-button-toggle-group>
-            <mat-button-toggle-group *ngIf="unsavedRowIndex === rowIndex" #group="matButtonToggleGroup">
-              <mat-button-toggle (click)="
+            <mat-button-toggle-group
+              *ngIf="unsavedRowIndex === rowIndex"
+              #group="matButtonToggleGroup"
+            >
+              <mat-button-toggle
+                (click)="
                   !isDuplicatingField('name') &&
                     !isDuplicatingField('address') &&
                     onEditEnd();
                   group.value = null
-                " [matTooltip]="'settings-data-source.Save' | translate" matTooltipPosition="above">
-                <mat-icon class="color-success" svgIcon="mdc:checkmark"></mat-icon>
+                "
+                [matTooltip]="'settings-data-source.Save' | translate"
+                matTooltipPosition="above"
+              >
+                <mat-icon
+                  class="color-success"
+                  svgIcon="mdc:checkmark"
+                ></mat-icon>
               </mat-button-toggle>
-              <mat-button-toggle (click)="onEditCancel(); group.value = null"
-                [matTooltip]="'settings-data-source.Cancel' | translate" matTooltipPosition="above">
+              <mat-button-toggle
+                (click)="onEditCancel(); group.value = null"
+                [matTooltip]="'settings-data-source.Cancel' | translate"
+                matTooltipPosition="above"
+              >
                 <mat-icon class="color-error" svgIcon="mdc:close"></mat-icon>
               </mat-button-toggle>
             </mat-button-toggle-group>

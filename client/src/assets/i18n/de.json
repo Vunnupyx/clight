@@ -99,6 +99,7 @@
     "RestoreConfiguration": "Konfiguration wiederherstellen",
     "LogDownloadError": "Die Log Dateien konnten nicht heruntergeladen werden. Versuche es später erneut!",
     "BackupHasBeenUploaded": "Die Konfiguration wurde erfolgreich wiederhergestellt!",
+    "BackupFileInvalid": "Backup Konfiguration hat ungültiges Format. Bitte probieren Sie erneut.",
     "RestartDevice": "Gerät neustarten",
     "RestartNow": "Neustarten",
     "RestartDeviceTitle": "Gerät neustarten",

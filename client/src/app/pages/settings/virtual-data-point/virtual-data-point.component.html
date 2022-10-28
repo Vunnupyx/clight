@@ -303,6 +303,7 @@
           [name]="'settings-virtual-data-point.LiveData' | translate"
           prop="livedata"
           [flexGrow]="1"
+          [sortable]="false"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -334,11 +335,15 @@
             >
               <mat-button-toggle
                 *ngIf="canSetComparativeValue(row?.operationType)"
-                (click)="onSetComparativeValue(row); group.value = null"
+                (click)="
+                  row?.sources?.length > 0 && onSetComparativeValue(row);
+                  group.value = null
+                "
                 [matTooltip]="
                   'settings-virtual-data-point.SetComparativeValue' | translate
                 "
                 matTooltipPosition="above"
+                [disabled]="row?.sources?.length === 0"
                 ><mat-icon svgIcon="mdc:settings"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
@@ -346,11 +351,15 @@
                   row?.operationType ===
                   VirtualDataPointOperationType.THRESHOLDS
                 "
-                (click)="onSetThreshold(row); group.value = null"
+                (click)="
+                  row?.sources?.length > 0 && onSetThreshold(row);
+                  group.value = null
+                "
                 [matTooltip]="
                   'settings-virtual-data-point.SetThreshold' | translate
                 "
                 matTooltipPosition="above"
+                [disabled]="row?.sources?.length === 0"
                 ><mat-icon svgIcon="mdc:diagnosis"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
@@ -358,11 +367,15 @@
                   row?.operationType ===
                   VirtualDataPointOperationType.ENUMERATION
                 "
-                (click)="onSetEnumeration(row); group.value = null"
+                (click)="
+                  row?.sources?.length > 0 && onSetEnumeration(row);
+                  group.value = null
+                "
                 [matTooltip]="
                   'settings-virtual-data-point.SetEnumeration' | translate
                 "
                 matTooltipPosition="above"
+                [disabled]="row?.sources?.length === 0"
                 ><mat-icon svgIcon="mdc:order-group"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
@@ -370,11 +383,15 @@
                   row?.operationType ===
                   VirtualDataPointOperationType.CALCULATION
                 "
-                (click)="onSetFormula(row); group.value = null"
+                (click)="
+                  row?.sources?.length > 0 && onSetFormula(row);
+                  group.value = null
+                "
                 [matTooltip]="
                   'settings-virtual-data-point.SetFormula' | translate
                 "
                 matTooltipPosition="above"
+                [disabled]="row?.sources?.length === 0"
                 ><mat-icon svgIcon="mdc:system"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
@@ -406,23 +423,14 @@
               <mat-button-toggle
                 *ngIf="canSetComparativeValue(unsavedRow?.operationType)"
                 (click)="
-                  unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0 &&
-                    onSetComparativeValue(unsavedRow);
+                  !unsavedRow && onSetComparativeValue(unsavedRow);
                   group.value = null
                 "
                 [matTooltip]="
                   'settings-virtual-data-point.SetComparativeValue' | translate
                 "
                 matTooltipPosition="above"
-                [disabled]="
-                  !(
-                    unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0
-                  )
-                "
+                [disabled]="!!unsavedRow"
                 ><mat-icon svgIcon="mdc:settings"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
@@ -431,23 +439,13 @@
                   VirtualDataPointOperationType.THRESHOLDS
                 "
                 (click)="
-                  unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0 &&
-                    onSetThreshold(unsavedRow);
-                  group.value = null
+                  !unsavedRow && onSetThreshold(unsavedRow); group.value = null
                 "
                 [matTooltip]="
                   'settings-virtual-data-point.SetThreshold' | translate
                 "
                 matTooltipPosition="above"
-                [disabled]="
-                  !(
-                    unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0
-                  )
-                "
+                [disabled]="!!unsavedRow"
                 ><mat-icon svgIcon="mdc:diagnosis"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
@@ -456,23 +454,14 @@
                   VirtualDataPointOperationType.ENUMERATION
                 "
                 (click)="
-                  unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0 &&
-                    onSetEnumeration(unsavedRow);
+                  !unsavedRow && onSetEnumeration(unsavedRow);
                   group.value = null
                 "
                 [matTooltip]="
                   'settings-virtual-data-point.SetEnumeration' | translate
                 "
                 matTooltipPosition="above"
-                [disabled]="
-                  !(
-                    unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0
-                  )
-                "
+                [disabled]="!!unsavedRow"
                 ><mat-icon svgIcon="mdc:order-group"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
@@ -481,23 +470,13 @@
                   VirtualDataPointOperationType.CALCULATION
                 "
                 (click)="
-                  unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0 &&
-                    onSetFormula(unsavedRow);
-                  group.value = null
+                  !unsavedRow && onSetFormula(unsavedRow); group.value = null
                 "
                 [matTooltip]="
                   'settings-virtual-data-point.SetFormula' | translate
                 "
                 matTooltipPosition="above"
-                [disabled]="
-                  !(
-                    unsavedRow &&
-                    unsavedRow.sources &&
-                    unsavedRow.sources.length > 0
-                  )
-                "
+                [disabled]="!!unsavedRow"
                 ><mat-icon svgIcon="mdc:system"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle

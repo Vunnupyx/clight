@@ -152,7 +152,11 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   get supportHref() {
-    return `${window.location.protocol}//${window.location.hostname}/help/docs/VirtualDataPoints`;
+    return `${window.location.protocol}//${
+      window.location.hostname
+    }/help${this.translate.instant(
+      'common.LanguageDocumentationPath'
+    )}/docs/VirtualDataPoints`;
   }
 
   constructor(
@@ -482,7 +486,6 @@ export class VirtualDataPointComponent implements OnInit {
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
       VirtualDataPointOperationType.ENUMERATION,
-      VirtualDataPointOperationType.THRESHOLDS,
       VirtualDataPointOperationType.CALCULATION
     ].includes(operationType!);
   }

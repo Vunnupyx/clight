@@ -1,6 +1,6 @@
 {
-  "name": "Input board to Messenger",
-  "description": "10 digital input board to messenger",
+  "name": "Input board to DMG MORI Messenger",
+  "description": "10 digital input board to DMG MORI Messenger",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",

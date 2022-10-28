@@ -13,7 +13,7 @@ export class LicenseChecker {
     '8C:F3:19:5B:9A:BE',
     '8C:F3:19:6A:E6:B5',
     'E0:DC:A0:C8:6F:7E',
-    // DMG
+    // DMG MORI
     '8C:F3:19:16:8C:C2',
     '8C:F3:19:16:8D:7E',
     '8C:F3:19:16:8D:8A',

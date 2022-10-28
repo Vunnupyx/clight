@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Abbrechen"
+    "Cancel": "Abbrechen",
+    "LanguageDocumentationPath": "/de"
   },
   "layout": {
     "Settings": "Einstellungen",
@@ -57,7 +58,7 @@
       },
       "s7": {
         "name": "Siemens",
-        "description": "Ermöglicht die Anbindung von Siemens Steuerungen, wie z.B. SINUMERIK oder S7 Steuerungen."
+        "description": "Ermöglicht die Anbindung von Siemens Steuerungen, wie z.B. SIEMENS SINUMERIK oder S7 Steuerungen."
       }
     },
     "DataSinks": {
@@ -99,6 +100,7 @@
     "RestoreConfiguration": "Konfiguration wiederherstellen",
     "LogDownloadError": "Die Log Dateien konnten nicht heruntergeladen werden. Versuche es später erneut!",
     "BackupHasBeenUploaded": "Die Konfiguration wurde erfolgreich wiederhergestellt!",
+    "BackupFileInvalid": "Die Konfigurationsdatei hat ein ungültiges Format. Überprüfen Sie das Format mithilfe eines JSON Validators und versuchen Sie es erneut.",
     "RestartDevice": "Gerät neustarten",
     "RestartNow": "Neustarten",
     "RestartDeviceTitle": "Gerät neustarten",
@@ -234,7 +236,7 @@
     "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
   },
   "settings-data-sink": {
-    "DataSink": "Applikations Interfaces",
+    "DataSink": "Anwendungsschnittstelle",
     "Enabled": "Aktiviert",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
@@ -306,6 +308,17 @@
       "Disabled": "Deaktiviert"
     },
     "DuplicatedKeys": "Der Wert ist breits vorhanden.",
+    "TimeZone": "Zeitzone",
+    "Organization": "Organisation",
+    "Model": "Modell",
+    "License": "",
+    "ServerConfiguration": "Server Konfiguration",
+    "Messenger": "Messenger",
+    "ConnectMessengerButton": "DMG MORI Messenger Verbinden",
+    "Register": "Registrieren",
+    "Status": "Status",
+    "Registration": "Registration",
+    "Password": "Passwort",
     "DuplicatedAddress": "Doppelte Adresse sind nicht erlaubt.",
     "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
     "OpcUaVariables": "OPC UA Variablen",
@@ -315,7 +328,30 @@
     "DataType": "Datentyp",
     "SetCustomOpcUaVariable": "Benutzerdefinierte OPC UA Variable setzen",
     "NodeId": "Node ID",
-    "DeleteMessage": "Sind Sie sicher "
+    "DeleteMessage": "Sind Sie sicher ",
+    "Username": "Benutzername",
+    "Hostname": "Hostname",
+    "Server": "Server Status",
+    "RegisterMachine": "Machine Registrieren",
+    "RegistrationStatus": {
+      "Notregistered": "Machine ist nicht registriert",
+      "Registered": "Machine ist registriert",
+      "Unknown": "Registrationstatus ist unbekannt"
+    },
+    "ServerStatus": {
+      "Invalidhost": "Host nicht erreichbar",
+      "NotConfigured": "Nicht konfiguriert",
+      "Invalidauth": "Invalid Auth",
+      "Available": "Verfügbar"
+    },
+    "RegistrationErrorReason": {
+      "UnexpectedError": "Unbekannter Fehler",
+      "InvalidOrganization": "Unbekannte Organisation",
+      "InvalidTimezone": "Invalide Zeitzone",
+      "InvalidModel": "Invalides Modell",
+      "MissingSerial": "Serialnummer fehlt",
+      "Duplicated": "Eine Machine mit gleicher Serialnummer und unterschiedliche Konfiguration wurde schon registriert."
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "Mapping",

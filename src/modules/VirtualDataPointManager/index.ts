@@ -188,7 +188,7 @@ export class VirtualDataPointManager {
       ) {
         this.addSummaryLog(
           'warn',
-          `${logPrefix} Unexpcted value while calculating formula: ${config.formula}. With replaced values: ${variableReplacedFormula}`
+          `${logPrefix} Unexpected value while calculating formula: ${config.formula}. With replaced values: ${variableReplacedFormula}`
         );
 
         return null;
@@ -524,10 +524,11 @@ export class VirtualDataPointManager {
       this.toBoolean(measurement.value) &&
       this.cache.hasChanged(measurement.id)
     ) {
+      // NOTE: The counter is incremented after each restart as against the cache the value has changed.
       return this.counters.increment(config.id);
     }
 
-    return null;
+    return this.counters.getValue(config.id);
   }
 
   /**
@@ -590,7 +591,7 @@ export class VirtualDataPointManager {
   private thresholds(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
-  ): number | null {
+  ): number | string | null {
     if (sourceEvents.length !== 1) {
       this.addSummaryLog(
         'warn',
@@ -613,8 +614,16 @@ export class VirtualDataPointManager {
     const value = (Object.keys(config.thresholds) || []).find(
       (key) => config.thresholds[key] === activeThreshold
     );
+    if (typeof value === 'undefined') {
+      return null;
+    }
+    const parsedValue = parseFloat(value);
 
-    return typeof value !== 'undefined' ? parseInt(value, 10) : null;
+    if (isNaN(parsedValue)) {
+      return value;
+    } else {
+      return parsedValue;
+    }
   }
 
   /**

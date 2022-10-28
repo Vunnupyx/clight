@@ -624,7 +624,7 @@ export class DataHubAdapter {
 }
 
 /**
- * Structure of asset data by DMG. For probes and telemetry data
+ * Structure of asset data by DMG MORI. For probes and telemetry data
  */
 interface IAssetData {
   ts: string;

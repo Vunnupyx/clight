@@ -52,7 +52,9 @@
                   <span>{{ 'auth-login.Password' | translate }}</span>
                   <span>
                     <app-doc-btn
-                      link="/help/docs/#login"
+                      link="/help{{
+                        'common.LanguageDocumentationPath' | translate
+                      }}/docs/#login"
                       tooltip="{{
                         'auth-login.WhereToFindPassword' | translate
                       }}"

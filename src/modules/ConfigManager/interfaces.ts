@@ -134,13 +134,54 @@ export interface IDataHubSettings {
   symKey: string;
 }
 
-export interface IDataSinkConfig {
+export interface IMessengerServerConfig {
+  hostname: string | null;
+  username: string | null;
+  password: string | null;
+  name: string | null;
+  model: number | null;
+  organization: string | null;
+  timezone: number | null;
+}
+export interface IMessengerServerStatus {
+  server: 'not_configured' | 'invalid_host' | 'invalid_auth' | 'available';
+  registration: 'unknown' | 'not_registered' | 'registered' | 'error';
+  registrationErrorReason:
+    | null
+    | 'unexpected_error'
+    | 'invalid_organization'
+    | 'invalid_timezone'
+    | 'invalid_model'
+    | 'missing_serial'
+    | 'duplicated';
+}
+export enum ICustomDataPointDataType {
+  string = 'String',
+  double = 'Double',
+  byte = 'Byte',
+  uint16 = 'UInt16',
+  uint32 = 'UInt32',
+  boolean = 'Boolean'
+}
+export interface IOpcuaCustomDataPoint {
+  address: string;
   name: string;
+  dataType: ICustomDataPointDataType;
+}
+export interface IMessengerMetadata {
+  organizations: Array<{ name: string; id: string }>;
+  timezones: Array<{ name: string; id: number }>;
+  models: Array<{ name: string; id: number }>;
+}
+
+export interface IDataSinkConfig {
+  name: string; //TBD: this seems to be obsolete?
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
   datahub?: IDataHubSettings;
+  customDataPoints?: IOpcuaCustomDataPoint[];
 }
 
 export interface IOpcuaAuth {
@@ -283,7 +324,7 @@ export interface IVirtualDataPointConfig {
     | 'smallerEqual'
     | 'equal'
     | 'unequal'
-    | 'sum';
+    | 'calculation';
   thresholds?: ITargetDataMap;
   enumeration?: {
     defaultValue?: string;
@@ -291,6 +332,7 @@ export interface IVirtualDataPointConfig {
   };
   comparativeValue?: string | number;
   resetSchedules?: ScheduleDescription[];
+  formula?: string;
 }
 
 export interface ISystemInfoItem {
@@ -322,6 +364,7 @@ export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: Array<IDataSinkConfig>;
   virtualDataPoints: IVirtualDataPointConfig[];
+  messenger: IMessengerServerConfig;
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
   networkConfig: NetworkConfig;

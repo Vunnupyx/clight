@@ -6,40 +6,31 @@ module.exports = {
       type: 'category',
       label: 'Introduction',
       collapsed: false,
-      items: ['tutorial/GettingStarted']
+      items: ['GettingStarted', 'DataFlow', 'LedStatusDisplay']
     },
     {
       type: 'category',
       label: 'Components',
       collapsed: false,
       items: [
-        'Sinumerik840DSL',
-        'IO-Shield',
+        'SINUMERIK840DSLPL',
+        'InputBoard',
         'VirtualDataPoints',
         'Mapping',
-        'DataSinks'
+        'ApplicationInterface'
       ]
     },
     {
       type: 'category',
-      label: 'Use cases',
+      label: 'Use Cases',
       collapsed: false,
-      items: [
-        'tutorial/DMGMessenger'
-        // "UseCaseIoShield"
-      ]
+      items: ['DMGMORIMessenger', 'OPCUA', 'MTConnect']
     },
     {
       type: 'category',
       label: 'Advanced',
       collapsed: false,
-      items: [
-        'DataFlow',
-        // 'DataFlowConfiguration',
-        'LedStatusDisplay',
-        'FactoryReset',
-        'MdcLightConfiguration'
-      ]
+      items: ['FactoryReset', 'Network']
     },
     {
       type: 'category',

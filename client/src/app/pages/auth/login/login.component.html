@@ -52,8 +52,12 @@
                   <span>{{ 'auth-login.Password' | translate }}</span>
                   <span>
                     <app-doc-btn
-                      link="/help/docs/#login"
-                      tooltip="Where do I find my login password?"
+                      link="/help{{
+                        'common.LanguageDocumentationPath' | translate
+                      }}/docs/#login"
+                      tooltip="{{
+                        'auth-login.WhereToFindPassword' | translate
+                      }}"
                     ></app-doc-btn>
                   </span>
                 </mat-label>

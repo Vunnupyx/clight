@@ -6,115 +6,115 @@
   xmlns="urn:mtconnect.org:MTConnectDevices:1.3">
   <Header creationTime="2015-11-18T15:37:00" sender="localhost" instanceId="1237628993" bufferSize="100000" version="1.3.0"/>
   <Devices>
-    <Device uuid="001" name="DMG_MORI_NTX11140602" sampleRate="1000" id="DMG_MORI_NTX11140602_0">
-      <Description manufacturer="DMG MORI" serialNumber="DMG_MORI_NTX11140602" />
+    <Device uuid="001" name="DMG_MORI_IoTconnector-flex" sampleRate="1000" id="DMG_MORI_IoTconnector-flex_0">
+      <Description manufacturer="DMG MORI" serialNumber="DMG_MORI_IoTconnector-flex" />
       <DataItems>
-        <DataItem type="EMERGENCY_STOP" category="EVENT" id="DMG_MORI_IoTconnector-Light_0" name="estop" />
-        <DataItem type="AVAILABILITY" category="EVENT" id="DMG_MORI_NTX11140602_2" name="avail" />
-        <DataItem type="RUN_TIME" category="EVENT" id="DMG_MORI_IoTconnector-Light_091" name="runTime" />
-        <DataItem type="SYSTEM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_084" name="system" />
+        <DataItem type="EMERGENCY_STOP" category="EVENT" id="DMG_MORI_IoTconnector-flex_0" name="estop" />
+        <DataItem type="AVAILABILITY" category="EVENT" id="DMG_MORI_IoTconnector-flex_2" name="avail" />
+        <DataItem type="RUN_TIME" category="EVENT" id="DMG_MORI_IoTconnector-flex_091" name="runTime" />
+        <DataItem type="SYSTEM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_084" name="system" />
       </DataItems>
       <Components>
-        <Axes name="Path Feedrate" id="DMG_MORI_NTX11140602_3">
+        <Axes name="Path Feedrate" id="DMG_MORI_IoTconnector-flex_3">
           <Components>
-            <Rotary name="C5" id="DMG_MORI_NTX11140602_31">
+            <Rotary name="C5" id="DMG_MORI_IoTconnector-flex_31">
               <DataItems>
-                <DataItem type="ms:SPINDLE_ROTATING" category="EVENT" id="DMG_MORI_NTX11140602_32" name="spindlerotating5" />
-                <DataItem type="ROTARY_VELOCITY_OVERRIDE" category="EVENT" id="DMG_MORI_NTX11140602_34" name="spindleoverride5" />
+                <DataItem type="ms:SPINDLE_ROTATING" category="EVENT" id="DMG_MORI_IoTconnector-flex_32" name="spindlerotating5" />
+                <DataItem type="ROTARY_VELOCITY_OVERRIDE" category="EVENT" id="DMG_MORI_IoTconnector-flex_34" name="spindleoverride5" />
               </DataItems>
             </Rotary>
-            <Rotary name="C6" id="DMG_MORI_NTX11140602_37">
+            <Rotary name="C6" id="DMG_MORI_IoTconnector-flex_37">
               <DataItems>
-                <DataItem type="ms:SPINDLE_ROTATING" category="EVENT" id="DMG_MORI_NTX11140602_38" name="spindlerotating6" />
-                <DataItem type="ROTARY_VELOCITY_OVERRIDE" category="EVENT" id="DMG_MORI_NTX11140602_40" name="spindleoverride6" />
+                <DataItem type="ms:SPINDLE_ROTATING" category="EVENT" id="DMG_MORI_IoTconnector-flex_38" name="spindlerotating6" />
+                <DataItem type="ROTARY_VELOCITY_OVERRIDE" category="EVENT" id="DMG_MORI_IoTconnector-flex_40" name="spindleoverride6" />
               </DataItems>
             </Rotary>
-            <Rotary name="C7" id="DMG_MORI_NTX11140602_43">
+            <Rotary name="C7" id="DMG_MORI_IoTconnector-flex_43">
               <DataItems>
-                <DataItem type="ms:SPINDLE_ROTATING" category="EVENT" id="DMG_MORI_NTX11140602_44" name="spindlerotating7" />
-                <DataItem type="ROTARY_VELOCITY_OVERRIDE" category="EVENT" id="DMG_MORI_NTX11140602_46" name="spindleoverride7" />
+                <DataItem type="ms:SPINDLE_ROTATING" category="EVENT" id="DMG_MORI_IoTconnector-flex_44" name="spindlerotating7" />
+                <DataItem type="ROTARY_VELOCITY_OVERRIDE" category="EVENT" id="DMG_MORI_IoTconnector-flex_46" name="spindleoverride7" />
               </DataItems>
             </Rotary>
           </Components>
         </Axes>
-        <Controller name="Controller" id="DMG_MORI_NTX11140602_85">
+        <Controller name="Controller" id="DMG_MORI_IoTconnector-flex_85">
           <DataItems>
-            <DataItem type="ms:LIGHT_STATE_RED" category="EVENT" id="DMG_MORI_NTX11140602_86" name="light_state_red" />
-            <DataItem type="ms:LIGHT_STATE_YELLOW" category="EVENT" id="DMG_MORI_NTX11140602_87" name="light_state_yellow" />
-            <DataItem type="ms:LIGHT_STATE_GREEN" category="EVENT" id="DMG_MORI_NTX11140602_88" name="light_state_green" />
-            <DataItem type="ms:LIGHT_STATE_BLUE" category="EVENT" id="DMG_MORI_NTX11140602_89" name="light_state_blue" />
-            <DataItem type="ms:CONTROL_VERSION_NUMBER" category="EVENT" id="DMG_MORI_NTX11140602_90" name="controlVersion" />
-            <DataItem type="ms:MTCONNECT_ADAPTER_VERSION" category="EVENT" id="DMG_MORI_NTX11140602_91" name="mtconnect_adapter_version"/>
-            <DataItem type="ms:NUMBER_OF_ACTIVE_ALARMS" category="EVENT" id="DMG_MORI_IoTconnector-Light_089" name="numberOfActiveAlarms"/>
-            <DataItem type="ms:OPERATION_TIME" category="SAMPLE" id="DMG_MORI_NTX11140602_92" name="operationTime" units="SECOND" />
-            <DataItem type="ms:POWER_ON_TIME" category="SAMPLE" id="DMG_MORI_NTX11140602_93" name="powerOnTime" units="SECOND" />
-            <DataItem type="ms:CUTTING_TIME" category="SAMPLE" id="DMG_MORI_NTX11140602_94" name="cuttingTime" units="SECOND" />
-            <DataItem type="ms:CURRENT_RUN_TIME" category="SAMPLE" id="DMG_MORI_IoTconnector-Light_083" name="currentRunTime" units="SECOND" />
-            <DataItem type="ms:MACHINE_SN" category="EVENT" id="DMG_MORI_NTX11140602_95" name="machineSN" />
-            <DataItem type="ms:VENDOR_SERVER_INFO" category="EVENT" id="DMG_MORI_IoTconnector-Light_090" name="vendorServerInfo" />
+            <DataItem type="ms:LIGHT_STATE_RED" category="EVENT" id="DMG_MORI_IoTconnector-flex_86" name="light_state_red" />
+            <DataItem type="ms:LIGHT_STATE_YELLOW" category="EVENT" id="DMG_MORI_IoTconnector-flex_87" name="light_state_yellow" />
+            <DataItem type="ms:LIGHT_STATE_GREEN" category="EVENT" id="DMG_MORI_IoTconnector-flex_88" name="light_state_green" />
+            <DataItem type="ms:LIGHT_STATE_BLUE" category="EVENT" id="DMG_MORI_IoTconnector-flex_89" name="light_state_blue" />
+            <DataItem type="ms:CONTROL_VERSION_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-flex_90" name="controlVersion" />
+            <DataItem type="ms:MTCONNECT_ADAPTER_VERSION" category="EVENT" id="DMG_MORI_IoTconnector-flex_91" name="mtconnect_adapter_version"/>
+            <DataItem type="ms:NUMBER_OF_ACTIVE_ALARMS" category="EVENT" id="DMG_MORI_IoTconnector-flex_089" name="numberOfActiveAlarms"/>
+            <DataItem type="ms:OPERATION_TIME" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_92" name="operationTime" units="SECOND" />
+            <DataItem type="ms:POWER_ON_TIME" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_93" name="powerOnTime" units="SECOND" />
+            <DataItem type="ms:CUTTING_TIME" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_94" name="cuttingTime" units="SECOND" />
+            <DataItem type="ms:CURRENT_RUN_TIME" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_083" name="currentRunTime" units="SECOND" />
+            <DataItem type="ms:MACHINE_SN" category="EVENT" id="DMG_MORI_IoTconnector-flex_95" name="machineSN" />
+            <DataItem type="ms:VENDOR_SERVER_INFO" category="EVENT" id="DMG_MORI_IoTconnector-flex_090" name="vendorServerInfo" />
           </DataItems>
           <Components>
-            <Path name="Path_1" id="DMG_MORI_NTX11140602_96">
+            <Path name="Path_1" id="DMG_MORI_IoTconnector-flex_96">
               <DataItems>
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_NTX11140602_98" name="part_count1" />
-                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-Light_085" name="part_count_desired1" />
-                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-Light_000" name="mode1" />
-                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-Light_001" name="execution1" />
-                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-Light_002" name="program1" />
-                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-Light_006" name="toolnumber1" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-Light_012" name="jogoverride1" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-Light_013" name="rapidoverride1" />
-                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_014" name="logic1" />
-                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_015" name="motion1" />
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-Light_079" name="part_count_overall1" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_98" name="part_count1" />
+                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-flex_085" name="part_count_desired1" />
+                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-flex_000" name="mode1" />
+                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-flex_001" name="execution1" />
+                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-flex_002" name="program1" />
+                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-flex_006" name="toolnumber1" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-flex_012" name="jogoverride1" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-flex_013" name="rapidoverride1" />
+                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_014" name="logic1" />
+                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_015" name="motion1" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_079" name="part_count_overall1" />
               </DataItems>
             </Path>
-            <Path name="Path_2" id="DMG_MORI_IoTconnector-Light_016">
+            <Path name="Path_2" id="DMG_MORI_IoTconnector-flex_016">
               <DataItems>
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-Light_018" name="part_count2" />
-                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-Light_086" name="part_count_desired2" />
-                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-Light_020" name="mode2" />
-                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-Light_021" name="execution2" />
-                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-Light_022" name="program2" />
-                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-Light_026" name="toolnumber2" />
-                <DataItem type="ms:OPERATION_MODE" category="EVENT" id="DMG_MORI_IoTconnector-Light_031" name="operationmode2" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-Light_032" name="jogoverride2" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-Light_033" name="rapidoverride2" />
-                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_034" name="logic2" />
-                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_035" name="motion2" />
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-Light_080" name="part_count_overall2" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_018" name="part_count2" />
+                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-flex_086" name="part_count_desired2" />
+                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-flex_020" name="mode2" />
+                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-flex_021" name="execution2" />
+                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-flex_022" name="program2" />
+                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-flex_026" name="toolnumber2" />
+                <DataItem type="ms:OPERATION_MODE" category="EVENT" id="DMG_MORI_IoTconnector-flex_031" name="operationmode2" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-flex_032" name="jogoverride2" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-flex_033" name="rapidoverride2" />
+                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_034" name="logic2" />
+                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_035" name="motion2" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_080" name="part_count_overall2" />
               </DataItems>
             </Path>
-            <Path name="Path_3" id="DMG_MORI_IoTconnector-Light_036">
+            <Path name="Path_3" id="DMG_MORI_IoTconnector-flex_036">
               <DataItems>
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-Light_038" name="part_count3" />
-                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-Light_087" name="part_count_desired3" />
-                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-Light_040" name="mode3" />
-                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-Light_041" name="execution3" />
-                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-Light_042" name="program3" />
-                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-Light_046" name="toolnumber3" />
-                <DataItem type="ms:OPERATION_MODE" category="EVENT" id="DMG_MORI_IoTconnector-Light_051" name="operationmode3" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-Light_052" name="jogoverride3" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-Light_053" name="rapidoverride3" />
-                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_054" name="logic3" />
-                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_055" name="motion3" />
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-Light_081" name="part_count_overall3" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_038" name="part_count3" />
+                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-flex_087" name="part_count_desired3" />
+                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-flex_040" name="mode3" />
+                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-flex_041" name="execution3" />
+                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-flex_042" name="program3" />
+                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-flex_046" name="toolnumber3" />
+                <DataItem type="ms:OPERATION_MODE" category="EVENT" id="DMG_MORI_IoTconnector-flex_051" name="operationmode3" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-flex_052" name="jogoverride3" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-flex_053" name="rapidoverride3" />
+                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_054" name="logic3" />
+                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_055" name="motion3" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_081" name="part_count_overall3" />
               </DataItems>
             </Path>
-            <Path name="Path_4" id="DMG_MORI_IoTconnector-Light_056">
+            <Path name="Path_4" id="DMG_MORI_IoTconnector-flex_056">
               <DataItems>
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-Light_058" name="part_count4" />
-                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-Light_088" name="part_count_desired4" />
-                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-Light_060" name="mode4" />
-                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-Light_061" name="execution4" />
-                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-Light_062" name="program4" />
-                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-Light_066" name="toolnumber4" />
-                <DataItem type="ms:OPERATION_MODE" category="EVENT" id="DMG_MORI_IoTconnector-Light_071" name="operationmode4" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-Light_072" name="jogoverride4" />
-                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-Light_073" name="rapidoverride4" />
-                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_074" name="logic4" />
-                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-Light_075" name="motion4" />
-                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-Light_082" name="part_count_overall4" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_058" name="part_count4" />
+                <DataItem type="PART_COUNT" subType="TARGET" category="EVENT" id="DMG_MORI_IoTconnector-flex_088" name="part_count_desired4" />
+                <DataItem type="CONTROLLER_MODE" category="EVENT" id="DMG_MORI_IoTconnector-flex_060" name="mode4" />
+                <DataItem type="EXECUTION" category="EVENT" id="DMG_MORI_IoTconnector-flex_061" name="execution4" />
+                <DataItem type="PROGRAM" category="EVENT" id="DMG_MORI_IoTconnector-flex_062" name="program4" />
+                <DataItem type="TOOL_NUMBER" category="EVENT" id="DMG_MORI_IoTconnector-flex_066" name="toolnumber4" />
+                <DataItem type="ms:OPERATION_MODE" category="EVENT" id="DMG_MORI_IoTconnector-flex_071" name="operationmode4" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="JOG" category="EVENT" id="DMG_MORI_IoTconnector-flex_072" name="jogoverride4" />
+                <DataItem type="PATH_FEEDRATE_OVERRIDE" subType="RAPID" category="EVENT" id="DMG_MORI_IoTconnector-flex_073" name="rapidoverride4" />
+                <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_074" name="logic4" />
+                <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_075" name="motion4" />
+                <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_082" name="part_count_overall4" />
               </DataItems>
             </Path>
           </Components>

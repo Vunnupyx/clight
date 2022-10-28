@@ -11,6 +11,11 @@ import { CreateDataItemModalComponent } from './create-data-item-modal/create-da
 import { SelectMapModalComponent } from './select-map-modal/select-map-modal.component';
 import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { DataSinkGuard } from './data-sink.guard';
+import { RegisterMachineComponent } from './register-machine/register-machine.component';
+import { MessengerConnectionComponent } from './messenger-connection/messenger-connection.component';
+import { SelectOpcUaVariableModalComponent } from './select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
+import { CustomOpcUaVariablesComponent } from './custom-opc-ua-variables/custom-opc-ua-variables.component';
+import { EditCustomOpcUaVariableModalComponent } from './edit-custom-opc-ua-variable-modal/edit-custom-opc-ua-variable-modal.component';
 
 const routes: Routes = [
   {
@@ -25,6 +30,12 @@ const COMPONENTS = [
   DataSinkComponent,
   DataSinkMtConnectComponent,
   CreateDataItemModalComponent,
+  SelectMapModalComponent,
+  RegisterMachineComponent,
+  MessengerConnectionComponent,
+  SelectOpcUaVariableModalComponent,
+  CustomOpcUaVariablesComponent,
+  EditCustomOpcUaVariableModalComponent,
   SelectMapModalComponent
 ];
 

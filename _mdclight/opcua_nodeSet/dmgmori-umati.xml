@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<UANodeSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:uax="http://opcfoundation.org/UA/2008/02/Types.xsd"
-    xmlns="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd"
-    xmlns:s1="urn:DummyNameSpace/Types.xsd"
-    xmlns:s2="http://DMGMORI.com/UA/OemExtensions/Types.xsd"
-    xmlns:s3="http://opcfoundation.org/UA/Machinery/Types.xsd"
-    xmlns:ua="http://unifiedautomation.com/Configuration/NodeSet.xsd"
-    xmlns:s4="http://opcfoundation.org/UA/MachineTool/Types.xsd"
-    xmlns:s5="http://opcfoundation.org/UA/DI/Types.xsd"
-    xmlns:s6="http://opcfoundation.org/UA/IA/Types.xsd"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<UANodeSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uax="http://opcfoundation.org/UA/2008/02/Types.xsd" xmlns="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd" xmlns:s1="urn:DummyNameSpace/Types.xsd" xmlns:s2="http://DMGMORI.com/UA/OemExtensions/Types.xsd" xmlns:s3="http://opcfoundation.org/UA/Machinery/Types.xsd" xmlns:ua="http://unifiedautomation.com/Configuration/NodeSet.xsd" xmlns:s4="http://opcfoundation.org/UA/MachineTool/Types.xsd" xmlns:s5="http://opcfoundation.org/UA/DI/Types.xsd" xmlns:s6="http://opcfoundation.org/UA/IA/Types.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <NamespaceUris>
         <Uri>urn:DummyNameSpace</Uri>
         <Uri>http://DMGMORI.com/UA/OemExtensions/</Uri>
@@ -19,13 +9,13 @@
         <Uri>http://opcfoundation.org/UA/IA/</Uri>
     </NamespaceUris>
     <Models>
-        <Model ModelUri="urn:DummyNameSpace" PublicationDate="2021-04-06T06:44:42Z" Version="2.0.11">
+        <Model ModelUri="urn:DummyNameSpace" PublicationDate="2022-07-13T11:49:15Z" Version="2.0.17-2">
             <RequiredModel ModelUri="http://opcfoundation.org/UA/" PublicationDate="2020-07-15T00:00:00Z" Version="1.04.7"/>
             <RequiredModel ModelUri="http://opcfoundation.org/UA/DI/" PublicationDate="2020-06-02T00:00:00Z" Version="1.02.2"/>
             <RequiredModel ModelUri="http://opcfoundation.org/UA/IA/" PublicationDate="2020-08-31T00:00:00Z" Version="1.00.0"/>
             <RequiredModel ModelUri="http://opcfoundation.org/UA/Machinery/" PublicationDate="2020-09-25T00:00:00Z" Version="1.0.0"/>
             <RequiredModel ModelUri="http://opcfoundation.org/UA/MachineTool/" PublicationDate="2020-09-25T00:00:00Z" Version="1.00.00"/>
-            <RequiredModel ModelUri="http://DMGMORI.com/UA/OemExtensions/" PublicationDate="2021-04-06T06:45:04Z" Version="2.0.11"/>
+            <RequiredModel ModelUri="http://DMGMORI.com/UA/OemExtensions/" PublicationDate="2022-08-19T07:36:47Z" Version="2.0.18"/>
         </Model>
     </Models>
     <Aliases>
@@ -33,10 +23,12 @@
         <Alias Alias="Byte">i=3</Alias>
         <Alias Alias="UInt16">i=5</Alias>
         <Alias Alias="UInt32">i=7</Alias>
+        <Alias Alias="Double">i=11</Alias>
         <Alias Alias="String">i=12</Alias>
         <Alias Alias="DateTime">i=13</Alias>
         <Alias Alias="NodeId">i=17</Alias>
         <Alias Alias="LocalizedText">i=21</Alias>
+        <Alias Alias="Organizes">i=35</Alias>
         <Alias Alias="HasEventSource">i=36</Alias>
         <Alias Alias="HasTypeDefinition">i=40</Alias>
         <Alias Alias="GeneratesEvent">i=41</Alias>
@@ -54,643 +46,642 @@
     </Aliases>
     <Extensions>
         <Extension>
-            <ua:ModelInfo Tool="UaModeler" Hash="zMJ2PVJbiqSk2UFgQEtZ7A==" Version="1.6.4"/>
+            <ua:ModelInfo Tool="UaModeler" Hash="yuktU6q4iaj+8QRvAvgmKQ==" Version="1.6.4"/>
         </Extension>
     </Extensions>
-    <UAObject NodeId="ns=1;s={{machineName}}" BrowseName="1:{{machineName}}">
-        <DisplayName>{{machineName}}</DisplayName>
+    <UAObject NodeId="ns=1;s=DummyMachineToolName" BrowseName="1:DummyMachineToolName">
+        <DisplayName>DummyMachineToolName</DisplayName>
         <References>
-            <Reference ReferenceType="HasComponent">ns=1;s=CustomData</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.CustomData</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=1003</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Equipment</Reference>
-            <Reference ReferenceType="HasAddIn">ns=1;s=Identification</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=IoTflex</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Monitoring</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Notification</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Production</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Equipment</Reference>
+            <Reference ReferenceType="HasAddIn">ns=1;s=DummyMachineToolName.Identification</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=IoTflex</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=3;i=1001</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Notification</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production</Reference>
         </References>
     </UAObject>
-    <UAObject NodeId="ns=1;s=CustomData" BrowseName="1:CustomData">
+    <UAObject NodeId="ns=1;s=DummyMachineToolName.CustomData" BrowseName="1:CustomData">
         <DisplayName>CustomData</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
         </References>
     </UAObject>
-    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=Equipment" BrowseName="4:Equipment">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=DummyMachineToolName.Equipment" BrowseName="4:Equipment">
         <DisplayName>Equipment</DisplayName>
         <References>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=4;i=12</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Tools</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Equipment.Tools</Reference>
         </References>
     </UAObject>
-    <UAObject ParentNodeId="ns=1;s=Equipment" NodeId="ns=1;s=Tools" BrowseName="4:Tools">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Equipment" NodeId="ns=1;s=DummyMachineToolName.Equipment.Tools" BrowseName="4:Tools">
         <DisplayName>Tools</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=Tools-NodeVersion</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Equipment.Tools.NodeVersion</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=4;i=44</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Equipment</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Equipment</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=Tools" NodeId="ns=1;s=Tools-NodeVersion" BrowseName="NodeVersion">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Equipment.Tools" NodeId="ns=1;s=DummyMachineToolName.Equipment.Tools.NodeVersion" BrowseName="NodeVersion">
         <DisplayName>NodeVersion</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Tools</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Equipment.Tools</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=Identification" BrowseName="5:Identification">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=DummyMachineToolName.Identification" BrowseName="5:Identification">
         <DisplayName>Identification</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=AssetId</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=ComponentName</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=DeviceClass</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.AssetId</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.ComponentName</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.DeviceClass</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=1012</Reference>
             <Reference ReferenceType="HasAddIn" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=Location</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=Manufacturer</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=ManufacturerUri</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=Model</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=MonthOfConstruction</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=ProductInstanceUri</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=SerialNumber</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=SoftwareIdentification</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=YearOfConstruction</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.Location</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.Manufacturer</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.ManufacturerUri</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.Model</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.MonthOfConstruction</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.ProductInstanceUri</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.SerialNumber</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.YearOfConstruction</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=AssetId" BrowseName="5:AssetId">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.AssetId" BrowseName="5:AssetId">
         <DisplayName>AssetId</DisplayName>
         <Description Locale="en">To be used by end users to store a unique identification in the context of their overall application. Servers shall support at least 40 Unicode characters for the clients writing this value, this means clients can expect to be able to write strings with a length of 40 Unicode characters into that field.</Description>
         <References>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
         </References>
         <Value>
             <uax:String></uax:String>
         </Value>
     </UAVariable>
-    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=ComponentName" BrowseName="5:ComponentName">
+    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.ComponentName" BrowseName="5:ComponentName">
         <DisplayName>ComponentName</DisplayName>
         <Description Locale="en">To be used by end users to store a human-readable localized text for the MachineryItem. The minimum number of locales supported for this property shall be two. Servers shall support at least 40 Unicode characters for the clients writing the text part of each locale, this means clients can expect to be able to write texts with a length of 40 Unicode characters into that field.</Description>
         <References>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
         </References>
         <Value>
             <uax:LocalizedText/>
         </Value>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=DeviceClass" BrowseName="5:DeviceClass">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.DeviceClass" BrowseName="5:DeviceClass">
         <DisplayName>DeviceClass</DisplayName>
         <Description Locale="en">Indicates in which domain or for what purpose the MachineryItem is used.</Description>
         <References>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=Location" BrowseName="3:Location">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.Location" BrowseName="3:Location">
         <DisplayName>Location</DisplayName>
         <Description Locale="en">To be used by end users to store the location of the machine in a scheme specific to the end user. Servers shall support at least 60 Unicode characters for the clients writing this value, this means clients can expect to be able to write strings with a length of 60 Unicode characters into that field.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=Manufacturer" BrowseName="5:Manufacturer">
+    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.Manufacturer" BrowseName="5:Manufacturer">
         <DisplayName>Manufacturer</DisplayName>
         <Description Locale="en">A human-readable, localized name of the manufacturer of the MachineryItem.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=ManufacturerUri" BrowseName="5:ManufacturerUri">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.ManufacturerUri" BrowseName="5:ManufacturerUri">
         <DisplayName>ManufacturerUri</DisplayName>
         <Description Locale="en">A globally unique identifier of the manufacturer of the MachineryItem.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=Model" BrowseName="5:Model">
+    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.Model" BrowseName="5:Model">
         <DisplayName>Model</DisplayName>
         <Description Locale="en">A human-readable, localized name of the model of the MachineryItem.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Byte" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=MonthOfConstruction" BrowseName="3:MonthOfConstruction">
+    <UAVariable DataType="Byte" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.MonthOfConstruction" BrowseName="3:MonthOfConstruction">
         <DisplayName>MonthOfConstruction</DisplayName>
         <Description Locale="en">The month in which the manufacturing process of the MachineryItem has been completed. It shall be a number between 1 and 12, representing the month from January to December.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=ProductInstanceUri" BrowseName="5:ProductInstanceUri">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.ProductInstanceUri" BrowseName="5:ProductInstanceUri">
         <DisplayName Locale="en">ProductInstanceUri</DisplayName>
         <Description Locale="en">A globally unique resource identifier provided by the manufacturer of the machine</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=SerialNumber" BrowseName="5:SerialNumber">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.SerialNumber" BrowseName="5:SerialNumber">
         <DisplayName>SerialNumber</DisplayName>
         <Description Locale="en">A string containing a unique production number of the manufacturer of the MachineryItem. The global uniqueness of the serial number is only given in the context of the manufacturer, and potentially the model. The value shall not change during the life-cycle of the MachineryItem.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=SoftwareIdentification" BrowseName="4:SoftwareIdentification">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification" BrowseName="4:SoftwareIdentification">
         <DisplayName>SoftwareIdentification</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=SoftwareIdentification-MDClight</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
         </References>
     </UAObject>
-    <UAObject NodeId="ns=1;s=SoftwareIdentification-MDClight" BrowseName="1:MDClight">
-        <DisplayName>MDClight</DisplayName>
+    <UAObject NodeId="ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC" BrowseName="1:MDC">
+        <DisplayName>MDC</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=SoftwareIdentification-MDClight-Identifier</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=SoftwareIdentification</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC.Identifier</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=4;i=43</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=SoftwareIdentification-MDClight-SoftwareRevision</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC.SoftwareRevision</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=SoftwareIdentification-MDClight" NodeId="ns=1;s=SoftwareIdentification-MDClight-Identifier" BrowseName="4:Identifier">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC" NodeId="ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC.Identifier" BrowseName="4:Identifier">
         <DisplayName>Identifier</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SoftwareIdentification-MDClight</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
             <uax:String>0</uax:String>
         </Value>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=SoftwareIdentification-MDClight" NodeId="ns=1;s=SoftwareIdentification-MDClight-SoftwareRevision" BrowseName="5:SoftwareRevision">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC" NodeId="ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC.SoftwareRevision" BrowseName="5:SoftwareRevision">
         <DisplayName>SoftwareRevision</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SoftwareIdentification-MDClight</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification.SoftwareIdentification.MDC</Reference>
         </References>
         <Value>
             <uax:String>0</uax:String>
         </Value>
     </UAVariable>
-    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=Identification" NodeId="ns=1;s=YearOfConstruction" BrowseName="3:YearOfConstruction">
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=DummyMachineToolName.Identification" NodeId="ns=1;s=DummyMachineToolName.Identification.YearOfConstruction" BrowseName="3:YearOfConstruction">
         <DisplayName>YearOfConstruction</DisplayName>
         <Description Locale="en">The year (Gregorian calendar) in which the manufacturing process of the MachineryItem has been completed. It shall be a four-digit number and never change during the life-cycle of a MachineryItem.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Identification</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Identification</Reference>
         </References>
     </UAVariable>
-    <UAObject NodeId="ns=1;s=IoTflex" BrowseName="1:IoTflex">
+    <UAObject NodeId="ns=1;s=IoTflex" BrowseName="2:IoTflex">
         <DisplayName>IoTflex</DisplayName>
+        <Description Locale="en">Temporary node for RnD purpose. No standard yet.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=58</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Sensor1</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Sensor2</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable1</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable2</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable3</Reference>
-            <Reference ReferenceType="Organizes">ns=1;s=Variable4</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Sensor1</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Sensor2</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable1</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable2</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable3</Reference>
+            <Reference ReferenceType="Organizes">ns=1;s=DummyMachineToolName.Variable4</Reference>
         </References>
     </UAObject>
-        <UAVariable DataType="Double" NodeId="ns=1;s=Sensor1" BrowseName="1:Sensor1">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Sensor1" BrowseName="2:Sensor1">
         <DisplayName>Sensor1</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Sensor2" BrowseName="1:Sensor2">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Sensor2" BrowseName="2:Sensor2">
         <DisplayName>Sensor2</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Variable1" BrowseName="1:Variable1" AccessLevel="3">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Variable1" BrowseName="2:Variable1" AccessLevel="3">
         <DisplayName>Variable1</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=Variable2" BrowseName="1:Variable2" AccessLevel="3">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Variable2" BrowseName="2:Variable2" AccessLevel="3">
         <DisplayName>Variable2</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="String" NodeId="ns=1;s=Variable3" BrowseName="1:Variable3" AccessLevel="3">
+    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Variable3" BrowseName="1:Variable3" AccessLevel="3">
         <DisplayName>Variable3</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="UInt16" NodeId="ns=1;s=Variable4" BrowseName="1:Variable4" AccessLevel="3">
+    <UAVariable DataType="UInt16" NodeId="ns=1;s=DummyMachineToolName.Variable4" BrowseName="1:Variable4" AccessLevel="3">
         <DisplayName>Variable4</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=Monitoring" BrowseName="4:Monitoring">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=DummyMachineToolName.Monitoring" BrowseName="4:Monitoring">
         <DisplayName>Monitoring</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=1011</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=MachineTool</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.MachineTool</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Stacklight</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight</Reference>
         </References>
     </UAObject>
-    <UAObject ParentNodeId="ns=1;s=Monitoring" NodeId="ns=1;s=MachineTool" BrowseName="4:MachineTool">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring" NodeId="ns=1;s=DummyMachineToolName.Monitoring.MachineTool" BrowseName="4:MachineTool">
         <DisplayName>MachineTool</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=1005</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=OperationDuration</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=OperationMode</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=PowerOnDuration</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Monitoring</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.MachineTool.OperationDuration</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.MachineTool.OperationMode</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.MachineTool.PowerOnDuration</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=MachineTool" NodeId="ns=1;s=OperationDuration" BrowseName="2:OperationDuration">
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.MachineTool" NodeId="ns=1;s=DummyMachineToolName.Monitoring.MachineTool.OperationDuration" BrowseName="2:OperationDuration">
         <DisplayName>OperationDuration</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=MachineTool</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.MachineTool</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="MachineOperationMode" ParentNodeId="ns=1;s=MachineTool" NodeId="ns=1;s=OperationMode" BrowseName="4:OperationMode">
+    <UAVariable DataType="MachineOperationMode" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.MachineTool" NodeId="ns=1;s=DummyMachineToolName.Monitoring.MachineTool.OperationMode" BrowseName="4:OperationMode">
         <DisplayName>OperationMode</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=MachineTool</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.MachineTool</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=MachineTool" NodeId="ns=1;s=PowerOnDuration" BrowseName="2:PowerOnDuration">
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.MachineTool" NodeId="ns=1;s=DummyMachineToolName.Monitoring.MachineTool.PowerOnDuration" BrowseName="2:PowerOnDuration">
         <DisplayName>PowerOnDuration</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=MachineTool</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.MachineTool</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=Monitoring" NodeId="ns=1;s=Stacklight" BrowseName="4:Stacklight">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight" BrowseName="4:Stacklight">
         <DisplayName>Stacklight</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">ns=6;i=1002</Reference>
-            <Reference ReferenceType="HasOrderedComponent">ns=1;s=Light_1</Reference>
-            <Reference ReferenceType="HasOrderedComponent">ns=1;s=Light_2</Reference>
-            <Reference ReferenceType="HasOrderedComponent">ns=1;s=Light_3</Reference>
-            <Reference ReferenceType="HasOrderedComponent">ns=1;s=Light_4</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Monitoring</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=StacklightMode</Reference>
+            <Reference ReferenceType="HasOrderedComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1</Reference>
+            <Reference ReferenceType="HasOrderedComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2</Reference>
+            <Reference ReferenceType="HasOrderedComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3</Reference>
+            <Reference ReferenceType="HasOrderedComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.StacklightMode</Reference>
         </References>
     </UAObject>
-    <UAObject ParentNodeId="ns=1;s=Stacklight" NodeId="ns=1;s=Light_1" BrowseName="1:Light_1">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1" BrowseName="1:Light_1">
         <DisplayName>Light_1</DisplayName>
         <Description Locale="en">Base class for elements in a stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_1-NumberInList</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_1-SignalColor</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_1-SignalMode</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_1-SignalOn</Reference>
+            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.NumberInList</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.SignalColor</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.SignalMode</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.SignalOn</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=6;i=1006</Reference>
-            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=Stacklight</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=Light_1" NodeId="ns=1;s=Light_1-NumberInList" BrowseName="NumberInList">
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.NumberInList" BrowseName="NumberInList">
         <DisplayName>NumberInList</DisplayName>
         <Description Locale="en">Enumerate the stacklight elements counting upwards beginning from the base of the stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_1</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
             <uax:UInt16>0</uax:UInt16>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=Light_1" NodeId="ns=1;s=Light_1-SignalColor" BrowseName="6:SignalColor">
+    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.SignalColor" BrowseName="6:SignalColor">
         <DisplayName>SignalColor</DisplayName>
         <Description Locale="en">Indicates the colour the lamp element has when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_1</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1</Reference>
         </References>
         <Value>
             <uax:Int32>3</uax:Int32>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=Light_1" NodeId="ns=1;s=Light_1-SignalMode" BrowseName="6:SignalMode">
+    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.SignalMode" BrowseName="6:SignalMode">
         <DisplayName>SignalMode</DisplayName>
         <Description Locale="en">Shows in what way the lamp is used (continuous light, flashing, blinking) when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_1</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=Light_1" NodeId="ns=1;s=Light_1-SignalOn" BrowseName="6:SignalOn">
+    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1.SignalOn" BrowseName="6:SignalOn">
         <DisplayName>SignalOn</DisplayName>
         <Description Locale="en">Indicates if the signal emitted by the stack element is currently switched on or not.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_1</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_1</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=Stacklight" NodeId="ns=1;s=Light_2" BrowseName="1:Light_2">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2" BrowseName="1:Light_2">
         <DisplayName>Light_2</DisplayName>
         <Description Locale="en">Represents a lamp element in a stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_2-NumberInList</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_2-SignalColor</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_2-SignalMode</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_2-SignalOn</Reference>
+            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.NumberInList</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.SignalColor</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.SignalMode</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.SignalOn</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=6;i=1006</Reference>
-            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=Stacklight</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=Light_2" NodeId="ns=1;s=Light_2-NumberInList" BrowseName="NumberInList">
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.NumberInList" BrowseName="NumberInList">
         <DisplayName>NumberInList</DisplayName>
         <Description Locale="en">Enumerate the stacklight elements counting upwards beginning from the base of the stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_2</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
             <uax:UInt16>1</uax:UInt16>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=Light_2" NodeId="ns=1;s=Light_2-SignalColor" BrowseName="6:SignalColor">
+    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.SignalColor" BrowseName="6:SignalColor">
         <DisplayName>SignalColor</DisplayName>
         <Description Locale="en">Indicates the colour the lamp element has when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_2</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2</Reference>
         </References>
         <Value>
             <uax:Int32>2</uax:Int32>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=Light_2" NodeId="ns=1;s=Light_2-SignalMode" BrowseName="6:SignalMode">
+    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.SignalMode" BrowseName="6:SignalMode">
         <DisplayName>SignalMode</DisplayName>
         <Description Locale="en">Shows in what way the lamp is used (continuous light, flashing, blinking) when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_2</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=Light_2" NodeId="ns=1;s=Light_2-SignalOn" BrowseName="6:SignalOn">
+    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2.SignalOn" BrowseName="6:SignalOn">
         <DisplayName>SignalOn</DisplayName>
         <Description Locale="en">Indicates if the signal emitted by the stack element is currently switched on or not.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_2</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_2</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=Stacklight" NodeId="ns=1;s=Light_3" BrowseName="1:Light_3">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3" BrowseName="1:Light_3">
         <DisplayName>Light_3</DisplayName>
         <Description Locale="en">Represents a lamp element in a stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_3-NumberInList</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_3-SignalColor</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_3-SignalMode</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_3-SignalOn</Reference>
+            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.NumberInList</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.SignalColor</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.SignalMode</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.SignalOn</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=6;i=1006</Reference>
-            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=Stacklight</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=Light_3" NodeId="ns=1;s=Light_3-NumberInList" BrowseName="NumberInList">
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.NumberInList" BrowseName="NumberInList">
         <DisplayName>NumberInList</DisplayName>
         <Description Locale="en">Enumerate the stacklight elements counting upwards beginning from the base of the stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_3</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
             <uax:UInt16>2</uax:UInt16>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=Light_3" NodeId="ns=1;s=Light_3-SignalColor" BrowseName="6:SignalColor">
+    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.SignalColor" BrowseName="6:SignalColor">
         <DisplayName>SignalColor</DisplayName>
         <Description Locale="en">Indicates the colour the lamp element has when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_3</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3</Reference>
         </References>
         <Value>
             <uax:Int32>4</uax:Int32>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=Light_3" NodeId="ns=1;s=Light_3-SignalMode" BrowseName="6:SignalMode">
+    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.SignalMode" BrowseName="6:SignalMode">
         <DisplayName>SignalMode</DisplayName>
         <Description Locale="en">Shows in what way the lamp is used (continuous light, flashing, blinking) when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_3</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=Light_3" NodeId="ns=1;s=Light_3-SignalOn" BrowseName="6:SignalOn">
+    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3.SignalOn" BrowseName="6:SignalOn">
         <DisplayName>SignalOn</DisplayName>
         <Description Locale="en">Indicates if the signal emitted by the stack element is currently switched on or not.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_3</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_3</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=Stacklight" NodeId="ns=1;s=Light_4" BrowseName="1:Light_4">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4" BrowseName="1:Light_4">
         <DisplayName>Light_4</DisplayName>
         <Description Locale="en">Represents a lamp element in a stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_4-NumberInList</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_4-SignalColor</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Light_4-SignalMode</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=Light_4-SignalOn</Reference>
+            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.NumberInList</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.SignalColor</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.SignalMode</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.SignalOn</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=6;i=1006</Reference>
-            <Reference ReferenceType="HasOrderedComponent" IsForward="false">ns=1;s=Stacklight</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=Light_4" NodeId="ns=1;s=Light_4-NumberInList" BrowseName="NumberInList">
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.NumberInList" BrowseName="NumberInList">
         <DisplayName>NumberInList</DisplayName>
         <Description Locale="en">Enumerate the stacklight elements counting upwards beginning from the base of the stacklight.</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_4</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
             <uax:UInt16>3</uax:UInt16>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=Light_4" NodeId="ns=1;s=Light_4-SignalColor" BrowseName="6:SignalColor">
+    <UAVariable DataType="SignalColor" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.SignalColor" BrowseName="6:SignalColor">
         <DisplayName>SignalColor</DisplayName>
         <Description Locale="en">Indicates the colour the lamp element has when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_4</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4</Reference>
         </References>
         <Value>
             <uax:Int32>1</uax:Int32>
         </Value>
     </UAVariable>
-    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=Light_4" NodeId="ns=1;s=Light_4-SignalMode" BrowseName="6:SignalMode">
+    <UAVariable DataType="SignalModeLight" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.SignalMode" BrowseName="6:SignalMode">
         <DisplayName>SignalMode</DisplayName>
         <Description Locale="en">Shows in what way the lamp is used (continuous light, flashing, blinking) when switched on.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Light_4</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=Light_4" NodeId="ns=1;s=Light_4-SignalOn" BrowseName="6:SignalOn">
+    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4.SignalOn" BrowseName="6:SignalOn">
         <DisplayName>SignalOn</DisplayName>
         <Description Locale="en">Indicates if the signal emitted by the stack element is currently switched on or not.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Light_4</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight.Light_4</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="StacklightOperationMode" ParentNodeId="ns=1;s=Stacklight" NodeId="ns=1;s=StacklightMode" BrowseName="6:StacklightMode">
+    <UAVariable DataType="StacklightOperationMode" ParentNodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight" NodeId="ns=1;s=DummyMachineToolName.Monitoring.Stacklight.StacklightMode" BrowseName="6:StacklightMode">
         <DisplayName>StacklightMode</DisplayName>
         <Description Locale="en">Shows in what way (stack of individual lights, level meter, running light) the stacklight unit is used.</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=Stacklight</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Monitoring.Stacklight</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=Notification" BrowseName="4:Notification">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=DummyMachineToolName.Notification" BrowseName="4:Notification">
         <DisplayName>Notification</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=1004</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=EmergencyStopTriggered</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=Messages</Reference>
-            <Reference ReferenceType="HasEventSource">ns=1;s=Messages</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Notification.EmergencyStopTriggered</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Notification.Messages</Reference>
+            <Reference ReferenceType="HasEventSource">ns=1;s=DummyMachineToolName.Notification.Messages</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=Notification" NodeId="ns=1;s=EmergencyStopTriggered" BrowseName="2:EmergencyStopTriggered">
+    <UAVariable DataType="Boolean" ParentNodeId="ns=1;s=DummyMachineToolName.Notification" NodeId="ns=1;s=DummyMachineToolName.Notification.EmergencyStopTriggered" BrowseName="2:EmergencyStopTriggered">
         <DisplayName>EmergencyStopTriggered</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Notification</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Notification</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=Notification" EventNotifier="1" NodeId="ns=1;s=Messages" BrowseName="4:Messages">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Notification" EventNotifier="1" NodeId="ns=1;s=DummyMachineToolName.Notification.Messages" BrowseName="4:Messages">
         <DisplayName>Messages</DisplayName>
         <References>
             <Reference ReferenceType="GeneratesEvent">ns=4;i=39</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Notification</Reference>
+            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;s=DummyMachineToolName.Notification</Reference>
+            <Reference ReferenceType="HasNotifier" IsForward="false">i=2253</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=4;i=38</Reference>
             <Reference ReferenceType="GeneratesEvent">ns=4;i=35</Reference>
-            <Reference ReferenceType="HasNotifier" IsForward="false">i=2253</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Notification</Reference>
-            <Reference ReferenceType="HasEventSource" IsForward="false">ns=1;s=Notification</Reference>
         </References>
     </UAObject>
-    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=Production" BrowseName="4:Production">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName" NodeId="ns=1;s=DummyMachineToolName.Production" BrowseName="4:Production">
         <DisplayName>Production</DisplayName>
         <References>
-            <Reference ReferenceType="HasComponent">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
             <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=4;i=21</Reference>
         </References>
     </UAObject>
-    <UAObject ParentNodeId="ns=1;s=Production" NodeId="ns=1;s=ActiveProgram" BrowseName="4:ActiveProgram">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Production" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" BrowseName="4:ActiveProgram">
         <DisplayName>ActiveProgram</DisplayName>
         <References>
-            <Reference ReferenceType="HasComponent">ns=1;s=ActiveProgram-CurrentRunTime</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=ActiveProgram-DesiredParts</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Production</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production.ActiveProgram.CurrentRunTime</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production.ActiveProgram.DesiredParts</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=2;i=1010</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=ActiveProgram-Name</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=ActiveProgram-NumberInList</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=ActiveProgram-PartCounter</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=ActiveProgram-ProgramPath</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=ActiveProgram-State</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=Production</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Production.ActiveProgram.Name</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Production.ActiveProgram.NumberInList</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production.ActiveProgram.PartCounter</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production.ActiveProgram.ProgramPath</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production.ActiveProgram.State</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=ActiveProgram" NodeId="ns=1;s=ActiveProgram-CurrentRunTime" BrowseName="2:CurrentRunTime">
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.CurrentRunTime" BrowseName="2:CurrentRunTime">
         <DisplayName>CurrentRunTime</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=ActiveProgram" NodeId="ns=1;s=ActiveProgram-DesiredParts" BrowseName="2:DesiredParts">
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.DesiredParts" BrowseName="2:DesiredParts">
         <DisplayName>DesiredParts</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=ActiveProgram" NodeId="ns=1;s=ActiveProgram-Name" BrowseName="4:Name">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.Name" BrowseName="4:Name">
         <DisplayName>Name</DisplayName>
-        <Description Locale="en">The name of the active program without its path</Description>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=ActiveProgram" NodeId="ns=1;s=ActiveProgram-NumberInList" BrowseName="NumberInList">
+    <UAVariable DataType="UInt16" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.NumberInList" BrowseName="NumberInList">
         <DisplayName>NumberInList</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=ActiveProgram" NodeId="ns=1;s=ActiveProgram-PartCounter" BrowseName="2:PartCounter">
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.PartCounter" BrowseName="2:PartCounter">
         <DisplayName>PartCounter</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="String" ParentNodeId="ns=1;s=ActiveProgram" NodeId="ns=1;s=ActiveProgram-ProgramPath" BrowseName="2:ProgramPath">
+    <UAVariable DataType="String" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.ProgramPath" BrowseName="2:ProgramPath">
         <DisplayName>ProgramPath</DisplayName>
-        <Description Locale="en">The machine specific program path if available, Null otherwise</Description>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
         </References>
     </UAVariable>
-    <UAObject ParentNodeId="ns=1;s=ActiveProgram" NodeId="ns=1;s=ActiveProgram-State" BrowseName="4:State">
+    <UAObject ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.State" BrowseName="4:State">
         <DisplayName>State</DisplayName>
         <References>
-            <Reference ReferenceType="HasComponent">ns=1;s=ActiveProgram-State-CurrentState</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState</Reference>
             <Reference ReferenceType="HasTypeDefinition">ns=4;i=15</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=ActiveProgram</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram</Reference>
         </References>
     </UAObject>
-    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=ActiveProgram-State" NodeId="ns=1;s=ActiveProgram-State-CurrentState" BrowseName="CurrentState">
+    <UAVariable DataType="LocalizedText" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.State" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState" BrowseName="CurrentState">
         <DisplayName>CurrentState</DisplayName>
         <References>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=ActiveProgram-State</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram.State</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=2760</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=ActiveProgram-State-CurrentState-Id</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;s=ActiveProgram-State-CurrentState-Number</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState.Id</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState.Number</Reference>
         </References>
         <Value>
             <uax:LocalizedText/>
         </Value>
     </UAVariable>
-    <UAVariable DataType="NodeId" ParentNodeId="ns=1;s=ActiveProgram-State-CurrentState" NodeId="ns=1;s=ActiveProgram-State-CurrentState-Id" BrowseName="Id">
+    <UAVariable DataType="NodeId" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState.Id" BrowseName="Id">
         <DisplayName>Id</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=ActiveProgram-State-CurrentState</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=ActiveProgram-State-CurrentState" NodeId="ns=1;s=ActiveProgram-State-CurrentState-Number" BrowseName="Number">
+    <UAVariable DataType="UInt32" ParentNodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState" NodeId="ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState.Number" BrowseName="Number">
         <DisplayName>Number</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=ActiveProgram-State-CurrentState</Reference>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DummyMachineToolName.Production.ActiveProgram.State.CurrentState</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
     </UAVariable>
@@ -725,7 +716,7 @@
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
-            <uax:DateTime>2021-04-06T06:44:42Z</uax:DateTime>
+            <uax:DateTime>2022-07-13T11:49:15Z</uax:DateTime>
         </Value>
     </UAVariable>
     <UAVariable DataType="String" ParentNodeId="ns=1;i=5001" NodeId="ns=1;i=6003" BrowseName="NamespaceUri">
@@ -745,7 +736,7 @@
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
         </References>
         <Value>
-            <uax:String>2.0.11</uax:String>
+            <uax:String>2.0.17-2</uax:String>
         </Value>
     </UAVariable>
     <UAVariable DataType="IdType" ParentNodeId="ns=1;i=5001" ValueRank="1" NodeId="ns=1;i=6005" ArrayDimensions="0" BrowseName="StaticNodeIdTypes">

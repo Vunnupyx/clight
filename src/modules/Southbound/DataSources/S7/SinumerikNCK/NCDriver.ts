@@ -46,7 +46,7 @@ interface NCKObjectLevel {
 }
 
 /**
- * Implements an driver to read data from an Sinumerik NCKxxx (Reference Model: NCK100 / NCK001),
+ * Implements an driver to read data from an SIEMENS SINUMERIK NCKxxx (Reference Model: NCK100 / NCK001),
  * currently reading objects (preprocessed vibration KPIs) is supported.
  */
 export default class SinumerikNCKProtocolDriver {
@@ -116,7 +116,7 @@ export default class SinumerikNCKProtocolDriver {
   }
 
   /**
-   * Connect to the NCK of a Siemens Sinumerik 840D
+   * Connect to the NCK of a SIEMENS SINUMERIK 840D
    * @param host the IP of the NCK
    * @param port the port of the TCP connection (for direct ethernet connections to an 840D, this is always 102)
    * @param rack the rack of the NCK module (for direct ethernet connections to an 840D, this is always 0)
@@ -171,7 +171,7 @@ export default class SinumerikNCKProtocolDriver {
         }
         reject(
           new Error(
-            'Sinumerik NCK TCP connection timeout error - check IP address'
+            'SIEMENS SINUMERIK NCK TCP connection timeout error - check IP address'
           )
         );
         return;
@@ -206,7 +206,7 @@ export default class SinumerikNCKProtocolDriver {
 
         reject(
           new Error(
-            'Sinumerik NCK ISO connection timeout error - check rack and slot number'
+            'SIEMENS SINUMERIK NCK ISO connection timeout error - check rack and slot number'
           )
         );
         return;
@@ -247,7 +247,9 @@ export default class SinumerikNCKProtocolDriver {
       const timeout = setTimeout(() => {
         this.tcpClient.removeAllListeners('data');
         reject(
-          new Error('Sinumerik NCK connection parameter negotiation failed')
+          new Error(
+            'SIEMENS SINUMERIK NCK connection parameter negotiation failed'
+          )
         );
       }, 5000);
       let negotiatePDUPacket = this.ISO_NEGOTIATE_PDU.slice();
@@ -380,7 +382,7 @@ export default class SinumerikNCKProtocolDriver {
         const timeout = setTimeout(() => {
           reject(
             new Error(
-              `Sinumerik NCK readVariable timeout. Variable: ${JSON.stringify(
+              `SIEMENS SINUMERIK NCK readVariable timeout. Variable: ${JSON.stringify(
                 ncVar
               )}, Request TCP packet: ${requestPacket.toString('hex')}`
             )

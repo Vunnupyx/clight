@@ -53,6 +53,10 @@
     {
       "name": "health",
       "description": "Healthcheck endpoint"
+    },
+    {
+      "name": "messenger",
+      "description": "Everything about the messenger."
     }
   ],
   "produces": ["application/json"],
@@ -1517,6 +1521,61 @@
           }
         }
       }
+    },
+    "/messenger/configuration": {
+      "get": {
+        "tags": ["messenger"],
+        "description": "Get messenger server configuration",
+        "operationId": "messengerConfigurationGetHandler",
+        "responses": {
+          "200": {
+            "description": "Returns current messenger server configuration",
+            "schema": {
+              "$ref": "#/definitions/messengerServerConfiguration"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["messenger"],
+        "description": "Update messenger server configuration",
+        "operationId": "messengerConfigurationPostHandler",
+        "responses": {
+          "200": {
+            "description": "Server configration was successfully saved!"
+          }
+        }
+      }
+    },
+    "/messenger/status": {
+      "get": {
+        "tags": ["messenger"],
+        "description": "Get messenger server status",
+        "operationId": "messengerStatusGetHandler",
+        "responses": {
+          "200": {
+            "description": "Returns messenger server status",
+            "schema": {
+              "$ref": "#/definitions/messengerStatus"
+            }
+          }
+        }
+      }
+    },
+    "/messenger/metadata": {
+      "get": {
+        "tags": ["messenger"],
+        "description": "Get messenger server metadata",
+        "operationId": "messengerMetadataGetHandler",
+        "responses": {
+          "200": {
+            "description": "Returns messenger server metadata",
+            "schema": {
+              "$ref": "#/definitions/messengerMetadata"
+            }
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
@@ -1578,7 +1637,7 @@
             "equal",
             "unequal",
             "enumeration",
-            "sum"
+            "calculation"
           ]
         },
         "comparativeValue": {
@@ -2385,6 +2444,117 @@
         "env": {
           "type": "string",
           "enum": ["stag", "dev", "prod"]
+        }
+      }
+    },
+    "messengerServerConfiguration": {
+      "type": "object",
+      "required": [
+        "hostname",
+        "username",
+        "password",
+        "model",
+        "name",
+        "organization",
+        "timezone"
+      ],
+      "properties": {
+        "hostname": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "boolean" },
+        "model": { "type": "string" },
+        "name": { "type": "string" },
+        "organization": { "type": "string" },
+        "timezone": { "type": "number" }
+      }
+    },
+    "messengerStatus": {
+      "type": "object",
+      "required": ["server", "registration"],
+      "properties": {
+        "server": {
+          "type": "string",
+          "enum": [
+            "not_configured",
+            "invalid_host",
+            "invalid_auth",
+            "available"
+          ]
+        },
+        "registration": {
+          "type": "string",
+          "enum": ["unknown", "not_registered", "registered", "error"]
+        },
+        "registrationErrorReason": {
+          "type": "string",
+          "enum": [
+            "unexpected_error",
+            "invalid_organization",
+            "invalid_timezone",
+            "invalid_model",
+            "missing_serial",
+            "duplicated"
+          ]
+        }
+      }
+    },
+    "messengerMetadata": {
+      "type": "object",
+      "required": ["organizations", "timezones", "models"],
+      "properties": {
+        "organizations": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "timezones": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "number"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "number"
+                  }
+                }
+              }
+            ]
+          }
         }
       }
     }

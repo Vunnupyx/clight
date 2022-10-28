@@ -1,4 +1,4 @@
-﻿# DMG Header Component
+﻿# DMG MORI Header Component
 
 This component should be embedded in the sidenav menu and applies a Header, Subheader and an optional Column Layout as designed to the page.
 
@@ -6,16 +6,15 @@ Header and Subheader are extracted from the routing data.
 
 ## Input Options
 
-| Key           | Default  | Description                                                                                |
-|---------------|----------|--------------------------------------------------------------------------------------------|
-| includeLayout | true     | Can be used to deselect the grid layout which is by default applied to the child element   |
-
+| Key           | Default | Description                                                                              |
+| ------------- | ------- | ---------------------------------------------------------------------------------------- |
+| includeLayout | true    | Can be used to deselect the grid layout which is by default applied to the child element |
 
 ## Implementation
 
 app.component.html:
 
-````html
+```html
 <ng-container>
   <cn-sidenav-container>
     <cn-sidenav>
@@ -31,27 +30,27 @@ app.component.html:
     </cn-sidenav-content>
   </cn-sidenav-container>
 </ng-container>
-````
+```
 
-without grid layout: 
+without grid layout:
 
-````html
+```html
 <dmg-header [includeLayout]="false">
   <router-outlet></router-outlet>
 </dmg-header>
-````
+```
 
 app.routing.ts:
 
-````typescript
+```typescript
 const routes: Routes = [
   {
     path: '',
     component: ChildComponent,
     data: {
-      header: "Child Header",
-      subheader: "Child Subheader"
+      header: 'Child Header',
+      subheader: 'Child Subheader'
     }
-  },
+  }
 ];
-````
+```

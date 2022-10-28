@@ -1,4 +1,6 @@
 import winston from 'winston';
+import { evaluate, isNaN, number } from 'mathjs';
+
 import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { CounterManager } from '../CounterManager';
@@ -129,40 +131,72 @@ export class VirtualDataPointManager {
   }
 
   /**
-   * Calculates the sum of a  list of virtual data points.
+   * Calculates the given math expression.
    *
    * @param  {IDataSourceMeasurementEvent[]} sourceEvents
    * @param  {IVirtualDataPointConfig} config
    * @returns boolean
    */
-  private sum(
+  private calculation(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
   ): number | null {
-    const logPrefix = `VirtualDataPointManager::sum`;
-    if (config.operationType !== 'sum') {
-      winston.error(`${logPrefix} called with invalid operation type.`);
+    const logPrefix = `VirtualDataPointManager::calculation`;
+    if (config.operationType !== 'calculation') {
+      this.addSummaryLog(
+        'error',
+        `${logPrefix} called with invalid operation type.`
+      );
       return null;
     }
-    if (sourceEvents.length < 2) {
-      winston.warn(
-        `${logPrefix} virtual data point (${config.id}) requires at least 2 sources!`
+    if (sourceEvents.length < 1) {
+      this.addSummaryLog(
+        'warn',
+        `${logPrefix} Virtual data point Calculation (${config.id}) requires at least 1 source!`
+      );
+      return null;
+    }
+    if (typeof config.formula !== 'string' || config.formula.length === 0) {
+      this.addSummaryLog(
+        'warn',
+        `${logPrefix} Virtual data point Calculation called without formula string`
       );
       return null;
     }
     try {
-      return sourceEvents.reduce(
-        (previousValue, { measurement: { value } }) => {
-          if (typeof value !== 'number') {
-            // Not addable
-            throw Error(`${value} is not a number.`);
-          }
-          return value + previousValue;
-        },
-        0
-      );
+      let variableReplacedFormula = config.formula;
+      sourceEvents.forEach((sourceEvent) => {
+        variableReplacedFormula = variableReplacedFormula.replace(
+          new RegExp(sourceEvent.measurement.id, 'g'),
+          sourceEvent.measurement.value.toString()
+        );
+      });
+      // Replace true with 1 and false with 0
+      variableReplacedFormula = variableReplacedFormula
+        .replace(new RegExp('true', 'g'), '1')
+        .replace(new RegExp('false', 'g'), '0');
+
+      let result = evaluate(variableReplacedFormula);
+      if (
+        /[*/+-]+([*/+-])/.test(variableReplacedFormula) || //check if any operators are repeating
+        variableReplacedFormula.includes('Infinity') ||
+        result === Infinity ||
+        result === -Infinity ||
+        result === null ||
+        result === -0 ||
+        isNaN(result)
+      ) {
+        this.addSummaryLog(
+          'warn',
+          `${logPrefix} Unexpected value while calculating formula: ${config.formula}. With replaced values: ${variableReplacedFormula}`
+        );
+
+        return null;
+      } else {
+        return number(result.toFixed(4));
+      }
     } catch (err) {
-      winston.error(`${logPrefix} ${err.message}`);
+      this.addSummaryLog('error', `${logPrefix} ${err.message}`);
       return null;
     }
   }
@@ -490,10 +524,11 @@ export class VirtualDataPointManager {
       this.toBoolean(measurement.value) &&
       this.cache.hasChanged(measurement.id)
     ) {
+      // NOTE: The counter is incremented after each restart as against the cache the value has changed.
       return this.counters.increment(config.id);
     }
 
-    return null;
+    return this.counters.getValue(config.id);
   }
 
   /**
@@ -556,7 +591,7 @@ export class VirtualDataPointManager {
   private thresholds(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
-  ): number | null {
+  ): number | string | null {
     if (sourceEvents.length !== 1) {
       this.addSummaryLog(
         'warn',
@@ -579,8 +614,16 @@ export class VirtualDataPointManager {
     const value = (Object.keys(config.thresholds) || []).find(
       (key) => config.thresholds[key] === activeThreshold
     );
+    if (typeof value === 'undefined') {
+      return null;
+    }
+    const parsedValue = parseFloat(value);
 
-    return typeof value !== 'undefined' ? parseInt(value, 10) : null;
+    if (isNaN(parsedValue)) {
+      return value;
+    } else {
+      return parsedValue;
+    }
   }
 
   /**
@@ -618,8 +661,8 @@ export class VirtualDataPointManager {
         return this.equal(sourceEvents, config);
       case 'unequal':
         return this.unequal(sourceEvents, config);
-      case 'sum':
-        return this.sum(sourceEvents, config);
+      case 'calculation':
+        return this.calculation(sourceEvents, config);
       default:
         // TODO Only print this once at startup or config change, if invalid
         // this.addSummaryLog("warn",

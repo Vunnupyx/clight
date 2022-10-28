@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "LanguageDocumentationPath": ""
   },
   "layout": {
     "Settings": "Settings",
@@ -20,7 +21,8 @@
     "Username": "Username",
     "Password": "Password",
     "SignIn": "Sign in",
-    "ForgotPassword": "Forgot your password?"
+    "ForgotPassword": "Forgot your password?",
+    "WhereToFindPassword": "Where do I find my login password?"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",
@@ -34,10 +36,13 @@
     "TermsAndConditions": "Terms and Conditions",
     "Accept": "Accept",
     "Language": "Select your Language",
+    "WhatIsTemplate": "What is a template?",
     "SelectTemplate": "Select Template",
     "SelectSource": "Select Source",
     "SelectApplicationInterfaces": "Select Application Interfaces",
-    "LoadError": "Failed to load info. Try again later",
+    "LoadError": "Failed to load info. Please try again later",
+    "TermsLoadError": "Error loading Terms and Conditions. Please try again later.",
+    "AcceptError": "Error occured while accepting Terms and Conditions. Please try again later.",
     "Next": "Next",
     "Save": "Save",
     "Yes": "Yes",
@@ -52,22 +57,22 @@
         "description": "Ioshield description"
       },
       "s7": {
-        "name": "S7",
-        "description": "S7 description"
+        "name": "Siemens",
+        "description": "Allows connection to Siemens devices, such as SIEMENS SINUMERIK or SIEMENS S7"
       }
     },
     "DataSinks": {
       "mtconnect": {
         "name": "MTConnect",
-        "description": "MTConnect description"
+        "description": "Provides MTConnect interface for other applications"
       },
       "opcua": {
         "name": "OPCUA",
-        "description": "OPCUA Description"
+        "description": "Provides OPCUA interface for other applications"
       },
       "datahub": {
         "name": "CELOS Xchange",
-        "description": "CELOS Xchange description"
+        "description": "Provides CELOS Xchange interface for other applications"
       }
     },
     "Descriptions": {
@@ -86,7 +91,7 @@
     "CELOSLanguage": "CELOS Language",
     "English": "English",
     "Deutsch": "Deutsch",
-    "Japanese": "Japanese",
+    "Japanese": "日本語",
     "Templates": "Templates",
     "CurrentTemplate": "Current Template",
     "OpenConfigurationWizard": "Open Configuration Wizard",
@@ -95,6 +100,7 @@
     "RestoreConfiguration": "Restore Configuration",
     "LogDownloadError": "Could not download logs. Please try again!",
     "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
+    "BackupFileInvalid": "The configuration file has an invalid format. Please check your files syntax using a JSON validator and try again.",
     "RestartDevice": "Restart device",
     "RestartNow": "Restart now",
     "RestartDeviceTitle": "Restart device",
@@ -149,7 +155,7 @@
     "LiveData": "Live Data",
     "Actions": "Actions",
     "SoftwareVersion": "Software Version",
-    "BTTSString": "BTTS String",
+    "BTSSString": "BTSS String",
     "LoadError": "Failed to load data sources. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
@@ -203,7 +209,9 @@
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
-    "ReturnValueIfTrue": "Value if left side is true"
+    "ReturnValueIfTrue": "Return Value",
+    "SetFormula": "Set formula",
+    "Formula": "Formula"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -217,17 +225,18 @@
     "SmallerEqual": "Smaller or Equal",
     "Equal": "Equal",
     "Unequal": "Unequal",
-    "Sum": "Sum",
-    "Enumeration": "Enumeration"
+    "Enumeration": "Enumeration",
+    "Calculation": "Calculation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
+    "LoadError": "Failed to load source data points. Try again later",
     "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
     "HostUnreachable": "Host unreachable please check IP configuration"
   },
   "settings-data-sink": {
-    "DataSink": "Data Sink",
+    "DataSink": "Application Interface",
     "Enabled": "Enabled",
     "Connection": "Connection",
     "Running": "Running",
@@ -259,11 +268,12 @@
     "Delete": "Delete",
     "Save": "Save",
     "Cancel": "Cancel",
+    "Close": "Close",
     "Event": "Event",
     "Condition": "Condition",
     "SelectAVariable": "Select a variable",
     "CreateDataPoint": "Create data item",
-    "SelectVariable": "SelectVariable",
+    "SelectVariable": "Select Variable",
     "Mapping": "Mapping",
     "From": "From",
     "To": "To",
@@ -285,6 +295,7 @@
     "OPCUAAuthenticationLevel": "OPC UA Authentication Level",
     "OPCUAServerUsername": "OPC UA Server Username",
     "OPCUAServerPassword": "OPC UA Server Password",
+    "NoData": "No data",
     "LoadError": "Failed to load data sinks. Try again later",
     "OpenMTConnectStream": "Open MTConnect Stream",
     "BulkSuccess": "Changes have been applied successfully!",
@@ -297,7 +308,50 @@
       "Disabled": "Disabled"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
-    "HasDataMapping": "Datapoint is mapped to a source"
+    "TimeZone": "Time zone",
+    "Organization": "Organization",
+    "Model": "Model",
+    "License": "License",
+    "ServerConfiguration": "Server configuration",
+    "Messenger": "DMG MORI Messenger",
+    "ConnectMessengerButton": "Connect DMG MORI Messenger",
+    "Register": "Register",
+    "Status": "Status",
+    "Registration": "Registration",
+    "Password": "Password",
+    "DuplicatedAddress": "You are not allowed to duplicate addresses",
+    "HasDataMapping": "Data point is mapped to a source",
+    "OpcUaVariables": "OPC UA Variables",
+    "UmatiOpcUaVariables": "UMATI OPC UA Variables",
+    "CustomOpcUaVariables": "Custom OPC UA Variables",
+    "AddOpcUaVariable": "Add your own OPC UA Variable",
+    "DataType": "Data Type",
+    "SetCustomOpcUaVariable": "Set Custom OPC UA Variable",
+    "NodeId": "Node ID",
+    "DeleteMessage": "Are you sure you want to delete data point?",
+    "Username": "Username",
+    "Hostname": "Hostname",
+    "Server": "Server Status",
+    "RegisterMachine": "Register Machine",
+    "RegistrationStatus": {
+      "Notregistered": "Machine is not registered",
+      "Registered": "Machine is registered",
+      "Unknown": "Registration status is unknown"
+    },
+    "ServerStatus": {
+      "Invalidhost": "Server host is unreachable",
+      "NotConfigured": "Server is not configured",
+      "Invalidauth": "Server authentication is invalid",
+      "Available": "Server is available"
+    },
+    "RegistrationErrorReason": {
+      "UnexpectedError": "An unexpected error occurred, that could not be specified",
+      "InvalidOrganization": "Organization does not exist",
+      "InvalidTimezone": "Timezone does not exist",
+      "InvalidModel": "Model does not exist",
+      "MissingSerial": "Serial number is missing",
+      "Duplicated": "A machine with the same serial number and different configuration is registered"
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",
@@ -377,5 +431,13 @@
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+  },
+  "data-type": {
+    "String": "String",
+    "Double": "Double",
+    "Byte": "Byte",
+    "UInt16": "UInt16",
+    "UInt32": "UInt32",
+    "Boolean": "Boolean"
   }
 }

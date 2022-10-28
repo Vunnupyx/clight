@@ -84,7 +84,7 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
           animation: false
         },
         formatter: (params) => {
-          const seriesTemplate = params
+          const seriesTemplate = params.slice(0, this.rows.length + 1)
             .map(
               (param) => `
                 <div style="margin: 10px 0 5px;line-height:1;">${
@@ -256,12 +256,11 @@ export class SetThresholdsModalComponent implements OnInit, OnDestroy {
   private prepareThresholds() {
     return this.rows.reduce((acc, curr) => {
       if (
-        Number.isFinite(Number(curr.value)) &&
+        curr.value &&
         Number.isFinite(Number(curr.threshold))
       ) {
-        acc[Number(curr.value)] = Number(curr.threshold);
+        acc[curr.value] = Number(curr.threshold);
       }
-
       return acc;
     }, {});
   }

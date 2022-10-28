@@ -15,7 +15,7 @@ export class EventBus<TEventType> {
     this.logLevel = logLevel;
 
     if (this.logLevel) {
-      this.onEvent(this.log.bind(this));
+      this.addEventListener(this.log.bind(this));
     }
   }
 
@@ -42,17 +42,23 @@ export class EventBus<TEventType> {
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  public onEvent(cb: TSubscriberFn<TEventType>): void {
+  public addEventListener(cb: TSubscriberFn<TEventType>): void {
     if (!this.callbacks.some((_cb) => _cb === cb)) {
       this.callbacks.push(cb);
     }
   }
 
-  public offEvent(cb: TSubscriberFn<TEventType>): void {
+  /**
+   * Removes a call back from the event bus
+   * @param cb The callback that should be removed
+   */
+  public removeEventListener(cb: TSubscriberFn<TEventType>): void {
     const index = this.callbacks.findIndex((_cb) => {
       _cb === cb;
     });
-    if (index) this.callbacks.splice(index, 1);
+    if (index) {
+      this.callbacks = this.callbacks.splice(index, 1);
+    }
   }
 
   /**
@@ -63,8 +69,17 @@ export class EventBus<TEventType> {
   // TODO Rename
   public async push(event: TEventType): Promise<void> {
     // TODO These are not promises
+    const logPrefix = `${EventBus.name}::push`;
+
     const promises = this.callbacks.map((cb) => cb(event));
-    await Promise.all(promises);
+    await Promise.allSettled(promises).then((results) => {
+      results.forEach((result) => {
+        if (result.status === 'rejected')
+          winston.error(
+            `${logPrefix} error while processing Event: ${result.reason}`
+          );
+      });
+    });
   }
 }
 

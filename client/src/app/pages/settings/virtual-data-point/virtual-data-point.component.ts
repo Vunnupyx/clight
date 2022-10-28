@@ -225,6 +225,7 @@ export class VirtualDataPointComponent implements OnInit {
 
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
+    this.ngxDatatable.sorts = [];
     this.datapointRows = this.datapointRows.concat([obj]);
   }
 

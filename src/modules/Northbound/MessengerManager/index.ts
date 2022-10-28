@@ -222,7 +222,8 @@ export class MessengerManager {
           const otherMachinesWithSameIP =
             listOfRegisteredMachinesInMessenger.find?.(
               (registeredMachine) =>
-                registeredMachine.IpAddress === this.hostname
+                registeredMachine.IpAddress?.toLowerCase() ===
+                this.hostname?.toLowerCase()
             );
 
           if (
@@ -270,7 +271,8 @@ export class MessengerManager {
                       this.hostname
                     )) ||
                   (isManagedMode &&
-                    matchingMachineDetailInfo.IpAddress === this.hostname &&
+                    matchingMachineDetailInfo.IpAddress?.toLowerCase() ===
+                      this.hostname?.toLowerCase() &&
                     matchingMachineDetailInfo.Port === 7878)
                 ) {
                   this.serverStatus.registration = 'registered';

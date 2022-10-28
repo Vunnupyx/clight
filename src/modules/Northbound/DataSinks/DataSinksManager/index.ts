@@ -13,6 +13,7 @@ import { DataPointCache } from '../../../DatapointCache';
 import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
 import { LicenseChecker } from '../../../LicenseChecker';
 import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
+import { MessengerManager } from '../../MessengerManager';
 import { DataHubDataSink, DataHubDataSinkOptions } from '../DataHubDataSink';
 import { DataSink } from '../DataSink';
 import {
@@ -49,6 +50,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private dataSinkConnectRetryTimer: NodeJS.Timer;
   private sinksRetryCount: number = 0;
   private licenseChecker: LicenseChecker;
+
+  public messengerManager: MessengerManager;
 
   constructor(params: IDataSinkManagerParams) {
     super();
@@ -112,6 +115,13 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private async spawnDataSink(protocol: DataSinkProtocols): Promise<void> {
     const logPrefix = `${DataSinksManager.#className}::createDataSinks`;
     winston.info(`${logPrefix} creating ${protocol} data sink`);
+
+    if (protocol === DataSinkProtocols.MTCONNECT) {
+      this.messengerManager = new MessengerManager({
+        configManager: this.configManager,
+        messengerConfig: this.configManager.config.messenger
+      });
+    }
     const sink = this.dataSourceFactory(protocol);
 
     // It must be pushed before initialization, to prevent double initialization
@@ -169,7 +179,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
             this.configManager.config.termsAndConditions.accepted,
-          isLicensed: this.licenseChecker.isLicensed
+          isLicensed: this.licenseChecker.isLicensed,
+          messengerManager: this.messengerManager
         };
         return new MTConnectDataSink(mtConnectDataSinkOptions);
       }

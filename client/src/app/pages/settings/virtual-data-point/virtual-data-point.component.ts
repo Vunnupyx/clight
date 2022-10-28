@@ -482,7 +482,6 @@ export class VirtualDataPointComponent implements OnInit {
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
       VirtualDataPointOperationType.ENUMERATION,
-      VirtualDataPointOperationType.THRESHOLDS,
       VirtualDataPointOperationType.CALCULATION
     ].includes(operationType!);
   }

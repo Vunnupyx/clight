@@ -631,11 +631,21 @@
                 (click)="
                   !isDuplicatingField('name') &&
                     !isDuplicatingField('address') &&
+                    unsavedRow.name?.length > 0 &&
+                    unsavedRow.address?.length > 0 &&
                     onEditEnd();
                   group.value = null
                 "
                 [matTooltip]="'settings-data-source.Save' | translate"
                 matTooltipPosition="above"
+                [disabled]="
+                  isDuplicatingField('name') ||
+                  isDuplicatingField('address') ||
+                  unsavedRow.name?.length === 0 ||
+                  !unsavedRow.name ||
+                  unsavedRow.address?.length === 0 ||
+                  !unsavedRow.address
+                "
               >
                 <mat-icon
                   class="color-success"

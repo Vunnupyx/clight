@@ -592,7 +592,18 @@
             #group="matButtonToggleGroup"
           >
             <mat-button-toggle
-              (click)="onEditEnd(); group.value = null"
+              (click)="
+                unsavedRow.name?.length > 0 &&
+                  unsavedRow.address?.length > 0 &&
+                  onEditEnd();
+                group.value = null
+              "
+              [disabled]="
+                unsavedRow.name?.length === 0 ||
+                !unsavedRow.name ||
+                unsavedRow.address?.length === 0 ||
+                !unsavedRow.address
+              "
               [matTooltip]="'settings-data-sink.Save' | translate"
               matTooltipPosition="above"
             >

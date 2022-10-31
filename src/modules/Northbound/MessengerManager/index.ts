@@ -222,8 +222,10 @@ export class MessengerManager {
           const otherMachinesWithSameIP =
             listOfRegisteredMachinesInMessenger.find?.(
               (registeredMachine) =>
+                registeredMachine.SerialNumber !==
+                  this.configManager.config.general.serialNumber &&
                 registeredMachine.IpAddress?.toLowerCase() ===
-                this.hostname?.toLowerCase()
+                  this.hostname?.toLowerCase()
             );
 
           if (

@@ -27,6 +27,7 @@
             <div class="col-12 col-md-7">
               <mat-form-field>
                 <mat-select
+                  disableOptionCentering="true"
                   [(ngModel)]="auth.type"
                   (ngModelChange)="
                     $event === DataSinkAuthType.Anonymous && onSaveAuth()

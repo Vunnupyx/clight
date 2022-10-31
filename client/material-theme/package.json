@@ -2,7 +2,7 @@
   "name": "@celosnext/material-theme",
   "version": "13.9.1",
   "description": "Material theme file that have color pallet and typography that fits with design in UI component library. Also there is some style overridings of material components",
-  "author": "DMG Mori - SDK",
+  "author": "DMG MORI - SDK",
   "publishConfig": {
     "registry": "https://artifactory.app.dmgmori.com/artifactory/api/npm/sws-celosnext-npm-dev/"
   },

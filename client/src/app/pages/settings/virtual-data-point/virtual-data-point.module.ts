@@ -12,6 +12,8 @@ import { VirtualDataPointGuard } from './virtual-data-point.guard';
 import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
 import { PromptDialogModule } from 'app/shared/components/prompt-dialog/prompt-dialog.module';
 import { SetFormulaModalComponent } from './set-formula-modal/set-formula-modal.component';
+import { EditScheduleModalComponent } from "./edit-schedule-modal/edit-schedule-modal.component";
+import { SetSchedulesModalComponent } from "./set-schedules-modal/set-schedules-modal.component";
 
 const routes: Routes = [
   {
@@ -26,7 +28,9 @@ const COMPONENTS = [
   VirtualDataPointComponent,
   SetThresholdsModalComponent,
   SetEnumerationModalComponent,
-  SetFormulaModalComponent
+  SetFormulaModalComponent,
+  SetSchedulesModalComponent,
+  EditScheduleModalComponent,
 ];
 
 @NgModule({

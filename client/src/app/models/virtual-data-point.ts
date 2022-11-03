@@ -26,6 +26,7 @@ export class VirtualDataPoint {
   formula?: string;
   comparativeValue?: string;
   enabled?: boolean;
+  resetSchedules?: VirtualDataPointSchedule[];
 }
 
 export interface VirtualDataPointEnumeration {

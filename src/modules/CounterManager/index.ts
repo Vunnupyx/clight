@@ -168,7 +168,7 @@ export class CounterManager {
    * @returns number
    */
   public getValue(id: string): number {
-    return this.counters[id] || 0;
+    return this.counters[id] ?? 0;
   }
 
   /**

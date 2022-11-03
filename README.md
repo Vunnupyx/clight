@@ -12,11 +12,11 @@ To run the MDC Lite runtime, use the following commands:
 - `yarn` - Install dependencies
 - `yarn docker:run:mtc` - Run the MTConnect agent
 - `yarn dev` - To start the agent (in a different terminal)
-- `IP=192.168.185.100 yarn copy_mdc_conf` to update the MDC Lite config on an IoT2050
+- `IP=192.168.185.100 yarn copy_mdc_conf` to update the MDC Lite config on an IOT2050
 
 ### Local development without IO-Shield
 
-If you want to use the ioshield data source without developing on an IoT2050, you have to install the following mocks:
+If you want to use the ioshield data source without developing on an IOT2050, you have to install the following mocks:
 
 Setup mock for mraa-gpio CLI:
 `sudo chmod +x src/modules/Iot2050MraaDI10/mraa-gpio` and `sudo cp src/modules/Iot2050MraaDI10/mraa-gpio /usr/local/bin/`
@@ -35,11 +35,11 @@ Additional documentation can be found in the following folders of this repositor
 
 ## Project structure
 
-Currently two docker containers are deployed to the IoT2050: The MTConnect agent (mtc) & the MDClight runtime.
+Currently two docker containers are deployed to the IOT2050: The MTConnect agent (mtc) & the MDClight runtime.
 The runtime accepts a user configuration file, connects to data sources and provides a TCP-Server for the MTConnect agent.
 Only the MTConnect server (provided by the MTC agent) is accessible from the outside.
 
 ## Building the docker image
 
 - `yarn build:mdclight` - Build & push the production (ARM64) docker image of the MDClight runtime
-- See `docs/developer` for information on how to integrate new version with the operating system of the IoT2050
+- See `docs/developer` for information on how to integrate new version with the operating system of the IOT2050

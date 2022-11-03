@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "LanguageDocumentationPath": ""
   },
   "layout": {
     "Settings": "Settings",
@@ -57,7 +58,7 @@
       },
       "s7": {
         "name": "Siemens",
-        "description": "Allows connection to Siemens devices, such as SINUMERIK or S7"
+        "description": "Allows connection to Siemens devices, such as SIEMENS SINUMERIK or SIEMENS S7"
       }
     },
     "DataSinks": {
@@ -99,6 +100,7 @@
     "RestoreConfiguration": "Restore Configuration",
     "LogDownloadError": "Could not download logs. Please try again!",
     "BackupHasBeenUploaded": "Backup has been uploaded successfully!",
+    "BackupFileInvalid": "The configuration file has an invalid format. Please check your files syntax using a JSON validator and try again.",
     "RestartDevice": "Restart device",
     "RestartNow": "Restart now",
     "RestartDeviceTitle": "Restart device",
@@ -246,7 +248,7 @@
     "HostUnreachable": "Host unreachable please check IP configuration"
   },
   "settings-data-sink": {
-    "DataSink": "Data Sink",
+    "DataSink": "Application Interface",
     "Enabled": "Enabled",
     "Connection": "Connection",
     "Running": "Running",
@@ -318,8 +320,19 @@
       "Disabled": "Disabled"
     },
     "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "TimeZone": "Time zone",
+    "Organization": "Organization",
+    "Model": "Model",
+    "License": "License",
+    "ServerConfiguration": "Server configuration",
+    "Messenger": "DMG MORI Messenger",
+    "ConnectMessengerButton": "Connect DMG MORI Messenger",
+    "Register": "Register",
+    "Status": "Status",
+    "Registration": "Registration",
+    "Password": "Password",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "HasDataMapping": "Datapoint is mapped to a source",
+    "HasDataMapping": "Data point is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",
     "UmatiOpcUaVariables": "UMATI OPC UA Variables",
     "CustomOpcUaVariables": "Custom OPC UA Variables",
@@ -327,7 +340,30 @@
     "DataType": "Data Type",
     "SetCustomOpcUaVariable": "Set Custom OPC UA Variable",
     "NodeId": "Node ID",
-    "DeleteMessage": "Are you sure you want to delete data point?"
+    "DeleteMessage": "Are you sure you want to delete data point?",
+    "Username": "Username",
+    "Hostname": "Hostname",
+    "Server": "Server Status",
+    "RegisterMachine": "Register Machine",
+    "RegistrationStatus": {
+      "Notregistered": "Machine is not registered",
+      "Registered": "Machine is registered",
+      "Unknown": "Registration status is unknown"
+    },
+    "ServerStatus": {
+      "Invalidhost": "Server host is unreachable",
+      "NotConfigured": "Server is not configured",
+      "Invalidauth": "Server authentication is invalid",
+      "Available": "Server is available"
+    },
+    "RegistrationErrorReason": {
+      "UnexpectedError": "An unexpected error occurred, that could not be specified",
+      "InvalidOrganization": "Organization does not exist",
+      "InvalidTimezone": "Timezone does not exist",
+      "InvalidModel": "Model does not exist",
+      "MissingSerial": "Serial number is missing",
+      "Duplicated": "A machine with the same serial number and different configuration is registered"
+    }
   },
   "settings-data-mapping": {
     "DataMapping": "Data Mapping",

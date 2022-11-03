@@ -27,7 +27,7 @@ export default class IoT2050HardwareEvents {
     const logPrefix = `${this.constructor.name}::watchUserButtonLongPress`;
     if (!(await this.is_2050())) {
       winston.error(
-        `${logPrefix} no iot2050 device detected. Registration to USER_BUTTON not available.`
+        `${logPrefix} no IOT2050 device detected. Registration to USER_BUTTON not available.`
       );
       return;
     }

@@ -259,12 +259,9 @@
                   {{ s.name }}</mat-option
                 >
                 <mat-option
-                  *ngFor="
-                    let s of previousVirtualPointsFiltered;
-                    let idx = index
-                  "
+                  *ngFor="let s of previousVirtualPointsFiltered"
                   [value]="s.id"
-                  [disabled]="getRowIndex(s.id) > idx"
+                  [disabled]="getRowIndex(s.id) > rowIndex"
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
                 >
               </mat-select>
@@ -335,15 +332,15 @@
             >
               <mat-button-toggle
                 *ngIf="
-                  row?.operationType ===
-                  VirtualDataPointOperationType.COUNTER
+                  row?.operationType === VirtualDataPointOperationType.COUNTER
                 "
                 (click)="onSetSchedule(row); group.value = null"
                 [matTooltip]="
                   'settings-virtual-data-point.SetSchedules' | translate
                 "
                 matTooltipPosition="above"
-              ><mat-icon svgIcon="mdc:calendar"></mat-icon></mat-button-toggle>
+                ><mat-icon svgIcon="mdc:calendar"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="canSetComparativeValue(row?.operationType)"
                 (click)="
@@ -467,7 +464,7 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-              ><mat-icon svgIcon="mdc:calendar"></mat-icon
+                ><mat-icon svgIcon="mdc:calendar"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="

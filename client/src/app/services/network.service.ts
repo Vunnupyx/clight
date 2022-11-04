@@ -4,7 +4,6 @@ import { ToastrService } from 'ngx-toastr';
 import { from, interval } from 'rxjs';
 import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 
-import { HttpService } from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler, ObjectMap } from '../shared/utils';
 import { NetworkConfig, NetworkType } from '../models';
@@ -12,6 +11,7 @@ import {
   fromISOStringIgnoreTimezone,
   toISOStringIgnoreTimezone
 } from 'app/shared/utils/datetime';
+import { ConfigurationAgentHttpService } from 'app/shared';
 
 export class NetworkState {
   status!: Status;
@@ -24,7 +24,7 @@ export class NetworkService {
 
   constructor(
     storeFactory: StoreFactory<NetworkState>,
-    private httpService: HttpService,
+    private configurationAgentHttpService: ConfigurationAgentHttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -51,7 +51,7 @@ export class NetworkService {
 
   async getNetworkConfig() {
     try {
-      const response = await this.httpService.get<any>(`/networkconfig`);
+      const response = await this.configurationAgentHttpService.get<any>(`/networkconfig`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.config = response;
@@ -73,7 +73,7 @@ export class NetworkService {
     const verifiedObj = this._serializeNetworkConfig(obj);
 
     try {
-      const response = await this.httpService.patch<any>(
+      const response = await this.configurationAgentHttpService.patch<any>(
         `/networkconfig`,
         verifiedObj
       );

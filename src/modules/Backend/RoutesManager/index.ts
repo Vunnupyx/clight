@@ -43,10 +43,6 @@ import {
   setConfigManager as mappingSetConfigManager
 } from '../routes/apis/v1/Mapping';
 import {
-  networkConfigHandlers,
-  setConfigManager as networkConfigSetConfigManager
-} from '../routes/apis/v1/NetworkConfig';
-import {
   systemInfoHandlers,
   setConfigManager as systemInfoSetConfigManager
 } from '../routes/apis/v1/SystemInfo';
@@ -101,7 +97,6 @@ export class RoutesManager {
     ...livedataDataSourcesHandlers,
     ...livedataVirtualDataPointsHandlers,
     ...mappingHandlers,
-    ...networkConfigHandlers,
     ...systemInfoHandlers,
     ...templatesHandlers,
     ...messengerHandlers,
@@ -129,7 +124,6 @@ export class RoutesManager {
       livedataDataSourcesSetConfigManager,
       livedataVirtualDataPointsSetConfigManager,
       mappingSetConfigManager,
-      networkConfigSetConfigManager,
       systemInfoSetConfigManager,
       templatesConfigSetConfigManager,
       messengerConfigSetConfigManager,

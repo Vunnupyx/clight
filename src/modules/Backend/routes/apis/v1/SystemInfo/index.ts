@@ -6,7 +6,7 @@ import { System } from '../../../../../System';
 import UpdateManager, { updateStatus } from '../../../../../UpdateManager';
 
 let configManager: ConfigManager;
-let updateManager; 
+let updateManager;
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -58,40 +58,16 @@ async function triggerContainerUpdate(request: Request, response: Response) {
 }
 
 /**
- * Get System Time
- * @param  {Request} request
- * @param  {Response} response
- */
-async function systemTimeGetHandler(request: Request, response: Response) {
-  response.status(200).json({
-    timestamp: Math.round(Date.now() / 1000)
-  });
-}
-
-/**
- * Restart system
- * @param  {Request} request
- * @param  {Response} response
- */
-async function restartPostHandler(request: Request, response: Response) {
-  const system = new System();
-  await system.restartDevice();
-  response.status(204);
-}
-
-/**
  * Returns current set env variable ENV
  * @param request HTTP Request
- * @param response 
+ * @param response
  */
 function systemGetEnvironment(request: Request, response: Response) {
-  response.json({env: configManager.config.env.selected}).status(200);
+  response.json({ env: configManager.config.env.selected }).status(200);
 }
 
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
-  systemTimeGet: systemTimeGetHandler,
-  restartPost: restartPostHandler,
   updateContainerGet: triggerContainerUpdate,
   systemEnvironmentGet: systemGetEnvironment
 };

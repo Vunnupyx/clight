@@ -76,6 +76,8 @@ Counters are persistent across reboots. Counters can be reset in two ways:
 
 - **Scheduled Reset:** You can reset a counter by setting up a scheduled reset time. You may enter multiple schedules and while adding you can choose the month, day or time as specific or as `Every`. The counter count will be reset to 0 when the set scheduled times are reached.
 
+**Note:** Once you set a new scheduled counter, it may take up to 5 minutes for it to take effect. After that, it will reset the counter according to the schedule.
+
 ![Counter Schedule Reset Button](/img/vdp/counter_schedule_reset.png)
 
 Example of scheduled reset:

@@ -14,6 +14,7 @@ title: Changelog
 ### Fixed
 
 - [DIGMDCLGHT-205](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-205) Fixes issue with text threshold values with VDPs and prevents selection of multiple data points
+- [DIGMDCLGHT-198](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-198) Scheduled counter reset button and dialog is now visible
 
 ### Changed
 

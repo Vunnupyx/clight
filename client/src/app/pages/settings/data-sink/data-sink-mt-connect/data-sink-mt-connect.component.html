@@ -417,6 +417,7 @@
           <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
             <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
               <mat-select
+                disableOptionCentering="true"
                 [ngModel]="value"
                 (ngModelChange)="
                   unsavedRow && setDataPointAddress(unsavedRow, $event)
@@ -467,6 +468,7 @@
             </ng-container>
           </span>
           <mat-select
+            disableOptionCentering="true"
             *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"

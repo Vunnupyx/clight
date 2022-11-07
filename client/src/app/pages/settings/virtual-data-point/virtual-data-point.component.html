@@ -211,6 +211,7 @@
               </ng-container>
             </span>
             <mat-select
+              disableOptionCentering="true"
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="
@@ -242,6 +243,7 @@
             </ng-container>
             <div *ngIf="unsavedRowIndex === rowIndex">
               <mat-select
+                disableOptionCentering="true"
                 *ngIf="isAbleToSelectMultipleSources(unsavedRow?.operationType)"
                 [ngModel]="value"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = $event)"
@@ -269,6 +271,7 @@
                 >
               </mat-select>
               <mat-select
+                disableOptionCentering="true"
                 *ngIf="
                   !isAbleToSelectMultipleSources(unsavedRow?.operationType)
                 "
@@ -335,15 +338,15 @@
             >
               <mat-button-toggle
                 *ngIf="
-                  row?.operationType ===
-                  VirtualDataPointOperationType.COUNTER
+                  row?.operationType === VirtualDataPointOperationType.COUNTER
                 "
                 (click)="onSetSchedule(row); group.value = null"
                 [matTooltip]="
                   'settings-virtual-data-point.SetSchedules' | translate
                 "
                 matTooltipPosition="above"
-              ><mat-icon svgIcon="mdc:calendar"></mat-icon></mat-button-toggle>
+                ><mat-icon svgIcon="mdc:calendar"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="canSetComparativeValue(row?.operationType)"
                 (click)="
@@ -467,7 +470,7 @@
                     unsavedRow.sources.length > 0
                   )
                 "
-              ><mat-icon svgIcon="mdc:calendar"></mat-icon
+                ><mat-icon svgIcon="mdc:calendar"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="

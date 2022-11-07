@@ -552,6 +552,7 @@
                       dataSource?.protocol === Protocol.IOShield;
                       else s7InputAddress
                     "
+                    disableOptionCentering="true"
                     [ngModel]="value"
                     (ngModelChange)="
                       unsavedRow && (unsavedRow.address = $event)

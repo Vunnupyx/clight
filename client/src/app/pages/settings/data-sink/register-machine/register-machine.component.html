@@ -23,7 +23,12 @@
         </div>
         <div class="col">
           <mat-form-field>
-            <mat-select name="model" required formControlName="model">
+            <mat-select
+              disableOptionCentering="true"
+              name="model"
+              required
+              formControlName="model"
+            >
               <mat-option>
                 <ngx-mat-select-search
                   placeholderLabel="Search..."
@@ -54,6 +59,7 @@
         <div class="col">
           <mat-form-field>
             <mat-select
+              disableOptionCentering="true"
               name="organization"
               required
               formControlName="organization"
@@ -87,7 +93,12 @@
         </div>
         <div class="col">
           <mat-form-field>
-            <mat-select name="timezone" required formControlName="timezone">
+            <mat-select
+              disableOptionCentering="true"
+              name="timezone"
+              required
+              formControlName="timezone"
+            >
               <mat-option>
                 <ngx-mat-select-search
                   placeholderLabel="Search..."

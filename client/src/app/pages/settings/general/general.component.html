@@ -20,7 +20,7 @@
           <mat-label>{{
             'settings-general.CELOSLanguage' | translate
           }}</mat-label>
-          <mat-select
+          <mat-select disableOptionCentering="true"
             [value]="currentLang"
             (valueChange)="onLanguageChange($event)"
           >
@@ -79,7 +79,9 @@
             {{ 'settings-general.Templates' | translate }}
             <span
               ><app-doc-btn
-                link="/help/docs/#configuration-wizard"
+                link="/help{{
+                  'common.LanguageDocumentationPath' | translate
+                }}/docs/#configuration-wizard"
                 tooltip="{{ 'quick-start.WhatIsTemplate' | translate }}"
               ></app-doc-btn
             ></span>

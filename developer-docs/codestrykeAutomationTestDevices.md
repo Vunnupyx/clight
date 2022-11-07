@@ -22,7 +22,7 @@ DB3001
 	typeTest_S5Time	S5Time	38.0	    S5T#0ms	S5T#0MS	False	True	True	True	False		E2E Test Type S5Time
 ```
 
-# Sinumerik 840D SL - 192.168.214.1
+# SIEMENS SINUMERIK 840D sl - 192.168.214.1
 
 PLC - DB12
 
@@ -49,7 +49,7 @@ sudo nmcli con mod enx00e04c6bf53f-default ipv4.addresses 192.168.0.220/24 ipv4.
 sudo nmcli con up enx00e04c6bf53f-default
 ```
 
-To connect to Sinumerik:
+To connect to SIEMENS SINUMERIK:
 
 ```
 sudo nmcli con mod enx00e04c6bf53f-default ipv4.addresses 192.168.214.240/24 ipv4.gateway 0.0.0.0 ipv4.dns 0.0.0.0 ipv4.method manual

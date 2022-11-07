@@ -9,21 +9,24 @@ title: Changelog
 ### Added
 
 - [DIGMDCLGHT-208](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-208) Messenger UI buttons are conditionally enabled to make it easier to choose the next action needed
+- [DIGMDCLGHT-197](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-197) User documentation supports German and Japanese languages
 
 ### Fixed
 
 - [DIGMDCLGHT-205](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-205) Fixes issue with text threshold values with VDPs and prevents selection of multiple data points
+- [DIGMDCLGHT-198](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-198) Scheduled counter reset button and dialog is now visible
 
 ### Changed
 
 - [DIGMDCLGHT-206](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-206) Value setting buttons such as "Set Comparative Value" in VDPs are disabled during edit mode, as they should be used outside of edit mode
 - [DIGMDCLGHT-212](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-212) Counters are now initialized with value 0 on creation
+- [DIGMDCLGHT-211](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-211) Updated user documentation
 
 ## [2.3.0]
 
 ### Fixed
 
-- [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) Reconnecting to Sinumeriks now works also when no PLC is connected and prevent runtime crash if NC variables are read when only connecting to PLC
+- [DIGMDCLGHT-187](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-187) Reconnecting to SIEMENS SINUMERIK now works also when no PLC is connected and prevent runtime crash if NC variables are read when only connecting to PLC
 - [DIGMDCLGHT-178](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-178) and [DIGMDCLGHT-189](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-189) IP addresses could not be set if the device has no ip address set
 - [DIGMDCLGHT-188](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-188) Enum virtual data point could'nt be set sometimes
 - Fixed MTConnect id's
@@ -103,18 +106,18 @@ title: Changelog
 ### Changed
 
 - [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Renamed IoTconnector Light to IoTconnector Lite
-- [MDCL-218](https://codestryke.atlassian.net/browse/MDCL-217) Switched CELOS logo to DMG Connectivity logo
+- [MDCL-218](https://codestryke.atlassian.net/browse/MDCL-217) Switched CELOS logo to DMG MORI Connectivity logo
 - [MDCL-217](https://codestryke.atlassian.net/browse/MDCL-217) Removed step 3 and 4 from configuration wizard. The "enabled" flag of datasources and datasinks are now only controlled by the templates
 - [DIGMDCLGHT-27](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-27) Add a feature to change current staging environment. **RESTRICTION:** Back switch to _prod_ from _stag_ or _dev_ is not possible if there is no newer _prod_ image on registry.
 - [DIGMDCLGHT-2](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-2) Adjusted log file naming to DM{MAC}-{YYYY}-{MM}-{DD}-{HH}-{mm}-{ss}
 - [DIGMDCLGHT-11](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-11) Update NC variable set
-- [DIGMDCLGHT-15](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Renamed IoT connector light to IoT connector flex
+- [DIGMDCLGHT-15](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-15) Renamed IoT connector light to IoTconnector flex
 
 ## [1.7.4]
 
 ### Added
 
-- Support for SINUMERIK 840D pl with a static read frequency of 5 seconds
+- Support for SIEMENS SINUMERIK 840D pl with a static read frequency of 5 seconds
 - Improved data source logs
 
 ### Fixed
@@ -181,7 +184,7 @@ title: Changelog
 
 ### Changed
 
-- Improvement of the stability of the s7 and nck connector
+- Improvement of the stability of the SIEMENS S7 and nck connector
 - Change log level to debug and removed unnecessary logs
 
 ### Fixed

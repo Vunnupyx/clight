@@ -27,6 +27,7 @@
             <div class="col-12 col-md-7">
               <mat-form-field>
                 <mat-select
+                  disableOptionCentering="true"
                   [(ngModel)]="auth.type"
                   (ngModelChange)="
                     $event === DataSinkAuthType.Anonymous && onSaveAuth()
@@ -301,7 +302,7 @@
           "
         >
           <mat-spinner *ngIf="isBusy" diameter="25"></mat-spinner>
-          {{ 'Connect Messenger' | translate }}
+          {{ 'settings-data-sink.ConnectMessengerButton' | translate }}
         </button>
       </div>
     </div>
@@ -416,6 +417,7 @@
           <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
             <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
               <mat-select
+                disableOptionCentering="true"
                 [ngModel]="value"
                 (ngModelChange)="
                   unsavedRow && setDataPointAddress(unsavedRow, $event)
@@ -466,6 +468,7 @@
             </ng-container>
           </span>
           <mat-select
+            disableOptionCentering="true"
             *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"

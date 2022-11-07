@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "LanguageDocumentationPath": "/jp"
   },
   "layout": {
     "Settings": "設定",
@@ -157,7 +158,7 @@
     "BTSSString": "BTSS文字列",
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再度試してください。",
     "Tabs": {
-      "s7": "SINUMERIK 840D sl",
+      "s7": "SIEMENS",
       "ioshield": "デジタル入力"
     },
     "Livedata": {
@@ -204,6 +205,18 @@
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
     "DuplicatedName": "You are not allowed to duplicate names",
+    "SetSchedules": "Set Schedules",
+    "AddSchedule": "Add Schedule",
+    "ScheduleName": "Schedule Name",
+    "DayDate": "Day/Date",
+    "Month": "Month",
+    "Hour": "Hour",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "SetScheduledReset": "Set scheduled reset",
+    "ScheduleEvery": "Every",
+    "Day": "Day",
+    "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
@@ -313,12 +326,13 @@
     "License": "",
     "ServerConfiguration": "Server configuration",
     "Messenger": "DMG MORI Messenger",
+    "ConnectMessengerButton": "Connect DMG MORI Messenger",
     "Register": "Register",
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Password",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "HasDataMapping": "Datapoint is mapped to a source",
+    "HasDataMapping": "Data point is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",
     "UmatiOpcUaVariables": "UMATI OPC UA Variables",
     "CustomOpcUaVariables": "Custom OPC UA Variables",
@@ -337,7 +351,7 @@
       "Unknown": "Registration status is unknown"
     },
     "ServerStatus": {
-      "Invalidhost": "Server host is invalid",
+      "Invalidhost": "Server host is unreachable",
       "NotConfigured": "Server is not configured",
       "Invalidauth": "Server authentication is invalid",
       "Available": "Server is available"
@@ -437,5 +451,28 @@
     "UInt16": "UInt16",
     "UInt32": "UInt32",
     "Boolean": "Boolean"
+  },
+  "days-of-week": {
+    "Monday": "",
+    "Tuesday": "",
+    "Wednesday": "",
+    "Thursday": "",
+    "Friday": "",
+    "Saturday": "",
+    "Sunday": ""
+  },
+  "month": {
+    "Jan": "",
+    "Feb": "",
+    "Mar": "",
+    "Apr": "",
+    "May": "",
+    "Jun": "",
+    "Jul": "",
+    "Aug": "",
+    "Sep": "",
+    "Oct": "",
+    "Nov": "",
+    "Dec": ""
   }
 }

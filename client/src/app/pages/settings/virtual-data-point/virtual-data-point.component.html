@@ -128,13 +128,13 @@
               <ng-container [ngSwitch]="value">
                 <ng-container
                   *ngSwitchCase="VirtualDataPointOperationType.AND"
-                >{{
-                  'virtual-data-point-operation-type.And' | translate
+                  >{{
+                    'virtual-data-point-operation-type.And' | translate
                   }}</ng-container
                 >
                 <ng-container
                   *ngSwitchCase="VirtualDataPointOperationType.OR"
-                >{{
+                  >{{
                     'virtual-data-point-operation-type.Or' | translate
                   }}</ng-container
                 >
@@ -212,6 +212,7 @@
             </span>
             <mat-select
               *ngIf="unsavedRow?.id === row.id"
+              disableOptionCentering="true"
               [ngModel]="value"
               (ngModelChange)="
                 unsavedRow && (unsavedRow.operationType = $event)
@@ -242,6 +243,7 @@
             </ng-container>
             <div *ngIf="unsavedRow?.id === row.id">
               <mat-select
+                disableOptionCentering="true"
                 *ngIf="isAbleToSelectMultipleSources(unsavedRow?.operationType)"
                 [ngModel]="value"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = $event)"
@@ -269,6 +271,7 @@
                 >
               </mat-select>
               <mat-select
+                disableOptionCentering="true"
                 *ngIf="
                   !isAbleToSelectMultipleSources(unsavedRow?.operationType)
                 "
@@ -333,6 +336,17 @@
               *ngIf="unsavedRow?.id !== row.id"
               #group="matButtonToggleGroup"
             >
+              <mat-button-toggle
+                *ngIf="
+                  row?.operationType === VirtualDataPointOperationType.COUNTER
+                "
+                (click)="onSetSchedule(row); group.value = null"
+                [matTooltip]="
+                  'settings-virtual-data-point.SetSchedules' | translate
+                "
+                matTooltipPosition="above"
+                ><mat-icon svgIcon="mdc:calendar"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="canSetComparativeValue(row?.operationType)"
                 (click)="
@@ -432,6 +446,31 @@
                 matTooltipPosition="above"
                 [disabled]="!!unsavedRow"
                 ><mat-icon svgIcon="mdc:settings"></mat-icon
+              ></mat-button-toggle>
+              <mat-button-toggle
+                *ngIf="
+                  unsavedRow?.operationType ===
+                  VirtualDataPointOperationType.COUNTER
+                "
+                (click)="
+                  unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0 &&
+                    onSetSchedule(unsavedRow);
+                  group.value = null
+                "
+                [matTooltip]="
+                  'settings-virtual-data-point.SetSchedules' | translate
+                "
+                matTooltipPosition="above"
+                [disabled]="
+                  !(
+                    unsavedRow &&
+                    unsavedRow.sources &&
+                    unsavedRow.sources.length > 0
+                  )
+                "
+                ><mat-icon svgIcon="mdc:calendar"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
                 *ngIf="

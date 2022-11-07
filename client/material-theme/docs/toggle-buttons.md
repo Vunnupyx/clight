@@ -1,6 +1,6 @@
 # Toggle Button Component
 
-The DMG Mori Theme will be applied on top of the default Angular Material Component ([documentation here](https://material.angular.io/components/button-toggle/overview)).
+The DMG MORI Theme will be applied on top of the default Angular Material Component ([documentation here](https://material.angular.io/components/button-toggle/overview)).
 
 ## Development Guidelines
 
@@ -8,18 +8,17 @@ The DMG Mori Theme will be applied on top of the default Angular Material Compon
 
 Along with the Angular Material API, the following custom classes are enabled by the theme:
 
-| Class name      | Variants                     | Description                                                       |
-|-----------------|------------------------------|-------------------------------------------------------------------|
-| raised          | mat-button-toggle (no group) | Applies a box-shadow to the element                               |
-| large           | mat-button-toggle (no group) | Does not set a fixed size and therefore enables the toggle        |
-|                 |                              | button for larger content                                         |
-
+| Class name | Variants                     | Description                                                |
+| ---------- | ---------------------------- | ---------------------------------------------------------- |
+| raised     | mat-button-toggle (no group) | Applies a box-shadow to the element                        |
+| large      | mat-button-toggle (no group) | Does not set a fixed size and therefore enables the toggle |
+|            |                              | button for larger content                                  |
 
 ## Code Examples
 
 #### Toggle Button Group
 
-``` html
+```html
 <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
   <mat-button-toggle value="bold">Bold</mat-button-toggle>
   <mat-button-toggle value="italic">Italic</mat-button-toggle>
@@ -31,7 +30,7 @@ Along with the Angular Material API, the following custom classes are enabled by
 
 Default:
 
-``` html
+```html
 <mat-button-toggle>
   <mat-icon>visibility</mat-icon>
 </mat-button-toggle>
@@ -39,7 +38,7 @@ Default:
 
 Raised:
 
-``` html
+```html
 <mat-button-toggle class="raised">
   <mat-icon>visibility</mat-icon>
 </mat-button-toggle>
@@ -47,7 +46,7 @@ Raised:
 
 Large:
 
-``` html
+```html
 <mat-button-toggle class="large">
   <h2>Header</h2>
   <p>content</p>

@@ -3,4 +3,8 @@
         background-color: unset !important;
         color: unset !important;
     }
+  .ngx-datatable .datatable-header {
+    display: inline-table;
+    overflow: visible;
+  }
 }

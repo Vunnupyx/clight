@@ -6,7 +6,7 @@
 
 | Device           | Flasher Version | MDC Connector Flex version | Firmware version |
 | ---------------- | --------------- | -------------------------- | ---------------- |
-| IoT2050 **FS04** | 1.0.2           | 2.3.0                      | none             |
+| IOT2050 **FS04** | 1.0.2           | 2.3.0                      | none             |
 
 ## Description
 
@@ -27,21 +27,21 @@ This bootable image of _MDC Flasher_ flashes the above version to internal eMMC 
 5. [Windows/Linux] You can also use balena Etcher for a safer way to flash the image: Download Balena Etcher
 6. After the command or balena Etcher is finished your USB device is ready to install mdc lite and upgrade firmware version of IOT2050.
 
-## How to install on IoT2050 via USB storage:
+## How to install on IOT2050 via USB storage:
 
 ---
 
-0. Shutdown Iot2050 if it is running.
+0. Shutdown IOT2050 if it is running.
 1. Unplug all removable boot devices like SD card or USB devices.
 2. Insert USB storage with flashed image (see steps above) to any USB port
-3. Start IoT2050 and hold USER-Button during bootup. You can release USER-Button if STAT LED is blinking.
+3. Start IOT2050 and hold USER-Button during bootup. You can release USER-Button if STAT LED is blinking.
 4. Wait for green blinking USER1- and USER2-LED. Now the flash service is ready to flash.
 5. Hold USER-Button for 3 seconds.
 6. USER1 LED starts blinking orange and USER2 LED is still blinking green. The installation process is running.
 7. After installation the installer check the installed firmware version and update if necessary.
 8. If the USER2-LED is green and the USER1-LED is off the installation was successful, otherwise please check error codes section and contact support.
 9. Remove USB device and restart IOT2050 via reset button.
-10. The IoT2050 device now is booting from internal eMMC
+10. The IOT2050 device now is booting from internal eMMC
 
 ### LED states
 

@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Abbrechen"
+    "Cancel": "Abbrechen",
+    "LanguageDocumentationPath": "/de"
   },
   "layout": {
     "Settings": "Einstellungen",
@@ -57,7 +58,7 @@
       },
       "s7": {
         "name": "Siemens",
-        "description": "Ermöglicht die Anbindung von Siemens Steuerungen, wie z.B. SINUMERIK oder S7 Steuerungen."
+        "description": "Ermöglicht die Anbindung von Siemens Steuerungen, wie z.B. SIEMENS SINUMERIK oder S7 Steuerungen."
       }
     },
     "DataSinks": {
@@ -204,6 +205,18 @@
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen übernehmen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
+    "SetSchedules": "Set Schedules",
+    "AddSchedule": "Add Schedule",
+    "ScheduleName": "Schedule Name",
+    "DayDate": "Day/Date",
+    "Month": "Month",
+    "Hour": "Hour",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "SetScheduledReset": "Set scheduled reset",
+    "ScheduleEvery": "Every",
+    "Day": "Day",
+    "DayOfMonth": "Day of the month",
     "SetEnumeration": "Enumeration speichern",
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
@@ -235,7 +248,7 @@
     "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
   },
   "settings-data-sink": {
-    "DataSink": "Applikations Interfaces",
+    "DataSink": "Anwendungsschnittstelle",
     "Enabled": "Aktiviert",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
@@ -313,6 +326,7 @@
     "License": "",
     "ServerConfiguration": "Server Konfiguration",
     "Messenger": "Messenger",
+    "ConnectMessengerButton": "DMG MORI Messenger Verbinden",
     "Register": "Registrieren",
     "Status": "Status",
     "Registration": "Registration",
@@ -337,7 +351,7 @@
       "Unknown": "Registrationstatus ist unbekannt"
     },
     "ServerStatus": {
-      "Invalidhost": "Invalider Host",
+      "Invalidhost": "Host nicht erreichbar",
       "NotConfigured": "Nicht konfiguriert",
       "Invalidauth": "Invalid Auth",
       "Available": "Verfügbar"
@@ -437,5 +451,28 @@
     "UInt16": "UInt16",
     "UInt32": "UInt32",
     "Boolean": "Boolean"
+  },
+  "days-of-week": {
+  "Monday": "",
+  "Tuesday": "",
+  "Wednesday": "",
+  "Thursday": "",
+  "Friday": "",
+  "Saturday": "",
+  "Sunday": ""
+},
+  "month": {
+    "Jan": "",
+    "Feb": "",
+    "Mar": "",
+    "Apr": "",
+    "May": "",
+    "Jun": "",
+    "Jul": "",
+    "Aug": "",
+    "Sep": "",
+    "Oct": "",
+    "Nov": "",
+    "Dec": ""
   }
 }

@@ -68,14 +68,15 @@
                 <div class="col-12 col-md-7">
                   <mat-form-field>
                     <mat-select
+                      disableOptionCentering="true"
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
                       <mat-option [value]="S7Types.SinumerikSl"
-                        >Sinumerik 840D sl</mat-option
+                        >SIEMENS SINUMERIK 840D sl</mat-option
                       >
                       <mat-option [value]="S7Types.SinumerikPl"
-                        >Sinumerik 840D pl</mat-option
+                        >SIEMENS SINUMERIK 840D pl</mat-option
                       >
                       <mat-option [value]="S7Types.S7_300_400"
                         >S7-300/400</mat-option
@@ -100,6 +101,7 @@
                 <div class="col-12 col-md-7">
                   <mat-form-field>
                     <mat-select
+                      disableOptionCentering="true"
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
@@ -130,6 +132,7 @@
             <div class="col-12 col-md-7">
               <mat-form-field>
                 <mat-select
+                  disableOptionCentering="true"
                   [ngModel]="dataSource?.softwareVersion"
                   (ngModelChange)="updateSoftwareVersion($event)"
                 >
@@ -458,6 +461,7 @@
               </ng-container>
             </span>
             <mat-select
+              disableOptionCentering="true"
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
@@ -548,6 +552,7 @@
                       dataSource?.protocol === Protocol.IOShield;
                       else s7InputAddress
                     "
+                    disableOptionCentering="true"
                     [ngModel]="value"
                     (ngModelChange)="
                       unsavedRow && (unsavedRow.address = $event)

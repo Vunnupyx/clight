@@ -1,7 +1,8 @@
 {
   "common": {
     "OK": "OK",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "LanguageDocumentationPath": ""
   },
   "layout": {
     "Settings": "Settings",
@@ -57,7 +58,7 @@
       },
       "s7": {
         "name": "Siemens",
-        "description": "Allows connection to Siemens devices, such as SINUMERIK or S7"
+        "description": "Allows connection to Siemens devices, such as SIEMENS SINUMERIK or SIEMENS S7"
       }
     },
     "DataSinks": {
@@ -204,6 +205,18 @@
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
     "DuplicatedName": "You are not allowed to duplicate names",
+    "SetSchedules": "Set Schedules",
+    "AddSchedule": "Add Schedule",
+    "ScheduleName": "Schedule Name",
+    "DayDate": "Day/Date",
+    "Month": "Month",
+    "Hour": "Hour",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "SetScheduledReset": "Set scheduled reset",
+    "ScheduleEvery": "Every",
+    "Day": "Day",
+    "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
@@ -235,7 +248,7 @@
     "HostUnreachable": "Host unreachable please check IP configuration"
   },
   "settings-data-sink": {
-    "DataSink": "Data Sink",
+    "DataSink": "Application Interface",
     "Enabled": "Enabled",
     "Connection": "Connection",
     "Running": "Running",
@@ -313,12 +326,13 @@
     "License": "License",
     "ServerConfiguration": "Server configuration",
     "Messenger": "DMG MORI Messenger",
+    "ConnectMessengerButton": "Connect DMG MORI Messenger",
     "Register": "Register",
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Password",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "HasDataMapping": "Datapoint is mapped to a source",
+    "HasDataMapping": "Data point is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",
     "UmatiOpcUaVariables": "UMATI OPC UA Variables",
     "CustomOpcUaVariables": "Custom OPC UA Variables",
@@ -337,7 +351,7 @@
       "Unknown": "Registration status is unknown"
     },
     "ServerStatus": {
-      "Invalidhost": "Server host is invalid",
+      "Invalidhost": "Server host is unreachable",
       "NotConfigured": "Server is not configured",
       "Invalidauth": "Server authentication is invalid",
       "Available": "Server is available"
@@ -437,5 +451,28 @@
     "UInt16": "UInt16",
     "UInt32": "UInt32",
     "Boolean": "Boolean"
+  },
+  "days-of-week": {
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday",
+    "Sunday": "Sunday"
+  },
+  "month": {
+    "Jan": "Jan",
+    "Feb": "Feb",
+    "Mar": "Mar",
+    "Apr": "Apr",
+    "May": "May",
+    "Jun": "Jun",
+    "Jul": "Jul",
+    "Aug": "Aug",
+    "Sep": "Sep",
+    "Oct": "Oct",
+    "Nov": "Nov",
+    "Dec": "Dec"
   }
 }

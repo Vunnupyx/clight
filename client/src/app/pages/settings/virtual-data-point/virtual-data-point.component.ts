@@ -30,6 +30,7 @@ import {
   SetFormulaModalComponent,
   SetFormulaModalData
 } from './set-formula-modal/set-formula-modal.component';
+import { SetSchedulesModalComponent, SetSchedulesModalData } from "./set-schedules-modal/set-schedules-modal.component";
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -229,6 +230,7 @@ export class VirtualDataPointComponent implements OnInit {
 
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
+    this.ngxDatatable.sorts = [];
     this.datapointRows = this.datapointRows.concat([obj]);
   }
 
@@ -332,6 +334,33 @@ export class VirtualDataPointComponent implements OnInit {
 
   getRowIndex(id: string) {
     return this.datapointRows?.findIndex((x) => x.id === id)!;
+  }
+
+  onSetSchedule(virtualPoint: VirtualDataPoint) {
+    const dialogRef = this.dialog.open<SetSchedulesModalComponent, SetSchedulesModalData, SetSchedulesModalData>(
+      SetSchedulesModalComponent,
+      {
+        data: {
+          schedules: virtualPoint.resetSchedules || [],
+        },
+        width: "900px"
+      });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) {
+        return;
+      }
+
+      if (!virtualPoint.id) {
+        virtualPoint.resetSchedules = result.schedules;
+        return;
+      }
+
+      this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+        ...virtualPoint,
+        resetSchedules: result.schedules,
+      });
+    });
   }
 
   canSetComparativeValue(

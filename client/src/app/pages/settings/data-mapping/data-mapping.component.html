@@ -48,7 +48,8 @@
             ></mat-spinner>
 
             <button
-              mat-button color="primary"
+              mat-button
+              color="primary"
               type="button"
               class="btn-sm"
               [disabled]="!isTouchedTable || isLoading"
@@ -78,16 +79,22 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              <span [class.color-disabled]="isDataMappingDisabled(row)"
-                [matTooltip]="'settings-data-mapping.MappingDisabledTooltip' | translate"
+              <span
+                [class.color-disabled]="isDataMappingDisabled(row)"
+                [matTooltip]="
+                  'settings-data-mapping.MappingDisabledTooltip' | translate
+                "
                 matTooltipPosition="above"
-                [matTooltipDisabled]="!isDataMappingDisabled(row)">
-                {{ getSourcePrefix(value) }} {{ getSourceDataPoint(value)?.name }}
+                [matTooltipDisabled]="!isDataMappingDisabled(row)"
+              >
+                {{ getSourcePrefix(value) }}
+                {{ getSourceDataPoint(value)?.name }}
               </span>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
+              disableOptionCentering="true"
               (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
               [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
               matTooltipPosition="above"
@@ -105,7 +112,9 @@
                 *ngFor="let item of sourcesAndVirtualPointsFiltered"
                 [value]="item.id"
                 [disabled]="isSourceDisabled(item)"
-                [matTooltip]="'settings-data-mapping.SourceDisabledTooltip' | translate"
+                [matTooltip]="
+                  'settings-data-mapping.SourceDisabledTooltip' | translate
+                "
                 matTooltipPosition="above"
                 [matTooltipDisabled]="!isSourceDisabled(item)"
                 >{{ getSourcePrefix(item.id) }} {{ item.name }}</mat-option
@@ -125,16 +134,21 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-              <span [class.color-disabled]="isDataMappingDisabled(row)"
-                [matTooltip]="'settings-data-mapping.MappingDisabledTooltip' | translate"
+              <span
+                [class.color-disabled]="isDataMappingDisabled(row)"
+                [matTooltip]="
+                  'settings-data-mapping.MappingDisabledTooltip' | translate
+                "
                 matTooltipPosition="above"
-                [matTooltipDisabled]="!isDataMappingDisabled(row)">
+                [matTooltipDisabled]="!isDataMappingDisabled(row)"
+              >
                 {{ getTargetPrefix(value) }} {{ getDataPoint(value)?.name }}
               </span>
             </span>
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
+              disableOptionCentering="true"
               (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
               [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
               matTooltipPosition="above"
@@ -148,11 +162,13 @@
                   [(ngModel)]="filterTargetStr"
                 ></ngx-mat-select-search>
               </mat-option>
-              <mat-option 
+              <mat-option
                 *ngFor="let item of targets"
                 [value]="item.id"
                 [disabled]="!item.enabled"
-                [matTooltip]="'settings-data-mapping.TargetDisabledTooltip' | translate"
+                [matTooltip]="
+                  'settings-data-mapping.TargetDisabledTooltip' | translate
+                "
                 matTooltipPosition="above"
                 [matTooltipDisabled]="item.enabled"
               >
@@ -181,14 +197,14 @@
                 (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Edit' | translate"
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:edit"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:edit"></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 (click)="onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-mapping.Delete' | translate"
                 matTooltipPosition="above"
-                ><mat-icon svgIcon="mdc:delete"></mat-icon></mat-button-toggle
-              >
+                ><mat-icon svgIcon="mdc:delete"></mat-icon
+              ></mat-button-toggle>
             </mat-button-toggle-group>
             <mat-button-toggle-group
               *ngIf="unsavedRowIndex === rowIndex"
@@ -200,18 +216,17 @@
                 "
                 [matTooltip]="'settings-data-mapping.Save' | translate"
                 matTooltipPosition="above"
-                ><mat-icon class="color-success"
-                  svgIcon="mdc:checkmark"></mat-icon
-                ></mat-button-toggle
-              >
+                ><mat-icon
+                  class="color-success"
+                  svgIcon="mdc:checkmark"
+                ></mat-icon
+              ></mat-button-toggle>
               <mat-button-toggle
                 (click)="onEditCancel(); group.value = null"
                 [matTooltip]="'settings-data-mapping.Cancel' | translate"
                 matTooltipPosition="above"
-                ><mat-icon class="color-error"
-                  svgIcon="mdc:close"></mat-icon
-                ></mat-button-toggle
-              >
+                ><mat-icon class="color-error" svgIcon="mdc:close"></mat-icon
+              ></mat-button-toggle>
             </mat-button-toggle-group>
           </ng-template>
         </ngx-datatable-column>

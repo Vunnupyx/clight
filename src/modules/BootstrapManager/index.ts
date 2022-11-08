@@ -55,7 +55,7 @@ export class BootstrapManager {
       configManager: this.configManager,
       cache: this.dataPointCache
     });
-    
+
     this.licenseChecker = new LicenseChecker();
 
     this.dataSinksManager = new DataSinksManager({
@@ -122,24 +122,25 @@ export class BootstrapManager {
           Object.keys(x2).length !== 0
             ? NetworkManagerCliController.setConfiguration('eth1', nx2)
             : Promise.resolve(),
-          time && time.useNtp 
+          time && time.useNtp
             ? TimeManager.setNTPServer(time.ntpHost)
             : Promise.resolve()
         ])
           .then(() => winston.info(log + ' Successfully.'))
-          .catch((err) => {          
+          .catch((err) => {
             winston.error(`${log} Failed due to ${JSON.stringify(err)}`);
-          }).then(() => {
+          })
+          .then(() => {
             return HostnameController.setDefaultHostname();
-          }).catch((e) =>
-            winston.error(`Failed to set hostname: ${e?.msg}`)
-        );
+          })
+          .catch((e) => winston.error(`Failed to set hostname: ${e?.msg}`));
       });
 
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {
           await this.configManager.factoryResetConfiguration();
+          await this.ledManager.turnOffLeds();
           const system = new System();
           await system.restartDevice();
         } catch (e) {

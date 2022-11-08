@@ -64,7 +64,7 @@ Im Folgenden finden Sie einige Beispiele, die Ihnen bei der Auswahl Ihrer Variab
 | `/Channel/State/specParts`                       | Zahl |
 | `/Channel/Spindle/turnState`                     | Zahl |
 | `/Nck/Configuration/anLanguageOnHmi`             | Zahl |
-| `/Nck/Configuration/basicLengthUnit`             |      |
+| `/Nck/Configuration/basicLengthUnit`             | Zahl |
 | `/Nck/Configuration/nckType`                     | Zahl |
 | `/Nck/Configuration/nckVersion`                  | Zahl |
 | `/Channel/State/chanStatus`                      | Zahl |

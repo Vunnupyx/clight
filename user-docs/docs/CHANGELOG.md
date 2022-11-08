@@ -4,6 +4,12 @@ title: Changelog
 
 # Changelog
 
+## [3.0.0]
+
+## Fixed
+
+- [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixed missing value for NCK data point basicLengthUnit
+
 ## [2.4.0]
 
 ### Added

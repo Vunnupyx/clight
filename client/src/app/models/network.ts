@@ -10,24 +10,25 @@ export enum ProxyType {
   Http = 'http'
 }
 
-export class NetworkConfig {
-  useDhcp?: boolean;
-  ipAddr?: string;
-  netmask?: string;
-  defaultGateway?: string;
-  dnsServer?: string;
-  useProxy?: boolean;
-  type?: ProxyType;
-  port?: number;
-  username?: string;
-  password?: string;
-  configurationState?: boolean;
-  serviceState?: boolean;
+export interface NetworkConfig {
+  id: string;
+  displayName: string;
+  enabled: boolean;
+  ipv4Settings: IpSettings;
+  ipv6Settings: IpSettings;
+  macAddress: string;
+  ssid: string;
+}
 
-  // TIME:
-  useNtp?: boolean;
-  ntpHost?: string;
-  currentTime?: string;
-  timezone?: string;
-  reachable?: boolean;
+interface IpSettings {
+  enabled: boolean;
+  dhcp: boolean;
+  ipAddresses: [
+    {
+      Address: string;
+      Netmask: string;
+    }
+  ];
+  defaultGateway: string;
+  dnsserver: string[];
 }

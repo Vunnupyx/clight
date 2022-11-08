@@ -95,14 +95,15 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.config = clone(this.originalConfig);
   }
 
-  async saveChanges(mainForm: NgForm, networkType: NetworkType) {
-    await this.networkService.updateNetworkConfig(this.config);
+  async saveChanges(mainForm: NgForm) {
+    const newConfig = this.config[this.selectedTab];
+    await this.networkService.updateNetworkConfig(newConfig).then(() => {
+      this.originalConfig = clone(this.config);
 
-    this.originalConfig = clone(this.config);
-
-    mainForm.resetForm({
-      ...this.config[networkType],
-      notToUseDhcp: !this.config[networkType]?.useDhcp
+      /*mainForm.resetForm({
+        ...newConfig,
+        notToUseDhcp: !newConfig.ipv4Settings.dhcp
+      });*/
     });
   }
 

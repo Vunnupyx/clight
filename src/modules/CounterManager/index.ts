@@ -136,9 +136,13 @@ export class CounterManager {
       );
     }
 
-    this.checkMissedResets();
     this.registerScheduleChecker();
+    this.configManager.on('configsLoaded', this.handleConfigsLoaded.bind(this));
     this.configManager.on('configChange', this.checkTimers.bind(this));
+  }
+
+  private handleConfigsLoaded() {
+    this.checkMissedResets();
     this.checkTimers();
   }
 

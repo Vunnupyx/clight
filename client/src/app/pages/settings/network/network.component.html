@@ -11,6 +11,18 @@
         (click)="onSelectTab(i, adapter.id)"
         >{{ adapter.displayName }}</a
       >
+      <a
+        mat-tab-link
+        [active]="NetworkType.PROXY === selectedTabContent"
+        (click)="onSelectTab(0, NetworkType.PROXY)"
+        >Proxy</a
+      >
+      <a
+        mat-tab-link
+        [active]="NetworkType.TIME === selectedTabContent"
+        (click)="onSelectTab(0, NetworkType.TIME)"
+        >Time</a
+      >
     </nav>
   </div>
 </div>
@@ -246,7 +258,8 @@
           </div>
         </form>
       </ng-container>
-      <!--<ng-container *ngSwitchCase="NetworkType.PROXY">
+
+      <ng-container *ngSwitchCase="NetworkType.PROXY">
         <form #mainForm="ngForm">
           <div class="d-flex align-items-center justify-content-between mb-10">
             <div class="mr-30">
@@ -255,31 +268,8 @@
             <mat-slide-toggle
               class="ml-20"
               name="useProxy"
-              [(ngModel)]="config[selectedTab].useProxy"
+              [(ngModel)]="proxy.enabled"
             ></mat-slide-toggle>
-          </div>
-
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="mr-30">
-              {{ 'settings-network.ProxyType' | translate }}
-            </div>
-
-            <div>
-              <mat-form-field>
-                <mat-select
-                  name="type"
-                  [(ngModel)]="config[selectedTab].type"
-                  [disabled]="!config[selectedTab].useProxy"
-                >
-                  <mat-option [value]="ProxyType.Socks5">
-                    {{ ProxyType.Socks5 }}
-                  </mat-option>
-                  <mat-option [value]="ProxyType.Http">
-                    {{ ProxyType.Http }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
           </div>
 
           <div class="d-flex align-items-center justify-content-between">
@@ -293,10 +283,10 @@
                   matInput
                   name="ipAddr"
                   #ipAddr="ngModel"
-                  [(ngModel)]="config[selectedTab].ipAddr"
+                  [(ngModel)]="proxy.host"
                   [pattern]="hostRegex"
-                  [required]="!!config[selectedTab].useProxy"
-                  [disabled]="!config[selectedTab].useProxy"
+                  [required]="!!proxy.enabled"
+                  [disabled]="!proxy.enabled"
                 />
               </mat-form-field>
             </div>
@@ -315,11 +305,11 @@
                   type="text"
                   min="1"
                   max="65535"
-                  [(ngModel)]="config[selectedTab].port"
+                  [(ngModel)]="proxy.port"
                   #port="ngModel"
                   [pattern]="portRegex"
-                  [required]="!!config[selectedTab].useProxy"
-                  [disabled]="!config[selectedTab].useProxy"
+                  [required]="!!proxy.enabled"
+                  [disabled]="!proxy.enabled"
                 />
               </mat-form-field>
             </div>
@@ -335,8 +325,8 @@
                 <input
                   matInput
                   name="username"
-                  [(ngModel)]="config[selectedTab].username"
-                  [disabled]="!config[selectedTab].useProxy"
+                  [(ngModel)]="proxy.username"
+                  [disabled]="!proxy.enabled"
                 />
               </mat-form-field>
             </div>
@@ -353,8 +343,8 @@
                   matInput
                   name="password"
                   type="password"
-                  [(ngModel)]="config[selectedTab].password"
-                  [disabled]="!config[selectedTab].useProxy"
+                  [(ngModel)]="proxy.password"
+                  [disabled]="!proxy.enabled"
                 />
               </mat-form-field>
             </div>
@@ -362,15 +352,16 @@
 
           <div class="d-flex justify-content-end mt-25">
             <button
-              mat-button color="primary"
+              mat-button
+              color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="saveChanges(mainForm, NetworkType.PROXY)"
+              (click)="onSaveProxy()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>
           </div>
         </form>
-      </ng-container>-->
+      </ng-container>
 
       <!--<ng-container *ngSwitchCase="NetworkType.TIME">
         <form #mainForm="ngForm">

@@ -6,12 +6,12 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler } from '../shared/utils';
-import { NetworkAdapter } from '../models';
+import { NetworkAdapter, NetworkProxy } from '../models';
 import { HttpMockupService } from 'app/shared';
-
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
+  proxy: NetworkProxy;
 }
 
 // TODO: Connect to Network API
@@ -80,6 +80,16 @@ let RESPONSE_ADAPTERS: NetworkAdapter[] = [
   }
 ] as any;
 
+// TODO: Connect to Network API
+let RESPONSE_PROXY: NetworkProxy = {
+  enabled: true,
+  host: '',
+  port: 62145,
+  username: '',
+  password: '',
+  whitelist: ['']
+} as any;
+
 @Injectable()
 export class NetworkService {
   private _store: Store<NetworkState>;
@@ -101,6 +111,14 @@ export class NetworkService {
     return this._store.state.pipe(
       filter((x) => x.status != Status.NotInitialized),
       map((x) => x.adapters),
+      distinctUntilChanged()
+    );
+  }
+
+  get proxy() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.proxy),
       distinctUntilChanged()
     );
   }
@@ -147,6 +165,46 @@ export class NetworkService {
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.adapters = RESPONSE_ADAPTERS;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  async getNetworkProxy() {
+    try {
+      const response = await this.configurationAgentHttpService.get<any>(
+        `/network/proxy`,
+        undefined,
+        RESPONSE_PROXY
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.proxy = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.LoadError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  async updateNetworkProxy(obj: NetworkProxy) {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+
+    try {
+      await this.configurationAgentHttpService.put<any>(`/network/proxy`, obj);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.proxy = obj;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));

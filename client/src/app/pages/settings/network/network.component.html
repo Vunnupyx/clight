@@ -5,18 +5,18 @@
   <div class="layout-header__tabs">
     <nav mat-tab-nav-bar mat-align-tabs="center">
       <a
-        *ngFor="let tab of tabs"
+        *ngFor="let adapter of adapters; let i = index"
         mat-tab-link
-        [active]="tab === selectedTab"
-        (click)="onSelectTab(tab)"
-        >{{ config[tab].displayName }}</a
+        [active]="adapter.id === selectedTabContent"
+        (click)="onSelectTab(i, adapter.id)"
+        >{{ adapter.displayName }}</a
       >
     </nav>
   </div>
 </div>
 <mat-divider></mat-divider>
 <div class="pl-25 pr-25">
-  <div class="pb-25" [ngSwitch]="config && config[selectedTab].id">
+  <div class="pb-25" [ngSwitch]="selectedTabContent">
     <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
       <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
     </ng-container>
@@ -32,7 +32,7 @@
     <mat-divider></mat-divider>
   </div>
 
-  <div class="row" [ngSwitch]="config && config[selectedTab].id">
+  <div class="row" [ngSwitch]="selectedTabContent">
     <div class="col-12 col-md-7 col-lg-5">
       <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
         <form #mainForm="ngForm">
@@ -43,8 +43,10 @@
             <mat-slide-toggle
               class="ml-20"
               name="notToUseDhcp"
-              [ngModel]="!config[selectedTab].ipv4Settings.dhcp"
-              (ngModelChange)="config[selectedTab].ipv4Settings.dhcp = !$event"
+              [ngModel]="!adapters[selectedTab].ipv4Settings.dhcp"
+              (ngModelChange)="
+                adapters[selectedTab].ipv4Settings.dhcp = !$event
+              "
             ></mat-slide-toggle>
           </div>
 
@@ -57,9 +59,9 @@
                 <input
                   #ipAddr="ngModel"
                   [(ngModel)]="
-                    config[selectedTab].ipv4Settings.ipAddresses[0].Address
+                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Address
                   "
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                   [pattern]="ipRegex"
                   matInput
                   name="ipAddr"
@@ -76,9 +78,9 @@
                 <input
                   #netmask="ngModel"
                   [(ngModel)]="
-                    config[selectedTab].ipv4Settings.ipAddresses[0].Netmask
+                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Netmask
                   "
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                   [pattern]="ipRegex"
                   matInput
                   name="netmask"
@@ -97,9 +99,11 @@
                   matInput
                   name="defaultGateway"
                   #defaultGateway="ngModel"
-                  [(ngModel)]="config[selectedTab].ipv4Settings.defaultGateway"
+                  [(ngModel)]="
+                    adapters[selectedTab].ipv4Settings.defaultGateway
+                  "
                   [pattern]="ipRegex"
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                 />
               </mat-form-field>
             </div>
@@ -115,9 +119,9 @@
                   matInput
                   name="dnsServer"
                   #dnsServer="ngModel"
-                  [(ngModel)]="config[selectedTab].ipv4Settings.dnsserver[0]"
+                  [(ngModel)]="adapters[selectedTab].ipv4Settings.dnsserver[0]"
                   [pattern]="ipRegex"
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                 />
               </mat-form-field>
             </div>
@@ -128,7 +132,7 @@
               mat-button
               color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="saveChanges(mainForm)"
+              (click)="onSaveAdapters()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>
@@ -145,8 +149,10 @@
             <mat-slide-toggle
               class="ml-20"
               name="notToUseDhcp"
-              [ngModel]="!config[selectedTab].ipv4Settings.dhcp"
-              (ngModelChange)="config[selectedTab].ipv4Settings.dhcp = !$event"
+              [ngModel]="!adapters[selectedTab].ipv4Settings.dhcp"
+              (ngModelChange)="
+                adapters[selectedTab].ipv4Settings.dhcp = !$event
+              "
             ></mat-slide-toggle>
           </div>
 
@@ -161,10 +167,10 @@
                   name="ipAddr"
                   #netmask="ngModel"
                   [(ngModel)]="
-                    config[selectedTab].ipv4Settings.ipAddresses[0].Address
+                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Address
                   "
                   [pattern]="ipRegex"
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                 />
               </mat-form-field>
             </div>
@@ -181,10 +187,10 @@
                   name="netmask"
                   #netmask="ngModel"
                   [(ngModel)]="
-                    config[selectedTab].ipv4Settings.ipAddresses[0].Netmask
+                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Netmask
                   "
                   [pattern]="ipRegex"
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                 />
               </mat-form-field>
             </div>
@@ -200,9 +206,11 @@
                   matInput
                   name="defaultGateway"
                   #defaultGateway="ngModel"
-                  [(ngModel)]="config[selectedTab].ipv4Settings.defaultGateway"
+                  [(ngModel)]="
+                    adapters[selectedTab].ipv4Settings.defaultGateway
+                  "
                   [pattern]="ipRegex"
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                 />
               </mat-form-field>
             </div>
@@ -218,9 +226,9 @@
                   matInput
                   name="dnsServer"
                   #dnsServer="ngModel"
-                  [(ngModel)]="config[selectedTab].ipv4Settings.dnsserver[0]"
+                  [(ngModel)]="adapters[selectedTab].ipv4Settings.dnsserver[0]"
                   [pattern]="ipRegex"
-                  [disabled]="!!config[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
                 />
               </mat-form-field>
             </div>
@@ -231,7 +239,7 @@
               mat-button
               color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="saveChanges(mainForm)"
+              (click)="onSaveAdapters()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>

@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
-import { clone, ObjectMap } from '../../../shared/utils';
-import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
+import { clone } from '../../../shared/utils';
+import { NetworkAdapter, NetworkType, ProxyType } from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
@@ -18,8 +18,8 @@ import { Status } from 'app/shared/state';
 export class NetworkComponent implements OnInit, OnDestroy {
   NetworkType = NetworkType;
 
-  config!: ObjectMap<NetworkConfig>;
-  originalConfig!: ObjectMap<NetworkConfig>;
+  adapters!: NetworkAdapter[];
+  originalAdapters!: NetworkAdapter[];
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
@@ -34,14 +34,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     );
   }
 
-  get tabs() {
-    if (!this.config) {
-      return [];
-    }
-
-    return Object.keys(this.config);
-  }
-
   get timezoneOptionsSearchResults() {
     if (!this.timezoneOptions || !this.timezoneOptionKeyphrase) {
       return this.timezoneOptions;
@@ -54,7 +46,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   sub: Subscription = new Subscription();
-  selectedTab!: string;
+  selectedTab: number = 0;
+  selectedTabContent: string;
   timezoneOptions!: string[];
   timezoneOptionKeyphrase = '';
 
@@ -64,47 +57,43 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub.add(
-      this.networkService.config
+      this.networkService.adapters
         .pipe(filter((el) => !!el))
-        .subscribe((x) => this.onConfig(x))
+        .subscribe((x) => this.onAdapters(x))
     );
 
     this.timezoneOptions = this._getTimezoneOptions();
 
-    this.sub.add(this.networkService.setNetworkConfigTimer().subscribe());
+    this.sub.add(this.networkService.setNetworkAdaptersTimer().subscribe());
 
-    this.networkService.getNetworkConfig();
+    this.networkService.getNetworkAdapters();
   }
 
-  private onConfig(x: ObjectMap<NetworkConfig>) {
+  private onAdapters(x: NetworkAdapter[]) {
     if (this.mainForm && this.mainForm.dirty) {
       return;
     }
 
-    this.config = clone(x);
-    this.originalConfig = clone(x);
+    this.adapters = clone(x);
+    this.originalAdapters = clone(x);
 
     if (!this.selectedTab) {
-      this.selectedTab = this.tabs[0];
+      this.selectedTabContent = this.adapters[this.selectedTab].id;
     }
   }
 
-  onSelectTab(tab: string) {
+  onSelectTab(tab: number, content: string) {
     this.selectedTab = tab;
+    this.selectedTabContent = content;
 
-    this.config = clone(this.originalConfig);
+    this.adapters = clone(this.originalAdapters);
   }
 
-  async saveChanges(mainForm: NgForm) {
-    const newConfig = this.config[this.selectedTab];
-    await this.networkService.updateNetworkConfig(newConfig).then(() => {
-      this.originalConfig = clone(this.config);
-
-      /*mainForm.resetForm({
-        ...newConfig,
-        notToUseDhcp: !newConfig.ipv4Settings.dhcp
-      });*/
-    });
+  onSaveAdapters() {
+    const newAdapter = this.adapters[this.selectedTab];
+    this.networkService
+      .updateNetworkAdapter(newAdapter)
+      .then(() => (this.originalAdapters = clone(this.adapters)));
   }
 
   ngOnDestroy() {

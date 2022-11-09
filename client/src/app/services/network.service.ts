@@ -6,17 +6,79 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler, ObjectMap } from '../shared/utils';
-import { NetworkConfig, NetworkType } from '../models';
-import {
-  fromISOStringIgnoreTimezone,
-  toISOStringIgnoreTimezone
-} from 'app/shared/utils/datetime';
-import { ConfigurationAgentHttpService } from 'app/shared';
+import { NetworkConfig } from '../models';
+import { HttpMockupService } from 'app/shared';
 
 export class NetworkState {
   status!: Status;
   config!: ObjectMap<NetworkConfig>;
 }
+
+// TODO: Connect to Network API
+let RESPONSE_CONFIG: ObjectMap<NetworkConfig> = [
+  {
+    id: 'x1',
+    displayName: 'Ethernet X1 p1',
+    enabled: false,
+    ipv4Settings: {
+      enabled: false,
+      dhcp: true,
+      ipAddresses: [
+        {
+          Address: '',
+          Netmask: ''
+        }
+      ],
+      defaultGateway: '',
+      dnsserver: ['192.168.214.230', '192.168.214.230']
+    },
+    ipv6Settings: {
+      enabled: false,
+      dhcp: false,
+      ipAddresses: [
+        {
+          Address: '',
+          Netmask: ''
+        }
+      ],
+      defaultGateway: '',
+      dnsserver: []
+    },
+    macAddress: '',
+    ssid: ''
+  },
+  {
+    id: 'x2',
+    displayName: 'Ethernet X2 p1',
+    enabled: false,
+    ipv4Settings: {
+      enabled: false,
+      dhcp: true,
+      ipAddresses: [
+        {
+          Address: '192.168.214.230',
+          Netmask: '255.255.255.0'
+        }
+      ],
+      defaultGateway: '192.168',
+      dnsserver: ['192.168.214.230', '192.168.214.230']
+    },
+    ipv6Settings: {
+      enabled: false,
+      dhcp: false,
+      ipAddresses: [
+        {
+          Address: '',
+          Netmask: ''
+        }
+      ],
+      defaultGateway: '',
+      dnsserver: []
+    },
+    macAddress: '',
+    ssid: ''
+  }
+] as any;
 
 @Injectable()
 export class NetworkService {
@@ -24,7 +86,7 @@ export class NetworkService {
 
   constructor(
     storeFactory: StoreFactory<NetworkState>,
-    private configurationAgentHttpService: ConfigurationAgentHttpService,
+    private configurationAgentHttpService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -51,7 +113,11 @@ export class NetworkService {
 
   async getNetworkConfig() {
     try {
-      const response = await this.configurationAgentHttpService.get<any>(`/networkconfig`);
+      const response = await this.configurationAgentHttpService.get<any>(
+        `/network/adapters`,
+        undefined,
+        RESPONSE_CONFIG
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.config = response;
@@ -65,7 +131,7 @@ export class NetworkService {
     }
   }
 
-  async updateNetworkConfig(obj: ObjectMap<NetworkConfig>) {
+  async updateNetworkConfig(obj: NetworkConfig) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
@@ -73,13 +139,14 @@ export class NetworkService {
     const verifiedObj = this._serializeNetworkConfig(obj);
 
     try {
-      const response = await this.configurationAgentHttpService.patch<any>(
-        `/networkconfig`,
+      this.setMockDataById(verifiedObj);
+      const response = await this.configurationAgentHttpService.put<any>(
+        `/network/adapters/${obj.id}`,
         verifiedObj
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.config = response;
+        state.config = RESPONSE_CONFIG;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
@@ -90,42 +157,35 @@ export class NetworkService {
     }
   }
 
-  private _serializeNetworkConfig(
-    obj: ObjectMap<NetworkConfig>
-  ): ObjectMap<NetworkConfig> {
-    // The backend should receive empty values for defaultGateway, dnsServer, ipAddr, netmask in case of useDhcp is enabled
-    const verifiedObj = {};
-    Object.keys(obj).forEach((key) => {
-      if (['x1', 'x2'].includes(key)) {
-        const config: NetworkConfig = obj[key];
-        if (config.useDhcp) {
-          verifiedObj[key] = {
-            ...obj[key],
-            ipAddr: '',
-            netmask: '',
-            dnsServer: '',
-            defaultGateway: ''
-          };
-        } else {
-          verifiedObj[key] = obj[key];
-        }
-      } else {
-        verifiedObj[key] = obj[key];
+  setMockDataById(obj: NetworkConfig) {
+    Object.keys(RESPONSE_CONFIG).forEach((key) => {
+      if (RESPONSE_CONFIG[key].id.includes(obj.id)) {
+        RESPONSE_CONFIG[key] = obj;
       }
     });
-
-    const timeObj = { ...verifiedObj[NetworkType.TIME] };
-    timeObj.currentTime = toISOStringIgnoreTimezone(
-      new Date(timeObj.currentTime)
-    );
-    verifiedObj[NetworkType.TIME] = timeObj;
-
-    return verifiedObj;
   }
 
   private _emptyState() {
     return <NetworkState>{
       status: Status.NotInitialized
     };
+  }
+
+  private _serializeNetworkConfig(config: NetworkConfig): NetworkConfig {
+    // The backend should receive empty values for defaultGateway, dnsServer, ipAddr, netmask in case of useDhcp is enabled
+    if (['x1', 'x2'].includes(config.id)) {
+      if (config.ipv4Settings.dhcp) {
+        return {
+          ...config,
+          ipv4Settings: {
+            ...config.ipv4Settings,
+            dnsserver: [''],
+            defaultGateway: '',
+            ipAddresses: [{ Address: '', Netmask: '' }]
+          }
+        };
+      }
+    }
+    return config;
   }
 }

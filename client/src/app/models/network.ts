@@ -32,3 +32,12 @@ interface IpSettings {
   defaultGateway: string;
   dnsserver: string[];
 }
+
+export interface NetworkProxy {
+  enabled: boolean;
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  whitelist: string[];
+}

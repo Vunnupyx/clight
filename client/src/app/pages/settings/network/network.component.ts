@@ -6,7 +6,12 @@ import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
-import { NetworkAdapter, NetworkType, ProxyType } from '../../../models';
+import {
+  NetworkAdapter,
+  NetworkProxy,
+  NetworkType,
+  ProxyType
+} from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
@@ -20,6 +25,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   adapters!: NetworkAdapter[];
   originalAdapters!: NetworkAdapter[];
+  proxy!: NetworkProxy;
+  originalProxy!: NetworkProxy;
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
@@ -61,12 +68,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onAdapters(x))
     );
+    this.sub.add(
+      this.networkService.proxy
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onProxy(x))
+    );
 
     this.timezoneOptions = this._getTimezoneOptions();
 
     this.sub.add(this.networkService.setNetworkAdaptersTimer().subscribe());
 
     this.networkService.getNetworkAdapters();
+    this.networkService.getNetworkProxy();
   }
 
   private onAdapters(x: NetworkAdapter[]) {
@@ -82,11 +95,25 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
   }
 
+  private onProxy(x: NetworkProxy) {
+    if (this.mainForm && this.mainForm.dirty) {
+      return;
+    }
+
+    this.proxy = clone(x);
+    this.originalProxy = clone(x);
+
+    if (!this.adapters) {
+      this.selectedTabContent = NetworkType.PROXY;
+    }
+  }
+
   onSelectTab(tab: number, content: string) {
     this.selectedTab = tab;
     this.selectedTabContent = content;
 
     this.adapters = clone(this.originalAdapters);
+    this.proxy = clone(this.originalProxy);
   }
 
   onSaveAdapters() {
@@ -94,6 +121,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.networkService
       .updateNetworkAdapter(newAdapter)
       .then(() => (this.originalAdapters = clone(this.adapters)));
+  }
+
+  onSaveProxy() {
+    this.networkService
+      .updateNetworkProxy(this.proxy)
+      .then(() => (this.originalProxy = clone(this.proxy)));
   }
 
   ngOnDestroy() {

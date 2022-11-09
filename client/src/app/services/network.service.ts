@@ -5,17 +5,17 @@ import { from, interval } from 'rxjs';
 import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
-import { errorHandler, ObjectMap } from '../shared/utils';
-import { NetworkConfig } from '../models';
+import { errorHandler } from '../shared/utils';
+import { NetworkAdapter } from '../models';
 import { HttpMockupService } from 'app/shared';
 
-export class NetworkState {
-  status!: Status;
-  config!: ObjectMap<NetworkConfig>;
+export interface NetworkState {
+  status: Status;
+  adapters: NetworkAdapter[];
 }
 
 // TODO: Connect to Network API
-let RESPONSE_CONFIG: ObjectMap<NetworkConfig> = [
+let RESPONSE_ADAPTERS: NetworkAdapter[] = [
   {
     id: 'x1',
     displayName: 'Ethernet X1 p1',
@@ -97,30 +97,30 @@ export class NetworkService {
     return this._store.snapshot.status;
   }
 
-  get config() {
+  get adapters() {
     return this._store.state.pipe(
       filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.config),
+      map((x) => x.adapters),
       distinctUntilChanged()
     );
   }
 
-  setNetworkConfigTimer() {
+  setNetworkAdaptersTimer() {
     return interval(10 * 1000).pipe(
-      mergeMap(() => from(this.getNetworkConfig()))
+      mergeMap(() => from(this.getNetworkAdapters()))
     );
   }
 
-  async getNetworkConfig() {
+  async getNetworkAdapters() {
     try {
       const response = await this.configurationAgentHttpService.get<any>(
         `/network/adapters`,
         undefined,
-        RESPONSE_CONFIG
+        RESPONSE_ADAPTERS
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.config = response;
+        state.adapters = response;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
@@ -131,12 +131,12 @@ export class NetworkService {
     }
   }
 
-  async updateNetworkConfig(obj: NetworkConfig) {
+  async updateNetworkAdapter(obj: NetworkAdapter) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
-    const verifiedObj = this._serializeNetworkConfig(obj);
+    const verifiedObj = this._serializeNetworkAdapters(obj);
 
     try {
       this.setMockDataById(verifiedObj);
@@ -146,7 +146,7 @@ export class NetworkService {
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.config = RESPONSE_CONFIG;
+        state.adapters = RESPONSE_ADAPTERS;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
@@ -157,10 +157,10 @@ export class NetworkService {
     }
   }
 
-  setMockDataById(obj: NetworkConfig) {
-    Object.keys(RESPONSE_CONFIG).forEach((key) => {
-      if (RESPONSE_CONFIG[key].id.includes(obj.id)) {
-        RESPONSE_CONFIG[key] = obj;
+  setMockDataById(obj: NetworkAdapter) {
+    Object.keys(RESPONSE_ADAPTERS).forEach((key) => {
+      if (RESPONSE_ADAPTERS[key].id.includes(obj.id)) {
+        RESPONSE_ADAPTERS[key] = obj;
       }
     });
   }
@@ -171,14 +171,14 @@ export class NetworkService {
     };
   }
 
-  private _serializeNetworkConfig(config: NetworkConfig): NetworkConfig {
+  private _serializeNetworkAdapters(adapter: NetworkAdapter): NetworkAdapter {
     // The backend should receive empty values for defaultGateway, dnsServer, ipAddr, netmask in case of useDhcp is enabled
-    if (['x1', 'x2'].includes(config.id)) {
-      if (config.ipv4Settings.dhcp) {
+    if (['x1', 'x2'].includes(adapter.id)) {
+      if (adapter.ipv4Settings.dhcp) {
         return {
-          ...config,
+          ...adapter,
           ipv4Settings: {
-            ...config.ipv4Settings,
+            ...adapter.ipv4Settings,
             dnsserver: [''],
             defaultGateway: '',
             ipAddresses: [{ Address: '', Netmask: '' }]
@@ -186,6 +186,6 @@ export class NetworkService {
         };
       }
     }
-    return config;
+    return adapter;
   }
 }

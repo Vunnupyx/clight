@@ -4,6 +4,12 @@ title: Changelog
 
 # Changelog
 
+## [3.0.0]
+
+### Changed
+
+- [DIGMDCLGHT-246](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-246) SSH communications are removed with usage of DMG MORI CELOS
+
 ## [2.4.0]
 
 ### Added

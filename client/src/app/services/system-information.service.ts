@@ -3,7 +3,11 @@ import { HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { HttpService, RequestOptionsArgs } from '../shared';
+import {
+  ConfigurationAgentHttpService,
+  HttpService,
+  RequestOptionsArgs
+} from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { SystemInformationSection } from '../models';
 import { errorHandler } from '../shared/utils';
@@ -35,6 +39,7 @@ export class SystemInformationService {
   constructor(
     storeFactory: StoreFactory<SystemInformationState>,
     private httpService: HttpService,
+    private configurationAgentHttpService: ConfigurationAgentHttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -100,7 +105,7 @@ export class SystemInformationService {
 
   async restartDevice(): Promise<boolean> {
     try {
-      await this.httpService.post(`/systemInfo/restart`, null);
+      await this.configurationAgentHttpService.post(`/system/restart`, null);
 
       return true;
     } catch (e) {

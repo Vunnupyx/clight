@@ -5,32 +5,18 @@
   <div class="layout-header__tabs">
     <nav mat-tab-nav-bar mat-align-tabs="center">
       <a
-        *ngFor="let adapter of adapters; let i = index"
+        *ngFor="let tab of tabs"
         mat-tab-link
-        [active]="adapter.id === selectedTabContent"
-        (click)="onSelectTab(i, adapter.id)"
-        >{{ adapter.displayName }}</a
-      >
-      <a
-        *ngIf="proxy"
-        mat-tab-link
-        [active]="NetworkType.PROXY === selectedTabContent"
-        (click)="onSelectTab(0, NetworkType.PROXY)"
-        >Proxy</a
-      >
-      <a
-        *ngIf="ntp"
-        mat-tab-link
-        [active]="NetworkType.NTP === selectedTabContent"
-        (click)="onSelectTab(0, NetworkType.NTP)"
-        >Time</a
+        [active]="tab === selectedTab"
+        (click)="onSelectTab(tab)"
+        >{{ 'settings-network.Tabs.' + tab | translate }}</a
       >
     </nav>
   </div>
 </div>
 <mat-divider></mat-divider>
 <div class="pl-25 pr-25">
-  <div class="pb-25" [ngSwitch]="selectedTabContent">
+  <div class="pb-25" [ngSwitch]="selectedTab">
     <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
       <h3>{{ 'settings-network.AdapterSettings' | translate }}</h3>
     </ng-container>
@@ -46,7 +32,7 @@
     <mat-divider></mat-divider>
   </div>
 
-  <div class="row" [ngSwitch]="selectedTabContent">
+  <div class="row" [ngSwitch]="selectedTab">
     <div class="col-12 col-md-7 col-lg-5">
       <ng-container *ngSwitchCase="NetworkType.ETHERNET_X1">
         <form #mainForm="ngForm">
@@ -57,9 +43,9 @@
             <mat-slide-toggle
               class="ml-20"
               name="notToUseDhcp"
-              [ngModel]="!adapters[selectedTab].ipv4Settings.dhcp"
+              [ngModel]="!config[NetworkType.ETHERNET_X1].ipv4Settings.dhcp"
               (ngModelChange)="
-                adapters[selectedTab].ipv4Settings.dhcp = !$event
+                config[NetworkType.ETHERNET_X1].ipv4Settings.dhcp = !$event
               "
             ></mat-slide-toggle>
           </div>
@@ -73,9 +59,12 @@
                 <input
                   #ipAddr="ngModel"
                   [(ngModel)]="
-                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Address
+                    config[NetworkType.ETHERNET_X1].ipv4Settings.ipAddresses[0]
+                      .Address
                   "
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X1].ipv4Settings.dhcp
+                  "
                   [pattern]="ipRegex"
                   matInput
                   name="ipAddr"
@@ -92,9 +81,12 @@
                 <input
                   #netmask="ngModel"
                   [(ngModel)]="
-                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Netmask
+                    config[NetworkType.ETHERNET_X1].ipv4Settings.ipAddresses[0]
+                      .Netmask
                   "
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X1].ipv4Settings.dhcp
+                  "
                   [pattern]="ipRegex"
                   matInput
                   name="netmask"
@@ -114,10 +106,12 @@
                   name="defaultGateway"
                   #defaultGateway="ngModel"
                   [(ngModel)]="
-                    adapters[selectedTab].ipv4Settings.defaultGateway
+                    config[NetworkType.ETHERNET_X1].ipv4Settings.defaultGateway
                   "
                   [pattern]="ipRegex"
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X1].ipv4Settings.dhcp
+                  "
                 />
               </mat-form-field>
             </div>
@@ -133,9 +127,13 @@
                   matInput
                   name="dnsServer"
                   #dnsServer="ngModel"
-                  [(ngModel)]="adapters[selectedTab].ipv4Settings.dnsserver[0]"
+                  [(ngModel)]="
+                    config[NetworkType.ETHERNET_X1].ipv4Settings.dnsserver[0]
+                  "
                   [pattern]="ipRegex"
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X1].ipv4Settings.dhcp
+                  "
                 />
               </mat-form-field>
             </div>
@@ -146,7 +144,7 @@
               mat-button
               color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="onSaveAdapters()"
+              (click)="onSaveChanges()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>
@@ -163,9 +161,9 @@
             <mat-slide-toggle
               class="ml-20"
               name="notToUseDhcp"
-              [ngModel]="!adapters[selectedTab].ipv4Settings.dhcp"
+              [ngModel]="!config[NetworkType.ETHERNET_X2].ipv4Settings.dhcp"
               (ngModelChange)="
-                adapters[selectedTab].ipv4Settings.dhcp = !$event
+                config[NetworkType.ETHERNET_X2].ipv4Settings.dhcp = !$event
               "
             ></mat-slide-toggle>
           </div>
@@ -181,10 +179,13 @@
                   name="ipAddr"
                   #netmask="ngModel"
                   [(ngModel)]="
-                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Address
+                    config[NetworkType.ETHERNET_X2].ipv4Settings.ipAddresses[0]
+                      .Address
                   "
                   [pattern]="ipRegex"
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X2].ipv4Settings.dhcp
+                  "
                 />
               </mat-form-field>
             </div>
@@ -201,10 +202,13 @@
                   name="netmask"
                   #netmask="ngModel"
                   [(ngModel)]="
-                    adapters[selectedTab].ipv4Settings.ipAddresses[0].Netmask
+                    config[NetworkType.ETHERNET_X2].ipv4Settings.ipAddresses[0]
+                      .Netmask
                   "
                   [pattern]="ipRegex"
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X2].ipv4Settings.dhcp
+                  "
                 />
               </mat-form-field>
             </div>
@@ -221,10 +225,12 @@
                   name="defaultGateway"
                   #defaultGateway="ngModel"
                   [(ngModel)]="
-                    adapters[selectedTab].ipv4Settings.defaultGateway
+                    config[NetworkType.ETHERNET_X2].ipv4Settings.defaultGateway
                   "
                   [pattern]="ipRegex"
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X2].ipv4Settings.dhcp
+                  "
                 />
               </mat-form-field>
             </div>
@@ -240,9 +246,13 @@
                   matInput
                   name="dnsServer"
                   #dnsServer="ngModel"
-                  [(ngModel)]="adapters[selectedTab].ipv4Settings.dnsserver[0]"
+                  [(ngModel)]="
+                    config[NetworkType.ETHERNET_X2].ipv4Settings.dnsserver[0]
+                  "
                   [pattern]="ipRegex"
-                  [disabled]="!!adapters[selectedTab].ipv4Settings.dhcp"
+                  [disabled]="
+                    !!config[NetworkType.ETHERNET_X2].ipv4Settings.dhcp
+                  "
                 />
               </mat-form-field>
             </div>
@@ -253,7 +263,7 @@
               mat-button
               color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="onSaveAdapters()"
+              (click)="onSaveChanges()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>
@@ -270,7 +280,7 @@
             <mat-slide-toggle
               class="ml-20"
               name="useProxy"
-              [(ngModel)]="proxy.enabled"
+              [(ngModel)]="config[NetworkType.PROXY].enabled"
             ></mat-slide-toggle>
           </div>
 
@@ -285,10 +295,10 @@
                   matInput
                   name="ipAddr"
                   #ipAddr="ngModel"
-                  [(ngModel)]="proxy.host"
+                  [(ngModel)]="config[NetworkType.PROXY].host"
                   [pattern]="hostRegex"
-                  [required]="!!proxy.enabled"
-                  [disabled]="!proxy.enabled"
+                  [required]="!!config[NetworkType.PROXY].enabled"
+                  [disabled]="!config[NetworkType.PROXY].enabled"
                 />
               </mat-form-field>
             </div>
@@ -307,11 +317,11 @@
                   type="text"
                   min="1"
                   max="65535"
-                  [(ngModel)]="proxy.port"
+                  [(ngModel)]="config[NetworkType.PROXY].port"
                   #port="ngModel"
                   [pattern]="portRegex"
-                  [required]="!!proxy.enabled"
-                  [disabled]="!proxy.enabled"
+                  [required]="!!config[NetworkType.PROXY].enabled"
+                  [disabled]="!config[NetworkType.PROXY].enabled"
                 />
               </mat-form-field>
             </div>
@@ -327,8 +337,8 @@
                 <input
                   matInput
                   name="username"
-                  [(ngModel)]="proxy.username"
-                  [disabled]="!proxy.enabled"
+                  [(ngModel)]="config[NetworkType.PROXY].username"
+                  [disabled]="!config[NetworkType.PROXY].enabled"
                 />
               </mat-form-field>
             </div>
@@ -345,8 +355,8 @@
                   matInput
                   name="password"
                   type="password"
-                  [(ngModel)]="proxy.password"
-                  [disabled]="!proxy.enabled"
+                  [(ngModel)]="config[NetworkType.PROXY].password"
+                  [disabled]="!config[NetworkType.PROXY].enabled"
                 />
               </mat-form-field>
             </div>
@@ -357,7 +367,7 @@
               mat-button
               color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="onSaveProxy()"
+              (click)="onSaveChanges()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>
@@ -374,12 +384,12 @@
             <mat-slide-toggle
               class="ml-20"
               name="useNtp"
-              [(ngModel)]="ntp.useNtp"
+              [(ngModel)]="config[NetworkType.NTP].useNtp"
             ></mat-slide-toggle>
           </div>
 
           <div
-            *ngIf="ntp.useNtp"
+            *ngIf="config[NetworkType.NTP].useNtp"
             class="d-flex align-items-center justify-content-between"
           >
             <div class="mr-30">
@@ -387,7 +397,7 @@
             </div>
             <div>
               <mat-form-field
-                *ngIf="ntp.reachable === false"
+                *ngIf="config[NetworkType.NTP].reachable === false"
                 class="nptUnreachable"
               >
                 <input
@@ -395,27 +405,27 @@
                   matInput
                   name="ntpHost"
                   #ipAddr="ngModel"
-                  [(ngModel)]="ntp.ntpHost"
+                  [(ngModel)]="config[NetworkType.NTP].ntpHost"
                   [pattern]="hostRegex"
                   matTooltip="{{
                     'settings-network.nptUnreachableLong' | translate
                   }}"
                   matTooltipPosition="above"
-                  [required]="!!ntp.useNtp"
+                  [required]="!!config[NetworkType.NTP].useNtp"
                 />
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
                 <mat-hint>{{
                   'settings-network.nptUnreachable' | translate
                 }}</mat-hint>
               </mat-form-field>
-              <mat-form-field *ngIf="ntp.reachable">
+              <mat-form-field *ngIf="config[NetworkType.NTP].reachable">
                 <input
                   matInput
                   name="ntpHost"
                   #ipAddr="ngModel"
-                  [(ngModel)]="ntp.ntpHost"
+                  [(ngModel)]="config[NetworkType.NTP].ntpHost"
                   [pattern]="hostRegex"
-                  [required]="!!ntp.useNtp"
+                  [required]="!!config[NetworkType.NTP].useNtp"
                 />
                 <mat-icon
                   class="color-success"
@@ -425,7 +435,7 @@
             </div>
           </div>
 
-          <ng-container *ngIf="!ntp.useNtp">
+          <ng-container *ngIf="!config[NetworkType.NTP].useNtp">
             <div class="d-flex align-items-center justify-content-between">
               <div class="mr-30">
                 {{ 'settings-network.SetCurrentTime' | translate }}
@@ -437,7 +447,7 @@
                     name="currentTime"
                     matInput
                     [ngxMatDatetimePicker]="picker"
-                    [(ngModel)]="this.ntp.currentTime"
+                    [(ngModel)]="this.config[NetworkType.NTP].currentTime"
                     required
                   />
                   <mat-datepicker-toggle
@@ -457,7 +467,7 @@
                 <mat-form-field>
                   <mat-select
                     name="timezone"
-                    [(ngModel)]="ntp.timezone"
+                    [(ngModel)]="config[NetworkType.NTP].timezone"
                     required
                   >
                     <mat-option>
@@ -485,7 +495,7 @@
               mat-button
               color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="onSaveNtp()"
+              (click)="onSaveChanges()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>

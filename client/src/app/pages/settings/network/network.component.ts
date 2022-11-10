@@ -6,13 +6,7 @@ import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
-import {
-  NetworkAdapter,
-  NetworkNtp,
-  NetworkProxy,
-  NetworkType,
-  ProxyType
-} from '../../../models';
+import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
@@ -24,12 +18,8 @@ import { Status } from 'app/shared/state';
 export class NetworkComponent implements OnInit, OnDestroy {
   NetworkType = NetworkType;
 
-  adapters!: NetworkAdapter[];
-  originalAdapters!: NetworkAdapter[];
-  proxy!: NetworkProxy;
-  originalProxy!: NetworkProxy;
-  ntp!: NetworkNtp;
-  originalNtp!: NetworkNtp;
+  config!: NetworkConfig;
+  originalConfig!: NetworkConfig;
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
@@ -56,8 +46,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   sub: Subscription = new Subscription();
-  selectedTab: number = 0;
-  selectedTabContent: string;
+  selectedTab!: string;
   timezoneOptions!: string[];
   timezoneOptionKeyphrase = '';
 
@@ -67,19 +56,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub.add(
-      this.networkService.adapters
+      this.networkService.config
         .pipe(filter((el) => !!el))
-        .subscribe((x) => this.onAdapters(x))
-    );
-    this.sub.add(
-      this.networkService.proxy
-        .pipe(filter((el) => !!el))
-        .subscribe((x) => this.onProxy(x))
-    );
-    this.sub.add(
-      this.networkService.ntp
-        .pipe(filter((el) => !!el))
-        .subscribe((x) => this.onNtp(x))
+        .subscribe((x) => this.onConfig(x))
     );
 
     this.timezoneOptions = this._getTimezoneOptions();
@@ -91,71 +70,37 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.networkService.getNetworkNtp();
   }
 
-  private onAdapters(x: NetworkAdapter[]) {
+  get tabs() {
+    if (!this.config) {
+      return [];
+    }
+
+    return Object.keys(this.config).filter((key) => this.config[key]);
+  }
+
+  private onConfig(x: NetworkConfig) {
     if (this.mainForm && this.mainForm.dirty) {
       return;
     }
 
-    this.adapters = clone(x);
-    this.originalAdapters = clone(x);
+    this.config = clone(x);
+    this.originalConfig = clone(x);
 
     if (!this.selectedTab) {
-      this.selectedTabContent = this.adapters[this.selectedTab].id;
+      this.selectedTab = this.tabs[0];
     }
   }
 
-  private onProxy(x: NetworkProxy) {
-    if (this.mainForm && this.mainForm.dirty) {
-      return;
-    }
-
-    this.proxy = clone(x);
-    this.originalProxy = clone(x);
-
-    if (!this.adapters) {
-      this.selectedTabContent = NetworkType.PROXY;
-    }
-  }
-
-  private onNtp(x: NetworkNtp) {
-    if (this.mainForm && this.mainForm.dirty) {
-      return;
-    }
-
-    this.ntp = clone(x);
-    this.originalNtp = clone(x);
-
-    if (!this.adapters && !this.proxy) {
-      this.selectedTabContent = NetworkType.NTP;
-    }
-  }
-
-  onSelectTab(tab: number, content: string) {
+  onSelectTab(tab: string) {
     this.selectedTab = tab;
-    this.selectedTabContent = content;
-
-    this.adapters = clone(this.originalAdapters);
-    this.proxy = clone(this.originalProxy);
-    this.ntp = clone(this.originalNtp);
+    this.config = clone(this.originalConfig);
   }
 
-  onSaveAdapters() {
-    const newAdapter = this.adapters[this.selectedTab];
+  onSaveChanges() {
+    const newAdapter = this.config[this.selectedTab];
     this.networkService
       .updateNetworkAdapter(newAdapter)
-      .then(() => (this.originalAdapters = clone(this.adapters)));
-  }
-
-  onSaveProxy() {
-    this.networkService
-      .updateNetworkProxy(this.proxy)
-      .then(() => (this.originalProxy = clone(this.proxy)));
-  }
-
-  onSaveNtp() {
-    this.networkService
-      .updateNetworkNtp(this.ntp)
-      .then(() => (this.originalNtp = clone(this.ntp)));
+      .then(() => (this.originalConfig = clone(this.config)));
   }
 
   ngOnDestroy() {

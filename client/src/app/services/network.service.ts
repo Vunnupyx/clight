@@ -6,14 +6,19 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler } from '../shared/utils';
-import { NetworkAdapter, NetworkNtp, NetworkProxy } from '../models';
+import {
+  NetworkAdapter,
+  NetworkConfig,
+  NetworkNtp,
+  NetworkProxy
+} from '../models';
 import { ConfigurationAgentHttpMockupService } from 'app/shared';
 import { toISOStringIgnoreTimezone } from '../shared/utils/datetime';
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
   proxy: NetworkProxy;
-  ntp: any;
+  ntp: NetworkNtp;
 }
 
 // TODO: Connect to Network API
@@ -126,18 +131,17 @@ export class NetworkService {
     );
   }
 
-  get proxy() {
+  get config() {
     return this._store.state.pipe(
       filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.proxy),
-      distinctUntilChanged()
-    );
-  }
-
-  get ntp() {
-    return this._store.state.pipe(
-      filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.ntp),
+      map(
+        (x): NetworkConfig => ({
+          x1: x.adapters?.[0],
+          x2: x.adapters?.[1],
+          proxy: x.proxy,
+          ntp: x.ntp
+        })
+      ),
       distinctUntilChanged()
     );
   }

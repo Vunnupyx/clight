@@ -409,7 +409,7 @@
       "x1": "イーサネットX1 P1",
       "x2": "イーサネットX1 P2",
       "proxy": "プロキシ",
-      "time": "Time"
+      "ntp": "Time"
     },
     "TimeSettings": "Time Settings",
     "UseNTPServer": "Use NTP Server",

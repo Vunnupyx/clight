@@ -10,6 +10,13 @@ export enum ProxyType {
   Http = 'http'
 }
 
+export interface NetworkConfig {
+  x1: NetworkAdapter;
+  x2: NetworkAdapter;
+  proxy: NetworkProxy;
+  ntp: NetworkNtp;
+}
+
 export interface NetworkAdapter {
   id: string;
   displayName: string;

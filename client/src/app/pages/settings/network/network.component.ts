@@ -96,10 +96,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.config = clone(this.originalConfig);
   }
 
-  onSaveChanges() {
-    const newAdapter = this.config[this.selectedTab];
+  onSaveAdapters() {
     this.networkService
-      .updateNetworkAdapter(newAdapter)
+      .updateNetworkAdapter(this.config[this.selectedTab])
+      .then(() => (this.originalConfig = clone(this.config)));
+  }
+
+  onSaveProxy() {
+    this.networkService
+      .updateNetworkProxy(this.config[this.selectedTab])
+      .then(() => (this.originalConfig = clone(this.config)));
+  }
+
+  onSaveNtp() {
+    this.networkService
+      .updateNetworkNtp(this.config[this.selectedTab])
       .then(() => (this.originalConfig = clone(this.config)));
   }
 

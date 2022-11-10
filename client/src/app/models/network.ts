@@ -2,7 +2,7 @@ export enum NetworkType {
   ETHERNET_X1 = 'x1',
   ETHERNET_X2 = 'x2',
   PROXY = 'proxy',
-  TIME = 'time'
+  NTP = 'ntp'
 }
 
 export enum ProxyType {
@@ -40,4 +40,12 @@ export interface NetworkProxy {
   username: string;
   password: string;
   whitelist: string[];
+}
+
+export interface NetworkNtp {
+  useNtp: boolean;
+  ntpHost: string;
+  currentTime: string;
+  timezone: string;
+  reachable: boolean;
 }

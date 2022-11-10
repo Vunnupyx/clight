@@ -12,15 +12,17 @@
         >{{ adapter.displayName }}</a
       >
       <a
+        *ngIf="proxy"
         mat-tab-link
         [active]="NetworkType.PROXY === selectedTabContent"
         (click)="onSelectTab(0, NetworkType.PROXY)"
         >Proxy</a
       >
       <a
+        *ngIf="ntp"
         mat-tab-link
-        [active]="NetworkType.TIME === selectedTabContent"
-        (click)="onSelectTab(0, NetworkType.TIME)"
+        [active]="NetworkType.NTP === selectedTabContent"
+        (click)="onSelectTab(0, NetworkType.NTP)"
         >Time</a
       >
     </nav>
@@ -38,7 +40,7 @@
     <ng-container *ngSwitchCase="NetworkType.PROXY">
       <h3>{{ 'settings-network.ProxySettings' | translate }}</h3>
     </ng-container>
-    <ng-container *ngSwitchCase="NetworkType.TIME">
+    <ng-container *ngSwitchCase="NetworkType.NTP">
       <h3>{{ 'settings-network.TimeSettings' | translate }}</h3>
     </ng-container>
     <mat-divider></mat-divider>
@@ -363,7 +365,7 @@
         </form>
       </ng-container>
 
-      <!--<ng-container *ngSwitchCase="NetworkType.TIME">
+      <ng-container *ngSwitchCase="NetworkType.NTP">
         <form #mainForm="ngForm">
           <div class="d-flex align-items-center justify-content-between mb-10">
             <div class="mr-30">
@@ -372,12 +374,12 @@
             <mat-slide-toggle
               class="ml-20"
               name="useNtp"
-              [(ngModel)]="config[NetworkType.TIME].useNtp"
+              [(ngModel)]="ntp.useNtp"
             ></mat-slide-toggle>
           </div>
 
           <div
-            *ngIf="config[NetworkType.TIME].useNtp"
+            *ngIf="ntp.useNtp"
             class="d-flex align-items-center justify-content-between"
           >
             <div class="mr-30">
@@ -385,7 +387,7 @@
             </div>
             <div>
               <mat-form-field
-                *ngIf="config[NetworkType.TIME].reachable === false"
+                *ngIf="ntp.reachable === false"
                 class="nptUnreachable"
               >
                 <input
@@ -393,34 +395,37 @@
                   matInput
                   name="ntpHost"
                   #ipAddr="ngModel"
-                  [(ngModel)]="config[NetworkType.TIME].ntpHost"
+                  [(ngModel)]="ntp.ntpHost"
                   [pattern]="hostRegex"
                   matTooltip="{{
                     'settings-network.nptUnreachableLong' | translate
                   }}"
                   matTooltipPosition="above"
-                  [required]="!!config[NetworkType.TIME].useNtp"
+                  [required]="!!ntp.useNtp"
                 />
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
                 <mat-hint>{{
                   'settings-network.nptUnreachable' | translate
                 }}</mat-hint>
               </mat-form-field>
-              <mat-form-field *ngIf="config[NetworkType.TIME].reachable">
+              <mat-form-field *ngIf="ntp.reachable">
                 <input
                   matInput
                   name="ntpHost"
                   #ipAddr="ngModel"
-                  [(ngModel)]="config[NetworkType.TIME].ntpHost"
+                  [(ngModel)]="ntp.ntpHost"
                   [pattern]="hostRegex"
-                  [required]="!!config[NetworkType.TIME].useNtp"
+                  [required]="!!ntp.useNtp"
                 />
-                <mat-icon class="color-success" svgIcon="mdc:success"></mat-icon>
+                <mat-icon
+                  class="color-success"
+                  svgIcon="mdc:success"
+                ></mat-icon>
               </mat-form-field>
             </div>
           </div>
 
-          <ng-container *ngIf="!config[NetworkType.TIME].useNtp">
+          <ng-container *ngIf="!ntp.useNtp">
             <div class="d-flex align-items-center justify-content-between">
               <div class="mr-30">
                 {{ 'settings-network.SetCurrentTime' | translate }}
@@ -432,7 +437,7 @@
                     name="currentTime"
                     matInput
                     [ngxMatDatetimePicker]="picker"
-                    [(ngModel)]="this.config[NetworkType.TIME].currentTime"
+                    [(ngModel)]="this.ntp.currentTime"
                     required
                   />
                   <mat-datepicker-toggle
@@ -452,7 +457,7 @@
                 <mat-form-field>
                   <mat-select
                     name="timezone"
-                    [(ngModel)]="config[NetworkType.TIME].timezone"
+                    [(ngModel)]="ntp.timezone"
                     required
                   >
                     <mat-option>
@@ -477,15 +482,16 @@
 
           <div class="d-flex justify-content-end mt-25">
             <button
-              mat-button color="primary"
+              mat-button
+              color="primary"
               [disabled]="mainForm.invalid || !mainForm.dirty"
-              (click)="saveChanges(mainForm, NetworkType.TIME)"
+              (click)="onSaveNtp()"
             >
               {{ 'settings-network.Apply' | translate }}
             </button>
           </div>
         </form>
-      </ng-container>-->
+      </ng-container>
     </div>
   </div>
 </div>

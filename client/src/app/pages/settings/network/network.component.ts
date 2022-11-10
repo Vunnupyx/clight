@@ -8,6 +8,7 @@ import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
 import {
   NetworkAdapter,
+  NetworkNtp,
   NetworkProxy,
   NetworkType,
   ProxyType
@@ -27,6 +28,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
   originalAdapters!: NetworkAdapter[];
   proxy!: NetworkProxy;
   originalProxy!: NetworkProxy;
+  ntp!: NetworkNtp;
+  originalNtp!: NetworkNtp;
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
@@ -73,6 +76,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onProxy(x))
     );
+    this.sub.add(
+      this.networkService.ntp
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onNtp(x))
+    );
 
     this.timezoneOptions = this._getTimezoneOptions();
 
@@ -80,6 +88,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.networkService.getNetworkAdapters();
     this.networkService.getNetworkProxy();
+    this.networkService.getNetworkNtp();
   }
 
   private onAdapters(x: NetworkAdapter[]) {
@@ -108,12 +117,26 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
   }
 
+  private onNtp(x: NetworkNtp) {
+    if (this.mainForm && this.mainForm.dirty) {
+      return;
+    }
+
+    this.ntp = clone(x);
+    this.originalNtp = clone(x);
+
+    if (!this.adapters && !this.proxy) {
+      this.selectedTabContent = NetworkType.NTP;
+    }
+  }
+
   onSelectTab(tab: number, content: string) {
     this.selectedTab = tab;
     this.selectedTabContent = content;
 
     this.adapters = clone(this.originalAdapters);
     this.proxy = clone(this.originalProxy);
+    this.ntp = clone(this.originalNtp);
   }
 
   onSaveAdapters() {
@@ -127,6 +150,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.networkService
       .updateNetworkProxy(this.proxy)
       .then(() => (this.originalProxy = clone(this.proxy)));
+  }
+
+  onSaveNtp() {
+    this.networkService
+      .updateNetworkNtp(this.ntp)
+      .then(() => (this.originalNtp = clone(this.ntp)));
   }
 
   ngOnDestroy() {

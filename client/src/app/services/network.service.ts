@@ -6,12 +6,14 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler } from '../shared/utils';
-import { NetworkAdapter, NetworkProxy } from '../models';
-import { HttpMockupService } from 'app/shared';
+import { NetworkAdapter, NetworkNtp, NetworkProxy } from '../models';
+import { ConfigurationAgentHttpService, HttpMockupService } from 'app/shared';
+import { toISOStringIgnoreTimezone } from '../shared/utils/datetime';
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
   proxy: NetworkProxy;
+  ntp: any;
 }
 
 // TODO: Connect to Network API
@@ -90,6 +92,15 @@ let RESPONSE_PROXY: NetworkProxy = {
   whitelist: ['']
 } as any;
 
+// TODO: Connect to Network API
+let RESPONSE_NTP: NetworkNtp = {
+  useNtp: true,
+  ntpHost: 'time.dmgmori.net',
+  currentTime: '2022-11-06T06:48:42',
+  timezone: 'Europe/Berlin',
+  reachable: false
+} as any;
+
 @Injectable()
 export class NetworkService {
   private _store: Store<NetworkState>;
@@ -97,6 +108,7 @@ export class NetworkService {
   constructor(
     storeFactory: StoreFactory<NetworkState>,
     private configurationAgentHttpService: HttpMockupService,
+    private configurationAgentHttpServices: ConfigurationAgentHttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -123,6 +135,14 @@ export class NetworkService {
     );
   }
 
+  get ntp() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.ntp),
+      distinctUntilChanged()
+    );
+  }
+
   setNetworkAdaptersTimer() {
     return interval(10 * 1000).pipe(
       mergeMap(() => from(this.getNetworkAdapters()))
@@ -131,11 +151,9 @@ export class NetworkService {
 
   async getNetworkAdapters() {
     try {
-      const response = await this.configurationAgentHttpService.get<any>(
-        `/network/adapters`,
-        undefined,
-        RESPONSE_ADAPTERS
-      );
+      const response = await this.configurationAgentHttpService.get<
+        NetworkAdapter[]
+      >(`/network/adapters`, undefined, RESPONSE_ADAPTERS);
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.adapters = response;
@@ -158,10 +176,11 @@ export class NetworkService {
 
     try {
       this.setMockDataById(verifiedObj);
-      const response = await this.configurationAgentHttpService.put<any>(
-        `/network/adapters/${obj.id}`,
-        verifiedObj
-      );
+      const response =
+        await this.configurationAgentHttpService.put<NetworkAdapter>(
+          `/network/adapters/${obj.id}`,
+          verifiedObj
+        );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.adapters = RESPONSE_ADAPTERS;
@@ -177,11 +196,12 @@ export class NetworkService {
 
   async getNetworkProxy() {
     try {
-      const response = await this.configurationAgentHttpService.get<any>(
-        `/network/proxy`,
-        undefined,
-        RESPONSE_PROXY
-      );
+      const response =
+        await this.configurationAgentHttpService.get<NetworkProxy>(
+          `/network/proxy`,
+          undefined,
+          RESPONSE_PROXY
+        );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.proxy = response;
@@ -201,10 +221,58 @@ export class NetworkService {
     });
 
     try {
-      await this.configurationAgentHttpService.put<any>(`/network/proxy`, obj);
+      await this.configurationAgentHttpService.put<NetworkProxy>(
+        `/network/proxy`,
+        obj
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.proxy = obj;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  async getNetworkNtp() {
+    try {
+      const response = await this.configurationAgentHttpService.get<NetworkNtp>(
+        `/network/ntp`,
+        undefined,
+        RESPONSE_NTP
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.ntp = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.LoadError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  async updateNetworkNtp(obj: NetworkNtp) {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+
+    const verifiedObj = this._serializeNetworkNtp(obj);
+
+    try {
+      await this.configurationAgentHttpService.put<NetworkNtp>(
+        `/network/ntp`,
+        verifiedObj
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.ntp = obj;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
@@ -245,5 +313,12 @@ export class NetworkService {
       }
     }
     return adapter;
+  }
+
+  private _serializeNetworkNtp(ntp: NetworkNtp): NetworkNtp {
+    return {
+      ...ntp,
+      ...{ currentTime: toISOStringIgnoreTimezone(new Date(ntp.currentTime)) }
+    };
   }
 }

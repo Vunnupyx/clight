@@ -95,12 +95,12 @@ export class SystemInformationService {
     return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
   }
 
-  async getServerTime(): Promise<number> {
-    const response = await this.httpService.get<{ timestamp: number }>(
-      `/systemInfo/time`
-    );
+  async getServerTime(): Promise<string> {
+    const response = await this.configurationAgentHttpService.get<{
+      Timestamp: string;
+    }>(`/system/time`);
 
-    return response.timestamp;
+    return response.Timestamp;
   }
 
   async restartDevice(): Promise<boolean> {
@@ -115,9 +115,8 @@ export class SystemInformationService {
 
   async getServerTimeOffset(force = false): Promise<number> {
     if (force || this._store.snapshot.serverOffset === undefined) {
-      const time = await this.getServerTime();
-
-      const offset = Math.round(Date.now() / 1000) - time;
+      const time = new Date(await this.getServerTime());
+      const offset = Math.round(Date.now() - time.getTime()) / 1000;
 
       this._store.patchState((state) => {
         state.serverOffset = offset;

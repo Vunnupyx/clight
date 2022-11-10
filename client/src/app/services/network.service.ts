@@ -7,7 +7,7 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { errorHandler } from '../shared/utils';
 import { NetworkAdapter, NetworkNtp, NetworkProxy } from '../models';
-import { ConfigurationAgentHttpService, HttpMockupService } from 'app/shared';
+import { ConfigurationAgentHttpMockupService } from 'app/shared';
 import { toISOStringIgnoreTimezone } from '../shared/utils/datetime';
 export interface NetworkState {
   status: Status;
@@ -107,8 +107,7 @@ export class NetworkService {
 
   constructor(
     storeFactory: StoreFactory<NetworkState>,
-    private configurationAgentHttpService: HttpMockupService,
-    private configurationAgentHttpServices: ConfigurationAgentHttpService,
+    private configurationAgentHttpMockupService: ConfigurationAgentHttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -151,7 +150,7 @@ export class NetworkService {
 
   async getNetworkAdapters() {
     try {
-      const response = await this.configurationAgentHttpService.get<
+      const response = await this.configurationAgentHttpMockupService.get<
         NetworkAdapter[]
       >(`/network/adapters`, undefined, RESPONSE_ADAPTERS);
       this._store.patchState((state) => {
@@ -177,7 +176,7 @@ export class NetworkService {
     try {
       this.setMockDataById(verifiedObj);
       const response =
-        await this.configurationAgentHttpService.put<NetworkAdapter>(
+        await this.configurationAgentHttpMockupService.put<NetworkAdapter>(
           `/network/adapters/${obj.id}`,
           verifiedObj
         );
@@ -197,7 +196,7 @@ export class NetworkService {
   async getNetworkProxy() {
     try {
       const response =
-        await this.configurationAgentHttpService.get<NetworkProxy>(
+        await this.configurationAgentHttpMockupService.get<NetworkProxy>(
           `/network/proxy`,
           undefined,
           RESPONSE_PROXY
@@ -221,7 +220,7 @@ export class NetworkService {
     });
 
     try {
-      await this.configurationAgentHttpService.put<NetworkProxy>(
+      await this.configurationAgentHttpMockupService.put<NetworkProxy>(
         `/network/proxy`,
         obj
       );
@@ -240,11 +239,12 @@ export class NetworkService {
 
   async getNetworkNtp() {
     try {
-      const response = await this.configurationAgentHttpService.get<NetworkNtp>(
-        `/network/ntp`,
-        undefined,
-        RESPONSE_NTP
-      );
+      const response =
+        await this.configurationAgentHttpMockupService.get<NetworkNtp>(
+          `/network/ntp`,
+          undefined,
+          RESPONSE_NTP
+        );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.ntp = response;
@@ -266,7 +266,7 @@ export class NetworkService {
     const verifiedObj = this._serializeNetworkNtp(obj);
 
     try {
-      await this.configurationAgentHttpService.put<NetworkNtp>(
+      await this.configurationAgentHttpMockupService.put<NetworkNtp>(
         `/network/ntp`,
         verifiedObj
       );

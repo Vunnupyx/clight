@@ -234,7 +234,7 @@ export class OPCUAAdapter {
       winston.debug(errorMsg);
       return Promise.resolve();
     }
-    this.server
+    return this.server
       .start()
       .then(() => this.system.getHostname())
       .then((hostname) => {

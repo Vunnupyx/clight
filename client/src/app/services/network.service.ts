@@ -367,11 +367,11 @@ export class NetworkService {
   private _serializeNetworkTimestamp(timestamp: string): NetworkTime {
     return {
       time: moment(timestamp).parseZone().format('YYYY-MM-DDTHH:mm:ss'),
-      timezone: 'Africa/Abidjan'
+      timezone: 'Universal'
     };
   }
 
   private _deserializeNetworkTimestamp(timestamp: NetworkTime): string {
-    return moment(timestamp.time).tz(timestamp.timezone).toISOString();
+    return moment.tz(timestamp.time, timestamp.timezone).toISOString(true);
   }
 }

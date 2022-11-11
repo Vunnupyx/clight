@@ -14,7 +14,7 @@ export interface NetworkConfig {
   x1: NetworkAdapter;
   x2: NetworkAdapter;
   proxy: NetworkProxy;
-  ntp: NetworkNtp;
+  ntp: NetworkNtp[];
 }
 
 export interface NetworkAdapter {

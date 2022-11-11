@@ -384,12 +384,12 @@
             <mat-slide-toggle
               class="ml-20"
               name="useNtp"
-              [(ngModel)]="config[NetworkType.NTP].useNtp"
+              [(ngModel)]="config[NetworkType.NTP][0].useNtp"
             ></mat-slide-toggle>
           </div>
 
           <div
-            *ngIf="config[NetworkType.NTP].useNtp"
+            *ngIf="config[NetworkType.NTP][0].useNtp"
             class="d-flex align-items-center justify-content-between"
           >
             <div class="mr-30">
@@ -397,7 +397,7 @@
             </div>
             <div>
               <mat-form-field
-                *ngIf="config[NetworkType.NTP].reachable === false"
+                *ngIf="config[NetworkType.NTP][0].reachable === false"
                 class="nptUnreachable"
               >
                 <input
@@ -405,27 +405,27 @@
                   matInput
                   name="ntpHost"
                   #ipAddr="ngModel"
-                  [(ngModel)]="config[NetworkType.NTP].ntpHost"
+                  [(ngModel)]="config[NetworkType.NTP][0].ntpHost"
                   [pattern]="hostRegex"
                   matTooltip="{{
                     'settings-network.nptUnreachableLong' | translate
                   }}"
                   matTooltipPosition="above"
-                  [required]="!!config[NetworkType.NTP].useNtp"
+                  [required]="!!config[NetworkType.NTP][0].useNtp"
                 />
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
                 <mat-hint>{{
                   'settings-network.nptUnreachable' | translate
                 }}</mat-hint>
               </mat-form-field>
-              <mat-form-field *ngIf="config[NetworkType.NTP].reachable">
+              <mat-form-field *ngIf="config[NetworkType.NTP][0].reachable">
                 <input
                   matInput
                   name="ntpHost"
                   #ipAddr="ngModel"
-                  [(ngModel)]="config[NetworkType.NTP].ntpHost"
+                  [(ngModel)]="config[NetworkType.NTP][0].ntpHost"
                   [pattern]="hostRegex"
-                  [required]="!!config[NetworkType.NTP].useNtp"
+                  [required]="!!config[NetworkType.NTP][0].useNtp"
                 />
                 <mat-icon
                   class="color-success"
@@ -435,7 +435,7 @@
             </div>
           </div>
 
-          <ng-container *ngIf="!config[NetworkType.NTP].useNtp">
+          <ng-container *ngIf="!config[NetworkType.NTP][0].useNtp">
             <div class="d-flex align-items-center justify-content-between">
               <div class="mr-30">
                 {{ 'settings-network.SetCurrentTime' | translate }}
@@ -447,7 +447,7 @@
                     name="currentTime"
                     matInput
                     [ngxMatDatetimePicker]="picker"
-                    [(ngModel)]="this.config[NetworkType.NTP].currentTime"
+                    [(ngModel)]="this.config[NetworkType.NTP][0].currentTime"
                     required
                   />
                   <mat-datepicker-toggle
@@ -467,7 +467,7 @@
                 <mat-form-field>
                   <mat-select
                     name="timezone"
-                    [(ngModel)]="config[NetworkType.NTP].timezone"
+                    [(ngModel)]="config[NetworkType.NTP][0].timezone"
                     required
                   >
                     <mat-option>

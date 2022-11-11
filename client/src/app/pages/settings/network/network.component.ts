@@ -6,7 +6,12 @@ import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
-import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
+import {
+  NetworkConfig,
+  NetworkTime,
+  NetworkType,
+  ProxyType
+} from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
@@ -20,6 +25,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   config!: NetworkConfig;
   originalConfig!: NetworkConfig;
+  timestamp!: NetworkTime;
+  originalTimestamp!: NetworkTime;
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
@@ -60,6 +67,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onConfig(x))
     );
+    this.sub.add(
+      this.networkService.timestamp
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onTimestamp(x))
+    );
 
     this.timezoneOptions = this._getTimezoneOptions();
 
@@ -68,6 +80,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.networkService.getNetworkAdapters();
     this.networkService.getNetworkProxy();
     this.networkService.getNetworkNtp();
+    this.networkService.getNetworkTimestamp();
   }
 
   get tabs() {
@@ -85,6 +98,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.config = clone(x);
     this.originalConfig = clone(x);
+
+    if (!this.selectedTab) {
+      this.selectedTab = this.tabs[0];
+    }
+  }
+
+  private onTimestamp(x: NetworkTime) {
+    if (this.mainForm && this.mainForm.dirty) {
+      return;
+    }
+
+    this.timestamp = clone(x);
+    this.originalTimestamp = clone(x);
 
     if (!this.selectedTab) {
       this.selectedTab = this.tabs[0];
@@ -111,6 +137,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   onSaveNtp() {
     this.networkService
       .updateNetworkNtp(this.config[this.selectedTab])
+      .then(() => this.networkService.updateNetworkTimestamp(this.timestamp))
       .then(() => (this.originalConfig = clone(this.config)));
   }
 

@@ -14,7 +14,7 @@ export interface NetworkConfig {
   x1: NetworkAdapter;
   x2: NetworkAdapter;
   proxy: NetworkProxy;
-  ntp: NetworkNtp[];
+  ntp: string[];
 }
 
 export interface NetworkAdapter {
@@ -55,4 +55,9 @@ export interface NetworkNtp {
   currentTime: string;
   timezone: string;
   reachable: boolean;
+}
+
+export interface NetworkTime {
+  time: string;
+  timezone: string;
 }

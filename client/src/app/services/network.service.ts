@@ -311,7 +311,7 @@ export class NetworkService {
       state.status = Status.Loading;
     });
 
-    const verifiedObj = this._deserializeNetworkTimestamp(obj);
+    const verifiedObj = { Timestamp: this._deserializeNetworkTimestamp(obj) };
 
     try {
       await this.configurationAgentHttpMockupService.put<{

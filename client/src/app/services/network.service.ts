@@ -18,7 +18,7 @@ export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
   proxy: NetworkProxy;
-  ntp: NetworkNtp;
+  ntp: NetworkNtp[];
 }
 
 // TODO: Connect to Network API
@@ -98,13 +98,15 @@ let RESPONSE_PROXY: NetworkProxy = {
 } as any;
 
 // TODO: Connect to Network API
-let RESPONSE_NTP: NetworkNtp = {
-  useNtp: true,
-  ntpHost: 'time.dmgmori.net',
-  currentTime: '2022-11-06T06:48:42',
-  timezone: 'Europe/Berlin',
-  reachable: false
-} as any;
+let RESPONSE_NTP: NetworkNtp[] = [
+  {
+    useNtp: true,
+    ntpHost: 'time.dmgmori.net',
+    currentTime: '2022-11-06T06:48:42',
+    timezone: 'Europe/Berlin',
+    reachable: false
+  }
+] as any;
 
 @Injectable()
 export class NetworkService {
@@ -243,15 +245,12 @@ export class NetworkService {
 
   async getNetworkNtp() {
     try {
-      const response =
-        await this.configurationAgentHttpMockupService.get<NetworkNtp>(
-          `/network/ntp`,
-          undefined,
-          RESPONSE_NTP
-        );
+      const response = await this.configurationAgentHttpMockupService.get<
+        NetworkNtp[]
+      >(`/network/ntp`, undefined, RESPONSE_NTP);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.ntp = response;
+        if (response[0]) state.ntp = response;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
@@ -262,7 +261,7 @@ export class NetworkService {
     }
   }
 
-  async updateNetworkNtp(obj: NetworkNtp) {
+  async updateNetworkNtp(obj: NetworkNtp[]) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
@@ -270,7 +269,7 @@ export class NetworkService {
     const verifiedObj = this._serializeNetworkNtp(obj);
 
     try {
-      await this.configurationAgentHttpMockupService.put<NetworkNtp>(
+      await this.configurationAgentHttpMockupService.put<NetworkNtp[]>(
         `/network/ntp`,
         verifiedObj
       );
@@ -297,7 +296,16 @@ export class NetworkService {
 
   private _emptyState() {
     return <NetworkState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      ntp: [
+        {
+          useNtp: false,
+          ntpHost: '',
+          currentTime: '',
+          timezone: '',
+          reachable: false
+        }
+      ]
     };
   }
 
@@ -319,10 +327,16 @@ export class NetworkService {
     return adapter;
   }
 
-  private _serializeNetworkNtp(ntp: NetworkNtp): NetworkNtp {
-    return {
-      ...ntp,
-      ...{ currentTime: toISOStringIgnoreTimezone(new Date(ntp.currentTime)) }
-    };
+  private _serializeNetworkNtp(ntps: NetworkNtp[]): NetworkNtp[] {
+    return ntps.map((ntp) => {
+      if (!Number.isNaN(new Date(ntp.currentTime).getTime()))
+        return {
+          ...ntp,
+          ...{
+            currentTime: toISOStringIgnoreTimezone(new Date(ntp?.currentTime))
+          }
+        };
+      return ntp;
+    });
   }
 }

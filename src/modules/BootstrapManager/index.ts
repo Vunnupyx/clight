@@ -1,4 +1,5 @@
 import winston from 'winston';
+import fetch from 'node-fetch';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { EventBus, MeasurementEventBus } from '../EventBus';
 import {
@@ -13,12 +14,8 @@ import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
 import { RestApiManager } from '../Backend/RESTAPIManager';
-import NetworkManagerCliController from '../NetworkManager';
-import { NetworkInterfaceInfo } from '../NetworkManager/interfaces';
-import { TimeManager } from '../NetworkManager/TimeManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { System } from '../System';
-import HostnameController from '../HostnameController';
 import { LedStatusService } from '../LedStatusService';
 import { LicenseChecker } from '../LicenseChecker';
 
@@ -106,45 +103,16 @@ export class BootstrapManager {
       await this.ledManager.init();
       this.setupKillEvents();
 
-      this.configManager.on('configsLoaded', async () => {
-        const log = `${BootstrapManager.name} send network configuration to host.`;
-        winston.info(log);
-        const { x1, x2, time } = this.configManager.config.networkConfig;
-        const nx1: NetworkInterfaceInfo =
-          NetworkManagerCliController.generateNetworkInterfaceInfo(x1, 'eth0');
-        const nx2: NetworkInterfaceInfo =
-          NetworkManagerCliController.generateNetworkInterfaceInfo(x2, 'eth1');
-
-        Promise.all([
-          Object.keys(x1).length !== 0
-            ? NetworkManagerCliController.setConfiguration('eth0', nx1)
-            : Promise.resolve(),
-          Object.keys(x2).length !== 0
-            ? NetworkManagerCliController.setConfiguration('eth1', nx2)
-            : Promise.resolve(),
-          time && time.useNtp
-            ? TimeManager.setNTPServer(time.ntpHost)
-            : Promise.resolve()
-        ])
-          .then(() => winston.info(log + ' Successfully.'))
-          .catch((err) => {
-            winston.error(`${log} Failed due to ${JSON.stringify(err)}`);
-          })
-          .then(() => {
-            return HostnameController.setDefaultHostname();
-          })
-          .catch((e) => winston.error(`Failed to set hostname: ${e?.msg}`));
-      });
-
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {
           await this.configManager.factoryResetConfiguration();
           await this.ledManager.turnOffLeds();
-          const system = new System();
-          await system.restartDevice();
+          await fetch('host.docker.internal/system/restart', {
+            method: 'POST'
+          });
         } catch (e) {
-          winston.error(`Device factory reset error: ${e}`);
+          winston.error(`Device factory reset error: ${e?.message}`);
         }
       });
       // Activate watcher

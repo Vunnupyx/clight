@@ -1,7 +1,6 @@
 import { promises as fs, readFileSync, existsSync } from 'fs';
 import { promisify } from 'util';
 import winston from 'winston';
-import SshService from '../SshService';
 const child_process = require('child_process');
 const exec = promisify(child_process.exec);
 
@@ -57,23 +56,15 @@ export class System {
    * @async
    * @returns {Promise<string>}
    */
-  public async getHostname() {
-    const macAddress = (await this.readMacAddress('eth0')) || '000000000000';
-    const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
-    return `DM${formattedMacAddress}`;
-  }
-
-  /**
-   * Restarts device
-   */
-  public async restartDevice() {
-    const logPrefix = `${System.className}::restartDevice`;
+  public async getHostname(): Promise<string> {
     try {
-      winston.info(`${logPrefix} restarting device`);
-      await SshService.sendCommand('reboot', true);
-    } catch (err) {}
-
-    process.exit(0);
+      const hostnameReadFromFile = await fs.readFile(`/etc/hostname`, {
+        encoding: 'utf-8'
+      });
+      return hostnameReadFromFile.trim();
+    } catch (err) {
+      return 'DM000000000000'; //TODO: how is the default value?
+    }
   }
 
   /**

@@ -1,5 +1,0 @@
-To create Dockerfile from yaml:
-mockoon-cli dockerize --data ./configuration-agent-swagger.yaml --port 3000 --output ./tmp/Dockerfile
-
-To build and run the container:
-docker build -t mockoon-configuration-agent-api . && docker run -d -p 1884:1884 mockoon-configuration-agent-api

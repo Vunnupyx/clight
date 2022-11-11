@@ -2,6 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "mdclight Local Dev",
+      "type": "node",
+      "port": 9229,
+      "request": "attach"
+    },
+    {
       "name": "Launch RT",
       "type": "node",
       "request": "launch",
@@ -14,10 +20,7 @@
       "env": {
         "LOG_LEVEL": "debug"
       },
-      "skipFiles": [
-        "<node_internals>/**",
-        "node_modules/**/*.js"
-      ]
+      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js"]
     }
   ]
 }

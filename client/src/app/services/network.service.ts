@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -9,16 +10,16 @@ import { errorHandler } from '../shared/utils';
 import {
   NetworkAdapter,
   NetworkConfig,
-  NetworkNtp,
-  NetworkProxy
+  NetworkProxy,
+  NetworkTime
 } from '../models';
 import { ConfigurationAgentHttpMockupService } from 'app/shared';
-import { toISOStringIgnoreTimezone } from '../shared/utils/datetime';
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
   proxy: NetworkProxy;
-  ntp: NetworkNtp[];
+  ntp: string[];
+  timestamp: NetworkTime;
 }
 
 // TODO: Connect to Network API
@@ -98,15 +99,7 @@ let RESPONSE_PROXY: NetworkProxy = {
 } as any;
 
 // TODO: Connect to Network API
-let RESPONSE_NTP: NetworkNtp[] = [
-  {
-    useNtp: true,
-    ntpHost: 'time.dmgmori.net',
-    currentTime: '2022-11-06T06:48:42',
-    timezone: 'Europe/Berlin',
-    reachable: false
-  }
-] as any;
+let RESPONSE_NTP: string[] = ['time.dmgmori.net'] as any;
 
 @Injectable()
 export class NetworkService {
@@ -144,6 +137,14 @@ export class NetworkService {
           ntp: x.ntp
         })
       ),
+      distinctUntilChanged()
+    );
+  }
+
+  get timestamp() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.timestamp),
       distinctUntilChanged()
     );
   }
@@ -246,11 +247,11 @@ export class NetworkService {
   async getNetworkNtp() {
     try {
       const response = await this.configurationAgentHttpMockupService.get<
-        NetworkNtp[]
+        string[]
       >(`/network/ntp`, undefined, RESPONSE_NTP);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        if (response[0]) state.ntp = response;
+        state.ntp = response;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
@@ -261,21 +262,64 @@ export class NetworkService {
     }
   }
 
-  async updateNetworkNtp(obj: NetworkNtp[]) {
+  async updateNetworkNtp(obj: string[]) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
-    const verifiedObj = this._serializeNetworkNtp(obj);
-
     try {
-      await this.configurationAgentHttpMockupService.put<NetworkNtp[]>(
+      await this.configurationAgentHttpMockupService.put<string[]>(
         `/network/ntp`,
-        verifiedObj
+        obj
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.ntp = obj;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  async getNetworkTimestamp() {
+    try {
+      const response = await this.configurationAgentHttpMockupService.get<{
+        Timestamp: string;
+      }>(`/system/time`);
+
+      const verifiedObj = this._serializeNetworkTimestamp(response.Timestamp);
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.timestamp = verifiedObj;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.LoadError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  async updateNetworkTimestamp(obj: NetworkTime) {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+
+    const verifiedObj = this._deserializeNetworkTimestamp(obj);
+
+    try {
+      await this.configurationAgentHttpMockupService.put<{
+        Timestamp: string;
+      }>(`/system/time`, verifiedObj);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.timestamp = obj;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
@@ -297,15 +341,8 @@ export class NetworkService {
   private _emptyState() {
     return <NetworkState>{
       status: Status.NotInitialized,
-      ntp: [
-        {
-          useNtp: false,
-          ntpHost: '',
-          currentTime: '',
-          timezone: '',
-          reachable: false
-        }
-      ]
+      ntp: [''],
+      timestamp: { time: '', timezone: '' }
     };
   }
 
@@ -327,16 +364,14 @@ export class NetworkService {
     return adapter;
   }
 
-  private _serializeNetworkNtp(ntps: NetworkNtp[]): NetworkNtp[] {
-    return ntps.map((ntp) => {
-      if (!Number.isNaN(new Date(ntp.currentTime).getTime()))
-        return {
-          ...ntp,
-          ...{
-            currentTime: toISOStringIgnoreTimezone(new Date(ntp?.currentTime))
-          }
-        };
-      return ntp;
-    });
+  private _serializeNetworkTimestamp(timestamp: string): NetworkTime {
+    return {
+      time: moment(timestamp).parseZone().format('YYYY-MM-DDTHH:mm:ss'),
+      timezone: 'Universal'
+    };
+  }
+
+  private _deserializeNetworkTimestamp(timestamp: NetworkTime): string {
+    return moment.tz(timestamp.time, timestamp.timezone).toISOString(true);
   }
 }

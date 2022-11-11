@@ -5,12 +5,16 @@ import { MessengerManager } from '..';
 import { ConfigManager } from '../../../ConfigManager';
 import { EventBus } from '../../../EventBus';
 
+function log(m) {
+  //console.log(m);
+}
+
 jest.mock('winston', () => {
   return {
-    debug: (m) => console.log(m),
-    info: (m) => console.log(m),
-    error: (m) => console.log(m),
-    warn: (m) => console.log(m)
+    debug: log,
+    info: log,
+    error: log,
+    warn: log
   };
 });
 

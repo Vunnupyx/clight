@@ -12,7 +12,9 @@ const mockSocket = {
 const mockServer = {
   listen: jest.fn(),
   on: jest.fn(),
-  stop: jest.fn()
+  stop: jest.fn(),
+  shutdown: jest.fn(),
+  close: jest.fn().mockImplementation((cb) => cb?.())
 };
 
 const mockNet = {
@@ -21,7 +23,20 @@ const mockNet = {
   }
 };
 
-jest.mock('winston');
+function log(m) {
+  console.log(m);
+}
+
+const winstonMock = {
+  winston: jest.fn(), // Constructor
+  info: jest.fn(log),
+  debug: jest.fn(log),
+  warn: jest.fn(log)
+};
+jest.doMock('winston', () => {
+  return winstonMock;
+});
+
 jest.mock('net', () => {
   return mockNet;
 });
@@ -31,6 +46,31 @@ import { MTConnectAdapter } from '..';
 describe('Test MTCAdapter', () => {
   afterEach(() => {
     jest.clearAllMocks();
+  });
+  test('Server starts correctly', async () => {
+    const adapter = new MTConnectAdapter({ listenerPort: 0 });
+    adapter.addDataItem(new DataItem('test'));
+    adapter.start();
+
+    expect(adapter.isRunning).toBeTruthy();
+
+    const listenForClients = mockServer.on.mock.calls[0][1];
+
+    await listenForClients(mockSocket);
+  });
+
+  test('Server stops and shuts down correctly', async () => {
+    const adapter = new MTConnectAdapter({ listenerPort: 0 });
+    adapter.addDataItem(new DataItem('test'));
+    adapter.start();
+
+    expect(adapter.isRunning).toBeTruthy();
+    await adapter.stop();
+    expect(adapter.isRunning).toBeFalsy();
+    await adapter.shutdown();
+    expect(winstonMock.info).toBeCalledWith(
+      expect.stringContaining('shutdown successful')
+    );
   });
 
   test('Server should send data items to new clients', async () => {
@@ -66,7 +106,6 @@ describe('Test MTCAdapter', () => {
     console.log(listenForClients);
     // Mock socket connect
     await listenForClients(mockSocket);
-    console.log('send changes');
     await adapter.sendChanged();
 
     let data = mockSocket.write.mock.calls[1][0];
@@ -82,7 +121,6 @@ describe('Test MTCAdapter', () => {
     expect(dataParts[2]).toBe('UNAVAILABLE\n');
     item.value = 1;
 
-    console.log('send changes');
     await adapter.sendChanged();
 
     data = mockSocket.write.mock.calls[2][0];

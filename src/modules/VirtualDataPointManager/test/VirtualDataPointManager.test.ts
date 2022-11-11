@@ -3,14 +3,15 @@ import { ConfigManager } from '../../ConfigManager';
 import { DataPointCache } from '../../DatapointCache';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../EventBus';
+import { IErrorEvent, ILifecycleEvent } from '../../../common/interfaces';
 
 jest.mock('winston');
 jest.mock('fs');
 
 describe('Test VirtualDataPointManager', () => {
   const config = new ConfigManager({
-    errorEventsBus: new EventBus<null>(),
-    lifecycleEventsBus: new EventBus<null>()
+    errorEventsBus: new EventBus<IErrorEvent>(),
+    lifecycleEventsBus: new EventBus<ILifecycleEvent>()
   });
 
   config.config.virtualDataPoints = [
@@ -50,6 +51,11 @@ describe('Test VirtualDataPointManager', () => {
   const virtualDpManager = new VirtualDataPointManager({
     configManager: config,
     cache
+  });
+
+  afterAll(() => {
+    //@ts-ignore
+    virtualDpManager.scheduler.shutdown();
   });
 
   config.emit('configsLoaded');
@@ -394,7 +400,7 @@ describe('Test VirtualDataPointManager', () => {
     // false => no event
     cache.update(events1);
     const virtualEvents1 = virtualDpManager.getVirtualEvents(events1);
-    expect(virtualEvents1.length).toBe(0);
+    expect(virtualEvents1[0].measurement.value).toBe(0);
 
     // true => count 1
     const events2: IDataSourceMeasurementEvent[] = [
@@ -412,7 +418,6 @@ describe('Test VirtualDataPointManager', () => {
     ];
     cache.update(events2);
     const virtualEvents2 = virtualDpManager.getVirtualEvents(events2);
-    expect(virtualEvents2.length).toBe(1);
     expect(virtualEvents2[0].measurement.value).toBe(1);
 
     // false => no event
@@ -431,7 +436,7 @@ describe('Test VirtualDataPointManager', () => {
     ];
     cache.update(events3);
     const virtualEvents3 = virtualDpManager.getVirtualEvents(events3);
-    expect(virtualEvents3.length).toBe(0);
+    expect(virtualEvents3[0].measurement.value).toBe(1);
 
     // true => count 2
     const events4: IDataSourceMeasurementEvent[] = [
@@ -449,7 +454,6 @@ describe('Test VirtualDataPointManager', () => {
     ];
     cache.update(events4);
     const virtualEvents4 = virtualDpManager.getVirtualEvents(events4);
-    expect(virtualEvents4.length).toBe(1);
     expect(virtualEvents4[0].measurement.value).toBe(2);
   });
 

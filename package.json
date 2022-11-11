@@ -40,13 +40,11 @@
     "xmlbuilder2": "^3.0.2"
   },
   "scripts": {
-    "dev": "export NODE_ENV=development && npm run loglevel:debug && ts-node-dev --respawn --inspect=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
+    "dev:debugger": "export NODE_ENV=development && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export RUNTIME_FOLDER=mdclight && export SYS_PREFIX=mdclight && npm run setup:local:dev && ts-node-dev --respawn --inspect=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
+    "dev": "export NODE_ENV=development && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export RUNTIME_FOLDER=mdclight && export SYS_PREFIX=mdclight && npm run setup:local:dev && ts-node-dev --respawn --max-old-space-size=1024 src/index.ts",
     "dev:configurationagent": "docker run --mount type=bind,source=$PWD/configuration-agent/swagger.yaml,target=/data,readonly -p 1884:1884 mockoon/cli:latest -d data -p 1884",
-    "dev:docker": "npm run setup:local:dev && docker build -f docker/mdclight-base.Dockerfile -t mdclight-base:latest ./docker/ && MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) docker-compose -f docker/docker-compose_local.yaml up --build",
-    "dev:docker:all": "npm run setup:local:dev && docker build -f docker/mdclight-base.Dockerfile -t mdclight-base:latest ./docker/ && $(MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) docker-compose -f docker/docker-compose_local.yaml up --build & cd client && npm run dev)",
     "dev:webserver": "cd client && yarn dev",
-    "yesOrNo": "./scripts/yesOrNo.sh",
-    "setup:local:dev": "./scripts/createLocalTestingEnv.sh",
+    "setup:local:dev": "./scripts/localMocks/createLocalTestingEnv.sh",
     "build": "tsc -p tsconfig.json",
     "build:dist": "ncc build build/main/index.js -o runtime --minify",
     "build:webserver": "cd client && yarn && yarn build && cd .. && cd user-docs && yarn && yarn build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",

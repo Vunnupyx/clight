@@ -106,6 +106,13 @@ describe('Test VirtualDataPointManager', () => {
         expectedResult: 1
       },
       {
+        text: 'Giving only zero works correctly',
+        firstValue: 0,
+        secondValue: 0,
+        formula: '0',
+        expectedResult: 0
+      },
+      {
         text: 'boolean values in formula',
         firstValue: false,
         secondValue: true,

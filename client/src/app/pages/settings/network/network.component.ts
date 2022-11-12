@@ -8,7 +8,7 @@ import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
 import {
   NetworkConfig,
-  NetworkTime,
+  NetworkDateTime,
   NetworkType,
   ProxyType
 } from '../../../models';
@@ -25,8 +25,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   config!: NetworkConfig;
   originalConfig!: NetworkConfig;
-  timestamp!: NetworkTime;
-  originalTimestamp!: NetworkTime;
+  timestamp!: NetworkDateTime;
+  originalTimestamp!: NetworkDateTime;
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
@@ -104,7 +104,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onTimestamp(x: NetworkTime) {
+  private onTimestamp(x: NetworkDateTime) {
     if (this.mainForm && this.mainForm.dirty) {
       return;
     }
@@ -120,6 +120,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   onSelectTab(tab: string) {
     this.selectedTab = tab;
     this.config = clone(this.originalConfig);
+    this.timestamp = clone(this.originalTimestamp);
   }
 
   onSaveAdapters() {
@@ -138,7 +139,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.networkService
       .updateNetworkNtp(this.config[this.selectedTab])
       .then(() => this.networkService.updateNetworkTimestamp(this.timestamp))
-      .then(() => (this.originalConfig = clone(this.config)));
+      .then(() => {
+        this.originalConfig = clone(this.config);
+        this.originalTimestamp = clone(this.timestamp);
+      });
   }
 
   ngOnDestroy() {

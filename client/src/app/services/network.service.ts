@@ -11,7 +11,8 @@ import {
   NetworkAdapter,
   NetworkConfig,
   NetworkProxy,
-  NetworkTime
+  NetworkDateTime,
+  NetworkTimestamp
 } from '../models';
 import { ConfigurationAgentHttpMockupService } from 'app/shared';
 export interface NetworkState {
@@ -19,7 +20,7 @@ export interface NetworkState {
   adapters: NetworkAdapter[];
   proxy: NetworkProxy;
   ntp: string[];
-  timestamp: NetworkTime;
+  timestamp: NetworkDateTime;
 }
 
 // TODO: Connect to Network API
@@ -287,11 +288,12 @@ export class NetworkService {
 
   async getNetworkTimestamp() {
     try {
-      const response = await this.configurationAgentHttpMockupService.get<{
-        Timestamp: string;
-      }>(`/system/time`);
+      const response =
+        await this.configurationAgentHttpMockupService.get<NetworkTimestamp>(
+          `/system/time`
+        );
 
-      const verifiedObj = this._serializeNetworkTimestamp(response.Timestamp);
+      const verifiedObj = this._serializeNetworkTimestamp(response);
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -306,17 +308,18 @@ export class NetworkService {
     }
   }
 
-  async updateNetworkTimestamp(obj: NetworkTime) {
+  async updateNetworkTimestamp(obj: NetworkDateTime) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
     });
 
-    const verifiedObj = { Timestamp: this._deserializeNetworkTimestamp(obj) };
+    const verifiedObj = this._deserializeNetworkTimestamp(obj);
 
     try {
-      await this.configurationAgentHttpMockupService.put<{
-        Timestamp: string;
-      }>(`/system/time`, verifiedObj);
+      await this.configurationAgentHttpMockupService.put<NetworkTimestamp>(
+        `/system/time`,
+        verifiedObj
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.timestamp = obj;
@@ -342,7 +345,7 @@ export class NetworkService {
     return <NetworkState>{
       status: Status.NotInitialized,
       ntp: [''],
-      timestamp: { time: '', timezone: '' }
+      timestamp: { datetime: '', timezone: '' }
     };
   }
 
@@ -364,14 +367,24 @@ export class NetworkService {
     return adapter;
   }
 
-  private _serializeNetworkTimestamp(timestamp: string): NetworkTime {
+  private _serializeNetworkTimestamp(
+    timestamp: NetworkTimestamp
+  ): NetworkDateTime {
     return {
-      time: moment(timestamp).parseZone().format('YYYY-MM-DDTHH:mm:ss'),
+      datetime: moment(timestamp.Timestamp)
+        .parseZone()
+        .format('YYYY-MM-DDTHH:mm:ss'),
       timezone: 'Universal'
     };
   }
 
-  private _deserializeNetworkTimestamp(timestamp: NetworkTime): string {
-    return moment.tz(timestamp.time, timestamp.timezone).toISOString(true);
+  private _deserializeNetworkTimestamp(
+    timestamp: NetworkDateTime
+  ): NetworkTimestamp {
+    return {
+      Timestamp: moment
+        .tz(timestamp.datetime, timestamp.timezone)
+        .toISOString(true)
+    };
   }
 }

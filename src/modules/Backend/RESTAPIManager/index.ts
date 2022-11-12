@@ -82,14 +82,23 @@ export class RestApiManager {
     this.start();
   }
 
-  private getProxySettings(authManager) {
+  private getProxySettings(authManager: AuthManager) {
+    const logPrefix = `${RestApiManager.className}::getProxySettings`;
+
     const PATH_PREFIX = '/api/v1';
     return proxy('http://host.docker.internal:1884', {
       filter: (req: Request, res: Response) => {
-        return authManager.verifyJWTAuth({
+        const isAuthenticated = authManager.verifyJWTAuth({
           withPasswordChangeDetection: true,
           withBooleanResponse: true
         })(req, res);
+
+        if (!isAuthenticated) {
+          winston.warn(
+            `${logPrefix} Unauthorized attempt to access Configuration Agent proxy, requested URL: ${req.url}`
+          );
+        }
+        return isAuthenticated;
       },
       proxyReqOptDecorator: (proxyReqOpts) => {
         // Update headers
@@ -99,6 +108,12 @@ export class RestApiManager {
       },
       proxyReqPathResolver: (req) => {
         return `${PATH_PREFIX}${req.url}`;
+      },
+      proxyErrorHandler: function (err, res, next) {
+        winston.error(
+          `${logPrefix} Error at Configuration Agent proxy:${err?.code}`
+        );
+        next(err);
       }
     });
   }

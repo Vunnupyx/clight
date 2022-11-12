@@ -56,6 +56,14 @@ services:
         read_only: true
         source: /var/lib/docker/containers
         target: /host/log/docker
+      - type: bind
+        read_only: true
+        source: /etc/timezone
+        target: /etc/timezone
+      - type: bind
+        read_only: true
+        source: /etc/hostname
+        target: /etc/hostname
     environment:
       - PORT=80
       - LOG_LEVEL=debug

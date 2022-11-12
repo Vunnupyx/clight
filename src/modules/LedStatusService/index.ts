@@ -4,7 +4,6 @@ import { writeFile } from 'fs/promises';
 import winston from 'winston';
 import { LifecycleEventStatus } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
-import { DataSource } from '../Southbound/DataSources/DataSource';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { DataSourceEventTypes } from '../Southbound/DataSources/interfaces';
 
@@ -25,7 +24,7 @@ export class LedStatusService {
   #configured = false;
   #southboundConnected = false;
   #configCheckRunning = false;
-  #sysfsPrefix = '';
+  #sysfsPrefix = process.env.SYS_PREFIX || '';
   private locked = false;
 
   constructor(
@@ -406,31 +405,5 @@ export class LedStatusService {
   public async turnOffLeds() {
     await this.clearLed(1);
     await this.clearLed(2);
-  }
-
-  /**
-   * Sets directory prefix to mocked sys folder for dev environments.
-   * Setup mock with "yarn setup_mock_sysfs"
-   * @returns
-   * @deprecated
-   */
-  private async setSysfsPrefix() {
-    this.#sysfsPrefix = '';
-    return;
-    if (process.env.MOCK_LEDS) {
-      this.#sysfsPrefix = process.env.MOCK_LEDS;
-      return;
-    }
-    try {
-      const board = await fs.readFile('/sys/firmware/devicetree/base/model');
-      if (board.indexOf('SIMATIC IOT2050') >= 0) {
-        this.#sysfsPrefix = '';
-        return;
-      }
-    } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
-    }
-
-    this.#sysfsPrefix = 'src/modules/LedStatusService';
   }
 }

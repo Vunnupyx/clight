@@ -57,7 +57,11 @@ export interface NetworkNtp {
   reachable: boolean;
 }
 
-export interface NetworkTime {
-  time: string;
+export interface NetworkDateTime {
+  datetime: string;
   timezone: string;
+}
+
+export interface NetworkTimestamp {
+  Timestamp: string;
 }

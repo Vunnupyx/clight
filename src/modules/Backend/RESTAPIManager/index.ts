@@ -51,7 +51,7 @@ export class RestApiManager {
     winston.info(`${logPrefix} Initializing rest api`);
 
     this.config = this.options.configManager.runtimeConfig.restApi;
-    this.port = this.config.port || Number.parseInt(process.env.PORT) || 5000;
+    this.port = Number.parseInt(process.env.PORT) || this.config.port || 5000;
 
     const authManager = new AuthManager(this.options.configManager);
 
@@ -127,9 +127,7 @@ export class RestApiManager {
 
     winston.info(`${logPrefix} Starting backend server`);
     this.expressApp.listen(this.port, () =>
-      winston.info(
-        `${logPrefix} Backend server listening on port ${this.config.port}`
-      )
+      winston.info(`${logPrefix} Backend server listening on port ${this.port}`)
     );
     return this;
   }

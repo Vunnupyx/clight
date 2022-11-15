@@ -15,7 +15,7 @@ import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
 import { RestApiManager } from '../Backend/RESTAPIManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
-import { System } from '../System';
+import { TLSKeyManager } from '../TLSKeyManager';
 import { LedStatusService } from '../LedStatusService';
 import { LicenseChecker } from '../LicenseChecker';
 
@@ -35,6 +35,7 @@ export class BootstrapManager {
   private hwEvents: IoT2050HardwareEvents;
   private ledManager: LedStatusService;
   private licenseChecker: LicenseChecker;
+  private tlsKeyManager: TLSKeyManager;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -92,6 +93,8 @@ export class BootstrapManager {
 
     this.hwEvents = new IoT2050HardwareEvents();
     this.licenseChecker.ledManager = this.ledManager;
+
+    this.tlsKeyManager = new TLSKeyManager();
   }
 
   /**
@@ -103,6 +106,7 @@ export class BootstrapManager {
       await this.ledManager.init();
       this.setupKillEvents();
 
+      await this.tlsKeyManager.generateKeys();
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {

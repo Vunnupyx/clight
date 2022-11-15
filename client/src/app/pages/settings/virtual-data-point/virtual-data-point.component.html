@@ -214,9 +214,7 @@
               *ngIf="unsavedRow?.id === row.id"
               disableOptionCentering="true"
               [ngModel]="value"
-              (ngModelChange)="
-                unsavedRow && (unsavedRow.operationType = $event)
-              "
+              (ngModelChange)="unsavedRow && onOperationTypeChange($event)"
             >
               <mat-option *ngFor="let op of Operations" [value]="op.value">{{
                 op.text | translate

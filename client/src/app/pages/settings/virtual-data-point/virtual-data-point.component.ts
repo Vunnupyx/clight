@@ -514,6 +514,15 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  onOperationTypeChange(newOperationType) {
+    if (this.unsavedRow) {
+      this.unsavedRow.sources = this.unsavedRow.sources
+        ? [this.unsavedRow.sources[0]]
+        : [];
+      this.unsavedRow.operationType = newOperationType;
+    }
+  }
+
   isAbleToSelectMultipleSources(
     operationType: VirtualDataPointOperationType | undefined
   ) {

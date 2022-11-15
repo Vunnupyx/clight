@@ -397,7 +397,6 @@
     "DefaultGateway": "デフォルトゲートウェイ",
     "DNSServer": "DNSサーバ",
     "UseProxy": "プロキシを使う",
-    "ProxyType": "プロキシの種類",
     "Host": "ホスト",
     "Port": "ポート",
     "Username": "ユーザ名",

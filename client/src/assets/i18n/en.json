@@ -397,7 +397,6 @@
     "DefaultGateway": "Default Gateway",
     "DNSServer": "DNS Server",
     "UseProxy": "Use Proxy",
-    "ProxyType": "Type",
     "Host": "Host",
     "Port": "Port",
     "Username": "Username",

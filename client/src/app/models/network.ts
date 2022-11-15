@@ -5,16 +5,15 @@ export enum NetworkType {
   NTP = 'ntp'
 }
 
-export enum ProxyType {
-  Socks5 = 'socks5',
-  Http = 'http'
-}
-
 export interface NetworkConfig {
   x1: NetworkAdapter;
   x2: NetworkAdapter;
   proxy: NetworkProxy;
-  ntp: string[];
+  ntp: {
+    host: string[];
+    timestamp: NetworkDateTime;
+    ntpEnabled: boolean;
+  };
 }
 
 export interface NetworkAdapter {

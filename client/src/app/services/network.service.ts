@@ -102,6 +102,11 @@ let RESPONSE_PROXY: NetworkProxy = {
 // TODO: Connect to Network API
 let RESPONSE_NTP: string[] = ['time.dmgmori.net'] as any;
 
+// TODO: Connect to Network API
+let RESPONSE_TIMESTAMP: NetworkTimestamp = {
+  Timestamp: 'Sun Jan 09 2022 00:14:58 GMT+0000 (Coordinated Universal Time)'
+} as any;
+
 @Injectable()
 export class NetworkService {
   private _store: Store<NetworkState>;
@@ -135,17 +140,16 @@ export class NetworkService {
           x1: x.adapters?.[0],
           x2: x.adapters?.[1],
           proxy: x.proxy,
-          ntp: x.ntp
+          ntp:
+            x.ntp && x.timestamp
+              ? {
+                  host: x.ntp,
+                  timestamp: x.timestamp,
+                  ntpEnabled: !!x.ntp[0]
+                }
+              : undefined
         })
       ),
-      distinctUntilChanged()
-    );
-  }
-
-  get timestamp() {
-    return this._store.state.pipe(
-      filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.timestamp),
       distinctUntilChanged()
     );
   }
@@ -290,7 +294,9 @@ export class NetworkService {
     try {
       const response =
         await this.configurationAgentHttpMockupService.get<NetworkTimestamp>(
-          `/system/time`
+          `/system/time`,
+          undefined,
+          RESPONSE_TIMESTAMP
         );
 
       const verifiedObj = this._serializeNetworkTimestamp(response);
@@ -343,9 +349,7 @@ export class NetworkService {
 
   private _emptyState() {
     return <NetworkState>{
-      status: Status.NotInitialized,
-      ntp: [''],
-      timestamp: { datetime: '', timezone: '' }
+      status: Status.NotInitialized
     };
   }
 
@@ -371,7 +375,7 @@ export class NetworkService {
     timestamp: NetworkTimestamp
   ): NetworkDateTime {
     return {
-      datetime: moment(timestamp.Timestamp)
+      datetime: moment(timestamp?.Timestamp)
         .parseZone()
         .format('YYYY-MM-DDTHH:mm:ss'),
       timezone: 'Universal'

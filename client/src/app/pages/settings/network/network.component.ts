@@ -6,12 +6,7 @@ import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
-import {
-  NetworkConfig,
-  NetworkDateTime,
-  NetworkType,
-  ProxyType
-} from '../../../models';
+import { NetworkConfig, NetworkType } from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
@@ -25,14 +20,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   config!: NetworkConfig;
   originalConfig!: NetworkConfig;
-  timestamp!: NetworkDateTime;
-  originalTimestamp!: NetworkDateTime;
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
   ipRegex = IP_REGEX;
-
-  ProxyType = ProxyType;
 
   get showLoading() {
     return (
@@ -67,11 +58,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onConfig(x))
     );
-    this.sub.add(
-      this.networkService.timestamp
-        .pipe(filter((el) => !!el))
-        .subscribe((x) => this.onTimestamp(x))
-    );
 
     this.timezoneOptions = this._getTimezoneOptions();
 
@@ -104,23 +90,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onTimestamp(x: NetworkDateTime) {
-    if (this.mainForm && this.mainForm.dirty) {
-      return;
-    }
-
-    this.timestamp = clone(x);
-    this.originalTimestamp = clone(x);
-
-    if (!this.selectedTab) {
-      this.selectedTab = this.tabs[0];
-    }
-  }
-
   onSelectTab(tab: string) {
     this.selectedTab = tab;
     this.config = clone(this.originalConfig);
-    this.timestamp = clone(this.originalTimestamp);
   }
 
   onSaveAdapters() {
@@ -131,18 +103,20 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   onSaveProxy() {
     this.networkService
-      .updateNetworkProxy(this.config[this.selectedTab])
+      .updateNetworkProxy(this.config[NetworkType.PROXY])
       .then(() => (this.originalConfig = clone(this.config)));
   }
 
   onSaveNtp() {
-    this.networkService
-      .updateNetworkNtp(this.config[this.selectedTab])
-      .then(() => this.networkService.updateNetworkTimestamp(this.timestamp))
-      .then(() => {
-        this.originalConfig = clone(this.config);
-        this.originalTimestamp = clone(this.timestamp);
-      });
+    if (this.config[NetworkType.NTP].ntpEnabled)
+      this.networkService
+        .updateNetworkNtp(this.config[NetworkType.NTP].host)
+        .then(() => (this.originalConfig = clone(this.config)));
+    else
+      this.networkService
+        .updateNetworkTimestamp(this.config[NetworkType.NTP].timestamp)
+        .then(() => this.networkService.updateNetworkNtp(['']))
+        .then(() => (this.originalConfig = clone(this.config)));
   }
 
   ngOnDestroy() {

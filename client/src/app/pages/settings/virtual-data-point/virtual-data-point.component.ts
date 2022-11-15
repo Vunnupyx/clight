@@ -30,7 +30,10 @@ import {
   SetFormulaModalComponent,
   SetFormulaModalData
 } from './set-formula-modal/set-formula-modal.component';
-import { SetSchedulesModalComponent, SetSchedulesModalData } from "./set-schedules-modal/set-schedules-modal.component";
+import {
+  SetSchedulesModalComponent,
+  SetSchedulesModalData
+} from './set-schedules-modal/set-schedules-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -304,6 +307,7 @@ export class VirtualDataPointComponent implements OnInit {
       if (!dialogResult) {
         return;
       }
+      this.clearUnsavedRow();
       this.virtualDataPointService.deleteDataPoint(obj.id!);
     });
   }
@@ -337,14 +341,16 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onSetSchedule(virtualPoint: VirtualDataPoint) {
-    const dialogRef = this.dialog.open<SetSchedulesModalComponent, SetSchedulesModalData, SetSchedulesModalData>(
+    const dialogRef = this.dialog.open<
       SetSchedulesModalComponent,
-      {
-        data: {
-          schedules: virtualPoint.resetSchedules || [],
-        },
-        width: "900px"
-      });
+      SetSchedulesModalData,
+      SetSchedulesModalData
+    >(SetSchedulesModalComponent, {
+      data: {
+        schedules: virtualPoint.resetSchedules || []
+      },
+      width: '900px'
+    });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) {
@@ -358,7 +364,7 @@ export class VirtualDataPointComponent implements OnInit {
 
       this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
         ...virtualPoint,
-        resetSchedules: result.schedules,
+        resetSchedules: result.schedules
       });
     });
   }

@@ -34,15 +34,19 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { CreateDataItemModalComponent, CreateDataItemModalData } from '../create-data-item-modal/create-data-item-modal.component';
+import {
+  CreateDataItemModalComponent,
+  CreateDataItemModalData
+} from '../create-data-item-modal/create-data-item-modal.component';
 import { SelectMapModalComponent } from '../select-map-modal/select-map-modal.component';
 import { Status } from 'app/shared/state';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { MessengerConnectionComponent } from '../messenger-connection/messenger-connection.component';
+import { MessengerConnectionService } from 'app/services/messenger-connection.service';
 import {
-  MessengerConnectionService
-} from 'app/services/messenger-connection.service';
-import { SelectOpcUaVariableModalComponent, SelectOpcUaVariableModalData } from '../select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
+  SelectOpcUaVariableModalComponent,
+  SelectOpcUaVariableModalData
+} from '../select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
@@ -135,11 +139,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.MTConnectItems =
       this.dataSinkService.getPredefinedMtConnectDataPoints();
-    this.OPCUAAddresses =
-      [
-        ...this.dataSinkService.getPredefinedOPCDataPoints(),
-        ...(this.dataSink.customDataPoints || [])
-      ];
+    this.OPCUAAddresses = [
+      ...this.dataSinkService.getPredefinedOPCDataPoints(),
+      ...(this.dataSink.customDataPoints || [])
+    ];
     this.sub.add(
       combineLatest([
         this.dataPointService.dataPoints,
@@ -233,45 +236,53 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     }
 
     if (this.dataSink?.protocol === DataSinkProtocol.OPC) {
-      this.dialog.open<SelectOpcUaVariableModalComponent, SelectOpcUaVariableModalData, PreDefinedDataPoint>(
-        SelectOpcUaVariableModalComponent,
-        {
+      this.dialog
+        .open<
+          SelectOpcUaVariableModalComponent,
+          SelectOpcUaVariableModalData,
+          PreDefinedDataPoint
+        >(SelectOpcUaVariableModalComponent, {
           data: {
             existingAddresses: this.datapointRows
               .map((x) => x.address)
               .filter(Boolean)
           } as SelectOpcUaVariableModalData
-        }
-      ).afterClosed().subscribe(result => {
-        if (!result) {
-          return;
-        }
-        this.onAddConfirm(result);
-      });
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (!result) {
+            return;
+          }
+          this.onAddConfirm(result);
+        });
     } else {
-      this.dialog.open<CreateDataItemModalComponent, CreateDataItemModalData, PreDefinedDataPoint>(
-        CreateDataItemModalComponent,
-        {
+      this.dialog
+        .open<
+          CreateDataItemModalComponent,
+          CreateDataItemModalData,
+          PreDefinedDataPoint
+        >(CreateDataItemModalComponent, {
           data: {
             dataSinkProtocol: this.dataSink?.protocol,
             existingAddresses: this.datapointRows
               .map((x) => x.address)
               .filter(Boolean)
           } as CreateDataItemModalData
-        }
-      ).afterClosed().subscribe(result => {
-        if (!result) {
-          return;
-        }
-        this.onAddConfirm(result);
-      });
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          if (!result) {
+            return;
+          }
+          this.onAddConfirm(result);
+        });
     }
   }
 
   private onAddConfirm(result: PreDefinedDataPoint) {
     const obj = {
       ...result,
-      enabled: true,
+      enabled: true
     } as DataPoint;
 
     this.unsavedRowIndex = this.datapointRows!.length;
@@ -354,6 +365,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       if (!dialogResult) {
         return;
       }
+      this.clearUnsavedRow();
       this.dataPointService.deleteDataPoint(this.dataSink!.protocol, obj);
     });
   }
@@ -396,14 +408,14 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       return false;
     }
 
-    return this.OPCUAAddresses.every(dp => dp.address !== obj.address);
+    return this.OPCUAAddresses.every((dp) => dp.address !== obj.address);
   }
 
   private getCustomDataPointByAddress(address: string) {
     if (!this.dataSink?.customDataPoints) {
       return;
     }
-    return this.dataSink.customDataPoints.find(dp => dp.address === address);
+    return this.dataSink.customDataPoints.find((dp) => dp.address === address);
   }
 
   saveDatahubConfig(form: NgForm) {

@@ -5,97 +5,7 @@ import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
 import SshService from '../SshService';
-
-type CounterDict = {
-  [id: string]: number;
-};
-
-enum Day {
-  'Sunday' = 0,
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday'
-}
-type DayType =
-  | 'Monday'
-  | 'Tuesday'
-  | 'Wednesday'
-  | 'Thursday'
-  | 'Friday'
-  | 'Saturday'
-  | 'Sunday'
-  | 'Every';
-type MonthType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 'Every';
-type DateType =
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | 13
-  | 14
-  | 15
-  | 16
-  | 17
-  | 18
-  | 19
-  | 20
-  | 21
-  | 22
-  | 23
-  | 24
-  | 25
-  | 26
-  | 27
-  | 28
-  | 29
-  | 30
-  | 31
-  | 'Every';
-type HoursType = number | 'Every';
-type MinuteType = HoursType;
-type SecondsType = number;
-
-type ScheduleDescriptionBase = {
-  month: MonthType;
-  hours: HoursType;
-  minutes: MinuteType;
-  seconds: SecondsType;
-  created: number;
-  lastReset: number | undefined;
-};
-type ScheduleDescriptionDay = ScheduleDescriptionBase & {
-  day: DayType;
-};
-
-type ScheduleDescriptionDate = ScheduleDescriptionBase & {
-  date: DateType;
-};
-
-// TODO Fix TYPE
-export type ScheduleDescription =
-  | ScheduleDescriptionDay
-  | ScheduleDescriptionDate;
-
-type ScheduledCounterResetDict = {
-  [id: string]: ScheduleDescription[];
-};
-
-type timerDict = {
-  [counterId: string]: {
-    [scheduleIndex: number]: NodeJS.Timer;
-  };
-};
+import { CounterDict, Day, ScheduleDescription, timerDict } from './interfaces';
 
 /**
  * Manages counter (virtual data points)
@@ -137,7 +47,10 @@ export class CounterManager {
     }
 
     this.registerScheduleChecker();
-    this.configManager.on('configsLoaded', this.handleConfigsLoaded.bind(this));
+    this.configManager.once(
+      'configsLoaded',
+      this.handleConfigsLoaded.bind(this)
+    );
     this.configManager.on('configChange', this.checkTimers.bind(this));
   }
 
@@ -183,6 +96,7 @@ export class CounterManager {
     const logPrefix = `CounterManager::reset`;
 
     winston.debug(`${logPrefix} started for id: ${counterId}`);
+    console.log(`${logPrefix} started for id: ${counterId}`);
     if (typeof this.counters[counterId] === 'undefined') {
       winston.warn(`${logPrefix} try to reset unknown id: ${counterId} .`);
       return;

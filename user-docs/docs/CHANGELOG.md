@@ -9,6 +9,7 @@ title: Changelog
 ## Fixed
 
 - [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixed missing value for NCK data point basicLengthUnit
+- [DIGMDCLGHT-70](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-70) Fixed the case where Add new data point button might remain disabled after deleting a data point
 
 ## [2.4.0]
 

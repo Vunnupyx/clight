@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import winston from 'winston';
+import path from 'path';
 const child = require('child_process');
 
 interface PinStatus {
@@ -27,8 +27,14 @@ interface PinData {
 export class Iot2050MraaDI10 {
   private ANALOG_PIN_LABELS = ['AI0', 'AI1'];
   private ANALOG_READ_ADDRESSES = [
-    '/sys/bus/iio/devices/iio:device0/in_voltage0_raw',
-    '/sys/bus/iio/devices/iio:device0/in_voltage2_raw'
+    path.join(
+      process.env.SYS_PREFIX,
+      '/sys/bus/iio/devices/iio:device0/in_voltage0_raw'
+    ),
+    path.join(
+      process.env.SYS_PREFIX,
+      '/sys/bus/iio/devices/iio:device0/in_voltage2_raw'
+    )
   ];
   // Maximum time (ms) between the last three edges for detecting the state as blinking
   private BLINKING_MAX_TIME_BETWEEN_EDGES = 2250; // 0,5Hz + tolerance
@@ -160,17 +166,14 @@ export class Iot2050MraaDI10 {
   }
 
   private async analogRead(sysfs_file: string): Promise<number> {
-    const data = await fs.readFile(
-      `${sysfs_file}`,
-      'utf-8'
-    );
+    const data = await fs.readFile(`${sysfs_file}`, 'utf-8');
     const parsedValue = parseInt(data, 10);
     const scaledValue = (parsedValue / 4096) * 100.0;
     return scaledValue;
   }
 
   /**
-   * 
+   *
    * @deprecated
    */
   private async sysfs_prefix() {

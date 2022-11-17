@@ -24,13 +24,8 @@ export class IoshieldDataSource extends DataSource {
     const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
-    const { name, protocol, enabled } = this.config;
+    const { enabled } = this.config;
 
-    if (!this.isLicensed) {
-      winston.warn(`${logPrefix} no valid license found. Stop initializing.`);
-      this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
-      return;
-    }
     if (!enabled) {
       winston.info(
         `${logPrefix} io shield data source is disabled. Skipping initialization.`

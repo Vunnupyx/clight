@@ -17,7 +17,6 @@ import { RestApiManager } from '../Backend/RESTAPIManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { TLSKeyManager } from '../TLSKeyManager';
 import { LedStatusService } from '../LedStatusService';
-import { LicenseChecker } from '../LicenseChecker';
 
 /**
  * Launches agent and handles module life cycles
@@ -34,7 +33,6 @@ export class BootstrapManager {
   private backend: RestApiManager;
   private hwEvents: IoT2050HardwareEvents;
   private ledManager: LedStatusService;
-  private licenseChecker: LicenseChecker;
   private tlsKeyManager: TLSKeyManager;
 
   constructor() {
@@ -54,15 +52,12 @@ export class BootstrapManager {
       cache: this.dataPointCache
     });
 
-    this.licenseChecker = new LicenseChecker();
-
     this.dataSinksManager = new DataSinksManager({
       configManager: this.configManager,
       dataPointCache: this.dataPointCache,
       errorBus: this.errorEventsBus,
       lifecycleBus: this.lifecycleEventsBus,
-      measurementsBus: this.measurementsEventsBus,
-      licenseChecker: this.licenseChecker
+      measurementsBus: this.measurementsEventsBus
     });
     this.configManager.dataSinksManager = this.dataSinksManager;
 
@@ -72,8 +67,7 @@ export class BootstrapManager {
       virtualDataPointManager: this.virtualDataPointManager,
       errorBus: this.errorEventsBus,
       lifecycleBus: this.lifecycleEventsBus,
-      measurementsBus: this.measurementsEventsBus,
-      licenseChecker: this.licenseChecker
+      measurementsBus: this.measurementsEventsBus
     });
 
     this.ledManager = new LedStatusService(
@@ -92,8 +86,6 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
-    this.licenseChecker.ledManager = this.ledManager;
-
     this.tlsKeyManager = new TLSKeyManager();
   }
 
@@ -102,7 +94,6 @@ export class BootstrapManager {
    */
   public async start() {
     try {
-      await this.licenseChecker.init();
       await this.ledManager.init();
       this.setupKillEvents();
 
@@ -139,18 +130,14 @@ export class BootstrapManager {
       //   process.exit(1);
       // }, 5 * 60 * 1000);
     } catch (error) {
-      if (error?.code === 'LICENSE_CHECK_FAILED') {
-        winston.error(error?.msg);
-      } else {
-        this.errorEventsBus.push({
-          id: 'device',
-          level: EventLevels.Device,
-          type: DeviceLifecycleEventTypes.LaunchError,
-          payload: error.toString()
-        });
+      this.errorEventsBus.push({
+        id: 'device',
+        level: EventLevels.Device,
+        type: DeviceLifecycleEventTypes.LaunchError,
+        payload: error.toString()
+      });
 
-        winston.error('Error while launching. Exiting program.');
-      }
+      winston.error('Error while launching. Exiting program.');
 
       process.exit(1);
     }

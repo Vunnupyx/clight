@@ -261,12 +261,9 @@
                   {{ s.name }}</mat-option
                 >
                 <mat-option
-                  *ngFor="
-                    let s of previousVirtualPointsFiltered;
-                    let idx = index
-                  "
+                  *ngFor="let s of previousVirtualPointsFiltered"
                   [value]="s.id"
-                  [disabled]="getRowIndex(s.id) > idx"
+                  [disabled]="getRowIndex(s.id) > rowIndex"
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
                 >
               </mat-select>

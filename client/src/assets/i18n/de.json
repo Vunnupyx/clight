@@ -397,7 +397,6 @@
     "DefaultGateway": "Standardgateway",
     "DNSServer": "DNS Server",
     "UseProxy": "Proxy verwenden",
-    "ProxyType": "Type",
     "Host": "Host",
     "Port": "Port",
     "Username": "Username",
@@ -409,7 +408,7 @@
       "x1": "Ethernet X1 P1",
       "x2": "Ethernet X1 P2",
       "proxy": "Proxy",
-      "time": "Systemzeit"
+      "ntp": "Systemzeit"
     },
     "TimeSettings": "Systemzeit",
     "UseNTPServer": "NTP Server verwenden",

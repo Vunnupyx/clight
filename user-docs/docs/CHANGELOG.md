@@ -9,6 +9,7 @@ title: Changelog
 ### Changed
 
 - [DIGMDCLGHT-246](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-246) SSH communications are removed with usage of DMG MORI CELOS
+- [DIGMDCLGHT-145](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-145) Updated network, time and proxy endpoints to CELOS configuration agent
 
 ## [2.4.0]
 

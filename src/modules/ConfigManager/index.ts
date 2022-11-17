@@ -1033,13 +1033,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             key: 'Mac address X1',
             keyDescription: '',
             value: await system.readMacAddress('eth0'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           },
           {
             key: 'Mac address X2',
             keyDescription: '',
             value: await system.readMacAddress('eth1'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           }
         ]
       },

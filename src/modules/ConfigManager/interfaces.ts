@@ -127,13 +127,6 @@ export interface IOpcuaAuth {
   password?: string;
 }
 
-export interface IDataHubSettings {
-  provisioningHost: string;
-  scopeId: string;
-  regId: string;
-  symKey: string;
-}
-
 export interface IMessengerServerConfig {
   hostname: string | null;
   username: string | null;
@@ -179,7 +172,6 @@ export interface IDataSinkConfig {
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
-  datahub?: IDataHubSettings;
   customDataPoints?: IOpcuaCustomDataPoint[];
 }
 

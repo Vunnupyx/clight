@@ -352,6 +352,7 @@
       [rows]="datapointRows"
       rowHeight="auto"
       columnMode="flex"
+      class="{{ datapointRows?.length ? '' : 'd-none' }}"
     >
       <ngx-datatable-column
         [name]="'settings-data-sink.Name' | translate"
@@ -615,6 +616,11 @@
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>
+    <info-message
+      *ngIf="!isLoading && !datapointRows?.length"
+      title="{{ 'settings-data-sink.EmptyTable.title' | translate }}"
+      message="{{ 'settings-data-sink.EmptyTable.message' | translate }}"
+    ></info-message>
   </div>
 </div>
 

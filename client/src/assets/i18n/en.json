@@ -173,7 +173,11 @@
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",
@@ -223,7 +227,11 @@
     "CurrentLiveValue": "Current Live Value",
     "ReturnValueIfTrue": "Return Value",
     "SetFormula": "Set formula",
-    "Formula": "Formula"
+    "Formula": "Formula",
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
+    }
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -363,6 +371,10 @@
       "InvalidModel": "Model does not exist",
       "MissingSerial": "Serial number is missing",
       "Duplicated": "A machine with the same serial number and different configuration is registered"
+    },
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
     }
   },
   "settings-data-mapping": {
@@ -385,7 +397,11 @@
     "TargetDisabledTooltip": "Activate the related application interface to create this mapping",
     "MappingDisabledTooltip": "The mapping is currently not active because either the data source or the application interface is deactivated.",
     "DiscardChanges": "Discard Changes",
-    "ApplyChanges": "Apply Changes"
+    "ApplyChanges": "Apply Changes",
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
+    }
   },
   "settings-network": {
     "Network": "Network",
@@ -474,5 +490,9 @@
     "Oct": "Oct",
     "Nov": "Nov",
     "Dec": "Dec"
+  },
+  "info-message": {
+    "Title": "No data",
+    "Description": "There is no rows to display"
   }
 }

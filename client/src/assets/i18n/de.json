@@ -173,7 +173,11 @@
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
-    "SelectVariable": "Wählen Sie eine Variable"
+    "SelectVariable": "Wählen Sie eine Variable",
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtuelle Datenpunkte",
@@ -223,7 +227,11 @@
     "CurrentLiveValue": "Aktualwert",
     "ReturnValueIfTrue": "Rückgabewert",
     "SetFormula": "Formel festlegen",
-    "Formula": "Formel"
+    "Formula": "Formel",
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
+    }
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -363,6 +371,10 @@
       "InvalidModel": "Invalides Modell",
       "MissingSerial": "Serialnummer fehlt",
       "Duplicated": "Eine Machine mit gleicher Serialnummer und unterschiedliche Konfiguration wurde schon registriert."
+    },
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
     }
   },
   "settings-data-mapping": {
@@ -385,7 +397,11 @@
     "TargetDisabledTooltip": "Aktivieren Sie die entsprechende Anwendungsschnittstelle, um diese Zuordnung zu erstellen",
     "MappingDisabledTooltip": "Das Mapping ist derzeit nicht aktiv, weil entweder die Datenquelle oder die Anwendungsschnittstelle deaktiviert ist.",
     "DiscardChanges": "Änderungen verwerfen",
-    "ApplyChanges": "Änderungen speichern"
+    "ApplyChanges": "Änderungen speichern",
+    "EmptyTable": {
+      "title": "its title",
+      "message": "its message"
+    }
   },
   "settings-network": {
     "Network": "Netzwerkeinstellungen",
@@ -474,5 +490,9 @@
     "Oct": "",
     "Nov": "",
     "Dec": ""
+  },
+  "info-message": {
+    "Title": "No data",
+    "Description": "There is no rows to display"
   }
 }

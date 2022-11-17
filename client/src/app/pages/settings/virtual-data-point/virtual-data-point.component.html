@@ -68,6 +68,7 @@
         [rows]="datapointRows"
         rowHeight="auto"
         columnMode="flex"
+        class="{{ datapointRows?.length ? '' : 'd-none' }}"
       >
         <ngx-datatable-column
           [name]="'settings-virtual-data-point.Name' | translate"
@@ -539,6 +540,13 @@
           </ng-template>
         </ngx-datatable-column>
       </ngx-datatable>
+      <info-message
+        *ngIf="!isLoading && !datapointRows?.length"
+        title="{{ 'settings-virtual-data-point.EmptyTable.title' | translate }}"
+        message="{{
+          'settings-virtual-data-point.EmptyTable.message' | translate
+        }}"
+      ></info-message>
     </div>
   </div>
 </div>

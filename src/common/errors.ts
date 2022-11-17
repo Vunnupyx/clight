@@ -1,4 +1,6 @@
 import winston from 'winston';
+
+export type TNorthBoundErrorTypes = 'STATUS_ERROR' | 'NOT_REGISTERED';
 /**
  * Representation of a Northbound error.
  * Automatic log to winston.error()
@@ -6,7 +8,7 @@ import winston from 'winston';
 export class NorthBoundError extends Error {
   protected code: string;
 
-  constructor(msg: string, code?: string) {
+  constructor(msg: string, code?: TNorthBoundErrorTypes) {
     super(msg);
     this.code = code;
     this.name = this.constructor.name;
@@ -23,5 +25,11 @@ export type TAdapterErrorTypes =
 export class AdapterError extends NorthBoundError {
   constructor(msg, code?, public type: TAdapterErrorTypes = undefined) {
     super(msg, code);
+  }
+}
+
+export class LicenseError extends Error {
+  constructor(msg: string, public code?: string) {
+    super(msg);
   }
 }

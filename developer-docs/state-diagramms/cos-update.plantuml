@@ -6,6 +6,7 @@ INIT --> CHECK_INSTALLED_COS_VERSION : REBOOT_AFTER_COS_UPDATE
 INIT --> IDLE : IDLE
 IDLE --> GET_UPDATES : START_UPDATE (User initiated)
 GET_UPDATES --> CHECK_INSTALLED_COS_VERSION
+GET_UPDATES --> IDLE : NO_UPDATE_FOUND
 GET_UPDATES : Call Azure Function: get-iotflex-updates
 CHECK_INSTALLED_COS_VERSION --> APPLY_MODULE_UPDATES : VERSION_OK
 CHECK_INSTALLED_COS_VERSION : GET /system/versions
@@ -15,14 +16,20 @@ CHECK_COS_UPDATES : Response Code 200: Update avaible
 CHECK_COS_UPDATES : Response Code 204: No update locally available
 CHECK_COS_UPDATES --> APPLY_COS_UPDATES : 200 AND Same Version that should be installed
 APPLY_COS_UPDATES : POST /system/applyupdate 
-CHECK_COS_UPDATES --> DOWNLOAD_COS_UPDATES : 204 OR & Other Version that should be installed
-DOWNLOAD_COS_UPDATES : POST /system/update/{osversion}/download
-DOWNLOAD_COS_UPDATES --> APPLY_COS_UPDATES
+CHECK_COS_UPDATES --> START_DOWNLOAD_COS_UPDATES : 204 OR & Other Version that should be installed
+START_DOWNLOAD_COS_UPDATES : POST /system/update/{osversion}/download
+START_DOWNLOAD_COS_UPDATES : The request will immedatly resolve with success if version is found
+START_DOWNLOAD_COS_UPDATES : The download continues in background
+START_DOWNLOAD_COS_UPDATES --> VALIDATE_COS_DOWNLOAD
+VALIDATE_COS_DOWNLOAD : Continuesly check the down state with GET /system/update/download/status
+VALIDATE_COS_DOWNLOAD : Until pendingCount === 0
+VALIDATE_COS_DOWNLOAD : After that, check again with GET /system/update
+VALIDATE_COS_DOWNLOAD --> APPLY_COS_UPDATES
 APPLY_COS_UPDATES --> REBOOT
 REBOOT : POST /system/restart
 REBOOT --> [*]
 APPLY_MODULE_UPDATES --> WAIT_FOR_MODULE_UPDATE
-APPLY_MODULE_UPDATES : Call Azure Function: apply-iotflex-updates
+APPLY_MODULE_UPDATES : Call Azure Function: update-iotflex-version
 WAIT_FOR_MODULE_UPDATE : The IoT Edge Hub will automatically apply updates
 WAIT_FOR_MODULE_UPDATE : after they have been set inside Azure by the Azure function
 WAIT_FOR_MODULE_UPDATE --> [*]

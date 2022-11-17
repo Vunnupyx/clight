@@ -1018,6 +1018,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   public async getSystemInformation() {
     const system = new System();
+    const osVersion = await system.readOsVersion();
     return [
       {
         title: 'General system information',
@@ -1058,9 +1059,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             valueDescription: null
           },
           {
-            key: 'IoT connector flex OS version',
+            key: 'CELOS version',
             keyDescription: 'Operating System',
-            value: system.readOsVersion(),
+            value: osVersion,
             valueDescription: null
           },
           {

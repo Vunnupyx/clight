@@ -5,13 +5,16 @@ import { System } from './modules/System';
 
 Logger.init();
 
-winston.error('MDC Flex starting...');
-winston.error(
-  `MDC Flex runtime version: ${process.env.MDC_LIGHT_RUNTIME_VERSION}`
-);
-winston.error(`MDC Flex OS version: ${new System().readOsVersion()}`);
+async function main() {
+  winston.error('MDC Flex starting...');
+  winston.error(
+    `MDC Flex runtime version: ${process.env.MDC_LIGHT_RUNTIME_VERSION}`
+  );
+  const osVersion = await new System().readOsVersion();
 
-const bootstrapManager = new BootstrapManager();
-bootstrapManager.start();
+  const bootstrapManager = new BootstrapManager();
+  bootstrapManager.start();
 
-winston.error('MDC Flex started');
+  winston.error('MDC Flex started');
+}
+main();

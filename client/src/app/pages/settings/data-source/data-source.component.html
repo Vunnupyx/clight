@@ -68,6 +68,7 @@
                 <div class="col-12 col-md-7">
                   <mat-form-field>
                     <mat-select
+                      disableOptionCentering="true"
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
@@ -100,6 +101,7 @@
                 <div class="col-12 col-md-7">
                   <mat-form-field>
                     <mat-select
+                      disableOptionCentering="true"
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
@@ -130,6 +132,7 @@
             <div class="col-12 col-md-7">
               <mat-form-field>
                 <mat-select
+                  disableOptionCentering="true"
                   [ngModel]="dataSource?.softwareVersion"
                   (ngModelChange)="updateSoftwareVersion($event)"
                 >
@@ -458,6 +461,7 @@
               </ng-container>
             </span>
             <mat-select
+              disableOptionCentering="true"
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
@@ -548,6 +552,7 @@
                       dataSource?.protocol === Protocol.IOShield;
                       else s7InputAddress
                     "
+                    disableOptionCentering="true"
                     [ngModel]="value"
                     (ngModelChange)="
                       unsavedRow && (unsavedRow.address = $event)

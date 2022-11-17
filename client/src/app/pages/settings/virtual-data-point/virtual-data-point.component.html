@@ -82,14 +82,14 @@
             let-row="row"
           >
             <div
-              *ngIf="unsavedRowIndex !== rowIndex"
+              *ngIf="unsavedRow?.id !== row.id"
               class="text-ellipsis"
               [title]="value"
             >
               {{ getVirtualDataPointPrefix() }} {{ value }}
             </div>
             <input
-              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              *ngIf="unsavedRow?.id === row.id"
               type="text"
               class="w-100"
               [matTooltip]="
@@ -124,7 +124,7 @@
             let-value="value"
             let-row="row"
           >
-            <span *ngIf="unsavedRowIndex !== rowIndex">
+            <span *ngIf="unsavedRow?.id !== row.id">
               <ng-container [ngSwitch]="value">
                 <ng-container
                   *ngSwitchCase="VirtualDataPointOperationType.AND"
@@ -211,7 +211,8 @@
               </ng-container>
             </span>
             <mat-select
-              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              *ngIf="unsavedRow?.id === row.id"
+              disableOptionCentering="true"
               [ngModel]="value"
               (ngModelChange)="
                 unsavedRow && (unsavedRow.operationType = $event)
@@ -235,13 +236,14 @@
             let-value="value"
             let-row="row"
           >
-            <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+            <ng-container *ngIf="unsavedRow?.id !== row.id">
               <div class="text-ellipsis" [title]="value">
                 {{ getSourceNames(value) }}
               </div>
             </ng-container>
-            <div *ngIf="unsavedRowIndex === rowIndex">
+            <div *ngIf="unsavedRow?.id === row.id">
               <mat-select
+                disableOptionCentering="true"
                 *ngIf="isAbleToSelectMultipleSources(unsavedRow?.operationType)"
                 [ngModel]="value"
                 (ngModelChange)="unsavedRow && (unsavedRow.sources = $event)"
@@ -266,6 +268,7 @@
                 >
               </mat-select>
               <mat-select
+                disableOptionCentering="true"
                 *ngIf="
                   !isAbleToSelectMultipleSources(unsavedRow?.operationType)
                 "
@@ -327,7 +330,7 @@
             let-row="row"
           >
             <mat-button-toggle-group
-              *ngIf="unsavedRowIndex !== rowIndex"
+              *ngIf="unsavedRow?.id !== row.id"
               #group="matButtonToggleGroup"
             >
               <mat-button-toggle
@@ -426,7 +429,7 @@
             </mat-button-toggle-group>
             <mat-button-toggle-group
               #group="matButtonToggleGroup"
-              *ngIf="unsavedRowIndex === rowIndex"
+              *ngIf="unsavedRow?.id === row.id"
             >
               <mat-button-toggle
                 *ngIf="canSetComparativeValue(unsavedRow?.operationType)"

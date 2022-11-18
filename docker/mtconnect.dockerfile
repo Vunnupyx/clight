@@ -13,6 +13,6 @@ RUN cp agent/agent /usr/local/bin
 
 WORKDIR /agentConfiguration
 
-COPY _mdclight/mtc_config/MtcAgentConfig_prod .
+COPY _mdclight/mtc-config/prod .
 
 CMD ["agent", "run"]

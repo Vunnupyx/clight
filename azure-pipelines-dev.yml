@@ -42,7 +42,7 @@ steps:
       script: | # Only build image if dockerfile has changed
         MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "_mdclight/mtc-config/prod")
 
-        MATCH_COUNT=1
+        MATCH_COUNT=1 # Force build
 
         version=$(git describe --tags)
 

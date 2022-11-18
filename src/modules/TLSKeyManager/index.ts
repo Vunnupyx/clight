@@ -29,8 +29,7 @@ export class TLSKeyManager {
 
   private opensslWrapper(
     params: string | Array<string>,
-    callback = (err: Error, stderr: Array<unknown>, stdout: Array<unknown>) =>
-      undefined
+    callback = (err: Error, stderr?: string, stdout?: string) => undefined
   ): ChildProcessWithoutNullStreams {
     const stdout = [];
     const stderr = [];
@@ -66,14 +65,15 @@ export class TLSKeyManager {
     });
 
     openSSLProcess.on('error', (error) => {
-      callback.call(error);
+      winston.error(error);
+      callback(new Error());
     });
 
     openSSLProcess.on('close', (closeStatusCode, closeSignal) => {
       if (closeStatusCode === 0) {
-        callback.call(null, stderr.toString(), stdout.toString());
+        callback(null, stderr.toString(), stdout.toString());
       } else {
-        callback.call(closeSignal, stderr.toString(), stdout.toString());
+        callback(new Error(closeSignal), stderr.toString(), stdout.toString());
       }
     });
 

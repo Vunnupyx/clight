@@ -9,4 +9,4 @@ echo $1
 
 docker buildx build --platform linux/arm64 \
     -t ${DOCKER_REGISTRY}/mtconnect-agent:$1 \
-    -f docker/mtconnect.dockerfile --push .
+    -f docker/mtconnect-agent.dockerfile --push .

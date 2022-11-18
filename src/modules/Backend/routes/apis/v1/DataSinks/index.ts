@@ -200,7 +200,6 @@ async function dataSinksPostDatapointBulkHandler(
  * @param  {Response} response
  */
 function dataPointsGetHandler(request: Request, response: Response) {
-  // @ts-ignore // TODO
   const sink = configManager?.config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );

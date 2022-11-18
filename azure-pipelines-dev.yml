@@ -40,7 +40,7 @@ steps:
     displayName: BuildMtc
     inputs:
       script: | # Only build image if dockerfile has changed
-        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mtconnect.dockerfile")
+        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "_mdclight/mtc-config/prod")
 
         version=$(git describe --tags)
 

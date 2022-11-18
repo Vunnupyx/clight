@@ -1,6 +1,6 @@
 ARG DOCKER_REGISTRY
 
-FROM mdclight-base:latest
+FROM ${DOCKER_REGISTRY}/mdclight-base:latest
 
 WORKDIR /
 

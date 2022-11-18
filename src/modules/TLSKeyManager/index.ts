@@ -1,18 +1,25 @@
 import fs from 'fs';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import winston from 'winston';
+import path from 'path';
 
 export class TLSKeyManager {
-  private PATH = process.env.TLS_KEY_PATH || '/etc/MDCLight/config';
+  private PATH = path.join(process.env.MDC_LIGHT_FOLDER, 'sslkeys');
 
   public async generateKeys(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (!fs.existsSync(`${this.PATH}/ssl_private.key`)) {
+      const logPrefix = 'TLSKeyManager::generateKeys';
+      winston.debug(`${logPrefix} no SSL keys found. Generating...`);
+      if (
+        !fs.existsSync(`${this.PATH}/ssl_private.key`) ||
+        !fs.existsSync(`${this.PATH}/ssl.crt`)
+      ) {
         this.opensslWrapper(
           `openssl req -x509 -nodes -days 10950 -newkey rsa:4096 -keyout ${this.PATH}/ssl_private.key -out ${this.PATH}/ssl.crt -subj "/C=DE/L=Bielefeld/O=DMG MORI Digital GmbH/CN=IOT2050/emailAddress=info@dmgmori.com"`,
           (err, stderr, stdout) => {
             if (err) {
-              winston.error(err.toString());
+              winston.debug(`${logPrefix} failed to generate SSL keys`);
+              winston.error(JSON.stringify(err));
               reject();
               return;
             }
@@ -29,9 +36,9 @@ export class TLSKeyManager {
 
   private opensslWrapper(
     params: string | Array<string>,
-    callback = (err: Error, stderr: Array<unknown>, stdout: Array<unknown>) =>
+    callback = (err: Error | string, stderr: string, stdout: string) =>
       undefined
-  ): ChildProcessWithoutNullStreams {
+  ): void {
     const stdout = [];
     const stderr = [];
 
@@ -66,17 +73,15 @@ export class TLSKeyManager {
     });
 
     openSSLProcess.on('error', (error) => {
-      callback.call(error);
+      callback(error, null, null);
     });
 
     openSSLProcess.on('close', (closeStatusCode, closeSignal) => {
       if (closeStatusCode === 0) {
-        callback.call(null, stderr.toString(), stdout.toString());
+        callback(null, stderr.toString(), stdout.toString());
       } else {
-        callback.call(closeSignal, stderr.toString(), stdout.toString());
+        callback(closeSignal, stderr.toString(), stdout.toString());
       }
     });
-
-    return openSSLProcess;
   }
 }

@@ -95,7 +95,7 @@ export class BootstrapManager {
   public async start() {
     try {
       await this.ledManager.init();
-      this.setupKillEvents();
+      // this.setupKillEvents();
 
       await this.tlsKeyManager.generateKeys();
       await this.configManager.init();
@@ -134,10 +134,12 @@ export class BootstrapManager {
         id: 'device',
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchError,
-        payload: error.toString()
+        payload: JSON.stringify(error)
       });
 
-      winston.error('Error while launching. Exiting program.');
+      console.log(error);
+      winston.error(`Error while launching. Exiting program. `);
+      winston.error(JSON.stringify(error));
 
       process.exit(1);
     }
@@ -148,9 +150,9 @@ export class BootstrapManager {
     process.stdin.resume();
 
     //do something when app is closing
-    process.on('exit', (exitCode) => {
-      winston.info(`Exited program, code:" ${exitCode}`);
-    });
+    // process.on('exit', (exitCode) => {
+    //   winston.info(`Exited program, code:" ${exitCode}`);
+    // });
 
     //catches ctrl+c event
     process.on('SIGINT', this.signalHandler.bind(this, 'SIGINT'));

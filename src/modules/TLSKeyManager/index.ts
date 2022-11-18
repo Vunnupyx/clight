@@ -13,7 +13,7 @@ export class TLSKeyManager {
           (err, stderr, stdout) => {
             if (err) {
               winston.error(err.toString());
-              reject();
+              reject(err);
               return;
             }
             resolve();
@@ -66,7 +66,7 @@ export class TLSKeyManager {
 
     openSSLProcess.on('error', (error) => {
       winston.error(error);
-      callback(new Error());
+      callback(new Error(error.message));
     });
 
     openSSLProcess.on('close', (closeStatusCode, closeSignal) => {

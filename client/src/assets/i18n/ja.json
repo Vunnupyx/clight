@@ -173,11 +173,7 @@
     "TestConnection": "テスト接続",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable",
-    "EmptyTable": {
-      "title": "its title",
-      "message": "its message"
-    }
+    "SelectVariable": "Select Variable"
   },
   "settings-virtual-data-point": {
     "DataPoints": "仮想データポイント",
@@ -227,11 +223,7 @@
     "CurrentLiveValue": "Current Live Value",
     "ReturnValueIfTrue": "Return Value",
     "SetFormula": "Set formula",
-    "Formula": "Formula",
-    "EmptyTable": {
-      "title": "its title",
-      "message": "its message"
-    }
+    "Formula": "Formula"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -371,10 +363,6 @@
       "InvalidModel": "Model does not exist",
       "MissingSerial": "Serial number is missing",
       "Duplicated": "A machine with the same serial number and different configuration is registered"
-    },
-    "EmptyTable": {
-      "title": "its title",
-      "message": "its message"
     }
   },
   "settings-data-mapping": {
@@ -397,11 +385,7 @@
     "TargetDisabledTooltip": "Activate the related application interface to create this mapping",
     "MappingDisabledTooltip": "The mapping is currently not active because either the data source or the application interface is deactivated.",
     "DiscardChanges": "変更を破棄",
-    "ApplyChanges": "変更を適用",
-    "EmptyTable": {
-      "title": "its title",
-      "message": "its message"
-    }
+    "ApplyChanges": "変更を適用"
   },
   "settings-network": {
     "Network": "ネットワーク",
@@ -490,9 +474,5 @@
     "Oct": "",
     "Nov": "",
     "Dec": ""
-  },
-  "info-message": {
-    "Title": "No data",
-    "Description": "There is no rows to display"
   }
 }

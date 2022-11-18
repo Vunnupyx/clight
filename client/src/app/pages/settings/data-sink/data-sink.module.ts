@@ -16,7 +16,6 @@ import { MessengerConnectionComponent } from './messenger-connection/messenger-c
 import { SelectOpcUaVariableModalComponent } from './select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
 import { CustomOpcUaVariablesComponent } from './custom-opc-ua-variables/custom-opc-ua-variables.component';
 import { EditCustomOpcUaVariableModalComponent } from './edit-custom-opc-ua-variable-modal/edit-custom-opc-ua-variable-modal.component';
-import { InfoMessageModule } from 'app/shared/components/info-message/info-message.module';
 
 const routes: Routes = [
   {
@@ -45,8 +44,7 @@ const COMPONENTS = [
     SharedModule,
     ConfirmDialogModule,
     MatTableModule,
-    RouterModule.forRoot(routes),
-    InfoMessageModule
+    RouterModule.forRoot(routes)
   ],
   declarations: COMPONENTS,
   exports: [RouterModule, ...COMPONENTS],

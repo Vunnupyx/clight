@@ -7,7 +7,6 @@ import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confir
 import { DataMappingComponent } from './data-mapping.component';
 import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { DataMappingGuard } from './data-mapping.guard';
-import { InfoMessageModule } from 'app/shared/components/info-message/info-message.module';
 
 const routes: Routes = [
   {
@@ -21,12 +20,7 @@ const routes: Routes = [
 const COMPONENTS = [DataMappingComponent];
 
 @NgModule({
-  imports: [
-    SharedModule,
-    ConfirmDialogModule,
-    RouterModule.forRoot(routes),
-    InfoMessageModule
-  ],
+  imports: [SharedModule, ConfirmDialogModule, RouterModule.forRoot(routes)],
   declarations: COMPONENTS,
   exports: [RouterModule, ...COMPONENTS],
   providers: [DataMappingGuard]

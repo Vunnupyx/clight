@@ -66,7 +66,6 @@
         rowHeight="auto"
         columnMode="flex"
         [rowClass]="getRowClassBound"
-        class="{{ mappingRows?.length ? '' : 'd-none' }}"
       >
         <ngx-datatable-column
           [name]="'settings-data-mapping.Source' | translate"
@@ -232,11 +231,6 @@
           </ng-template>
         </ngx-datatable-column>
       </ngx-datatable>
-      <info-message
-        *ngIf="!isLoading && !mappingRows?.length"
-        title="{{ 'settings-data-mapping.EmptyTable.title' | translate }}"
-        message="{{ 'settings-data-mapping.EmptyTable.message' | translate }}"
-      ></info-message>
     </div>
   </div>
 </div>

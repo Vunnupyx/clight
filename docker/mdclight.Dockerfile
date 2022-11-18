@@ -1,6 +1,6 @@
 ARG DOCKER_REGISTRY
 
-FROM ${DOCKER_REGISTRY}/mdclight-base:latest
+FROM mdclight-base:latest
 
 WORKDIR /
 
@@ -17,9 +17,13 @@ COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
 RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 
+RUN mkdir /etc/MDClight/config
+RUN mkdir /etc/MDClight/logs
+RUN mkdir /etc/MDClight/jwtkeys
+RUN mkdir /etc/MDClight/sslkeys
+
 # Copy runtime config files
-COPY _mdclight/opcua_nodeSet /runTimeFiles/nodeSets
-COPY _mdclight/runtime.json /runTimeFiles/
+COPY _mdclight/runtime-files /etc/MDClight/runtime-files
 
 COPY src src
 COPY tsconfig.json tsconfig.json
@@ -30,7 +34,7 @@ RUN mv build/main app
 WORKDIR /app
 
 ENV LOG_LEVEL=info
-ENV MDC_LIGHT_FOLDER=/
+ENV MDC_LIGHT_FOLDER=/etc/MDClight
 ENV MDC_LIGHT_RUNTIME_VERSION=$MDC_LIGHT_RUNTIME_VERSION
 
 CMD ["node", "--max-old-space-size=1024", "index.js"]

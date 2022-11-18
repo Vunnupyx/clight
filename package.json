@@ -40,8 +40,8 @@
     "xmlbuilder2": "^3.0.2"
   },
   "scripts": {
-    "dev:debugger": "export MDC_LIGHT_FOLDER=mdclight && export NODE_ENV=development && export PORT=8083 && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export RUNTIME_FOLDER=mdclight && export SYS_PREFIX=mdclight && npm run setup:local:dev && ts-node-dev --respawn --inspect=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
-    "dev": "export MDC_LIGHT_FOLDER=mdclight && export PORT=8083 && export NODE_ENV=development && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export RUNTIME_FOLDER=mdclight && export SYS_PREFIX=mdclight && npm run setup:local:dev && ts-node-dev --respawn --transpile-only --max-old-space-size=1024 src/index.ts",
+    "dev:debugger": "export MDC_LIGHT_FOLDER=mdclight && export NODE_ENV=development && export PORT=8083 && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export SYS_PREFIX=mdclight && npm run setup:local:dev && ts-node-dev --respawn --inspect=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
+    "dev": "export MDC_LIGHT_FOLDER=mdclight && export PORT=8083 && export NODE_ENV=development && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && && export SYS_PREFIX=mdclight && npm run setup:local:dev && ts-node-dev --respawn --transpile-only --max-old-space-size=1024 src/index.ts",
     "dev:configurationagent": "docker run --mount type=bind,source=$PWD/configuration-agent/swagger.yaml,target=/data,readonly -p 1884:1884 mockoon/cli:latest -d data -p 1884",
     "dev:webserver": "cd client && yarn dev",
     "setup:local:dev": "./scripts/localMocks/createLocalTestingEnv.sh",

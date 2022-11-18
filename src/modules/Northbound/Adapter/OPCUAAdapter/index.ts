@@ -289,7 +289,7 @@ export class OPCUAAdapter {
     const applicationUri = `urn:${hostname}`;
     const certificateFolder = path.join(
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      '/config/certs'
+      '/certs'
     );
     const certificateFile = path.join(
       certificateFolder,

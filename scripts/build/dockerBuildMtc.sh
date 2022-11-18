@@ -5,6 +5,8 @@ if [[ -z "$DOCKER_REGISTRY" ]]; then
     exit 1
 fi
 
+echo $1
+
 docker buildx build --platform linux/arm64 \
-    -t ${DOCKER_REGISTRY}/mtconnect-prod_arm64:latest \
-    -f docker/mtconnect_arm64.dockerfile --push .
+    -t ${DOCKER_REGISTRY}/mtconnect-agent:$1 \
+    -f docker/mtconnect.dockerfile --push .

@@ -483,8 +483,8 @@
   "quickStart": {
     "completed": true
   },
-  "name": "GM Series",
-  "description": "GM 16-6 or GM 20-6",
+  "name": "quick-start.Templates.name.gm",
+  "description": "quick-start.Templates.description.gm",
   "env": {
     "selected": "prod",
     "web": {

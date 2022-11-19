@@ -1,6 +1,6 @@
 {
-  "name": "Empty Template",
-  "description": "Template does not include any data source, virtual data points, mappings and application interface",
+  "name": "quick-start.Templates.name.empty",
+  "description": "quick-start.Templates.description.empty",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",

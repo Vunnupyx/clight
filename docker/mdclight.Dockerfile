@@ -17,13 +17,13 @@ COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
 RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 
-RUN mkdir -p /etc/MDClight/config
-RUN mkdir -p /etc/MDClight/logs
-RUN mkdir -p /etc/MDClight/jwtkeys
-RUN mkdir -p /etc/MDClight/sslkeys
+RUN mkdir -p /etc/mdc-light/config
+RUN mkdir -p /etc/mdc-light/logs
+RUN mkdir -p /etc/mdc-light/jwtkeys
+RUN mkdir -p /etc/mdc-light/sslkeys
 
 # Copy runtime config files
-COPY _mdclight/runtime-files /etc/MDClight/runtime-files
+COPY _mdclight/runtime-files /etc/mdc-light/runtime-files
 
 COPY src src
 COPY tsconfig.json tsconfig.json
@@ -34,7 +34,7 @@ RUN mv build/main app
 WORKDIR /app
 
 ENV LOG_LEVEL=info
-ENV MDC_LIGHT_FOLDER=/etc/MDClight
+ENV MDC_LIGHT_FOLDER=/etc/mdc-light
 ENV MDC_LIGHT_RUNTIME_VERSION=$MDC_LIGHT_RUNTIME_VERSION
 
 CMD ["node", "--max-old-space-size=1024", "index.js"]

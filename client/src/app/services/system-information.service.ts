@@ -20,12 +20,18 @@ export class SystemInformationState {
 }
 
 export enum UpdateStatus {
-  UpToDate,
-  NeedsUpdate,
-  CheckFailed,
-  Dismissed,
-  UpdateSuccessful,
-  UnexpectedError
+  UP_TO_DATE,
+  GET_UPDATES,
+  CHECK_INSTALLED_COS_VERSION,
+  CHECK_COS_UPDATES,
+  START_DOWNLOAD_COS_UPDATES,
+  VALIDATE_COS_DOWNLOAD,
+  APPLY_COS_UPDATES,
+  WAITING_FOR_SYSTEM_RESTART,
+  APPLY_MODULE_UPDATES,
+  WAIT_FOR_MODULE_UPDATE,
+  SUCCESS,
+  ERROR
 }
 
 export interface HealthcheckResponse {
@@ -80,18 +86,8 @@ export class SystemInformationService {
     }
   }
 
-  async getUpdateStatus(): Promise<UpdateStatus> {
-    const response = await this.httpService.get<HttpResponse<void>>(
-      `/systemInfo/update`,
-      {
-        observe: 'response',
-        responseType: 'raw'
-      } as RequestOptionsArgs
-    );
-    return this._getUpdateStatus(response.status);
-  }
-
   async healthcheck(): Promise<HealthcheckResponse> {
+    //TBD
     return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
   }
 
@@ -136,16 +132,5 @@ export class SystemInformationService {
       status: Status.NotInitialized,
       serverOffset: 0 // TODO: remove it when backend is ready
     };
-  }
-
-  private _getUpdateStatus(httpCode: number) {
-    switch (httpCode) {
-      case 204:
-        return UpdateStatus.UpToDate;
-      case 200:
-        return UpdateStatus.NeedsUpdate;
-      default:
-        return UpdateStatus.CheckFailed;
-    }
   }
 }

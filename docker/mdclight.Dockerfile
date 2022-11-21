@@ -17,10 +17,10 @@ COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
 RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
 RUN chmod 600 /root/.ssh/config
 
-RUN mkdir /etc/MDClight/config
-RUN mkdir /etc/MDClight/logs
-RUN mkdir /etc/MDClight/jwtkeys
-RUN mkdir /etc/MDClight/sslkeys
+RUN mkdir -p /etc/MDClight/config
+RUN mkdir -p /etc/MDClight/logs
+RUN mkdir -p /etc/MDClight/jwtkeys
+RUN mkdir -p /etc/MDClight/sslkeys
 
 # Copy runtime config files
 COPY _mdclight/runtime-files /etc/MDClight/runtime-files

@@ -43,7 +43,9 @@ export class StateMachine extends EventEmitter {
         }
       } catch (e) {
         console.log(e);
-        throw e;
+        const nextState = 'END';
+        this.currentState = nextState;
+        this.emit(nextState);
       }
     }
   }

@@ -24,18 +24,6 @@ async function systemInfoGetHandler(request: Request, response: Response) {
 }
 
 /**
- * Trigger update mechanism of docker images
- */
-async function triggerContainerUpdate(request: Request, response: Response) {
-  const timeOut = 10 * 60 * 1000;
-  request.setTimeout(timeOut, () => {
-    winston.error(`Request on /systemInfo/update timeout after ${timeOut} ms.`);
-    response.sendStatus(408);
-  });
-  //TODO: Update to be done via CELOS
-}
-
-/**
  * Returns current set env variable ENV
  * @param request HTTP Request
  * @param response
@@ -46,6 +34,5 @@ function systemGetEnvironment(request: Request, response: Response) {
 
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
-  updateContainerGet: triggerContainerUpdate,
   systemEnvironmentGet: systemGetEnvironment
 };

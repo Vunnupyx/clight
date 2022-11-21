@@ -47,13 +47,13 @@ export class Logger {
       maxSize: '10m',
       handleExceptions: true,
       handleRejections: true,
-      filename: path.join(__dirname, '../../../mdclight/logs/MDClight'),
+      filename: path.join(__dirname, '../../../mdclight/logs/mdc-light'),
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()
       ),
-      extension: '.log',
+      extension: '.log'
     };
     const file = new winston.transports.DailyRotateFile(options);
 

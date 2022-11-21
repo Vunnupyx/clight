@@ -16,7 +16,7 @@
 
 1. Prepare the release operation system image on a sd card
    1.1 Make sure, the latest docker-compose file is located inside `/root/docker-compose.yml`. Use `yarn copy_compose` (inside project root folder) to update
-   1.2 Make sure, the latest mdclight configuration is installed inside `/etc/MDClight/config/*`. Use `yarn copy_mdc_conf` (inside project root folder) to update
+   1.2 Make sure, the latest mdclight configuration is installed inside `/etc/mdc-light/config/*`. Use `yarn copy_mdc_conf` (inside project root folder) to update
    1.3 Make sure, the latest MTConnect configuration is installed inside `/etc/MDCLight/mtc_config/*`. Use `yarn copy_mtc_conf` (inside project root folder) to update
    1.4 Stop containers `docker-compose down`
    1.5 Pull latest docker images `docker-compose pull`

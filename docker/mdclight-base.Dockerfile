@@ -2,7 +2,7 @@ FROM debian:buster
 
 # RUN echo 'deb http://deb.debian.org/debian testing main' >> /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get install -y git build-essential cmake curl
+RUN apt-get install -y git build-essential cmake curl openssl
 RUN git clone https://github.com/eclipse/mraa.git
 RUN git clone https://github.com/siemens/meta-iot2050
 

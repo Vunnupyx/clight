@@ -123,7 +123,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     await sink.init();
 
     this.connectDataSinksToBus(sink);
-    winston.info(`${logPrefix} created.`);
+    winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
   }
 
   private findDataSinkConfig(protocol: DataSinkProtocols): IDataSinkConfig {

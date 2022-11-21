@@ -1,0 +1,1829 @@
+swagger: "2.0"
+
+info:
+  title: Configuration Agent API
+  version: 0.9.0
+
+host: localhost:1884
+basePath: /api/v1
+
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+  
+securityDefinitions:
+  SystemAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Bearer token
+
+paths:
+  /network/firewall/reservedlocalports:
+    get:
+      summary: Get list of local ports those cannot be forwarded
+      tags: [Network]
+      operationId: GetReservedLocalPorts
+      responses:
+        200:
+          description: List of reserved local ports
+          schema:
+            $ref: '#/definitions/ReservedLocalPorts'
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /network/firewall/staticportforwarding:
+    get:
+      summary: Get list of configured static port forwarding rules
+      tags: [Network]
+      operationId: GetStaticPortForwardingRules
+      responses:
+        200:
+          description: List of static port forwarding rules
+          schema:
+            $ref: '#/definitions/StaticPortForwardingRules'
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Set list of static port forwarding rules
+      operationId: SetStaticPortForwardingRules
+      tags: [Network]
+      responses:
+        200:
+          description: List of static port forwarding rules
+          schema:
+            $ref: '#/definitions/StaticPortForwardingRules'
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/StaticPortForwardingRules"
+          required: true
+          
+  /network/firewall/internetaccess:
+    get:
+      summary: Get current internet access configuration
+      operationId: GetFirewallInternetAccess
+      tags: [Network]
+      responses:
+        200:
+          description: Currrent internet access configuration
+          schema:
+            $ref: "#/definitions/InternetAccessConfiguration"
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+          
+    put:
+      summary: Set internet access configuration
+      operationId: SetFirewallInternetAccess
+      tags: [Network]
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/InternetAccessConfiguration"
+          required: true
+      responses:
+        200:
+          description: Current internet access configuration
+          schema:
+            $ref: "#/definitions/InternetAccessConfiguration"
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /network/ntp:
+    get:
+      summary: Get list of configured NTP servers
+      tags: [Network]  
+      operationId: GetNTPConfiguration
+      responses:
+        200:
+            $ref: "#/responses/NTPResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Updates the list of NTP servers
+      operationId: UpdateNTPConfiguration
+      tags: [Network]
+      responses:
+        200:
+          $ref:  "#/responses/NTPResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/StringList"
+          required: true
+
+  /network/adapters:
+    get:
+      summary: Return list of all network adapters of the operating system
+      tags: [Network]  
+      operationId: GetNetworkAdapterList
+      responses:
+        200:
+            $ref: "#/responses/AdaptersResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /network/adapters/{adapterID}:
+    get:
+      summary: Return network adapter configuration of defined id
+      tags: [Network]  
+      operationId: GetNetworkAdapterSettings
+      parameters:
+        - $ref: '#/parameters/adapterID'
+      responses:
+        200:
+          $ref: "#/responses/AdapterResponse"
+        404:
+          $ref:  "#/responses/NotFoundErrorResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Update network adapter configuration of defined id
+      tags: [Network]  
+      operationId: UpdateNetworkAdapterSettings
+      parameters:
+        - $ref: '#/parameters/adapterID'
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/AdapterSettings"
+          required: true
+      responses:
+        200:
+          $ref: "#/responses/AdapterResponse"
+        404:
+          $ref:  "#/responses/NotFoundErrorResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /network/adapters/{adapterID}/status:
+    get:
+      summary: Return status of network adapter of defined id
+      tags: [Network]  
+      operationId: GetNetworkAdapterStatus
+      parameters:
+        - $ref: '#/parameters/adapterID'
+      responses:
+        200:
+          $ref: "#/responses/AdapterStatusResponse"
+        404:
+          $ref:  "#/responses/NotFoundErrorResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /network/proxy:
+    get:
+      summary: Proxy configuration of the system.
+      operationId: GetProxySettings
+      tags: [Network] 
+      responses:
+        200:
+            $ref: "#/responses/ProxyResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Updates the proxy confiugration of the system
+      operationId: UpdateProxySettings
+      tags: [Network]
+      responses:
+        200:
+          $ref:  "#/responses/ProxyResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/ProxySettings"
+          required: true
+
+  /network/proxy/status:
+    get:
+      summary: Returns the current status of the proxy
+      operationId: GetProxyStatus
+      tags: [Network] 
+      responses:
+        200:
+            $ref: "#/responses/ProxyStatusResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /netservice/centralserver:
+    get:
+      summary: Returns central server configuration of the NETservcie site control.
+      tags: [Netservice]  
+      operationId: GetCentralServerConfiguration
+      responses:
+        200:
+          $ref: "#/responses/NetserviceConfigurationResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Update central server configuration of the NETservice site control.
+      tags: [Netservice]  
+      operationId: UpdateCentralServerConfiguration
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/NetserviceSettings"
+          required: true
+      responses:
+        200:
+          $ref: "#/responses/NetserviceConfigurationResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+
+  /netservice/status:
+    get:
+      summary: Get the current status of the NETservice site control.
+      tags: [Netservice]  
+      operationId: GetNetserviceStatus
+      responses:
+        200:
+          $ref: "#/responses/NetserviceStatusResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /netservice/machineappcredentials:
+    get:
+      summary: Returns the default credentials for the machine app.
+      tags: [Netservice]  
+      operationId: GetMachineAppCredentials
+      responses:
+        200:
+          $ref: "#/responses/CredentialsResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /netservice/machineappactive:
+    post:
+      summary: This endpoint should be called when the NETservice machine app is started.
+      tags: [Netservice]  
+      operationId: NotifyMachineAppActive
+      responses:
+        204:
+            $ref: "#/responses/NoContentResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /netservice/facility/reset:
+    post:
+      summary: This endpoint triggers a reset of the NETsevice facility tree.
+      tags: [Netservice]  
+      operationId: ResetFacilityTree
+      responses:
+        204:
+            $ref: "#/responses/NoContentResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /machine/info:
+    get:
+      summary: Current machine information.
+      tags: [Machine]  
+      operationId: GetMachineInformation
+      responses:
+        200:
+          $ref: "#/responses/MachineInformationResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Update machine information.
+      tags: [Machine]  
+      operationId: UpdateMachineInformation
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/SetMachineInformation"
+          required: true
+      responses:
+        200:
+          $ref: "#/responses/MachineInformationResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /machine/plcncagent:
+    get:
+      summary: IP addresses of the plcncagent.
+      tags: [Machine]  
+      operationId: GetPlcNcAgentIPAddresses
+      responses:
+        200:
+          $ref: "#/responses/PlcNcAgentResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Set the plcncagent ip addresses.
+      tags: [Machine]  
+      operationId: UpdatePlcNcAgentIPAddresses
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/ServerAddressList"
+          required: true
+      responses:
+        200:
+          $ref: "#/responses/PlcNcAgentResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /machine/controlipc:
+    get:
+      summary: IP addresses of the control ipc.
+      tags: [Machine]  
+      operationId: GetControlIPCIPAddress
+      responses:
+        200:
+          $ref: "#/responses/ControlIPCResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /devicemanagement/server:
+    get:
+      summary: Get configuration of device management platform.
+      tags: [DeviceManagement]  
+      operationId: GetDeviceManagementConfiguration
+      responses:
+        200:
+          $ref: "#/responses/DeviceManagementConfigurationResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Update configuration of device management platform.
+      tags: [DeviceManagement]  
+      operationId: UpdateDeviceManagementConfiguration
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/DeviceManagementSettings"
+          required: true
+      responses:
+        200:
+          $ref: "#/responses/DeviceManagementConfigurationResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+          
+  /messenger/server:
+    get:
+      summary: Get configuration of messenger server.
+      tags: [Messenger]  
+      operationId: GetMessengerServerConfiguration
+      responses:
+        200:
+          description: 'Configuration of the messenger server'
+          schema:
+            $ref: "#/definitions/MessengerServer"
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+    put:
+      summary: Update configuration of the messenger server.
+      tags: [Messenger]  
+      operationId: UpdateMessengerServerConfiguration
+      parameters:
+        - in: body
+          name: config
+          schema:
+            $ref: "#/definitions/MessengerServer"
+          required: true
+      responses:
+        200:
+          description: 'Configuration of the messenger server'
+          schema:
+            $ref: "#/definitions/MessengerServer"
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/shutdown:
+    post:
+      summary: Request shutdown of system
+      tags: [System]  
+      operationId: RequestSystemShutdown
+      responses:
+        201:
+            $ref: "#/responses/DefaultEmptyResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/restart:
+    post:
+      summary: Request restart of system
+      tags: [System]  
+      operationId: RequestSystemRestart
+      responses:
+        201:
+            $ref: "#/responses/DefaultEmptyResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/versions:
+    get:
+      summary: Request version information
+      tags: [System]  
+      operationId: RequestVersions
+      responses:
+        200:
+            $ref: "#/responses/SystemVersionsResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/logs/{moduleID}:
+    get:
+      summary: Request log export of iotedge module with given id
+      tags: [System]  
+      operationId: GetContainerLog
+      produces:
+        - application/octet-stream
+      parameters:
+        - $ref: '#/parameters/moduleID'
+        - $ref: '#/parameters/DateFrom'
+        - $ref: '#/parameters/DateTo'
+        - $ref: '#/parameters/MaxSize'
+        - $ref: '#/parameters/SearchPattern'
+        - $ref: '#/parameters/Compressed'
+      responses:
+        200:
+          description: "Successfully exported logs for given criteria"
+          schema:
+            type: file
+          headers:
+            Content-Disposition:
+              type: string
+        404:
+          $ref: "#/responses/NotFoundErrorResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/logs:
+    get:
+      summary: Request log export of CELOS OS
+      tags: [System]  
+      operationId: GetLogs
+      produces:
+        - application/octet-stream
+      parameters:
+        - $ref: '#/parameters/DateFrom'
+        - $ref: '#/parameters/DateTo'
+        - $ref: '#/parameters/MaxSize'
+        - $ref: '#/parameters/SearchPattern'
+        - $ref: '#/parameters/Modules'
+      responses:
+        200:
+          description: "A ZIP file which contains all logs of the specified modules."
+          schema:
+            type: file
+          headers:
+            Content-Disposition:
+              type: string
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+          
+  /system/logs/metainformation:
+    get:
+      summary: Get meta information of last triggered log export. Will be empty if no log export has been triggered before this call.
+      tags: [System]  
+      operationId: GetLogExportMetaInformation
+      responses:
+        200:
+          description: "Log export meta information"
+          schema:
+            $ref: '#/definitions/LogMetaInformation'
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/logs/modules:
+    get:
+      summary: Get list of available log modules.
+      tags: [System]  
+      operationId: GetLogModules
+      responses:
+        200:
+          $ref: "#/responses/StringListResponse"
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/icons:
+    get:
+      summary: Get list of available status icons
+      tags: [System]  
+      operationId: GetIconList
+      responses:
+        200:
+            $ref: "#/responses/IconListResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/icons/{iconID}:
+    get:
+      summary: Get icon of given id.
+      tags: [System]  
+      operationId: GetIcon
+      parameters:
+        - $ref: '#/parameters/iconID'
+      responses:
+        200:
+          $ref: "#/responses/IconResponse"
+        404:
+          $ref: "#/responses/NotFoundErrorResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+  
+  /system/update:
+    get:
+      summary: Get available system update (Celos Next OS)
+      tags: [System]  
+      operationId: RequestUpdateStatus
+      responses:
+        200:
+            $ref: "#/responses/SystemUpdateResponse"
+        204:
+            $ref: "#/responses/NoContentResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/applyupdate:
+    post:
+      summary: Start system update
+      tags: [System]  
+      operationId: RequestSystemUpdate
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: "#/definitions/SystemUpdateInformation"
+          required: true
+      responses:
+        201:
+          description: 'Successfully triggered OS update'
+          schema:
+            $ref: '#/definitions/SystemUpdateStatus'
+        404:
+          $ref: "#/responses/NotFoundErrorResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+          
+  /system/update/{osversion}/download:
+    post:
+      summary: Request download of CELOS OS with given version
+      tags: [System]  
+      operationId: RequestSystemUpdateDownload
+      parameters:
+        - $ref: '#/parameters/OSVersion'
+      responses:
+        201:
+          description: 'Successfully triggered download of CELOS OS update'
+          schema:
+            type: object
+            properties:
+              Version:
+                type: string
+            required:
+              - Version
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+  
+  /system/update/download/status:
+    get:
+      summary: Get download status of CELOS OS
+      tags: [System]  
+      operationId: GetSystemUpdateDownloadStatus
+      responses:
+        200:
+          description: 'Status of CELOS OS update download'
+          schema:
+            $ref: '#/definitions/DownloadStatus'
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/commissioning:
+    get:
+      summary: Get commissioning status.
+      tags: [System]  
+      operationId: GetCommissioningStatus
+      responses:
+        200:
+          $ref: "#/responses/CommissioningResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+  
+  /system/commissioning/finish:
+    post:
+      summary: Finish commissioning of device
+      tags: [System]  
+      operationId: RequestFinishCommissioning
+      responses:
+        201:
+            $ref: "#/responses/CommissioningResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+          
+  /system/backup:
+    get:
+      summary: Get backup archive from IPC
+      tags: [System]  
+      operationId: GetBackupArchive
+      produces:
+        - application/octet-stream
+      responses:
+        200:
+          description: "A zip archive with all configuration files"
+          schema:
+            type: file
+          headers:
+            Content-Disposition:
+              type: string
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+          
+  /system/recover:
+    post:
+      summary: Apply recovery archive to IPC
+      tags: [System]
+      operationId: ApplyRecoveryArchive
+      security:
+        - SystemAuth: []
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: recoveryarchive
+          type: file
+          description: Recovery archive
+          required: true
+      responses:
+        204:
+          $ref: '#/responses/NoContentResponse'
+        default:
+          $ref:  '#/responses/DefaultErrorResponse'
+          
+  /system/time:
+    get:
+      summary: Get current system time
+      tags: [System]  
+      operationId: GetTime
+      responses:
+        200:
+          description: "Current utc system time"
+          schema:
+            $ref: '#/definitions/SystemTime'
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+          
+    put:
+      summary: Set system time to tiven time. The given time will be always converted to utc.
+      tags: [System]
+      operationId: SetTime
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: "#/definitions/SystemTime"
+          required: true
+      responses:
+        200:
+          description: "Current utc system time"
+          schema:
+            $ref: '#/definitions/SystemTime'
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /system/rsaPublicKey:
+    get:
+      summary: Get RSA public key of CELOS IPC (marked for removal)
+      tags: [System]
+      operationId: GetRSAPublicKey
+      produces:
+        - application/octet-stream
+      responses:
+        200:
+          description: "The public RSA key of the CELOS IPC."
+          schema:
+            type: file
+          headers:
+            Content-Disposition:
+              type: string
+        default:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /datahub/dps:
+    get:
+      summary: Get settings of device provisioning service used by iotedge.
+      tags: [DataHub]  
+      operationId: GetDataHubDPSConfiguration
+      responses:
+        200:
+          $ref: "#/responses/DataHubDPSResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /datahub/modules:
+    get:
+      summary: Get list of iotedge modules.
+      tags: [DataHub]  
+      operationId: GetDataHubModules
+      responses:
+        200:
+          $ref: "#/responses/StringListResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /datahub/status/{moduleID}:
+    get:
+      summary: Get status of iotedge module with given id
+      tags: [DataHub]  
+      operationId: GetDataHubModule
+      parameters:
+        - $ref: '#/parameters/moduleID'
+      responses:
+        200:
+          $ref: "#/responses/DataHubModuleResponse"
+        404:
+          $ref: "#/responses/NotFoundErrorResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+  /datahub/status:
+    get:
+      summary: Get status of cloud connection
+      tags: [DataHub]  
+      operationId: GetDataHubStatus
+      responses:
+        200:
+          $ref: "#/responses/DataHubStatusResponse"
+        500:
+          $ref: "#/responses/DefaultErrorResponse"
+
+responses:
+  DefaultEmptyResponse:
+    description: "OK"
+    schema:
+      type: "object"
+
+  DefaultErrorResponse:
+    description: "Unknown Error"
+    schema:
+      $ref: "#/definitions/ErrorData"
+
+  NotFoundErrorResponse:
+    description: "Not found"
+    schema:
+      $ref: "#/definitions/ErrorData"
+
+  ProxyResponse:
+    description: "OK"
+    schema:
+      $ref:  "#/definitions/ProxySettings"
+
+  ProxyStatusResponse:
+    description: "OK"
+    schema:
+      $ref:  "#/definitions/ProxyStatus"
+
+  AdaptersResponse:
+    description: "OK"
+    schema:
+      type: array
+      items: 
+        $ref:  "#/definitions/AdapterSettings"
+
+  AdapterStatusResponse:
+    description: "OK"
+    schema:
+      $ref:  "#/definitions/AdapterStatus"
+
+  AdapterResponse:
+    description: "OK"
+    schema:
+      $ref:  "#/definitions/AdapterSettings"
+
+  NetserviceConfigurationResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/NetserviceSettings"
+
+  NetserviceStatusResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/NetserviceStatus"
+
+  NTPResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/StringList"
+
+  MachineInformationResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/MachineInformation"
+
+  PlcNcAgentResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/ServerAddressList"
+
+  DeviceManagementConfigurationResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/DeviceManagementSettings"
+
+  CredentialsResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/Credentials"
+
+  DataHubDPSResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/DPSSettings"
+
+  StringListResponse:
+    description: "List of items"
+    schema:
+      $ref: "#/definitions/StringList"
+
+  DataHubStatusResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/DataHubStatus"
+
+  DataHubModuleResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/DataHubModuleStatus"
+
+  SystemVersionsResponse:
+    description: "OK"
+    schema:
+      type: array
+      items: 
+        $ref:  "#/definitions/VersionInfo"
+
+  LogExportResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/LogfileName"
+
+  IconListResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/StringList"
+
+  IconResponse:
+    description: "OK"
+    schema:
+      $ref: "#/definitions/IconData"
+  
+  SystemUpdateResponse:
+    description: "OK"
+    schema:
+      $ref:  "#/definitions/SystemUpdateInformation"
+
+  CommissioningResponse:
+    description: "OK"
+    schema:
+      $ref:  "#/definitions/CommissioningInformation"
+
+  NoContentResponse:
+    description: "There is no content"
+    
+  InsufficientStorageResponse:
+    description: "Insufficient storage - the log package is too big"
+    schema:
+      $ref: "#/definitions/ErrorData"
+
+  ControlIPCResponse:
+    description: "OK"
+    schema:
+      $ref: '#/definitions/ControlIPC'
+
+parameters:
+  adapterID:
+    name: adapterID
+    in: path
+    required: true
+    description: Unique id of network adapter
+    type: string
+
+  moduleID:
+    name: moduleID
+    in: path
+    required: true
+    description: Unique id of datahub module
+    type: string
+
+  iconID:
+    name: iconID
+    in: path
+    required: true
+    description: Unique filename of a status icon
+    type: string
+    
+  DateFrom:
+    name: dateFrom
+    in: query
+    required: true
+    description: Date-time of start
+    type: string
+    format: date-time
+    
+  DateTo:
+    name: dateTo
+    in: query
+    required: true
+    description: Date-time of end
+    type: string
+    format: date-time
+    
+  MaxSize:
+    name: maxSize
+    description: Maximum size of a log file in MB
+    in: query
+    default: 4000
+    minimum: 1
+    maximum: 4000
+    type: integer
+
+  Compressed:
+    name: compressed
+    description: Defines if a logfile should be requested as compressed zip archive or as plain text file
+    in: query
+    type: boolean
+    default: false
+    
+  SearchPattern:
+    name: pattern
+    description: Pattern which is applied to the log entries
+    in: query
+    default: ""
+    type: string
+    
+  Modules:
+    name: modules
+    description: List of comma separated modules which should be included in the log.
+    in: query
+    type: string
+    
+  OSVersion:
+    name: osversion
+    description: Version number of the operating system.
+    in: path
+    type: string
+    required: true
+
+definitions:
+  NetworkConnectionTypeEnum:
+    type: string
+    enum:
+      - LAN
+      - WIFI
+      - MOBILE
+    description: >
+      Values:
+        * `LAN` - Device is connected by lan network to cloud.
+        * `WIFI` - Device is connected by wifi network to cloud.
+        * `MOBILE` - Device is connected by mobile network to cloud.
+
+  NetworkAdapterConfigurationEnum:
+    type: string
+    enum:
+      - configured
+      - configuring
+      - unmanaged
+      - failed
+      - pending
+      - linger
+      - unknown
+    description: >
+      Values:
+        * `configured` - link configured successfully
+        * `configuring` - in the process of retrieving configuration or configuring the link
+        * `unmanaged` - link is not handled
+        * `failed` - failed to manage the link
+        * `pending` - link configured successfully
+        * `linger` - the link is gone, but has not yet been dropped
+        * `unknown` - configuration status is unknown
+
+  NetworkAdapterLinkEnum:
+    type: string
+    enum:
+      - disabled
+      - disconnected
+      - connected
+      - unknown
+    description: >
+      Values:
+        * `disabled` - adapter is disabled / powered down
+        * `disconnected` - adapter is powered up but disconnected
+        * `connected` - adapter is connected
+        * `unknown` - adapter status is unknown
+
+  DaemonStatusEnum:
+    type: string
+    enum:
+          - running
+          - stopped
+          - unknown
+    description: >
+      Values:
+        * `running` - daemon is running
+        * `stopped` - daemon is not running
+        * `unknown` - status of daemon is unknown
+
+  ProxyStatusEnum:
+    type: string
+    enum:
+      - notused
+      - configured
+      - validating
+      - failed
+      - unknown
+    description: >
+      Values:
+        * `notused` - proxy is disabled, all requests are forwared to the network
+        * `configured` - proxy is enabled and configuration is valid
+        * `validating` - configuration of proxy is getting verified
+        * `failed` - proxy is enabled but configuration is invalid
+        * `unknown` - configuration status is unknown
+
+  MachineInformationSourceEnum:
+    type: string
+    enum:
+      - unknown
+      - ncplcagent
+      - operator
+    description: >
+      Values:
+        * `unknown` - source of machine information is unknown
+        * `ncplcagent` - machine information was received from NC/PLC Agent
+        * `operator` - machine information has been set by operator
+
+  NetserviceUpdateStatusEnum:
+    type: string
+    enum:
+      - noupdate
+      - clientupdating
+      - sitecontrolupdating
+    description: >
+      Values:
+        * `noupdate` - No update available
+        * `clientupdating` - Connected client of site-control is updated
+        * `sitecontrolupdating` - Site-control is updating itself
+        
+  ControlManufacturerEnum:
+    type: string
+    description: "Manufacturer of the control (i.e. Siemens, Heidenhain, ...)"
+    enum:
+      - UNSPECIFIED
+      - SIEMENS
+      - HEIDENHAIN
+      - FANUC
+      - MITSUBISHI
+      - BECKHOFF
+      
+  ControlTypeEnum:
+    type: string
+    enum:
+      - UNSPECIFIED
+      - 840D
+      - SIN_ONE
+      - TNC_620
+      - TNC_640
+      - MAPPS6
+      - FANUC
+      - SIN_ONE_LEG
+      - TNC_7
+    description: >
+      Values:
+        * `UNSPECIFIED` - Unknown or not set
+        * `840D` - Siemens Sinumerik 840D
+        * `SIN_ONE` - Siemens Sinumerik One
+        * `TNC_620` - Heidenhain TNC 620
+        * `TNC_640` - Heidenhain TNC 640
+        * `MAPPS6` - MAPPS6
+        * `FANUC` - Fanuc Native HMI
+        * `SIN_ONE_LEG` - Siemens Sinumerik One Legacy
+        * `SIN_ONE` - Heidenhain TNC 7
+  
+  InternetAccessModeEnum:
+    type: string
+    enum:
+      - manual
+      - scheduled
+    description: >
+      Values:
+        * `manual` - The internet access is controlled manually
+        * `scheduled` - The internet access is controlled by a given schedule.
+  
+  ErrorData:
+    type: object
+    properties:
+      message:
+        type: string
+      error:
+        type: string
+    required:
+      - "message"
+      - "error"
+
+  AdapterSettings:
+    properties:
+      id:
+        type: string
+        description: unique id of network adapter as used by the os (enoX1, enoX2...)
+      displayName:
+        type: string
+        description: display name
+      enabled:
+        type: boolean
+      ipv4Settings:
+        $ref: "#/definitions/IPSettings"
+      ipv6Settings:
+        $ref: "#/definitions/IPSettings"
+      macAddress:
+        type: string
+      ssid:
+        type: string
+        description: Only used for wifi interfaces to provide the SSID of the connected wifi network
+    required:
+      - "id"
+      - "enabled"
+      - "ipv4Settings"
+
+  IPSettings:
+    properties:
+      enabled:
+        type: boolean
+      dhcp:
+        type: boolean
+      ipAddresses:
+        type: array
+        items: 
+          $ref: "#/definitions/IPAddress"
+      defaultGateway:
+        type: string
+      dnsserver:
+        type: array
+        items:
+          type: string
+    required:
+      - "enabled"
+      - "dhcp"
+      - "ipAddresses"
+
+  IPAddress:
+    properties: 
+      Address:
+        type: string
+      Netmask:
+        type: string
+        description: "Netmask as CIDR suffix (valid values are 8-32 for ipv4 and 64 - 128 for ipv6)"
+    required:
+      - "Address"
+      - "Netmask"
+
+  IPv4Address:
+    type: string
+    description: "IPv4 address like 10.10.1.2 for example"
+    pattern: "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+
+  AdapterStatus:
+    properties: 
+      linkStatus:
+        $ref: "#/definitions/NetworkAdapterLinkEnum"
+      configurationStatus:
+        $ref: "#/definitions/NetworkAdapterConfigurationEnum"
+      message:
+        type: string
+        description: Detailed description in case of an error
+    required:
+      - "linkStatus"
+      - "configurationStatus"
+
+  ProxySettings:
+    properties:
+      enabled:
+        type: boolean
+      host:
+        type: string
+      port:
+        type: integer
+        minimum: 0
+        maximum: 65535
+      username:
+        type: string
+      password:
+        type: string
+      whitelist:
+        type: array
+        items:
+          type: string
+    required:
+      - "enabled"
+      - "host"
+      - "port"
+      - "username"
+      - "password"
+      - "whitelist"
+
+  ProxyStatus:
+    properties: 
+      serviceStatus:
+        $ref: "#/definitions/DaemonStatusEnum"
+      configurationStatus:
+        $ref: "#/definitions/ProxyStatusEnum"
+      message:
+        type: string
+        description: provides a detailed description in case of an error
+    required:
+      - "configurationStatus"
+      - "serviceStatus"
+      
+  ProtocolTypeEnum:
+    type: string
+    enum:
+      - tcp
+      - udp
+    description: >
+      Values:
+        * `tcp` - tcp protocol
+        * `udp` - udp protocol
+
+  PortNumberType:
+    type: integer
+    minimum: 1
+    maximum: 65535
+    description: The TCP or UDP port number
+
+  ReservedLocalPorts:
+    type: array
+    items:
+      $ref: '#/definitions/ReservedLocalPort'
+
+  ReservedLocalPort:
+    properties:
+      Port:
+        $ref: '#/definitions/PortNumberType'
+      Protocol:
+        $ref: '#/definitions/ProtocolTypeEnum'
+    required:
+      - "Port"
+      - "Protocol"
+
+  StaticPortForwardingRules:
+    type: array
+    items:
+      $ref: '#/definitions/StaticPortForwardingRule'
+
+  StaticPortForwardingRule:
+    properties:
+      Enabled:
+        type: boolean
+        description: Is the rule enabled (true) or disabled (false)
+      InternalPort:
+        $ref: '#/definitions/PortNumberType'
+        description: The internal port to be forwarded to
+      InternalIPAddress:
+        type: string
+        description: The address to be forwarded to
+      ExternalPort:
+        $ref: '#/definitions/PortNumberType'
+        description: The external port to be forwarded from
+      Protocol:
+        $ref: '#/definitions/ProtocolTypeEnum'
+        description: Protocol to be applied on 'tcp' or 'udp'
+      Name:
+        type: string
+        description: Name of the rule, must be non-empty and must be unique
+      Comment:
+        type: string
+        description: Textual comment for the rule
+    required:
+      - "Enabled"
+      - "InternalPort"
+      - "InternalIPAddress"
+      - "ExternalPort"
+      - "Protocol"
+      - "Name"
+      - "Comment"
+
+
+  FirewallRules:
+    properties:
+      enabled:
+        type: boolean
+      rules:
+        type: array
+        items:
+          $ref: "#/definitions/FirewallRule"
+    required:
+      - "enabled"
+      - "rules"
+
+  FirewallRule:
+    properties:
+      id:
+        type: string
+        description: Unique id of firewall rule
+      displayName:
+        type: string
+      enabled:
+        type: boolean
+      action:
+        type: string
+        enum:
+          - block
+          - allow
+      ports:
+        type: array
+        items:
+          type: string
+          description: Single port number or port ranges, i.e. 4567-4569
+      protocol:
+        type: string
+        enum:
+          - tcp
+          - udp
+        description: tcp,udp,...
+      direction:
+        type: string
+        enum:
+          - inbound
+          - outbound
+        default: inbound
+      program:
+        type: string
+        description: Path to executable which is allowed for this rule
+      adapters:
+        type: array
+        items:
+          type: string
+        description: reference to network adapter id(s) for which the rule is applied
+      remoteaddress:
+        type: object
+        $ref: "#/definitions/IPNetworkData"
+
+  IPNetworkData:
+    properties:
+      address:
+        type: string
+      netmask:
+        type: string
+    required:
+      - "address"
+      - "netmask"
+
+  NetserviceSettings:
+    properties: 
+      url:
+        type: string
+        description: "URL of the NETservice central server without http:// prefix"
+        default: "netservice-live.dmgmori.com"
+      port:
+        type: integer
+        minimum: 1
+        maximum: 65535
+        default: 443
+    required:
+      - "url"
+      - "port"
+
+  NetserviceStatus:
+    properties: 
+      ServiceStatus:
+        $ref: "#/definitions/DaemonStatusEnum"
+      Connected:
+        type: boolean
+        description: "Connection status of site-control to central-server"
+      ConnectedClients:
+        $ref: "#/definitions/StringList"
+      UpdateStatus:
+        $ref: "#/definitions/NetserviceUpdateStatusEnum"
+      FacilityTree:
+        type: string
+        description: "Name of the current configured facility tree"
+      StatusIcon:
+        type: string
+        description: "Filename of the icon which represents the current status"
+    required:
+      - "ServiceStatus"
+      - "Connected"
+      - "ConnectedClients"
+      - "UpdateStatus"
+      - "FacilityTree"
+      - "StatusIcon"
+
+  StringList:
+    type: array
+    items: 
+      type: string
+
+  ServerAddressList:
+    type: array
+    items: 
+      $ref: "#/definitions/ServerAddress"
+    minItems: 1
+
+  ServerAddress:
+    properties: 
+      host:
+        $ref: '#/definitions/IPv4Address'
+      port:
+        type: integer
+        minimum: 1
+        maximum: 65535
+        default: 1400
+    required:
+      - "host"
+      - "port"
+
+  SetMachineInformation:
+    properties: 
+      Serial:
+        type: string
+        description: "Serial number of machine"
+      ControlType:
+        $ref: '#/definitions/ControlTypeEnum'
+      ControlManufacturer:
+        $ref: '#/definitions/ControlManufacturerEnum'
+      Model:
+        type: string
+        description: "Machine model"
+      Manufacturer:
+        type: string
+        description: "Machine manufacturer"
+        default: "DMG MORI"
+    required:
+      - "Serial"
+      - "ControlType"
+      - "ControlManufacturer"
+
+  MachineInformation:
+    properties: 
+      Serial:
+        type: string
+        description: "Serial number of machine"
+      Model:
+        type: string
+        description: "Machine model"
+      ControlType:
+        $ref: '#/definitions/ControlTypeEnum'
+      ControlManufacturer:
+        $ref: '#/definitions/ControlManufacturerEnum'
+      Manufacturer:
+        type: string
+        description: "Machine manufacturer"
+      Source:
+        $ref: "#/definitions/MachineInformationSourceEnum"
+      Timestamp:
+        type: string
+        format: date-time
+        description: "Timestamp when the machine information was updated/confirmed the last time"
+    required:
+      - "Serial"
+      - "ControlType"
+      - "ControlManufacturer"
+      - "Model"
+      - "Manufacturer"
+      - "Source"
+      - "Timestamp"
+
+  DeviceManagementSettings:
+    properties: 
+      url:
+        type: string
+        description: "URL of the device management platform including the prefix https://"
+        default: "https://dmgmoridevices.adamos.com"
+      tenant:
+        type: string
+        description: "Tenant of the device management platform"
+        default: "dmgmoridevices"
+    required:
+      - "url"
+      - "tenant"
+
+  Credentials:
+    properties: 
+      username:
+        type: string
+      password:
+        type: string
+        format: password 
+    required:
+      - "username"
+      - "password"
+
+  DPSSettings:
+    properties: 
+      Registered:
+        type: boolean
+      RegistrationID:
+        type: string
+      DPSEndpoint:
+        type: string
+      ScopeID:
+        type: string
+    required:
+      - "Registered"
+      - "RegistrationID"
+      - "DPSEndpoint"
+      - "ScopeID"
+
+  DataHubModuleStatus:
+    properties: 
+      ImageName:
+        type: string
+      DisplayName:
+        type: string
+      Version:
+        type: string
+      Status:
+        type: string
+      StartedAt:
+        type: string
+      Error:
+        type: string
+    required:
+      - "ImageName"
+      - "DisplayName"
+      - "Version"
+      - "Status"
+      - "StartedAt"
+      - "Error"
+      
+  DataHubStatus:
+    properties: 
+      ConnectionType:
+        $ref: "#/definitions/NetworkConnectionTypeEnum"
+      ConnectionStatus:
+        type: boolean
+        description: "Summary cloud connection status"
+      NetserviceStatus:
+        type: boolean
+        description: "Netservice connection status"
+      CumulocityStatus:
+        type: boolean
+        description: "Cumulocity connection status"
+      EdgeAgentStatus:
+        type: boolean
+        description: "IoT Edge Agent connection status"
+      NetworkStatus:
+        type: boolean
+        description: "Ethernet X1 connection status (OSI layer 3)"
+      StatusIcon:
+        type: string
+        description: "Filename of the icon which represents the current status"
+    required:
+      - ConnectionType
+      - ConnectionStatus
+      - StatusIcon
+      - NetserviceStatus
+      - CumulocityStatus
+      - EdgeAgentStatus
+      - NetworkStatus
+
+  VersionInfo:
+    properties: 
+      Name:
+        type: string
+      DisplayName:
+        type: string
+      Version:
+        type: string
+    required:
+      - "Name"
+      - "DisplayName"
+      - "Version"
+
+  LogExportCriteria:
+    properties: 
+      From:
+        type: string
+        format: date-time
+        description: "Timestamp of the first log entry to be included" 
+      To:
+        type: string
+        format: date-time
+        description: "Timestamp of the last log entry to be included"
+      Pattern:
+        type: string
+        default: ""
+        description: "Regular expression to filter log entries"
+      Lines:
+        type: integer
+        default: 10000
+        minimum: 1
+        description: "Maximum number of log entries which should be exported"
+    required:
+        - "From"
+        - "To"
+        - "Lines"
+
+  LogfileName:
+      properties: 
+        FileName:
+          type: string
+          description: "The name of the logfile which contains the exported log entries. It will get copied to the directory /mnt/share on the CELOS X IPC."
+      required:
+        - "FileName"
+
+  IconData:
+      properties: 
+        Data:
+          type: string
+          description: "standard base64 encoded file content"
+      required:
+        - "Data"
+  
+  SystemUpdateInformation:
+    properties: 
+      Title:
+        type: string
+      Version:
+        type: string
+      Description:
+        type: string
+    required:
+      - "Title"
+      - "Version"
+
+  SystemUpdateStatus:
+    type: object
+    properties:
+      Title:
+        type: string
+      Version:
+        type: string
+      Success:
+        type: boolean
+      Error:
+        type: string
+        description: 'Contains error message in case of an unsuccessful update'
+    required:
+      - Title
+      - Version
+      - Success
+      - Error
+
+  CommissioningInformation:
+    properties: 
+      Timestamp:
+        type: string
+        format: date-time
+        description: "Timestamp when commissioning has been finished."
+      Finished:
+        type: boolean
+    required:
+      - "Finished"
+      - "Timestamp"
+
+  ControlIPC:
+    type: object
+    properties: 
+      IP:
+        $ref: '#/definitions/IPv4Address'
+        
+  LogMetaInformation:
+    type: object
+    properties:
+      Filename:
+        type: string
+        description: "Filename of the last log export"
+      DateFrom:
+        type: string
+        format: date-time
+        description: "Start date-time as provided in the request"
+      DateTo:
+        type: string
+        format: date-time
+        description: "End date-time as provided in the request"
+      Pattern:
+        type: string
+        default: ""
+        description: "Search pattern as provided in the request"
+      MachineSerial:
+        type: string
+        default: ""
+        description: "Serial of the machine to which the logs belong to"
+      Logs:
+        type: array
+        items:
+          $ref: '#/definitions/LogfileMetaInformation'
+    required:
+      - "Filename"
+      - "DateFrom"
+      - "DateTo"
+      - "Pattern"
+      - "MachineSerial"
+      - "Logs"
+          
+  LogfileMetaInformation:
+    type: object
+    properties:
+      DateFrom:
+        type: string
+        format: date-time
+        description: "Date-time of the first log entry"
+      DateTo:
+        type: string
+        format: date-time
+        description: "Date-time of the last log entry"
+      Path:
+        type: string
+        description: "Path to the logfile within the log archive"
+      Truncated:
+        type: boolean
+        description: "Indicates if the logfile is truncated due to the given maximum file size"
+      Module:
+        type: string
+        description: "Name of the module which created the logs"
+      Empty:
+        type: boolean
+        description: "True if no logs were found for the given filter criteria"
+    required: 
+      - "DateFrom"
+      - "DateTo"
+      - "Path"
+      - "Truncated"
+      - "Module"
+      - "Empty"
+
+  SystemTime:
+    type: object
+    properties:
+      Timestamp:
+        type: string
+        format: date-time
+        description: "Current date-time of the system"
+    required:
+      - "Timestamp"
+      
+  MessengerServer:
+    properties: 
+      URL:
+        type: string
+        description: "URL of the messenger server"
+      Name:
+        type: string
+        description: "Name of the messenger server"
+    required:
+      - "URL"
+      - "Name"
+      
+  InternetAccessConfiguration:
+    type: object
+    properties:
+      AccessMode:
+        $ref: '#/definitions/InternetAccessModeEnum'
+      ManualAccessMode:
+        type: object
+        properties:
+          Enabled:
+            type: boolean
+            description: Internet access is enabled if set to true
+        required:
+          - "Enabled"
+    required:
+      - "AccessMode"
+
+  DownloadStatus:
+    type: object
+    properties:
+      PendingPackageCount:
+        type: integer
+        minimum: 0
+        description: Number of software packages which need to get downloaded
+      FailedPackageCount:
+        type: integer
+        minimum: 0
+        description: Number of software packages which failed to download
+      LastStatusUpdate:
+        type: string
+        format: date-time
+        description: Date-Time of last status update of software packages
+      Connected:
+        type: boolean
+        description: Describes the status of the connection to the device management platform
+      

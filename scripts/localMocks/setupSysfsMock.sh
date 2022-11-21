@@ -1,3 +1,6 @@
+#!/bin/bash
+# Description: Create mock files for iot2050 LEDs and GPIO ports
+
 mkdir -p mdclight/sys/bus/iio/devices/iio:device0
 echo 333 > mdclight/sys/bus/iio/devices/iio:device0/in_voltage0_raw
 echo 555 > mdclight/sys/bus/iio/devices/iio:device0/in_voltage2_raw 

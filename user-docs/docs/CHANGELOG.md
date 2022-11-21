@@ -11,6 +11,10 @@ title: Changelog
 - [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixed missing value for NCK data point basicLengthUnit
 - [DIGMDCLGHT-70](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-70) Fixed the case where Add new data point button might remain disabled after deleting a data point
 
+### Changed
+
+- [DIGMDCLGHT-246](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-246) SSH communications are removed with usage of DMG MORI CELOS
+
 ## [2.4.0]
 
 ### Added

@@ -1,5 +1,7 @@
 <div class="layout-header">
-  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">{{ 'system-information.SystemInformation' | translate }}</h2>
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
+    {{ 'system-information.SystemInformation' | translate }}
+  </h2>
 </div>
 
 <mat-divider></mat-divider>
@@ -13,8 +15,10 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
-        <button mat-button color="primary" (click)="update()">
-          {{ 'system-information.UpdateNow' | translate }}
+        <!--TODO src/modules/Backend/routes/apis/v1/SystemInfo/index.ts Line 35 -->
+        <button [disabled]="true" mat-button color="primary" (click)="update()">
+          {{ 'system-information.UpdateNow' | translate }} [CELOS Migration not
+          completed]
         </button>
       </div>
     </mat-expansion-panel>
@@ -33,11 +37,15 @@
       <div class="row pt-15 pb-15">
         <div class="col-12 col-md-6">
           <h4 class="m-0 system-info-item__title">{{ item.key }}</h4>
-          <p class="m-0 system-info-item__description">{{ item.keyDescription }}</p>
+          <p class="m-0 system-info-item__description">
+            {{ item.keyDescription }}
+          </p>
         </div>
         <div class="col-12 col-md-6">
           <h4 class="m-0 system-info-item__value">{{ item.value }}</h4>
-          <p class="m-0 system-info-item__description">{{ item.valueDescription }}</p>
+          <p class="m-0 system-info-item__description">
+            {{ item.valueDescription }}
+          </p>
         </div>
       </div>
       <mat-divider></mat-divider>

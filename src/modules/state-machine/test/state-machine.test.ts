@@ -5,66 +5,30 @@ jest.mock('winston');
 
 const stateAndTransitions: StateAndTransitions = {
   INIT: {
-    action: () => 'START_UPDATE',
+    transition: () => 'START',
     transitions: {
-      START_UPDATE: 'GET_UPDATES'
+      START: 'STATE1',
+      GOTOSTATE3: 'STATE3'
     }
   },
-  GET_UPDATES: {
-    action: () => {},
+  STATE1: {
+    transition: () => {},
     transitions: {
-      UPDATE_FOUND: 'CHECK_INSTALLED_COS_VERSION',
-      NO_UPDATE_FOUND: 'END'
+      TRANSITION1: 'STATE2',
+      TRANSITION2: 'END'
     }
   },
-  CHECK_INSTALLED_COS_VERSION: {
-    action: () => {},
+  STATE2: {
+    transition: () => {},
     transitions: {
-      VERSION_OK: 'APPLY_MODULE_UPDATES',
-      VERSION_NOT_OK: 'CHECK_COS_UPDATES'
+      RESULT_OK: 'END',
+      RESULT_NOK: 'STATE1'
     }
   },
-  CHECK_COS_UPDATES: {
-    action: () => {},
+  STATE3: {
+    transition: () => 'TRANSIT',
     transitions: {
-      UPDATE_AVAILABLE: 'APPLY_COS_UPDATES',
-      UPDATE_NOT_AVAILABLE: 'START_DOWNLOAD_COS_UPDATES'
-    }
-  },
-  START_DOWNLOAD_COS_UPDATES: {
-    action: () => {},
-    transitions: {
-      COS_DOWNLOAD_STARTED: 'VALIDATE_COS_DOWNLOAD'
-    }
-  },
-  VALIDATE_COS_DOWNLOAD: {
-    action: () => {},
-    transitions: {
-      COS_DOWNLOADED: 'APPLY_COS_UPDATES'
-    }
-  },
-  APPLY_COS_UPDATES: {
-    action: () => {},
-    transitions: {
-      INSTALLING_COS: 'WAITING_FOR_SYSTEM_RESTART'
-    }
-  },
-  WAITING_FOR_SYSTEM_RESTART: {
-    action: () => {},
-    transitions: {
-      SYSTEM_RESTARTED: 'APPLY_MODULE_UPDATES'
-    }
-  },
-  APPLY_MODULE_UPDATES: {
-    action: () => {},
-    transitions: {
-      MODULE_UPDATE_APPLIED: 'WAIT_FOR_MODULE_UPDATE'
-    }
-  },
-  WAIT_FOR_MODULE_UPDATE: {
-    action: () => {},
-    transitions: {
-      SUCCESS: 'END'
+      TRANSIT: 'DEAD_END'
     }
   }
 };
@@ -81,15 +45,35 @@ describe('State Machine', () => {
     expect(stateMachine.currentState).toBe('END');
   });
 
-  test('Unexpected response will throw', async () => {
+  test('No response from transition ends the state machine', async () => {
+    const stateMachine = new StateMachine(
+      {
+        ...stateAndTransitions,
+        STATE1: {
+          ...stateAndTransitions.STATE1,
+          transition: () => {}
+        }
+      },
+      initialState
+    );
+    jest.spyOn(stateMachine, 'emit');
+
+    expect(stateMachine.currentState).toBe(undefined);
+    await stateMachine.start();
+    expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
+    expect(stateMachine.emit).not.toHaveBeenCalledWith('STATE2');
+    expect(stateMachine.emit).not.toHaveBeenCalledWith('STATE3');
+    expect(stateMachine.emit).toHaveBeenCalledWith('END');
+    expect(stateMachine.currentState).toBe('END');
+  });
+
+  test('Wrong transition response will end the state machine', async () => {
     const stateMachine = new StateMachine(
       {
         ...stateAndTransitions,
         INIT: {
-          action: () => 'WRONG',
-          transitions: {
-            START_UPDATE: 'GET_UPDATES'
-          }
+          ...stateAndTransitions.INIT,
+          transition: () => 'WRONG'
         }
       },
       initialState
@@ -103,13 +87,13 @@ describe('State Machine', () => {
     expect(stateMachine.currentState).toBe('END');
   });
 
-  test('No update found ends the state machine', async () => {
+  test('Ends the state machine if a transition leads to a not existing state', async () => {
     const stateMachine = new StateMachine(
       {
         ...stateAndTransitions,
-        GET_UPDATES: {
-          ...stateAndTransitions.GET_UPDATES,
-          action: () => 'NO_UPDATE_FOUND'
+        INIT: {
+          ...stateAndTransitions.INIT,
+          transition: () => 'GOTOSTATE3'
         }
       },
       initialState
@@ -118,18 +102,22 @@ describe('State Machine', () => {
 
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith('GET_UPDATES');
+    expect(stateMachine.emit).toHaveBeenCalledWith('STATE3');
     expect(stateMachine.emit).toHaveBeenCalledWith('END');
     expect(stateMachine.currentState).toBe('END');
   });
 
-  test('Update found and checks installed version', async () => {
+  test('Successful happy path', async () => {
     const stateMachine = new StateMachine(
       {
         ...stateAndTransitions,
-        GET_UPDATES: {
-          ...stateAndTransitions.GET_UPDATES,
-          action: () => 'UPDATE_FOUND'
+        STATE1: {
+          ...stateAndTransitions.STATE1,
+          transition: () => 'TRANSITION1'
+        },
+        STATE2: {
+          ...stateAndTransitions.STATE2,
+          transition: () => 'RESULT_OK'
         }
       },
       initialState
@@ -138,52 +126,31 @@ describe('State Machine', () => {
 
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith('GET_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'CHECK_INSTALLED_COS_VERSION'
-    );
+    expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
+    expect(stateMachine.emit).toHaveBeenCalledWith('STATE2');
+    expect(stateMachine.emit).toHaveBeenCalledWith('END');
     expect(stateMachine.currentState).toBe('END');
   });
 
-  test('Update found and installed version is not ok', async () => {
+  test('Second state sends back to first state and it ends', async () => {
+    let counter = 0;
     const stateMachine = new StateMachine(
       {
         ...stateAndTransitions,
-        GET_UPDATES: {
-          ...stateAndTransitions.GET_UPDATES,
-          action: () => 'UPDATE_FOUND'
+        STATE1: {
+          ...stateAndTransitions.STATE1,
+          transition: () => {
+            if (counter === 0) {
+              counter++;
+              return 'TRANSITION1';
+            } else {
+              return 'TRANSITION2';
+            }
+          }
         },
-        CHECK_INSTALLED_COS_VERSION: {
-          ...stateAndTransitions.CHECK_INSTALLED_COS_VERSION,
-          action: () => 'VERSION_NOT_OK'
-        },
-        CHECK_COS_UPDATES: {
-          ...stateAndTransitions.CHECK_COS_UPDATES,
-          action: () => 'UPDATE_NOT_AVAILABLE'
-        },
-        START_DOWNLOAD_COS_UPDATES: {
-          ...stateAndTransitions.START_DOWNLOAD_COS_UPDATES,
-          action: () => 'COS_DOWNLOAD_STARTED'
-        },
-        VALIDATE_COS_DOWNLOAD: {
-          ...stateAndTransitions.VALIDATE_COS_DOWNLOAD,
-          action: () => 'COS_DOWNLOADED'
-        },
-        APPLY_COS_UPDATES: {
-          ...stateAndTransitions.APPLY_COS_UPDATES,
-          action: () => 'INSTALLING_COS'
-        },
-        WAITING_FOR_SYSTEM_RESTART: {
-          ...stateAndTransitions.WAITING_FOR_SYSTEM_RESTART,
-          action: () => 'SYSTEM_RESTARTED'
-        },
-        APPLY_MODULE_UPDATES: {
-          ...stateAndTransitions.APPLY_MODULE_UPDATES,
-          action: () => 'MODULE_UPDATE_APPLIED'
-        },
-        WAIT_FOR_MODULE_UPDATE: {
-          ...stateAndTransitions.WAIT_FOR_MODULE_UPDATE,
-          action: () => 'SUCCESS'
+        STATE2: {
+          ...stateAndTransitions.STATE2,
+          transition: () => 'RESULT_NOK'
         }
       },
       initialState
@@ -192,21 +159,10 @@ describe('State Machine', () => {
 
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith('GET_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'CHECK_INSTALLED_COS_VERSION'
-    );
-    expect(stateMachine.emit).toHaveBeenCalledWith('CHECK_COS_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'START_DOWNLOAD_COS_UPDATES'
-    );
-    expect(stateMachine.emit).toHaveBeenCalledWith('VALIDATE_COS_DOWNLOAD');
-    expect(stateMachine.emit).toHaveBeenCalledWith('APPLY_COS_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'WAITING_FOR_SYSTEM_RESTART'
-    );
-    expect(stateMachine.emit).toHaveBeenCalledWith('APPLY_MODULE_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith('WAIT_FOR_MODULE_UPDATE');
+    expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
+    expect(stateMachine.emit).toHaveBeenCalledWith('STATE2');
+    expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
+    expect(stateMachine.emit).toHaveBeenCalledWith('END');
     expect(stateMachine.currentState).toBe('END');
   });
 });

@@ -44,6 +44,7 @@ describe('State Machine', () => {
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
     });
 
     test('No response from transition ends the state machine', async () => {
@@ -72,6 +73,7 @@ describe('State Machine', () => {
       );
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('ERROR_MISSING_STATE');
     });
 
     test('Wrong transition response will end the state machine', async () => {
@@ -95,6 +97,7 @@ describe('State Machine', () => {
       );
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('ERROR_MISSING_STATE');
     });
 
     test('Failed long transition ends the state machine', async () => {
@@ -120,6 +123,7 @@ describe('State Machine', () => {
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
       jest.useRealTimers();
     });
 
@@ -141,6 +145,7 @@ describe('State Machine', () => {
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE3');
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
     });
   });
   describe('Handles success cases', () => {
@@ -167,6 +172,7 @@ describe('State Machine', () => {
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE2');
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('RESULT_OK');
     });
 
     test('Second state sends back to first state and it ends', async () => {
@@ -201,6 +207,7 @@ describe('State Machine', () => {
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('TRANSITION2');
     });
 
     test('Long processing before transition is settled', async () => {
@@ -226,6 +233,7 @@ describe('State Machine', () => {
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
       expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
+      expect(stateMachine.endReason).toBe('TRANSITION2');
       jest.useRealTimers();
     });
   });

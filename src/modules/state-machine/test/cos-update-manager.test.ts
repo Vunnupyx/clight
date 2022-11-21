@@ -79,6 +79,7 @@ describe('State Machine', () => {
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
     expect(stateMachine.currentState).toBe('END');
+    expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
   });
 
   test('Unexpected transition response will throw', async () => {
@@ -102,6 +103,7 @@ describe('State Machine', () => {
     );
     expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
     expect(stateMachine.currentState).toBe('END');
+    expect(stateMachine.endReason).toBe('ERROR_MISSING_STATE');
   });
 
   test('No update found ends the state machine', async () => {
@@ -125,15 +127,28 @@ describe('State Machine', () => {
     );
     expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
     expect(stateMachine.currentState).toBe('END');
+    expect(stateMachine.endReason).toBe('NO_UPDATE_FOUND');
   });
 
-  test('Update found and checks installed version', async () => {
+  test('Update found and installed version is ok', async () => {
     const stateMachine = new StateMachine(
       {
         ...stateAndTransitions,
         GET_UPDATES: {
           ...stateAndTransitions.GET_UPDATES,
           transition: () => 'UPDATE_FOUND'
+        },
+        CHECK_INSTALLED_COS_VERSION: {
+          ...stateAndTransitions.CHECK_INSTALLED_COS_VERSION,
+          transition: () => 'VERSION_OK'
+        },
+        APPLY_MODULE_UPDATES: {
+          ...stateAndTransitions.APPLY_MODULE_UPDATES,
+          transition: () => 'MODULE_UPDATE_APPLIED'
+        },
+        WAIT_FOR_MODULE_UPDATE: {
+          ...stateAndTransitions.WAIT_FOR_MODULE_UPDATE,
+          transition: () => 'SUCCESS'
         }
       },
       initialState
@@ -150,7 +165,16 @@ describe('State Machine', () => {
       'stateChanged',
       'CHECK_INSTALLED_COS_VERSION'
     );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'APPLY_MODULE_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'WAIT_FOR_MODULE_UPDATE'
+    );
     expect(stateMachine.currentState).toBe('END');
+    expect(stateMachine.endReason).toBe('SUCCESS');
   });
 
   test('Update found and installed version is not ok', async () => {
@@ -237,5 +261,6 @@ describe('State Machine', () => {
       'WAIT_FOR_MODULE_UPDATE'
     );
     expect(stateMachine.currentState).toBe('END');
+    expect(stateMachine.endReason).toBe('SUCCESS');
   });
 });

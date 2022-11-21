@@ -4,6 +4,7 @@ import { StateAndTransitions } from './interfaces';
 
 export class StateMachine extends EventEmitter {
   public currentState: string;
+  public endReason: string | undefined;
 
   constructor(
     private stateAndTransitions: StateAndTransitions,
@@ -28,8 +29,11 @@ export class StateMachine extends EventEmitter {
               ];
 
         if (!nextState) {
-          console.log('intended state is missing');
+          console.log('State is missing');
+          this.endReason = 'ERROR_MISSING_STATE';
           nextState = 'END';
+        } else if (nextState === 'END' && !this.endReason) {
+          this.endReason = command;
         }
         this.currentState = nextState;
         this.emit('stateChanged', nextState);
@@ -43,6 +47,7 @@ export class StateMachine extends EventEmitter {
         }
       } catch (e) {
         console.log(e);
+        this.endReason = 'ERROR';
         const nextState = 'END';
         this.currentState = nextState;
         this.emit(nextState);
@@ -56,6 +61,7 @@ export class StateMachine extends EventEmitter {
 
     if (!transition) {
       console.log('transition function is missing');
+      this.endReason = 'ERROR_WRONG_TRANSITION';
       return 'END';
     }
 

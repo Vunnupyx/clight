@@ -61,10 +61,16 @@ describe('State Machine', () => {
 
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
-      expect(stateMachine.emit).not.toHaveBeenCalledWith('STATE2');
-      expect(stateMachine.emit).not.toHaveBeenCalledWith('STATE3');
-      expect(stateMachine.emit).toHaveBeenCalledWith('END');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
+      expect(stateMachine.emit).not.toHaveBeenCalledWith(
+        'stateChanged',
+        'STATE2'
+      );
+      expect(stateMachine.emit).not.toHaveBeenCalledWith(
+        'stateChanged',
+        'STATE3'
+      );
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
     });
 
@@ -83,8 +89,11 @@ describe('State Machine', () => {
 
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).not.toHaveBeenCalledWith('GET_UPDATES');
-      expect(stateMachine.emit).toHaveBeenCalledWith('END');
+      expect(stateMachine.emit).not.toHaveBeenCalledWith(
+        'stateChanged',
+        'GET_UPDATES'
+      );
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
     });
 
@@ -108,8 +117,8 @@ describe('State Machine', () => {
 
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('END');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
       jest.useRealTimers();
     });
@@ -129,8 +138,8 @@ describe('State Machine', () => {
 
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE3');
-      expect(stateMachine.emit).toHaveBeenCalledWith('END');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE3');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
     });
   });
@@ -154,9 +163,9 @@ describe('State Machine', () => {
 
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE2');
-      expect(stateMachine.emit).toHaveBeenCalledWith('END');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE2');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
     });
 
@@ -187,10 +196,10 @@ describe('State Machine', () => {
 
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE2');
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('END');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE2');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
     });
 
@@ -214,8 +223,8 @@ describe('State Machine', () => {
 
       expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('END');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
+      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
       expect(stateMachine.currentState).toBe('END');
       jest.useRealTimers();
     });

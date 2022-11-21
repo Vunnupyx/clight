@@ -32,7 +32,7 @@ export class StateMachine extends EventEmitter {
           nextState = 'END';
         }
         this.currentState = nextState;
-        this.emit(nextState);
+        this.emit('stateChanged', nextState);
 
         if (this.currentState === 'END') {
           if (this.isInfiniteLoop) {

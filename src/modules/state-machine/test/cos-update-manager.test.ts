@@ -96,8 +96,11 @@ describe('State Machine', () => {
 
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).not.toHaveBeenCalledWith('GET_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith('END');
+    expect(stateMachine.emit).not.toHaveBeenCalledWith(
+      'stateChanged',
+      'GET_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
     expect(stateMachine.currentState).toBe('END');
   });
 
@@ -116,8 +119,11 @@ describe('State Machine', () => {
 
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith('GET_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith('END');
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'GET_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
     expect(stateMachine.currentState).toBe('END');
   });
 
@@ -136,8 +142,12 @@ describe('State Machine', () => {
 
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith('GET_UPDATES');
     expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'GET_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
       'CHECK_INSTALLED_COS_VERSION'
     );
     expect(stateMachine.currentState).toBe('END');
@@ -190,21 +200,42 @@ describe('State Machine', () => {
 
     expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith('GET_UPDATES');
     expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'GET_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
       'CHECK_INSTALLED_COS_VERSION'
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith('CHECK_COS_UPDATES');
     expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'CHECK_COS_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
       'START_DOWNLOAD_COS_UPDATES'
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith('VALIDATE_COS_DOWNLOAD');
-    expect(stateMachine.emit).toHaveBeenCalledWith('APPLY_COS_UPDATES');
     expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'VALIDATE_COS_DOWNLOAD'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'APPLY_COS_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
       'WAITING_FOR_SYSTEM_RESTART'
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith('APPLY_MODULE_UPDATES');
-    expect(stateMachine.emit).toHaveBeenCalledWith('WAIT_FOR_MODULE_UPDATE');
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'APPLY_MODULE_UPDATES'
+    );
+    expect(stateMachine.emit).toHaveBeenCalledWith(
+      'stateChanged',
+      'WAIT_FOR_MODULE_UPDATE'
+    );
     expect(stateMachine.currentState).toBe('END');
   });
 });

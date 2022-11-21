@@ -6,7 +6,11 @@ import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
-import { NetworkConfig, NetworkType } from '../../../models';
+import {
+  NetworkConfig,
+  NetworkNtpReachable,
+  NetworkType
+} from '../../../models';
 import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
@@ -20,6 +24,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   config!: NetworkConfig;
   originalConfig!: NetworkConfig;
+  ntpReachable!: NetworkNtpReachable[];
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
@@ -58,6 +63,16 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onConfig(x))
     );
+    this.sub.add(
+      this.networkService.ntp
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onNtp(x))
+    );
+    this.sub.add(
+      this.networkService.ntpReachable
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onNtpReachable(x))
+    );
 
     this.timezoneOptions = this._getTimezoneOptions();
 
@@ -88,6 +103,14 @@ export class NetworkComponent implements OnInit, OnDestroy {
     if (!this.selectedTab) {
       this.selectedTab = this.tabs[0];
     }
+  }
+
+  private onNtp(x: string[]) {
+    !!x[0] && this.networkService.getNtpReachable(x);
+  }
+
+  private onNtpReachable(x: NetworkNtpReachable[]) {
+    this.ntpReachable = x;
   }
 
   onSelectTab(tab: string) {

@@ -1,42 +1,38 @@
-import { EventEmitter } from 'events';
-
 import { StateAndTransitions } from './interfaces';
 
-export class StateMachine extends EventEmitter {
-  public currentState: string;
-  public endReason: string | undefined;
+export class StateMachine {
+  private currentState: string;
+  private endReason: string | undefined;
 
   constructor(
     private stateAndTransitions: StateAndTransitions,
-    private initialState: string = 'INIT',
-    private isInfiniteLoop: boolean = false
-  ) {
-    super();
-  }
+    private onStateChange = (newState: string, endReason?: string) => {},
+    private initialState = 'INIT',
+    private isInfiniteLoop = false
+  ) {}
 
   public async start() {
     this.currentState = this.initialState;
 
     while (true) {
       try {
-        const command = await this.executeCurrentStep();
+        const transitionCommand = await this.executeCurrentStep();
 
         let nextState =
-          command === 'END'
-            ? command
+          transitionCommand === 'END'
+            ? transitionCommand
             : this.stateAndTransitions[this.currentState]?.transitions?.[
-                command
+                transitionCommand
               ];
 
         if (!nextState) {
-          console.log('State is missing');
-          this.endReason = 'ERROR_MISSING_STATE';
+          this.endReason = transitionCommand;
           nextState = 'END';
         } else if (nextState === 'END' && !this.endReason) {
-          this.endReason = command;
+          this.endReason = transitionCommand;
         }
         this.currentState = nextState;
-        this.emit('stateChanged', nextState);
+        this.onStateChange(this.currentState, this.endReason);
 
         if (this.currentState === 'END') {
           if (this.isInfiniteLoop) {
@@ -50,7 +46,7 @@ export class StateMachine extends EventEmitter {
         this.endReason = 'ERROR';
         const nextState = 'END';
         this.currentState = nextState;
-        this.emit(nextState);
+        this.onStateChange(this.currentState, this.endReason);
       }
     }
   }

@@ -54,70 +54,44 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(async (result: UpdateDialogResult) => {
-      if (result.status === UpdateStatus.Dismissed) {
-        return;
+      let title, type, content;
+      switch (result.status) {
+        case UpdateStatus.UP_TO_DATE:
+          type = 'success';
+          title = this.translate.instant(
+            'system-information.YourSystemUpToDate'
+          );
+          break;
+        case UpdateStatus.SUCCESS:
+          type = 'success';
+          title = this.translate.instant(
+            'system-information.YourSystemUpdateSuccess'
+          );
+          content = this.translate.instant(
+            result.error || 'system-information.YourSystemUpdateSuccessDescr'
+          );
+          break;
+        case UpdateStatus.ERROR:
+          type = 'error';
+          title = this.translate.instant('system-information.UpdateFailed');
+          content = result.error;
+
+          break;
+        default:
+          break;
       }
-      if (result.status === UpdateStatus.UpToDate) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'success',
-            title: this.translate.instant(
-              'system-information.YourSystemUpToDate'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
-      if (result.status === UpdateStatus.UpdateSuccessful) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'success',
-            title: this.translate.instant(
-              'system-information.YourSystemUpdateSuccess'
-            ),
-            content: this.translate.instant(
-              result.error || 'system-information.YourSystemUpdateSuccessDescr'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
-      if (result.status === UpdateStatus.CheckFailed) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'error',
-            title: this.translate.instant('system-information.UpdateFailed'),
-            content: this.translate.instant(
-              result.error || 'settings-general.UpdateFailedCheckNetworkConfig'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
-      if (result.status === UpdateStatus.UnexpectedError) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'error',
-            title: this.translate.instant('system-information.UpdateFailed'),
-            content: this.translate.instant(
-              result.error || 'settings-general.UnknownError'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
+
+      const alertRef = this.dialog.open(AlertDialogComponent, {
+        disableClose: true,
+        width: '650px',
+        data: {
+          type,
+          title,
+          content,
+          confirmText: this.translate.instant('common.OK'),
+          hideCancelButton: true
+        } as AlertDialogModel
+      });
     });
   }
 

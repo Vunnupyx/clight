@@ -1,6 +1,6 @@
 export interface StateAndTransitions {
   [key: string]: {
-    action: Function;
+    transition: Function;
     transitions: {
       [key: string]: string;
     };

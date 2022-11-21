@@ -28,7 +28,7 @@ export class StateMachine extends EventEmitter {
               ];
 
         if (!nextState) {
-          console.log('nextState missing');
+          console.log('intended state is missing');
           nextState = 'END';
         }
         this.currentState = nextState;
@@ -49,14 +49,15 @@ export class StateMachine extends EventEmitter {
   }
 
   private async executeCurrentStep(): Promise<string> {
-    const action = this.stateAndTransitions?.[this.currentState]?.action;
+    const transition =
+      this.stateAndTransitions?.[this.currentState]?.transition;
 
-    if (!action) {
-      console.log('stateAction missing');
+    if (!transition) {
+      console.log('transition function is missing');
       return 'END';
     }
 
-    const nextState = await action();
+    const nextState = await transition();
     return nextState;
   }
 }

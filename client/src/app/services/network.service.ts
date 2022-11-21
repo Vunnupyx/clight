@@ -12,7 +12,8 @@ import {
   NetworkConfig,
   NetworkProxy,
   NetworkDateTime,
-  NetworkTimestamp
+  NetworkTimestamp,
+  NetworkNtpReachable
 } from '../models';
 import { ConfigurationAgentHttpMockupService } from 'app/shared';
 export interface NetworkState {
@@ -21,6 +22,7 @@ export interface NetworkState {
   proxy: NetworkProxy;
   ntp: string[];
   timestamp: NetworkDateTime;
+  ntpReachable: NetworkNtpReachable[];
 }
 
 // TODO: Connect to Network API
@@ -107,6 +109,11 @@ let RESPONSE_TIMESTAMP: NetworkTimestamp = {
   Timestamp: 'Sun Jan 09 2022 00:14:58 GMT+0000 (Coordinated Universal Time)'
 } as any;
 
+// TODO: Connect to Network API
+let RESPONSE_NTP_REACHABLE: NetworkNtpReachable[] = [
+  { address: 'time.dmgmori.net', responsible: true, valid: true }
+] as any;
+
 @Injectable()
 export class NetworkService {
   private _store: Store<NetworkState>;
@@ -150,6 +157,22 @@ export class NetworkService {
               : undefined
         })
       ),
+      distinctUntilChanged()
+    );
+  }
+
+  get ntp() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.ntp),
+      distinctUntilChanged()
+    );
+  }
+
+  get ntpReachable() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.ntpReachable),
       distinctUntilChanged()
     );
   }
@@ -290,6 +313,28 @@ export class NetworkService {
     }
   }
 
+  async getNtpReachable(ntp: string[]) {
+    try {
+      const response = await this.configurationAgentHttpMockupService.get<
+        NetworkNtpReachable[]
+      >(
+        `/check-ntp?`,
+        { params: { address: ntp[0] }, responseType: 'json' },
+        RESPONSE_NTP_REACHABLE
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.ntpReachable = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.LoadError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
   async getNetworkTimestamp() {
     try {
       const response =
@@ -349,7 +394,8 @@ export class NetworkService {
 
   private _emptyState() {
     return <NetworkState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      ntpReachable: [{ address: '', responsible: false, valid: false }]
     };
   }
 

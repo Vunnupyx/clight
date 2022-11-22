@@ -19,7 +19,7 @@ export const runtimeConfig: IRuntimeConfig = {
       productName: 'MDCLight',
       softwareVersion: process.env.MDC_RUNTIME_VERSION
     },
-    nodesetDir: '/runTimeFiles/nodeSets'
+    nodesetDir: 'runtime-files/opcua-node-sets'
   },
   datahub: {
     groupDevice: false,

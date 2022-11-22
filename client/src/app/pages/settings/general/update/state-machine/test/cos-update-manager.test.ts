@@ -69,17 +69,22 @@ const stateAndTransitions: StateAndTransitions = {
   }
 };
 
-const initialState = 'INIT';
-
 describe('State Machine', () => {
-  test('Wrong initial state ends the state machine', async () => {
-    const stateMachine = new StateMachine(stateAndTransitions, 'WRONG');
-    jest.spyOn(stateMachine, 'emit');
+  const onStateChange = jest.fn();
 
-    expect(stateMachine.currentState).toBe(undefined);
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('Wrong initial state ends the state machine', async () => {
+    const stateMachine = new StateMachine(
+      stateAndTransitions,
+      onStateChange,
+      'WRONG'
+    );
+
     await stateMachine.start();
-    expect(stateMachine.currentState).toBe('END');
-    expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
+    expect(onStateChange).toHaveBeenCalledWith('END', 'ERROR_WRONG_TRANSITION');
   });
 
   test('Unexpected transition response will throw', async () => {
@@ -88,22 +93,15 @@ describe('State Machine', () => {
         ...stateAndTransitions,
         INIT: {
           ...stateAndTransitions.INIT,
-          transition: () => 'WRONG'
+          transition: () => 'FAILED'
         }
       },
-      initialState
+      onStateChange
     );
-    jest.spyOn(stateMachine, 'emit');
 
-    expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).not.toHaveBeenCalledWith(
-      'stateChanged',
-      'GET_UPDATES'
-    );
-    expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-    expect(stateMachine.currentState).toBe('END');
-    expect(stateMachine.endReason).toBe('ERROR_MISSING_STATE');
+    expect(onStateChange).not.toHaveBeenCalledWith('GET_UPDATES', undefined);
+    expect(onStateChange).toHaveBeenCalledWith('END', 'FAILED');
   });
 
   test('No update found ends the state machine', async () => {
@@ -115,19 +113,12 @@ describe('State Machine', () => {
           transition: () => 'NO_UPDATE_FOUND'
         }
       },
-      initialState
+      onStateChange
     );
-    jest.spyOn(stateMachine, 'emit');
 
-    expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'GET_UPDATES'
-    );
-    expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-    expect(stateMachine.currentState).toBe('END');
-    expect(stateMachine.endReason).toBe('NO_UPDATE_FOUND');
+    expect(onStateChange).toHaveBeenCalledWith('GET_UPDATES', undefined);
+    expect(onStateChange).toHaveBeenCalledWith('END', 'NO_UPDATE_FOUND');
   });
 
   test('Update found and installed version is ok', async () => {
@@ -151,30 +142,24 @@ describe('State Machine', () => {
           transition: () => 'SUCCESS'
         }
       },
-      initialState
+      onStateChange
     );
-    jest.spyOn(stateMachine, 'emit');
 
-    expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'GET_UPDATES'
+    expect(onStateChange).toHaveBeenCalledWith('GET_UPDATES', undefined);
+    expect(onStateChange).toHaveBeenCalledWith(
+      'CHECK_INSTALLED_COS_VERSION',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'CHECK_INSTALLED_COS_VERSION'
+    expect(onStateChange).toHaveBeenCalledWith(
+      'APPLY_MODULE_UPDATES',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'APPLY_MODULE_UPDATES'
+    expect(onStateChange).toHaveBeenCalledWith(
+      'WAIT_FOR_MODULE_UPDATE',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'WAIT_FOR_MODULE_UPDATE'
-    );
-    expect(stateMachine.currentState).toBe('END');
-    expect(stateMachine.endReason).toBe('SUCCESS');
+    expect(onStateChange).toHaveBeenCalledWith('END', 'SUCCESS');
   });
 
   test('Update found and installed version is not ok', async () => {
@@ -218,49 +203,37 @@ describe('State Machine', () => {
           transition: () => 'SUCCESS'
         }
       },
-      initialState
+      onStateChange
     );
-    jest.spyOn(stateMachine, 'emit');
 
-    expect(stateMachine.currentState).toBe(undefined);
     await stateMachine.start();
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'GET_UPDATES'
+    expect(onStateChange).toHaveBeenCalledWith('GET_UPDATES', undefined);
+    expect(onStateChange).toHaveBeenCalledWith(
+      'CHECK_INSTALLED_COS_VERSION',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'CHECK_INSTALLED_COS_VERSION'
+    expect(onStateChange).toHaveBeenCalledWith('CHECK_COS_UPDATES', undefined);
+    expect(onStateChange).toHaveBeenCalledWith(
+      'START_DOWNLOAD_COS_UPDATES',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'CHECK_COS_UPDATES'
+    expect(onStateChange).toHaveBeenCalledWith(
+      'VALIDATE_COS_DOWNLOAD',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'START_DOWNLOAD_COS_UPDATES'
+    expect(onStateChange).toHaveBeenCalledWith('APPLY_COS_UPDATES', undefined);
+    expect(onStateChange).toHaveBeenCalledWith(
+      'WAITING_FOR_SYSTEM_RESTART',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'VALIDATE_COS_DOWNLOAD'
+    expect(onStateChange).toHaveBeenCalledWith(
+      'APPLY_MODULE_UPDATES',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'APPLY_COS_UPDATES'
+    expect(onStateChange).toHaveBeenCalledWith(
+      'WAIT_FOR_MODULE_UPDATE',
+      undefined
     );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'WAITING_FOR_SYSTEM_RESTART'
-    );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'APPLY_MODULE_UPDATES'
-    );
-    expect(stateMachine.emit).toHaveBeenCalledWith(
-      'stateChanged',
-      'WAIT_FOR_MODULE_UPDATE'
-    );
-    expect(stateMachine.currentState).toBe('END');
-    expect(stateMachine.endReason).toBe('SUCCESS');
+    expect(onStateChange).toHaveBeenCalledWith('END', 'SUCCESS');
   });
 });

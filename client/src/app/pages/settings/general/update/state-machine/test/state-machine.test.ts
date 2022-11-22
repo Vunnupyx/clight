@@ -26,25 +26,33 @@ const stateAndTransitions: StateAndTransitions = {
     }
   },
   STATE3: {
-    transition: () => 'TRANSIT',
+    transition: () => 'NOEND',
     transitions: {
-      TRANSIT: 'DEAD_END'
+      NOEND: 'DEAD_END'
     }
   }
 };
 
-const initialState = 'INIT';
-
 describe('State Machine', () => {
+  const onStateChange = jest.fn();
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('Handles failure cases', () => {
     test('Wrong initial state ends the state machine', async () => {
-      const stateMachine = new StateMachine(stateAndTransitions, 'WRONG');
-      jest.spyOn(stateMachine, 'emit');
+      const stateMachine = new StateMachine(
+        stateAndTransitions,
+        onStateChange,
+        'WRONG'
+      );
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
+      expect(onStateChange).toHaveBeenCalledWith(
+        'END',
+        'ERROR_WRONG_TRANSITION'
+      );
     });
 
     test('No response from transition ends the state machine', async () => {
@@ -56,48 +64,31 @@ describe('State Machine', () => {
             transition: () => {}
           }
         },
-        initialState
+        onStateChange
       );
-      jest.spyOn(stateMachine, 'emit');
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
-      expect(stateMachine.emit).not.toHaveBeenCalledWith(
-        'stateChanged',
-        'STATE2'
-      );
-      expect(stateMachine.emit).not.toHaveBeenCalledWith(
-        'stateChanged',
-        'STATE3'
-      );
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('ERROR_MISSING_STATE');
+      expect(onStateChange).toHaveBeenCalledWith('STATE1', undefined);
+      expect(onStateChange).not.toHaveBeenCalledWith('STATE2', undefined);
+      expect(onStateChange).not.toHaveBeenCalledWith('STATE3', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('END', undefined);
     });
 
-    test('Wrong transition response will end the state machine', async () => {
+    test('Wrong transition response will end the state machine with that as reason', async () => {
       const stateMachine = new StateMachine(
         {
           ...stateAndTransitions,
           INIT: {
             ...stateAndTransitions.INIT,
-            transition: () => 'WRONG'
+            transition: () => 'FAILED'
           }
         },
-        initialState
+        onStateChange
       );
-      jest.spyOn(stateMachine, 'emit');
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).not.toHaveBeenCalledWith(
-        'stateChanged',
-        'GET_UPDATES'
-      );
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('ERROR_MISSING_STATE');
+      expect(onStateChange).not.toHaveBeenCalledWith('GET_UPDATES');
+      expect(onStateChange).toHaveBeenCalledWith('END', 'FAILED');
     });
 
     test('Failed long transition ends the state machine', async () => {
@@ -114,16 +105,13 @@ describe('State Machine', () => {
               })
           }
         },
-        initialState
+        onStateChange
       );
-      jest.spyOn(stateMachine, 'emit');
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
+      expect(onStateChange).toHaveBeenCalledWith('STATE1', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('END', 'ERROR');
+
       jest.useRealTimers();
     });
 
@@ -136,16 +124,15 @@ describe('State Machine', () => {
             transition: () => 'GOTOSTATE3'
           }
         },
-        initialState
+        onStateChange
       );
-      jest.spyOn(stateMachine, 'emit');
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE3');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('ERROR_WRONG_TRANSITION');
+      expect(onStateChange).toHaveBeenCalledWith('STATE3', undefined);
+      expect(onStateChange).toHaveBeenCalledWith(
+        'END',
+        'ERROR_WRONG_TRANSITION'
+      );
     });
   });
   describe('Handles success cases', () => {
@@ -162,17 +149,13 @@ describe('State Machine', () => {
             transition: () => 'RESULT_OK'
           }
         },
-        initialState
+        onStateChange
       );
-      jest.spyOn(stateMachine, 'emit');
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE2');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('RESULT_OK');
+      expect(onStateChange).toHaveBeenCalledWith('STATE1', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('STATE2', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('END', 'RESULT_OK');
     });
 
     test('Second state sends back to first state and it ends', async () => {
@@ -196,18 +179,14 @@ describe('State Machine', () => {
             transition: () => 'RESULT_NOK'
           }
         },
-        initialState
+        onStateChange
       );
-      jest.spyOn(stateMachine, 'emit');
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE2');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('TRANSITION2');
+      expect(onStateChange).toHaveBeenCalledWith('STATE1', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('STATE2', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('STATE1', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('END', 'TRANSITION2');
     });
 
     test('Long processing before transition is settled', async () => {
@@ -224,16 +203,36 @@ describe('State Machine', () => {
               })
           }
         },
-        initialState
+        onStateChange
       );
-      jest.spyOn(stateMachine, 'emit');
 
-      expect(stateMachine.currentState).toBe(undefined);
       await stateMachine.start();
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'STATE1');
-      expect(stateMachine.emit).toHaveBeenCalledWith('stateChanged', 'END');
-      expect(stateMachine.currentState).toBe('END');
-      expect(stateMachine.endReason).toBe('TRANSITION2');
+      expect(onStateChange).toHaveBeenCalledWith('STATE1', undefined);
+      expect(onStateChange).toHaveBeenCalledWith('END', 'TRANSITION2');
+      jest.useRealTimers();
+    });
+
+    test('Starting at a different state', async () => {
+      jest.useFakeTimers();
+      const stateMachine = new StateMachine(
+        {
+          ...stateAndTransitions,
+          STATE2: {
+            ...stateAndTransitions.STATE2,
+            transition: () =>
+              new Promise((resolve) => {
+                setTimeout(() => resolve('RESULT_OK'), 20 * 1000);
+                jest.runAllTimers();
+              })
+          }
+        },
+        onStateChange,
+        'STATE2'
+      );
+
+      await stateMachine.start();
+      expect(onStateChange).toHaveBeenCalledWith('END', 'RESULT_OK');
+
       jest.useRealTimers();
     });
   });

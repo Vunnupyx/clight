@@ -17,8 +17,8 @@ export class System {
   ): Promise<string | null> {
     let address;
     enum interfaceMapping {
-      'eth0' = 'eno1',
-      'eth1' = 'eno2'
+      'eth0' = 'enoX1',
+      'eth1' = 'enoX1'
     }
     try {
       address = await fs.readFile(

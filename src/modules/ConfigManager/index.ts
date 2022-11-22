@@ -324,27 +324,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Applies template settings.
    */
-  public applyTemplate(
-    templateFileName: string,
-    dataSources: string[],
-    dataSinks: string[]
-  ) {
+  public applyTemplate(templateFileName: string) {
     const template = this._defaultTemplates.templates.find(
       (x) => x.id === templateFileName
-    );
-    const sources = template.dataSources.filter((x) =>
-      dataSources.includes(x.protocol)
-    );
-    const sinks = template.dataSinks.filter((x) =>
-      dataSinks.includes(x.protocol)
     );
 
     this._config = {
       ...this._config,
-      dataSources: sources,
-      dataSinks: sinks,
-      virtualDataPoints: template.virtualDataPoints,
-      mapping: template.mapping,
+      ...template,
       quickStart: {
         completed: true,
         currentTemplate: templateFileName,
@@ -480,8 +467,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplate(templateName) {
     try {
       const configPath = path.join(
-        this.configFolder,
-        'templates',
+        this.mdcFolder,
+        'runtime-files/templates',
         templateName
       );
       return JSON.parse(

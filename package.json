@@ -1,7 +1,7 @@
 {
   "name": "mdc-light",
   "version": "2.1.0",
-  "description": "Machine Data Connector Lite",
+  "description": "Machine Data Connector Flex",
   "main": "index.js",
   "repository": "git@gitlab.com:codestryke-tech/dmg-mori/mdc-light.git",
   "author": "codestryke <info@codestryke.com>",

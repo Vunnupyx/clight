@@ -37,23 +37,6 @@ steps:
           scripts/build/dockerBuildMdclightBase.sh
         fi
   - task: CmdLine@2
-    displayName: BuildMtc
-    inputs:
-      script: | # Only build image if dockerfile has changed
-        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "_mdclight/mtc-config/prod")
-
-        MATCH_COUNT=1 # Force build
-
-        version=$(git describe --tags)
-
-        echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
-        if [[ $MATCH_COUNT -gt 0 ]]; then
-          docker run --privileged --rm tonistiigi/binfmt --install arm64
-          docker run --privileged --rm tonistiigi/binfmt
-          docker buildx create --use
-          scripts/build/dockerBuildMtc.sh $version
-        fi
-  - task: CmdLine@2
     displayName: BuildMdc
     inputs:
       script: |
@@ -62,12 +45,3 @@ steps:
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use
         scripts/build/dockerBuildMdclight.sh $version
-  # - task: CmdLine@2
-  #   displayName: BuildWebserver
-  #   inputs:
-  #     script: |
-  #       version=$(git describe --tags)
-  #       docker run --privileged --rm tonistiigi/binfmt --install arm64
-  #       docker run --privileged --rm tonistiigi/binfmt
-  #       docker buildx create --use
-  #       scripts/build/dockerBuildWebserver.sh $version

@@ -28,11 +28,11 @@ export class Iot2050MraaDI10 {
   private ANALOG_PIN_LABELS = ['AI0', 'AI1'];
   private ANALOG_READ_ADDRESSES = [
     path.join(
-      process.env.SYS_PREFIX,
+      process.env.SYS_PREFIX || '',
       '/sys/bus/iio/devices/iio:device0/in_voltage0_raw'
     ),
     path.join(
-      process.env.SYS_PREFIX,
+      process.env.SYS_PREFIX || '',
       '/sys/bus/iio/devices/iio:device0/in_voltage2_raw'
     )
   ];

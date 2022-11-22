@@ -95,7 +95,7 @@ export class BootstrapManager {
   public async start() {
     try {
       await this.ledManager.init();
-      // this.setupKillEvents();
+      this.setupKillEvents();
 
       await this.tlsKeyManager.generateKeys();
       await this.configManager.init();
@@ -120,15 +120,6 @@ export class BootstrapManager {
       });
 
       this.ledManager.runTimeStatus(true);
-
-      // // TODO Remove
-      // winston.warn(
-      //   'Shutting down runtime in 5min for debugging purpose. Remove later!'
-      // );
-      // setTimeout(() => {
-      //   winston.warn('Shutting down manually!');
-      //   process.exit(1);
-      // }, 5 * 60 * 1000);
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',
@@ -150,9 +141,9 @@ export class BootstrapManager {
     process.stdin.resume();
 
     //do something when app is closing
-    // process.on('exit', (exitCode) => {
-    //   winston.info(`Exited program, code:" ${exitCode}`);
-    // });
+    process.on('exit', (exitCode) => {
+      winston.info(`Exited program, code:" ${exitCode}`);
+    });
 
     //catches ctrl+c event
     process.on('SIGINT', this.signalHandler.bind(this, 'SIGINT'));

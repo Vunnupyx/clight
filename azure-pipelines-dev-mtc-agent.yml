@@ -27,7 +27,7 @@ steps:
 
         MATCH_COUNT=1 # Force build
 
-        version=$(git describe --tags)
+        version=$(git describe --tags --always)
 
         echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
         if [[ $MATCH_COUNT -gt 0 ]]; then

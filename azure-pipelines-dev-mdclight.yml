@@ -36,7 +36,7 @@ steps:
     displayName: BuildMdc
     inputs:
       script: |
-        version=$(git describe --tags)
+        version=$(git describe --tags --always)
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use

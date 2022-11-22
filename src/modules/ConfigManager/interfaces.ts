@@ -209,12 +209,6 @@ export interface IProxyConfig {
   enabled: boolean;
 }
 
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName?: string;
-  password?: string;
-}
-
 interface IDataHubDataPointTypesData {
   intervalHours: number | null;
 }

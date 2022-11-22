@@ -20,10 +20,6 @@ steps:
       containerRegistry: 'mdc-light-acr-dev'
       command: 'login'
   - task: CmdLine@2
-    displayName: PrintVersion
-    inputs:
-      script: git describe --tags
-  - task: CmdLine@2
     displayName: BuildWebserver
     inputs:
       script: |

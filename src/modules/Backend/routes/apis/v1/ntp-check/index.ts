@@ -68,20 +68,29 @@ interface ICheckedNTPEntry {
  * @param res Express response object
  */
 async function getCheckedNTPServer(req: Request, res: Response) {
-  ntpCheck(
-    Array.isArray(req.params.address)
-      ? req.params.address
-      : [req.params.address]
-  )
+  const logPrefix = `getCheckedNTPServer::/check-ntp`;
+
+  const ntpList = Array.isArray(req.query.addresses)
+    ? (req.query.addresses as Array<string>)
+    : typeof req.query.addresses === 'string'
+    ? [req.query.addresses]
+    : undefined;
+
+  winston.verbose(`${logPrefix} route called. Query: ${ntpList}`);
+  if (!ntpList) {
+    res.status(400).json({
+      msg: 'Error: Invalid query parameters'
+    });
+    return;
+  }
+  await ntpCheck(ntpList)
     .then((checkedList) => {
       res.status(200).json(checkedList);
       return;
     })
     .catch((err) => {
       res.status(500).json({
-        error: {
-          msg: 'Internal server error'
-        }
+        msg: 'Internal server error'
       });
     });
 }
@@ -97,34 +106,31 @@ async function ntpCheck(
   const logPrefix = `ntpCheck`;
 
   const validated = ntpArray.map<ICheckedNTPEntry>((nptEntry: string) => {
+    const ntpListEntry = {
+      address: nptEntry,
+      responsible: null,
+      valid: false
+    };
+
     if (typeof nptEntry !== 'string') {
-      return {
-        address: nptEntry,
-        responsible: false,
-        valid: false
-      };
+      return ntpListEntry;
     }
 
-    if (!isIpAddress(nptEntry) && !isHostname(nptEntry)) {
-      return {
-        address: nptEntry,
-        responsible: false,
-        valid: false
-      };
+    if (isIpAddress(nptEntry) || isHostname(nptEntry)) {
+      ntpListEntry.valid = true;
     }
-    return {
-      address: nptEntry,
-      responsible: undefined,
-      valid: true
-    };
+    return ntpListEntry;
   });
+
+  if (process.env.NODE_ENV !== 'development' && !(await checkInterfaces())) {
+    return Promise.resolve(validated);
+  }
 
   const responsibleCheck = validated.map<Promise<ICheckedNTPEntry>>((entry) => {
     return new Promise(async (res) => {
-      if (!entry.valid) res(entry);
       return res({
         ...entry,
-        responsible: await testNTPServer(entry.address)
+        responsible: entry.valid ? await testNTPServer(entry.address) : false
       });
     });
   });
@@ -160,20 +166,25 @@ function isHostname(toCheck: string): boolean {
  */
 function testNTPServer(server: string): Promise<boolean> {
   const logPrefix = `NTP::testNTPServer`;
+  const timeOut = 1000 * 0.5; // NTP request abort
   winston.debug(`${logPrefix} start testing: ${server}`);
 
   return new Promise<boolean>(async (res, rej) => {
-    if (await checkInterfaces()) {
-      winston.warn(`${logPrefix} fo interface available.`);
-      return res(false);
-    }
     if (isHostname(server)) {
-      await dns.lookup(server).catch(() => {
-        winston.error(
-          `${logPrefix} DNS lookup for ${server} failed. Testing NTP Server aborted.`
-        );
-        return res(false);
-      });
+      winston.verbose(`${logPrefix} start DNS lookup for: ${server}`);
+      await dns
+        .lookup(server)
+        .then(() => {
+          winston.verbose(
+            `${logPrefix} DNS lookup for ${server} successfully.`
+          );
+        })
+        .catch(() => {
+          winston.error(
+            `${logPrefix} DNS lookup for ${server} failed. Testing NTP Server aborted.`
+          );
+          return res(false);
+        });
     }
 
     const client = createSocket('udp4');
@@ -186,7 +197,7 @@ function testNTPServer(server: string): Promise<boolean> {
       client.removeAllListeners();
       winston.error(`${logPrefix} ntp request timed out.`);
       return res(false);
-    }, 1000 * 10);
+    }, timeOut);
 
     client.on('error', (err) => {
       client.close();
@@ -201,6 +212,7 @@ function testNTPServer(server: string): Promise<boolean> {
       return res(true);
     });
 
+    winston.verbose(`${logPrefix} send ntp request to ${server}`);
     client.send(requestData, 123, server, (err, bytes) => {
       if (err) {
         winston.error(
@@ -211,7 +223,6 @@ function testNTPServer(server: string): Promise<boolean> {
         clearTimeout(timeout);
         rej(false);
       }
-      winston.info(`${logPrefix} send ntp request to ${server}`);
     });
   });
 }
@@ -223,19 +234,24 @@ function testNTPServer(server: string): Promise<boolean> {
  */
 async function checkInterfaces(): Promise<boolean> {
   const logPrefix = `NTPCheck::checkInterfaces`;
+  const basePath =
+    (process.env.NODE_ENV === 'development'
+      ? 'http://localhost:1884'
+      : 'http://host.docker.internal:1884') + '/api/v1';
   const adaptersEndpoint = '/network/adapters';
   const adapterStatus = '/network/adapters/{adapterID}/status';
   let adapterInfos: Array<IAdapterSettings['id']>;
-  winston.debug(`${logPrefix} send request to get all interfaces.`);
+  winston.debug(
+    `${logPrefix} send request to get all interfaces. GET ${
+      basePath + adaptersEndpoint
+    }`
+  );
 
-  return await fetch(adaptersEndpoint, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    }
+  return await fetch(basePath + adaptersEndpoint, {
+    method: 'GET'
   })
     .then((res) => {
+      winston.verbose(`${logPrefix} got response: ${JSON.stringify(res)}`);
       return Promise.all[(res.json(), res.status)];
     })
     .then((payload: [Array<IAdapterSettings> | IResponseError, number]) => {
@@ -267,7 +283,7 @@ async function checkInterfaces(): Promise<boolean> {
     })
     .then(() => {
       const requests = Object.keys(adapterInfos).map((id) => {
-        return fetch(adapterStatus.replace('{adapterID}', id));
+        return fetch(basePath + adapterStatus.replace('{adapterID}', id));
       });
       return Promise.all(requests);
     })

@@ -37,4 +37,8 @@ ENV LOG_LEVEL=info
 ENV MDC_LIGHT_FOLDER=/etc/mdc-light
 ENV MDC_LIGHT_RUNTIME_VERSION=$MDC_LIGHT_RUNTIME_VERSION
 
+EXPOSE 80/tcp
+EXPOSE 4840/tcp
+EXPOSE 7878/tcp
+
 CMD ["node", "--max-old-space-size=1024", "index.js"]

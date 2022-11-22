@@ -100,7 +100,7 @@ export class BootstrapManager {
         try {
           await this.configManager.factoryResetConfiguration();
           await this.ledManager.turnOffLeds();
-          await fetch('host.docker.internal/system/restart', {
+          await fetch('127.0.0.1/system/restart', {
             method: 'POST'
           });
         } catch (e) {

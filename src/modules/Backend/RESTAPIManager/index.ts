@@ -87,9 +87,7 @@ export class RestApiManager {
 
     const PATH_PREFIX = '/api/v1';
     const PROXY_HOST =
-      process.env.NODE_ENV === 'development'
-        ? 'localhost'
-        : 'host.docker.internal';
+      process.env.NODE_ENV === 'development' ? 'localhost' : '127.0.0.1';
     const PROXY_PORT = 1884;
 
     return proxy(`http://${PROXY_HOST}:${PROXY_PORT}`, {

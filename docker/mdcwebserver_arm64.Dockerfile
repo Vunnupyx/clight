@@ -15,6 +15,7 @@ FROM arm64v8/nginx:1.21.3-alpine
 
 COPY --from=build /app/client/dist/mdc-light-client /var/www
 COPY client/nginx.conf /etc/nginx/nginx.conf
-EXPOSE 8080
+
+EXPOSE 443/tcp
 
 ENTRYPOINT ["nginx","-g","daemon off;"]

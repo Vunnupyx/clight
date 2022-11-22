@@ -147,7 +147,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public id: string | null = null;
   private configFolder = path.join(
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
-    'mdclight/config'
+    '/config'
   );
   private runtimeFolder = process.env.RUNTIME_FOLDER || '/runTimeFiles';
   private keyFolder = path.join(this.configFolder, 'keys');
@@ -1192,6 +1192,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   async checkJwtKeyPair() {
     const logPrefix = `${ConfigManager.className}::checkJwtKeyPair`;
 
+    winston.debug(`${logPrefix} checking JWT keys.`);
     if (fs.existsSync(this.keyFolder)) {
       const files = (await fs.readdirSync(this.keyFolder)) as string[];
       if (

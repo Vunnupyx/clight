@@ -11,12 +11,6 @@ RUN echo Building runtime ${MDC_LIGHT_RUNTIME_VERSION}
 COPY package.json package.json
 RUN npm install
 
-# Install key pair for network manager cli
-RUN mkdir /root/.ssh/
-COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
-RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
-RUN chmod 600 /root/.ssh/config
-
 RUN mkdir -p /etc/mdc-light/config
 RUN mkdir -p /etc/mdc-light/logs
 RUN mkdir -p /etc/mdc-light/jwtkeys

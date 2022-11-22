@@ -19,7 +19,6 @@ import {
 import Timeout = NodeJS.Timeout;
 import { SynchronousIntervalScheduler } from '../../SyncScheduler';
 import winston from 'winston';
-import { LicenseChecker } from '../../LicenseChecker';
 
 type DataPointReadErrorSummary = {
   error: string;
@@ -47,7 +46,6 @@ export abstract class DataSource extends EventEmitter {
   protected processedDataPointCount = 0;
   protected dataPointReadErrors: DataPointReadErrorSummary[] = [];
   protected readCycleCount = 0;
-  protected isLicensed = false;
 
   /**
    * Create a new instance & initialize the sync scheduler
@@ -59,7 +57,6 @@ export abstract class DataSource extends EventEmitter {
     this.scheduler = SynchronousIntervalScheduler.getInstance();
     this.protocol = params.config.protocol;
     this.termsAndConditionsAccepted = params.termsAndConditionsAccepted;
-    this.isLicensed = params.isLicensed;
   }
 
   /**

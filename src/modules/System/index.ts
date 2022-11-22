@@ -58,14 +58,8 @@ export class System {
    * @returns {Promise<string>}
    */
   public async getHostname(): Promise<string> {
-    try {
-      const hostnameReadFromFile = await fs.readFile(`/etc/hostname`, {
-        encoding: 'utf-8'
-      });
-      return hostnameReadFromFile.trim();
-    } catch (err) {
-      return 'DM000000000000';
-    }
+    const defaultHostname = 'dm000000000000';
+    return process.env.IOTEDGE_GATEWAYHOSTNAME || defaultHostname;
   }
 
   /**
@@ -76,7 +70,7 @@ export class System {
       const PROXY_HOST =
         process.env.NODE_ENV === 'development'
           ? 'http://localhost'
-          : 'host.docker.internal';
+          : 'http://172.17.0.1';
       const PROXY_PORT = 1884;
       const PATH_PREFIX = '/api/v1';
 

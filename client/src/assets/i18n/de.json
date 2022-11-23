@@ -140,7 +140,6 @@
     "NoNetwork": "Kein Netzwerk",
     "Connecting": "Verbindung wird aufgebaut",
     "Reconnecting": "Neu verbinden",
-    "NoLicense": "Nicht lizenziert",
     "ConnectionError": "Verbindung fehlgeschlagen",
     "Disabled": "Deaktiviert",
     "Unavailable": "Nicht verfügbar",
@@ -260,7 +259,6 @@
     "NoNetwork": "Kein Netzwerk",
     "Connecting": "Verbindung wird aufgebaut",
     "Reconnecting": "Neu verbinden",
-    "NoLicense": "Nicht lizenziert",
     "ConnectionError": "Verbindung fehlgeschlagen",
     "Disabled": "Deaktiviert",
     "Unavailable": "Nicht verfügbar",
@@ -452,14 +450,14 @@
     "Boolean": "Boolean"
   },
   "days-of-week": {
-  "Monday": "",
-  "Tuesday": "",
-  "Wednesday": "",
-  "Thursday": "",
-  "Friday": "",
-  "Saturday": "",
-  "Sunday": ""
-},
+    "Monday": "",
+    "Tuesday": "",
+    "Wednesday": "",
+    "Thursday": "",
+    "Friday": "",
+    "Saturday": "",
+    "Sunday": ""
+  },
   "month": {
     "Jan": "",
     "Feb": "",

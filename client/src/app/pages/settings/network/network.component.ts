@@ -64,11 +64,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .subscribe((x) => this.onConfig(x))
     );
     this.sub.add(
-      this.networkService.ntp
-        .pipe(filter((el) => !!el))
-        .subscribe((x) => this.onNtp(x))
-    );
-    this.sub.add(
       this.networkService.ntpReachable
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onNtpReachable(x))
@@ -103,10 +98,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     if (!this.selectedTab) {
       this.selectedTab = this.tabs[0];
     }
-  }
-
-  private onNtp(x: string[]) {
-    !!x[0] && this.networkService.getNtpReachable(x);
   }
 
   private onNtpReachable(x: NetworkNtpReachable[]) {

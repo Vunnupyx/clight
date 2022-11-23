@@ -86,11 +86,11 @@ export class RestApiManager {
     const logPrefix = `${RestApiManager.className}::getProxySettings`;
 
     const PATH_PREFIX = '/api/v1';
-    const PROXY_HOST =
-      process.env.NODE_ENV === 'development' ? 'localhost' : '127.0.0.1';
-    const PROXY_PORT = 1884;
-
-    return proxy(`http://${PROXY_HOST}:${PROXY_PORT}`, {
+    const confAgentAddress =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:1884'
+        : 'http://172.17.0.1:1884';
+    return proxy(confAgentAddress, {
       filter: (req: Request, res: Response) => {
         const isAuthenticated = authManager.verifyJWTAuth({
           withPasswordChangeDetection: true,

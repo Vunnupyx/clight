@@ -20,6 +20,11 @@ steps:
       containerRegistry: 'mdc-light-acr-dev'
       command: 'login'
   - task: CmdLine@2
+    displayName: PrintVersion
+    inputs:
+      script: |
+        git describe --tags
+  - task: CmdLine@2
     displayName: BuildBase
     inputs:
       script: | # Only build image if dockerfile has changed
@@ -36,7 +41,7 @@ steps:
     displayName: BuildMdc
     inputs:
       script: |
-        version=$(git describe --tags --always)
+        version=$(git describe --tags)
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use

@@ -42,6 +42,7 @@ export function setDataSinksManager(manager: DataSinksManager) {
  */
 function templatesGetHandler(request: Request, response: Response): void {
   const templates = configManager.defaultTemplates.templates.map((x) => ({
+    ...x,
     id: x.id
   }));
 

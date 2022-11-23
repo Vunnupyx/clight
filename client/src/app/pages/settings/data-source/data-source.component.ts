@@ -292,7 +292,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
     return this.datapointRows.some((dp) => {
       return (
-        dp[field].toLowerCase().trim() === newFieldValue && dp.id !== editableId
+        dp[field]?.toLowerCase().trim() === newFieldValue &&
+        dp.id !== editableId
       );
     });
   }

@@ -212,7 +212,18 @@
             >
               <mat-button-toggle
                 (click)="
-                  !isDuplicatingMapping() && onEditEnd(); group.value = null
+                  !isDuplicatingMapping() &&
+                    unsavedRow.source?.length > 0 &&
+                    unsavedRow.target?.length > 0 &&
+                    onEditEnd();
+                  group.value = null
+                "
+                [disabled]="
+                  isDuplicatingMapping() ||
+                  unsavedRow.source?.length === 0 ||
+                  !unsavedRow.source ||
+                  unsavedRow.target?.length === 0 ||
+                  !unsavedRow.target
                 "
                 [matTooltip]="'settings-data-mapping.Save' | translate"
                 matTooltipPosition="above"

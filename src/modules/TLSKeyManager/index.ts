@@ -74,7 +74,7 @@ export class TLSKeyManager {
 
     openSSLProcess.on('error', (error) => {
       winston.error(error);
-      callback(new Error(error.message, null, null);
+      callback(new Error(error.message), null, null);
     });
 
     openSSLProcess.on('close', (closeStatusCode, closeSignal) => {

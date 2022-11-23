@@ -1,6 +1,0 @@
-Host dockerhost
-  HostName host.docker.internal
-  User mdclite
-  IdentityFile /root/.ssh/nmcli/nmclikey
-  StrictHostKeyChecking no
-  LogLevel ERROR

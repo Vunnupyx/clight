@@ -731,7 +731,6 @@ export class VirtualDataPointManager {
 
       const newEvent: IDataSourceMeasurementEvent = {
         dataSource: {
-          name: 'virtual',
           protocol: 'virtual'
         },
         measurement: {

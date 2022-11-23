@@ -113,13 +113,13 @@ export class OPCUAAdapter {
    */
   private async setupNodesets() {
     this.nodesetDir = path.join(
-      process.env.RUNTIME_FOLDER || process.cwd(),
-      '/tmpnodesets'
+      process.env.MDC_LIGHT_FOLDER || process.cwd(),
+      'config/tmpnodesets'
     );
     await fs.rm(this.nodesetDir, { recursive: true, force: true });
     await fs.copy(
       path.join(
-        process.env.RUNTIME_FOLDER || process.cwd(),
+        process.env.MDC_LIGHT_FOLDER || process.cwd(),
         this.opcuaRuntimeConfig.nodesetDir
       ),
       this.nodesetDir
@@ -289,7 +289,7 @@ export class OPCUAAdapter {
     const applicationUri = `urn:${hostname}`;
     const certificateFolder = path.join(
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      '/config/certs'
+      '/certs'
     );
     const certificateFile = path.join(
       certificateFolder,

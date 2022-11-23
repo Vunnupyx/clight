@@ -114,7 +114,6 @@ export class DataPointCache {
           value: newValue
         },
         dataSource: {
-          name: 'virtual',
           protocol: 'virtual'
         }
       };

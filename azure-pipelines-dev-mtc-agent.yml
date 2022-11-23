@@ -1,4 +1,4 @@
-# Azure pipelines for the mdclight client. It's separated for dev to fasten up the build time
+# Azure pipelines for the mdclight
 
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
 
@@ -25,11 +25,11 @@ steps:
       script: |
         git describe --tags
   - task: CmdLine@2
-    displayName: BuildWebserver
+    displayName: BuildMtc
     inputs:
       script: |
         version=$(git describe --tags)
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use
-        scripts/build/dockerBuildWebserver.sh $version
+        scripts/build/dockerBuildMtc.sh $version

@@ -1,4 +1,5 @@
 import { promises as fs, readFileSync, existsSync } from 'fs';
+import fetch from 'node-fetch';
 import { promisify } from 'util';
 import winston from 'winston';
 const child_process = require('child_process');
@@ -17,8 +18,8 @@ export class System {
   ): Promise<string | null> {
     let address;
     enum interfaceMapping {
-      'eth0' = 'eno1',
-      'eth1' = 'eno2'
+      'eth0' = 'enoX1',
+      'eth1' = 'enoX1'
     }
     try {
       address = await fs.readFile(
@@ -57,36 +58,45 @@ export class System {
    * @returns {Promise<string>}
    */
   public async getHostname(): Promise<string> {
-    try {
-      const hostnameReadFromFile = await fs.readFile(`/etc/hostname`, {
-        encoding: 'utf-8'
-      });
-      return hostnameReadFromFile.trim();
-    } catch (err) {
-      return 'DM000000000000'; //TODO: how is the default value?
-    }
+    const defaultHostname = 'dm000000000000';
+    return process.env.IOTEDGE_GATEWAYHOSTNAME || defaultHostname;
   }
 
   /**
-   * Reads mdc flex OS version. Located
+   * Reads CELOS version
    */
-  public readOsVersion() {
+  public async readOsVersion() {
     try {
-      if (existsSync('/etc/mdcflex-os-release')) {
-        const fileContent = readFileSync(
-          '/etc/mdcflex-os-release',
-          'utf-8'
-        ).trim();
-        const versionLine =
-          fileContent.split('\n').find((line) => line.startsWith('VERSION=')) ||
-          'unknown';
-        return versionLine.replace('VERSION=', '');
+      const PROXY_HOST =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost'
+          : 'http://172.17.0.1';
+      const PROXY_PORT = 1884;
+      const PATH_PREFIX = '/api/v1';
+
+      let response = await fetch(
+        `${PROXY_HOST}:${PROXY_PORT}${PATH_PREFIX}/system/versions`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      if (response.ok) {
+        const versions = await response?.json();
+        const osVersion = versions?.find((v) => v.Name === 'COS')?.Version;
+        return osVersion || 'unknown';
+      } else {
+        winston.error('OS Version reading response is not OK');
+        winston.error(JSON.stringify(response));
+        return 'unknown';
       }
     } catch (e) {
-      console.log('Error reading OS version!');
-      console.log(e);
+      winston.error('Error reading OS version!');
+      winston.error(e.message);
+      return 'unknown';
     }
-
-    return 'unknown';
   }
 }

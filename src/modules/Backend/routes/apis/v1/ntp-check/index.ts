@@ -58,7 +58,7 @@ function isAdapterSettings(obj: any): obj is IAdapterSettings {
  */
 interface ICheckedNTPEntry {
   address: string;
-  responsible: boolean;
+  reachable: boolean;
   valid: boolean;
 }
 
@@ -108,7 +108,7 @@ async function ntpCheck(
   const validated = ntpArray.map<ICheckedNTPEntry>((nptEntry: string) => {
     const ntpListEntry = {
       address: nptEntry,
-      responsible: null,
+      reachable: null,
       valid: false
     };
 
@@ -126,15 +126,15 @@ async function ntpCheck(
     return Promise.resolve(validated);
   }
 
-  const responsibleCheck = validated.map<Promise<ICheckedNTPEntry>>((entry) => {
+  const reachableCheck = validated.map<Promise<ICheckedNTPEntry>>((entry) => {
     return new Promise(async (res) => {
       return res({
         ...entry,
-        responsible: entry.valid ? await testNTPServer(entry.address) : false
+        reachable: entry.valid ? await testNTPServer(entry.address) : false
       });
     });
   });
-  return Promise.all(responsibleCheck);
+  return Promise.all(reachableCheck);
 }
 
 /**
@@ -166,7 +166,7 @@ function isHostname(toCheck: string): boolean {
  */
 function testNTPServer(server: string): Promise<boolean> {
   const logPrefix = `NTP::testNTPServer`;
-  const timeOut = 1000 * 0.5; // NTP request abort
+  const timeOut = 1000 * 1; // NTP request abort
   winston.debug(`${logPrefix} start testing: ${server}`);
 
   return new Promise<boolean>(async (res, rej) => {

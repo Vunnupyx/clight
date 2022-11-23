@@ -20,10 +20,15 @@ steps:
       containerRegistry: 'mdc-light-acr-dev'
       command: 'login'
   - task: CmdLine@2
+    displayName: PrintVersion
+    inputs:
+      script: |
+        git describe --tags
+  - task: CmdLine@2
     displayName: BuildWebserver
     inputs:
       script: |
-        version=$(git describe --tags --always)
+        version=$(git describe --tags)
         docker run --privileged --rm tonistiigi/binfmt --install arm64
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use

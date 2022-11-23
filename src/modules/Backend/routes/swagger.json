@@ -1702,7 +1702,7 @@
         "operationId": "checkNTPGet",
         "parameters": [
           {
-            "name": "address",
+            "name": "addresses",
             "in": "path",
             "description": "Address array of all ntp servers",
             "required": true,

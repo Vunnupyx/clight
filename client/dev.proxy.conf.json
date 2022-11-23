@@ -6,7 +6,7 @@
     "logLevel": "debug"
   },
   "/configuration-agent/*": {
-    "target": "http://localhost:1884",
+    "target": "http://localhost:8083",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

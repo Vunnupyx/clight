@@ -15,10 +15,7 @@ import {
   NetworkTimestamp,
   NetworkNtpReachable
 } from '../models';
-import {
-  ConfigurationAgentHttpMockupService,
-  HttpMockupService
-} from 'app/shared';
+import { ConfigurationAgentHttpMockupService, HttpService } from 'app/shared';
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
@@ -112,11 +109,6 @@ let RESPONSE_TIMESTAMP: NetworkTimestamp = {
   Timestamp: 'Sun Jan 09 2022 00:14:58 GMT+0000 (Coordinated Universal Time)'
 } as any;
 
-// TODO: Connect to Network API
-let RESPONSE_NTP_REACHABLE: NetworkNtpReachable[] = [
-  { address: 'time.dmgmori.net', responsible: true, valid: true }
-] as any;
-
 @Injectable()
 export class NetworkService {
   private _store: Store<NetworkState>;
@@ -124,7 +116,7 @@ export class NetworkService {
   constructor(
     storeFactory: StoreFactory<NetworkState>,
     private configurationAgentHttpMockupService: ConfigurationAgentHttpMockupService,
-    private httpMockupService: HttpMockupService,
+    private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -314,10 +306,9 @@ export class NetworkService {
 
   async getNtpReachable(ntp: string[]) {
     try {
-      const response = await this.httpMockupService.get<NetworkNtpReachable[]>(
+      const response = await this.httpService.get<NetworkNtpReachable[]>(
         `/check-ntp?`,
-        { params: { address: ntp[0] }, responseType: 'json' },
-        RESPONSE_NTP_REACHABLE
+        { params: { address: ntp[0] }, responseType: 'json' }
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;

@@ -20,7 +20,7 @@ export class TLSKeyManager {
             if (err) {
               winston.debug(`${logPrefix} failed to generate SSL keys`);
               winston.error(JSON.stringify(err));
-              reject();
+              reject(err);
               return;
             }
             resolve();
@@ -73,14 +73,15 @@ export class TLSKeyManager {
     });
 
     openSSLProcess.on('error', (error) => {
-      callback(error, null, null);
+      winston.error(error);
+      callback(new Error(error.message), null, null);
     });
 
     openSSLProcess.on('close', (closeStatusCode, closeSignal) => {
       if (closeStatusCode === 0) {
         callback(null, stderr.toString(), stdout.toString());
       } else {
-        callback(closeSignal, stderr.toString(), stdout.toString());
+        callback(new Error(closeSignal), stderr.toString(), stdout.toString());
       }
     });
   }

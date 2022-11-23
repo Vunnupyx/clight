@@ -237,7 +237,7 @@ async function checkInterfaces(): Promise<boolean> {
   const basePath =
     (process.env.NODE_ENV === 'development'
       ? 'http://localhost:1884'
-      : 'http://host.docker.internal:1884') + '/api/v1';
+      : 'http://172.17.0.1:1884') + '/api/v1';
   const adaptersEndpoint = '/network/adapters';
   const adapterStatus = '/network/adapters/{adapterID}/status';
   let adapterInfos: Array<IAdapterSettings['id']>;

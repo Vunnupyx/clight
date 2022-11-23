@@ -19,12 +19,6 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
   };
 });
 
-const licenseCheckerMock = {
-  isLicensed: jest.fn().mockImplementation(() => {
-    return true;
-  })
-};
-
 const winstonMock = {
   winston: jest.fn(), // Constructor
   debug: jest.fn((msg) => {
@@ -99,7 +93,6 @@ describe('DataHubDataSink', () => {
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
     termsAndConditionsAccepted: true,
-    isLicensed: true,
     proxy: {
       ip: '',
       port: 0,

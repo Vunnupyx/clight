@@ -42,9 +42,7 @@ export function setDataSinksManager(manager: DataSinksManager) {
  */
 function templatesGetHandler(request: Request, response: Response): void {
   const templates = configManager.defaultTemplates.templates.map((x) => ({
-    ...x,
-    dataSources: x.dataSources.filter((x) => x.enabled).map((y) => y.protocol),
-    dataSinks: x.dataSinks.filter((x) => x.enabled).map((y) => y.protocol)
+    id: x.id
   }));
 
   const payload = {
@@ -79,20 +77,12 @@ async function templatesApplyPostHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  if (
-    !request.body.templateId ||
-    !request.body.dataSources?.length ||
-    !request.body.dataSinks?.length
-  ) {
+  if (!request.body.templateId) {
     response.status(400).json({ message: 'Invalid Body' });
     return;
   }
 
-  configManager.applyTemplate(
-    request.body.templateId,
-    request.body.dataSources,
-    request.body.dataSinks
-  );
+  configManager.applyTemplate(request.body.templateId);
   await configManager.configChangeCompleted();
 
   response.status(200).json(null);

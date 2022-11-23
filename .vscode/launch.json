@@ -2,7 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch RT",
+      "name": "Attach RT Local Dev",
+      "type": "node",
+      "port": 9229,
+      "request": "attach"
+    },
+    {
+      "name": "Launch RT Local Dev",
       "type": "node",
       "request": "launch",
       "protocol": "inspector",
@@ -14,10 +20,7 @@
       "env": {
         "LOG_LEVEL": "debug"
       },
-      "skipFiles": [
-        "<node_internals>/**",
-        "node_modules/**/*.js"
-      ]
+      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js"]
     }
   ]
 }

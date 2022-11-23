@@ -3,7 +3,11 @@ import { HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { HttpService, RequestOptionsArgs } from '../shared';
+import {
+  ConfigurationAgentHttpMockupService,
+  HttpService,
+  RequestOptionsArgs
+} from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { SystemInformationSection } from '../models';
 import { errorHandler } from '../shared/utils';
@@ -35,6 +39,7 @@ export class SystemInformationService {
   constructor(
     storeFactory: StoreFactory<SystemInformationState>,
     private httpService: HttpService,
+    private configurationAgentHttpMockupService: ConfigurationAgentHttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -90,17 +95,20 @@ export class SystemInformationService {
     return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
   }
 
-  async getServerTime(): Promise<number> {
-    const response = await this.httpService.get<{ timestamp: number }>(
-      `/systemInfo/time`
-    );
+  async getServerTime(): Promise<string> {
+    const response = await this.configurationAgentHttpMockupService.get<{
+      Timestamp: string;
+    }>(`/system/time`);
 
-    return response.timestamp;
+    return response.Timestamp;
   }
 
   async restartDevice(): Promise<boolean> {
     try {
-      await this.httpService.post(`/systemInfo/restart`, null);
+      await this.configurationAgentHttpMockupService.post(
+        `/system/restart`,
+        null
+      );
 
       return true;
     } catch (e) {
@@ -110,9 +118,8 @@ export class SystemInformationService {
 
   async getServerTimeOffset(force = false): Promise<number> {
     if (force || this._store.snapshot.serverOffset === undefined) {
-      const time = await this.getServerTime();
-
-      const offset = Math.round(Date.now() / 1000) - time;
+      const time = new Date(await this.getServerTime());
+      const offset = Math.round(Date.now() - time.getTime()) / 1000;
 
       this._store.patchState((state) => {
         state.serverOffset = offset;

@@ -35,11 +35,11 @@ Additional documentation can be found in the following folders of this repositor
 
 ## Project structure
 
-Currently two docker containers are deployed to the IOT2050: The MTConnect agent (mtc) & the MDClight runtime.
+Currently two docker containers are deployed to the IOT2050: The MTConnect agent (mtc) & the mdc-light runtime.
 The runtime accepts a user configuration file, connects to data sources and provides a TCP-Server for the MTConnect agent.
 Only the MTConnect server (provided by the MTC agent) is accessible from the outside.
 
 ## Building the docker image
 
-- `yarn build:mdclight` - Build & push the production (ARM64) docker image of the MDClight runtime
+- `yarn build:mdclight` - Build & push the production (ARM64) docker image of the mdc-light runtime
 - See `docs/developer` for information on how to integrate new version with the operating system of the IOT2050

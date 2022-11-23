@@ -1,5 +1,5 @@
-import { Client, Message, Twin } from 'azure-iot-device';
-import { MqttWs as iotHubTransport } from 'azure-iot-device-mqtt';
+import { Message, Twin, ModuleClient } from 'azure-iot-device';
+import { MqttWs as IotHubTransport } from 'azure-iot-device-mqtt';
 
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
@@ -39,7 +39,7 @@ export class DataHubAdapter {
 
   // Datahub and Twin
   private connectionSting: string = null;
-  private dataHubClient: Client;
+  private dataHubClient: ModuleClient;
   private deviceTwin: Twin;
   private probeBuffer: MessageBuffer;
   private telemetryBuffer: MessageBuffer;
@@ -138,7 +138,10 @@ export class DataHubAdapter {
         winston.debug(`${logPrefix} initializing.`);
       })
       .then(() => {
-        this.connectionSting = process.env.EdgeHubConnectionString;
+        return ModuleClient.fromEnvironment(IotHubTransport);
+      })
+      .then((modClient) => {
+        this.dataHubClient = modClient;
         this.initialized = true;
         return this;
       })
@@ -169,8 +172,6 @@ export class DataHubAdapter {
       const logMsg = `${logPrefix} no connection string available. CelosXchange disabled.`;
       return Promise.reject(new NorthBoundError(logMsg, 'NOT_REGISTERED'));
     }
-
-    this.createDatahubClient();
 
     return this.dataHubClient
       .on('error', (...args) =>
@@ -210,17 +211,6 @@ export class DataHubAdapter {
           )
         );
       });
-  }
-
-  /**
-   * Create DataHubClient instance and add proxy if required.
-   * Instance is available via this.#dataHubClient
-   */
-  private createDatahubClient(): void {
-    this.dataHubClient = Client.fromConnectionString(
-      this.connectionSting,
-      iotHubTransport
-    );
   }
 
   /**

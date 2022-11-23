@@ -73,10 +73,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.sub.add(this.networkService.setNetworkAdaptersTimer().subscribe());
 
-    this.networkService.getNetworkAdapters();
-    this.networkService.getNetworkProxy();
-    this.networkService.getNetworkNtp();
-    this.networkService.getNetworkTimestamp();
+    this.networkService.getNetworkAdapters()
+      .then(() => this.networkService.getNetworkProxy())
+      .then(() => this.networkService.getNetworkNtp())
+      .then(() => this.networkService.getNetworkTimestamp())
   }
 
   get tabs() {
@@ -95,7 +95,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.config = clone(x);
     this.originalConfig = clone(x);
 
-    if (!this.selectedTab) {
+    if (!this.tabs.includes(this.selectedTab)) {
       this.selectedTab = this.tabs[0];
     }
   }

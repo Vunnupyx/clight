@@ -98,7 +98,6 @@ export interface IDataPointConfig {
 }
 
 export interface IDataSourceConfig {
-  name: string;
   dataPoints: IDataPointConfig[];
   protocol: DataSourceProtocols;
   connection?: IS7DataSourceConnection;
@@ -117,14 +116,15 @@ export interface IDataSinkDataPointConfig {
   id: string;
   address: string;
   name: string;
-  type: IMTConnectDataPointTypes | TDataHubDataPointType;
+  type?: IMTConnectDataPointTypes | TDataHubDataPointType;
   map?: ITargetDataMap;
   initialValue?: string | number;
+  mandatory?: true; //only used inside frontend
 }
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
+  userName?: string;
+  password?: string;
 }
 
 export interface IDataHubSettings {
@@ -175,25 +175,12 @@ export interface IMessengerMetadata {
 }
 
 export interface IDataSinkConfig {
-  name: string; //TBD: this seems to be obsolete?
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
   datahub?: IDataHubSettings;
   customDataPoints?: IOpcuaCustomDataPoint[];
-}
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
-}
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
 }
 
 export interface IDataHubConfig {
@@ -220,12 +207,6 @@ export interface IProxyConfig {
   username?: string;
   password?: string;
   enabled: boolean;
-}
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
 }
 
 interface IDataHubDataPointTypesData {
@@ -333,6 +314,7 @@ export interface IVirtualDataPointConfig {
   comparativeValue?: string | number;
   resetSchedules?: ScheduleDescription[];
   formula?: string;
+  name: string;
 }
 
 export interface ISystemInfoItem {

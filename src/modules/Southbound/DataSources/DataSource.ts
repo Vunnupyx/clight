@@ -198,13 +198,12 @@ export abstract class DataSource extends EventEmitter {
   protected onDataPointMeasurement = (measurements: IMeasurement[]): void => {
     const logPrefix = `${this.name}::onDataPointMeasurement`;
 
-    const { name, protocol } = this.config;
+    const { protocol } = this.config;
 
     try {
       this.submitMeasurement(
         measurements.map((measurement) => ({
           dataSource: {
-            name,
             protocol
           },
           measurement
@@ -223,10 +222,9 @@ export abstract class DataSource extends EventEmitter {
   protected onDataPointLifecycle = (
     lifecycleEvent: IBaseLifecycleEvent
   ): void => {
-    const { name, protocol } = this.config;
+    const { protocol } = this.config;
     const DPLifecycleEvent: IDataSourceDataPointLifecycleEvent = {
       dataSource: {
-        name,
         protocol
       },
       ...lifecycleEvent

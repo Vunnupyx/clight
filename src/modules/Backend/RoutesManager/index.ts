@@ -140,8 +140,7 @@ export class RoutesManager {
     livedataVirtualDataPointsSetDataPointCache(options.dataPointCache);
 
     this.inputValidator = OpenApiValidator.middleware({
-      // @ts-ignore
-      apiSpec: swaggerFile,
+      apiSpec: swaggerFile as any,
       validateRequests: false,
       validateResponses: false
     });

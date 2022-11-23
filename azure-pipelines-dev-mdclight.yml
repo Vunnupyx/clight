@@ -22,7 +22,8 @@ steps:
   - task: CmdLine@2
     displayName: PrintVersion
     inputs:
-      script: git describe --tags
+      script: |
+        git describe --tags
   - task: CmdLine@2
     displayName: BuildBase
     inputs:
@@ -37,19 +38,6 @@ steps:
           scripts/build/dockerBuildMdclightBase.sh
         fi
   - task: CmdLine@2
-    displayName: BuildMtc
-    inputs:
-      script: | # Only build image if dockerfile has changed
-        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mtconnect_arm64.dockerfile")
-
-        echo "$MATCH_COUNT match(es) for filter '$PATH_FILTER' found."
-        if [[ $MATCH_COUNT -gt 0 ]]; then
-          docker run --privileged --rm tonistiigi/binfmt --install arm64
-          docker run --privileged --rm tonistiigi/binfmt
-          docker buildx create --use
-          scripts/build/dockerBuildMtc.sh
-        fi
-  - task: CmdLine@2
     displayName: BuildMdc
     inputs:
       script: |
@@ -58,12 +46,3 @@ steps:
         docker run --privileged --rm tonistiigi/binfmt
         docker buildx create --use
         scripts/build/dockerBuildMdclight.sh $version
-  # - task: CmdLine@2
-  #   displayName: BuildWebserver
-  #   inputs:
-  #     script: |
-  #       version=$(git describe --tags)
-  #       docker run --privileged --rm tonistiigi/binfmt --install arm64
-  #       docker run --privileged --rm tonistiigi/binfmt
-  #       docker buildx create --use
-  #       scripts/build/dockerBuildWebserver.sh $version

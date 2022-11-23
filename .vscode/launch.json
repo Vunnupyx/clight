@@ -2,13 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "mdclight Local Dev",
+      "name": "Attach RT Local Dev",
       "type": "node",
       "port": 9229,
       "request": "attach"
     },
     {
-      "name": "Launch RT",
+      "name": "Launch RT Local Dev",
       "type": "node",
       "request": "launch",
       "protocol": "inspector",

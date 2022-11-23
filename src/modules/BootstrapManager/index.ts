@@ -15,7 +15,7 @@ import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
 import { RestApiManager } from '../Backend/RESTAPIManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
-import { System } from '../System';
+import { TLSKeyManager } from '../TLSKeyManager';
 import { LedStatusService } from '../LedStatusService';
 
 /**
@@ -33,6 +33,7 @@ export class BootstrapManager {
   private backend: RestApiManager;
   private hwEvents: IoT2050HardwareEvents;
   private ledManager: LedStatusService;
+  private tlsKeyManager: TLSKeyManager;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -85,6 +86,7 @@ export class BootstrapManager {
     });
 
     this.hwEvents = new IoT2050HardwareEvents();
+    this.tlsKeyManager = new TLSKeyManager();
   }
 
   /**
@@ -95,12 +97,13 @@ export class BootstrapManager {
       await this.ledManager.init();
       this.setupKillEvents();
 
+      await this.tlsKeyManager.generateKeys();
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {
           await this.configManager.factoryResetConfiguration();
           await this.ledManager.turnOffLeds();
-          await fetch('host.docker.internal/system/restart', {
+          await fetch('http://172.17.0.1/system/restart', {
             method: 'POST'
           });
         } catch (e) {
@@ -117,24 +120,17 @@ export class BootstrapManager {
       });
 
       this.ledManager.runTimeStatus(true);
-
-      // // TODO Remove
-      // winston.warn(
-      //   'Shutting down runtime in 5min for debugging purpose. Remove later!'
-      // );
-      // setTimeout(() => {
-      //   winston.warn('Shutting down manually!');
-      //   process.exit(1);
-      // }, 5 * 60 * 1000);
     } catch (error) {
       this.errorEventsBus.push({
         id: 'device',
         level: EventLevels.Device,
         type: DeviceLifecycleEventTypes.LaunchError,
-        payload: error.toString()
+        payload: JSON.stringify(error)
       });
 
-      winston.error('Error while launching. Exiting program.');
+      console.log(error);
+      winston.error(`Error while launching. Exiting program. `);
+      winston.error(JSON.stringify(error));
 
       process.exit(1);
     }

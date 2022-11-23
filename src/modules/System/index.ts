@@ -17,8 +17,8 @@ export class System {
   ): Promise<string | null> {
     let address;
     enum interfaceMapping {
-      'eth0' = 'eno1',
-      'eth1' = 'eno2'
+      'eth0' = 'enoX1',
+      'eth1' = 'enoX1'
     }
     try {
       address = await fs.readFile(
@@ -57,14 +57,8 @@ export class System {
    * @returns {Promise<string>}
    */
   public async getHostname(): Promise<string> {
-    try {
-      const hostnameReadFromFile = await fs.readFile(`/etc/hostname`, {
-        encoding: 'utf-8'
-      });
-      return hostnameReadFromFile.trim();
-    } catch (err) {
-      return 'DM000000000000'; //TODO: how is the default value?
-    }
+    const defaultHostname = 'dm000000000000';
+    return process.env.IOTEDGE_GATEWAYHOSTNAME || defaultHostname;
   }
 
   /**

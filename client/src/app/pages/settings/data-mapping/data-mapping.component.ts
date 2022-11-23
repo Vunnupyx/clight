@@ -273,6 +273,7 @@ export class DataMappingComponent implements OnInit, OnDestroy {
       if (!dialogResult) {
         return;
       }
+      this.clearUnsavedRow();
       this.dataMappingService.deleteDataMapping(obj);
     });
   }

@@ -113,7 +113,7 @@ export const NC_ADDRESSES: { [key: string]: NCVarSelectorAddress } = {
     dataType: 0x4,
     byteLength: 0x2
   },
-  '/Nck/Configuration/basicLengthUnit ': {
+  '/Nck/Configuration/basicLengthUnit': {
     /** @see N_Y_basicLengthUnit_2 */
     syntaxId: 0x82,
     areaUnit: 0x1,

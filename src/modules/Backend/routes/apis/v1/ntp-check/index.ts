@@ -105,18 +105,18 @@ async function ntpCheck(
 ): Promise<Array<ICheckedNTPEntry>> {
   const logPrefix = `ntpCheck`;
 
-  const validated = ntpArray.map<ICheckedNTPEntry>((nptEntry: string) => {
+  const validated = ntpArray.map<ICheckedNTPEntry>((ntpEntry: string) => {
     const ntpListEntry = {
-      address: nptEntry,
+      address: ntpEntry,
       reachable: null,
       valid: false
     };
 
-    if (typeof nptEntry !== 'string') {
+    if (typeof ntpEntry !== 'string') {
       return ntpListEntry;
     }
 
-    if (isIpAddress(nptEntry) || isHostname(nptEntry)) {
+    if (isIpAddress(ntpEntry) || isHostname(ntpEntry)) {
       ntpListEntry.valid = true;
     }
     return ntpListEntry;

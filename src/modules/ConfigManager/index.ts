@@ -893,6 +893,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   public async getSystemInformation() {
     const system = new System();
+    const osVersion = await system.readOsVersion();
     return [
       {
         title: 'General system information',
@@ -907,13 +908,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             key: 'Mac address X1',
             keyDescription: '',
             value: await system.readMacAddress('eth0'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           },
           {
             key: 'Mac address X2',
             keyDescription: '',
             value: await system.readMacAddress('eth1'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           }
         ]
       },
@@ -933,9 +934,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             valueDescription: null
           },
           {
-            key: 'IoT connector flex OS version',
+            key: 'CELOS version',
             keyDescription: 'Operating System',
-            value: system.readOsVersion(),
+            value: osVersion,
             valueDescription: null
           },
           {

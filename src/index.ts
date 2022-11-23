@@ -10,7 +10,7 @@ async function main() {
   winston.error(
     `MDC Flex runtime version: ${process.env.MDC_LIGHT_RUNTIME_VERSION}`
   );
-  const osVersion = await new System().readOsVersion();
+  winston.error(`COS version: ${await new System().readOsVersion()}`);
 
   const bootstrapManager = new BootstrapManager();
   bootstrapManager.start();

@@ -15,7 +15,10 @@ import {
   NetworkTimestamp,
   NetworkNtpReachable
 } from '../models';
-import { ConfigurationAgentHttpMockupService } from 'app/shared';
+import {
+  ConfigurationAgentHttpMockupService,
+  HttpMockupService
+} from 'app/shared';
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
@@ -121,6 +124,7 @@ export class NetworkService {
   constructor(
     storeFactory: StoreFactory<NetworkState>,
     private configurationAgentHttpMockupService: ConfigurationAgentHttpMockupService,
+    private httpMockupService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -157,14 +161,6 @@ export class NetworkService {
               : undefined
         })
       ),
-      distinctUntilChanged()
-    );
-  }
-
-  get ntp() {
-    return this._store.state.pipe(
-      filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.ntp),
       distinctUntilChanged()
     );
   }
@@ -281,6 +277,7 @@ export class NetworkService {
         state.status = Status.Ready;
         state.ntp = response;
       });
+      !!response?.[0] && this.getNtpReachable(response);
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
       errorHandler(err);
@@ -293,6 +290,7 @@ export class NetworkService {
   async updateNetworkNtp(obj: string[]) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
+      state.ntpReachable = [{ address: '', responsible: false, valid: false }];
     });
 
     try {
@@ -304,6 +302,7 @@ export class NetworkService {
         state.status = Status.Ready;
         state.ntp = obj;
       });
+      !!obj?.[0] && this.getNtpReachable(obj);
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
       errorHandler(err);
@@ -315,9 +314,7 @@ export class NetworkService {
 
   async getNtpReachable(ntp: string[]) {
     try {
-      const response = await this.configurationAgentHttpMockupService.get<
-        NetworkNtpReachable[]
-      >(
+      const response = await this.httpMockupService.get<NetworkNtpReachable[]>(
         `/check-ntp?`,
         { params: { address: ntp[0] }, responseType: 'json' },
         RESPONSE_NTP_REACHABLE

@@ -94,6 +94,7 @@
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
+              disableOptionCentering="true"
               (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
               [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
               matTooltipPosition="above"
@@ -147,6 +148,7 @@
             <mat-select
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
+              disableOptionCentering="true"
               (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
               [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
               matTooltipPosition="above"

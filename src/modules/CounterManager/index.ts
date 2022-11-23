@@ -4,7 +4,6 @@ import winston from 'winston';
 import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
-import SshService from '../SshService';
 
 type CounterDict = {
   [id: string]: number;
@@ -136,9 +135,13 @@ export class CounterManager {
       );
     }
 
-    this.checkMissedResets();
     this.registerScheduleChecker();
+    this.configManager.on('configsLoaded', this.handleConfigsLoaded.bind(this));
     this.configManager.on('configChange', this.checkTimers.bind(this));
+  }
+
+  private handleConfigsLoaded() {
+    this.checkMissedResets();
     this.checkTimers();
   }
 
@@ -283,13 +286,9 @@ export class CounterManager {
           winston.debug(`${logPrefix} timer for ${counterId} already started.`);
           continue;
         }
-        const { stdout } = await SshService.sendCommand('date +%FT%T');
-        let now: Date;
-        if (typeof stdout === 'string') {
-          now = new Date(stdout.trim());
-        } else {
-          now = new Date(stdout.toString().trim());
-        }
+
+        const now = new Date();
+
         const nextScheduling = CounterManager.calcNextTrigger(entry, now);
 
         const timeDiff = now.getTime() - nextScheduling.getTime();

@@ -8,6 +8,7 @@
         <mat-form-field appearance="legacy">
           <mat-label>{{ 'quick-start.Language' | translate }}</mat-label>
           <mat-select
+            disableOptionCentering="true"
             [value]="currentLang"
             (valueChange)="onLanguageChange($event)"
           >

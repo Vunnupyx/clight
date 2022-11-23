@@ -20,7 +20,7 @@
           <mat-label>{{
             'settings-general.CELOSLanguage' | translate
           }}</mat-label>
-          <mat-select
+          <mat-select disableOptionCentering="true"
             [value]="currentLang"
             (valueChange)="onLanguageChange($event)"
           >

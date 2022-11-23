@@ -398,6 +398,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       if (!dialogResult) {
         return;
       }
+      this.clearUnsavedRow();
       this.sourceDataPointService.deleteDataPoint(
         this.dataSource!.protocol!,
         obj

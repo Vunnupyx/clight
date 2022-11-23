@@ -4,7 +4,6 @@ import { writeFile } from 'fs/promises';
 import winston from 'winston';
 import { LifecycleEventStatus } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
-import { DataSource } from '../Southbound/DataSources/DataSource';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { DataSourceEventTypes } from '../Southbound/DataSources/interfaces';
 
@@ -25,8 +24,7 @@ export class LedStatusService {
   #configured = false;
   #southboundConnected = false;
   #configCheckRunning = false;
-  #sysfsPrefix = '';
-  private locked = false;
+  #sysfsPrefix = process.env.SYS_PREFIX || '';
 
   constructor(
     private configManager: ConfigManager,
@@ -44,8 +42,9 @@ export class LedStatusService {
   private registerDataSourceEvents(): void {
     const logPrefix = `LedStatusService::registerDataSourceEvents`;
     const sources = this.datasourceManager.getDataSources();
-    if (!sources || sources.length < 1)
-      {winston.error(`${logPrefix} no datasources available`);}
+    if (!sources || sources.length < 1) {
+      winston.error(`${logPrefix} no datasources available`);
+    }
     winston.debug(`${logPrefix} register on sources.`);
     sources.forEach((source) => {
       source.on(DataSourceEventTypes.Lifecycle, async (status) => {
@@ -61,7 +60,9 @@ export class LedStatusService {
               await this.setLed([this.getLedPathByNumberAndColor(1, 'green')]);
             }
             this.#southboundConnected = true;
-            winston.debug(`${logPrefix} successfully configured and connected to NC. Set USER 1 LED to green light.`);
+            winston.debug(
+              `${logPrefix} successfully configured and connected to NC. Set USER 1 LED to green light.`
+            );
             return;
           }
           case LifecycleEventStatus.Disconnected: {
@@ -72,7 +73,9 @@ export class LedStatusService {
               this.getLedPathByNumberAndColor(1, 'green')
             ]);
             this.#southboundConnected = false;
-            winston.debug(`${logPrefix} successfully configured and but not connected to NC. Set USER 1 LED to orange light.`);
+            winston.debug(
+              `${logPrefix} successfully configured and but not connected to NC. Set USER 1 LED to orange light.`
+            );
             return;
           }
           default: {
@@ -99,10 +102,6 @@ export class LedStatusService {
   ): void {
     const logPrefix = `LedStatusService::blink`;
     let paths;
-    if (ledNumber === 2 && this.locked) {
-      winston.warn(`${logPrefix} can not set LED 2 to blink mode because LED is locked by invalid license.`);
-      return;
-    }
     switch (color) {
       case 'green': {
         paths = [this.getLedPathByNumberAndColor(ledNumber, color)];
@@ -164,10 +163,6 @@ export class LedStatusService {
    */
   private async clearLed(ledNumber: 1 | 2) {
     const logPrefix = `LedStatusService::clearLed`;
-    if(this.locked && ledNumber === 2) {
-      winston.warn(`${logPrefix} can not clear LED 2 because LED is locked by invalid license.`);
-      return;
-    }
     const paths = [
       this.getLedPathByNumberAndColor(ledNumber, 'red'),
       this.getLedPathByNumberAndColor(ledNumber, 'green')
@@ -196,7 +191,7 @@ export class LedStatusService {
       }
     }
     await this.unsetLed(paths);
-    winston.debug(`${logPrefix} successfully cleared USER ${ledNumber} LED.`)
+    winston.debug(`${logPrefix} successfully cleared USER ${ledNumber} LED.`);
   }
 
   /**
@@ -206,10 +201,6 @@ export class LedStatusService {
     ledNumber: 1 | 2,
     color: 'red' | 'green'
   ): PathLike | null {
-    if(this.locked && ledNumber === 2) {
-      winston.warn(`LedStatusService::getLedPathByNumberAndColor can not generate LED2 path because LED is locked by invalid license.`);
-      return null;
-    }
     return `${this.#sysfsPrefix}/sys/class/leds/user-led${ledNumber.toString(
       10
     )}-${color}/brightness`;
@@ -246,7 +237,7 @@ export class LedStatusService {
     const terms = this.configManager.config.termsAndConditions;
     const logPrefix = `LedStatusService::checkConfigTemplateTerms`;
 
-    winston.debug(`${logPrefix} start checking.`)
+    winston.debug(`${logPrefix} start checking.`);
 
     // Fast way out of check
     if (!terms) {
@@ -273,7 +264,9 @@ export class LedStatusService {
           loop3: for (const sink of this.configManager.config.dataSinks) {
             if (!sink.enabled) continue;
             if (sink.dataPoints.some((point) => point.id === sinkDatapoint)) {
-              winston.debug(`${logPrefix} correct configuration found. Set USER 1 LED to orange`);
+              winston.debug(
+                `${logPrefix} correct configuration found. Set USER 1 LED to orange`
+              );
               // disable blinking
               await this.clearLed(1);
               // led orange
@@ -282,9 +275,13 @@ export class LedStatusService {
                 this.getLedPathByNumberAndColor(1, 'green')
               ]);
               if (this.#southboundConnected) {
-                winston.debug(`${logPrefix} catch connected event during check. Set USER 1 LED to green. `)
+                winston.debug(
+                  `${logPrefix} catch connected event during check. Set USER 1 LED to green. `
+                );
                 await this.clearLed(1);
-                await this.setLed([this.getLedPathByNumberAndColor(1, 'green')]);
+                await this.setLed([
+                  this.getLedPathByNumberAndColor(1, 'green')
+                ]);
               }
               this.#configured = true;
               this.#configCheckRunning = false;
@@ -330,8 +327,8 @@ export class LedStatusService {
    */
   private noConfigBlink(): void {
     const logPrefix = `LedStatusService::noConfigBlink`;
-      if (this.#led1Blink) return;
-      this.blink(1, 500, 500, 'orange');
+    if (this.#led1Blink) return;
+    this.blink(1, 500, 500, 'orange');
 
     winston.info(
       `${logPrefix} set USER LED 1 to 'orange blinking' because not not completely configured.`
@@ -344,14 +341,9 @@ export class LedStatusService {
   public runTimeStatus(status: boolean): void {
     const logPrefix = `LedStatusService::runTimeStatus`;
 
-    if(this.locked) {
-      winston.warn(`${logPrefix} can not ${status ? 'set' : 'unset '} runtime status because LED is locked by invalid license.`);
-      return;
-    }
-
     const path = this.getLedPathByNumberAndColor(2, 'green');
     this.clearLed(2).then(() => {
-      if(status) {
+      if (status) {
         this.setLed([path]);
         winston.info(
           `${logPrefix} set USER LED 2 to ${
@@ -359,50 +351,14 @@ export class LedStatusService {
           } (Runtime status: ${status ? 'RUNNING' : 'NOT RUNNING'})`
         );
       }
-    })
+    });
   }
 
   /**
-   * Set LED 2 blinking red.
+   * Turns off both led's of the device
    */
-  public setLicenseInvalid(): void {
-    const logPrefix = `LedStatusService::setLicenseInvalid`;
-    if(this.locked) {
-      winston.warn(`${logPrefix} already set.`);
-      return;
-    }
-    winston.info(`${logPrefix} start.`);
-    this.clearLed(2).then(() => {
-      this.blink(2, 500, 500, 'red');
-      this.locked = true;
-      winston.info(`${logPrefix} succeeded.`);
-    })
-    
-  }
-
-  /**
-   * Sets directory prefix to mocked sys folder for dev environments.
-   * Setup mock with "yarn setup_mock_sysfs"
-   * @returns
-   * @deprecated
-   */
-  private async setSysfsPrefix() {
-    this.#sysfsPrefix = '';
-    return;
-    if (process.env.MOCK_LEDS) {
-      this.#sysfsPrefix = process.env.MOCK_LEDS;
-      return; 
-    }
-    try {
-      const board = await fs.readFile('/sys/firmware/devicetree/base/model');
-      if (board.indexOf('SIMATIC IOT2050') >= 0) {
-        this.#sysfsPrefix = '';
-        return;
-      }
-    } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
-    }
-
-    this.#sysfsPrefix = 'src/modules/LedStatusService';
+  public async turnOffLeds() {
+    await this.clearLed(1);
+    await this.clearLed(2);
   }
 }

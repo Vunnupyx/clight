@@ -396,7 +396,7 @@
             </div>
             <div>
               <mat-form-field
-                *ngIf="!ntpReachable[0].valid"
+                *ngIf="!ntpReachable[0].responsible"
                 class="nptUnreachable"
               >
                 <input
@@ -416,7 +416,7 @@
                   'settings-network.nptUnreachable' | translate
                 }}</mat-hint>
               </mat-form-field>
-              <mat-form-field *ngIf="ntpReachable[0].valid">
+              <mat-form-field *ngIf="ntpReachable[0].responsible">
                 <input
                   matInput
                   name="ntpHost"

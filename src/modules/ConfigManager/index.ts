@@ -35,6 +35,8 @@ import { System } from '../System';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { areObjectsEqual } from '../Utilities';
+import { factoryConfig } from './factoryConfig';
+import { runtimeConfig } from './runtimeConfig';
 
 const promisifiedGenerateKeyPair = promisify(generateKeyPair);
 
@@ -47,7 +49,6 @@ interface IConfigManagerEvents {
 type ChangeOperation = 'insert' | 'update' | 'delete';
 
 const defaultS7DataSource: IDataSourceConfig = {
-  name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.S7,
   enabled: false,
@@ -60,21 +61,18 @@ const defaultS7DataSource: IDataSourceConfig = {
   }
 };
 const defaultIoShieldDataSource: IDataSourceConfig = {
-  name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false,
   type: 'ai-100+5di'
 };
 const defaultOpcuaDataSink: IDataSinkConfig = {
-  name: '',
   dataPoints: [],
   enabled: false,
   protocol: DataSinkProtocols.OPCUA
 };
 
 const defaultDataHubDataSink: IDataSinkConfig = {
-  name: '',
   dataPoints: [],
   enabled: false,
   protocol: DataSinkProtocols.DATAHUB,
@@ -87,57 +85,9 @@ const defaultDataHubDataSink: IDataSinkConfig = {
 };
 
 const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
-  name: '',
   dataPoints: [],
   enabled: false,
   protocol: DataSinkProtocols.MTCONNECT
-};
-
-export const emptyDefaultConfig: IConfig = {
-  general: {
-    manufacturer: '',
-    serialNumber: '',
-    model: '',
-    control: ''
-  },
-  networkConfig: {
-    x1: {},
-    x2: {},
-    time: {}
-  },
-  messenger: {
-    hostname: null,
-    username: null,
-    password: null,
-    model: null,
-    name: null,
-    organization: null,
-    timezone: null
-  },
-  dataSources: [],
-  dataSinks: [],
-  virtualDataPoints: [],
-  mapping: [],
-  quickStart: {
-    currentTemplate: null,
-    currentTemplateName: null,
-    completed: false
-  },
-  termsAndConditions: {
-    accepted: false
-  },
-  env: {
-    selected: 'prod',
-    mdc: {
-      tag: 'main'
-    },
-    mtc: {
-      tag: 'latest'
-    },
-    web: {
-      tag: 'main'
-    }
-  }
 };
 
 /**
@@ -145,16 +95,12 @@ export const emptyDefaultConfig: IConfig = {
  */
 export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
   public id: string | null = null;
-  private configFolder = path.join(
-    process.env.MDC_LIGHT_FOLDER || process.cwd(),
-    'mdclight/config'
-  );
-  private runtimeFolder = '/runTimeFiles';
-  private keyFolder = path.join(this.configFolder, 'keys');
+
+  private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
+  private configFolder = path.join(this.mdcFolder, '/config');
+  private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
 
   private configName = 'config.json';
-  private factoryConfigName = 'config.factory.json';
-  private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private privateKeyName = 'jwtRS256.key';
   private publicKeyName = 'jwtRS256.key.pub';
@@ -218,81 +164,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.lifecycleEventsBus = lifecycleEventsBus;
 
     // Initial values
-    this._runtimeConfig = {
-      users: [],
-      systemInfo: [],
-      mtconnect: {
-        listenerPort: 7878
-      },
-      opcua: {
-        port: 4840,
-        nodesetDir: ''
-      },
-      restApi: {
-        port: 5000,
-        maxFileSizeByte: 20000000
-      },
-      auth: {
-        expiresIn: 60 * 60
-      },
-      datahub: {
-        groupDevice: false,
-        signalGroups: undefined,
-        dataPointTypesData: {
-          probe: {
-            intervalHours: undefined
-          },
-          telemetry: {
-            intervalHours: undefined
-          }
-        }
-      },
-      registries: {
-        dev: {
-          url: '',
-          mdc: {
-            tag: 'develop'
-          },
-          mtc: {
-            tag: 'latest'
-          },
-          web: {
-            tag: 'develop'
-          }
-        },
-        prod: {
-          url: '',
-          mdc: {
-            tag: 'main'
-          },
-          mtc: {
-            tag: 'latest'
-          },
-          web: {
-            tag: 'main'
-          }
-        },
-        stag: {
-          url: '',
-          mdc: {
-            tag: 'staging'
-          },
-          mtc: {
-            tag: 'latest'
-          },
-          web: {
-            tag: 'staging'
-          }
-        }
-      }
-    };
+    this._runtimeConfig = runtimeConfig;
 
     this._authConfig = {
       secret: null,
       public: null
     };
-
-    this._config = emptyDefaultConfig;
 
     this._authUsers = {
       users: []
@@ -302,7 +179,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Initializes and parses config items
    */
-  public init(): Promise<void> {
+  public async init(): Promise<void> {
     const logPrefix = `${ConfigManager.className}::init`;
     winston.info(`${logPrefix} initializing.`);
 
@@ -315,12 +192,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       this.onDataSourcesRestarted.bind(this)
     );
 
-    return Promise.all([
-      this.loadConfig<IRuntimeConfig>(
-        this.runtimeConfigName,
-        this.runtimeConfig
-      ),
-      this.loadConfig<IConfig>(this.configName, this.config),
+    await this.checkConfigFolder();
+
+    return Promise.allSettled([
+      this.loadConfig<IConfig>(this.configName, factoryConfig),
       this.loadConfig<IAuthUsersConfig>(
         this.authUsersConfigName,
         this._authUsers
@@ -330,16 +205,17 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     ])
       .then(
         ([
-          runTime,
-          config,
-          authUsers,
+          configResult,
+          authUsersResult,
           loadTemplatesResult,
           checkJwtKeyPairResult
         ]) => {
-          this._runtimeConfig = runTime;
-          this._config = config;
-
-          this._authUsers = authUsers;
+          if (!(configResult.status === 'rejected')) {
+            this._config = configResult.value;
+          }
+          if (!(authUsersResult.status === 'rejected')) {
+            this._authUsers = authUsersResult.value;
+          }
 
           return this.loadJwtKeyPair();
         }
@@ -371,6 +247,15 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       .catch((err) => {
         return Promise.reject(err);
       });
+  }
+
+  /**
+   * Creates config folder if not existing
+   */
+  async checkConfigFolder() {
+    if (!fs.existsSync(this.configFolder)) {
+      fs.mkdirSync(this.configFolder);
+    }
   }
 
   /**
@@ -421,14 +306,16 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Factory reset
    */
   public async factoryResetConfiguration() {
-    const configPath = path.join(this.configFolder, this.configName);
-    const factoryConfig = path.join(this.configFolder, this.factoryConfigName);
     const authConfig = path.join(this.configFolder, this.authUsersConfigName);
 
-    await promisefs.copyFile(factoryConfig, configPath);
+    await promisefs.writeFile(
+      this.configPath,
+      JSON.stringify(factoryConfig, null, 2),
+      { encoding: 'utf-8' }
+    );
     await promisefs.unlink(authConfig);
-    if (fs.existsSync(`${this.configFolder}/certs`)) {
-      await promisefs.rmdir(`${this.configFolder}/certs`, {
+    if (fs.existsSync(`${this.mdcFolder}/certs`)) {
+      await promisefs.rmdir(`${this.mdcFolder}/certs`, {
         recursive: true
       });
     }
@@ -437,27 +324,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Applies template settings.
    */
-  public applyTemplate(
-    templateFileName: string,
-    dataSources: string[],
-    dataSinks: string[]
-  ) {
+  public applyTemplate(templateFileName: string) {
     const template = this._defaultTemplates.templates.find(
       (x) => x.id === templateFileName
-    );
-    const sources = template.dataSources.filter((x) =>
-      dataSources.includes(x.protocol)
-    );
-    const sinks = template.dataSinks.filter((x) =>
-      dataSinks.includes(x.protocol)
     );
 
     this._config = {
       ...this._config,
-      dataSources: sources,
-      dataSinks: sinks,
-      virtualDataPoints: template.virtualDataPoints,
-      mapping: template.mapping,
+      ...template,
       quickStart: {
         completed: true,
         currentTemplate: templateFileName,
@@ -522,14 +396,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
-    const configPath = path.join(
-      configName === this.runtimeConfigName
-        ? this.runtimeFolder
-        : this.configFolder,
-      configName
-    );
+    const configPath = path.join(this.configFolder, configName);
 
-    return Promise.all([promisefs.readFile(configPath, { encoding: 'utf-8' })])
+    winston.debug(`${logPrefix} loading config ${configPath}`);
+
+    return promisefs
+      .readFile(configPath, { encoding: 'utf-8' })
       .catch(() => {
         this.lifecycleEventsBus.push({
           id: 'device',
@@ -543,15 +415,18 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           )
         );
       })
-      .then(([file]) => {
+      .then((file) => {
         return JSON.parse(file);
       })
       .catch((error) => {
-        winston.error(`${logPrefix} Invalid json file ${configPath}`);
-        return Promise.reject(error);
+        winston.error(
+          `${logPrefix} Invalid json file ${configPath}. Using default config`
+        );
+        return defaultConfig;
       })
       .then((parsedFile) => {
-        return this.mergeDeep(defaultConfig, parsedFile);
+        const mergedFile = this.mergeDeep(defaultConfig, parsedFile);
+        return mergedFile;
       })
       .catch((error) => {
         this.lifecycleEventsBus.push({
@@ -592,8 +467,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplate(templateName) {
     try {
       const configPath = path.join(
-        this.configFolder,
-        'templates',
+        this.mdcFolder,
+        'runtime-files/templates',
         templateName
       );
       return JSON.parse(
@@ -607,7 +482,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplates() {
     try {
       const templateNames = await promisefs.readdir(
-        path.join(this.configFolder, 'templates'),
+        path.join(this.mdcFolder, 'runtime-files/templates'),
         { encoding: 'utf-8' }
       );
 
@@ -1018,6 +893,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   public async getSystemInformation() {
     const system = new System();
+    const osVersion = await system.readOsVersion();
     return [
       {
         title: 'General system information',
@@ -1032,13 +908,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             key: 'Mac address X1',
             keyDescription: '',
             value: await system.readMacAddress('eth0'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           },
           {
             key: 'Mac address X2',
             keyDescription: '',
             value: await system.readMacAddress('eth1'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           }
         ]
       },
@@ -1058,9 +934,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             valueDescription: null
           },
           {
-            key: 'IoT connector flex OS version',
+            key: 'CELOS version',
             keyDescription: 'Operating System',
-            value: system.readOsVersion(),
+            value: osVersion,
             valueDescription: null
           },
           {
@@ -1192,6 +1068,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   async checkJwtKeyPair() {
     const logPrefix = `${ConfigManager.className}::checkJwtKeyPair`;
 
+    winston.debug(`${logPrefix} checking JWT keys.`);
     if (fs.existsSync(this.keyFolder)) {
       const files = (await fs.readdirSync(this.keyFolder)) as string[];
       if (

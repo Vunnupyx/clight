@@ -46,7 +46,7 @@ export class ClockComponent implements OnInit, OnDestroy {
       })
     );
     this.sub.add(
-      this.networkService.config.pipe(filter(Boolean)).subscribe(() => {
+      this.networkService.adapters.pipe(filter(Boolean)).subscribe(() => {
         this.syncTime(true);
       })
     );

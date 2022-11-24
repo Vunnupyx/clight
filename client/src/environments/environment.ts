@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   apiRoot: '/api/v1',
+  configurationAgentApiRoot: '/configuration-agent/v1',
   version: 'development'
 };
 

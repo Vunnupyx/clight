@@ -157,7 +157,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           mapping: this.configManager.config.mapping,
           dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
           runTimeConfig: this.configManager.runtimeConfig.datahub,
-          proxy: this.configManager.config.networkConfig.proxy,
           termsAndConditionsAccepted:
             this.configManager.config.termsAndConditions.accepted
         };

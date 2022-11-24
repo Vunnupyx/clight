@@ -11,15 +11,13 @@ RUN echo Building runtime ${MDC_LIGHT_RUNTIME_VERSION}
 COPY package.json package.json
 RUN npm install
 
-# Install key pair for network manager cli
-RUN mkdir /root/.ssh/
-COPY host/services/ContainerKeys/containerSSHConfig /root/.ssh
-RUN mv /root/.ssh/containerSSHConfig /root/.ssh/config
-RUN chmod 600 /root/.ssh/config
+RUN mkdir -p /etc/mdc-light/config
+RUN mkdir -p /etc/mdc-light/logs
+RUN mkdir -p /etc/mdc-light/jwtkeys
+RUN mkdir -p /etc/mdc-light/sslkeys
 
 # Copy runtime config files
-COPY _mdclight/opcua_nodeSet /runTimeFiles/nodeSets
-COPY _mdclight/runtime.json /runTimeFiles/
+COPY _mdclight/runtime-files /etc/mdc-light/runtime-files
 
 COPY src src
 COPY tsconfig.json tsconfig.json
@@ -30,7 +28,11 @@ RUN mv build/main app
 WORKDIR /app
 
 ENV LOG_LEVEL=info
-ENV MDC_LIGHT_FOLDER=/
+ENV MDC_LIGHT_FOLDER=/etc/mdc-light
 ENV MDC_LIGHT_RUNTIME_VERSION=$MDC_LIGHT_RUNTIME_VERSION
+
+EXPOSE 80/tcp
+EXPOSE 4840/tcp
+EXPOSE 7878/tcp
 
 CMD ["node", "--max-old-space-size=1024", "index.js"]

@@ -22,7 +22,6 @@ export interface IDataSourceParams {
 }
 
 export interface IDataSourceEvent {
-  name: string;
   protocol: string;
 }
 

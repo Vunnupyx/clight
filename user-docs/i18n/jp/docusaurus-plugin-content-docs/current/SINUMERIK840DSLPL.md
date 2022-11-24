@@ -64,7 +64,7 @@ Here are the some examples to guide you in choosing your variables:
 | `/Channel/State/specParts`                       | Number |
 | `/Channel/Spindle/turnState`                     | Number |
 | `/Nck/Configuration/anLanguageOnHmi`             | Number |
-| `/Nck/Configuration/basicLengthUnit`             |        |
+| `/Nck/Configuration/basicLengthUnit`             | Number |
 | `/Nck/Configuration/nckType`                     | Number |
 | `/Nck/Configuration/nckVersion`                  | Number |
 | `/Channel/State/chanStatus`                      | Number |

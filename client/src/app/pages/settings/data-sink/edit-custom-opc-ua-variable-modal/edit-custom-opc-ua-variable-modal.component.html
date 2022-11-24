@@ -2,7 +2,10 @@
   {{ 'settings-data-sink.SetCustomOpcUaVariable' | translate }}
 </h1>
 
-<form #form="ngForm" (ngSubmit)="!isDuplicatingAddress(customDatapoint) && onSave()">
+<form
+  #form="ngForm"
+  (ngSubmit)="!isDuplicatingAddress(customDatapoint) && onSave()"
+>
   <div mat-dialog-content *ngIf="customDatapoint">
     <mat-form-field>
       <mat-label>{{ 'settings-data-sink.Name' | translate }}</mat-label>
@@ -16,7 +19,9 @@
         required
       />
     </mat-form-field>
-    <mat-form-field [class.mat-form-field-invalid]="isDuplicatingAddress(customDatapoint)">
+    <mat-form-field
+      [class.mat-form-field-invalid]="isDuplicatingAddress(customDatapoint)"
+    >
       <mat-label>{{ 'settings-data-sink.NodeId' | translate }}</mat-label>
       <input
         matInput
@@ -24,9 +29,7 @@
         [(ngModel)]="customDatapoint.address"
         [placeholder]="'settings-data-sink.NodeId' | translate"
         pattern="^\w+$"
-        [matTooltip]="
-          'settings-data-sink.DuplicatedAddress' | translate
-        "
+        [matTooltip]="'settings-data-sink.DuplicatedAddress' | translate"
         matTooltipPosition="above"
         [matTooltipDisabled]="!isDuplicatingAddress(customDatapoint)"
         required
@@ -35,17 +38,30 @@
     <mat-form-field>
       <mat-label>{{ 'settings-data-sink.DataType' | translate }}</mat-label>
       <mat-select
+        disableOptionCentering="true"
         name="dataType"
         [(ngModel)]="customDatapoint.dataType"
         [placeholder]="'settings-data-sink.DataType' | translate"
         required
       >
-        <mat-option [value]="DataPointDataType.String" required>{{ 'data-type.String' | translate }}</mat-option>
-        <mat-option [value]="DataPointDataType.Double" required>{{ 'data-type.Double' | translate }}</mat-option>
-        <mat-option [value]="DataPointDataType.Byte" required>{{ 'data-type.Byte' | translate }}</mat-option>
-        <mat-option [value]="DataPointDataType.UInt16" required>{{ 'data-type.UInt16' | translate }}</mat-option>
-        <mat-option [value]="DataPointDataType.UInt32" required>{{ 'data-type.UInt32' | translate }}</mat-option>
-        <mat-option [value]="DataPointDataType.Boolean" required>{{ 'data-type.Boolean' | translate }}</mat-option>
+        <mat-option [value]="DataPointDataType.String" required>{{
+          'data-type.String' | translate
+        }}</mat-option>
+        <mat-option [value]="DataPointDataType.Double" required>{{
+          'data-type.Double' | translate
+        }}</mat-option>
+        <mat-option [value]="DataPointDataType.Byte" required>{{
+          'data-type.Byte' | translate
+        }}</mat-option>
+        <mat-option [value]="DataPointDataType.UInt16" required>{{
+          'data-type.UInt16' | translate
+        }}</mat-option>
+        <mat-option [value]="DataPointDataType.UInt32" required>{{
+          'data-type.UInt32' | translate
+        }}</mat-option>
+        <mat-option [value]="DataPointDataType.Boolean" required>{{
+          'data-type.Boolean' | translate
+        }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -62,7 +78,9 @@
       type="submit"
       mat-button
       color="primary"
-      [disabled]="!form.dirty || form.invalid || isDuplicatingAddress(customDatapoint)"
+      [disabled]="
+        !form.dirty || form.invalid || isDuplicatingAddress(customDatapoint)
+      "
     >
       {{ 'settings-data-sink.Save' | translate }}
     </button>

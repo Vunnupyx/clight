@@ -848,7 +848,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   async getTermsAndConditions(lang: string) {
     const terms = await promisefs
       .readFile(
-        path.join(this.configFolder, 'terms', 'eula', `eula_${lang}.txt`),
+        path.join(
+          this.mdcFolder,
+          'runtime-files/terms',
+          'eula',
+          `eula_${lang}.txt`
+        ),
         { encoding: 'utf-8' }
       )
       .then((data) => data)

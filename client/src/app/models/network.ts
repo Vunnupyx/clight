@@ -67,6 +67,6 @@ export interface NetworkTimestamp {
 
 export interface NetworkNtpReachable {
   address: string;
-  responsible: boolean;
+  reachable: boolean;
   valid: boolean;
 }

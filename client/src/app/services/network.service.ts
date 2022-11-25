@@ -160,8 +160,7 @@ export class NetworkService {
   get ntpReachable() {
     return this._store.state.pipe(
       filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.ntpReachable),
-      distinctUntilChanged()
+      map((x) => x.ntpReachable)
     );
   }
 
@@ -282,7 +281,7 @@ export class NetworkService {
   async updateNetworkNtp(obj: string[]) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
-      state.ntpReachable = [{ address: '', responsible: false, valid: false }];
+      state.ntpReachable = [{ address: '', reachable: false, valid: false }];
     });
 
     try {
@@ -308,7 +307,7 @@ export class NetworkService {
     try {
       const response = await this.httpService.get<NetworkNtpReachable[]>(
         `/check-ntp?`,
-        { params: { address: ntp[0] }, responseType: 'json' }
+        { params: { addresses: ntp }, responseType: 'json' }
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -383,7 +382,7 @@ export class NetworkService {
   private _emptyState() {
     return <NetworkState>{
       status: Status.NotInitialized,
-      ntpReachable: [{ address: '', responsible: false, valid: false }]
+      ntpReachable: [{ address: '', reachable: false, valid: false }]
     };
   }
 

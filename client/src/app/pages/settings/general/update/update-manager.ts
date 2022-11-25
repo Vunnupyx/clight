@@ -1,5 +1,4 @@
-import { StateMachine } from './state-machine';
-import { StateAndTransitions } from './state-machine/interfaces';
+import { StateMachine, StateAndTransitions } from './state-machine';
 import {
   ConfigurationAgentHttpMockupService,
   HttpMockupService

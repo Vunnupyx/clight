@@ -183,6 +183,7 @@ export class DataHubAdapter {
       })
       .then((twin) => {
         this.deviceTwin = twin;
+        winston.debug(`${logPrefix} got device twin: ${JSON.stringify(twin)}`);
         twin.on('properties.desired.services', async (data) => {
           winston.info(`${logPrefix} received desired services update.`);
           winston.debug(`${logPrefix} ${JSON.stringify(data)}`);

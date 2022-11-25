@@ -4,7 +4,7 @@ import {
   HttpMockupService
 } from 'app/shared';
 import { sleep } from 'app/shared/utils';
-import { UpdateStatus } from 'app/services';
+import { HealthcheckResponse, UpdateStatus } from 'app/services';
 
 interface CosInstalledVersion {
   Name: string;
@@ -24,7 +24,9 @@ interface CosDownloadStatus {
   Connected: boolean;
 }
 
-interface CosApplyUpdateRespons {
+type checkDownloadStatus = 'success' | 'fail' | 'not_connected';
+
+interface CosApplyUpdateResponse {
   Title: string;
   Version: string;
   Success: boolean;
@@ -32,12 +34,12 @@ interface CosApplyUpdateRespons {
 }
 
 const DOWNLOAD_STATUS_POLLING_INTERVAL_MS = 5_000;
-const RESTART_STATUS_POLLING_INTERVAL_MS = 2_000;
-const CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS = 1_000;
+const RESTART_STATUS_POLLING_INTERVAL_MS = 5_000;
+const CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS = 5_000;
 
 export class UpdateManager {
-  private currentState = '';
-  private endReason = '';
+  public retryCount = 0;
+
   private stateMachine: StateMachine;
   private startState = 'GET_UPDATES';
   private newVersionToInstall = '';
@@ -136,7 +138,7 @@ export class UpdateManager {
       //return 'NO_UPDATE_FOUND';
     } catch (err) {
       console.log(logPrefix, err);
-      return 'GET_UPDATES_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
@@ -152,7 +154,7 @@ export class UpdateManager {
       return isVersionInstalled ? 'VERSION_OK' : 'VERSION_NOT_OK';
     } catch (err) {
       console.log(logPrefix, err);
-      return 'CHECK_INSTALLED_COS_VERSION_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
@@ -168,7 +170,7 @@ export class UpdateManager {
       return isUpdateAvailable ? 'UPDATE_AVAILABLE' : 'UPDATE_NOT_AVAILABLE';
     } catch (err) {
       console.log(logPrefix, err);
-      return 'CHECK_COS_UPDATES_FAILED'; //TBD: or "UPDATE_NOT_AVAILABLE"?
+      return 'UNEXPECTED_ERROR';
     }
   }
 
@@ -188,30 +190,40 @@ export class UpdateManager {
       }
     } catch (err) {
       console.log(logPrefix, err);
-      return 'START_DOWNLOAD_COS_UPDATES_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
   private async validateCosDownload() {
     const logPrefix = `${UpdateManager.name}::validateCosDownload`;
     try {
-      const isCosDownloaded = await this.checkContinuously(
+      const downloadStatus: checkDownloadStatus = await this.checkContinuously(
         this.checkCosDownloadStatus.bind(this),
         DOWNLOAD_STATUS_POLLING_INTERVAL_MS
       );
-      if (isCosDownloaded) {
+      if (downloadStatus === 'success') {
         return 'COS_DOWNLOADED';
-      } //TBD else
+      } else if (downloadStatus === 'fail') {
+        if (this.retryCount === 3) {
+          return 'UNEXPECTED_ERROR';
+        } else {
+          this.retryCount++;
+          await sleep(DOWNLOAD_STATUS_POLLING_INTERVAL_MS);
+          return this.validateCosDownload();
+        }
+      } else if (downloadStatus === 'not_connected') {
+        return 'NO_CONNECTION';
+      }
     } catch (err) {
       console.log(logPrefix, err);
-      return 'VALIDATE_COS_DOWNLOAD_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
   private async applyCosUpdates() {
     const logPrefix = `${UpdateManager.name}::applyCosUpdates`;
     try {
-      const response: CosApplyUpdateRespons =
+      const response: CosApplyUpdateResponse =
         await this.configAgentEndpoint.post(`/system/applyupdate`, {
           Title: '',
           Version: this.newVersionToInstall,
@@ -222,11 +234,12 @@ export class UpdateManager {
 
       if (isCosUpdatesApplied) {
         return 'INSTALLING_COS';
+      } else {
+        return 'UNEXPECTED_ERROR';
       }
-      //TBD: error/not successful cases
     } catch (err) {
       console.log(logPrefix, err);
-      return 'APPLY_COS_UPDATES_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
@@ -237,12 +250,14 @@ export class UpdateManager {
         this.checkSystemVersions.bind(this),
         RESTART_STATUS_POLLING_INTERVAL_MS
       );
-      if (result) {
+      if (result === 'ERROR') {
+        return 'UNEXPECTED_ERROR';
+      } else if (result) {
         return 'SYSTEM_RESTARTED';
       }
     } catch (err) {
       console.log(logPrefix, err);
-      return 'VALIDATE_COS_DOWNLOAD_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
@@ -259,7 +274,7 @@ export class UpdateManager {
 
       return 'MODULE_UPDATE_APPLIED';
     } catch (err) {
-      return 'APPLY_MODULE_UPDATES_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
@@ -271,25 +286,32 @@ export class UpdateManager {
         this.checkSystemVersions.bind(this),
         CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS
       );
-
       if (result === 'ERROR') {
-        // Expected status of backend being down due to restart, so after this a reachability of backend will show update was successful
+        // Expected status of configuration agent being down due to restart, so after this a reachability will show update was successful
         return this.waitForModuleUpdates(true);
       } else if (hasBackendRestarted) {
-        return 'SUCCESS';
+        //With healthcheck make sure runtime is also running
+        const healthCheckResponse = await this.checkContinuously(
+          this.checkRuntimeHealth.bind(this),
+          CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS
+        );
+        if (healthCheckResponse) {
+          return 'SUCCESS';
+        } else {
+          //TBD is this Else a use case? it is already waiting through checkContinuously
+        }
       } else {
         await sleep(CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS);
         return this.waitForModuleUpdates(false);
       }
     } catch (err) {
       console.log(logPrefix, err);
-      return 'WAIT_FOR_MODULE_UPDATES_FAILED';
+      return 'UNEXPECTED_ERROR';
     }
   }
 
   private async checkContinuously(fn, msDelayBetweenCalls: number) {
     const logPrefix = `${UpdateManager.name}::checkContinuously`;
-    console.log(logPrefix);
     return new Promise(async (resolve, reject) => {
       resolve(await fn());
     })
@@ -298,33 +320,40 @@ export class UpdateManager {
           return result;
         } else {
           // TBD Will unreachability error go to here or catch? To test after mockups are removed
-          console.log('else');
           await sleep(msDelayBetweenCalls);
           return this.checkContinuously(fn, msDelayBetweenCalls);
         }
       })
       .catch((err) => {
-        console.log('expected error');
         console.log(logPrefix, err);
         return 'ERROR';
       });
   }
 
-  private async checkCosDownloadStatus() {
+  private async checkCosDownloadStatus(): Promise<checkDownloadStatus> {
+    const logPrefix = `${UpdateManager.name}::checkCosDownloadStatus`;
     try {
       const response: CosDownloadStatus = await this.configAgentEndpoint.get(
         `/system/update/download/status`
       );
-      const isCosDownloaded = response?.PendingPackageCount === 0;
+      let status: checkDownloadStatus;
+      if (response?.Connected === false) {
+        status = 'not_connected';
+      } else if (response?.FailedPackageCount > 0) {
+        status = 'fail';
+      } else if (response?.PendingPackageCount === 0) {
+        status = 'success';
+      }
 
-      return isCosDownloaded;
-      //TBD: not connected case
-      //TBD: what to do when failed packages exist?
+      return status;
     } catch (err) {
-      //TBD will error be returned as failure or wait further? How long wait?
-      console.log(err);
-      return 'START_DOWNLOAD_COS_UPDATES_FAILED';
+      console.log(logPrefix, err);
+      return 'fail';
     }
+  }
+
+  private async checkRuntimeHealth() {
+    return await this.apiEndpoint.get<HealthcheckResponse>(`/healthcheck`);
   }
 
   private async checkSystemVersions(): Promise<Array<CosInstalledVersion>> {

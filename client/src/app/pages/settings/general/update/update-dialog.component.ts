@@ -10,7 +10,7 @@ import {
 } from 'app/shared';
 import { UpdateManager } from './update-manager';
 
-const UPDATE_TIMEOUT_MS = 10 * 60_000;
+const UPDATE_TIMEOUT_MS = 30 * 60_000;
 
 export interface UpdateDialogResult {
   status: UpdateStatus;
@@ -38,6 +38,15 @@ export class UpdateDialogComponent implements OnInit {
     private httpMockupService: HttpMockupService
   ) {}
 
+  get currentStateText(): string {
+    return `system-information.UpdateStatus-${
+      this.currentState === 'VALIDATE_COS_DOWNLOAD' &&
+      this.updateManager.retryCount > 0
+        ? 'VALIDATE_COS_DOWNLOAD-RETRYING'
+        : this.currentState
+    }`;
+  }
+
   async ngOnInit(): Promise<any> {
     Promise.race([this.checkTimeout(), this.update()]).catch((err) => {
       console.error(err);
@@ -55,9 +64,11 @@ export class UpdateDialogComponent implements OnInit {
           );
         }
       } else {
-        //TBD translated error texts
-        errorText = this.endReason;
+        errorText = this.translate.instant(
+          `system-information.UpdateStatus-${this.endReason}`
+        );
       }
+      console.log(errorText);
       this.dialogRef.close({
         status: UpdateStatus.ERROR,
         error: errorText
@@ -97,7 +108,9 @@ export class UpdateDialogComponent implements OnInit {
       } else {
         this.dialogRef.close({
           status: UpdateStatus.ERROR,
-          error: this.endReason
+          error: this.translate.instant(
+            `system-information.UpdateStatus-${this.endReason}`
+          )
         });
       }
     } else if (this.currentState === 'CHECK_INSTALLED_COS_VERSION') {

@@ -86,11 +86,6 @@ export class SystemInformationService {
     }
   }
 
-  async healthcheck(): Promise<HealthcheckResponse> {
-    //TBD
-    return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
-  }
-
   async getServerTime(): Promise<string> {
     const response = await this.configurationAgentHttpMockupService.get<{
       Timestamp: string;

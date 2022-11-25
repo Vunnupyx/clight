@@ -38,7 +38,6 @@ export class DataHubAdapter {
   private initialized: boolean = false;
 
   // Datahub and Twin
-  private connectionSting: string = null;
   private dataHubClient: ModuleClient;
   private deviceTwin: Twin;
   private probeBuffer: MessageBuffer;
@@ -167,10 +166,6 @@ export class DataHubAdapter {
         `${logPrefix} try to start a already started adapter. Please remove unnecessary invoke of start().`
       );
       return Promise.resolve();
-    }
-    if (!this.connectionSting) {
-      const logMsg = `${logPrefix} no connection string available. CelosXchange disabled.`;
-      return Promise.reject(new NorthBoundError(logMsg, 'NOT_REGISTERED'));
     }
 
     return this.dataHubClient

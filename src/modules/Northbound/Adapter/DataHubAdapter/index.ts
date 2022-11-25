@@ -65,7 +65,7 @@ export class DataHubAdapter {
       !staticOptions.dataPointTypesData.telemetry.intervalHours
     ) {
       throw new NorthBoundError(
-        `${DataHubAdapter.constructor.name} can not build instance. No send interval available`
+        `${this.constructor.name} can not build instance. No send interval available`
       );
     }
     this.probeSendInterval = this.hoursToMs(
@@ -86,13 +86,17 @@ export class DataHubAdapter {
    * Get desired properties object by device twin.
    */
   public getDesiredProps(): IDesiredProps {
-    const logPrefix = `${DataHubAdapter.constructor.name}::getDesiredProps`;
+    const logPrefix = `${this.constructor.name}::getDesiredProps`;
     if (!this.deviceTwin) {
       winston.warn(`${logPrefix} no device twin available.`);
       return;
     }
     if (!isDesiredProps(this.deviceTwin.properties.desired)) {
-      winston.warn(`${logPrefix} no desired properties found.`);
+      winston.warn(
+        `${logPrefix} no desired properties found. ${JSON.stringify(
+          this.deviceTwin
+        )}`
+      );
       return;
     }
 
@@ -103,19 +107,19 @@ export class DataHubAdapter {
    * Set reported properties on device twin.
    */
   public async setReportedProps(data: IDesiredServices): Promise<void> {
-    const logPrefix = `${DataHubAdapter.constructor.name}::setReportedProps`;
+    const logPrefix = `${this.constructor.name}::setReportedProps`;
 
     return new Promise((res, rej) => {
       if (!this.deviceTwin) {
         winston.warn(`${logPrefix} no device twin available.`);
-        return;
+        return rej();
       }
 
       winston.info(`${logPrefix} updating reported properties`);
       this.deviceTwin.properties.reported.update({ services: data }, (err) => {
         if (err) winston.error(`${logPrefix} error due to ${err.message}`);
         else this.deviceTwinChanged = false;
-        res();
+        return res();
       });
     });
   }
@@ -124,7 +128,7 @@ export class DataHubAdapter {
    * Initialize the DataHubAdapter and get provisioning for the device.
    */
   public async init(): Promise<DataHubAdapter> {
-    const logPrefix = `${DataHubAdapter.constructor.name}::init`;
+    const logPrefix = `${this.constructor.name}::init`;
 
     this.serialNumber = (
       (await new System().readMacAddress('eth0')) || '000000000000'
@@ -155,7 +159,7 @@ export class DataHubAdapter {
    * Start adapter by building a iot hub client.
    */
   public start(): Promise<void> {
-    const logPrefix = `${DataHubAdapter.constructor.name}::start`;
+    const logPrefix = `${this.constructor.name}::start`;
     winston.debug(`${logPrefix} starting...`);
     if (!this.initialized)
       return Promise.reject(
@@ -212,7 +216,7 @@ export class DataHubAdapter {
    * Stop adapter and set running status.
    */
   public stop(): Promise<void> {
-    const logPrefix = `${DataHubAdapter.constructor.name}::stop`;
+    const logPrefix = `${this.constructor.name}::stop`;
     if (!this.isRunning) {
       winston.debug(`${logPrefix} try to stop a not running adapter.`);
       return;
@@ -248,7 +252,7 @@ export class DataHubAdapter {
    * Send a key value pair.
    */
   public sendData(groupedMeasurements: TGroupedMeasurements): void {
-    const logPrefix = `${DataHubAdapter.constructor.name}::sendData`;
+    const logPrefix = `${this.constructor.name}::sendData`;
 
     // winston.debug(`${logPrefix} start: ${JSON.stringify(groupedMeasurements)}`);
 
@@ -324,7 +328,7 @@ export class DataHubAdapter {
   }
 
   private sendMessage(msgType: Exclude<TDataHubDataPointType, 'event'>): void {
-    const logPrefix = `${DataHubAdapter.constructor.name}::sendMessage`;
+    const logPrefix = `${this.constructor.name}::sendMessage`;
     if (!this.dataHubClient || !this.isRunning) {
       winston.error(
         `${logPrefix} try to send ${msgType} to datahub on not running adapter.`

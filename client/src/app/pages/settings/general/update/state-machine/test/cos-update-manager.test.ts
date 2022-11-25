@@ -1,5 +1,4 @@
-import { StateMachine } from '..';
-import { StateAndTransitions } from '../interfaces';
+import { StateMachine, StateAndTransitions } from '..';
 
 jest.mock('winston');
 

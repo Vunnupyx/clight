@@ -1,5 +1,5 @@
 import { Message, Twin, ModuleClient } from 'azure-iot-device';
-import { MqttWs as IotHubTransport } from 'azure-iot-device-mqtt';
+import { Mqtt as IotHubTransport } from 'azure-iot-device-mqtt';
 import { inspect } from 'util';
 
 import winston from 'winston';
@@ -88,6 +88,8 @@ export class DataHubAdapter {
    */
   public getDesiredProps(): IDesiredProps {
     const logPrefix = `${this.constructor.name}::getDesiredProps`;
+
+    winston.error(`${logPrefix} > ${inspect(this.deviceTwin.properties)}`);
     if (!this.deviceTwin) {
       winston.warn(`${logPrefix} no device twin available.`);
       return;

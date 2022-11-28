@@ -87,7 +87,7 @@
                   [disabled]="
                     !!config[NetworkType.ETHERNET_X1].ipv4Settings.dhcp
                   "
-                  [pattern]="ipRegex"
+                  [pattern]="netmaskRegex"
                   matInput
                   name="netmask"
                 />
@@ -205,7 +205,7 @@
                     config[NetworkType.ETHERNET_X2].ipv4Settings.ipAddresses[0]
                       .Netmask
                   "
-                  [pattern]="ipRegex"
+                  [pattern]="netmaskRegex"
                   [disabled]="
                     !!config[NetworkType.ETHERNET_X2].ipv4Settings.dhcp
                   "

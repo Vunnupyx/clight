@@ -15,6 +15,7 @@ title: Changelog
 ### Changed
 
 - [DIGMDCLGHT-246](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-246) SSH communications are removed with usage of DMG MORI CELOS
+- [DIGMDCLGHT-145](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-145) Updated network, time and proxy endpoints to CELOS configuration agent
 - [DIGMDCLGHT-250](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-250) The runtime now works with an empty file system that hasn't the application file installed. Also the folder structure where application data are stored has changed.
 - [DIGMDCLGHT-260](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-260) The MAC address license check has been removed.
 - [DIGMDCLGHT-261](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-261) Pipelines do now created versioned containers

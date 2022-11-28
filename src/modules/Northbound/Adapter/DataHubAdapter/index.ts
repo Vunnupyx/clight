@@ -1,6 +1,5 @@
 import { Message, Twin, ModuleClient } from 'azure-iot-device';
-import { Mqtt as IotHubTransport } from 'azure-iot-device-mqtt';
-import { inspect } from 'util';
+import { MqttWs as IotHubTransport } from 'azure-iot-device-mqtt';
 
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
@@ -40,7 +39,7 @@ export class DataHubAdapter {
 
   // Datahub and Twin
   private dataHubClient: ModuleClient;
-  private deviceTwin: Twin;
+  private moduleTwin: Twin;
   private probeBuffer: MessageBuffer;
   private telemetryBuffer: MessageBuffer;
   private serialNumber: string;
@@ -89,17 +88,16 @@ export class DataHubAdapter {
   public getDesiredProps(): IDesiredProps {
     const logPrefix = `${this.constructor.name}::getDesiredProps`;
 
-    winston.error(`${logPrefix} > ${inspect(this.deviceTwin.properties)}`);
-    if (!this.deviceTwin) {
+    if (!this.moduleTwin) {
       winston.warn(`${logPrefix} no device twin available.`);
       return;
     }
-    if (!isDesiredProps(this.deviceTwin.properties.desired)) {
+    if (!isDesiredProps(this.moduleTwin.properties.desired)) {
       winston.warn(`${logPrefix} no desired properties found.`);
       return;
     }
 
-    return this.deviceTwin.properties.desired;
+    return this.moduleTwin.properties.desired;
   }
 
   /**
@@ -109,13 +107,13 @@ export class DataHubAdapter {
     const logPrefix = `${this.constructor.name}::setReportedProps`;
 
     return new Promise((res, rej) => {
-      if (!this.deviceTwin) {
+      if (!this.moduleTwin) {
         winston.warn(`${logPrefix} no device twin available.`);
         return rej();
       }
 
       winston.info(`${logPrefix} updating reported properties`);
-      this.deviceTwin.properties.reported.update({ services: data }, (err) => {
+      this.moduleTwin.properties.reported.update({ services: data }, (err) => {
         if (err) winston.error(`${logPrefix} error due to ${err.message}`);
         else this.deviceTwinChanged = false;
         return res();
@@ -181,11 +179,10 @@ export class DataHubAdapter {
         return this.dataHubClient.getTwin();
       })
       .then((twin) => {
-        this.deviceTwin = twin;
+        this.moduleTwin = twin;
         winston.debug(
-          `${logPrefix} got device twin. Register to desired services:`
+          `${logPrefix} got device twin. Register to desired services`
         );
-        winston.error(inspect(this.deviceTwin));
         twin.on('properties.desired.services', async (data) => {
           winston.info(`${logPrefix} received desired services update.`);
           winston.debug(`${logPrefix} ${JSON.stringify(data)}`);
@@ -371,7 +368,7 @@ export class DataHubAdapter {
     const logPrefix = `${DataHubAdapter.name}::shutdown`;
 
     const shutdownFunctions = [];
-    [this.dataHubClient, this.deviceTwin].forEach((prop) => {
+    [this.dataHubClient, this.moduleTwin].forEach((prop) => {
       // @ts-ignore
       if (prop?.shutdown) shutdownFunctions.push(prop.shutdown());
       // @ts-ignore

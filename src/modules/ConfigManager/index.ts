@@ -306,14 +306,96 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Factory reset
    */
   public async factoryResetConfiguration() {
+    //TBD catching any promise rejection?
     const authConfig = path.join(this.configFolder, this.authUsersConfigName);
+
+    const confAgentAddress =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:1884'
+        : 'http://172.17.0.1:1884';
+
+    const factoryProxy = {
+      enabled: false,
+      host: '',
+      port: 0,
+      username: '',
+      password: '',
+      whitelist: ['']
+    };
+    await fetch(`${confAgentAddress}/network/proxy`, {
+      method: 'PUT',
+      body: JSON.stringify(factoryProxy)
+    });
+
+    const factoryNtp = [''];
+    await fetch(`${confAgentAddress}/network/ntp`, {
+      method: 'PUT',
+      body: JSON.stringify(factoryNtp)
+    });
+
+    const adaptersResponse = await fetch(
+      `${confAgentAddress}/network/adapters`,
+      {
+        method: 'GET'
+      }
+    );
+    // TBD when response.ok is not true?
+    const networkAdapters: Array<{ id: string }> =
+      await adaptersResponse?.json();
+    const factoryNetworkAdapter = {
+      id: '', // id will be overwritten
+      displayName: '',
+      enabled: true,
+      ipv4Settings: {
+        enabled: true,
+        dhcp: true,
+        ipAddresses: [
+          {
+            Address: '',
+            Netmask: ''
+          }
+        ],
+        defaultGateway: '',
+        dnsserver: ['']
+      },
+      ipv6Settings: {
+        enabled: false,
+        dhcp: false,
+        ipAddresses: [
+          {
+            Address: '',
+            Netmask: ''
+          }
+        ],
+        defaultGateway: '',
+        dnsserver: ['']
+      },
+      macAddress: '',
+      ssid: ''
+    };
+
+    await Promise.all(
+      networkAdapters.map((adapter) =>
+        fetch(`${confAgentAddress}/network/adapters/${adapter.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            ...factoryNetworkAdapter,
+            id: adapter.id
+          })
+        })
+      )
+    );
 
     await promisefs.writeFile(
       this.configPath,
       JSON.stringify(factoryConfig, null, 2),
       { encoding: 'utf-8' }
     );
+
     await promisefs.unlink(authConfig);
+    await promisefs.unlink(path.join(this.keyFolder, this.privateKeyName));
+    await promisefs.unlink(path.join(this.keyFolder, this.publicKeyName));
+
     if (fs.existsSync(`${this.mdcFolder}/certs`)) {
       await promisefs.rmdir(`${this.mdcFolder}/certs`, {
         recursive: true

@@ -183,6 +183,7 @@ export class VirtualDataPointManager {
         result === Infinity ||
         result === -Infinity ||
         result === null ||
+        result === -0 ||
         isNaN(result)
       ) {
         this.addSummaryLog(

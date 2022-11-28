@@ -66,7 +66,7 @@ let RESPONSE_ADAPTERS: NetworkAdapter[] = [
       ipAddresses: [
         {
           Address: '192.168.214.230',
-          Netmask: '1'
+          Netmask: '24'
         }
       ],
       defaultGateway: '192.168',

@@ -32,6 +32,7 @@ const config = {
                 'dmgmori-mdclight-logs:/etc/mdc-light/logs',
                 'dmgmori-mdclight-sslkeys:/etc/mdc-light/sslkeys',
                 'dmgmori-mdclight-jwtkeys:/etc/mdc-light/jwtkeys',
+                'dmgmori-mdclight-certs:/etc/mdc-light/certs',
                 '/proc:/proc',
                 '/sys:/sys'
               ],

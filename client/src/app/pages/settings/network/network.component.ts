@@ -73,10 +73,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.sub.add(this.networkService.setNetworkAdaptersTimer().subscribe());
 
-    this.networkService.getNetworkAdapters()
+    this.networkService
+      .getNetworkAdapters()
       .then(() => this.networkService.getNetworkProxy())
       .then(() => this.networkService.getNetworkNtp())
-      .then(() => this.networkService.getNetworkTimestamp())
+      .then(() => this.networkService.getNetworkTimestamp());
   }
 
   get tabs() {
@@ -102,6 +103,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   private onNtpReachable(x: NetworkNtpReachable[]) {
     this.ntpReachable = x;
+  }
+
+  getNtpReachableByAddress(address: string): boolean {
+    return this.ntpReachable.find(
+      (obj: NetworkNtpReachable) => obj.address === address
+    )?.reachable;
   }
 
   onSelectTab(tab: string) {

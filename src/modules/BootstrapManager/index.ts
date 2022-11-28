@@ -103,7 +103,11 @@ export class BootstrapManager {
         try {
           await this.configManager.factoryResetConfiguration();
           await this.ledManager.turnOffLeds();
-          await fetch('http://172.17.0.1/system/restart', {
+          const confAgentAddress =
+            process.env.NODE_ENV === 'development'
+              ? 'http://localhost:1884'
+              : 'http://172.17.0.1:1884';
+          await fetch(`${confAgentAddress}/system/restart`, {
             method: 'POST'
           });
         } catch (e) {

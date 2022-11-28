@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
 import {
-  ConfigurationAgentHttpMockupService,
+  ConfigurationAgentHttpService,
   HttpService,
   RequestOptionsArgs
 } from '../shared';
@@ -45,7 +45,7 @@ export class SystemInformationService {
   constructor(
     storeFactory: StoreFactory<SystemInformationState>,
     private httpService: HttpService,
-    private configurationAgentHttpMockupService: ConfigurationAgentHttpMockupService,
+    private configurationAgentHttpService: ConfigurationAgentHttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -87,7 +87,7 @@ export class SystemInformationService {
   }
 
   async getServerTime(): Promise<string> {
-    const response = await this.configurationAgentHttpMockupService.get<{
+    const response = await this.configurationAgentHttpService.get<{
       Timestamp: string;
     }>(`/system/time`);
 
@@ -96,10 +96,7 @@ export class SystemInformationService {
 
   async restartDevice(): Promise<boolean> {
     try {
-      await this.configurationAgentHttpMockupService.post(
-        `/system/restart`,
-        null
-      );
+      await this.configurationAgentHttpService.post(`/system/restart`, null);
 
       return true;
     } catch (e) {

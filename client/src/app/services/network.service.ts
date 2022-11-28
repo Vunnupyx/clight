@@ -10,11 +10,12 @@ import { errorHandler } from '../shared/utils';
 import {
   NetworkAdapter,
   NetworkConfig,
-  NetworkProxy,
   NetworkDateTime,
+  NetworkProxy,
   NetworkTimestamp
 } from '../models';
-import { ConfigurationAgentHttpMockupService } from 'app/shared';
+import { ConfigurationAgentHttpService } from 'app/shared';
+
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
@@ -23,97 +24,13 @@ export interface NetworkState {
   timestamp: NetworkDateTime;
 }
 
-// TODO: Connect to Network API
-let RESPONSE_ADAPTERS: NetworkAdapter[] = [
-  {
-    id: 'x1',
-    displayName: 'Ethernet X1 p1',
-    enabled: false,
-    ipv4Settings: {
-      enabled: false,
-      dhcp: true,
-      ipAddresses: [
-        {
-          Address: '',
-          Netmask: ''
-        }
-      ],
-      defaultGateway: '',
-      dnsserver: ['192.168.214.230', '192.168.214.230']
-    },
-    ipv6Settings: {
-      enabled: false,
-      dhcp: false,
-      ipAddresses: [
-        {
-          Address: '',
-          Netmask: ''
-        }
-      ],
-      defaultGateway: '',
-      dnsserver: []
-    },
-    macAddress: '',
-    ssid: ''
-  },
-  {
-    id: 'x2',
-    displayName: 'Ethernet X2 p1',
-    enabled: false,
-    ipv4Settings: {
-      enabled: false,
-      dhcp: true,
-      ipAddresses: [
-        {
-          Address: '192.168.214.230',
-          Netmask: '255.255.255.0'
-        }
-      ],
-      defaultGateway: '192.168',
-      dnsserver: ['192.168.214.230', '192.168.214.230']
-    },
-    ipv6Settings: {
-      enabled: false,
-      dhcp: false,
-      ipAddresses: [
-        {
-          Address: '',
-          Netmask: ''
-        }
-      ],
-      defaultGateway: '',
-      dnsserver: []
-    },
-    macAddress: '',
-    ssid: ''
-  }
-] as any;
-
-// TODO: Connect to Network API
-let RESPONSE_PROXY: NetworkProxy = {
-  enabled: true,
-  host: '',
-  port: 62145,
-  username: '',
-  password: '',
-  whitelist: ['']
-} as any;
-
-// TODO: Connect to Network API
-let RESPONSE_NTP: string[] = ['time.dmgmori.net'] as any;
-
-// TODO: Connect to Network API
-let RESPONSE_TIMESTAMP: NetworkTimestamp = {
-  Timestamp: 'Sun Jan 09 2022 00:14:58 GMT+0000 (Coordinated Universal Time)'
-} as any;
-
 @Injectable()
 export class NetworkService {
   private _store: Store<NetworkState>;
 
   constructor(
     storeFactory: StoreFactory<NetworkState>,
-    private configurationAgentHttpMockupService: ConfigurationAgentHttpMockupService,
+    private configurationAgentHttpService: ConfigurationAgentHttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -162,12 +79,15 @@ export class NetworkService {
 
   async getNetworkAdapters() {
     try {
-      const response = await this.configurationAgentHttpMockupService.get<
+      const response = await this.configurationAgentHttpService.get<
         NetworkAdapter[]
-      >(`/network/adapters`, undefined, RESPONSE_ADAPTERS);
+      >(`/network/adapters`);
+
+      const verifiedAdapters = this._deserializeNetworkAdapters(response);
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.adapters = response;
+        state.adapters = verifiedAdapters;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
@@ -186,15 +106,18 @@ export class NetworkService {
     const verifiedObj = this._serializeNetworkAdapters(obj);
 
     try {
-      this.setMockDataById(verifiedObj);
       const response =
-        await this.configurationAgentHttpMockupService.put<NetworkAdapter>(
+        await this.configurationAgentHttpService.put<NetworkAdapter>(
           `/network/adapters/${obj.id}`,
           verifiedObj
         );
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.adapters = RESPONSE_ADAPTERS;
+        Object.keys(state.adapters).forEach((key) => {
+          if (state.adapters[key].id.includes(obj.id)) {
+            state.adapters[key] = response;
+          }
+        });
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
@@ -208,10 +131,8 @@ export class NetworkService {
   async getNetworkProxy() {
     try {
       const response =
-        await this.configurationAgentHttpMockupService.get<NetworkProxy>(
-          `/network/proxy`,
-          undefined,
-          RESPONSE_PROXY
+        await this.configurationAgentHttpService.get<NetworkProxy>(
+          `/network/proxy`
         );
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -232,7 +153,7 @@ export class NetworkService {
     });
 
     try {
-      await this.configurationAgentHttpMockupService.put<NetworkProxy>(
+      await this.configurationAgentHttpService.put<NetworkProxy>(
         `/network/proxy`,
         obj
       );
@@ -251,9 +172,9 @@ export class NetworkService {
 
   async getNetworkNtp() {
     try {
-      const response = await this.configurationAgentHttpMockupService.get<
-        string[]
-      >(`/network/ntp`, undefined, RESPONSE_NTP);
+      const response = await this.configurationAgentHttpService.get<string[]>(
+        `/network/ntp`
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.ntp = response;
@@ -273,7 +194,7 @@ export class NetworkService {
     });
 
     try {
-      await this.configurationAgentHttpMockupService.put<string[]>(
+      await this.configurationAgentHttpService.put<string[]>(
         `/network/ntp`,
         obj
       );
@@ -293,10 +214,8 @@ export class NetworkService {
   async getNetworkTimestamp() {
     try {
       const response =
-        await this.configurationAgentHttpMockupService.get<NetworkTimestamp>(
-          `/system/time`,
-          undefined,
-          RESPONSE_TIMESTAMP
+        await this.configurationAgentHttpService.get<NetworkTimestamp>(
+          `/system/time`
         );
 
       const verifiedObj = this._serializeNetworkTimestamp(response);
@@ -322,7 +241,7 @@ export class NetworkService {
     const verifiedObj = this._deserializeNetworkTimestamp(obj);
 
     try {
-      await this.configurationAgentHttpMockupService.put<NetworkTimestamp>(
+      await this.configurationAgentHttpService.put<NetworkTimestamp>(
         `/system/time`,
         verifiedObj
       );
@@ -337,14 +256,6 @@ export class NetworkService {
         status: Status.Failed
       }));
     }
-  }
-
-  setMockDataById(obj: NetworkAdapter) {
-    Object.keys(RESPONSE_ADAPTERS).forEach((key) => {
-      if (RESPONSE_ADAPTERS[key].id.includes(obj.id)) {
-        RESPONSE_ADAPTERS[key] = obj;
-      }
-    });
   }
 
   private _emptyState() {
@@ -368,7 +279,51 @@ export class NetworkService {
         };
       }
     }
-    return adapter;
+    const maskNodes: string[] =
+      adapter.ipv4Settings.ipAddresses[0].Netmask.match(/(\d+)/g);
+    let cidr = 0;
+    for (let i in maskNodes) {
+      cidr += ((+maskNodes[i] >>> 0).toString(2).match(/1/g) || []).length;
+    }
+    return {
+      ...adapter,
+      ipv4Settings: {
+        ...adapter.ipv4Settings,
+        ipAddresses: [
+          {
+            Address: adapter.ipv4Settings.ipAddresses[0].Address,
+            Netmask: String(cidr)
+          }
+        ]
+      }
+    };
+  }
+  private _deserializeNetworkAdapters(
+    adapters: NetworkAdapter[]
+  ): NetworkAdapter[] {
+    return adapters.map((adapter) => {
+      const mask =
+        0xffffffff <<
+        (32 - Number(adapter.ipv4Settings.ipAddresses[0].Netmask));
+      const maskStr = [
+        mask >>> 24,
+        (mask >> 16) & 0xff,
+        (mask >> 8) & 0xff,
+        mask & 0xff
+      ].join('.');
+      return {
+        ...adapter,
+        ipv4Settings: {
+          ...adapter.ipv4Settings,
+          ipAddresses: [
+            {
+              Address: adapter.ipv4Settings.ipAddresses[0].Address,
+              Netmask: maskStr
+            }
+          ]
+        }
+      };
+    });
   }
 
   private _serializeNetworkTimestamp(

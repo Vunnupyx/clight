@@ -420,9 +420,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     await promisefs.unlink(path.join(this.sslFolder, 'ssl_private.key'));
 
     if (fs.existsSync(`${this.mdcFolder}/certs`)) {
-      await promisefs.rmdir(`${this.mdcFolder}/certs`, {
-        recursive: true
-      });
+      let certFiles = await promisefs.readdir(`${this.mdcFolder}/certs`);
+      await Promise.all(
+        certFiles.map((filename) =>
+          promisefs.unlink(path.join(`${this.mdcFolder}/certs`, filename))
+        )
+      );
     }
   }
 

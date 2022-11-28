@@ -1,0 +1,2863 @@
+{
+  "uuid": "0416b947-aa7a-4695-b975-a0c3227ab945",
+  "lastMigration": 22,
+  "name": "Configuration Agent API",
+  "endpointPrefix": "api/v1",
+  "latency": 0,
+  "port": 1884,
+  "hostname": "0.0.0.0",
+  "routes": [
+    {
+      "uuid": "bd311334-e717-4049-80f8-2ec7fa991ca4",
+      "documentation": "Get list of local ports those cannot be forwarded",
+      "method": "get",
+      "endpoint": "network/firewall/reservedlocalports",
+      "responses": [
+        {
+          "uuid": "d9dddb37-7fd8-417a-91ed-b3f567dcd03e",
+          "body": "[\n  {\n    \"Port\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of reserved local ports",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "79a44c38-eda3-4c43-aaa6-5ffd9bba7417",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "1b32de3b-ca09-405a-b97a-e82e74da6142",
+      "documentation": "Get list of configured static port forwarding rules",
+      "method": "get",
+      "endpoint": "network/firewall/staticportforwarding",
+      "responses": [
+        {
+          "uuid": "881767ba-0f1a-4b42-9229-ea091b66e345",
+          "body": "[\n  {\n    \"Enabled\": {{faker 'datatype.boolean'}},\n    \"InternalPort\": {{faker 'datatype.number'}},\n    \"InternalIPAddress\": \"\",\n    \"ExternalPort\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\",\n    \"Name\": \"\",\n    \"Comment\": \"\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of static port forwarding rules",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "1b37ce7f-01ed-4d97-a70c-e5da60365b5b",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "c4529648-fe84-4158-ad44-6ea3030c5caa",
+      "documentation": "Set list of static port forwarding rules",
+      "method": "put",
+      "endpoint": "network/firewall/staticportforwarding",
+      "responses": [
+        {
+          "uuid": "38b33883-402b-4dba-a747-d9eebd6e21e6",
+          "body": "[\n  {\n    \"Enabled\": {{faker 'datatype.boolean'}},\n    \"InternalPort\": {{faker 'datatype.number'}},\n    \"InternalIPAddress\": \"\",\n    \"ExternalPort\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\",\n    \"Name\": \"\",\n    \"Comment\": \"\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of static port forwarding rules",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "4d80238c-9665-4e3f-925c-2342048000f6",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "cdff4818-543b-414c-817a-6509f9c155ac",
+      "documentation": "Get current internet access configuration",
+      "method": "get",
+      "endpoint": "network/firewall/internetaccess",
+      "responses": [
+        {
+          "uuid": "b191eab1-7958-4988-ba1b-233daf7d5823",
+          "body": "{\n  \"AccessMode\": \"{{oneOf (array 'manual' 'scheduled')}}\",\n  \"ManualAccessMode\": {\n    \"Enabled\": {{faker 'datatype.boolean'}}\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Currrent internet access configuration",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "154b04f2-bb58-4e46-886a-2125d05ace86",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "8c9ac1e7-a47f-4935-adda-96f180311b63",
+      "documentation": "Set internet access configuration",
+      "method": "put",
+      "endpoint": "network/firewall/internetaccess",
+      "responses": [
+        {
+          "uuid": "74651ad5-0855-4acc-8c79-2ca4491e0528",
+          "body": "{\n  \"AccessMode\": \"{{oneOf (array 'manual' 'scheduled')}}\",\n  \"ManualAccessMode\": {\n    \"Enabled\": {{faker 'datatype.boolean'}}\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Current internet access configuration",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "f229419c-b767-4a7c-8db9-95423d414405",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "396d5b04-d39c-44cd-980f-5fc041a05bdb",
+      "documentation": "Get list of configured NTP servers",
+      "method": "get",
+      "endpoint": "network/ntp",
+      "responses": [
+        {
+          "uuid": "843e9341-8abf-4ff2-9aa9-07ef4b485723",
+          "body": "[\n  \"\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "8dc1ce79-f0a7-4164-9c3d-25275393e41b",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "2e0dd75d-9fd9-489a-9ee7-6a466358fbd0",
+      "documentation": "Updates the list of NTP servers",
+      "method": "put",
+      "endpoint": "network/ntp",
+      "responses": [
+        {
+          "uuid": "935e9136-c69c-4ceb-a627-25b4b0884168",
+          "body": "[\n  \"\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "2290daa4-64ac-4a4a-9501-af4b4a33f388",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "a97470da-533a-46df-b421-64ad7dc5067b",
+      "documentation": "Return list of all network adapters of the operating system",
+      "method": "get",
+      "endpoint": "network/adapters",
+      "responses": [
+        {
+          "uuid": "7906dbbf-5ce3-4bee-91c4-e811d16861ba",
+          "body": "[\n  {\n    \"id\": \"\",\n    \"displayName\": \"\",\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"ipv4Settings\": {\n      \"enabled\": {{faker 'datatype.boolean'}},\n      \"dhcp\": {{faker 'datatype.boolean'}},\n      \"ipAddresses\": [\n        {\n          \"Address\": \"\",\n          \"Netmask\": \"\"\n        }\n      ],\n      \"defaultGateway\": \"\",\n      \"dnsserver\": [\n        \"\"\n      ]\n    },\n    \"ipv6Settings\": {\n      \"enabled\": {{faker 'datatype.boolean'}},\n      \"dhcp\": {{faker 'datatype.boolean'}},\n      \"ipAddresses\": [\n        {\n          \"Address\": \"\",\n          \"Netmask\": \"\"\n        }\n      ],\n      \"defaultGateway\": \"\",\n      \"dnsserver\": [\n        \"\"\n      ]\n    },\n    \"macAddress\": \"\",\n    \"ssid\": \"\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "2b915c1c-8d97-4680-85e0-ce75762dbcb5",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "cbf1cf04-f6e4-427f-82d1-131bdd31f0bd",
+      "documentation": "Return network adapter configuration of defined id",
+      "method": "get",
+      "endpoint": "network/adapters/:adapterID",
+      "responses": [
+        {
+          "uuid": "4cc4d3a6-b34d-4847-9f5b-116387971b7c",
+          "body": "{\n  \"id\": \"\",\n  \"displayName\": \"\",\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"ipv4Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"ipv6Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"macAddress\": \"\",\n  \"ssid\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "3c4b438c-7775-446a-a539-52d87e72ba2f",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Not found",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "e8a129d0-5230-4848-9098-acd5fda46efc",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "7e611b04-3948-4f50-a9d2-1fef55fdafa6",
+      "documentation": "Update network adapter configuration of defined id",
+      "method": "put",
+      "endpoint": "network/adapters/:adapterID",
+      "responses": [
+        {
+          "uuid": "3f054d1c-7522-4031-985d-3db87f6385b2",
+          "body": "{\n  \"id\": \"\",\n  \"displayName\": \"\",\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"ipv4Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"ipv6Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"macAddress\": \"\",\n  \"ssid\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "70d2198b-00ab-45b6-bff3-ddca4a30bd2c",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Not found",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "c59ae5ae-d4b6-4a05-b611-06ce1d64f9bd",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "95d12c51-45ad-4b70-ac8d-bd3d62473b18",
+      "documentation": "Return status of network adapter of defined id",
+      "method": "get",
+      "endpoint": "network/adapters/:adapterID/status",
+      "responses": [
+        {
+          "uuid": "0d7a21bc-666f-4d02-8af5-12144b8a36d2",
+          "body": "{\n  \"linkStatus\": \"{{oneOf (array 'disabled' 'disconnected' 'connected' 'unknown')}}\",\n  \"configurationStatus\": \"{{oneOf (array 'configured' 'configuring' 'unmanaged' 'failed' 'pending' 'linger' 'unknown')}}\",\n  \"message\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "b5339c33-b193-44ba-95dd-ecb97c3a4bc7",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Not found",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "f6f81cd2-8168-4261-be35-53ffece0abc0",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "3a972fcb-e876-4d6c-98cd-4e0cedd3d8b4",
+      "documentation": "Proxy configuration of the system.",
+      "method": "get",
+      "endpoint": "network/proxy",
+      "responses": [
+        {
+          "uuid": "07170192-becb-436e-ad19-ecc31aa22c0e",
+          "body": "{\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"host\": \"\",\n  \"port\": {{faker 'datatype.number'}},\n  \"username\": \"\",\n  \"password\": \"\",\n  \"whitelist\": [\n    \"\"\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "8dbb41e0-5aa9-48cc-9725-c4ca4af0f7b4",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "a8ed64f7-aa67-498c-bebe-cb3f4f2c55d7",
+      "documentation": "Updates the proxy confiugration of the system",
+      "method": "put",
+      "endpoint": "network/proxy",
+      "responses": [
+        {
+          "uuid": "42ceca1c-1d20-42bd-9e67-f40639377f4d",
+          "body": "{\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"host\": \"\",\n  \"port\": {{faker 'datatype.number'}},\n  \"username\": \"\",\n  \"password\": \"\",\n  \"whitelist\": [\n    \"\"\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "1a6d7775-9297-4572-95ba-a2c3ce794616",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "73ebe845-a1c2-4d4d-ae80-a681a15eec42",
+      "documentation": "Returns the current status of the proxy",
+      "method": "get",
+      "endpoint": "network/proxy/status",
+      "responses": [
+        {
+          "uuid": "17288679-d090-4f31-94a9-703a685f100c",
+          "body": "{\n  \"serviceStatus\": \"{{oneOf (array 'running' 'stopped' 'unknown')}}\",\n  \"configurationStatus\": \"{{oneOf (array 'notused' 'configured' 'validating' 'failed' 'unknown')}}\",\n  \"message\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "d1307cd1-96d6-477e-9b79-c1f2ffcccf5b",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "f4cac515-9c57-41b4-93b2-d56a48fc8651",
+      "documentation": "Returns central server configuration of the NETservcie site control.",
+      "method": "get",
+      "endpoint": "netservice/centralserver",
+      "responses": [
+        {
+          "uuid": "9b2034af-755e-4b7f-bcfb-04369325e60e",
+          "body": "{\n  \"url\": \"netservice-live.dmgmori.com\",\n  \"port\": 443\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "d4806965-6ee9-4d8e-a38a-8f35164db2f2",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "18d4baea-f9f4-48a0-9a63-e1c2d4f03230",
+      "documentation": "Update central server configuration of the NETservice site control.",
+      "method": "put",
+      "endpoint": "netservice/centralserver",
+      "responses": [
+        {
+          "uuid": "aa55f07d-80bd-4fcf-8d6c-ca474dc77fe6",
+          "body": "{\n  \"url\": \"netservice-live.dmgmori.com\",\n  \"port\": 443\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "7a4eb9f5-44a6-469b-a55d-f81860fccacc",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "81a49ac6-b0bb-4db5-a4e6-6c57189745e2",
+      "documentation": "Get the current status of the NETservice site control.",
+      "method": "get",
+      "endpoint": "netservice/status",
+      "responses": [
+        {
+          "uuid": "544a1201-4509-492a-ac50-2b273f643845",
+          "body": "{\n  \"ServiceStatus\": \"{{oneOf (array 'running' 'stopped' 'unknown')}}\",\n  \"Connected\": {{faker 'datatype.boolean'}},\n  \"ConnectedClients\": [\n    \"\"\n  ],\n  \"UpdateStatus\": \"{{oneOf (array 'noupdate' 'clientupdating' 'sitecontrolupdating')}}\",\n  \"FacilityTree\": \"\",\n  \"StatusIcon\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "fe6841f9-13de-4daf-a5dc-617ee4070d2d",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "906fef4f-fed2-491a-96d2-311ac7b57edb",
+      "documentation": "Returns the default credentials for the machine app.",
+      "method": "get",
+      "endpoint": "netservice/machineappcredentials",
+      "responses": [
+        {
+          "uuid": "b0b2fa7f-1b92-4bea-be83-5eba544dc417",
+          "body": "{\n  \"username\": \"\",\n  \"password\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "20779b76-0e7d-4a73-aabc-5c103265e2e0",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "eb0ddc81-a185-4834-b9be-81e34123e698",
+      "documentation": "This endpoint should be called when the NETservice machine app is started.",
+      "method": "post",
+      "endpoint": "netservice/machineappactive",
+      "responses": [
+        {
+          "uuid": "1d1b55c3-2c2b-4cca-90b0-1cdfd13ca068",
+          "body": "",
+          "latency": 0,
+          "statusCode": 204,
+          "label": "There is no content",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "6572791c-8416-4a3a-a92a-b7ac3d92f53e",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "1c7b7804-8363-4f8d-9d01-d94c71804f25",
+      "documentation": "This endpoint triggers a reset of the NETsevice facility tree.",
+      "method": "post",
+      "endpoint": "netservice/facility/reset",
+      "responses": [
+        {
+          "uuid": "edbb60d2-5102-4f3e-a080-3dfce80519b6",
+          "body": "",
+          "latency": 0,
+          "statusCode": 204,
+          "label": "There is no content",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "0069cf37-074f-45af-b2c7-47f0d07353c6",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "71cf9dc8-8299-4a61-9c1c-c1e00d7ed0e6",
+      "documentation": "Current machine information.",
+      "method": "get",
+      "endpoint": "machine/info",
+      "responses": [
+        {
+          "uuid": "d6411804-8b83-4dc2-b156-4f29017bfae3",
+          "body": "{\n  \"Serial\": \"\",\n  \"Model\": \"\",\n  \"ControlType\": \"{{oneOf (array 'UNSPECIFIED' '840D' 'SIN_ONE' 'TNC_620' 'TNC_640' 'MAPPS6' 'FANUC' 'SIN_ONE_LEG' 'TNC_7')}}\",\n  \"ControlManufacturer\": \"{{oneOf (array 'UNSPECIFIED' 'SIEMENS' 'HEIDENHAIN' 'FANUC' 'MITSUBISHI' 'BECKHOFF')}}\",\n  \"Manufacturer\": \"\",\n  \"Source\": \"{{oneOf (array 'unknown' 'ncplcagent' 'operator')}}\",\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "076f3949-8aab-49c8-9130-f6cc802a93af",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "e7130a97-6a61-4c2c-bbec-498f78b63046",
+      "documentation": "Update machine information.",
+      "method": "put",
+      "endpoint": "machine/info",
+      "responses": [
+        {
+          "uuid": "a2e88cfc-da30-412b-b9a0-dd006bbb8197",
+          "body": "{\n  \"Serial\": \"\",\n  \"Model\": \"\",\n  \"ControlType\": \"{{oneOf (array 'UNSPECIFIED' '840D' 'SIN_ONE' 'TNC_620' 'TNC_640' 'MAPPS6' 'FANUC' 'SIN_ONE_LEG' 'TNC_7')}}\",\n  \"ControlManufacturer\": \"{{oneOf (array 'UNSPECIFIED' 'SIEMENS' 'HEIDENHAIN' 'FANUC' 'MITSUBISHI' 'BECKHOFF')}}\",\n  \"Manufacturer\": \"\",\n  \"Source\": \"{{oneOf (array 'unknown' 'ncplcagent' 'operator')}}\",\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "240c359f-af00-4ca3-8ec6-23c15e8857dc",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "268ca5c8-689e-4bbc-95c9-cf9d1b61d628",
+      "documentation": "IP addresses of the plcncagent.",
+      "method": "get",
+      "endpoint": "machine/plcncagent",
+      "responses": [
+        {
+          "uuid": "a88d691b-cb6f-46d0-94b4-0503c9b603f2",
+          "body": "[\n  {\n    \"host\": \"\",\n    \"port\": 1400\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "b8bcb29e-864c-457f-8a52-1f95cccdd7ae",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "06812d1c-68b9-450a-98af-e6e066a3f4bc",
+      "documentation": "Set the plcncagent ip addresses.",
+      "method": "put",
+      "endpoint": "machine/plcncagent",
+      "responses": [
+        {
+          "uuid": "f8ad569d-533e-4719-9064-b1d53cc0e841",
+          "body": "[\n  {\n    \"host\": \"\",\n    \"port\": 1400\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "398f9616-3fac-4435-b5e0-ffe4310f8e63",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "f2ebf310-e810-4775-9d71-82b86e47d8d0",
+      "documentation": "IP addresses of the control ipc.",
+      "method": "get",
+      "endpoint": "machine/controlipc",
+      "responses": [
+        {
+          "uuid": "09cf3996-8650-497d-8e2e-7170977d58aa",
+          "body": "{\n  \"IP\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "36078487-bd35-4866-b000-f4ebff8452c6",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "56b12d46-ca39-4d57-8804-6cb9a73d99a2",
+      "documentation": "Get configuration of device management platform.",
+      "method": "get",
+      "endpoint": "devicemanagement/server",
+      "responses": [
+        {
+          "uuid": "0a49fa53-08dd-428b-b7c6-5a2fabae830e",
+          "body": "{\n  \"url\": \"https://dmgmoridevices.adamos.com\",\n  \"tenant\": \"dmgmoridevices\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "d91a494d-7eb7-4c64-80c5-24c4ddf6e596",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "1504f341-5098-4fd4-966a-1c87c7253030",
+      "documentation": "Update configuration of device management platform.",
+      "method": "put",
+      "endpoint": "devicemanagement/server",
+      "responses": [
+        {
+          "uuid": "516ff7d9-c84e-450f-8727-9ef48a1038e7",
+          "body": "{\n  \"url\": \"https://dmgmoridevices.adamos.com\",\n  \"tenant\": \"dmgmoridevices\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "ebf0a44f-5cfd-4beb-81e3-493876b80268",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "17c52459-0670-4f48-88ee-e906d0c17345",
+      "documentation": "Get configuration of messenger server.",
+      "method": "get",
+      "endpoint": "messenger/server",
+      "responses": [
+        {
+          "uuid": "41846c1d-9890-45e3-b2a0-d8c3c160ed23",
+          "body": "{\n  \"URL\": \"\",\n  \"Name\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Configuration of the messenger server",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "a6349a78-dad0-4363-bc48-a214230f0a7e",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "018492f7-293a-4ebd-b96f-c15bab07b8a9",
+      "documentation": "Update configuration of the messenger server.",
+      "method": "put",
+      "endpoint": "messenger/server",
+      "responses": [
+        {
+          "uuid": "9c4703d5-486b-484b-8732-cf56993b9cf9",
+          "body": "{\n  \"URL\": \"\",\n  \"Name\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Configuration of the messenger server",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "e592b652-a873-41dc-a123-54d5164fbed5",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "8a44ae14-4ef5-45ed-965f-645a0b49b080",
+      "documentation": "Request shutdown of system",
+      "method": "post",
+      "endpoint": "system/shutdown",
+      "responses": [
+        {
+          "uuid": "0b3061d3-6b33-4879-bc62-2254d551842d",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "91e203d5-daee-4332-844a-0563b8ab281c",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "a5aa66d9-a70c-4be7-8b78-cc3eb5790f1e",
+      "documentation": "Request restart of system",
+      "method": "post",
+      "endpoint": "system/restart",
+      "responses": [
+        {
+          "uuid": "dbe8d092-458f-4aa8-af66-3441ecc11b4c",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "dfddb16f-3ce9-4a47-9be3-0fa31334c7fb",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "a3ed5922-2a14-4cfd-8b55-3f2f1eba0362",
+      "documentation": "Request version information",
+      "method": "get",
+      "endpoint": "system/versions",
+      "responses": [
+        {
+          "uuid": "a4f28f89-9a05-4d63-accf-9b85697f0a45",
+          "body": "[\n  {\n    \"Name\": \"\",\n    \"DisplayName\": \"\",\n    \"Version\": \"\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "8777f832-18c1-438c-bc99-addc018c246e",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "1906bf7f-5c71-4c3f-94f4-ef6b1b160427",
+      "documentation": "Request log export of iotedge module with given id",
+      "method": "get",
+      "endpoint": "system/logs/:moduleID",
+      "responses": [
+        {
+          "uuid": "bac6238f-906e-4d0b-9229-543178a36c8e",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Successfully exported logs for given criteria",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            },
+            {
+              "key": "Content-Disposition",
+              "value": ""
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "2bf91787-dd4d-473f-9df2-858d0e927a91",
+          "body": "",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Not found",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "864eca9a-8888-43eb-8d17-4c413a424f1a",
+          "body": "",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "10331756-b15c-4077-9ac9-1a3059b2b98b",
+      "documentation": "Request log export of CELOS OS",
+      "method": "get",
+      "endpoint": "system/logs",
+      "responses": [
+        {
+          "uuid": "359b3bc5-8077-4e73-8659-926e18ba29fa",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "A ZIP file which contains all logs of the specified modules.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            },
+            {
+              "key": "Content-Disposition",
+              "value": ""
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "63b4b246-6f49-4cbe-998b-43e273f7c9e8",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "4150b2ab-60e8-49aa-b649-12933d6d9784",
+      "documentation": "Get meta information of last triggered log export. Will be empty if no log export has been triggered before this call.",
+      "method": "get",
+      "endpoint": "system/logs/metainformation",
+      "responses": [
+        {
+          "uuid": "4427e84d-27fd-4207-97ff-7303545f4331",
+          "body": "{\n  \"Filename\": \"\",\n  \"DateFrom\": \"{{faker 'date.recent' 365}}\",\n  \"DateTo\": \"{{faker 'date.recent' 365}}\",\n  \"Pattern\": \"\",\n  \"MachineSerial\": \"\",\n  \"Logs\": [\n    {\n      \"DateFrom\": \"{{faker 'date.recent' 365}}\",\n      \"DateTo\": \"{{faker 'date.recent' 365}}\",\n      \"Path\": \"\",\n      \"Truncated\": {{faker 'datatype.boolean'}},\n      \"Module\": \"\",\n      \"Empty\": {{faker 'datatype.boolean'}}\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Log export meta information",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "f3ad5b0d-4737-44f0-87f7-4e24f764f71d",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "e1265439-cd39-4f1b-b89b-cf8189c7f2f8",
+      "documentation": "Get list of available log modules.",
+      "method": "get",
+      "endpoint": "system/logs/modules",
+      "responses": [
+        {
+          "uuid": "708ff819-2eec-4fc4-81d2-a438bc966923",
+          "body": "[\n  \"\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of items",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "4d36b7f9-049e-4623-a83b-ab74a2d45934",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "6708c67c-73d5-46e6-9a54-957128c334b9",
+      "documentation": "Get list of available status icons",
+      "method": "get",
+      "endpoint": "system/icons",
+      "responses": [
+        {
+          "uuid": "fbff068b-7939-4f60-9df4-d741639acfd9",
+          "body": "[\n  \"\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "9d76984e-1c57-42a2-ac2e-a756d1de2662",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "12f1820e-b39c-48cf-87cf-bafaff868d94",
+      "documentation": "Get icon of given id.",
+      "method": "get",
+      "endpoint": "system/icons/:iconID",
+      "responses": [
+        {
+          "uuid": "baf989ed-8485-4911-b38f-30778899a36f",
+          "body": "{\n  \"Data\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "014e1a9d-e51a-459d-87a9-c509de76348f",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Not found",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "7abf52ab-ec08-4937-b433-8779bce9b3b8",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "18d1e1ff-1144-40a5-aa28-5f0e1689fce0",
+      "documentation": "Get available system update (Celos Next OS)",
+      "method": "get",
+      "endpoint": "system/update",
+      "responses": [
+        {
+          "uuid": "dc41beb4-5036-4287-a37c-7b63a0dced0d",
+          "body": "{\n  \"Title\": \"\",\n  \"Version\": \"\",\n  \"Description\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "6a0de810-dc13-4e42-90b4-2f5c4b8b109a",
+          "body": "",
+          "latency": 0,
+          "statusCode": 204,
+          "label": "There is no content",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "27968237-9f78-4b56-a735-508b15b82584",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "1b64c66f-75c2-4948-995d-82cdda3c72b3",
+      "documentation": "Start system update",
+      "method": "post",
+      "endpoint": "system/applyupdate",
+      "responses": [
+        {
+          "uuid": "19d8890f-af73-4355-a8c0-11668710b0cd",
+          "body": "{\n  \"Title\": \"\",\n  \"Version\": \"\",\n  \"Success\": {{faker 'datatype.boolean'}},\n  \"Error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "Successfully triggered OS update",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "87b96157-b019-4763-9389-e35dce58e0da",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Not found",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "8ab281d2-1955-44e1-9543-3942b3c49c22",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "9e476983-2f89-4241-93d8-4b805d2c2d80",
+      "documentation": "Request download of CELOS OS with given version",
+      "method": "post",
+      "endpoint": "system/update/:osversion/download",
+      "responses": [
+        {
+          "uuid": "6446c6ec-978c-495e-a35e-ca4f38ac2518",
+          "body": "{\n  \"Version\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "Successfully triggered download of CELOS OS update",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "f96204b3-c0b7-4c59-aeff-3e4d68d7cbbf",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "634c8741-cab8-4171-83fd-af051d2233ae",
+      "documentation": "Get download status of CELOS OS",
+      "method": "get",
+      "endpoint": "system/update/download/status",
+      "responses": [
+        {
+          "uuid": "7cbe0366-22b9-4714-abe3-6230d73207a6",
+          "body": "{\n  \"PendingPackageCount\": {{faker 'datatype.number'}},\n  \"FailedPackageCount\": {{faker 'datatype.number'}},\n  \"LastStatusUpdate\": \"{{faker 'date.recent' 365}}\",\n  \"Connected\": {{faker 'datatype.boolean'}}\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Status of CELOS OS update download",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "16d3d084-2782-4a38-bbae-19d8cbcc3abb",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "87930fa0-036c-4dbc-a32d-0ac9bd36a856",
+      "documentation": "Get commissioning status.",
+      "method": "get",
+      "endpoint": "system/commissioning",
+      "responses": [
+        {
+          "uuid": "cb30ed54-0a8a-4b7c-80ac-4db1dccf6b9a",
+          "body": "{\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\",\n  \"Finished\": {{faker 'datatype.boolean'}}\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "930be177-0492-429b-96eb-5f51d37b1679",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "89de3729-24b3-41d9-bbd3-9527cb508812",
+      "documentation": "Finish commissioning of device",
+      "method": "post",
+      "endpoint": "system/commissioning/finish",
+      "responses": [
+        {
+          "uuid": "7db09d17-83cb-4dfd-868e-a162f18ac065",
+          "body": "{\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\",\n  \"Finished\": {{faker 'datatype.boolean'}}\n}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "9e2f58a9-b7aa-4c31-b408-5344df1807a7",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "d71647a7-2949-4343-832b-5e66020b4f47",
+      "documentation": "Get backup archive from IPC",
+      "method": "get",
+      "endpoint": "system/backup",
+      "responses": [
+        {
+          "uuid": "ca5e94dd-33fc-4006-a282-120e246fbf0c",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "A zip archive with all configuration files",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            },
+            {
+              "key": "Content-Disposition",
+              "value": ""
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "abc0d8e4-6ed0-443e-8b99-17aa0af1bc10",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "cbf7527c-8d7a-4245-9549-07fed1293f45",
+      "documentation": "Apply recovery archive to IPC",
+      "method": "post",
+      "endpoint": "system/recover",
+      "responses": [
+        {
+          "uuid": "93fb1335-f533-4d6d-8b06-28835b0e8a59",
+          "body": "",
+          "latency": 0,
+          "statusCode": 204,
+          "label": "There is no content",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "ff2adbb8-bb61-4121-bc36-7a7705c4b1f1",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "feb2f7fa-bba8-4594-88bf-5210f8882108",
+      "documentation": "Get current system time",
+      "method": "get",
+      "endpoint": "system/time",
+      "responses": [
+        {
+          "uuid": "36de6b7e-cacb-4722-9a00-3dc964a2cd25",
+          "body": "{\n  \"Timestamp\": \"{{ now 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Current utc system time",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "08aa2ff6-6642-4cac-a744-dd34a916c2b7",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "fbe6cfa5-dce6-4451-87d7-91ec0cde338f",
+      "documentation": "Set system time to tiven time. The given time will be always converted to utc.",
+      "method": "put",
+      "endpoint": "system/time",
+      "responses": [
+        {
+          "uuid": "e7fe1737-2460-4edc-9c9f-fde21231d259",
+          "body": "{\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Current utc system time",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "9d5e6cad-492a-4ad1-8a3f-6c4400dd39dc",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "b345b401-ee4e-4740-bdee-a147b967ba65",
+      "documentation": "Get RSA public key of CELOS IPC (marked for removal)",
+      "method": "get",
+      "endpoint": "system/rsaPublicKey",
+      "responses": [
+        {
+          "uuid": "9eb3f391-9253-4e3d-944b-8caae1ec86ab",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "The public RSA key of the CELOS IPC.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            },
+            {
+              "key": "Content-Disposition",
+              "value": ""
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "0e9c34f1-ab40-4cb7-aa39-f0147e32ce84",
+          "body": "",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/octet-stream"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "dc5f56bb-7666-47b5-b059-1b4977f33153",
+      "documentation": "Get settings of device provisioning service used by iotedge.",
+      "method": "get",
+      "endpoint": "datahub/dps",
+      "responses": [
+        {
+          "uuid": "a92b71e1-0c20-4212-95eb-89f8f221049c",
+          "body": "{\n  \"Registered\": {{faker 'datatype.boolean'}},\n  \"RegistrationID\": \"\",\n  \"DPSEndpoint\": \"\",\n  \"ScopeID\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "ff2a4479-10e1-4050-9297-85aa5df7a530",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "f332f941-b879-43ed-8567-3d0097b6a86f",
+      "documentation": "Get list of iotedge modules.",
+      "method": "get",
+      "endpoint": "datahub/modules",
+      "responses": [
+        {
+          "uuid": "97f08fdf-86a8-4287-b7ad-d33cf4b0c1b8",
+          "body": "[\n  \"\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of items",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "d99321ed-9bd5-44e7-becd-95635f5e8809",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "a0024538-0f6a-44cb-a3b1-0cb4580379cc",
+      "documentation": "Get status of iotedge module with given id",
+      "method": "get",
+      "endpoint": "datahub/status/:moduleID",
+      "responses": [
+        {
+          "uuid": "ac1f8c31-2ac7-4b9c-b9ed-b5c68b98765e",
+          "body": "{\n  \"ImageName\": \"\",\n  \"DisplayName\": \"\",\n  \"Version\": \"\",\n  \"Status\": \"\",\n  \"StartedAt\": \"\",\n  \"Error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "90341b9f-a822-4ed5-891a-25e98f6b3aca",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Not found",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "7808593e-4bd5-4c28-a31c-da4fc4099736",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "a959e7b6-0f93-4335-98d2-f5879310b04b",
+      "documentation": "Get status of cloud connection",
+      "method": "get",
+      "endpoint": "datahub/status",
+      "responses": [
+        {
+          "uuid": "c3bd0250-9d2d-4329-af6b-6f4b4b134196",
+          "body": "{\n  \"ConnectionType\": \"{{oneOf (array 'LAN' 'WIFI' 'MOBILE')}}\",\n  \"ConnectionStatus\": {{faker 'datatype.boolean'}},\n  \"NetserviceStatus\": {{faker 'datatype.boolean'}},\n  \"CumulocityStatus\": {{faker 'datatype.boolean'}},\n  \"EdgeAgentStatus\": {{faker 'datatype.boolean'}},\n  \"NetworkStatus\": {{faker 'datatype.boolean'}},\n  \"StatusIcon\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "c6845227-a960-4f27-813a-98afc31063d6",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "filePath": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ]
+}

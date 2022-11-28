@@ -1,6 +1,5 @@
-import { PathLike } from 'fs';
+import { PathLike, writeFileSync } from 'fs';
 import { promises as fs } from 'fs';
-import { writeFile } from 'fs/promises';
 import winston from 'winston';
 import { LifecycleEventStatus } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
@@ -209,21 +208,21 @@ export class LedStatusService {
   /**
    * Activate LED selected by paths.
    */
-  private setLed(paths: PathLike[]): Promise<void> {
-    return Promise.all([
-      writeFile(paths[0], LED.ON),
-      paths.length === 2 ? writeFile(paths[1], LED.ON) : Promise.resolve()
-    ]).then();
+  private setLed(paths: PathLike[]): void {
+    writeFileSync(paths[0], LED.ON);
+    if (paths.length === 2) {
+      writeFileSync(paths[1], LED.ON);
+    }
   }
 
   /**
    * Disable LED selected by paths.
    */
-  private unsetLed(paths: PathLike[]): Promise<void> {
-    return Promise.all([
-      writeFile(paths[0], LED.OFF),
-      paths.length === 2 ? writeFile(paths[1], LED.OFF) : Promise.resolve()
-    ]).then();
+  private unsetLed(paths: PathLike[]): void {
+    writeFileSync(paths[0], LED.OFF);
+    if (paths.length === 2) {
+      writeFileSync(paths[1], LED.OFF);
+    }
   }
 
   /**

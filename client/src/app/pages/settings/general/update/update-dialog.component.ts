@@ -2,18 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { UpdateStatus } from 'app/services/system-information.service';
 import { Subscription } from 'rxjs';
-import {
-  ConfigurationAgentHttpMockupService,
-  HttpMockupService
-} from 'app/shared';
+import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
 import { UpdateManager } from './update-manager';
 
 const UPDATE_TIMEOUT_MS = 30 * 60_000;
 
 export interface UpdateDialogResult {
-  status: UpdateStatus;
+  status: string;
   error?: string;
 }
 
@@ -34,8 +30,8 @@ export class UpdateDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<any, UpdateDialogResult>,
     @Inject(MAT_DIALOG_DATA) private data: any,
     private translate: TranslateService,
-    private configurationAgentHttpMockupService: ConfigurationAgentHttpMockupService,
-    private httpMockupService: HttpMockupService
+    private configurationAgentHttpMockupService: ConfigurationAgentHttpService,
+    private httpMockupService: HttpService
   ) {}
 
   get currentStateText(): string {
@@ -70,7 +66,7 @@ export class UpdateDialogComponent implements OnInit {
       }
       console.log(errorText);
       this.dialogRef.close({
-        status: UpdateStatus.ERROR,
+        status: 'ERROR',
         error: errorText
       });
     });
@@ -102,12 +98,12 @@ export class UpdateDialogComponent implements OnInit {
     if (this.currentState === 'END') {
       this.checkingForUpdates = false;
       if (this.endReason === 'SUCCESS') {
-        this.dialogRef.close({ status: UpdateStatus.SUCCESS });
+        this.dialogRef.close({ status: 'SUCCESS' });
       } else if (this.endReason === 'NO_UPDATE_FOUND') {
-        this.dialogRef.close({ status: UpdateStatus.UP_TO_DATE });
+        this.dialogRef.close({ status: 'UP_TO_DATE' });
       } else {
         this.dialogRef.close({
-          status: UpdateStatus.ERROR,
+          status: 'ERROR',
           error: this.translate.instant(
             `system-information.UpdateStatus-${this.endReason}`
           )

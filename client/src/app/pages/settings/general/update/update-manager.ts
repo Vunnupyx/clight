@@ -1,10 +1,7 @@
 import { StateMachine, StateAndTransitions } from './state-machine';
-import {
-  ConfigurationAgentHttpMockupService,
-  HttpMockupService
-} from 'app/shared';
+import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
 import { sleep } from 'app/shared/utils';
-import { HealthcheckResponse, UpdateStatus } from 'app/services';
+import { HealthcheckResponse } from 'app/services';
 
 interface CosInstalledVersion {
   Name: string;
@@ -110,8 +107,8 @@ export class UpdateManager {
   };
 
   constructor(
-    private apiEndpoint: HttpMockupService,
-    private configAgentEndpoint: ConfigurationAgentHttpMockupService,
+    private apiEndpoint: HttpService,
+    private configAgentEndpoint: ConfigurationAgentHttpService,
     private onStateChange
   ) {}
 
@@ -127,11 +124,9 @@ export class UpdateManager {
   private async getUpdates() {
     const logPrefix = `${UpdateManager.name}::getUpdates`;
     try {
-      const response = await this.apiEndpoint.get(
+      const response = undefined; /*await this.apiEndpoint.get(
         `/getUpdates`,
-        undefined,
-        'response'
-      );
+      );*/
       //TBD
       this.newVersionToInstall = response || '3.0.0';
       return 'UPDATE_FOUND';
@@ -265,11 +260,9 @@ export class UpdateManager {
     const logPrefix = `${UpdateManager.name}::applyModuleUpdates`;
 
     try {
-      const response = await this.apiEndpoint.get(
+      /*const response = await this.apiEndpoint.get(
         `/applyModuleUpdates`,
-        undefined,
-        'response'
-      );
+      );*/
       //TBD
 
       return 'MODULE_UPDATE_APPLIED';

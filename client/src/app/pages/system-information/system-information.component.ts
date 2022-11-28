@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { SystemInformationService, UpdateStatus } from '../../services';
+import { SystemInformationService } from '../../services';
 import { SystemInformationSection } from '../../models';
 import { environment } from '../../../environments/environment';
 import { MaterialThemeVersion } from 'app/app.component';
@@ -56,13 +56,13 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(async (result: UpdateDialogResult) => {
       let title, type, content;
       switch (result.status) {
-        case UpdateStatus.UP_TO_DATE:
+        case 'UP_TO_DATE':
           type = 'success';
           title = this.translate.instant(
             'system-information.YourSystemUpToDate'
           );
           break;
-        case UpdateStatus.SUCCESS:
+        case 'SUCCESS':
           type = 'success';
           title = this.translate.instant(
             'system-information.YourSystemUpdateSuccess'
@@ -71,7 +71,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
             result.error || 'system-information.YourSystemUpdateSuccessDescr'
           );
           break;
-        case UpdateStatus.ERROR:
+        case 'ERROR':
           type = 'error';
           title = this.translate.instant('system-information.UpdateFailed');
           content = result.error;

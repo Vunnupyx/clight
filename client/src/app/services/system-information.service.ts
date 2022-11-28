@@ -19,21 +19,6 @@ export class SystemInformationState {
   serverOffset!: number;
 }
 
-export enum UpdateStatus {
-  UP_TO_DATE,
-  GET_UPDATES,
-  CHECK_INSTALLED_COS_VERSION,
-  CHECK_COS_UPDATES,
-  START_DOWNLOAD_COS_UPDATES,
-  VALIDATE_COS_DOWNLOAD,
-  APPLY_COS_UPDATES,
-  WAITING_FOR_SYSTEM_RESTART,
-  APPLY_MODULE_UPDATES,
-  WAIT_FOR_MODULE_UPDATE,
-  SUCCESS,
-  ERROR
-}
-
 export interface HealthcheckResponse {
   startUpTime: string;
 }

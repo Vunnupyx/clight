@@ -86,7 +86,11 @@ export class RestApiManager {
     const logPrefix = `${RestApiManager.className}::getProxySettings`;
 
     const PATH_PREFIX = '/api/v1';
-    return proxy('http://host.docker.internal:1884', {
+    const confAgentAddress =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:1884'
+        : 'http://172.17.0.1:1884';
+    return proxy(confAgentAddress, {
       filter: (req: Request, res: Response) => {
         const isAuthenticated = authManager.verifyJWTAuth({
           withPasswordChangeDetection: true,

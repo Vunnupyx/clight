@@ -68,6 +68,7 @@
                 <div class="col-12 col-md-7">
                   <mat-form-field>
                     <mat-select
+                      disableOptionCentering="true"
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
@@ -100,6 +101,7 @@
                 <div class="col-12 col-md-7">
                   <mat-form-field>
                     <mat-select
+                      disableOptionCentering="true"
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
@@ -130,6 +132,7 @@
             <div class="col-12 col-md-7">
               <mat-form-field>
                 <mat-select
+                  disableOptionCentering="true"
                   [ngModel]="dataSource?.softwareVersion"
                   (ngModelChange)="updateSoftwareVersion($event)"
                 >
@@ -235,11 +238,6 @@
                   {{ 'settings-data-source.Reconnecting' | translate }}
                 </ng-container>
                 <ng-container
-                  *ngSwitchCase="DataSourceConnectionStatus.NoLicense"
-                >
-                  {{ 'settings-data-source.NoLicense' | translate }}
-                </ng-container>
-                <ng-container
                   *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
                 >
                   {{ 'settings-data-source.ConnectionError' | translate }}
@@ -321,11 +319,6 @@
                   class="color-success"
                   svgIcon="mdc:success"
                 ></mat-icon>
-              </ng-container>
-              <ng-container
-                *ngSwitchCase="DataSourceConnectionStatus.NoLicense"
-              >
-                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
@@ -458,6 +451,7 @@
               </ng-container>
             </span>
             <mat-select
+              disableOptionCentering="true"
               *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
@@ -548,6 +542,7 @@
                       dataSource?.protocol === Protocol.IOShield;
                       else s7InputAddress
                     "
+                    disableOptionCentering="true"
                     [ngModel]="value"
                     (ngModelChange)="
                       unsavedRow && (unsavedRow.address = $event)
@@ -631,11 +626,21 @@
                 (click)="
                   !isDuplicatingField('name') &&
                     !isDuplicatingField('address') &&
+                    unsavedRow.name?.length > 0 &&
+                    unsavedRow.address?.length > 0 &&
                     onEditEnd();
                   group.value = null
                 "
                 [matTooltip]="'settings-data-source.Save' | translate"
                 matTooltipPosition="above"
+                [disabled]="
+                  isDuplicatingField('name') ||
+                  isDuplicatingField('address') ||
+                  unsavedRow.name?.length === 0 ||
+                  !unsavedRow.name ||
+                  unsavedRow.address?.length === 0 ||
+                  !unsavedRow.address
+                "
               >
                 <mat-icon
                   class="color-success"

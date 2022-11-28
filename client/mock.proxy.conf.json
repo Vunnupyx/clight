@@ -1,0 +1,14 @@
+{
+  "/api/*": {
+    "target": "http://localhost:1885",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/configuration-agent/*": {
+    "target": "http://localhost:1884",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

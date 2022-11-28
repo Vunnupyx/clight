@@ -7,7 +7,12 @@ import { filter } from 'rxjs/operators';
 import { NetworkService } from '../../../services/network.service';
 import { clone } from '../../../shared/utils';
 import { NetworkConfig, NetworkType } from '../../../models';
-import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
+import {
+  HOST_REGEX,
+  IP_REGEX,
+  NETMASK_REGEX,
+  PORT_REGEX
+} from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
 @Component({
@@ -24,6 +29,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
   ipRegex = IP_REGEX;
+  netmaskRegex = NETMASK_REGEX;
 
   get showLoading() {
     return (

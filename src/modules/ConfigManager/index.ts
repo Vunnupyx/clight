@@ -333,55 +333,76 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       body: JSON.stringify(factoryNtp)
     });
 
-    const adaptersResponse = await fetch(
-      `${confAgentAddress}/network/adapters`,
+    const factoryNetworkAdapter = [
       {
-        method: 'GET'
-      }
-    );
-    // TBD when response.ok is not true?
-    const networkAdapters: Array<{ id: string }> =
-      await adaptersResponse?.json();
-    const factoryNetworkAdapter = {
-      id: '', // id will be overwritten
-      displayName: '',
-      enabled: true,
-      ipv4Settings: {
+        id: 'enoX1',
+        displayName: '',
         enabled: true,
-        dhcp: true,
-        ipAddresses: [
-          {
-            Address: '',
-            Netmask: ''
-          }
-        ],
-        defaultGateway: '',
-        dnsserver: ['']
+        ipv4Settings: {
+          enabled: true,
+          dhcp: true,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        ipv6Settings: {
+          enabled: false,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        macAddress: '',
+        ssid: ''
       },
-      ipv6Settings: {
-        enabled: false,
-        dhcp: false,
-        ipAddresses: [
-          {
-            Address: '',
-            Netmask: ''
-          }
-        ],
-        defaultGateway: '',
-        dnsserver: ['']
-      },
-      macAddress: '',
-      ssid: ''
-    };
+      {
+        id: 'enoX2',
+        displayName: '',
+        enabled: true,
+        ipv4Settings: {
+          enabled: true,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '192.168.214.230',
+              Netmask: '24'
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        ipv6Settings: {
+          enabled: false,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        macAddress: '',
+        ssid: ''
+      }
+    ];
 
     await Promise.all(
-      networkAdapters.map((adapter) =>
-        fetch(`${confAgentAddress}/network/adapters/${adapter.id}`, {
+      factoryNetworkAdapter.map((adapterSettings) =>
+        fetch(`${confAgentAddress}/network/adapters/${adapterSettings.id}`, {
           method: 'PUT',
-          body: JSON.stringify({
-            ...factoryNetworkAdapter,
-            id: adapter.id
-          })
+          body: JSON.stringify(adapterSettings)
         })
       )
     );

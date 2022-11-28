@@ -11,7 +11,7 @@ import {
   IOShieldTypes,
   S7Types
 } from 'app/models';
-import { HttpMockupService } from 'app/shared';
+import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
@@ -33,7 +33,7 @@ export class DataSourceService {
 
   constructor(
     storeFactory: StoreFactory<DataSourcesState>,
-    private httpService: HttpMockupService,
+    private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {

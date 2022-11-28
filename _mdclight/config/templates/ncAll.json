@@ -1,6 +1,6 @@
 {
-  "name": "SIEMENS SINUMERIK 840D sl",
-  "description": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+  "name": "quick-start.Templates.name.ncAll",
+  "description": "quick-start.Templates.description.ncAll",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",

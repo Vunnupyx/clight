@@ -8,36 +8,6 @@ export const factoryConfig: IConfig = {
     model: '',
     control: ''
   },
-  networkConfig: {
-    x1: {
-      useDhcp: true,
-      ipAddr: '',
-      netmask: '',
-      defaultGateway: '',
-      dnsServer: ''
-    },
-    x2: {
-      useDhcp: false,
-      ipAddr: '192.168.214.230',
-      netmask: '255.255.255.0',
-      defaultGateway: '',
-      dnsServer: ''
-    },
-    proxy: {
-      enabled: true,
-      password: '',
-      username: '',
-      port: 0,
-      ip: '',
-      type: 'http'
-    },
-    time: {
-      useNtp: true,
-      ntpHost: 'time.dmgmori.net',
-      currentTime: '',
-      timezone: 'Europe/Berlin'
-    }
-  },
   dataSources: [
     {
       dataPoints: [],
@@ -549,18 +519,6 @@ export const factoryConfig: IConfig = {
     completed: false,
     currentTemplate: null,
     currentTemplateName: null
-  },
-  env: {
-    selected: 'prod',
-    web: {
-      tag: 'main'
-    },
-    mdc: {
-      tag: 'main'
-    },
-    mtc: {
-      tag: 'latest'
-    }
   },
   termsAndConditions: {
     accepted: false

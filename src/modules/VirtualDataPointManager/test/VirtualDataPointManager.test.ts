@@ -3,15 +3,16 @@ import { ConfigManager } from '../../ConfigManager';
 import { DataPointCache } from '../../DatapointCache';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../EventBus';
-import { IErrorEvent, ILifecycleEvent } from '../../../common/interfaces';
 
 jest.mock('winston');
 jest.mock('fs');
 
+jest.mock('../../EventBus');
+
 describe('Test VirtualDataPointManager', () => {
   const config = new ConfigManager({
-    errorEventsBus: new EventBus<IErrorEvent>(),
-    lifecycleEventsBus: new EventBus<ILifecycleEvent>()
+    errorEventsBus: new EventBus(),
+    lifecycleEventsBus: new EventBus()
   });
 
   config.config.virtualDataPoints = [
@@ -244,7 +245,6 @@ describe('Test VirtualDataPointManager', () => {
         const events: IDataSourceMeasurementEvent[] = [
           {
             dataSource: {
-              name: '',
               protocol: ''
             },
             measurement: {
@@ -255,7 +255,6 @@ describe('Test VirtualDataPointManager', () => {
           },
           {
             dataSource: {
-              name: '',
               protocol: ''
             },
             measurement: {
@@ -286,7 +285,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -297,7 +295,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -328,7 +325,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -339,7 +335,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -393,7 +388,6 @@ describe('Test VirtualDataPointManager', () => {
     const events1: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -413,7 +407,6 @@ describe('Test VirtualDataPointManager', () => {
     const events2: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -431,7 +424,6 @@ describe('Test VirtualDataPointManager', () => {
     const events3: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -449,7 +441,6 @@ describe('Test VirtualDataPointManager', () => {
     const events4: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -468,7 +459,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -479,7 +469,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -490,7 +479,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -501,7 +489,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -512,7 +499,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {

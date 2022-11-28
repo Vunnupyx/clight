@@ -183,7 +183,6 @@ export class VirtualDataPointManager {
         result === Infinity ||
         result === -Infinity ||
         result === null ||
-        result === -0 ||
         isNaN(result)
       ) {
         this.addSummaryLog(
@@ -731,7 +730,6 @@ export class VirtualDataPointManager {
 
       const newEvent: IDataSourceMeasurementEvent = {
         dataSource: {
-          name: 'virtual',
           protocol: 'virtual'
         },
         measurement: {

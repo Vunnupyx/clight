@@ -55,13 +55,20 @@
       "description": "Everything about the messenger."
     }
   ],
-  "produces": ["application/json"],
-  "schemes": ["http", "https"],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
   "paths": {
     "/healthcheck": {
       "get": {
         "security": [],
-        "tags": ["health"],
+        "tags": [
+          "health"
+        ],
         "operationId": "healthCheckGet",
         "description": "",
         "parameters": [],
@@ -83,7 +90,9 @@
     "/auth/login": {
       "post": {
         "security": [],
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "operationId": "loginPost",
         "description": "Login in system",
         "parameters": [
@@ -114,7 +123,9 @@
     },
     "/auth/change-password": {
       "post": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "security": [
           {
             "jwtNoPasswordChangeDetection": []
@@ -149,7 +160,9 @@
     },
     "/datasources": {
       "get": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "description": "Returns all available datasources of the runtime",
         "parameters": [],
         "operationId": "dataSourcesGet",
@@ -174,7 +187,9 @@
         }
       ],
       "get": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourceGet",
         "responses": {
           "200": {
@@ -186,7 +201,9 @@
         }
       },
       "patch": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "summary": "change datasource",
         "description": "Only for toggling enabled property and change of connection",
         "operationId": "dataSourcePatch",
@@ -221,7 +238,9 @@
         }
       ],
       "post": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "summary": "change bulk datasource datapoints",
         "description": "",
         "operationId": "dataSourcesPostDatapointBulk",
@@ -253,7 +272,9 @@
         }
       ],
       "get": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourceGetStatus",
         "responses": {
           "200": {
@@ -276,7 +297,9 @@
         }
       ],
       "get": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourceGetPing",
         "responses": {
           "200": {
@@ -311,7 +334,9 @@
         }
       ],
       "get": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourcesGetDatapoints",
         "description": "Returns a list of dataPoints of this datasource",
         "responses": {
@@ -339,7 +364,9 @@
         }
       },
       "post": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourcesPostDatapoint",
         "description": "Create a new datapoint for the selected datasource.",
         "parameters": [
@@ -397,7 +424,9 @@
         }
       ],
       "get": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourcesGetDatapoint",
         "description": "returns a datapoint with given id",
         "responses": {
@@ -417,7 +446,9 @@
         }
       },
       "delete": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourcesDeleteDatapoint",
         "description": "Delete the datapoint selected by id",
         "responses": {
@@ -442,7 +473,9 @@
         }
       },
       "patch": {
-        "tags": ["datasource"],
+        "tags": [
+          "datasource"
+        ],
         "operationId": "dataSourcesPatchDatapoint",
         "description": "overwrite datapoint with selected id",
         "parameters": [
@@ -483,7 +516,9 @@
     },
     "/datasinks": {
       "get": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "description": "Returns all available datesinks of the runtime",
         "operationId": "dataSinksGet",
         "parameters": [],
@@ -519,7 +554,9 @@
         }
       ],
       "get": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "operationId": "dataSinkGet",
         "summary": "Get datasink object by id",
         "responses": {
@@ -532,7 +569,9 @@
         }
       },
       "patch": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "summary": "change datasink",
         "description": "Only for toggling enabled property and change of auth",
         "operationId": "dataSinkPatch",
@@ -567,7 +606,9 @@
         }
       ],
       "post": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "summary": "change bulk datasink datapoints",
         "description": "",
         "operationId": "dataSinksPostDatapointBulk",
@@ -598,7 +639,9 @@
         }
       ],
       "get": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "operationId": "dataSinkGetStatus",
         "responses": {
           "200": {
@@ -620,7 +663,9 @@
         }
       ],
       "get": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "operationId": "dataSinksDataPointsGet",
         "responses": {
           "200": {
@@ -632,7 +677,9 @@
         }
       },
       "post": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "operationId": "dataSinksDataPointsPost",
         "parameters": [
           {
@@ -689,7 +736,9 @@
         }
       ],
       "get": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "operationId": "dataSinksDataPointGet",
         "responses": {
           "200": {
@@ -708,7 +757,9 @@
         }
       },
       "patch": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "operationId": "dataSinksDataPointPatch",
         "parameters": [
           {
@@ -738,7 +789,9 @@
         }
       },
       "delete": {
-        "tags": ["datasinks"],
+        "tags": [
+          "datasinks"
+        ],
         "operationId": "dataSinksDataPointDelete",
         "responses": {
           "200": {
@@ -764,7 +817,9 @@
     },
     "/vdps": {
       "get": {
-        "tags": ["virtual datapoints"],
+        "tags": [
+          "virtual datapoints"
+        ],
         "description": "Return a list of virtual datapoints",
         "operationId": "vdpsGet",
         "responses": {
@@ -792,7 +847,9 @@
         }
       },
       "post": {
-        "tags": ["virtual datapoints"],
+        "tags": [
+          "virtual datapoints"
+        ],
         "description": "Add a virtual datapoint to the runtime",
         "parameters": [
           {
@@ -810,7 +867,10 @@
           "200": {
             "description": "Successfully create a virtual datapoint resource",
             "schema": {
-              "required": ["created", "href"],
+              "required": [
+                "created",
+                "href"
+              ],
               "type": "object",
               "properties": {
                 "created": {
@@ -835,7 +895,9 @@
     },
     "/vdps/bulk": {
       "post": {
-        "tags": ["virtual datapoints"],
+        "tags": [
+          "virtual datapoints"
+        ],
         "summary": "change bulk vdps",
         "description": "",
         "operationId": "vdpsPostBulk",
@@ -867,7 +929,9 @@
         }
       ],
       "get": {
-        "tags": ["virtual datapoints"],
+        "tags": [
+          "virtual datapoints"
+        ],
         "operationId": "vdpGet",
         "responses": {
           "200": {
@@ -886,7 +950,9 @@
         }
       },
       "delete": {
-        "tags": ["virtual datapoints"],
+        "tags": [
+          "virtual datapoints"
+        ],
         "operationId": "vdpDelete",
         "responses": {
           "200": {
@@ -910,7 +976,9 @@
         }
       },
       "patch": {
-        "tags": ["virtual datapoints"],
+        "tags": [
+          "virtual datapoints"
+        ],
         "operationId": "vdpPatch",
         "parameters": [
           {
@@ -951,9 +1019,13 @@
     },
     "/backup": {
       "get": {
-        "tags": ["backup"],
+        "tags": [
+          "backup"
+        ],
         "operationId": "backupGet",
-        "produces": ["application/x-binary"],
+        "produces": [
+          "application/x-binary"
+        ],
         "responses": {
           "200": {
             "description": "Config file as JSON.",
@@ -965,9 +1037,13 @@
         }
       },
       "post": {
-        "tags": ["backup"],
+        "tags": [
+          "backup"
+        ],
         "operationId": "backupPost",
-        "consumes": ["multipart/form-data"],
+        "consumes": [
+          "multipart/form-data"
+        ],
         "parameters": [
           {
             "in": "formData",
@@ -989,9 +1065,13 @@
     },
     "/logs": {
       "get": {
-        "tags": ["/logs"],
+        "tags": [
+          "/logs"
+        ],
         "operationId": "logsGet",
-        "produce": ["application/x-binary"],
+        "produce": [
+          "application/x-binary"
+        ],
         "responses": {
           "200": {
             "description": "Log files as ZIP.",
@@ -1005,7 +1085,9 @@
     },
     "/mappings": {
       "get": {
-        "tags": ["mappings"],
+        "tags": [
+          "mappings"
+        ],
         "operationId": "mappingsGet",
         "responses": {
           "200": {
@@ -1017,7 +1099,9 @@
         }
       },
       "post": {
-        "tags": ["mappings"],
+        "tags": [
+          "mappings"
+        ],
         "operationId": "mapPost",
         "parameters": [
           {
@@ -1049,7 +1133,9 @@
     },
     "/mappings/bulk": {
       "post": {
-        "tags": ["mappings"],
+        "tags": [
+          "mappings"
+        ],
         "summary": "change bulk mappings",
         "description": "",
         "operationId": "mapPostBulk",
@@ -1081,7 +1167,9 @@
         }
       ],
       "get": {
-        "tags": ["mappings"],
+        "tags": [
+          "mappings"
+        ],
         "operationId": "mapGet",
         "description": "Return a single mapping object",
         "responses": {
@@ -1101,7 +1189,9 @@
         }
       },
       "patch": {
-        "tags": ["mappings"],
+        "tags": [
+          "mappings"
+        ],
         "operationId": "mapPatch",
         "parameters": [
           {
@@ -1131,7 +1221,9 @@
         }
       },
       "delete": {
-        "tags": ["mappings"],
+        "tags": [
+          "mappings"
+        ],
         "operationId": "mapDelete",
         "description": "Delete the selected map",
         "responses": {
@@ -1158,7 +1250,9 @@
     },
     "/deviceInfos": {
       "get": {
-        "tags": ["deviceInfos"],
+        "tags": [
+          "deviceInfos"
+        ],
         "description": "Get device information",
         "operationId": "deviceInfosGet",
         "responses": {
@@ -1171,7 +1265,9 @@
         }
       },
       "patch": {
-        "tags": ["deviceInfos"],
+        "tags": [
+          "deviceInfos"
+        ],
         "operationId": "deviceInfosPatch",
         "parameters": [
           {
@@ -1211,7 +1307,9 @@
         }
       ],
       "get": {
-        "tags": ["livedata"],
+        "tags": [
+          "livedata"
+        ],
         "description": "Get livedata for dataSource dataPoints",
         "operationId": "livedataDataSourceDataPointsGet",
         "responses": {
@@ -1256,7 +1354,9 @@
         }
       ],
       "get": {
-        "tags": ["livedata"],
+        "tags": [
+          "livedata"
+        ],
         "description": "Get livedata for dataSource dataPoint",
         "operationId": "livedataDataSourceDataPointGet",
         "responses": {
@@ -1280,7 +1380,9 @@
         }
       ],
       "get": {
-        "tags": ["livedata"],
+        "tags": [
+          "livedata"
+        ],
         "description": "Get livedata for vdps",
         "operationId": "livedataVirtualDataPointsGet",
         "responses": {
@@ -1318,7 +1420,9 @@
         }
       ],
       "get": {
-        "tags": ["livedata"],
+        "tags": [
+          "livedata"
+        ],
         "description": "Get livedata for vdp",
         "operationId": "livedataVirtualDataPointGet",
         "responses": {
@@ -1333,7 +1437,9 @@
     },
     "/systemInfo": {
       "get": {
-        "tags": ["systemInfo"],
+        "tags": [
+          "systemInfo"
+        ],
         "description": "Get system information",
         "operationId": "systemInfoGet",
         "responses": {
@@ -1355,12 +1461,14 @@
     },
     "/systemInfo/update": {
       "get": {
-        "tags": ["systemInfo"],
-        "description": "Update all containers if possible",
-        "operationId": "updateContainerGet",
+        "tags": [
+          "systemInfo"
+        ],
+        "description": "Trigger azure function 'get-iotflex-updates'",
+        "operationId": "updateGet",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Update Found"
           },
           "204": {
             "description": "Request successfully but no updates available"
@@ -1382,7 +1490,9 @@
     },
     "systemInfo/environment": {
       "get": {
-        "tags": ["systemInfo"],
+        "tags": [
+          "systemInfo"
+        ],
         "description": "Get system environment",
         "operationId": "systemEnvironmentGet",
         "responses": {
@@ -1407,7 +1517,9 @@
             }
           }
         ],
-        "tags": ["terms-and-conditions"],
+        "tags": [
+          "terms-and-conditions"
+        ],
         "description": "Get terms-and-conditions by lang",
         "operationId": "termsAndConditionsGet",
         "responses": {
@@ -1436,7 +1548,9 @@
             }
           }
         ],
-        "tags": ["terms-and-conditions"],
+        "tags": [
+          "terms-and-conditions"
+        ],
         "description": "Accept terms-and-conditions",
         "operationId": "termsAndConditionsPost",
         "responses": {
@@ -1448,7 +1562,9 @@
     },
     "/templates": {
       "get": {
-        "tags": ["templates"],
+        "tags": [
+          "templates"
+        ],
         "description": "Get templates information",
         "operationId": "templatesGetHandler",
         "responses": {
@@ -1463,7 +1579,9 @@
     },
     "/templates/status": {
       "get": {
-        "tags": ["templates"],
+        "tags": [
+          "templates"
+        ],
         "description": "Get templates status information",
         "operationId": "templatesGetStatusHandler",
         "responses": {
@@ -1478,7 +1596,9 @@
     },
     "/templates/apply": {
       "post": {
-        "tags": ["templates"],
+        "tags": [
+          "templates"
+        ],
         "description": "Applies templates settings",
         "operationId": "templatesApplyPostHandler",
         "parameters": [
@@ -1500,7 +1620,9 @@
     },
     "/templates/skip": {
       "post": {
-        "tags": ["templates"],
+        "tags": [
+          "templates"
+        ],
         "description": "Skips templates settings",
         "operationId": "templatesSkipPostHandler",
         "responses": {
@@ -1512,7 +1634,9 @@
     },
     "/messenger/configuration": {
       "get": {
-        "tags": ["messenger"],
+        "tags": [
+          "messenger"
+        ],
         "description": "Get messenger server configuration",
         "operationId": "messengerConfigurationGetHandler",
         "responses": {
@@ -1525,7 +1649,9 @@
         }
       },
       "post": {
-        "tags": ["messenger"],
+        "tags": [
+          "messenger"
+        ],
         "description": "Update messenger server configuration",
         "operationId": "messengerConfigurationPostHandler",
         "responses": {
@@ -1537,7 +1663,9 @@
     },
     "/messenger/status": {
       "get": {
-        "tags": ["messenger"],
+        "tags": [
+          "messenger"
+        ],
         "description": "Get messenger server status",
         "operationId": "messengerStatusGetHandler",
         "responses": {
@@ -1552,7 +1680,9 @@
     },
     "/messenger/metadata": {
       "get": {
-        "tags": ["messenger"],
+        "tags": [
+          "messenger"
+        ],
         "description": "Get messenger server metadata",
         "operationId": "messengerMetadataGetHandler",
         "responses": {
@@ -1625,7 +1755,10 @@
     },
     "virtualDataPointType": {
       "type": "object",
-      "required": ["sources", "operationType"],
+      "required": [
+        "sources",
+        "operationType"
+      ],
       "properties": {
         "sources": {
           "type": "array",
@@ -1658,7 +1791,9 @@
         },
         "enumeration": {
           "type": "object",
-          "required": ["items"],
+          "required": [
+            "items"
+          ],
           "properties": {
             "defaultValue": {
               "type": "string"
@@ -1667,7 +1802,11 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["priority", "source", "returnValueIfTrue"],
+                "required": [
+                  "priority",
+                  "source",
+                  "returnValueIfTrue"
+                ],
                 "minItems": 2,
                 "properties": {
                   "priority": {
@@ -1692,7 +1831,12 @@
     },
     "sourcedatapoint": {
       "type": "object",
-      "required": ["name", "address", "readFrequency", "type"],
+      "required": [
+        "name",
+        "address",
+        "readFrequency",
+        "type"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -1709,7 +1853,11 @@
         },
         "type": {
           "type": "string",
-          "enum": ["s7", "nck", "nck-pl"]
+          "enum": [
+            "s7",
+            "nck",
+            "nck-pl"
+          ]
         }
       }
     },
@@ -1742,7 +1890,11 @@
       }
     },
     "datasinkArrayItem": {
-      "required": ["name", "id", "href"],
+      "required": [
+        "name",
+        "id",
+        "href"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -1759,7 +1911,11 @@
       }
     },
     "virtualdatapointArrayItem": {
-      "required": ["name", "id", "href"],
+      "required": [
+        "name",
+        "id",
+        "href"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -1814,7 +1970,12 @@
       }
     },
     "datasourceArrayItem": {
-      "required": ["name", "id", "href", "enabled"],
+      "required": [
+        "name",
+        "id",
+        "href",
+        "enabled"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -1855,7 +2016,10 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["none", "userpassword"]
+          "enum": [
+            "none",
+            "userpassword"
+          ]
         },
         "userName": {
           "type": "string"
@@ -1891,7 +2055,9 @@
         },
         "type": {
           "type": "string",
-          "enum": ["event"]
+          "enum": [
+            "event"
+          ]
         },
         "map": {
           "type": "array",
@@ -1921,7 +2087,9 @@
         },
         "type": {
           "type": "string",
-          "enum": ["event"]
+          "enum": [
+            "event"
+          ]
         }
       }
     },
@@ -1985,7 +2153,10 @@
     },
     "map": {
       "type": "object",
-      "required": ["source", "target"],
+      "required": [
+        "source",
+        "target"
+      ],
       "properties": {
         "source": {
           "type": "string"
@@ -2032,7 +2203,10 @@
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["connected", "disconnected"]
+          "enum": [
+            "connected",
+            "disconnected"
+          ]
         }
       }
     },
@@ -2107,7 +2281,10 @@
     },
     "loginRequest": {
       "type": "object",
-      "required": ["userName", "password"],
+      "required": [
+        "userName",
+        "password"
+      ],
       "properties": {
         "userName": {
           "type": "string"
@@ -2272,16 +2449,24 @@
             "entityProp": "entityValue"
           }
         },
-        "deleted": ["entityId"]
+        "deleted": [
+          "entityId"
+        ]
       }
     },
     "envResponse": {
       "type": "object",
-      "required": ["env"],
+      "required": [
+        "env"
+      ],
       "properties": {
         "env": {
           "type": "string",
-          "enum": ["stag", "dev", "prod"]
+          "enum": [
+            "stag",
+            "dev",
+            "prod"
+          ]
         }
       }
     },
@@ -2322,7 +2507,10 @@
     },
     "messengerStatus": {
       "type": "object",
-      "required": ["server", "registration"],
+      "required": [
+        "server",
+        "registration"
+      ],
       "properties": {
         "server": {
           "type": "string",
@@ -2335,7 +2523,12 @@
         },
         "registration": {
           "type": "string",
-          "enum": ["unknown", "not_registered", "registered", "error"]
+          "enum": [
+            "unknown",
+            "not_registered",
+            "registered",
+            "error"
+          ]
         },
         "registrationErrorReason": {
           "type": "string",
@@ -2352,7 +2545,11 @@
     },
     "messengerMetadata": {
       "type": "object",
-      "required": ["organizations", "timezones", "models"],
+      "required": [
+        "organizations",
+        "timezones",
+        "models"
+      ],
       "properties": {
         "organizations": {
           "type": "array",

@@ -99,6 +99,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
   private configFolder = path.join(this.mdcFolder, '/config');
   private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
+  private sslFolder = path.join(this.mdcFolder, 'sslkeys');
 
   private configName = 'config.json';
   private authUsersConfigName = 'auth.json';
@@ -306,7 +307,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Factory reset
    */
   public async factoryResetConfiguration() {
-    //TBD catching any promise rejection?
     const authConfig = path.join(this.configFolder, this.authUsersConfigName);
 
     const confAgentAddress =
@@ -416,6 +416,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     await promisefs.unlink(authConfig);
     await promisefs.unlink(path.join(this.keyFolder, this.privateKeyName));
     await promisefs.unlink(path.join(this.keyFolder, this.publicKeyName));
+    await promisefs.unlink(path.join(this.sslFolder, 'ssl.crt'));
+    await promisefs.unlink(path.join(this.sslFolder, 'ssl_private.key'));
 
     if (fs.existsSync(`${this.mdcFolder}/certs`)) {
       await promisefs.rmdir(`${this.mdcFolder}/certs`, {

@@ -35,7 +35,7 @@ let RESPONSE_ADAPTERS: NetworkAdapter[] = [
       ipAddresses: [
         {
           Address: '',
-          Netmask: ''
+          Netmask: '32'
         }
       ],
       defaultGateway: '',
@@ -66,7 +66,7 @@ let RESPONSE_ADAPTERS: NetworkAdapter[] = [
       ipAddresses: [
         {
           Address: '192.168.214.230',
-          Netmask: '255.255.255.0'
+          Netmask: '24'
         }
       ],
       defaultGateway: '192.168',
@@ -165,9 +165,12 @@ export class NetworkService {
       const response = await this.configurationAgentHttpMockupService.get<
         NetworkAdapter[]
       >(`/network/adapters`, undefined, RESPONSE_ADAPTERS);
+
+      const verifiedAdapters = this._deserializeNetworkAdapters(response);
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.adapters = response;
+        state.adapters = verifiedAdapters;
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
@@ -183,9 +186,8 @@ export class NetworkService {
       state.status = Status.Loading;
     });
 
-    const verifiedObj = this._serializeNetworkAdapters(obj);
-
     try {
+      const verifiedObj = this._serializeNetworkAdapters(obj);
       this.setMockDataById(verifiedObj);
       const response =
         await this.configurationAgentHttpMockupService.put<NetworkAdapter>(
@@ -368,7 +370,51 @@ export class NetworkService {
         };
       }
     }
-    return adapter;
+    const maskNodes: string[] =
+      adapter.ipv4Settings.ipAddresses[0].Netmask.match(/(\d+)/g);
+    let cidr = 0;
+    for (let i in maskNodes) {
+      cidr += ((+maskNodes[i] >>> 0).toString(2).match(/1/g) || []).length;
+    }
+    return {
+      ...adapter,
+      ipv4Settings: {
+        ...adapter.ipv4Settings,
+        ipAddresses: [
+          {
+            Address: adapter.ipv4Settings.ipAddresses[0].Address,
+            Netmask: String(cidr)
+          }
+        ]
+      }
+    };
+  }
+  private _deserializeNetworkAdapters(
+    adapters: NetworkAdapter[]
+  ): NetworkAdapter[] {
+    return adapters.map((adapter) => {
+      const mask =
+        0xffffffff <<
+        (32 - Number(adapter.ipv4Settings.ipAddresses[0].Netmask));
+      const maskStr = [
+        mask >>> 24,
+        (mask >> 16) & 0xff,
+        (mask >> 8) & 0xff,
+        mask & 0xff
+      ].join('.');
+      return {
+        ...adapter,
+        ipv4Settings: {
+          ...adapter.ipv4Settings,
+          ipAddresses: [
+            {
+              Address: adapter.ipv4Settings.ipAddresses[0].Address,
+              Netmask: maskStr
+            }
+          ]
+        }
+      };
+    });
   }
 
   private _serializeNetworkTimestamp(

@@ -92,11 +92,7 @@ export class DataHubAdapter {
       return;
     }
     if (!isDesiredProps(this.deviceTwin.properties.desired)) {
-      winston.warn(
-        `${logPrefix} no desired properties found. ${JSON.stringify(
-          this.deviceTwin
-        )}`
-      );
+      winston.warn(`${logPrefix} no desired properties found.`);
       return;
     }
 

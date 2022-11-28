@@ -51,7 +51,7 @@ const dataHubClientMock = {
 };
 
 const logFunc = (msg) => {
-  console.log(msg);
+  // console.log(msg);
 };
 const winstonMock = {
   winston: jest.fn(), // Constructor

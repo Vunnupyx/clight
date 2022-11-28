@@ -1,7 +1,41 @@
 import path from 'path';
 import fs from 'fs';
-jest.mock('winston');
+import * as opcua from 'node-opcua';
+
 jest.mock('node-opcua-pki');
+
+const mockOpcuaServerShutdown = jest
+  .fn()
+  .mockImplementation(() => Promise.resolve());
+
+/*jest.mock('node-opcua', () => ({
+  OPCUAServer: jest.fn()
+}));*/
+
+/*jest.mock('node-opcua', () => {
+  console.log('mockkk');
+  return jest.fn().mockImplementation(() => ({
+    shutdown: mockOpcuaServerShutdown
+  }));
+});*/
+
+/*jest.mock('node-opcua', () => ({
+  ...jest.requireActual('node-opcua'),
+  shutdown: mockOpcuaServerShutdown
+}));
+*/
+function log(m) {
+  //console.log(m)
+}
+const winstonMock = {
+  winston: jest.fn(), // Constructor
+  info: jest.fn(log),
+  debug: jest.fn(log),
+  warn: jest.fn(log)
+};
+jest.doMock('winston', () => {
+  return winstonMock;
+});
 
 const configManagerMock = {
   runtimeConfig: {
@@ -95,6 +129,8 @@ jest.mock('fs-extra', () => {
 });
 
 import { OPCUAAdapter } from '..';
+import { System } from '../../../../System';
+import { AdapterError, NorthBoundError } from '../../../../../common/errors';
 
 describe(`OPCUAAdapter Test`, () => {
   let testAdapter: OPCUAAdapter;
@@ -120,10 +156,11 @@ describe(`OPCUAAdapter Test`, () => {
       });
     });
 
-    describe(`succeeded `, () => {
+    describe(`succeeds`, () => {
       it(`with valid configManager `, () => {
         testAdapter = new OPCUAAdapter(configManagerMock as any);
         expect(testAdapter).toBeInstanceOf(OPCUAAdapter);
+        expect(testAdapter).toBe(testAdapter);
       });
 
       it(`with correct XML initialization (replacing DummyMachineToolName)`, async () => {
@@ -134,6 +171,8 @@ describe(`OPCUAAdapter Test`, () => {
       });
 
       it(`with correct custom data points, if any exists`, async () => {
+        const hostname = await new System().getHostname();
+
         const address = 'TEST_NODE_ID';
         const name = 'TEST_DISP_NAME';
         const dataTypeInConfig = 'string';
@@ -155,12 +194,12 @@ describe(`OPCUAAdapter Test`, () => {
 
         expect(
           writtenXMLFile!.includes(
-            `<Reference ReferenceType="Organizes">ns=1;s=${address}</Reference>`
+            `<Reference ReferenceType="Organizes">ns=1;s=IoTflex</Reference>`
           )
         ).toBeTruthy();
         expect(
           writtenXMLFile!.includes(
-            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${address}" BrowseName="2:${address}">`
+            `<UAVariable DataType="${dataType}" NodeId="ns=1;s=${hostname}.${address}" BrowseName="2:${address}">`
           )
         ).toBeTruthy();
         expect(
@@ -202,66 +241,108 @@ describe(`OPCUAAdapter Test`, () => {
           writtenXMLFile!.includes(`<DisplayName>${name}</DisplayName>`)
         ).toBeFalsy();
       });
+    });
+  });
+  describe(`initializing`, () => {
+    beforeEach(() => {
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+    });
 
-      describe(`TODO`, () => {
-        beforeEach(() => {
-          testAdapter = new OPCUAAdapter(configManagerMock as any);
-        });
+    it(`successful`, async () => {
+      await testAdapter.init();
+      expect(testAdapter).toBe(testAdapter);
+      expect(OPCUAServerMock.initialize).toHaveBeenCalled();
+    });
+  });
+  describe(`starting`, () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+      await testAdapter.init();
+    });
 
-        xit(`init returns same object`, async () => {
-          testAdapter.init().then((returned) => {
-            expect(returned).toBe(testAdapter);
-          });
-        });
-        it(`init invoke OPCUAServer.initialize`, async () => {
-          testAdapter.init().then(() => {
-            expect(OPCUAServerMock.initialize).toHaveBeenCalled();
-          });
-        });
+    it(`start, without previous init, rejects`, async () => {
+      testAdapter
+        .start()
+        .catch((err) => expect(err).toBeInstanceOf(NorthBoundError));
+    });
 
-        // it(`start, without previous init, rejects`, async () => {
-        //   testAdapter
-        //     .start()
-        //     .catch((err) => expect(err).toBeInstanceOf(AdapterError));
-        // });
+    it(`starting adapter`, (done) => {
+      testAdapter
+        .start()
+        .then(() => done())
+        .catch(() => done.fail());
+    });
 
-        describe(`after init`, () => {
-          beforeEach(async () => {
-            jest.clearAllMocks();
-            await testAdapter.init();
-          });
+    it(`starting already running adapter`, async () => {
+      await testAdapter.start();
+      expect(testAdapter.isRunning).toBeTruthy();
+      expect(winstonMock.info).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'adapter successfully started. The primary server endpoint url is'
+        )
+      );
+      await testAdapter.start();
+      expect(testAdapter.isRunning).toBeTruthy();
+      expect(winstonMock.debug).toHaveBeenCalledWith(
+        expect.stringContaining('try to start adapter but already running')
+      );
+    });
+  });
 
-          afterEach(() => {
-            jest.clearAllMocks();
-          });
+  describe(`stopping`, () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+      await testAdapter.init();
+    });
 
-          it(`starting adapter`, (done) => {
-            testAdapter
-              .start()
-              .then(() => done())
-              .catch(() => done.fail());
-          });
-          // TODO BUG: FIXME!
-          //   it(`starting already running adapter`, async (done) => {
-          //     await testAdapter.start();
-          //     await testAdapter.start();
-          //     expect(winston.info).toHaveBeenCalledWith(
-          //       'OPCUAAdapter::start try to start adapter but already running.'
-          //     );
-          //     done();
-          //   });
-        });
+    it(`stopping, without starting first`, async () => {
+      await testAdapter.stop();
+      expect(testAdapter.isRunning).toBeFalsy();
+      expect(winstonMock.debug).toHaveBeenCalledWith(
+        expect.stringContaining('try to stop a already stopped adapter')
+      );
+    });
+
+    it(`stopping already running adapter`, async () => {
+      const mock = jest.spyOn(opcua, 'OPCUAServer');
+      mock.mockReturnValue({
+        shutdown: mockOpcuaServerShutdown
       });
+
+      await testAdapter.start();
+      expect(testAdapter.isRunning).toBeTruthy();
+      await testAdapter.stop();
+      expect(testAdapter.isRunning).toBeFalsy();
+      expect(mockOpcuaServerShutdown).toHaveBeenCalledWith(1000); //1000 is default: shutdownTimeoutMs
+
+      expect(winstonMock.info).toHaveBeenCalledWith(
+        expect.stringContaining('adapter stopped')
+      );
+    });
+
+    it(`stopping already running adapter with a delay`, async () => {
+      await testAdapter.start();
+      expect(testAdapter.isRunning).toBeTruthy();
+      await testAdapter.stop(200);
+      expect(mockOpcuaServerShutdown).toHaveBeenCalledWith(200);
+      expect(testAdapter.isRunning).toBeFalsy();
+
+      expect(winstonMock.info).toHaveBeenCalledWith(
+        expect.stringContaining('adapter stopped')
+      );
     });
   });
 
   describe('findNode', () => {
     it('returns the node by using correct prefix', async () => {
+      const hostname = await new System().getHostname();
       testAdapter = new OPCUAAdapter(configManagerMock as any);
       await testAdapter.init();
 
       let node = await testAdapter.findNode('Variable1');
-      expect(node?.nodeId).toBe('ns=7;s=DM000000000000.Variable1');
+      expect(node?.nodeId).toBe(`ns=7;s=${hostname}.Variable1`);
     });
 
     it('returns null if no node is found', async () => {

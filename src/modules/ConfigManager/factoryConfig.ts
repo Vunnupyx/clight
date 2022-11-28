@@ -238,13 +238,7 @@ export const factoryConfig: IConfig = {
         }
       ],
       enabled: true,
-      protocol: 'datahub',
-      datahub: {
-        provisioningHost: 'celosnext-dps.azure-devices-provisioning.net',
-        scopeId: '',
-        regId: '',
-        symKey: ''
-      }
+      protocol: 'datahub'
     },
     {
       dataPoints: [

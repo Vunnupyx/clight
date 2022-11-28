@@ -1,5 +1,6 @@
 import { Message, Twin, ModuleClient } from 'azure-iot-device';
 import { MqttWs as IotHubTransport } from 'azure-iot-device-mqtt';
+import { inspect } from 'util';
 
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
@@ -180,8 +181,9 @@ export class DataHubAdapter {
       .then((twin) => {
         this.deviceTwin = twin;
         winston.debug(
-          `${logPrefix} got device twin. Register to desired services`
+          `${logPrefix} got device twin. Register to desired services:`
         );
+        winston.error(inspect(this.deviceTwin));
         twin.on('properties.desired.services', async (data) => {
           winston.info(`${logPrefix} received desired services update.`);
           winston.debug(`${logPrefix} ${JSON.stringify(data)}`);

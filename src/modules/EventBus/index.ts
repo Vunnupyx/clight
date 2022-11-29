@@ -53,11 +53,9 @@ export class EventBus<TEventType> {
    * @param cb The callback that should be removed
    */
   public removeEventListener(cb: TSubscriberFn<TEventType>): void {
-    const index = this.callbacks.findIndex((_cb) => {
-      _cb === cb;
-    });
-    if (index) {
-      this.callbacks = this.callbacks.splice(index, 1);
+    const index = this.callbacks.findIndex((_cb) => _cb === cb);
+    if (index > -1) {
+      this.callbacks.splice(index, 1);
     }
   }
 

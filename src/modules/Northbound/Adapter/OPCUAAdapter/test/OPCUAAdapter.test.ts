@@ -1,29 +1,15 @@
 import path from 'path';
 import fs from 'fs';
-import * as opcua from 'node-opcua';
 
 jest.mock('node-opcua-pki');
+jest.mock('bcrypt', () => ({
+  compare: jest.fn()
+}));
 
 const mockOpcuaServerShutdown = jest
   .fn()
   .mockImplementation(() => Promise.resolve());
 
-/*jest.mock('node-opcua', () => ({
-  OPCUAServer: jest.fn()
-}));*/
-
-/*jest.mock('node-opcua', () => {
-  console.log('mockkk');
-  return jest.fn().mockImplementation(() => ({
-    shutdown: mockOpcuaServerShutdown
-  }));
-});*/
-
-/*jest.mock('node-opcua', () => ({
-  ...jest.requireActual('node-opcua'),
-  shutdown: mockOpcuaServerShutdown
-}));
-*/
 function log(m) {
   //console.log(m)
 }
@@ -59,6 +45,7 @@ const configManagerMock = {
 const OPCUAServerMock = {
   start: jest.fn().mockImplementation(() => Promise.resolve()),
   stop: jest.fn(),
+  shutdown: mockOpcuaServerShutdown,
   initialize: jest.fn().mockImplementation(() => {
     OPCUAServerMock.initialized = true;
     return Promise.resolve();
@@ -117,10 +104,9 @@ jest.mock('fs-extra', () => {
     copy: jest.fn(),
     rm: jest.fn(),
     readFileSync: jest.fn(() =>
-      fs.readFileSync(
-        path.join(process.cwd(), '/_mdclight/opcua_nodeSet/dmgmori-umati.xml'),
-        { encoding: 'utf-8' }
-      )
+      fs.readFileSync(path.join(__dirname, 'mock.xml'), {
+        encoding: 'utf-8'
+      })
     ),
     writeFileSync: jest.fn(async (name, data) => {
       writtenXMLFile = data;
@@ -167,7 +153,7 @@ describe(`OPCUAAdapter Test`, () => {
         testAdapter = new OPCUAAdapter(configManagerMock as any);
         await testAdapter.init();
         expect(writtenXMLFile!.includes('DummyMachineToolName')).toBeFalsy();
-        expect(writtenXMLFile!.includes('DM000000000000')).toBeTruthy();
+        expect(writtenXMLFile!.includes('dm000000000000')).toBeTruthy();
       });
 
       it(`with correct custom data points, if any exists`, async () => {
@@ -306,11 +292,6 @@ describe(`OPCUAAdapter Test`, () => {
     });
 
     it(`stopping already running adapter`, async () => {
-      const mock = jest.spyOn(opcua, 'OPCUAServer');
-      mock.mockReturnValue({
-        shutdown: mockOpcuaServerShutdown
-      });
-
       await testAdapter.start();
       expect(testAdapter.isRunning).toBeTruthy();
       await testAdapter.stop();

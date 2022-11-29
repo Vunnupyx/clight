@@ -2,6 +2,11 @@ import {
   IDataSinkConfig,
   IDataSourceConfig
 } from '../../ConfigManager/interfaces';
+import { DataPointMapper } from '..';
+import { ConfigManager } from '../../ConfigManager';
+import emptyDefaultConfig from '../../../../_mdclight/runtime-files/templates/empty.json';
+import { EventBus } from '../../EventBus';
+import { DataSourceProtocols } from '../../../common/interfaces';
 
 jest.mock('fs', () => {
   return {
@@ -11,25 +16,17 @@ jest.mock('fs', () => {
   };
 });
 jest.mock('winston');
-
-import { DataPointMapper } from '..';
-import { ConfigManager, emptyDefaultConfig } from '../../ConfigManager';
-import { EventBus } from '../../EventBus';
-import {
-  DataSourceProtocols,
-  IErrorEvent,
-  ILifecycleEvent
-} from '../../../common/interfaces';
+jest.mock('../../EventBus');
+jest.mock('../../ConfigManager');
 
 describe('Test DataPointMapper', () => {
   test("should map a source to it's target", async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<IErrorEvent>(),
-      lifecycleEventsBus: new EventBus<ILifecycleEvent>()
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSource: IDataSourceConfig = {
-      name: '',
       protocol: DataSourceProtocols.S7,
       enabled: true,
       dataPoints: [
@@ -43,7 +40,6 @@ describe('Test DataPointMapper', () => {
       ]
     };
     const dataSink: IDataSinkConfig = {
-      name: '',
       protocol: '',
       enabled: true,
       dataPoints: [
@@ -61,7 +57,7 @@ describe('Test DataPointMapper', () => {
           target: 'target1'
         }
       ]
-    };
+    } as any;
 
     const mapper = new DataPointMapper(config.config.mapping);
     config.emit('configsLoaded');

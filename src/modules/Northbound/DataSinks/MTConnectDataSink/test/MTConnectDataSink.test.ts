@@ -5,7 +5,8 @@ import {
   DataSourceProtocols,
   EventLevels
 } from '../../../../../common/interfaces';
-import { ConfigManager, emptyDefaultConfig } from '../../../../ConfigManager';
+import { ConfigManager } from '../../../../ConfigManager';
+import emptyDefaultConfig from '../../../../../../_mdclight/runtime-files/templates/empty.json';
 import {
   IDataSinkConfig,
   IDataSourceConfig
@@ -20,6 +21,7 @@ jest.mock('winston');
 jest.mock('../../../MessengerManager');
 jest.mock('../../../Adapter/MTConnectAdapter');
 jest.mock('../../../../ConfigManager');
+jest.mock('../../../../EventBus');
 
 let addDataItemMock = jest.fn();
 (ConfigManager as any).mockImplementation(() => {
@@ -67,8 +69,7 @@ describe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true,
-      isLicensed: true
+      termsAndConditionsAccepted: true
     });
 
     dataSink.init();
@@ -86,8 +87,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should map bool values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>() as any,
-      lifecycleEventsBus: new EventBus<null>() as any
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -115,15 +116,14 @@ describe('Test MTConnectDataSink', () => {
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
       mapping: [{ source: 'source', target: 'target', id: '' }]
-    };
+    } as any;
 
     const dataSink = new MTConnectDataSink({
       mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true,
-      isLicensed: true
+      termsAndConditionsAccepted: true
     });
 
     dataSink.init();
@@ -148,8 +148,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should map enum values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>() as any,
-      lifecycleEventsBus: new EventBus<null>() as any
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -193,15 +193,14 @@ describe('Test MTConnectDataSink', () => {
         { source: 'source1', target: 'target', mapValue: '0', id: '' },
         { source: 'source2', target: 'target', mapValue: '1', id: '' }
       ]
-    };
+    } as any;
 
     const dataSink = new MTConnectDataSink({
       mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true,
-      isLicensed: true
+      termsAndConditionsAccepted: true
     });
 
     dataSink.init();
@@ -236,8 +235,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should not change string or number values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>() as any,
-      lifecycleEventsBus: new EventBus<null>() as any
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -286,15 +285,14 @@ describe('Test MTConnectDataSink', () => {
         { source: 'source1', target: 'target2', id: '' },
         { source: 'source2', target: 'target1', id: '' }
       ]
-    };
+    } as any;
 
     const dataSink = new MTConnectDataSink({
       mapping: config.config.mapping,
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true,
-      isLicensed: true
+      termsAndConditionsAccepted: true
     });
 
     dataSink.init();
@@ -334,8 +332,8 @@ describe('Test MTConnectDataSink', () => {
     // There is no available or unavailable value of .value.
     // onLifecycleEvent not implemented.
     const config = new ConfigManager({
-      errorEventsBus: new EventBus<null>() as any,
-      lifecycleEventsBus: new EventBus<null>() as any
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSinkConfig: IDataSinkConfig = {
@@ -349,8 +347,7 @@ describe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true,
-      isLicensed: true
+      termsAndConditionsAccepted: true
     });
 
     dataSink.init();

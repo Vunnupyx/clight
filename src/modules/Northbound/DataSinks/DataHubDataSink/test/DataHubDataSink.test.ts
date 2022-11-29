@@ -285,26 +285,6 @@ describe('DataHubDataSink', () => {
       configMock.dataPoints = [];
     });
 
-    it('does not instantiate with missing license', async () => {
-      datasinkUUT = new DataHubDataSink({
-        ...dataHubDataSinkOptions,
-        isLicensed: false
-      });
-      return datasinkUUT.init().then(() => {
-        expect(winstonMock.debug).toBeCalledWith(
-          expect.stringContaining('initializing')
-        );
-        expect(dataHubAdapterMock.init).not.toBeCalled();
-        expect(dataHubAdapterMock.start).not.toBeCalled();
-        expect(datasinkUUT.getCurrentStatus()).toBe(
-          LifecycleEventStatus.NoLicense
-        );
-        expect(winstonMock.warn).toBeCalledWith(
-          expect.stringContaining('no valid license found')
-        );
-      });
-    });
-
     it('does not instantiate when sink is not enabled', async () => {
       datasinkUUT = new DataHubDataSink({
         ...dataHubDataSinkOptions,
@@ -384,8 +364,7 @@ describe('DataHubDataSink', () => {
 
     it('disconnects correctly', async () => {
       datasinkUUT = new DataHubDataSink({
-        ...dataHubDataSinkOptions,
-        isLicensed: false
+        ...dataHubDataSinkOptions
       });
 
       return datasinkUUT.disconnect().then(() => {
@@ -398,8 +377,7 @@ describe('DataHubDataSink', () => {
 
     it('shuts down correctly', async () => {
       datasinkUUT = new DataHubDataSink({
-        ...dataHubDataSinkOptions,
-        isLicensed: false
+        ...dataHubDataSinkOptions
       });
 
       return datasinkUUT.shutdown().then(() => {

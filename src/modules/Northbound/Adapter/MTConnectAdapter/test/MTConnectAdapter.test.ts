@@ -24,7 +24,7 @@ const mockNet = {
 };
 
 function log(m) {
-  console.log(m);
+  //console.log(m);
 }
 
 const winstonMock = {

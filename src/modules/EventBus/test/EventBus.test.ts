@@ -13,7 +13,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus<TestEvent>();
+    const bus = new EventBus();
 
     bus.addEventListener(testCb1);
     bus.addEventListener(testCb2);
@@ -39,7 +39,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus<TestEvent>();
+    const bus = new EventBus();
 
     bus.addEventListener(testCb1);
     bus.addEventListener(testCb2);

@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { ConfigManager } from '../../../../../ConfigManager';
 import winston from 'winston';
 import { ModuleClient, Message } from 'azure-iot-device';
-import { MqttWs } from 'azure-iot-provisioning-device-mqtt';
+import { Mqtt as IotHubTransport } from 'azure-iot-device-mqtt';
 import { inspect } from 'util';
 
 let configManager: ConfigManager;
@@ -44,12 +44,11 @@ async function triggerAzureFunction(request: Request, response: Response) {
   if (!moduleClient) {
     winston.error(`moduleClient unknown`);
     moduleClient =
-      (await ModuleClient.fromEnvironment(MqttWs).catch(() => {
+      (await ModuleClient.fromEnvironment(IotHubTransport).catch(() => {
         winston.error(`${logPrefix} no azure module client available.`);
         response.status(500).json({
           msg: `Update mechanisms not available.`
         });
-        return;
       })) || null;
     winston.error(`module client gebaut: ${inspect(moduleClient)}`);
   }
@@ -66,12 +65,22 @@ async function triggerAzureFunction(request: Request, response: Response) {
         "module": "app-manager-api",
         "interface": "",
         "component": "",
-        "payload": "{\"machinenumber\":\"0000\",\"command\":\"ping\",\"commandId\":\"57d8fe66-140f-49ec-b367-cfcadc6be61f\",\"methodName\":\"command-response\"}"
+        "payload": "{
+          "machinenumber": "0000",
+          "command": "ping",
+          "commandId": "57d8fe66-140f-49ec-b367-cfcadc6be61f",
+          "methodName ": "command-response"
+        }"
     }
    */
   const buf = Buffer.from([]);
-  const msg = new Message(buf);
-  msg.properties.add('command', azureFuncName);
+  const payload = {
+    machinenumber: 'CODESTYKE_DUMMY',
+    command: 'get-iotflex-updates',
+    commandId: commandId,
+    methodName: uniqueMethodName
+  };
+  const msg = new Message(JSON.stringify(payload));
   await moduleClient
     .sendEvent(msg)
     .then((res) => {

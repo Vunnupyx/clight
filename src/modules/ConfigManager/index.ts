@@ -333,7 +333,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       body: JSON.stringify(factoryNtp)
     });
 
-    const factoryNetworkAdapter = [
+    const factoryNetworkAdapters = [
       {
         id: 'enoX1',
         displayName: '',
@@ -399,7 +399,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     ];
 
     await Promise.all(
-      factoryNetworkAdapter.map((adapterSettings) =>
+      factoryNetworkAdapters.map((adapterSettings) =>
         fetch(`${confAgentAddress}/network/adapters/${adapterSettings.id}`, {
           method: 'PUT',
           body: JSON.stringify(adapterSettings)

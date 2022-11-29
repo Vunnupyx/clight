@@ -103,7 +103,6 @@ describe('Test MTCAdapter', () => {
 
     const listenForClients = mockServer.on.mock.calls[0][1];
 
-    console.log(listenForClients);
     // Mock socket connect
     await listenForClients(mockSocket);
     await adapter.sendChanged();

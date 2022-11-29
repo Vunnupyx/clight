@@ -64,3 +64,9 @@ export interface NetworkDateTime {
 export interface NetworkTimestamp {
   Timestamp: string;
 }
+
+export interface NetworkNtpReachable {
+  address: string;
+  reachable: boolean;
+  valid: boolean;
+}

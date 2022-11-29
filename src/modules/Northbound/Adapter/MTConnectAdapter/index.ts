@@ -261,11 +261,11 @@ export class MTConnectAdapter {
     if (this._running) {
       return new Promise((resolve) => {
         this.server.close(() => {
-          this._running = false;
           resolve();
         });
       });
     }
+    this._running = false;
     return;
   }
 

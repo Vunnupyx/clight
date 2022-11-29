@@ -24,7 +24,6 @@ export class SynchronousIntervalScheduler {
    */
   public shutdown() {
     clearInterval(this.internalCycleInterval);
-    SynchronousIntervalScheduler.instance = undefined; // TBD: If after shutdown a Scheduler instance is taken, it will not start the timer otherwise
   }
 
   /**

@@ -5,7 +5,8 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import winston from 'winston';
 import { ModuleClient } from 'azure-iot-device';
 import { MqttWs } from 'azure-iot-provisioning-device-mqtt';
-import { json } from 'body-parser';
+import { inspect } from 'util';
+import { utils } from 'node-opcua';
 
 let configManager: ConfigManager;
 let moduleClient: ModuleClient;
@@ -33,7 +34,7 @@ async function systemInfoGetHandler(request: Request, response: Response) {
  */
 async function triggerAzureFunction(request: Request, response: Response) {
   const logPrefix = `Systeminfo::triggerAzureFunction`;
-  winston.verbose(`${logPrefix} routes handler called.`);
+  winston.error(`${logPrefix} routes handler called.`);
   if (process.env.NODE_ENV === 'development') {
     const warn = `${logPrefix} development environment detected. Update mechanisms not available.`;
     winston.warn(warn);
@@ -56,20 +57,26 @@ async function triggerAzureFunction(request: Request, response: Response) {
   const uniqueMethodName = azureFuncName + '/' + commandId;
   const deviceId = process.env.IOTEDGE_DEVICEID;
 
+  winston.error(`moduleClient.onMethod`);
   moduleClient.onMethod(uniqueMethodName, (result) => {
     winston.info(
       `TESTING: GOT REPOSNE on ${uniqueMethodName}: ${JSON.stringify(result)}`
     );
     //TODO hier sollte der Callback stehen und der Response befüllt werden
   });
-  moduleClient.on('error', () => {});
+  moduleClient.on('error', (err) => {
+    winston.error(`ERROR!!!!: ${inspect(err)}`);
+    return response.status(500).json();
+  });
 
-  moduleClient.invokeMethod(deviceId, {
+  const re = await moduleClient.invokeMethod(deviceId, {
     methodName: azureFuncName,
     connectTimeoutInSeconds: 20,
     payload: null,
     responseTimeoutInSeconds: 20
   });
+
+  winston.error(inspect(re));
 
   /** Brauchen wir die? 
   moduleId: app-manager-api

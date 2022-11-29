@@ -39,10 +39,6 @@
       "description": "Everything about the deviceInfos."
     },
     {
-      "name": "networkConfig",
-      "description": "Everything about the network config."
-    },
-    {
       "name": "templates",
       "description": "Everything about the templates."
     },
@@ -365,8 +361,12 @@
               "properties": {
                 "created": {
                   "allOf": [
-                    { "$ref": "#/definitions/sourcedatapoint" },
-                    { "$ref": "#/definitions/uuid" }
+                    {
+                      "$ref": "#/definitions/sourcedatapoint"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
                   ]
                 },
                 "href": {
@@ -464,8 +464,12 @@
               "properties": {
                 "changed": {
                   "allOf": [
-                    { "$ref": "#/definitions/sourcedatapoint" },
-                    { "$ref": "#/definitions/uuid" }
+                    {
+                      "$ref": "#/definitions/sourcedatapoint"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
                   ]
                 },
                 "href": {
@@ -648,8 +652,12 @@
               "properties": {
                 "created": {
                   "allOf": [
-                    { "$ref": "#/definitions/dataPointType" },
-                    { "$ref": "#/definitions/uuid" }
+                    {
+                      "$ref": "#/definitions/dataPointType"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
                   ]
                 },
                 "href": {
@@ -718,8 +726,12 @@
             "description": "Response of a change request for a datapoint with given id",
             "schema": {
               "allOf": [
-                { "$ref": "#/definitions/dataPointType" },
-                { "$ref": "#/definitions/uuid" }
+                {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
               ]
             }
           }
@@ -765,8 +777,12 @@
                   "type": "array",
                   "items": {
                     "allOf": [
-                      { "$ref": "#/definitions/virtualDataPointType" },
-                      { "$ref": "#/definitions/uuid" }
+                      {
+                        "$ref": "#/definitions/virtualDataPointType"
+                      },
+                      {
+                        "$ref": "#/definitions/uuid"
+                      }
                     ]
                   }
                 }
@@ -799,8 +815,12 @@
               "properties": {
                 "created": {
                   "allOf": [
-                    { "$ref": "#/definitions/virtualDataPointType" },
-                    { "$ref": "#/definitions/uuid" }
+                    {
+                      "$ref": "#/definitions/virtualDataPointType"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
                   ]
                 },
                 "href": {
@@ -854,8 +874,12 @@
             "description": "Returns a virtual datapoint",
             "schema": {
               "allOf": [
-                { "$ref": "#/definitions/virtualDataPointType" },
-                { "$ref": "#/definitions/uuid" }
+                {
+                  "$ref": "#/definitions/virtualDataPointType"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
               ]
             }
           }
@@ -906,8 +930,12 @@
               "properties": {
                 "changed": {
                   "allOf": [
-                    { "$ref": "#/definitions/virtualDataPointType" },
-                    { "$ref": "#/definitions/uuid" }
+                    {
+                      "$ref": "#/definitions/virtualDataPointType"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
                   ]
                 },
                 "href": {
@@ -1007,8 +1035,12 @@
             "description": "Successfully created new mapping",
             "schema": {
               "allOf": [
-                { "$ref": "#/definitions/map" },
-                { "$ref": "#/definitions/uuid" }
+                {
+                  "$ref": "#/definitions/map"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
               ]
             }
           }
@@ -1087,8 +1119,12 @@
             "description": "Successfully updated mapping",
             "schema": {
               "allOf": [
-                { "$ref": "#/definitions/map" },
-                { "$ref": "#/definitions/uuid" }
+                {
+                  "$ref": "#/definitions/map"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
               ]
             }
           }
@@ -1106,8 +1142,12 @@
               "properties": {
                 "deleted": {
                   "allOf": [
-                    { "$ref": "#/definitions/map" },
-                    { "$ref": "#/definitions/uuid" }
+                    {
+                      "$ref": "#/definitions/map"
+                    },
+                    {
+                      "$ref": "#/definitions/uuid"
+                    }
                   ]
                 }
               }
@@ -1180,7 +1220,11 @@
             "schema": {
               "type": "array",
               "items": {
-                "allOf": [{ "$ref": "#/definitions/livedataItem" }]
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/livedataItem"
+                  }
+                ]
               }
             }
           }
@@ -1245,7 +1289,11 @@
             "schema": {
               "type": "array",
               "items": {
-                "allOf": [{ "$ref": "#/definitions/livedataItem" }]
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/livedataItem"
+                  }
+                ]
               }
             }
           }
@@ -1283,43 +1331,6 @@
         }
       }
     },
-    "/networkconfig": {
-      "get": {
-        "tags": ["networkConfig"],
-        "description": "Get network config information",
-        "operationId": "networkConfigGet",
-        "responses": {
-          "200": {
-            "description": "Returns all information about the network config",
-            "schema": {
-              "$ref": "#/definitions/networkconfig"
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["networkConfig"],
-        "operationId": "networkConfigPatch",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "patchObject",
-            "description": "The changed properties",
-            "schema": {
-              "$ref": "#/definitions/changeNetworkconfig"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/changeNetworkconfig"
-            }
-          }
-        }
-      }
-    },
     "/systemInfo": {
       "get": {
         "tags": ["systemInfo"],
@@ -1331,36 +1342,13 @@
             "schema": {
               "type": "array",
               "items": {
-                "allOf": [{ "$ref": "#/definitions/systemInfoItem" }]
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/systemInfoItem"
+                  }
+                ]
               }
             }
-          }
-        }
-      }
-    },
-    "/systemInfo/time": {
-      "get": {
-        "tags": ["systemInfo"],
-        "description": "Get system time",
-        "operationId": "systemTimeGet",
-        "responses": {
-          "200": {
-            "description": "Returns all information about the system",
-            "schema": {
-              "$ref": "#/definitions/timeResponse"
-            }
-          }
-        }
-      }
-    },
-    "/systemInfo/restart": {
-      "post": {
-        "tags": ["systemInfo"],
-        "description": "Restart device",
-        "operationId": "restartPost",
-        "responses": {
-          "204": {
-            "description": "OK"
           }
         }
       }
@@ -1576,6 +1564,26 @@
           }
         }
       }
+    },
+    "/check-ntp": {
+      "get": {
+        "tags": [],
+        "description": "Route check if all given NTP server entries are valid IP oder hostnames and check if all are currently available for Backend.",
+        "operationId": "checkNTPGet",
+        "parameters": [
+          {
+            "name": "addresses",
+            "in": "path",
+            "description": "Address array of all ntp servers",
+            "required": true,
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -1585,7 +1593,11 @@
       "in": "header"
     }
   },
-  "security": [{ "jwt": [] }],
+  "security": [
+    {
+      "jwt": []
+    }
+  ],
   "definitions": {
     "changeDatasource": {
       "description": "JSON type for change enable state or connection",
@@ -1770,8 +1782,12 @@
           "type": "array",
           "items": {
             "allOf": [
-              { "$ref": "#/definitions/sourcedatapoint" },
-              { "$ref": "#/definitions/uuid" }
+              {
+                "$ref": "#/definitions/sourcedatapoint"
+              },
+              {
+                "$ref": "#/definitions/uuid"
+              }
             ]
           }
         },
@@ -1856,8 +1872,12 @@
           "type": "array",
           "items": {
             "allOf": [
-              { "$ref": "#/definitions/dataPointType" },
-              { "$ref": "#/definitions/uuid" }
+              {
+                "$ref": "#/definitions/dataPointType"
+              },
+              {
+                "$ref": "#/definitions/uuid"
+              }
             ]
           }
         }
@@ -1952,8 +1972,12 @@
           "type": "array",
           "items": {
             "allOf": [
-              { "$ref": "#/definitions/map" },
-              { "$ref": "#/definitions/uuid" }
+              {
+                "$ref": "#/definitions/map"
+              },
+              {
+                "$ref": "#/definitions/uuid"
+              }
             ]
           }
         }
@@ -2030,209 +2054,27 @@
         }
       }
     },
-    "networkconfig": {
-      "type": "object",
-      "properties": {
-        "x1": {
-          "type": "object",
-          "properties": {
-            "useDhcp": {
-              "type": "boolean"
-            },
-            "ipAddr": {
-              "type": "string"
-            },
-            "netmask": {
-              "type": "string"
-            },
-            "defaultGateway": {
-              "type": "string"
-            },
-            "dnsServer": {
-              "type": "string"
-            },
-            "configurationState": {
-              "type": "boolean"
-            },
-            "serviceState": {
-              "type": "boolean"
-            }
-          }
-        },
-        "x2": {
-          "type": "object",
-          "properties": {
-            "useDhcp": {
-              "type": "boolean"
-            },
-            "ipAddr": {
-              "type": "string"
-            },
-            "netmask": {
-              "type": "string"
-            },
-            "defaultGateway": {
-              "type": "string"
-            },
-            "dnsServer": {
-              "type": "string"
-            },
-            "configurationState": {
-              "type": "boolean"
-            },
-            "serviceState": {
-              "type": "boolean"
-            }
-          }
-        },
-        "proxy": {
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "ip": {
-              "type": "string"
-            },
-            "port": {
-              "type": "number"
-            },
-            "username": {
-              "type": "string"
-            },
-            "password": {
-              "type": "string"
-            },
-            "type": {
-              "type": "string",
-              "enum": ["socks5", "http"]
-            }
-          }
-        },
-        "time": {
-          "type": "object",
-          "properties": {
-            "currentTime": {
-              "type": "string"
-            },
-            "ntpHost": {
-              "type": "string"
-            },
-            "reachable": {
-              "type": "boolean"
-            },
-            "timezone": {
-              "type": "string"
-            },
-            "useNtp": {
-              "type": "boolean"
-            }
-          }
-        }
-      }
-    },
-    "changeNetworkconfig": {
-      "type": "object",
-      "properties": {
-        "x1": {
-          "type": "object",
-          "properties": {
-            "useDhcp": {
-              "type": "boolean"
-            },
-            "ipAddr": {
-              "type": "string"
-            },
-            "netmask": {
-              "type": "string"
-            },
-            "defaultGateway": {
-              "type": "string"
-            },
-            "dnsServer": {
-              "type": "string"
-            }
-          }
-        },
-        "x2": {
-          "type": "object",
-          "properties": {
-            "useDhcp": {
-              "type": "boolean"
-            },
-            "ipAddr": {
-              "type": "string"
-            },
-            "netmask": {
-              "type": "string"
-            },
-            "defaultGateway": {
-              "type": "string"
-            },
-            "dnsServer": {
-              "type": "string"
-            }
-          }
-        },
-        "proxy": {
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "ip": {
-              "type": "string"
-            },
-            "port": {
-              "type": "number"
-            },
-            "username": {
-              "type": "string"
-            },
-            "password": {
-              "type": "string"
-            },
-            "type": {
-              "type": "string",
-              "enum": ["socks5", "http"]
-            }
-          }
-        },
-        "time": {
-          "type": "object",
-          "properties": {
-            "currentTime": {
-              "type": "string"
-            },
-            "ntpHost": {
-              "type": "string"
-            },
-            "reachable": {
-              "type": "boolean"
-            },
-            "timezone": {
-              "type": "string"
-            },
-            "useNtp": {
-              "type": "boolean"
-            }
-          }
-        }
-      }
-    },
     "templates": {
       "type": "object",
       "properties": {
         "availableDataSources": {
           "type": "array",
           "items": {
-            "allOf": [{ "type": "string" }]
+            "allOf": [
+              {
+                "type": "string"
+              }
+            ]
           }
         },
         "availableDataSinks": {
           "type": "array",
           "items": {
-            "allOf": [{ "type": "string" }]
+            "allOf": [
+              {
+                "type": "string"
+              }
+            ]
           }
         }
       }
@@ -2246,7 +2088,11 @@
         "dataSinks": {
           "type": "array",
           "items": {
-            "allOf": [{ "type": "string" }]
+            "allOf": [
+              {
+                "type": "string"
+              }
+            ]
           }
         }
       }
@@ -2429,14 +2275,6 @@
         "deleted": ["entityId"]
       }
     },
-    "timeResponse": {
-      "type": "object",
-      "properties": {
-        "timestamp": {
-          "type": "number"
-        }
-      }
-    },
     "envResponse": {
       "type": "object",
       "required": ["env"],
@@ -2459,13 +2297,27 @@
         "timezone"
       ],
       "properties": {
-        "hostname": { "type": "string" },
-        "username": { "type": "string" },
-        "password": { "type": "boolean" },
-        "model": { "type": "string" },
-        "name": { "type": "string" },
-        "organization": { "type": "string" },
-        "timezone": { "type": "number" }
+        "hostname": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "organization": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "number"
+        }
       }
     },
     "messengerStatus": {

@@ -11,8 +11,6 @@ import { ConfigManager } from '../../../ConfigManager';
 import { IDataSinkConfig } from '../../../ConfigManager/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
 import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
-import { LicenseChecker } from '../../../LicenseChecker';
-import { DataHubAdapter } from '../../Adapter/DataHubAdapter';
 import { MessengerManager } from '../../MessengerManager';
 import { DataHubDataSink, DataHubDataSinkOptions } from '../DataHubDataSink';
 import { DataSink } from '../DataSink';
@@ -20,7 +18,7 @@ import {
   IMTConnectDataSinkOptions,
   MTConnectDataSink
 } from '../MTConnectDataSink';
-import { IOPCUADataSinkOptions, OPCUADataSink } from '../OPCUADataSink';
+import { OPCUADataSink } from '../OPCUADataSink';
 
 interface IDataSinkManagerEvents {
   dataSinksRestarted: (error: Error | null) => void;
@@ -32,7 +30,6 @@ export interface IDataSinkManagerParams {
   errorBus: EventBus<IErrorEvent>;
   measurementsBus: MeasurementEventBus;
   lifecycleBus: EventBus<ILifecycleEvent>;
-  licenseChecker: LicenseChecker;
 }
 
 /**
@@ -47,9 +44,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private dataSinks: Array<DataSink> = [];
   private dataSinksRestartPending = false;
   private dataAddedDuringRestart = false;
-  private dataSinkConnectRetryTimer: NodeJS.Timer;
-  private sinksRetryCount: number = 0;
-  private licenseChecker: LicenseChecker;
 
   public messengerManager: MessengerManager;
 
@@ -61,7 +55,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
-    this.licenseChecker = params.licenseChecker;
   }
 
   private async init(): Promise<DataSinksManager> {
@@ -130,7 +123,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     await sink.init();
 
     this.connectDataSinksToBus(sink);
-    winston.info(`${logPrefix} created.`);
+    winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
   }
 
   private findDataSinkConfig(protocol: DataSinkProtocols): IDataSinkConfig {
@@ -166,8 +159,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           proxy: this.configManager.config.networkConfig.proxy,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
-          isLicensed: this.licenseChecker.isLicensed
+            this.configManager.config.termsAndConditions.accepted
         };
 
         return new DataHubDataSink(dataHubDataSinkOptions);
@@ -179,7 +171,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
             this.configManager.config.termsAndConditions.accepted,
-          isLicensed: this.licenseChecker.isLicensed,
           messengerManager: this.messengerManager
         };
         return new MTConnectDataSink(mtConnectDataSinkOptions);
@@ -191,8 +182,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           generalConfig: this.configManager.config.general,
           runtimeConfig: this.configManager.runtimeConfig.opcua,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
-          isLicensed: this.licenseChecker.isLicensed
+            this.configManager.config.termsAndConditions.accepted
         });
       }
 

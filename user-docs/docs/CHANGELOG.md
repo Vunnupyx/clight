@@ -10,6 +10,16 @@ title: Changelog
 
 - [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixed missing value for NCK data point basicLengthUnit
 - [DIGMDCLGHT-70](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-70) Fixed the case where Add new data point button might remain disabled after deleting a data point
+- [DIGMDCLGHT-258](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-258) Fixes list of sources of a VDP not being reset after operator type change
+
+### Changed
+
+- [DIGMDCLGHT-246](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-246) SSH communications are removed with usage of DMG MORI CELOS
+- [DIGMDCLGHT-145](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-145) Updated network, time and proxy endpoints to CELOS configuration agent
+- [DIGMDCLGHT-250](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-250) The runtime now works with an empty file system that hasn't the application file installed. Also the folder structure where application data are stored has changed.
+- [DIGMDCLGHT-260](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-260) The MAC address license check has been removed.
+- [DIGMDCLGHT-261](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-261) Pipelines do now created versioned containers
+- [DIGMDCLGHT-264](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-264) Updated NTP server reachability after CELOS migration
 
 ## [2.4.0]
 

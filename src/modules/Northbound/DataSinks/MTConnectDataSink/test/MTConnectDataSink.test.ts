@@ -10,17 +10,10 @@ import {
   IDataSinkConfig,
   IDataSourceConfig
 } from '../../../../ConfigManager/interfaces';
-import { DataPointMapper } from '../../../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 import { MessengerManager } from '../../../MessengerManager';
-
-const licenseCheckerMock = {
-  isLicensed: jest.fn().mockImplementation(() => {
-    return true;
-  })
-};
 
 jest.mock('fs');
 jest.mock('winston');

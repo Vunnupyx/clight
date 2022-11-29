@@ -238,11 +238,6 @@
                   {{ 'settings-data-source.Reconnecting' | translate }}
                 </ng-container>
                 <ng-container
-                  *ngSwitchCase="DataSourceConnectionStatus.NoLicense"
-                >
-                  {{ 'settings-data-source.NoLicense' | translate }}
-                </ng-container>
-                <ng-container
                   *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
                 >
                   {{ 'settings-data-source.ConnectionError' | translate }}
@@ -324,11 +319,6 @@
                   class="color-success"
                   svgIcon="mdc:success"
                 ></mat-icon>
-              </ng-container>
-              <ng-container
-                *ngSwitchCase="DataSourceConnectionStatus.NoLicense"
-              >
-                <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
               </ng-container>
               <ng-container
                 *ngSwitchCase="DataSourceConnectionStatus.ConnectionError"
@@ -636,11 +626,21 @@
                 (click)="
                   !isDuplicatingField('name') &&
                     !isDuplicatingField('address') &&
+                    unsavedRow.name?.length > 0 &&
+                    unsavedRow.address?.length > 0 &&
                     onEditEnd();
                   group.value = null
                 "
                 [matTooltip]="'settings-data-source.Save' | translate"
                 matTooltipPosition="above"
+                [disabled]="
+                  isDuplicatingField('name') ||
+                  isDuplicatingField('address') ||
+                  unsavedRow.name?.length === 0 ||
+                  !unsavedRow.name ||
+                  unsavedRow.address?.length === 0 ||
+                  !unsavedRow.address
+                "
               >
                 <mat-icon
                   class="color-success"

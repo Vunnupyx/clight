@@ -158,7 +158,6 @@
     "NoNetwork": "NoNetwork",
     "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",
-    "NoLicense": "Not licensed",
     "ConnectionError": "Failed to connect",
     "Disabled": "Disabled",
     "Unavailable": "Unavailable",
@@ -278,7 +277,6 @@
     "NoNetwork": "No Network",
     "Connecting": "Starting",
     "Reconnecting": "Reconnecting",
-    "NoLicense": "Not licensed",
     "Disabled": "Disabled",
     "ConnectionError": "Failed to Connect",
     "Unavailable": "Unavailable",
@@ -415,7 +413,6 @@
     "DefaultGateway": "Default Gateway",
     "DNSServer": "DNS Server",
     "UseProxy": "Use Proxy",
-    "ProxyType": "Type",
     "Host": "Host",
     "Port": "Port",
     "Username": "Username",
@@ -427,7 +424,7 @@
       "x1": "Ethernet X1 P1",
       "x2": "Ethernet X1 P2",
       "proxy": "Proxy",
-      "time": "Time"
+      "ntp": "Time"
     },
     "TimeSettings": "Time Settings",
     "UseNTPServer": "Use NTP Server",

@@ -114,7 +114,7 @@ export class OPCUAAdapter {
   private async setupNodesets() {
     this.nodesetDir = path.join(
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      '/runTimeFiles/tmpnodesets'
+      'config/tmpnodesets'
     );
     await fs.rm(this.nodesetDir, { recursive: true, force: true });
     await fs.copy(
@@ -213,8 +213,23 @@ export class OPCUAAdapter {
         });
         fs.writeFileSync(file, updatedXMLFile);
       }
+    const sorting = [
+      'Opc.Ua.NodeSet2.xml',
+      'Opc.Ua.Di.NodeSet2.xml',
+      'Opc.Ua.Machinery.NodeSet2.xml',
+      'Opc.Ua.IA.NodeSet2.xml',
+      'Opc.Ua.MachineTool.Nodeset2.xml',
+      'dmgmori-umati-types.xml',
+      'dmgmori-umati.xml'
+    ];
 
-    return fullFiles;
+    return sorting.map((val) => {
+      return fullFiles[
+        fullFiles.findIndex((filePath) => {
+          return filePath.includes(val);
+        })
+      ];
+    });
   }
 
   /**
@@ -274,7 +289,7 @@ export class OPCUAAdapter {
     const applicationUri = `urn:${hostname}`;
     const certificateFolder = path.join(
       process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      'mdclight/config/certs'
+      '/certs'
     );
     const certificateFile = path.join(
       certificateFolder,
@@ -330,7 +345,7 @@ export class OPCUAAdapter {
       }
     };
     //BUGFIX: NODESET ORDER IS IMPORTANT FOR CONSTRUCTOR
-    const nodeSets = await this.setupNodesets();
+    const sortedNodeSets = await this.setupNodesets();
 
     this.server = new OPCUAServer({
       ...{
@@ -344,15 +359,7 @@ export class OPCUAAdapter {
       serverCertificateManager: this.serverCertificateManager,
       privateKeyFile,
       certificateFile,
-      nodeset_filename: [
-        '/runTimeFiles/tmpnodesets/Opc.Ua.NodeSet2.xml',
-        '/runTimeFiles/tmpnodesets/Opc.Ua.Di.NodeSet2.xml',
-        '/runTimeFiles/tmpnodesets/Opc.Ua.Machinery.NodeSet2.xml',
-        '/runTimeFiles/tmpnodesets/Opc.Ua.IA.NodeSet2.xml',
-        '/runTimeFiles/tmpnodesets/Opc.Ua.MachineTool.Nodeset2.xml',
-        '/runTimeFiles/tmpnodesets/dmgmori-umati-types.xml',
-        '/runTimeFiles/tmpnodesets/dmgmori-umati.xml'
-      ],
+      nodeset_filename: sortedNodeSets,
       securityPolicies: [
         SecurityPolicy.None,
         SecurityPolicy.Basic128Rsa15,

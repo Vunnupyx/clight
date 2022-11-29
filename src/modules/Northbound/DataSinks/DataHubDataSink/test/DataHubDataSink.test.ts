@@ -104,7 +104,6 @@ describe('DataHubDataSink', () => {
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
     termsAndConditionsAccepted: true,
-    isLicensed: true,
     proxy: {
       ip: '',
       port: 0,

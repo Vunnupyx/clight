@@ -24,6 +24,7 @@ import {
   backupHandlers,
   setConfigManager as backupSetConfigManager
 } from '../routes/apis/v1/Backup';
+import { ntpCheckHandlers } from '../routes/apis/v1/ntp-check';
 import {
   deviceInfosHandlers,
   setConfigManager as deviceInfosSetConfigManager
@@ -42,10 +43,6 @@ import {
   mappingHandlers,
   setConfigManager as mappingSetConfigManager
 } from '../routes/apis/v1/Mapping';
-import {
-  networkConfigHandlers,
-  setConfigManager as networkConfigSetConfigManager
-} from '../routes/apis/v1/NetworkConfig';
 import {
   systemInfoHandlers,
   setConfigManager as systemInfoSetConfigManager
@@ -96,12 +93,12 @@ export class RoutesManager {
     ...dataSourceHandlers,
     ...dataSinksHandlers,
     ...backupHandlers,
+    ...ntpCheckHandlers,
     ...virtualDatapointHandlers,
     ...deviceInfosHandlers,
     ...livedataDataSourcesHandlers,
     ...livedataVirtualDataPointsHandlers,
     ...mappingHandlers,
-    ...networkConfigHandlers,
     ...systemInfoHandlers,
     ...templatesHandlers,
     ...messengerHandlers,
@@ -129,7 +126,6 @@ export class RoutesManager {
       livedataDataSourcesSetConfigManager,
       livedataVirtualDataPointsSetConfigManager,
       mappingSetConfigManager,
-      networkConfigSetConfigManager,
       systemInfoSetConfigManager,
       templatesConfigSetConfigManager,
       messengerConfigSetConfigManager,
@@ -146,8 +142,7 @@ export class RoutesManager {
     livedataVirtualDataPointsSetDataPointCache(options.dataPointCache);
 
     this.inputValidator = OpenApiValidator.middleware({
-      // @ts-ignore
-      apiSpec: swaggerFile,
+      apiSpec: swaggerFile as any,
       validateRequests: false,
       validateResponses: false
     });

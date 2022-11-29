@@ -1,0 +1,30 @@
+# Some helpfull skipts. Delete later
+
+docker build --build-arg MDC_LIGHT_RUNTIME_VERSION=x --build-arg DOCKER_REGISTRY=mdclightdev.azurecr.io -t mdclight -f docker/mdclight.Dockerfile .
+docker pull mdclightdev.azurecr.io/mdclight:feature-DIGMDCLGHT-260-empty-file-system
+docker run \
+    --mount type=volume,source=dmgmori-mdclight-config,target=/etc/mdclight/config \
+    --mount type=volume,source=dmgmori-mdclight-logs,target=/etc/mdc-light/logs \
+    --mount type=bind,source=/var/log,target=/host/log/system \
+    --mount type=bind,source=/proc,target=/proc \
+    --mount type=bind,source=/sys,target=/sys \
+    -p 4840:4840 \
+    -p 7878:7878 \
+    -p 80:80 \
+    --network azure-iot-edge \
+    --network-alias=[mdclight] \
+    mdclightdev.azurecr.io/mdclight:2.3.0-182-g4f2ede2b -d
+
+docker run \
+    --mount type=volume,source=dmgmori-mdclight-sslkeys,target=/etc/mdc-light/sslkeys \
+    -p 443:443 \
+    --network azure-iot-edge \
+    --network-alias=[mdc-web-server] \
+    mdclightdev.azurecr.io/mdc-web-server:2.3.0-182-g4f2ede2b -d
+
+
+iotflex-3-0-0-beta1-mdclight
+tags.base='iotflex-1.2.10'
+tags.mdclight='iotflex-3.0.0-beta1'
+
+az iot edge deployment create -d iotflex-3-0-0-beta1-mdclight -n iot-datahub-euw-devd --content iot-config/mdclight/deployment.manifest-3.0.0-beta-1.json --target-condition "tags.mdclight='iotflex-3.0.0-beta1'" --priority 0 --verbose --layered false

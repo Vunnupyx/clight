@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
-import { getEventListeners } from 'node:events';
-
 import { MessengerManager } from '..';
+import emptyDefaultConfig from '../../../../../_mdclight/runtime-files/templates/empty.json';
 import { ConfigManager } from '../../../ConfigManager';
 import { EventBus } from '../../../EventBus';
 
@@ -17,6 +16,8 @@ jest.mock('winston', () => {
     warn: log
   };
 });
+jest.mock('../../../EventBus');
+jest.mock('../../../ConfigManager');
 
 const SERIALNUMBER = '1234';
 
@@ -26,21 +27,23 @@ let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 let messengerAdapter: MessengerManager;
 let configManager = new ConfigManager({
-  errorEventsBus: new EventBus<null>() as any,
-  lifecycleEventsBus: new EventBus<null>() as any
+  errorEventsBus: new EventBus(),
+  lifecycleEventsBus: new EventBus()
 });
 
 describe('MessengerManager', () => {
   beforeEach(() => {
     //@ts-ignore
     configManager._config = {
-      ...configManager.config,
+      ...emptyDefaultConfig,
       general: {
-        ...configManager.config.general,
+        ...emptyDefaultConfig.general,
         //@ts-ignore
         serialNumber: SERIALNUMBER
       }
     };
+    //@ts-ignore
+    configManager.config = configManager._config;
   });
   afterEach(() => {
     messengerAdapter = null!;
@@ -130,13 +133,15 @@ describe('MessengerManager', () => {
       );
     //@ts-ignore
     configManager._config = {
-      ...configManager.config,
+      ...emptyDefaultConfig,
       general: {
-        ...configManager.config.general,
+        ...emptyDefaultConfig.general,
         //@ts-ignore
         serialNumber: undefined
       }
     };
+    //@ts-ignore
+    configManager.config = configManager._config;
     const messengerConfig = {
       hostname: 'string',
       username: 'string',
@@ -561,7 +566,9 @@ describe('MessengerManager', () => {
     expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
 
-    configManager.emit('configChange');
+    //@ts-ignore
+    messengerAdapter.configManager.config.messenger = {};
+    messengerAdapter.handleConfigChange();
 
     expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
@@ -644,7 +651,7 @@ describe('MessengerManager', () => {
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
 
     configManager.config.messenger = messengerConfig;
-    configManager.emit('configChange');
+    messengerAdapter.handleConfigChange();
 
     expect(messengerAdapter.serverStatus.server).toEqual('available');
     expect(messengerAdapter.serverStatus.registration).toEqual('registered');
@@ -707,7 +714,7 @@ describe('MessengerManager', () => {
     configManager.config.messenger = messengerConfig;
     expect(configManager.config.messenger).toEqual(messengerConfig);
 
-    configManager.emit('configChange');
+    messengerAdapter.handleConfigChange();
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(messengerAdapter.serverStatus.server).toEqual('available');
     expect(messengerAdapter.serverStatus.registration).toEqual('registered');
@@ -810,7 +817,8 @@ describe('MessengerManager', () => {
     expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
     //Organization unit is removed from Messenger UI and then resubmitted with that organization unit
-    configManager.config.messenger = messengerConfig;
+    //@ts-ignore
+    messengerAdapter.configManager.config.messenger = messengerConfig;
     await messengerAdapter.init();
 
     expect(messengerAdapter.serverStatus.server).toEqual('available');

@@ -73,7 +73,6 @@ async function triggerAzureFunction(request: Request, response: Response) {
         }"
     }
    */
-  const buf = Buffer.from([]);
   const payload = {
     machinenumber: 'CODESTYKE_DUMMY',
     command: 'get-iotflex-updates',
@@ -81,6 +80,7 @@ async function triggerAzureFunction(request: Request, response: Response) {
     methodName: uniqueMethodName
   };
   const msg = new Message(JSON.stringify(payload));
+  msg.properties.add('messageType', 'command');
   await moduleClient
     .sendEvent(msg)
     .then((res) => {

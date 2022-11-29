@@ -3,10 +3,9 @@ import { v4 as uuid } from 'uuid';
 
 import { ConfigManager } from '../../../../../ConfigManager';
 import winston from 'winston';
-import { ModuleClient } from 'azure-iot-device';
+import { ModuleClient, Message } from 'azure-iot-device';
 import { MqttWs } from 'azure-iot-provisioning-device-mqtt';
 import { inspect } from 'util';
-import { utils } from 'node-opcua';
 
 let configManager: ConfigManager;
 let moduleClient: ModuleClient;
@@ -43,6 +42,7 @@ async function triggerAzureFunction(request: Request, response: Response) {
     });
   }
   if (!moduleClient) {
+    winston.error(`moduleClient unknown`);
     moduleClient =
       (await ModuleClient.fromEnvironment(MqttWs).catch(() => {
         winston.error(`${logPrefix} no azure module client available.`);
@@ -51,32 +51,53 @@ async function triggerAzureFunction(request: Request, response: Response) {
         });
         return;
       })) || null;
+    winston.error(`module client gebaut: ${inspect(moduleClient)}`);
   }
   const azureFuncName = 'get-iotflex-updates';
   const commandId = uuid();
   const uniqueMethodName = azureFuncName + '/' + commandId;
   const deviceId = process.env.IOTEDGE_DEVICEID;
 
-  winston.error(`moduleClient.onMethod`);
-  moduleClient.onMethod(uniqueMethodName, (result) => {
-    winston.info(
-      `TESTING: GOT REPOSNE on ${uniqueMethodName}: ${JSON.stringify(result)}`
-    );
-    //TODO hier sollte der Callback stehen und der Response befüllt werden
-  });
-  moduleClient.on('error', (err) => {
-    winston.error(`ERROR!!!!: ${inspect(err)}`);
-    return response.status(500).json();
-  });
+  const messageType = 'command';
 
-  const re = await moduleClient.invokeMethod(deviceId, {
-    methodName: azureFuncName,
-    connectTimeoutInSeconds: 20,
-    payload: null,
-    responseTimeoutInSeconds: 20
-  });
+  /**
+   * "event": {
+        "origin": "sdk-team-viktor-pinter-1",
+        "module": "app-manager-api",
+        "interface": "",
+        "component": "",
+        "payload": "{\"machinenumber\":\"0000\",\"command\":\"ping\",\"commandId\":\"57d8fe66-140f-49ec-b367-cfcadc6be61f\",\"methodName\":\"command-response\"}"
+    }
+   */
+  const buf = Buffer.from([]);
+  const msg = new Message(buf);
+  msg.properties.add('command', azureFuncName);
+  await moduleClient
+    .sendEvent(msg)
+    .then((res) => {
+      winston.error(inspect(res));
+    })
+    .catch((error) => {
+      winston.error(`Error gefangen: ${inspect(error)}`);
+    });
 
-  winston.error(inspect(re));
+  // moduleClient.onMethod(uniqueMethodName, (result) => {
+  //   winston.info(
+  //     `TESTING: GOT REPOSNE on ${uniqueMethodName}: ${JSON.stringify(result)}`
+  //   );
+  //   //TODO hier sollte der Callback stehen und der Response befüllt werden
+  // });
+  // moduleClient.on('error', (err) => {
+  //   winston.error(`ERROR!!!!: ${inspect(err)}`);
+  //   return response.status(500).json();
+  // });
+
+  // const re = await moduleClient.invokeMethod(deviceId, {
+  //   methodName: azureFuncName,
+  //   connectTimeoutInSeconds: 20,
+  //   payload: null,
+  //   responseTimeoutInSeconds: 20
+  // });
 
   /** Brauchen wir die? 
   moduleId: app-manager-api

@@ -12,16 +12,17 @@ import {
   NetworkConfig,
   NetworkDateTime,
   NetworkProxy,
-  NetworkTimestamp
+  NetworkTimestamp,
+  NetworkNtpReachable
 } from '../models';
-import { ConfigurationAgentHttpService } from 'app/shared';
-
+import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
   proxy: NetworkProxy;
   ntp: string[];
   timestamp: NetworkDateTime;
+  ntpReachable: NetworkNtpReachable[];
 }
 
 @Injectable()
@@ -31,6 +32,7 @@ export class NetworkService {
   constructor(
     storeFactory: StoreFactory<NetworkState>,
     private configurationAgentHttpService: ConfigurationAgentHttpService,
+    private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -68,6 +70,13 @@ export class NetworkService {
         })
       ),
       distinctUntilChanged()
+    );
+  }
+
+  get ntpReachable() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.ntpReachable)
     );
   }
 
@@ -179,6 +188,7 @@ export class NetworkService {
         state.status = Status.Ready;
         state.ntp = response;
       });
+      !!response?.[0] && this.getNtpReachable(response);
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
       errorHandler(err);
@@ -191,6 +201,7 @@ export class NetworkService {
   async updateNetworkNtp(obj: string[]) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
+      state.ntpReachable = [{ address: '', reachable: false, valid: false }];
     });
 
     try {
@@ -202,8 +213,28 @@ export class NetworkService {
         state.status = Status.Ready;
         state.ntp = obj;
       });
+      !!obj?.[0] && this.getNtpReachable(obj);
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
+      errorHandler(err);
+      this._store.patchState(() => ({
+        status: Status.Failed
+      }));
+    }
+  }
+
+  async getNtpReachable(ntp: string[]) {
+    try {
+      const response = await this.httpService.get<NetworkNtpReachable[]>(
+        `/check-ntp?`,
+        { params: { addresses: ntp }, responseType: 'json' }
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.ntpReachable = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('settings-network.LoadError'));
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed
@@ -260,7 +291,8 @@ export class NetworkService {
 
   private _emptyState() {
     return <NetworkState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      ntpReachable: [{ address: '', reachable: false, valid: false }]
     };
   }
 

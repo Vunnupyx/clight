@@ -81,6 +81,24 @@
       "Step2": "Here you can select the appropriate template.",
       "Step3": "Select or deselect the desired data sources here. Selected data sources are started automatically after successful completion of the setup. This setting can be changed later.",
       "Step4": "Select the desired application interfaces that are to be provided and activated by the system. This setting can be changed later."
+    },
+    "Templates": {
+      "name": {
+        "10diIoShieldMessenger": "Input board to DMG MORI Messenger",
+        "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
+        "empty": "Empty Template",
+        "gm": "GM Series",
+        "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
+      },
+      "description": {
+        "10diIoShieldMessenger": "10 digital input board to DMG MORI Messenger",
+        "ai2ioShieldMessenger": "Current sensors + 5 digital input board to DMG MORI Messenger",
+        "empty": "Template does not include any data source, virtual data points, mappings and application interface",
+        "gm": "GM 16-6 or GM 20-6",
+        "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
+      }
     }
   },
   "settings-general": {

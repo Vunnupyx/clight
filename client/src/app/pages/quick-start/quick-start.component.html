@@ -96,8 +96,12 @@
               *ngFor="let template of templates"
               [value]="template.id"
             >
-              <h3 class="mt-0 mb-0">{{ template.name }}</h3>
-              <p class="mt-0">{{ template.description }}</p>
+              <h3 class="mt-0 mb-0">
+                {{ template.name | translate }}
+              </h3>
+              <p class="mt-0">
+                {{ template.description | translate }}
+              </p>
             </mat-radio-button>
           </mat-radio-group>
         </div>

@@ -15,6 +15,7 @@ import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/
 import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 import { MessengerManager } from '../../../MessengerManager';
+import * as scheduler from '../../../../SyncScheduler';
 
 jest.mock('fs');
 jest.mock('winston');
@@ -22,6 +23,14 @@ jest.mock('../../../MessengerManager');
 jest.mock('../../../Adapter/MTConnectAdapter');
 jest.mock('../../../../ConfigManager');
 jest.mock('../../../../EventBus');
+
+jest.mock('../../../../SyncScheduler', () => ({
+  SynchronousIntervalScheduler: {
+    getInstance: jest.fn(() => ({
+      addListener: jest.fn()
+    }))
+  }
+}));
 
 let addDataItemMock = jest.fn();
 (ConfigManager as any).mockImplementation(() => {
@@ -43,11 +52,6 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.restoreAllMocks();
-});
-
-afterAll(() => {
-  //@ts-ignore
-  MTConnectDataSink.scheduler.shutdown();
 });
 
 describe('Test MTConnectDataSink', () => {

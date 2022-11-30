@@ -335,9 +335,8 @@ describe('DataHubDataSink', () => {
           ...configMock,
           datahub: {
             ...configMock.datahub,
-            //@ts-ignore
             provisioningHost: undefined
-          }
+          } as any
         }
       });
       return datasinkUUT.init().then(() => {

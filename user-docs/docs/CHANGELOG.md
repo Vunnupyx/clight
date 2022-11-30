@@ -20,6 +20,7 @@ title: Changelog
 - [DIGMDCLGHT-260](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-260) The MAC address license check has been removed.
 - [DIGMDCLGHT-261](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-261) Pipelines do now created versioned containers
 - [DIGMDCLGHT-264](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-264) Updated NTP server reachability after CELOS migration
+- [DIGMDCLGHT-186](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-186) Updated unit tests
 
 ## [2.4.0]
 

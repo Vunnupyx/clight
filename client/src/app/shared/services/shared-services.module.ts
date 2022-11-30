@@ -6,6 +6,8 @@ import { HttpMockupService } from './http-mockup.service';
 import { HttpService } from './http.service';
 import { LocalStorageService } from './local-storage.service';
 import { PromptService } from './prompt.service';
+import { ConfigurationAgentHttpService } from './configuration-agent-http.service';
+import { ConfigurationAgentHttpMockupService } from './configuration-agent-http-mockup.service';
 
 @NgModule({
   imports: [NgxWebstorageModule.forRoot({ prefix: 'mdcl', separator: '.' })],
@@ -14,7 +16,9 @@ import { PromptService } from './prompt.service';
     HttpMockupService,
     HttpService,
     LocalStorageService,
-    PromptService
+    PromptService,
+    ConfigurationAgentHttpService,
+    ConfigurationAgentHttpMockupService
   ]
 })
 export class SharedServicesModule {}

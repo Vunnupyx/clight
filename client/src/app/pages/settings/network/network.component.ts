@@ -5,9 +5,18 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { NetworkService } from '../../../services/network.service';
-import { clone, ObjectMap } from '../../../shared/utils';
-import { NetworkConfig, NetworkType, ProxyType } from '../../../models';
-import { HOST_REGEX, IP_REGEX, PORT_REGEX } from '../../../shared/utils/regex';
+import { clone } from '../../../shared/utils';
+import {
+  NetworkConfig,
+  NetworkNtpReachable,
+  NetworkType
+} from '../../../models';
+import {
+  HOST_REGEX,
+  IP_REGEX,
+  NETMASK_REGEX,
+  PORT_REGEX
+} from '../../../shared/utils/regex';
 import { Status } from 'app/shared/state';
 
 @Component({
@@ -18,28 +27,20 @@ import { Status } from 'app/shared/state';
 export class NetworkComponent implements OnInit, OnDestroy {
   NetworkType = NetworkType;
 
-  config!: ObjectMap<NetworkConfig>;
-  originalConfig!: ObjectMap<NetworkConfig>;
+  config!: NetworkConfig;
+  originalConfig!: NetworkConfig;
+  ntpReachable!: NetworkNtpReachable[];
 
   hostRegex = HOST_REGEX;
   portRegex = PORT_REGEX;
   ipRegex = IP_REGEX;
-
-  ProxyType = ProxyType;
+  netmaskRegex = NETMASK_REGEX;
 
   get showLoading() {
     return (
       this.networkService.status !== Status.Ready &&
       this.networkService.status !== Status.Failed
     );
-  }
-
-  get tabs() {
-    if (!this.config) {
-      return [];
-    }
-
-    return Object.keys(this.config);
   }
 
   get timezoneOptionsSearchResults() {
@@ -68,15 +69,32 @@ export class NetworkComponent implements OnInit, OnDestroy {
         .pipe(filter((el) => !!el))
         .subscribe((x) => this.onConfig(x))
     );
+    this.sub.add(
+      this.networkService.ntpReachable
+        .pipe(filter((el) => !!el))
+        .subscribe((x) => this.onNtpReachable(x))
+    );
 
     this.timezoneOptions = this._getTimezoneOptions();
 
-    this.sub.add(this.networkService.setNetworkConfigTimer().subscribe());
+    this.sub.add(this.networkService.setNetworkAdaptersTimer().subscribe());
 
-    this.networkService.getNetworkConfig();
+    this.networkService
+      .getNetworkAdapters()
+      .then(() => this.networkService.getNetworkProxy())
+      .then(() => this.networkService.getNetworkNtp())
+      .then(() => this.networkService.getNetworkTimestamp());
   }
 
-  private onConfig(x: ObjectMap<NetworkConfig>) {
+  get tabs() {
+    if (!this.config) {
+      return [];
+    }
+
+    return Object.keys(this.config).filter((key) => this.config[key]);
+  }
+
+  private onConfig(x: NetworkConfig) {
     if (this.mainForm && this.mainForm.dirty) {
       return;
     }
@@ -84,26 +102,48 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.config = clone(x);
     this.originalConfig = clone(x);
 
-    if (!this.selectedTab) {
+    if (!this.tabs.includes(this.selectedTab)) {
       this.selectedTab = this.tabs[0];
     }
   }
 
+  private onNtpReachable(x: NetworkNtpReachable[]) {
+    this.ntpReachable = x;
+  }
+
+  getNtpReachableByAddress(address: string): boolean {
+    return this.ntpReachable.find(
+      (obj: NetworkNtpReachable) => obj.address === address
+    )?.reachable;
+  }
+
   onSelectTab(tab: string) {
     this.selectedTab = tab;
-
     this.config = clone(this.originalConfig);
   }
 
-  async saveChanges(mainForm: NgForm, networkType: NetworkType) {
-    await this.networkService.updateNetworkConfig(this.config);
+  onSaveAdapters() {
+    this.networkService
+      .updateNetworkAdapter(this.config[this.selectedTab])
+      .then(() => (this.originalConfig = clone(this.config)));
+  }
 
-    this.originalConfig = clone(this.config);
+  onSaveProxy() {
+    this.networkService
+      .updateNetworkProxy(this.config[NetworkType.PROXY])
+      .then(() => (this.originalConfig = clone(this.config)));
+  }
 
-    mainForm.resetForm({
-      ...this.config[networkType],
-      notToUseDhcp: !this.config[networkType]?.useDhcp
-    });
+  onSaveNtp() {
+    if (this.config[NetworkType.NTP].ntpEnabled)
+      this.networkService
+        .updateNetworkNtp(this.config[NetworkType.NTP].host)
+        .then(() => (this.originalConfig = clone(this.config)));
+    else
+      this.networkService
+        .updateNetworkTimestamp(this.config[NetworkType.NTP].timestamp)
+        .then(() => this.networkService.updateNetworkNtp(['']))
+        .then(() => (this.originalConfig = clone(this.config)));
   }
 
   ngOnDestroy() {

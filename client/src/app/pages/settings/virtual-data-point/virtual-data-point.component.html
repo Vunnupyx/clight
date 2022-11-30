@@ -214,9 +214,7 @@
               *ngIf="unsavedRow?.id === row.id"
               disableOptionCentering="true"
               [ngModel]="value"
-              (ngModelChange)="
-                unsavedRow && (unsavedRow.operationType = $event)
-              "
+              (ngModelChange)="unsavedRow && onOperationTypeChange($event)"
             >
               <mat-option *ngFor="let op of Operations" [value]="op.value">{{
                 op.text | translate
@@ -261,12 +259,9 @@
                   {{ s.name }}</mat-option
                 >
                 <mat-option
-                  *ngFor="
-                    let s of previousVirtualPointsFiltered;
-                    let idx = index
-                  "
+                  *ngFor="let s of previousVirtualPointsFiltered"
                   [value]="s.id"
-                  [disabled]="getRowIndex(s.id) > idx"
+                  [disabled]="getRowIndex(s.id) > rowIndex"
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
                 >
               </mat-select>
@@ -520,7 +515,18 @@
               ></mat-button-toggle>
               <mat-button-toggle
                 (click)="
-                  !isDuplicatingName() && onEditEnd(); group.value = null
+                  !isDuplicatingName() &&
+                    unsavedRow.name?.length > 0 &&
+                    unsavedRow.sources?.length > 0 &&
+                    onEditEnd();
+                  group.value = null
+                "
+                [disabled]="
+                  isDuplicatingName() ||
+                  unsavedRow.name?.length === 0 ||
+                  !unsavedRow.name ||
+                  unsavedRow.sources?.length === 0 ||
+                  !unsavedRow.sources
                 "
                 [matTooltip]="'settings-virtual-data-point.Save' | translate"
                 matTooltipPosition="above"

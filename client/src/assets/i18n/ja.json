@@ -81,6 +81,24 @@
       "Step2": "ここで適切なテンプレートを選択することができます。",
       "Step3": "参照するデータソースを選択してください。選択されたデータソースはセットアップが完了後自動的に開始します。この設定は後から変更することができます。",
       "Step4": "使用するアプリケーションインタフェースを選択してください。この設定は後から変更することができます。"
+    },
+    "Templates": {
+      "name": {
+        "10diIoShieldMessenger": "Input board to DMG MORI Messenger",
+        "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
+        "empty": "Empty Template",
+        "gm": "GM Series",
+        "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
+      },
+      "description": {
+        "10diIoShieldMessenger": "10 digital input board to DMG MORI Messenger",
+        "ai2ioShieldMessenger": "Current sensors + 5 digital input board to DMG MORI Messenger",
+        "empty": "Template does not include any data source, virtual data points, mappings and application interface",
+        "gm": "GM 16-6 or GM 20-6",
+        "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
+      }
     }
   },
   "settings-general": {
@@ -140,7 +158,6 @@
     "NoNetwork": "NoNetwork",
     "Connecting": "Connecting",
     "Reconnecting": "Reconnecting",
-    "NoLicense": "非ライセンス",
     "ConnectionError": "Failed to connect",
     "Disabled": "無効",
     "Unavailable": "使用不可",
@@ -260,7 +277,6 @@
     "NoNetwork": "ネットワーク接続なし",
     "Connecting": "接続中",
     "Reconnecting": "再接続中",
-    "NoLicense": "非ライセンス",
     "Disabled": "無効",
     "ConnectionError": "接続失敗",
     "Unavailable": "使用不可",
@@ -397,7 +413,6 @@
     "DefaultGateway": "デフォルトゲートウェイ",
     "DNSServer": "DNSサーバ",
     "UseProxy": "プロキシを使う",
-    "ProxyType": "プロキシの種類",
     "Host": "ホスト",
     "Port": "ポート",
     "Username": "ユーザ名",
@@ -409,7 +424,7 @@
       "x1": "イーサネットX1 P1",
       "x2": "イーサネットX1 P2",
       "proxy": "プロキシ",
-      "time": "Time"
+      "ntp": "Time"
     },
     "TimeSettings": "Time Settings",
     "UseNTPServer": "Use NTP Server",

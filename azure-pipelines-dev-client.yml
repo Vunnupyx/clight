@@ -22,7 +22,8 @@ steps:
   - task: CmdLine@2
     displayName: PrintVersion
     inputs:
-      script: git describe --tags
+      script: |
+        git describe --tags
   - task: CmdLine@2
     displayName: BuildWebserver
     inputs:

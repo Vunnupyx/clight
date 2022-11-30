@@ -1,5 +1,4 @@
 import { ConfigManager } from '../../../../../ConfigManager';
-import HostnameController from '../../../../../HostnameController';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import fs from 'fs';
@@ -84,16 +83,12 @@ async function logsGetHandler(
     date.getMonth() + 1
   }-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
 
-  const macAddress = await new System().readMacAddress('eth0');
-  const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
-  const hostname = `DM${formattedMacAddress}`;
+  const hostname = await new System().getHostname();
 
   const outFileName = `${hostname}-${dateString}.zip`;
   const outPath = '/mdclight/logs';
-  const inputPaths = [`${outPath}/*log`, '/host/log'];
-  const zipCommand = `zip -0 -r ${outPath}/${outFileName} ${inputPaths.join(
-    ' '
-  )}`;
+  const inputPaths = `${outPath}/*log`;
+  const zipCommand = `zip -0 -r ${outPath}/${outFileName} ${inputPaths}`;
 
   /**
    * Deletes all log archives inside the log folder
@@ -105,26 +100,24 @@ async function logsGetHandler(
         return;
       }
 
-      files
-        .filter((filesName) => filesName.startsWith('DM'))
-        .forEach((filename) => {
-          winston.debug(
-            `${logPrefix} deleting zip file ${outPath}/${filename}...`
-          );
-          fs.unlink(`${outPath}/${filename}`, (err) => {
-            if (err) {
-              winston.error(
-                `${logPrefix} error during cleanup zip file ${outPath}/${filename}. ${JSON.stringify(
-                  err
-                )}`
-              );
-              return;
-            }
-            winston.info(
-              `${logPrefix} cleanup zip file ${outPath}/${filename} successfully.`
+      files.forEach((filename) => {
+        winston.debug(
+          `${logPrefix} deleting zip file ${outPath}/${filename}...`
+        );
+        fs.unlink(`${outPath}/${filename}`, (err) => {
+          if (err) {
+            winston.error(
+              `${logPrefix} error during cleanup zip file ${outPath}/${filename}. ${JSON.stringify(
+                err
+              )}`
             );
-          });
+            return;
+          }
+          winston.info(
+            `${logPrefix} cleanup zip file ${outPath}/${filename} successfully.`
+          );
         });
+      });
     });
   };
 

@@ -89,12 +89,6 @@ export class S7DataSource extends DataSource {
 
     const { connection, enabled } = this.config;
 
-    if (!this.isLicensed) {
-      winston.warn(`${logPrefix} no valid license found. Stop initializing.`);
-      this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
-      return;
-    }
-
     if (!enabled) {
       winston.info(
         `${logPrefix} S7 data source is disabled. Skipping initialization.`

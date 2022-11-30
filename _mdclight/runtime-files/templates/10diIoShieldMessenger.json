@@ -1,6 +1,6 @@
 {
-  "name": "Input board to DMG MORI Messenger",
-  "description": "10 digital input board to DMG MORI Messenger",
+  "name": "quick-start.Templates.name.10diIoShieldMessenger",
+  "description": "quick-start.Templates.description.10diIoShieldMessenger",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",

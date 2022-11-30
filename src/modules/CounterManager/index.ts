@@ -47,10 +47,7 @@ export class CounterManager {
     }
 
     this.registerScheduleChecker();
-    this.configManager.once(
-      'configsLoaded',
-      this.handleConfigsLoaded.bind(this)
-    );
+    this.configManager.on('configsLoaded', this.handleConfigsLoaded.bind(this));
     this.configManager.on('configChange', this.checkTimers.bind(this));
   }
 

@@ -1,65 +1,111 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
 import { DataPointCache } from '../../DatapointCache';
-import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../EventBus';
+import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
 jest.mock('winston');
 jest.mock('fs');
 
 jest.mock('../../EventBus');
+jest.mock('../../DatapointCache');
+jest.mock('../../ConfigManager');
+jest.mock('../../SyncScheduler');
+
+class mockCache {
+  private dataPoints = {};
+
+  update(events) {
+    events?.forEach((event) => {
+      const lastEvent = this.getCurrentEvent(event.measurement.id);
+      this.dataPoints[event.measurement.id] = {
+        changed: lastEvent
+          ? lastEvent.measurement.value !== event.measurement.value
+          : false,
+        event
+      };
+    });
+  }
+  getCurrentEvent(id) {
+    return this.dataPoints[id]?.event;
+  }
+
+  getLastestValue(id: string) {
+    return this.dataPoints[id]?.timeseries?.[
+      this.dataPoints[id]?.timeseries?.length - 1
+    ];
+  }
+
+  hasChanged(id) {
+    return this.dataPoints[id]?.changed;
+  }
+
+  clearAll() {
+    this.dataPoints = {};
+  }
+
+  getTimeSeries() {}
+
+  resetValue() {}
+}
 
 describe('Test VirtualDataPointManager', () => {
-  const config = new ConfigManager({
+  const mockConfigManager = new ConfigManager({
     errorEventsBus: new EventBus(),
     lifecycleEventsBus: new EventBus()
   });
+  mockConfigManager.config = {
+    virtualDataPoints: []
+  } as any;
 
-  config.config.virtualDataPoints = [
+  mockConfigManager.config.virtualDataPoints = [
     {
+      name: '',
       id: 'andResult',
       sources: ['inputAnd1', 'inputAnd2'],
       operationType: 'and'
     },
     {
+      name: '',
       id: 'orResult',
       sources: ['inputOr1', 'inputOr2'],
       operationType: 'or'
     },
     {
+      name: '',
       id: 'notResult',
       sources: ['inputNot1'],
       operationType: 'not'
     },
     {
+      name: '',
       id: 'counterResult',
       sources: ['inputCounter1'],
       operationType: 'counter'
     },
     {
+      name: '',
       id: 'nested1AndResult',
       sources: ['andResult', 'orResult'],
       operationType: 'and'
     },
     {
+      name: '',
       id: 'nested2AndResult',
       sources: ['nested1AndResult', 'notResult'],
       operationType: 'or'
     }
   ];
 
-  const cache = new DataPointCache();
+  const cache = new mockCache() as any;
   const virtualDpManager = new VirtualDataPointManager({
-    configManager: config,
+    configManager: mockConfigManager,
     cache
   });
 
-  afterAll(() => {
-    //@ts-ignore
-    virtualDpManager.scheduler.shutdown();
-  });
-
-  config.emit('configsLoaded');
+  //@ts-ignore
+  virtualDpManager.updateConfig();
+  mockConfigManager.emit('configsLoaded');
 
   afterEach(() => {
     cache.clearAll();
@@ -365,7 +411,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {

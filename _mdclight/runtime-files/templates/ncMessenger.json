@@ -1,6 +1,6 @@
 {
-  "name": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger",
-  "description": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger",
+  "name": "quick-start.Templates.name.ncMessenger",
+  "description": "quick-start.Templates.description.ncMessenger",
   "general": {
     "manufacturer": "DMGMORI",
     "serialNumber": "",

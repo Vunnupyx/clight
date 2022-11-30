@@ -65,8 +65,6 @@ async function triggerAzureFunction(request: Request, response: Response) {
       })) || null;
   }
 
-  moduleClient.onMethod(uniqueMethodName);
-
   // const azureFuncName = 'get-iotflex-updates';
   const azureFuncName = 'get-celos-updates';
   const commandId = uuid();

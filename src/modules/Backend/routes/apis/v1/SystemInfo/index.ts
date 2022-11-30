@@ -52,7 +52,7 @@ async function triggerAzureFunction(request: Request, response: Response) {
   }
   if (!moduleClient) {
     winston.warn(
-      `${logPrefix} moduleClient instance not available. Creating module client. Update mechanisms not available.`
+      `${logPrefix} moduleClient instance not available. Creating module client.`
     );
     moduleClient =
       (await ModuleClient.fromEnvironment(IotHubTransport).catch(() => {
@@ -63,6 +63,9 @@ async function triggerAzureFunction(request: Request, response: Response) {
           msg: `Update mechanisms not available.`
         });
       })) || null;
+    // TODO: Add error handling
+    const connected = await moduleClient.open();
+    winston.info(`${logPrefix} moduleClient instance connected.`);
   }
 
   // const azureFuncName = 'get-iotflex-updates';
@@ -70,9 +73,21 @@ async function triggerAzureFunction(request: Request, response: Response) {
   const commandId = uuid();
   const uniqueMethodName = azureFuncName + '/' + commandId;
 
-  moduleClient.onMethod(uniqueMethodName, (result) => {
-    winston.error(inspect(result));
-  });
+  const updateCbHandler = (request, response) => {
+    winston.error(`${uniqueMethodName} callback called: ${inspect(request)}`);
+    response.send(200, {
+      message: `Call to ${uniqueMethodName} successfully.`
+    });
+  };
+  moduleClient.onMethod(uniqueMethodName, updateCbHandler);
+
+  const devtestCbHandler = (request, response) => {
+    winston.error(`devtestCbHandler callback called: ${inspect(request)}`);
+    response.send(200, {
+      message: `Call to devtestCbHandler successfully.`
+    });
+  };
+  moduleClient.onMethod('devtestMethode', devtestCbHandler);
 
   const payload: CommandEventPayload = {};
   const msg = new Message(JSON.stringify(payload));

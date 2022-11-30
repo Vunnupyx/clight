@@ -35,7 +35,7 @@ export class SynchronousIntervalScheduler {
       const currentInterval = parseInt(key, 10);
       const lastRun = this.internalCycleLastExecution[key] || 0;
 
-      if (now - lastRun >= currentInterval) {
+      if (now - lastRun > currentInterval) {
         Object.keys(this.subscribers[key]).forEach((subscriberId) => {
           this.subscribers[key][subscriberId]([currentInterval]);
         });
@@ -80,10 +80,10 @@ export class SynchronousIntervalScheduler {
    * @returns The global instance
    */
   static getInstance(): SynchronousIntervalScheduler {
-    if (!SynchronousIntervalScheduler.instance) {
-      SynchronousIntervalScheduler.instance = new this();
+    if (!this.instance) {
+      this.instance = new this();
     }
 
-    return SynchronousIntervalScheduler.instance;
+    return this.instance;
   }
 }

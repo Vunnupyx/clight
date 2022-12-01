@@ -79,6 +79,7 @@ async function triggerAzureFunction(request: Request, response: Response) {
       message: `Call to ${uniqueMethodName} successfully.`
     });
   };
+  winston.error(`register ${uniqueMethodName}`);
   moduleClient.onMethod(uniqueMethodName, updateCbHandler);
 
   const devtestCbHandler = (request, response) => {
@@ -87,6 +88,7 @@ async function triggerAzureFunction(request: Request, response: Response) {
       message: `Call to devtestCbHandler successfully.`
     });
   };
+  winston.error(`register devtestMethode`);
   moduleClient.onMethod('devtestMethode', devtestCbHandler);
 
   const payload: CommandEventPayload = {};

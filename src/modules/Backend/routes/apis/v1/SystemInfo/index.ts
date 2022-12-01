@@ -68,39 +68,63 @@ async function triggerAzureFunction(request: Request, response: Response) {
     winston.info(`${logPrefix} moduleClient instance connected.`);
   }
 
-  // const azureFuncName = 'get-iotflex-updates';
-  const azureFuncName = 'get-celos-updates';
+  try {
+    const devtestCbHandler = (request, response) => {
+      winston.error(`devtestCbHandler callback called: ${inspect(request)}`);
+      moduleClient.off('devtestMethode', devtestCbHandler);
+      response.send(200, {
+        message: `Call to devtestCbHandler successfully. Unregister Method`
+      });
+    };
+    winston.error(`register devtestMethode`);
+    moduleClient.onMethod('devtestMethode', devtestCbHandler);
+  } catch (error) {
+    winston.error(`devtestMethode already registered.`);
+  }
+
+  try {
+    const devtestCbHandler2 = (request, response) => {
+      winston.error(`devtestCbHandler2 callback called: ${inspect(request)}`);
+      response.send(200, {
+        message: `Call to devtestCbHandler2 successfully. Method is still registered`
+      });
+    };
+    winston.error(`register devtestMethode2`);
+    moduleClient.onMethod('devtestMethode2', devtestCbHandler2);
+  } catch (error) {
+    winston.error(`devtestMethode2 already registered.`);
+  }
+
+  await sendGetMDCLUpdateInfos1();
+  await sendGetMDCLUpdateInfos2();
+}
+
+/**
+ * With commandid
+ */
+async function sendGetMDCLUpdateInfos1() {
+  const logPrefix = `systemInfo::sendGetMDCLUpdateInfos1`;
+  const azureFuncName = 'get-mdclight-updates';
   const commandId = uuid();
   const uniqueMethodName = azureFuncName + '/' + commandId;
 
   const updateCbHandler = (request, response) => {
-    winston.error(`${uniqueMethodName} callback called: ${inspect(request)}`);
-    moduleClient.off(uniqueMethodName, updateCbHandler);
+    winston.error(
+      `${logPrefix} ${commandId} callback called: ${inspect(request)}`
+    );
+    moduleClient.off(commandId, updateCbHandler);
     response.send(200, {
-      message: `Call to ${uniqueMethodName} successfully.`
+      message: `Call to ${commandId} successfully.`
     });
   };
-  winston.error(`register ${uniqueMethodName}`);
-  moduleClient.onMethod(uniqueMethodName, updateCbHandler);
 
-  const devtestCbHandler = (request, response) => {
-    winston.error(`devtestCbHandler callback called: ${inspect(request)}`);
-    moduleClient.off('devtestMethode', devtestCbHandler);
-    response.send(200, {
-      message: `Call to devtestCbHandler successfully. Unregister Method`
-    });
-  };
-  winston.error(`register devtestMethode`);
-  moduleClient.onMethod('devtestMethode', devtestCbHandler);
-
-  const devtestCbHandler2 = (request, response) => {
-    winston.error(`devtestCbHandler2 callback called: ${inspect(request)}`);
-    response.send(200, {
-      message: `Call to devtestCbHandler2 successfully. Method is still registered`
-    });
-  };
-  winston.error(`register devtestMethode2`);
-  moduleClient.onMethod('devtestMethode2', devtestCbHandler2);
+  winston.error(`${logPrefix} registering ${commandId}`);
+  try {
+    moduleClient.onMethod(commandId, updateCbHandler);
+    winston.error(`${logPrefix} ${commandId} registered.`);
+  } catch (err) {
+    winston.error(`${logPrefix} ${commandId} already registered.`);
+  }
 
   const payload: CommandEventPayload = {};
   const msg = new Message(JSON.stringify(payload));
@@ -110,8 +134,50 @@ async function triggerAzureFunction(request: Request, response: Response) {
   msg.properties.add('command', azureFuncName);
   msg.properties.add('commandId', commandId);
   msg.properties.add('methodName', uniqueMethodName);
+
   await moduleClient.sendEvent(msg).catch((error) => {
-    winston.error(``);
+    winston.error(`${logPrefix} error sending event msg ${inspect(error)}`);
+  });
+}
+
+/**
+ * With uniqueName
+ */
+async function sendGetMDCLUpdateInfos2() {
+  const logPrefix = `systemInfo::sendGetMDCLUpdateInfos2`;
+  const azureFuncName = 'get-mdclight-updates';
+  const commandId = uuid();
+  const uniqueMethodName = azureFuncName + '/' + commandId;
+
+  const updateCbHandler = (request, response) => {
+    winston.error(
+      `${logPrefix} ${uniqueMethodName} callback called: ${inspect(request)}`
+    );
+    moduleClient.off(uniqueMethodName, updateCbHandler);
+    response.send(200, {
+      message: `Call to ${uniqueMethodName} successfully.`
+    });
+  };
+
+  winston.error(`${logPrefix} registering ${uniqueMethodName}`);
+  try {
+    moduleClient.onMethod(uniqueMethodName, updateCbHandler);
+    winston.error(`${logPrefix} ${uniqueMethodName} registered.`);
+  } catch (err) {
+    winston.error(`${logPrefix} ${uniqueMethodName} already registered.`);
+  }
+
+  const payload: CommandEventPayload = {};
+  const msg = new Message(JSON.stringify(payload));
+
+  msg.properties.add('messageType', 'command');
+  msg.properties.add('moduleId', process.env.IOTEDGE_MODULEID);
+  msg.properties.add('command', azureFuncName);
+  msg.properties.add('commandId', commandId);
+  msg.properties.add('methodName', uniqueMethodName);
+
+  await moduleClient.sendEvent(msg).catch((error) => {
+    winston.error(`${logPrefix} error sending event msg ${inspect(error)}`);
   });
 }
 

@@ -304,7 +304,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * Factory reset
+   * Factory reset. Possible errors are handled by the caller, in BootstrapManager.start()
    */
   public async factoryResetConfiguration() {
     const authConfig = path.join(this.configFolder, this.authUsersConfigName);

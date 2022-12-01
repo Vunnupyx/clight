@@ -37,6 +37,9 @@ export interface ICosSystemVersion {
 }
 export type ICosSystemVersions = ICosSystemVersion[];
 
+//System restart response is an empty object
+export type ICosSystemRestartResponse = {};
+
 export interface ICosResponseError {
   message: string;
   error: string;

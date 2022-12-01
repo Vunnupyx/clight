@@ -5,7 +5,8 @@ import {
   ICosNetworkAdapterSettings,
   ICosNetworkAdapterStatus,
   ICosResponseError,
-  ICosSystemVersions
+  ICosSystemVersions,
+  ICosSystemRestartResponse
 } from './interfaces';
 
 export class ConfigurationAgentManager {
@@ -17,7 +18,17 @@ export class ConfigurationAgentManager {
   public static port = '1884';
   public static pathPrefix = '/api/v1';
 
-  private static async request(method = 'GET', endpoint) {
+  private static async request(
+    method: string = 'GET',
+    endpoint: string
+  ): Promise<
+    | ICosNetworkAdapterSettings
+    | ICosNetworkAdapterSetting
+    | ICosNetworkAdapterStatus
+    | ICosSystemVersions
+    | ICosSystemRestartResponse
+    | ICosResponseError
+  > {
     const logPrefix = `${ConfigurationAgentManager.name}::request`;
 
     const url = `${this.hostname}:${this.port}${this.pathPrefix}${endpoint}`;
@@ -30,8 +41,10 @@ export class ConfigurationAgentManager {
           'Content-Type': 'application/json'
         }
       });
-
-      if (!response.ok || response.status !== 200) {
+      if (
+        !response.ok ||
+        (response.status !== 200 && response.status !== 201)
+      ) {
         winston.error(`${logPrefix} error in response: ${response.status}`);
         return Promise.reject(new Error(`Error: ${response.status}`));
       }
@@ -40,6 +53,7 @@ export class ConfigurationAgentManager {
         | ICosNetworkAdapterSettings
         | ICosNetworkAdapterSetting
         | ICosNetworkAdapterStatus
+        | ICosSystemRestartResponse
         | ICosSystemVersions
         | ICosResponseError = await response.json();
 
@@ -56,28 +70,53 @@ export class ConfigurationAgentManager {
     }
   }
 
-  public static async getSystemVersions() {
-    return this.request('GET', '/system/versions');
+  public static async getSystemVersions(): Promise<ICosSystemVersions> {
+    const result = (await this.request(
+      'GET',
+      '/system/versions'
+    )) as ICosSystemVersions;
+    return result;
   }
-  public static async systemRestart() {
-    return this.request('POST', '/system/restart');
+  public static async systemRestart(): Promise<ICosSystemRestartResponse> {
+    const result = (await this.request(
+      'POST',
+      '/system/restart'
+    )) as ICosSystemRestartResponse;
+    return result;
   }
 
-  public static async getNetworkAdapters() {
-    return this.request('GET', '/network/adapters');
+  public static async getNetworkAdapters(): Promise<ICosNetworkAdapterSettings> {
+    const result = (await this.request(
+      'GET',
+      '/network/adapters'
+    )) as ICosNetworkAdapterSettings;
+
+    return result;
   }
 
-  public static async getSingleNetworkAdapterSetting(adapterId) {
+  public static async getSingleNetworkAdapterSetting(
+    adapterId: 'enoX1' | 'enoX2'
+  ): Promise<ICosNetworkAdapterSetting> {
     if (!adapterId || typeof adapterId !== 'string') {
-      return Promise.reject(new Error('Adapter Id missing or not string'));
+      return Promise.reject(new Error('Adapter Id not correct'));
     }
-    return this.request('GET', `/network/adapters/${adapterId}`);
+    const result = (await this.request(
+      'GET',
+      `/network/adapters/${adapterId}`
+    )) as ICosNetworkAdapterSetting;
+    return result;
   }
 
-  public static async getSingleNetworkAdapterStatus(adapterId) {
+  public static async getSingleNetworkAdapterStatus(
+    adapterId: 'enoX1' | 'enoX2'
+  ): Promise<ICosNetworkAdapterStatus> {
     if (!adapterId || typeof adapterId !== 'string') {
-      return Promise.reject(new Error('Adapter Id missing or not string'));
+      return Promise.reject(new Error('Adapter Id not correct'));
     }
-    return this.request('GET', `/network/adapters/${adapterId}/status`);
+    const result = (await this.request(
+      'GET',
+      `/network/adapters/${adapterId}/status`
+    )) as ICosNetworkAdapterStatus;
+    return result;
   }
 }

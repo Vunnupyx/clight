@@ -57,10 +57,10 @@ describe('ConfigurationAgentManager', () => {
   describe('successful cases', () => {
     test('System restart works correctly', async () => {
       mockedFetch.mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify({ a: 5 })))
+        Promise.resolve(new Response(JSON.stringify({}), { status: 201 }))
       );
       const result = await ConfigurationAgentManager.systemRestart();
-      expect(result).toStrictEqual({ a: 5 });
+      expect(result).toStrictEqual({});
     });
 
     test('System versions are read correctly', async () => {
@@ -82,13 +82,13 @@ describe('ConfigurationAgentManager', () => {
       mockedFetch.mockResolvedValueOnce(
         Promise.resolve(
           new Response(
-            JSON.stringify([{ id: 'testid', enabled: true, ipv4Settings: [] }])
+            JSON.stringify([{ id: 'enoX1', enabled: true, ipv4Settings: [] }])
           )
         )
       );
       const result = await ConfigurationAgentManager.getNetworkAdapters();
       expect(Array.isArray(result)).toBeTruthy();
-      expect(result[0].id).toBe('testid');
+      expect(result[0].id).toBe('enoX1');
       expect(result[0].enabled).toBeTruthy();
       expect(Array.isArray(result[0].ipv4Settings)).toBeTruthy();
     });
@@ -97,20 +97,20 @@ describe('ConfigurationAgentManager', () => {
       mockedFetch.mockResolvedValueOnce(
         Promise.resolve(
           new Response(
-            JSON.stringify({ id: 'enox1', enabled: true, ipv4Settings: [] })
+            JSON.stringify({ id: 'enoX1', enabled: true, ipv4Settings: [] })
           )
         )
       );
       const result =
         (await ConfigurationAgentManager.getSingleNetworkAdapterSetting(
-          'enox1'
+          'enoX1'
         )) as ICosNetworkAdapterSetting;
       expect(mockedFetch).toHaveBeenCalledWith(
-        expect.stringContaining('enox1'),
+        expect.stringContaining('enoX1'),
         expect.objectContaining({})
       );
       expect(Array.isArray(result)).toBeFalsy();
-      expect(result.id).toBe('enox1');
+      expect(result.id).toBe('enoX1');
       expect(result.enabled).toBeTruthy();
     });
 
@@ -128,10 +128,10 @@ describe('ConfigurationAgentManager', () => {
       );
       const result =
         (await ConfigurationAgentManager.getSingleNetworkAdapterStatus(
-          'enox1'
+          'enoX1'
         )) as ICosNetworkAdapterStatus;
       expect(mockedFetch).toHaveBeenCalledWith(
-        expect.stringContaining('enox1'),
+        expect.stringContaining('enoX1'),
         expect.objectContaining({})
       );
       expect(Array.isArray(result)).toBeFalsy();
@@ -214,7 +214,7 @@ describe('ConfigurationAgentManager', () => {
 
         const result =
           await ConfigurationAgentManager.getSingleNetworkAdapterSetting(
-            'testid'
+            'enoX1'
           );
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
@@ -227,7 +227,7 @@ describe('ConfigurationAgentManager', () => {
 
         const result =
           await ConfigurationAgentManager.getSingleNetworkAdapterSetting(
-            'testid'
+            'enoX1'
           );
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
@@ -241,7 +241,7 @@ describe('ConfigurationAgentManager', () => {
           await ConfigurationAgentManager.getSingleNetworkAdapterSetting(id);
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
-        expect(e.message).toBe('Adapter Id missing or not string');
+        expect(e.message).toBe('Adapter Id not correct');
       }
     });
 
@@ -253,7 +253,7 @@ describe('ConfigurationAgentManager', () => {
 
         const result =
           await ConfigurationAgentManager.getSingleNetworkAdapterStatus(
-            'testid'
+            'enoX1'
           );
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
@@ -266,7 +266,7 @@ describe('ConfigurationAgentManager', () => {
 
         const result =
           await ConfigurationAgentManager.getSingleNetworkAdapterStatus(
-            'testid'
+            'enoX1'
           );
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
@@ -280,7 +280,7 @@ describe('ConfigurationAgentManager', () => {
           await ConfigurationAgentManager.getSingleNetworkAdapterStatus(id);
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
-        expect(e.message).toBe('Adapter Id missing or not string');
+        expect(e.message).toBe('Adapter Id not correct');
       }
     });
 
@@ -292,7 +292,7 @@ describe('ConfigurationAgentManager', () => {
 
         const result =
           await ConfigurationAgentManager.getSingleNetworkAdapterStatus(
-            'testid'
+            'enoX1'
           );
       } catch (e) {
         expect(e).toBeInstanceOf(Error);

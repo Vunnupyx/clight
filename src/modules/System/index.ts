@@ -22,7 +22,7 @@ export class System {
     let address;
     enum interfaceMapping {
       'eth0' = 'enoX1',
-      'eth1' = 'enoX1'
+      'eth1' = 'enoX2'
     }
     try {
       address = await fs.readFile(

@@ -451,7 +451,13 @@
     "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
     "MaterialThemeVersion": "CELOS X Material Themaversion",
     "SoftwareComponent": "Software Komponent",
-    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut"
+    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut",
+    "FactoryReset": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
+    "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
+    "FactoryResetError": "Beim Zurücksetzen auf die Werkseinstellungen ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal."
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"

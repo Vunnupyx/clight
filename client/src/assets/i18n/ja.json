@@ -451,7 +451,13 @@
     "UpdateInstallFailed": "Failed to install updates. Please contact support.",
     "MaterialThemeVersion": "CELOS X material theme",
     "SoftwareComponent": "Software component",
-    "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。"
+    "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。",
+    "FactoryReset": "Factory Reset",
+    "FactoryResetNow": "Reset device to factory settings",
+    "FactoryResetDeviceTitle": "Perform Factory Reset",
+    "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",
+    "FactoryResetSuccess": "Factory reset performed successfully",
+    "FactoryResetError": "Error occurred while performing factory reset. Please try again later."
   },
   "prompt": {
     "warningText": "保存されていない変更があります。このまま続けますか？"

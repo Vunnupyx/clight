@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 import { SystemInformationService, UpdateStatus } from '../../services';
 import { SystemInformationSection } from '../../models';
@@ -16,6 +17,10 @@ import {
 } from 'app/shared/components/alert-dialog/alert-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel
+} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-system-information',
@@ -24,6 +29,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class SystemInformationComponent implements OnInit, OnDestroy {
   readonly MaterialThemeVersion = MaterialThemeVersion;
+  public showLoadingFactoryReset = false;
 
   data: SystemInformationSection[] = [];
 
@@ -32,7 +38,8 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
   constructor(
     private systemInformationService: SystemInformationService,
     private translate: TranslateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -117,6 +124,40 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
             hideCancelButton: true
           } as AlertDialogModel
         });
+      }
+    });
+  }
+
+  async factoryReset() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: new ConfirmDialogModel(
+        this.translate.instant('system-information.FactoryResetDeviceTitle'),
+        this.translate.instant('system-information.FactoryResetDeviceText')
+      )
+    });
+
+    dialogRef.afterClosed().subscribe(async (dialogResult) => {
+      if (!dialogResult) {
+        return;
+      }
+
+      this.showLoadingFactoryReset = true;
+
+      const success = await this.systemInformationService.factoryReset();
+
+      if (!success) {
+        this.toastr.error(
+          this.translate.instant('system-information.FactoryResetError')
+        );
+        this.showLoadingFactoryReset = false;
+      } else {
+        setTimeout(() => {
+          this.toastr.success(
+            this.translate.instant('system-information.FactoryResetSuccess')
+          );
+
+          this.showLoadingFactoryReset = false;
+        }, 1 * 60 * 1000); // TBD Show loading indicator for 1 minute
       }
     });
   }

@@ -75,6 +75,7 @@ async function triggerAzureFunction(request: Request, response: Response) {
 
   const updateCbHandler = (request, response) => {
     winston.error(`${uniqueMethodName} callback called: ${inspect(request)}`);
+    moduleClient.off(uniqueMethodName, updateCbHandler);
     response.send(200, {
       message: `Call to ${uniqueMethodName} successfully.`
     });
@@ -84,12 +85,22 @@ async function triggerAzureFunction(request: Request, response: Response) {
 
   const devtestCbHandler = (request, response) => {
     winston.error(`devtestCbHandler callback called: ${inspect(request)}`);
+    moduleClient.off('devtestMethode', devtestCbHandler);
     response.send(200, {
-      message: `Call to devtestCbHandler successfully.`
+      message: `Call to devtestCbHandler successfully. Unregister Method`
     });
   };
   winston.error(`register devtestMethode`);
   moduleClient.onMethod('devtestMethode', devtestCbHandler);
+
+  const devtestCbHandler2 = (request, response) => {
+    winston.error(`devtestCbHandler2 callback called: ${inspect(request)}`);
+    response.send(200, {
+      message: `Call to devtestCbHandler2 successfully. Method is still registered`
+    });
+  };
+  winston.error(`register devtestMethode2`);
+  moduleClient.onMethod('devtestMethode2', devtestCbHandler2);
 
   const payload: CommandEventPayload = {};
   const msg = new Message(JSON.stringify(payload));

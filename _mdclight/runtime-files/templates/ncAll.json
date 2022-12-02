@@ -7,36 +7,6 @@
     "model": "",
     "control": "SIEMENS SINUMERIK 840D sl"
   },
-  "networkConfig": {
-    "x1": {
-      "useDhcp": true,
-      "ipAddr": "",
-      "netmask": "",
-      "defaultGateway": "",
-      "dnsServer": ""
-    },
-    "x2": {
-      "useDhcp": false,
-      "ipAddr": "192.168.214.230",
-      "netmask": "255.255.255.0",
-      "defaultGateway": "",
-      "dnsServer": ""
-    },
-    "proxy": {
-      "useProxy": false,
-      "password": "",
-      "username": "",
-      "port": "",
-      "ipAddr": "",
-      "type": "http"
-    },
-    "time": {
-      "useNtp": true,
-      "ntpHost": "pool.ntp.org",
-      "currentTime": "",
-      "timezone": "Europe/Berlin"
-    }
-  },
   "dataSources": [
     {
       "dataPoints": [

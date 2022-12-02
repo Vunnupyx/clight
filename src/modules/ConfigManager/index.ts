@@ -100,6 +100,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private configFolder = path.join(this.mdcFolder, '/config');
   private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
   private sslFolder = path.join(this.mdcFolder, 'sslkeys');
+  private runtimeFolder = path.join(this.mdcFolder, 'runtime-files');
 
   private configName = 'config.json';
   private authUsersConfigName = 'auth.json';
@@ -575,8 +576,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplate(templateName) {
     try {
       const configPath = path.join(
-        this.mdcFolder,
-        'runtime-files/templates',
+        this.runtimeFolder,
+        'templates',
         templateName
       );
       return JSON.parse(
@@ -590,7 +591,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplates() {
     try {
       const templateNames = await promisefs.readdir(
-        path.join(this.mdcFolder, 'runtime-files/templates'),
+        path.join(this.runtimeFolder, 'templates'),
         { encoding: 'utf-8' }
       );
 
@@ -956,12 +957,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   async getTermsAndConditions(lang: string) {
     const terms = await promisefs
       .readFile(
-        path.join(
-          this.mdcFolder,
-          'runtime-files/terms',
-          'eula',
-          `eula_${lang}.txt`
-        ),
+        path.join(this.runtimeFolder, 'terms', 'eula', `eula_${lang}.txt`),
         { encoding: 'utf-8' }
       )
       .then((data) => data)

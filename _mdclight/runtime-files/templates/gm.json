@@ -454,5 +454,14 @@
     "completed": true
   },
   "name": "quick-start.Templates.name.gm",
-  "description": "quick-start.Templates.description.gm"
+  "description": "quick-start.Templates.description.gm",
+  "messenger": {
+    "hostname": "",
+    "username": "",
+    "password": "",
+    "name": "",
+    "model": 0,
+    "organization": "",
+    "timezone": 0
+  }
 }

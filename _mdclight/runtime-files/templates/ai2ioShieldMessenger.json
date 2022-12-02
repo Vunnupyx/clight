@@ -615,5 +615,14 @@
   "systemInfo": [],
   "templates": {
     "completed": true
+  },
+  "messenger": {
+    "hostname": "",
+    "username": "",
+    "password": "",
+    "name": "",
+    "model": 0,
+    "organization": "",
+    "timezone": 0
   }
 }

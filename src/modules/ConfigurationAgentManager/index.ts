@@ -97,7 +97,7 @@ export class ConfigurationAgentManager {
   public static async getSingleNetworkAdapterSetting(
     adapterId: 'enoX1' | 'enoX2'
   ): Promise<ICosNetworkAdapterSetting> {
-    if (!adapterId || typeof adapterId !== 'string') {
+    if (adapterId !== 'enoX1' && adapterId !== 'enoX2') {
       return Promise.reject(new Error('Adapter Id not correct'));
     }
     const result = (await this.request(
@@ -110,7 +110,7 @@ export class ConfigurationAgentManager {
   public static async getSingleNetworkAdapterStatus(
     adapterId: 'enoX1' | 'enoX2'
   ): Promise<ICosNetworkAdapterStatus> {
-    if (!adapterId || typeof adapterId !== 'string') {
+    if (adapterId !== 'enoX1' && adapterId !== 'enoX2') {
       return Promise.reject(new Error('Adapter Id not correct'));
     }
     const result = (await this.request(

@@ -11,12 +11,12 @@ let configManager: ConfigManager;
 let moduleClient: ModuleClient;
 
 interface CommandEventPayload {
-  Command?: string;
-  Layer?: string;
-  Release?: string;
-  TwinVersion?: string;
-  BaseLayerVersion?: string;
-  Locale?: string;
+  command?: string;
+  layer?: string;
+  release?: string;
+  twinVersion?: string;
+  baseLayerVersion?: string;
+  locale?: string;
 }
 
 /**
@@ -127,7 +127,7 @@ async function sendGetMDCLUpdateInfos1() {
   }
 
   const payload: CommandEventPayload = {
-    Locale: 'en'
+    locale: 'en'
   };
   const msg = new Message(JSON.stringify(payload));
 
@@ -170,7 +170,7 @@ async function sendGetMDCLUpdateInfos2() {
   }
 
   const payload: CommandEventPayload = {
-    Locale: 'en'
+    locale: 'en'
   };
   const msg = new Message(JSON.stringify(payload));
 

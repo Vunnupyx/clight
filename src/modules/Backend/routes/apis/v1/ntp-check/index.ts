@@ -246,7 +246,7 @@ async function checkInterfaces(): Promise<boolean> {
       );
     })
     .then(() => {
-      const requests = Object.keys(adapterInfos).map((id) =>
+      const requests = Object.keys(adapterInfos).map((id: 'enoX1' | 'enoX2') =>
         ConfigurationAgentManager.getSingleNetworkAdapterStatus(id)
       );
       return Promise.all(requests);

@@ -135,7 +135,7 @@ async function sendGetMDCLUpdateInfos1() {
   msg.properties.add('moduleId', process.env.IOTEDGE_MODULEID);
   msg.properties.add('command', azureFuncName);
   msg.properties.add('commandId', commandId);
-  msg.properties.add('methodName', uniqueMethodName);
+  msg.properties.add('methodName', commandId);
 
   await moduleClient.sendEvent(msg).catch((error) => {
     winston.error(`${logPrefix} error sending event msg ${inspect(error)}`);

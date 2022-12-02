@@ -126,7 +126,9 @@ async function sendGetMDCLUpdateInfos1() {
     winston.error(`${logPrefix} ${commandId} already registered.`);
   }
 
-  const payload: CommandEventPayload = {};
+  const payload: CommandEventPayload = {
+    Locale: 'en'
+  };
   const msg = new Message(JSON.stringify(payload));
 
   msg.properties.add('messageType', 'command');
@@ -167,7 +169,9 @@ async function sendGetMDCLUpdateInfos2() {
     winston.error(`${logPrefix} ${uniqueMethodName} already registered.`);
   }
 
-  const payload: CommandEventPayload = {};
+  const payload: CommandEventPayload = {
+    Locale: 'en'
+  };
   const msg = new Message(JSON.stringify(payload));
 
   msg.properties.add('messageType', 'command');

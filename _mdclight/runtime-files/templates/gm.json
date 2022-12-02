@@ -454,17 +454,5 @@
     "completed": true
   },
   "name": "quick-start.Templates.name.gm",
-  "description": "quick-start.Templates.description.gm",
-  "env": {
-    "selected": "prod",
-    "web": {
-      "tag": "main"
-    },
-    "mdc": {
-      "tag": "main"
-    },
-    "mtc": {
-      "tag": "latest"
-    }
-  }
+  "description": "quick-start.Templates.description.gm"
 }

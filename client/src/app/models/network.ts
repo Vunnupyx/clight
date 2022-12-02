@@ -48,6 +48,7 @@ export interface NetworkProxy {
   whitelist: string[];
 }
 
+//TBD: NetworkNtp not used
 export interface NetworkNtp {
   useNtp: boolean;
   ntpHost: string;
@@ -58,7 +59,6 @@ export interface NetworkNtp {
 
 export interface NetworkDateTime {
   datetime: string;
-  timezone: string;
 }
 
 export interface NetworkTimestamp {

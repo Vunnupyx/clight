@@ -429,7 +429,7 @@
     "TimeSettings": "Time Settings",
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
-    "SetCurrentTime": "Set Current Time",
+    "SetCurrentTime": "Set Current Time (UTC)",
     "ChooseTimeZone": "Choose Time Zone",
     "nptUnreachable": "NTP Server unreachable",
     "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply."

@@ -16,6 +16,7 @@ import { Status, Store, StoreFactory } from 'app/shared/state';
 import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
+import FANUC_ADDRESSES from 'app/services/constants/fanucAddresses';
 
 export class DataSourcesState {
   status!: Status;
@@ -164,6 +165,10 @@ export class DataSourceService {
 
   getNckAddresses() {
     return NCK_ADDRESSES;
+  }
+
+  getFanucAddresses() {
+    return FANUC_ADDRESSES;
   }
 
   async getDataSourceType(

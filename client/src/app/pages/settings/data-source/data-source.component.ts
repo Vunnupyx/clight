@@ -10,6 +10,7 @@ import {
   DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
+  FanucTypes,
   IOShieldTypes,
   S7Types,
   SourceDataPoint,
@@ -37,6 +38,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;
+  FanucTypes = FanucTypes;
   IOShieldTypes = IOShieldTypes;
 
   dataSourceList?: DataSource[];

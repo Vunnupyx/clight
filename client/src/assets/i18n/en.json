@@ -176,7 +176,8 @@
     "LoadError": "Failed to load data sources. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Board"
+      "ioshield": "Input Board",
+      "fanuc": "Fanuc"
     },
     "Livedata": {
       "ioshield": {
@@ -190,7 +191,8 @@
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "Port": "Port"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",

@@ -10,6 +10,16 @@ import { inspect } from 'util';
 let configManager: ConfigManager;
 let moduleClient: ModuleClient;
 
+const updateCbHandler = (request, response) => {
+  winston.error(
+    `${logPrefix} update infos 
+    handler callback called: ${inspect(request)}`
+  );
+  response.send(200, {
+    message: `Call to ${commandId} successfully.`
+  });
+};
+
 interface CommandEventPayload {
   command?: string;
   layer?: string;
@@ -50,77 +60,66 @@ async function triggerAzureFunction(request: Request, response: Response) {
       msg: warn.replace(logPrefix + ' d', 'D')
     });
   }
-  if (!moduleClient) {
-    winston.warn(
-      `${logPrefix} moduleClient instance not available. Creating module client.`
+  await setUpModuleClient().catch((error) => {
+    winston.error(
+      `${logPrefix} error setting up module client due to ${JSON.stringify(
+        error || ''
+      )}`
     );
-    moduleClient =
-      (await ModuleClient.fromEnvironment(IotHubTransport).catch(() => {
-        winston.error(
-          `${logPrefix} no azure environment information available. `
-        );
-        response.status(500).json({
-          msg: `Update mechanisms not available.`
-        });
-      })) || null;
-    // TODO: Add error handling
-    const connected = await moduleClient.open();
-    winston.info(`${logPrefix} moduleClient instance connected.`);
-  }
+    return response.status(500).json({
+      msg: `No CelosXChange connection available.`
+    });
+  });
 
-  try {
-    const devtestCbHandler = (request, response) => {
-      winston.error(`devtestCbHandler callback called: ${inspect(request)}`);
-      moduleClient.off('devtestMethode', devtestCbHandler);
-      response.send(200, {
-        message: `Call to devtestCbHandler successfully. Unregister Method`
-      });
-    };
-    winston.error(`register devtestMethode`);
-    moduleClient.onMethod('devtestMethode', devtestCbHandler);
-  } catch (error) {
-    winston.error(`devtestMethode already registered.`);
-  }
-
-  try {
-    const devtestCbHandler2 = (request, response) => {
-      winston.error(`devtestCbHandler2 callback called: ${inspect(request)}`);
-      response.send(200, {
-        message: `Call to devtestCbHandler2 successfully. Method is still registered`
-      });
-    };
-    winston.error(`register devtestMethode2`);
-    moduleClient.onMethod('devtestMethode2', devtestCbHandler2);
-  } catch (error) {
-    winston.error(`devtestMethode2 already registered.`);
-  }
-
-  await sendGetMDCLUpdateInfos1();
-  await sendGetMDCLUpdateInfos2();
+  await sendGetMDCLUpdateInfos();
 }
 
 /**
- * With commandid
+ * Setup instance of module client.
+ * @returns
+ *  reject in case of:  - Missing environment information.
+ *                      - Connection to IoT Datahub not possible.
  */
-async function sendGetMDCLUpdateInfos1() {
+async function setUpModuleClient(): Promise<void> {
+  const logPrefix = `systeminfo::setUpModuleClient`;
+
+  if (moduleClient) {
+    return Promise.resolve();
+  }
+
+  winston.info(
+    `${logPrefix} module client not yet instantiated. Creating module client.`
+  );
+  moduleClient = await ModuleClient.fromEnvironment(IotHubTransport).catch(
+    (error) => {
+      moduleClient = null;
+      return Promise.reject(
+        `${logPrefix} error creating module client due to ${JSON.stringify(
+          error || ''
+        )}.`
+      );
+    }
+  );
+  winston.verbose(`${logPrefix} module client successfully created.`);
+  await moduleClient.open().catch((error) => {
+    return Promise.reject(
+      `${logPrefix} error connecting module client due to ${JSON.stringify(
+        error || ''
+      )}.`
+    );
+  });
+  winston.verbose(`${logPrefix} moduleClient instance connected.`);
+}
+
+async function sendGetMDCLUpdateInfos(cb: () => {}) {
   const logPrefix = `systemInfo::sendGetMDCLUpdateInfos1`;
   const azureFuncName = 'get-mdclight-updates';
   const commandId = uuid();
-  const uniqueMethodName = azureFuncName + '/' + commandId;
-
-  const updateCbHandler = (request, response) => {
-    winston.error(
-      `${logPrefix} ${commandId} callback called: ${inspect(request)}`
-    );
-    moduleClient.off(commandId, updateCbHandler);
-    response.send(200, {
-      message: `Call to ${commandId} successfully.`
-    });
-  };
+  const callbackName = commandId;
 
   winston.error(`${logPrefix} registering ${commandId}`);
   try {
-    moduleClient.onMethod(commandId, updateCbHandler);
+    moduleClient.onMethod(callbackName, updateCbHandler);
     winston.error(`${logPrefix} ${commandId} registered.`);
   } catch (err) {
     winston.error(`${logPrefix} ${commandId} already registered.`);
@@ -135,50 +134,7 @@ async function sendGetMDCLUpdateInfos1() {
   msg.properties.add('moduleId', process.env.IOTEDGE_MODULEID);
   msg.properties.add('command', azureFuncName);
   msg.properties.add('commandId', commandId);
-  msg.properties.add('methodName', commandId);
-
-  await moduleClient.sendEvent(msg).catch((error) => {
-    winston.error(`${logPrefix} error sending event msg ${inspect(error)}`);
-  });
-}
-
-/**
- * With uniqueName
- */
-async function sendGetMDCLUpdateInfos2() {
-  const logPrefix = `systemInfo::sendGetMDCLUpdateInfos2`;
-  const azureFuncName = 'get-mdclight-updates';
-  const commandId = uuid();
-  const uniqueMethodName = azureFuncName + '/' + commandId;
-
-  const updateCbHandler = (request, response) => {
-    winston.error(
-      `${logPrefix} ${uniqueMethodName} callback called: ${inspect(request)}`
-    );
-    moduleClient.off(uniqueMethodName, updateCbHandler);
-    response.send(200, {
-      message: `Call to ${uniqueMethodName} successfully.`
-    });
-  };
-
-  winston.error(`${logPrefix} registering ${uniqueMethodName}`);
-  try {
-    moduleClient.onMethod(uniqueMethodName, updateCbHandler);
-    winston.error(`${logPrefix} ${uniqueMethodName} registered.`);
-  } catch (err) {
-    winston.error(`${logPrefix} ${uniqueMethodName} already registered.`);
-  }
-
-  const payload: CommandEventPayload = {
-    locale: 'en'
-  };
-  const msg = new Message(JSON.stringify(payload));
-
-  msg.properties.add('messageType', 'command');
-  msg.properties.add('moduleId', process.env.IOTEDGE_MODULEID);
-  msg.properties.add('command', azureFuncName);
-  msg.properties.add('commandId', commandId);
-  msg.properties.add('methodName', uniqueMethodName);
+  msg.properties.add('methodName', callbackName);
 
   await moduleClient.sendEvent(msg).catch((error) => {
     winston.error(`${logPrefix} error sending event msg ${inspect(error)}`);

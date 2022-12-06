@@ -425,7 +425,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateControllerType(type: S7Types | IOShieldTypes) {
+  updateControllerType(type: S7Types | IOShieldTypes | FanucTypes) {
     this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
       type
     });

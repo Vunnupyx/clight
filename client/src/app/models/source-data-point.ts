@@ -1,6 +1,7 @@
 export enum SourceDataPointType {
   PLC = 's7',
-  NCK = 'nck'
+  NCK = 'nck',
+  FANUC = 'fanuc'
 }
 
 export class SourceDataPoint {

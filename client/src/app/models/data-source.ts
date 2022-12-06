@@ -62,11 +62,11 @@ export enum FanucTypes {
   Fanuc_21iA = 'fanuc_21iA',
   Fanuc_21iB = 'fanuc_21iB',
   Fanuc_30iA = 'fanuc_30iA',
-  Fanuc_30iB = 'fanuc_30iB',
+  Fanuc_30iB = 'fanuc_30iB'
 }
 
 export class DataSource {
-  type?: S7Types | IOShieldTypes;
+  type?: S7Types | IOShieldTypes | FanucTypes;
   connection?: Connection;
   dataPoints?: SourceDataPoint[];
   enabled?: boolean;

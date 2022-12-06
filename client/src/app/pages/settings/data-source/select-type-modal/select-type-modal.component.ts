@@ -1,17 +1,6 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA
-} from '@angular/material/dialog';
-import {
-  ColumnMode,
-  DatatableComponent
-} from '@swimlane/ngx-datatable';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 
 import { DataSourceProtocol } from '../../../../models';
 import { DataSourceService } from '../../../../services';
@@ -38,7 +27,10 @@ export class SelectTypeModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.rows = this.dataSourceService.getNckAddresses();
+    this.rows =
+      this.data.protocol === DataSourceProtocol.S7
+        ? this.dataSourceService.getNckAddresses()
+        : this.dataSourceService.getFanucAddresses();
   }
 
   ngAfterViewInit() {

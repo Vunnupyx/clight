@@ -90,6 +90,95 @@
               </div>
             </div>
           </ng-container>
+          <ng-container *ngSwitchCase="'fanuc'">
+            <form #form="ngForm" class="mt-20">
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5">
+                  {{ 'settings-data-source.IPAddress' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="ipAddress"
+                    #ipAddr="ngModel"
+                    [ngModel]="dataSource?.connection?.ipAddr"
+                    [pattern]="ipRegex"
+                    [required]="true"
+                    (ngModelChange)="updateIpAddress(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5">
+                  {{ 'settings-data-source.Port' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="port"
+                    #port="ngModel"
+                    [ngModel]="dataSource?.connection?.port"
+                    [required]="true"
+                  />
+                </mat-form-field>
+              </div>
+            </form>
+            <div>
+              <div class="row d-flex align-items-center">
+                <div class="col-12 col-md-5">
+                  <label>{{
+                    'settings-data-source.ControllerType' | translate
+                  }}</label>
+                </div>
+                <div class="col-12 col-md-7">
+                  <mat-form-field>
+                    <mat-select
+                      disableOptionCentering="true"
+                      [ngModel]="dataSource?.type"
+                      (ngModelChange)="updateControllerType($event)"
+                    >
+                      <mat-option [value]="FanucTypes.Fanuc_0iA"
+                        >0i-A</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_0iB"
+                        >0i-B</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_0iD"
+                        >0i-D</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_0iF"
+                        >0i-F</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_16iA"
+                        >16i-A</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_16iB"
+                        >16i-B</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_18iA"
+                        >18i-A</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_18iB"
+                        >18i-B</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_21iA"
+                        >21i-A</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_21iB"
+                        >21i-B</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_30iA"
+                        >30i-A</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_30iB"
+                        >30i-B</mat-option
+                      >
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </ng-container>
           <ng-container *ngSwitchCase="'ioshield'">
             <div>
               <div class="row d-flex align-items-center">

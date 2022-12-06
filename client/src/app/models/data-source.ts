@@ -2,6 +2,7 @@ import { SourceDataPoint } from './source-data-point';
 
 export enum DataSourceProtocol {
   S7 = 's7',
+  Fanuc = 'fanuc',
   IOShield = 'ioshield'
 }
 
@@ -47,6 +48,21 @@ export enum IOShieldTypes {
   DI_10 = '10di',
   AI_100_5di = 'ai-100+5di',
   AI_150_5di = 'ai-150+5di'
+}
+
+export enum FanucTypes {
+  Fanuc_0iA = 'fanuc_0iA',
+  Fanuc_0iB = 'fanuc_0iB',
+  Fanuc_0iD = 'fanuc_0iD',
+  Fanuc_0iF = 'fanuc_0iF',
+  Fanuc_16iA = 'fanuc_16iA',
+  Fanuc_16iB = 'fanuc_16iB',
+  Fanuc_18iA = 'fanuc_18iA',
+  Fanuc_18iB = 'fanuc_18iB',
+  Fanuc_21iA = 'fanuc_21iA',
+  Fanuc_21iB = 'fanuc_21iB',
+  Fanuc_30iA = 'fanuc_30iA',
+  Fanuc_30iB = 'fanuc_30iB',
 }
 
 export class DataSource {

@@ -349,10 +349,8 @@ export interface IConfig {
   messenger: IMessengerServerConfig;
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
-  networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
   termsAndConditions: TermsAndConditionsConfig;
-  env: env;
 }
 
 export interface IConfigManagerParams {

@@ -1353,6 +1353,18 @@
         }
       }
     },
+    "/systemInfo/factoryreset": {
+      "post": {
+        "tags": ["systemInfo"],
+        "description": "Perform factory reset",
+        "operationId": "systemFactoryReset",
+        "responses": {
+          "200": {
+            "description": "Factory reset performed successfully"
+          }
+        }
+      }
+    },
     "/systemInfo/update": {
       "get": {
         "tags": ["systemInfo"],
@@ -1375,21 +1387,6 @@
                   "example": "No update possible. Please check your network configuration."
                 }
               }
-            }
-          }
-        }
-      }
-    },
-    "systemInfo/environment": {
-      "get": {
-        "tags": ["systemInfo"],
-        "description": "Get system environment",
-        "operationId": "systemEnvironmentGet",
-        "responses": {
-          "200": {
-            "description": "Returns all information about the current environment",
-            "schema": {
-              "$ref": "#/definitions/envResponse"
             }
           }
         }
@@ -2273,16 +2270,6 @@
           }
         },
         "deleted": ["entityId"]
-      }
-    },
-    "envResponse": {
-      "type": "object",
-      "required": ["env"],
-      "properties": {
-        "env": {
-          "type": "string",
-          "enum": ["stag", "dev", "prod"]
-        }
       }
     },
     "messengerServerConfiguration": {

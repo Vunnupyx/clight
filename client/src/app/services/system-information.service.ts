@@ -113,6 +113,16 @@ export class SystemInformationService {
     }
   }
 
+  async factoryReset(): Promise<boolean> {
+    try {
+      await this.httpService.post(`/systemInfo/factoryreset`, null);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async getServerTimeOffset(force = false): Promise<number> {
     if (force || this._store.snapshot.serverOffset === undefined) {
       const time = new Date(await this.getServerTime());

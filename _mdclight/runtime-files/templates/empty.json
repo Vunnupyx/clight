@@ -7,36 +7,6 @@
     "model": "",
     "control": ""
   },
-  "networkConfig": {
-    "x1": {
-      "useDhcp": true,
-      "ipAddr": "",
-      "netmask": "",
-      "defaultGateway": "",
-      "dnsServer": ""
-    },
-    "x2": {
-      "useDhcp": false,
-      "ipAddr": "192.168.214.230",
-      "netmask": "255.255.255.0",
-      "defaultGateway": "",
-      "dnsServer": ""
-    },
-    "proxy": {
-      "useProxy": false,
-      "password": "",
-      "username": "",
-      "port": "",
-      "ipAddr": "",
-      "type": "http"
-    },
-    "time": {
-      "useNtp": true,
-      "ntpHost": "pool.ntp.org",
-      "currentTime": "",
-      "timezone": "Europe/Berlin"
-    }
-  },
   "dataSources": [],
   "dataSinks": [],
   "virtualDataPoints": [],
@@ -45,16 +15,13 @@
   "templates": {
     "completed": true
   },
-  "env": {
-    "selected": "prod",
-    "web": {
-      "tag": "main"
-    },
-    "mdc": {
-      "tag": "main"
-    },
-    "mtc": {
-      "tag": "latest"
-    }
+  "messenger": {
+    "hostname": "",
+    "username": "",
+    "password": "",
+    "name": "",
+    "model": 0,
+    "organization": "",
+    "timezone": 0
   }
 }

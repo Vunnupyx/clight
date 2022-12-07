@@ -22,6 +22,18 @@
         </button>
       </div>
     </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true" class="mt-25">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ 'system-information.FactoryReset' | translate }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div>
+        <button mat-button color="primary" (click)="factoryReset()">
+          {{ 'system-information.FactoryResetNow' | translate }}
+        </button>
+      </div>
+    </mat-expansion-panel>
   </div>
 </div>
 
@@ -51,4 +63,8 @@
       <mat-divider></mat-divider>
     </ng-container>
   </div>
+</div>
+
+<div class="loading-block" *ngIf="showLoadingFactoryReset">
+  <mat-spinner></mat-spinner>
 </div>

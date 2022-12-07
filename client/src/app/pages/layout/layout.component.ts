@@ -4,6 +4,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { filter, map, mergeMap, shareReplay } from 'rxjs/operators';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../shared';
+import { TimeSyncCheckService } from '../../services/time-sync-check.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -35,7 +36,8 @@ export class LayoutComponent {
     private router: Router,
     private route: ActivatedRoute,
     private auth: AuthService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private timeSyncCheckService: TimeSyncCheckService
   ) {
     this.subs.add(
       this.router.events
@@ -55,6 +57,13 @@ export class LayoutComponent {
           this.noLayout = noLayout;
         })
     );
+  }
+
+  ngOnInit() {
+    //Check time after a while to avoid not loading translation
+    setTimeout(() => {
+      this.timeSyncCheckService.checkTimeDifference();
+    }, 500);
   }
 
   async logout() {

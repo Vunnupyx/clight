@@ -48,17 +48,8 @@ export interface NetworkProxy {
   whitelist: string[];
 }
 
-export interface NetworkNtp {
-  useNtp: boolean;
-  ntpHost: string;
-  currentTime: string;
-  timezone: string;
-  reachable: boolean;
-}
-
 export interface NetworkDateTime {
   datetime: string;
-  timezone: string;
 }
 
 export interface NetworkTimestamp {

@@ -10,8 +10,6 @@
 read -p "Device Id: " deviceId
 read -p "Version of containers: " version
 
-
-version="3.0.0-beta-1-214-g6bc06473"
 versionForName=$(sed 's/[.]/-/g' <<< $version)
 
 target="tags.mdclight='iotflex-$version'"

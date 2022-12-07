@@ -1353,6 +1353,18 @@
         }
       }
     },
+    "/systemInfo/factoryreset": {
+      "post": {
+        "tags": ["systemInfo"],
+        "description": "Perform factory reset",
+        "operationId": "systemFactoryReset",
+        "responses": {
+          "200": {
+            "description": "Factory reset performed successfully"
+          }
+        }
+      }
+    },
     "/systemInfo/update": {
       "get": {
         "tags": ["systemInfo"],

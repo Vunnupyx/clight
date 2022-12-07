@@ -143,22 +143,15 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
 
       this.showLoadingFactoryReset = true;
 
-      const success = await this.systemInformationService.factoryReset();
+      this.systemInformationService.factoryReset(); // without await, as connection will be lost and it will keep waiting for a response
 
-      if (!success) {
-        this.toastr.error(
-          this.translate.instant('system-information.FactoryResetError')
+      setTimeout(() => {
+        this.toastr.success(
+          this.translate.instant('system-information.FactoryResetSuccess')
         );
-        this.showLoadingFactoryReset = false;
-      } else {
-        setTimeout(() => {
-          this.toastr.success(
-            this.translate.instant('system-information.FactoryResetSuccess')
-          );
 
-          this.showLoadingFactoryReset = false;
-        }, 1 * 60 * 1000); // TBD Show loading indicator for 1 minute
-      }
+        this.showLoadingFactoryReset = false;
+      }, 5 * 60 * 1000); //Show loading indicator for 5 minute
     });
   }
 

@@ -239,28 +239,6 @@ export interface IDataPointMapping {
   priority?: number;
 }
 
-export interface NetworkConfigItem {
-  useDhcp?: boolean;
-  ipAddr?: string;
-  netmask?: string;
-  defaultGateway?: string;
-  dnsServer?: string;
-  useProxy?: boolean;
-  port?: number;
-  username?: string;
-  password?: string;
-  configurationState?: boolean;
-  serviceState?: boolean;
-}
-
-export type NetworkConfig = {
-  [key in 'x1' | 'x2']: NetworkConfigItem;
-} & {
-  proxy?: IProxyConfig;
-} & {
-  time?: ITimeConfig;
-};
-
 export interface IDefaultTemplate {
   id?: string;
   name: string;
@@ -334,14 +312,6 @@ export interface TermsAndConditionsConfig {
   accepted: boolean;
 }
 
-type env = {
-  [component in TSoftwareComponents]: {
-    tag: string;
-  };
-} & {
-  selected: 'prod' | 'dev' | 'stag';
-};
-
 export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: Array<IDataSinkConfig>;
@@ -349,10 +319,8 @@ export interface IConfig {
   messenger: IMessengerServerConfig;
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
-  networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
   termsAndConditions: TermsAndConditionsConfig;
-  env: env;
 }
 
 export interface IConfigManagerParams {

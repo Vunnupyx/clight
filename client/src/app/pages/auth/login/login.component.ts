@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService, LocalStorageService } from '../../../shared';
 import { ForgotPasswordRequest, LoginRequest } from '../../../models/auth';
 import { EMAIL_REGEX } from '../../../shared/utils/regex';
+import { TimeSyncCheckService } from '../../../services/time-sync-check.service';
 
 enum LoginPageMode {
   Login = 'Login',
@@ -38,7 +39,8 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     private translate: TranslateService,
     private auth: AuthService,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private timeSyncCheckService: TimeSyncCheckService
   ) {}
 
   ngOnInit(): void {}
@@ -51,7 +53,7 @@ export class LoginComponent implements OnInit {
           this.auth.setOldPassword(this.loginRequest.password);
           return this.router.navigate(['/reset-password']);
         }
-
+        this.timeSyncCheckService.checkTimeDifference();
         return this.router.navigate(['/']);
       })
       .catch((error) => this.toastr.error(error.error.message));

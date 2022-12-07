@@ -13,7 +13,10 @@
           (click)="drawer.toggle()"
           *ngIf="isHandset$ | async"
         >
-          <mat-icon svgIcon="mdc:menu" aria-label="Side nav toggle icon"></mat-icon>
+          <mat-icon
+            svgIcon="mdc:menu"
+            aria-label="Side nav toggle icon"
+          ></mat-icon>
         </button>
         <span routerLink="settings" class="cursor-pointer"
           ><img src="/assets/images/logo-connectivity-white.png" width="250"
@@ -22,11 +25,11 @@
       <span class="spacer"></span>
       <span class="help-wrapper">
         <a mat-icon-button [href]="supportHref" target="_blank">
-          <mat-icon class="color-light-primary" svgIcon="mdc:unknown"></mat-icon>
+          <mat-icon
+            class="color-light-primary"
+            svgIcon="mdc:unknown"
+          ></mat-icon>
         </a>
-      </span>
-      <span class="clock-wrapper">
-        <app-clock></app-clock>
       </span>
     </mat-toolbar>
 
@@ -68,7 +71,10 @@
           (click)="drawer.toggle()"
           *ngIf="isHandset$ | async"
         >
-        <mat-icon svgIcon="mdc:menu" aria-label="Side nav toggle icon"></mat-icon>
+          <mat-icon
+            svgIcon="mdc:menu"
+            aria-label="Side nav toggle icon"
+          ></mat-icon>
         </button>
         <span routerLink="settings" class="cursor-pointer"
           ><img src="/assets/images/logo-connectivity-white.png" width="250"
@@ -77,11 +83,11 @@
       <span class="spacer"></span>
       <span class="help-wrapper">
         <a mat-icon-button [href]="supportHref" target="_blank">
-          <mat-icon class="color-light-primary" svgIcon="mdc:unknown"></mat-icon>
+          <mat-icon
+            class="color-light-primary"
+            svgIcon="mdc:unknown"
+          ></mat-icon>
         </a>
-      </span>
-      <span class="clock-wrapper">
-        <app-clock></app-clock>
       </span>
     </mat-toolbar>
 

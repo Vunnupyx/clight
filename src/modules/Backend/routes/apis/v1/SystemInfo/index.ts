@@ -36,15 +36,6 @@ async function triggerContainerUpdate(request: Request, response: Response) {
 }
 
 /**
- * Returns current set env variable ENV
- * @param request HTTP Request
- * @param response
- */
-function systemGetEnvironment(request: Request, response: Response) {
-  response.json({ env: configManager.config.env.selected }).status(200);
-}
-
-/**
  * Performs factory reset
  * @param request HTTP Request
  * @param response
@@ -61,6 +52,5 @@ async function systemFactoryResetHandler(request: Request, response: Response) {
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
   updateContainerGet: triggerContainerUpdate,
-  systemEnvironmentGet: systemGetEnvironment,
   systemFactoryReset: systemFactoryResetHandler
 };

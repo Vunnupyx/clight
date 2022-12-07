@@ -99,6 +99,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
   private configFolder = path.join(this.mdcFolder, '/config');
   private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
+  private sslFolder = path.join(this.mdcFolder, 'sslkeys');
+  private runtimeFolder = path.join(this.mdcFolder, 'runtime-files');
 
   private configName = 'config.json';
   private authUsersConfigName = 'auth.json';
@@ -303,21 +305,128 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * Factory reset
+   * Factory reset. Possible errors are handled by the caller, in BootstrapManager.start()
    */
   public async factoryResetConfiguration() {
     const authConfig = path.join(this.configFolder, this.authUsersConfigName);
+
+    const confAgentAddress =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:1884'
+        : 'http://172.17.0.1:1884';
+
+    const factoryProxy = {
+      enabled: false,
+      host: '',
+      port: 0,
+      username: '',
+      password: '',
+      whitelist: ['']
+    };
+    await fetch(`${confAgentAddress}/network/proxy`, {
+      method: 'PUT',
+      body: JSON.stringify(factoryProxy)
+    });
+
+    const factoryNtp = [''];
+    await fetch(`${confAgentAddress}/network/ntp`, {
+      method: 'PUT',
+      body: JSON.stringify(factoryNtp)
+    });
+
+    const factoryNetworkAdapters = [
+      {
+        id: 'enoX1',
+        displayName: '',
+        enabled: true,
+        ipv4Settings: {
+          enabled: true,
+          dhcp: true,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        ipv6Settings: {
+          enabled: false,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        macAddress: '',
+        ssid: ''
+      },
+      {
+        id: 'enoX2',
+        displayName: '',
+        enabled: true,
+        ipv4Settings: {
+          enabled: true,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '192.168.214.230',
+              Netmask: '24'
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        ipv6Settings: {
+          enabled: false,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        macAddress: '',
+        ssid: ''
+      }
+    ];
+
+    await Promise.all(
+      factoryNetworkAdapters.map((adapterSettings) =>
+        fetch(`${confAgentAddress}/network/adapters/${adapterSettings.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(adapterSettings)
+        })
+      )
+    );
 
     await promisefs.writeFile(
       this.configPath,
       JSON.stringify(factoryConfig, null, 2),
       { encoding: 'utf-8' }
     );
+
     await promisefs.unlink(authConfig);
+    await promisefs.unlink(path.join(this.keyFolder, this.privateKeyName));
+    await promisefs.unlink(path.join(this.keyFolder, this.publicKeyName));
+    await promisefs.unlink(path.join(this.sslFolder, 'ssl.crt'));
+    await promisefs.unlink(path.join(this.sslFolder, 'ssl_private.key'));
+
     if (fs.existsSync(`${this.mdcFolder}/certs`)) {
-      await promisefs.rmdir(`${this.mdcFolder}/certs`, {
-        recursive: true
-      });
+      let certFiles = await promisefs.readdir(`${this.mdcFolder}/certs`);
+      await Promise.all(
+        certFiles.map((filename) =>
+          promisefs.unlink(path.join(`${this.mdcFolder}/certs`, filename))
+        )
+      );
     }
   }
 
@@ -467,8 +576,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplate(templateName) {
     try {
       const configPath = path.join(
-        this.mdcFolder,
-        'runtime-files/templates',
+        this.runtimeFolder,
+        'templates',
         templateName
       );
       return JSON.parse(
@@ -482,7 +591,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplates() {
     try {
       const templateNames = await promisefs.readdir(
-        path.join(this.mdcFolder, 'runtime-files/templates'),
+        path.join(this.runtimeFolder, 'templates'),
         { encoding: 'utf-8' }
       );
 
@@ -848,12 +957,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   async getTermsAndConditions(lang: string) {
     const terms = await promisefs
       .readFile(
-        path.join(
-          this.mdcFolder,
-          'runtime-files/terms',
-          'eula',
-          `eula_${lang}.txt`
-        ),
+        path.join(this.runtimeFolder, 'terms', 'eula', `eula_${lang}.txt`),
         { encoding: 'utf-8' }
       )
       .then((data) => data)

@@ -51,7 +51,8 @@
     "build:webserver": "cd client && yarn && yarn build && cd .. && cd user-docs && yarn && yarn build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",
     "test": "jest",
     "format": "prettier --write .",
-    "connect:cs:machine": "sudo ssh -N -L 102:192.168.214.1:102 root@192.168.185.200 -v"
+    "connect:cs:machine": "sudo ssh -N -L 102:192.168.214.1:102 root@192.168.185.200 -v",
+    "deploy": "./scripts/deployment/deploy.sh"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

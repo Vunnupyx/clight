@@ -19,6 +19,8 @@ import { BaseChangesService } from './base-changes.service';
 import { DataSourceService } from './data-source.service';
 import { SystemInformationService } from './system-information.service';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
+import { HttpMockupService } from '../shared/services/http-mockup.service';
+import { Uuid } from 'app/api/models';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -28,6 +30,26 @@ export class SourceDataPointsState {
   dataPointsSourceMap!: ObjectMap<DataSourceProtocol>;
 }
 
+let DATA_POINTS: {
+  dataPoints: api.Sourcedatapoint[] & Uuid;
+} = {
+  dataPoints: [
+    {
+      type: SourceDataPointType.NCK,
+      name: 'CNC Type',
+      address: 'cnc_sysinfo.cnc_type',
+      readFrequency: 1000,
+      id: '123qwe'
+    },
+    {
+      type: SourceDataPointType.NCK,
+      name: 'ExecutionState',
+      address: 'cnc_statinfo.run',
+      readFrequency: 1000,
+      id: '123ewq'
+    }
+  ]
+};
 @Injectable()
 export class SourceDataPointService
   extends BaseChangesService<SourceDataPoint>
@@ -61,6 +83,7 @@ export class SourceDataPointService
     storeFactory: StoreFactory<SourceDataPointsState>,
     changesFactory: StoreFactory<IChangesState<string, SourceDataPoint>>,
     private httpService: HttpService,
+    private httpMockupService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService,
     private dataSourceService: DataSourceService,
@@ -130,27 +153,37 @@ export class SourceDataPointService
   /**
    * Send a request to ping endpoint of the data source api and wait for a returned delay float value as string
    * @param protocol destination for the request
-   * @returns 
+   * @returns
    */
   async ping(protocol: DataSourceProtocol | undefined): Promise<string> {
     // Info: currently only s7 supports ping!
-    if (protocol === undefined) protocol = DataSourceProtocol.S7
+    if (protocol === undefined) protocol = DataSourceProtocol.S7;
     const errorHandler = () => {
-      this.toastr.error(this.translate.instant('settings-data-source-point.HostUnreachable'));
-      return Promise.resolve(this.translate.instant('settings-data-source-point.HostUnreachable'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.HostUnreachable')
+      );
+      return Promise.resolve(
+        this.translate.instant('settings-data-source-point.HostUnreachable')
+      );
     };
     if (protocol !== DataSourceProtocol.S7) {
       return errorHandler();
     }
-    return this.httpService.get(`/datasources/${protocol}/ping`)
+    return this.httpService
+      .get(`/datasources/${protocol}/ping`)
       .then((res) => {
         this.toastr.success(
-          this.translate.instant(`settings-data-source-point.ConnectionAvailableWithDelay`) + res.delay + ' ms'
+          this.translate.instant(
+            `settings-data-source-point.ConnectionAvailableWithDelay`
+          ) +
+            res.delay +
+            ' ms'
         );
         return res.delay;
-      }).catch(() => {
-        return errorHandler();
       })
+      .catch(() => {
+        return errorHandler();
+      });
   }
 
   async getDataPoints(datasourceProtocol: DataSourceProtocol) {
@@ -199,7 +232,9 @@ export class SourceDataPointService
         };
 
         dataPoints = dataPoints.concat(
-          ...dataSource.dataPoints.map(x => this._parseDataPoint(x, dataSource))
+          ...dataSource.dataPoints.map((x) =>
+            this._parseDataPoint(x, dataSource)
+          )
         );
       }
 
@@ -335,9 +370,9 @@ export class SourceDataPointService
   }
 
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
-    const { dataPoints } = await this.httpService.get<{
+    const { dataPoints } = await this.httpMockupService.get<{
       dataPoints: api.Sourcedatapoint[];
-    }>(`/datasources/${datasourceProtocol}/datapoints`);
+    }>(`/datasources/${datasourceProtocol}/datapoints`, undefined, DATA_POINTS);
 
     this._store.patchState((state) => {
       state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
@@ -351,7 +386,10 @@ export class SourceDataPointService
     });
   }
 
-  private _parseDataPoint(obj: api.Sourcedatapoint, parentSource?: api.DataSourceType) {
+  private _parseDataPoint(
+    obj: api.Sourcedatapoint,
+    parentSource?: api.DataSourceType
+  ) {
     const dataPoint = obj as SourceDataPoint;
     if (parentSource) {
       dataPoint.enabled = Boolean(parentSource.enabled);

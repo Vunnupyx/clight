@@ -43,6 +43,9 @@ export function areObjectsEqual(
   object2: object,
   ignoreKeys: string[] = []
 ): boolean {
+  if (Object.keys(object1).length !== Object.keys(object2).length) {
+    return false;
+  }
   let hasChange = false;
   for (const key in object1) {
     if (!ignoreKeys.includes(key) && object2[key] !== object1[key]) {

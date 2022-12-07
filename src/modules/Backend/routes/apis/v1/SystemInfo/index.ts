@@ -44,8 +44,23 @@ function systemGetEnvironment(request: Request, response: Response) {
   response.json({ env: configManager.config.env.selected }).status(200);
 }
 
+/**
+ * Performs factory reset
+ * @param request HTTP Request
+ * @param response
+ */
+async function systemFactoryResetHandler(request: Request, response: Response) {
+  try {
+    await configManager.factoryResetConfiguration();
+    response.status(200).send();
+  } catch (e) {
+    response.sendStatus(500);
+  }
+}
+
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
   updateContainerGet: triggerContainerUpdate,
-  systemEnvironmentGet: systemGetEnvironment
+  systemEnvironmentGet: systemGetEnvironment,
+  systemFactoryReset: systemFactoryResetHandler
 };

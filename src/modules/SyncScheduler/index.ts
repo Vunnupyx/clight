@@ -24,6 +24,7 @@ export class SynchronousIntervalScheduler {
    */
   public shutdown() {
     clearInterval(this.internalCycleInterval);
+    SynchronousIntervalScheduler.instance = undefined; // TBD: If after shutdown a Scheduler instance is taken, it will not start the timer otherwise
   }
 
   /**
@@ -35,7 +36,7 @@ export class SynchronousIntervalScheduler {
       const currentInterval = parseInt(key, 10);
       const lastRun = this.internalCycleLastExecution[key] || 0;
 
-      if (now - lastRun > currentInterval) {
+      if (now - lastRun >= currentInterval) {
         Object.keys(this.subscribers[key]).forEach((subscriberId) => {
           this.subscribers[key][subscriberId]([currentInterval]);
         });
@@ -80,10 +81,10 @@ export class SynchronousIntervalScheduler {
    * @returns The global instance
    */
   static getInstance(): SynchronousIntervalScheduler {
-    if (!this.instance) {
-      this.instance = new this();
+    if (!SynchronousIntervalScheduler.instance) {
+      SynchronousIntervalScheduler.instance = new this();
     }
 
-    return this.instance;
+    return SynchronousIntervalScheduler.instance;
   }
 }

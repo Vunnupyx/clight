@@ -57,7 +57,7 @@ const dataHubClientMock = {
 };
 
 function log(m) {
-  console.log(m);
+  // console.log(m);
 }
 
 jest.mock('winston', () => {

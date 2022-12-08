@@ -580,7 +580,15 @@
                 {{ liveData[row.id].value }}
               </ng-container>
             </span>
-            <ng-template #noLiveData>-</ng-template>
+            <ng-template #noLiveData>
+              <span
+                class="color-danger"
+                [matTooltip]="'settings-data-source.LivedataError' | translate"
+                matTooltipPosition="above"
+              >
+                <mat-icon svgIcon="mdc:info"></mat-icon>
+              </span>
+            </ng-template>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column

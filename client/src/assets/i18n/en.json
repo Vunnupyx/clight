@@ -192,7 +192,8 @@
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
-    "Port": "Port"
+    "Port": "Port",
+    "LivedataError": "Could not read data point"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",

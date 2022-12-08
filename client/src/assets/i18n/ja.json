@@ -190,7 +190,9 @@
     "TestConnection": "テスト接続",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "Port": "",
+    "LivedataError": ""
   },
   "settings-virtual-data-point": {
     "DataPoints": "仮想データポイント",

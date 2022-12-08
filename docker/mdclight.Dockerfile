@@ -15,6 +15,7 @@ RUN mkdir -p /etc/mdc-light/config
 RUN mkdir -p /etc/mdc-light/logs
 RUN mkdir -p /etc/mdc-light/jwtkeys
 RUN mkdir -p /etc/mdc-light/sslkeys
+RUN mkdir -p /etc/mdc-light/certs
 
 # Copy runtime config files
 COPY _mdclight/runtime-files /etc/mdc-light/runtime-files

@@ -24,6 +24,7 @@ import {
   backupHandlers,
   setConfigManager as backupSetConfigManager
 } from '../routes/apis/v1/Backup';
+import { ntpCheckHandlers } from '../routes/apis/v1/ntp-check';
 import {
   deviceInfosHandlers,
   setConfigManager as deviceInfosSetConfigManager
@@ -92,6 +93,7 @@ export class RoutesManager {
     ...dataSourceHandlers,
     ...dataSinksHandlers,
     ...backupHandlers,
+    ...ntpCheckHandlers,
     ...virtualDatapointHandlers,
     ...deviceInfosHandlers,
     ...livedataDataSourcesHandlers,

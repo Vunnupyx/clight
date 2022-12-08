@@ -75,13 +75,7 @@ const defaultOpcuaDataSink: IDataSinkConfig = {
 const defaultDataHubDataSink: IDataSinkConfig = {
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.DATAHUB,
-  datahub: {
-    provisioningHost: '',
-    scopeId: '',
-    regId: '',
-    symKey: ''
-  }
+  protocol: DataSinkProtocols.DATAHUB
 };
 
 const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {

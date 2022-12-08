@@ -1,13 +1,14 @@
 {
-  "name": "funucadapter",
+  "name": "dmgmori-fanucadapter",
   "version": "0.0.1",
   "description": "Dependencies for Fanuc Datasource subprocess",
+  "author": "codestryke info@codestryke.com",
+  "license": "",
+  "private": true,
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Markus Leitz",
-  "license": "ISC",
   "dependencies": {
     "ffi-napi": "^4.0.3",
     "ref": "1.3.5",

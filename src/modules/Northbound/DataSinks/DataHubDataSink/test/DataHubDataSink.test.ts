@@ -68,13 +68,7 @@ import { LifecycleEventStatus } from '../../../../../common/interfaces';
 const configMock: IDataSinkConfig = {
   protocol: 'datahub',
   enabled: true,
-  dataPoints: [],
-  datahub: {
-    regId: 'UTregId',
-    symKey: 'UTKey',
-    scopeId: 'UTScopeId',
-    provisioningHost: 'UTHost.test'
-  }
+  dataPoints: []
 };
 
 const runTimeConfigMock: IDataHubConfig = {
@@ -103,13 +97,7 @@ describe('DataHubDataSink', () => {
     mapping: [],
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
-    termsAndConditionsAccepted: true,
-    proxy: {
-      ip: '',
-      port: 0,
-      type: 'http',
-      enabled: true
-    }
+    termsAndConditionsAccepted: true
   };
 
   describe(`instantiation successfully`, () => {
@@ -331,13 +319,7 @@ describe('DataHubDataSink', () => {
     it('does not instantiate when config is missing', async () => {
       datasinkUUT = new DataHubDataSink({
         ...dataHubDataSinkOptions,
-        dataSinkConfig: {
-          ...configMock,
-          datahub: {
-            ...configMock.datahub,
-            provisioningHost: undefined
-          } as any
-        }
+        dataSinkConfig: configMock
       });
       return datasinkUUT.init().then(() => {
         expect(winstonMock.debug).toBeCalledWith(

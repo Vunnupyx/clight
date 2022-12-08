@@ -5,7 +5,7 @@ import {
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
-import { ScheduleDescription } from '../CounterManager';
+import { ScheduleDescription } from '../CounterManager/interfaces';
 
 export interface IAuthConfig {
   secret: string;

@@ -98,6 +98,7 @@
         "empty": "Die Vorlage enthält keine Datenquelle, keine virtuellen Datenpunkte, keine Mappings und keine Anwendungsschnittstelle",
         "gm": "GM 16-6 oder GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger, OPC UA und CELOS Xchange",
+        "fanucAll": "Beinhaltet Datenpunkte für Fanuc Geräte",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
       }
     }

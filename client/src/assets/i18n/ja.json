@@ -98,6 +98,7 @@
         "empty": "Template does not include any data source, virtual data points, mappings and application interface",
         "gm": "GM 16-6 or GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "fanucAll": "Includes data points for Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       }
     }

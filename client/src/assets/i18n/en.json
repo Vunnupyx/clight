@@ -89,6 +89,7 @@
         "empty": "Empty Template",
         "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       },
       "description": {

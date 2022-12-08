@@ -89,6 +89,7 @@
         "empty": "Leere Vorlage",
         "gm": "GM Reihe",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Geräte",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
       },
       "description": {

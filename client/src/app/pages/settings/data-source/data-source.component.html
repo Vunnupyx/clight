@@ -22,7 +22,7 @@
 <div class="d-block m-20">
   <div class="row">
     <div class="col-12 col-md-6 col-lg-4">
-      <div class="row mt-20 mb-25">
+      <div class="row mb-25 align-items-center">
         <div class="col-6 col-lg-5">
           {{ 'settings-data-source.Enabled' | translate }}
         </div>
@@ -39,7 +39,7 @@
         <ng-container [ngSwitch]="dataSource?.protocol">
           <ng-container *ngSwitchCase="'s7'">
             <div class="mt-20 row d-flex align-items-center">
-              <div class="text-nowrap col-12 col-md-5">
+              <div class="text-nowrap col-12 col-md-5 pb-label">
                 {{ 'settings-data-source.IPAddress' | translate }}
               </div>
               <form #form="ngForm" class="col-12 col-md-7">
@@ -60,7 +60,7 @@
             </div>
             <div>
               <div class="row d-flex align-items-center">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-5 pb-label">
                   <label>{{
                     'settings-data-source.ControllerType' | translate
                   }}</label>
@@ -91,9 +91,9 @@
             </div>
           </ng-container>
           <ng-container *ngSwitchCase="'fanuc'">
-            <form #form="ngForm" class="mt-20">
+            <form #form="ngForm">
               <div class="row d-flex align-items-center">
-                <div class="text-nowrap col-12 col-md-5">
+                <div class="text-nowrap col-12 col-md-5 pb-label">
                   {{ 'settings-data-source.IPAddress' | translate }}
                 </div>
                 <mat-form-field class="col-12 col-md-7">
@@ -109,7 +109,7 @@
                 </mat-form-field>
               </div>
               <div class="row d-flex align-items-center">
-                <div class="text-nowrap col-12 col-md-5">
+                <div class="text-nowrap col-12 col-md-5 pb-label">
                   {{ 'settings-data-source.Port' | translate }}
                 </div>
                 <mat-form-field class="col-12 col-md-7">
@@ -125,7 +125,7 @@
             </form>
             <div>
               <div class="row d-flex align-items-center">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-5 pb-label">
                   <label>{{
                     'settings-data-source.ControllerType' | translate
                   }}</label>
@@ -182,7 +182,7 @@
           <ng-container *ngSwitchCase="'ioshield'">
             <div>
               <div class="row d-flex align-items-center">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-5 pb-label">
                   <label>{{
                     'settings-data-source.ControllerType' | translate
                   }}</label>

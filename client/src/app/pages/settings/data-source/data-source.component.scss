@@ -1,3 +1,8 @@
+:host {
+  & .mat-form-field {
+    margin-top: 0;
+  }
+}
 .circle {
   display: inline-block;
   height: 6px;
@@ -8,4 +13,10 @@
 }
 .address-nck {
   margin: -3px 0;
+}
+.pb-label {
+  padding-bottom: 40px;
+  @media all and (max-width: 767px) {
+    padding-bottom: 10px;
+  }
 }

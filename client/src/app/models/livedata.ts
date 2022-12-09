@@ -1,6 +1,6 @@
 export interface TimeSeriesValue {
-  ts: string,
-  value: boolean | number | string
+  ts: string;
+  value: boolean | number | string;
 }
 
 export class DataPointLiveData {
@@ -8,4 +8,6 @@ export class DataPointLiveData {
   value!: string | number | boolean;
   timestamp!: number;
   timeseries?: TimeSeriesValue[];
+  status?: string;
+  errorReason?: string;
 }

@@ -20,12 +20,6 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
   };
 });
 
-const licenseCheckerMock = {
-  isLicensed: jest.fn().mockImplementation(() => {
-    return true;
-  })
-};
-
 function log(m) {
   //console.log(m)
 }
@@ -312,26 +306,6 @@ describe('DataHubDataSink', () => {
         );
         expect(winstonMock.warn).toBeCalledWith(
           expect.stringContaining('not accepted terms and conditions')
-        );
-      });
-    });
-
-    it('does not instantiate when config is missing', async () => {
-      datasinkUUT = new DataHubDataSink({
-        ...dataHubDataSinkOptions,
-        dataSinkConfig: configMock
-      });
-      return datasinkUUT.init().then(() => {
-        expect(winstonMock.debug).toBeCalledWith(
-          expect.stringContaining('initializing')
-        );
-        expect(dataHubAdapterMock.init).not.toBeCalled();
-        expect(dataHubAdapterMock.start).not.toBeCalled();
-        expect(datasinkUUT.getCurrentStatus()).toBe(
-          LifecycleEventStatus.NotConfigured
-        );
-        expect(winstonMock.warn).toBeCalledWith(
-          expect.stringContaining('missing configuration')
         );
       });
     });

@@ -431,6 +431,14 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
+  updatePort(port: number) {
+    this.dataSource.connection = this.dataSource.connection || <Connection>{};
+    this.dataSource.connection.port = port;
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      connection: this.dataSource.connection
+    });
+  }
+
   onDiscard() {
     return this.sourceDataPointService.revert();
   }

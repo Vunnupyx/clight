@@ -4,5 +4,5 @@ export interface Sourcedatapoint {
   description?: string;
   name: string;
   readFrequency: number;
-  type: 's7' | 'nck' | 'nck-pl' | 'fanuc';
+  type: 's7' | 'nck' | 'nck-pl' | 'plc';
 }

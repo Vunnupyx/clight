@@ -538,6 +538,9 @@
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK"
                   >NCK</ng-container
                 >
+                <ng-container *ngSwitchCase="SourceDataPointType.FANUC"
+                  >PLC</ng-container
+                >
               </ng-container>
             </span>
             <mat-select
@@ -546,7 +549,14 @@
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
             >
-              <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
+              <mat-option
+                [value]="
+                  dataSource?.protocol === Protocol.S7
+                    ? SourceDataPointType.PLC
+                    : SourceDataPointType.FANUC
+                "
+                >PLC</mat-option
+              >
               <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
             </mat-select>
           </ng-template>
@@ -615,36 +625,34 @@
                 {{ mapAddressLabel(value) }}
               </div>
             </ng-container>
-            <div
-              *ngIf="unsavedRowIndex === rowIndex"
-              class="d-flex align-items-center"
-              [class.address-nck]="unsavedRow!.type === SourceDataPointType.NCK"
-            >
+            <ng-container *ngIf="unsavedRowIndex === rowIndex">
               <ng-container [ngSwitch]="unsavedRow!.type">
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK">
-                  <div>{{ unsavedRow?.address }}</div>
-                  <mat-button-toggle-group
-                    class="mt-0 ml-10"
-                    #group="matButtonToggleGroup"
-                  >
-                    <mat-button-toggle
-                      class="small-button"
-                      (click)="
-                        unsavedRow && onAddressSelect(unsavedRow);
-                        group.value = null
-                      "
-                      [matTooltip]="'settings-data-source.Select' | translate"
-                      matTooltipPosition="above"
+                  <div class="d-flex align-items-center address-nck">
+                    <div>{{ unsavedRow?.address }}</div>
+                    <mat-button-toggle-group
+                      class="mt-0 ml-10"
+                      #group="matButtonToggleGroup"
                     >
-                      <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
-                    </mat-button-toggle>
-                  </mat-button-toggle-group>
+                      <mat-button-toggle
+                        class="small-button"
+                        (click)="
+                          unsavedRow && onAddressSelect(unsavedRow);
+                          group.value = null
+                        "
+                        [matTooltip]="'settings-data-source.Select' | translate"
+                        matTooltipPosition="above"
+                      >
+                        <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
+                      </mat-button-toggle>
+                    </mat-button-toggle-group>
+                  </div>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                   <mat-select
                     *ngIf="
                       dataSource?.protocol === Protocol.IOShield;
-                      else s7InputAddress
+                      else s7OrFanucAddress
                     "
                     disableOptionCentering="true"
                     [ngModel]="value"
@@ -671,7 +679,31 @@
                       >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
-                  <ng-template #s7InputAddress>
+                  <ng-template #s7OrFanucAddress>
+                    <mat-select
+                      *ngIf="dataSource?.protocol === Protocol.Fanuc"
+                      (ngModelChange)="unsavedRow.fanucDataType = $event"
+                      [ngModel]="unsavedRow.fanucDataType"
+                      disableOptionCentering="true"
+                      class="mb-10"
+                    >
+                      <mat-option [value]="SourceDataPointFanucDataType.Bit"
+                        >bit
+                      </mat-option>
+                      <mat-option [value]="SourceDataPointFanucDataType.Byte"
+                        >byte
+                      </mat-option>
+                      <mat-option [value]="SourceDataPointFanucDataType.Word"
+                        >word
+                      </mat-option>
+                      <mat-option
+                        [value]="SourceDataPointFanucDataType.DoubleWord"
+                        >double_word
+                      </mat-option>
+                      <mat-option [value]="SourceDataPointFanucDataType.Real"
+                        >real
+                      </mat-option>
+                    </mat-select>
                     <input
                       *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
                       type="text"
@@ -688,7 +720,7 @@
                   </ng-template>
                 </ng-container>
               </ng-container>
-            </div>
+            </ng-container>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column

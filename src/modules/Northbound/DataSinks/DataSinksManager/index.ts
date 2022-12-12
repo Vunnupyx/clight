@@ -217,13 +217,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
-          this.configManager.config.termsAndConditions.accepted,
-          {
-            proxy:
-              sink.protocol === DataSinkProtocols.DATAHUB
-                ? this.configManager.config.networkConfig.proxy
-                : null
-          }
+          this.configManager.config.termsAndConditions.accepted
         )
       ) {
         winston.info(

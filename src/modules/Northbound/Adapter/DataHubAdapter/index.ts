@@ -226,11 +226,11 @@ export class DataHubAdapter {
     this.dataHubClient
       .close()
       .then(() => {
+        this.onStateChange(LifecycleEventStatus.Disconnected);
         Object.keys(this).forEach((key) => {
           delete this[key];
         });
         winston.info(`${logPrefix} successfully stopped adapter.`);
-        this.onStateChange(LifecycleEventStatus.Disconnected);
       })
       .catch((err) => {
         return Promise.reject(

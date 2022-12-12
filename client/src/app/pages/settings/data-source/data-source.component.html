@@ -119,6 +119,7 @@
                     #port="ngModel"
                     [ngModel]="dataSource?.connection?.port"
                     [required]="true"
+                    (ngModelChange)="updatePort($event)"
                   />
                 </mat-form-field>
               </div>

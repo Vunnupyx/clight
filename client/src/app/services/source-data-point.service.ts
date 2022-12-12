@@ -133,6 +133,10 @@ export class SourceDataPointService
    * @returns
    */
   async ping(protocol: DataSourceProtocol | undefined): Promise<string> {
+    const supportedProtocols = [
+      DataSourceProtocol.S7,
+      DataSourceProtocol.Fanuc
+    ];
     // Info: currently only s7 supports ping!
     if (protocol === undefined) protocol = DataSourceProtocol.S7;
     const errorHandler = () => {
@@ -143,7 +147,7 @@ export class SourceDataPointService
         this.translate.instant('settings-data-source-point.HostUnreachable')
       );
     };
-    if (protocol !== DataSourceProtocol.S7) {
+    if (!supportedProtocols.includes(protocol)) {
       return errorHandler();
     }
     return this.httpService

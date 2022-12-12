@@ -7,12 +7,10 @@ import { from, interval, Observable } from 'rxjs';
 import {
   DataSource,
   DataSourceConnection,
-  DataSourceConnectionStatus,
   DataSourceProtocol,
   FanucTypes,
   IOShieldTypes,
-  S7Types,
-  SourceDataPointType
+  S7Types
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -20,7 +18,6 @@ import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
 import FANUC_ADDRESSES from 'app/services/constants/fanucAddresses';
-import { HttpMockupService } from '../shared/services/http-mockup.service';
 
 export class DataSourcesState {
   status!: Status;
@@ -36,87 +33,6 @@ const DATA_SOURCES_ORDER = [
   DataSourceProtocol.IOShield
 ];
 
-let DATA_SOURCES: api.DataSourceList = {
-  dataSources: [
-    {
-      dataPoints: [
-        {
-          type: SourceDataPointType.NCK,
-          name: 'selectedWorkPProg',
-          address: '/Channel/Programinfo/selectedWorkPProg',
-          id: '55455192-9e2b-4423-b6e9-8466089cd299',
-          readFrequency: 1000
-        },
-        {
-          type: SourceDataPointType.NCK,
-          name: 'progName',
-          address: '/Channel/ProgramPointer/progName',
-          id: '66e44f24-8638-401d-8fcd-fdd1f197ae6d',
-          readFrequency: 1000
-        }
-      ],
-      protocol: DataSourceProtocol.S7,
-      connection: {
-        ipAddr: '192.168.214.1',
-        port: 102,
-        rack: 0,
-        slot: 2
-      },
-      enabled: true
-    },
-    {
-      dataPoints: [
-        {
-          type: null,
-          address: 'DI0',
-          name: 'Emergency Stop',
-          id: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b',
-          readFrequency: 1000
-        },
-        {
-          type: null,
-          address: 'DI1',
-          name: 'Red Light',
-          id: '86ea22fc-1091-46e5-9a1a-275c8f7768ec',
-          readFrequency: 1000
-        }
-      ],
-      protocol: DataSourceProtocol.IOShield,
-      enabled: true
-    },
-    {
-      dataPoints: [
-        {
-          type: SourceDataPointType.FANUC,
-          name: 'CNC Type',
-          address: 'cnc_sysinfo.cnc_type',
-          id: '55455192-9e2b-4423-b6e9-8466089cd299',
-          readFrequency: 1000
-        },
-        {
-          type: SourceDataPointType.FANUC,
-          name: 'ExecutionState',
-          address: 'cnc_statinfo.run',
-          id: '66e44f24-8638-401d-8fcd-fdd1f197ae6d',
-          readFrequency: 1000
-        }
-      ],
-      protocol: DataSourceProtocol.Fanuc,
-      connection: {
-        ipAddr: '192.168.214.1',
-        port: 8193,
-        rack: 0,
-        slot: 2
-      },
-      enabled: true
-    }
-  ]
-};
-
-let STATUS: DataSourceConnection = {
-  status: DataSourceConnectionStatus.ConnectionError
-};
-
 @Injectable()
 export class DataSourceService {
   private _store: Store<DataSourcesState>;
@@ -124,7 +40,6 @@ export class DataSourceService {
   constructor(
     storeFactory: StoreFactory<DataSourcesState>,
     private httpService: HttpService,
-    private httpMockupService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -159,12 +74,9 @@ export class DataSourceService {
     }));
 
     try {
-      const { dataSources } =
-        await this.httpMockupService.get<api.DataSourceList>(
-          `/datasourcesMock`,
-          undefined,
-          DATA_SOURCES
-        );
+      const { dataSources } = await this.httpService.get<api.DataSourceList>(
+        `/datasources`
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSources = this._orderByProtocol(
@@ -192,10 +104,8 @@ export class DataSourceService {
 
   async getStatus(datasourceProtocol: string) {
     try {
-      const obj = await this.httpMockupService.get<DataSourceConnection>(
-        `/datasources/${datasourceProtocol}/status`,
-        undefined,
-        STATUS
+      const obj = await this.httpService.get<DataSourceConnection>(
+        `/datasources/${datasourceProtocol}/status`
       );
 
       this._store.patchState((state) => {

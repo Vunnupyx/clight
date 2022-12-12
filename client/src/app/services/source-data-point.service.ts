@@ -19,8 +19,6 @@ import { BaseChangesService } from './base-changes.service';
 import { DataSourceService } from './data-source.service';
 import { SystemInformationService } from './system-information.service';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
-import { HttpMockupService } from '../shared/services/http-mockup.service';
-import { Uuid } from 'app/api/models';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -30,26 +28,6 @@ export class SourceDataPointsState {
   dataPointsSourceMap!: ObjectMap<DataSourceProtocol>;
 }
 
-let DATA_POINTS: {
-  dataPoints: api.Sourcedatapoint[] & Uuid;
-} = {
-  dataPoints: [
-    {
-      type: SourceDataPointType.NCK,
-      name: 'CNC Type',
-      address: 'cnc_sysinfo.cnc_type',
-      readFrequency: 1000,
-      id: '123qwe'
-    },
-    {
-      type: SourceDataPointType.NCK,
-      name: 'ExecutionState',
-      address: 'cnc_statinfo.run',
-      readFrequency: 1000,
-      id: '123ewq'
-    }
-  ]
-};
 @Injectable()
 export class SourceDataPointService
   extends BaseChangesService<SourceDataPoint>
@@ -83,7 +61,6 @@ export class SourceDataPointService
     storeFactory: StoreFactory<SourceDataPointsState>,
     changesFactory: StoreFactory<IChangesState<string, SourceDataPoint>>,
     private httpService: HttpService,
-    private httpMockupService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService,
     private dataSourceService: DataSourceService,
@@ -370,9 +347,9 @@ export class SourceDataPointService
   }
 
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
-    const { dataPoints } = await this.httpMockupService.get<{
+    const { dataPoints } = await this.httpService.get<{
       dataPoints: api.Sourcedatapoint[];
-    }>(`/datasources/${datasourceProtocol}/datapoints`, undefined, DATA_POINTS);
+    }>(`/datasources/${datasourceProtocol}/datapoints`);
 
     this._store.patchState((state) => {
       state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));

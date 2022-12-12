@@ -14,6 +14,7 @@ import {
   IOShieldTypes,
   S7Types,
   SourceDataPoint,
+  SourceDataPointFanucDataType,
   SourceDataPointType
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
@@ -35,6 +36,7 @@ import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.
 })
 export class DataSourceComponent implements OnInit, OnDestroy {
   SourceDataPointType = SourceDataPointType;
+  SourceDataPointFanucDataType = SourceDataPointFanucDataType;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;
@@ -304,11 +306,14 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     if (!this.datapointRows) {
       return;
     }
+    const supportedProtocols = [
+      DataSourceProtocol.S7,
+      DataSourceProtocol.Fanuc
+    ];
     const obj = {
-      type:
-        this.dataSource?.protocol === DataSourceProtocol.S7
-          ? SourceDataPointType.NCK
-          : null
+      type: supportedProtocols.includes(this.dataSource?.protocol)
+        ? SourceDataPointType.NCK
+        : null
     } as SourceDataPoint;
 
     if (this.dataSource?.protocol === DataSourceProtocol.IOShield) {

@@ -760,7 +760,10 @@
             >
               <mat-button-toggle
                 (click)="
-                  !isDuplicatingField('name') &&
+                  ((unsavedRow.type === SourceDataPointType.FANUC &&
+                    unsavedRow.fanucDataType) ||
+                    unsavedRow.type !== SourceDataPointType.FANUC) &&
+                    !isDuplicatingField('name') &&
                     !isDuplicatingField('address') &&
                     unsavedRow.name?.length > 0 &&
                     unsavedRow.address?.length > 0 &&
@@ -775,7 +778,9 @@
                   unsavedRow.name?.length === 0 ||
                   !unsavedRow.name ||
                   unsavedRow.address?.length === 0 ||
-                  !unsavedRow.address
+                  !unsavedRow.address ||
+                  (unsavedRow.type === SourceDataPointType.FANUC &&
+                    !unsavedRow.fanucDataType)
                 "
               >
                 <mat-icon

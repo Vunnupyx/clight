@@ -1,5 +1,5 @@
 import { Message, Twin, ModuleClient } from 'azure-iot-device';
-import { MqttWs as IotHubTransport } from 'azure-iot-device-mqtt';
+import { Mqtt as IotHubTransport } from 'azure-iot-device-mqtt';
 
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';

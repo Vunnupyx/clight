@@ -593,7 +593,7 @@
                   <span
                     class="color-danger"
                     [matTooltip]="
-                      'settings-data-source.LivedataError' | translate
+                      getFanucErrorReasonText(liveData[row.id].errorReason)
                     "
                     matTooltipPosition="above"
                   >

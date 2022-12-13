@@ -687,22 +687,14 @@
                       disableOptionCentering="true"
                       class="mb-10"
                     >
-                      <mat-option [value]="SourceDataPointFanucDataType.Bit"
-                        >bit
-                      </mat-option>
-                      <mat-option [value]="SourceDataPointFanucDataType.Byte"
-                        >byte
-                      </mat-option>
-                      <mat-option [value]="SourceDataPointFanucDataType.Word"
-                        >word
-                      </mat-option>
                       <mat-option
-                        [value]="SourceDataPointFanucDataType.DoubleWord"
-                        >double_word
-                      </mat-option>
-                      <mat-option [value]="SourceDataPointFanucDataType.Real"
-                        >real
-                      </mat-option>
+                        *ngFor="
+                          let dataType of SourceDataPointFanucDataType
+                            | keyvalue : sortFanucDataTypes
+                        "
+                        [value]="dataType.value"
+                        >{{ dataType.key }}</mat-option
+                      >
                     </mat-select>
                     <input
                       *ngIf="unsavedRow && unsavedRowIndex === rowIndex"

@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -450,6 +451,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onApply() {
     return this.sourceDataPointService.apply(this.dataSource?.protocol!);
+  }
+
+  sortFanucDataTypes(
+    a: KeyValue<string, SourceDataPointFanucDataType>,
+    b: KeyValue<string, SourceDataPointFanucDataType>
+  ): number {
+    return 0;
   }
 
   async onPing() {

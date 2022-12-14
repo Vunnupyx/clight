@@ -610,7 +610,7 @@
         </ngx-datatable-column>
         <ngx-datatable-column
           *ngIf="dataSource?.protocol === Protocol.Fanuc"
-          [name]="'settings-data-source.TypeAddress' | translate"
+          [name]="'settings-data-source.FanucDataType' | translate"
           prop="fanucDataType"
           [flexGrow]="1"
           cellClass="input-cell"
@@ -666,21 +666,14 @@
                 disableOptionCentering="true"
                 class="mb-10"
               >
-                <mat-option [value]="SourceDataPointFanucDataType.Bit"
-                  >bit
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.Byte"
-                  >byte
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.Word"
-                  >word
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.DoubleWord"
-                  >double_word
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.Real"
-                  >real
-                </mat-option>
+                <mat-option
+                  *ngFor="
+                    let dataType of SourceDataPointFanucDataType
+                      | keyvalue : sortFanucDataTypes
+                  "
+                  [value]="dataType.value"
+                  >{{ dataType.key }}</mat-option
+                >
               </mat-select>
             </ng-container>
           </ng-template>
@@ -756,27 +749,7 @@
                       >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
-<<<<<<< HEAD
                   <ng-template #otherAddress>
-=======
-                  <ng-template #s7OrFanucAddress>
-                    <mat-select
-                      *ngIf="dataSource?.protocol === Protocol.Fanuc"
-                      (ngModelChange)="unsavedRow.fanucDataType = $event"
-                      [ngModel]="unsavedRow.fanucDataType"
-                      disableOptionCentering="true"
-                      class="mb-10"
-                    >
-                      <mat-option
-                        *ngFor="
-                          let dataType of SourceDataPointFanucDataType
-                            | keyvalue : sortFanucDataTypes
-                        "
-                        [value]="dataType.value"
-                        >{{ dataType.key }}</mat-option
-                      >
-                    </mat-select>
->>>>>>> 7b374937c7b6a46e8e5ce5e8c8ee2aaeee9e5ede
                     <input
                       type="text"
                       class="w-100"

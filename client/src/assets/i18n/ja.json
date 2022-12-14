@@ -168,6 +168,7 @@
     "ControllerType": "Type",
     "Name": "名前",
     "Type": "型",
+    "TypeAddress": "",
     "Address": "アドレス",
     "LiveData": "ライブデータ",
     "Actions": "動作",

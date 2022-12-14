@@ -168,6 +168,7 @@
     "ControllerType": "Type",
     "Name": "Name",
     "Type": "Type",
+    "TypeAddress": "Type Address",
     "Address": "Address",
     "LiveData": "Live Data",
     "Actions": "Actions",

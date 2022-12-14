@@ -191,8 +191,14 @@
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
-    "Port": "",
-    "LivedataError": ""
+    "Port": "Port",
+    "Fanuc": {
+      "LivedataError": "Datenpunkt konnte nicht gelesen werden",
+      "unexpected_error": "Beim Lesen des Datenpunktes ist ein unerwarteter Fehler aufgetreten",
+      "no_response": "Es gab keine Antwort für den Datenpunkt",
+      "not_supported": "Dieser Datenpunkt wird nicht unterstützt",
+      "machine_busy": "Das Gerät ist zurzeit beschäftigt"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtuelle Datenpunkte",

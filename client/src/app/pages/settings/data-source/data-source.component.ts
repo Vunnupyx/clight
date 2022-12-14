@@ -463,11 +463,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   getFanucErrorReasonText(errorReason) {
-    const translationKey = `settings-data-source.${errorReason}`;
+    const translationKey = `settings-data-source.FanucErrorStatus.${errorReason}`;
     const result = this.translate.instant(translationKey);
     if (result === translationKey) {
       //Translation not found
-      return this.translate.instant('settings-data-source.LivedataError');
+      return this.translate.instant(
+        'settings-data-source.FanucErrorStatus.LivedataError'
+      );
     } else {
       //Translation found
       return result;

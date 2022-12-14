@@ -593,7 +593,7 @@
                   <span
                     class="color-danger"
                     [matTooltip]="
-                      'settings-data-source.LivedataError' | translate
+                      getFanucErrorReasonText(liveData[row.id].errorReason)
                     "
                     matTooltipPosition="above"
                   >
@@ -756,7 +756,27 @@
                       >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
+<<<<<<< HEAD
                   <ng-template #otherAddress>
+=======
+                  <ng-template #s7OrFanucAddress>
+                    <mat-select
+                      *ngIf="dataSource?.protocol === Protocol.Fanuc"
+                      (ngModelChange)="unsavedRow.fanucDataType = $event"
+                      [ngModel]="unsavedRow.fanucDataType"
+                      disableOptionCentering="true"
+                      class="mb-10"
+                    >
+                      <mat-option
+                        *ngFor="
+                          let dataType of SourceDataPointFanucDataType
+                            | keyvalue : sortFanucDataTypes
+                        "
+                        [value]="dataType.value"
+                        >{{ dataType.key }}</mat-option
+                      >
+                    </mat-select>
+>>>>>>> 7b374937c7b6a46e8e5ce5e8c8ee2aaeee9e5ede
                     <input
                       type="text"
                       class="w-100"

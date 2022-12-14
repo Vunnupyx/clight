@@ -1,6 +1,8 @@
+import { KeyValue } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
+import { TranslateService } from '@ngx-translate/core';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { Connection } from 'app/api/models';
 import {
@@ -110,7 +112,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
     private dialog: MatDialog,
-    private promptService: PromptService
+    private promptService: PromptService,
+    private translate: TranslateService
   ) {
     this.promptService.initWarnBeforePageUnload(
       () => this.sourceDataPointService.isTouched
@@ -450,6 +453,27 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onApply() {
     return this.sourceDataPointService.apply(this.dataSource?.protocol!);
+  }
+
+  sortFanucDataTypes(
+    a: KeyValue<string, SourceDataPointFanucDataType>,
+    b: KeyValue<string, SourceDataPointFanucDataType>
+  ): number {
+    return 0;
+  }
+
+  getFanucErrorReasonText(errorReason) {
+    const translationKey = `settings-data-source.FanucErrorStatus.${errorReason}`;
+    const result = this.translate.instant(translationKey);
+    if (result === translationKey) {
+      //Translation not found
+      return this.translate.instant(
+        'settings-data-source.FanucErrorStatus.LivedataError'
+      );
+    } else {
+      //Translation found
+      return result;
+    }
   }
 
   async onPing() {

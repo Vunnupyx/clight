@@ -194,7 +194,13 @@
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
     "Port": "Port",
-    "LivedataError": "Could not read data point"
+    "Fanuc": {
+      "LivedataError": "Could not read data point",
+      "unexpected_error": "There was an unexpected error while reading data point",
+      "no_response": "There was no response for the data point",
+      "not_supported": "This data point is not supported",
+      "machine_busy": "The machine is currently busy"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",

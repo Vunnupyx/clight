@@ -469,7 +469,11 @@
     "Byte": "Byte",
     "UInt16": "UInt16",
     "UInt32": "UInt32",
-    "Boolean": "Boolean"
+    "Boolean": "Boolean",
+    "Bit": "Bit",
+    "Word": "Word",
+    "DoubleWord": "DoubleWord",
+    "Real": "Real"
   },
   "days-of-week": {
     "Monday": "Monday",

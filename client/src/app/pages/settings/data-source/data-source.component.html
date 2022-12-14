@@ -621,42 +621,67 @@
             let-value="value"
             let-row="row"
           >
-            <ng-container>
-              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                <div
-                  *ngIf="value; else noFanucDataType"
-                  class="text-ellipsis"
-                  [title]="value"
-                >
-                  {{ value }}
-                </div>
-                <ng-template #noFanucDataType>-</ng-template>
-              </ng-container>
-              <ng-container *ngIf="unsavedRowIndex === rowIndex">
-                <mat-select
-                  *ngIf="unsavedRow?.type === SourceDataPointType.FANUC"
-                  (ngModelChange)="unsavedRow.fanucDataType = $event"
-                  [ngModel]="unsavedRow.fanucDataType"
-                  disableOptionCentering="true"
-                  class="mb-10"
-                >
-                  <mat-option [value]="SourceDataPointFanucDataType.Bit"
-                    >bit
-                  </mat-option>
-                  <mat-option [value]="SourceDataPointFanucDataType.Byte"
-                    >byte
-                  </mat-option>
-                  <mat-option [value]="SourceDataPointFanucDataType.Word"
-                    >word
-                  </mat-option>
-                  <mat-option [value]="SourceDataPointFanucDataType.DoubleWord"
-                    >double_word
-                  </mat-option>
-                  <mat-option [value]="SourceDataPointFanucDataType.Real"
-                    >real
-                  </mat-option>
-                </mat-select>
-              </ng-container>
+            <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+              <div
+                *ngIf="
+                  row?.type === SourceDataPointType.FANUC;
+                  else noFanucDataType
+                "
+                class="text-ellipsis"
+                [title]="value"
+              >
+                <ng-container [ngSwitch]="value">
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Bit"
+                    >{{ 'data-type.Bit' | translate }}</ng-container
+                  >
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Byte"
+                    >{{ 'data-type.Byte' | translate }}</ng-container
+                  >
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Word"
+                    >{{ 'data-type.Word' | translate }}</ng-container
+                  >
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.DoubleWord"
+                    >{{ 'data-type.DoubleWord' | translate }}</ng-container
+                  >
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Real"
+                    >{{ 'data-type.Real' | translate }}</ng-container
+                  >
+                  <ng-container *ngSwitchDefault>{{
+                    value | uppercase
+                  }}</ng-container>
+                </ng-container>
+              </div>
+              <ng-template #noFanucDataType>-</ng-template>
+            </ng-container>
+            <ng-container *ngIf="unsavedRowIndex === rowIndex">
+              <mat-select
+                *ngIf="unsavedRow?.type === SourceDataPointType.FANUC"
+                (ngModelChange)="unsavedRow.fanucDataType = $event"
+                [ngModel]="unsavedRow.fanucDataType"
+                disableOptionCentering="true"
+                class="mb-10"
+              >
+                <mat-option [value]="SourceDataPointFanucDataType.Bit"
+                  >bit
+                </mat-option>
+                <mat-option [value]="SourceDataPointFanucDataType.Byte"
+                  >byte
+                </mat-option>
+                <mat-option [value]="SourceDataPointFanucDataType.Word"
+                  >word
+                </mat-option>
+                <mat-option [value]="SourceDataPointFanucDataType.DoubleWord"
+                  >double_word
+                </mat-option>
+                <mat-option [value]="SourceDataPointFanucDataType.Real"
+                  >real
+                </mat-option>
+              </mat-select>
             </ng-container>
           </ng-template>
         </ngx-datatable-column>

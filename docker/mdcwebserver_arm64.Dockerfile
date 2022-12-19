@@ -2,6 +2,9 @@ FROM node:16-alpine as build
 
 WORKDIR /app
 
+# Install python/pip
+RUN apk add g++ make py3-pip
+
 ARG MDC_LIGHT_WEBSERVER_VERSION
 RUN echo Building webserver ${MDC_LIGHT_WEBSERVER_VERSION}
 

@@ -53,8 +53,6 @@ export enum DataPointLifecycleEventTypes {
 export enum LifecycleEventStatus {
   Disabled = 'disabled',
   NotConfigured = 'notconfigured',
-  Provisioning = 'provisioning',
-  ProvisioningFailed = 'provisioningfailed',
   TimeError = 'clienttimedeviation',
   NoNetwork = 'nonetwork',
   Connecting = 'connecting',

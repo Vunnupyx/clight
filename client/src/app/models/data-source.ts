@@ -51,8 +51,8 @@ export enum IOShieldTypes {
 }
 
 export enum FanucTypes {
-  Fanuc_0iA = 'fanuc_0iA',
   Fanuc_0iB = 'fanuc_0iB',
+  Fanuc_0iC = 'fanuc_0iC',
   Fanuc_0iD = 'fanuc_0iD',
   Fanuc_0iF = 'fanuc_0iF',
   Fanuc_16iA = 'fanuc_16iA',

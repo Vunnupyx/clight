@@ -1,7 +1,9 @@
 export enum SourceDataPointType {
   PLC = 's7',
   NCK = 'nck',
-  FANUC = 'plc'
+  PMC = 'pmc',
+  CNC = 'cnc',
+  CNCParameter = 'cncParameter'
 }
 
 export enum SourceDataPointFanucDataType {

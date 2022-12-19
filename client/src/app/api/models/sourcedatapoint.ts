@@ -4,5 +4,6 @@ export interface Sourcedatapoint {
   description?: string;
   name: string;
   readFrequency: number;
-  type: 's7' | 'nck' | 'nck-pl' | 'plc';
+  type: 's7' | 'nck' | 'nck-pl' | 'pmc' | 'cnc' | 'cncParameter';
+  fanucDataType?: 'bit' | 'byte' | 'word' | 'double_word' | 'real';
 }

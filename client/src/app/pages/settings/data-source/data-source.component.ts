@@ -309,14 +309,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     if (!this.datapointRows) {
       return;
     }
-    const supportedProtocols = [
-      DataSourceProtocol.S7,
-      DataSourceProtocol.Fanuc
-    ];
     const obj = {
-      type: supportedProtocols.includes(this.dataSource?.protocol)
-        ? SourceDataPointType.NCK
-        : null
+      type:
+        this.dataSource?.protocol === DataSourceProtocol.S7
+          ? SourceDataPointType.NCK
+          : this.dataSource?.protocol === DataSourceProtocol.Fanuc
+          ? SourceDataPointType.CNC
+          : null
     } as SourceDataPoint;
 
     if (this.dataSource?.protocol === DataSourceProtocol.IOShield) {
@@ -460,6 +459,16 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     b: KeyValue<string, SourceDataPointFanucDataType>
   ): number {
     return 0;
+  }
+
+  isAbleToSelectTypeAddress(type: SourceDataPointType | undefined): boolean {
+    return [SourceDataPointType.PMC, SourceDataPointType.CNCParameter].includes(
+      type
+    );
+  }
+
+  isAbleToSelectAddress(type: SourceDataPointType | undefined): boolean {
+    return [SourceDataPointType.NCK, SourceDataPointType.CNC].includes(type);
   }
 
   getFanucErrorReasonText(errorReason) {

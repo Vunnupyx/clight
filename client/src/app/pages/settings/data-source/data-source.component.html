@@ -138,11 +138,11 @@
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
-                      <mat-option [value]="FanucTypes.Fanuc_0iA"
-                        >0i-A</mat-option
-                      >
                       <mat-option [value]="FanucTypes.Fanuc_0iB"
                         >0i-B</mat-option
+                      >
+                      <mat-option [value]="FanucTypes.Fanuc_0iC"
+                        >0i-C</mat-option
                       >
                       <mat-option [value]="FanucTypes.Fanuc_0iD"
                         >0i-D</mat-option
@@ -538,8 +538,14 @@
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK"
                   >NCK</ng-container
                 >
-                <ng-container *ngSwitchCase="SourceDataPointType.FANUC"
-                  >PLC</ng-container
+                <ng-container *ngSwitchCase="SourceDataPointType.PMC"
+                  >PMC</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.CNC"
+                  >CNC</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.CNCParameter"
+                  >CNC Parameter</ng-container
                 >
               </ng-container>
             </span>
@@ -549,15 +555,19 @@
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
             >
-              <mat-option
-                [value]="
-                  dataSource?.protocol === Protocol.S7
-                    ? SourceDataPointType.PLC
-                    : SourceDataPointType.FANUC
-                "
-                >PLC</mat-option
-              >
-              <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
+              <ng-container [ngSwitch]="dataSource?.protocol">
+                <ng-container *ngSwitchCase="Protocol.S7">
+                  <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
+                  <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
+                </ng-container>
+                <ng-container *ngSwitchCase="Protocol.Fanuc">
+                  <mat-option [value]="SourceDataPointType.PMC">PMC</mat-option>
+                  <mat-option [value]="SourceDataPointType.CNC">CNC</mat-option>
+                  <mat-option [value]="SourceDataPointType.CNCParameter"
+                    >CNC Parameter</mat-option
+                  >
+                </ng-container>
+              </ng-container>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
@@ -624,7 +634,7 @@
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
               <div
                 *ngIf="
-                  row?.type === SourceDataPointType.FANUC;
+                  isAbleToSelectTypeAddress(row?.type);
                   else noFanucDataType
                 "
                 class="text-ellipsis"
@@ -660,27 +670,19 @@
             </ng-container>
             <ng-container *ngIf="unsavedRowIndex === rowIndex">
               <mat-select
-                *ngIf="unsavedRow?.type === SourceDataPointType.FANUC"
+                *ngIf="isAbleToSelectTypeAddress(unsavedRow?.type)"
                 (ngModelChange)="unsavedRow.fanucDataType = $event"
                 [ngModel]="unsavedRow.fanucDataType"
                 disableOptionCentering="true"
-                class="mb-10"
               >
-                <mat-option [value]="SourceDataPointFanucDataType.Bit"
-                  >bit
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.Byte"
-                  >byte
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.Word"
-                  >word
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.DoubleWord"
-                  >double_word
-                </mat-option>
-                <mat-option [value]="SourceDataPointFanucDataType.Real"
-                  >real
-                </mat-option>
+                <mat-option
+                  *ngFor="
+                    let dataType of SourceDataPointFanucDataType
+                      | keyvalue
+                  "
+                  [value]="dataType.value"
+                  >{{ dataType.key }}</mat-option
+                >
               </mat-select>
             </ng-container>
           </ng-template>
@@ -703,34 +705,9 @@
               </div>
             </ng-container>
             <ng-container *ngIf="unsavedRowIndex === rowIndex">
-              <ng-container [ngSwitch]="unsavedRow!.type">
-                <ng-container *ngSwitchCase="SourceDataPointType.NCK">
-                  <div class="d-flex align-items-center address-nck">
-                    <div>{{ unsavedRow?.address }}</div>
-                    <mat-button-toggle-group
-                      class="mt-0 ml-10"
-                      #group="matButtonToggleGroup"
-                    >
-                      <mat-button-toggle
-                        class="small-button"
-                        (click)="
-                          unsavedRow && onAddressSelect(unsavedRow);
-                          group.value = null
-                        "
-                        [matTooltip]="'settings-data-source.Select' | translate"
-                        matTooltipPosition="above"
-                      >
-                        <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
-                      </mat-button-toggle>
-                    </mat-button-toggle-group>
-                  </div>
-                </ng-container>
-                <ng-container *ngSwitchDefault>
+              <ng-container [ngSwitch]="dataSource?.protocol">
+                <ng-container *ngSwitchCase="Protocol.IOShield">
                   <mat-select
-                    *ngIf="
-                      dataSource?.protocol === Protocol.IOShield;
-                      else otherAddress
-                    "
                     disableOptionCentering="true"
                     [ngModel]="value"
                     (ngModelChange)="
@@ -756,27 +733,34 @@
                       >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
-<<<<<<< HEAD
-                  <ng-template #otherAddress>
-=======
-                  <ng-template #s7OrFanucAddress>
-                    <mat-select
-                      *ngIf="dataSource?.protocol === Protocol.Fanuc"
-                      (ngModelChange)="unsavedRow.fanucDataType = $event"
-                      [ngModel]="unsavedRow.fanucDataType"
-                      disableOptionCentering="true"
-                      class="mb-10"
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <div
+                    *ngIf="
+                      isAbleToSelectAddress(unsavedRow?.type);
+                      else otherAddress
+                    "
+                    class="d-flex align-items-center address-nck"
+                  >
+                    <div>{{ unsavedRow?.address }}</div>
+                    <mat-button-toggle-group
+                      class="mt-0 ml-10"
+                      #group="matButtonToggleGroup"
                     >
-                      <mat-option
-                        *ngFor="
-                          let dataType of SourceDataPointFanucDataType
-                            | keyvalue : sortFanucDataTypes
+                      <mat-button-toggle
+                        class="small-button"
+                        (click)="
+                          unsavedRow && onAddressSelect(unsavedRow);
+                          group.value = null
                         "
-                        [value]="dataType.value"
-                        >{{ dataType.key }}</mat-option
+                        [matTooltip]="'settings-data-source.Select' | translate"
+                        matTooltipPosition="above"
                       >
-                    </mat-select>
->>>>>>> 7b374937c7b6a46e8e5ce5e8c8ee2aaeee9e5ede
+                        <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
+                      </mat-button-toggle>
+                    </mat-button-toggle-group>
+                  </div>
+                  <ng-template #otherAddress>
                     <input
                       type="text"
                       class="w-100"
@@ -834,9 +818,9 @@
             >
               <mat-button-toggle
                 (click)="
-                  ((unsavedRow.type === SourceDataPointType.FANUC &&
+                  ((isAbleToSelectTypeAddress(unsavedRow.type) &&
                     unsavedRow.fanucDataType) ||
-                    unsavedRow.type !== SourceDataPointType.FANUC) &&
+                    !isAbleToSelectTypeAddress(unsavedRow.type)) &&
                     !isDuplicatingField('name') &&
                     !isDuplicatingField('address') &&
                     unsavedRow.name?.length > 0 &&
@@ -853,7 +837,7 @@
                   !unsavedRow.name ||
                   unsavedRow.address?.length === 0 ||
                   !unsavedRow.address ||
-                  (unsavedRow.type === SourceDataPointType.FANUC &&
+                  (isAbleToSelectTypeAddress(unsavedRow.type) &&
                     !unsavedRow.fanucDataType)
                 "
               >

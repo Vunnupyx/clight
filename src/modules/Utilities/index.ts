@@ -1,3 +1,5 @@
+import nodeNet from 'node:net';
+
 /**
  * Returns a promise that is rejected after the specified number of milliseconds
  * (Intended for use with Promise.race())
@@ -53,4 +55,19 @@ export function areObjectsEqual(
     }
   }
   return !hasChange;
+}
+
+/**
+ * Validates the input to be valid ip or hostname
+ * @param {string} textInput
+ * @returns {boolean} whether the input is valid ip/hostname
+ */
+export function isValidIpOrHostname(textInput: string): boolean {
+  const isValidIP = nodeNet.isIP(textInput) > 0; // returns 4 for IPv4 or 6 for IPv6, otherwise 0
+  const validHostnameRegex =
+    /^(http([s]){0,1}:\/\/){0,1}([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$/;
+
+  const isValidHostname =
+    textInput.length <= 255 && !!textInput.match(validHostnameRegex);
+  return isValidIP || isValidHostname;
 }

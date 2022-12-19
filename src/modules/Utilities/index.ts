@@ -63,11 +63,13 @@ export function areObjectsEqual(
  * @returns {boolean} whether the input is valid ip/hostname
  */
 export function isValidIpOrHostname(textInput: string): boolean {
+  if (!textInput || typeof textInput !== 'string') {
+    return false;
+  }
   const isValidIP = nodeNet.isIP(textInput) > 0; // returns 4 for IPv4 or 6 for IPv6, otherwise 0
   const validHostnameRegex =
     /^(http([s]){0,1}:\/\/){0,1}([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$/;
 
-  const isValidHostname =
-    textInput.length <= 255 && !!textInput.match(validHostnameRegex);
+  const isValidHostname = !!textInput.match(validHostnameRegex);
   return isValidIP || isValidHostname;
 }

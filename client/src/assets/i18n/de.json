@@ -168,7 +168,7 @@
     "ControllerType": "Typ",
     "Name": "Name",
     "Type": "Typ",
-    "FanucAddressType": "Fanuc Address Type",
+    "FanucAddressType": "Address Type",
     "FanucSNumber": "SNumber",
     "FanucENumber": "ENumber",
     "FanucLength": "Length",

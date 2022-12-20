@@ -6,7 +6,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
-import {exec} from 'child_process';
+import { exec } from 'child_process';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import {
   DataSourceProtocols,
@@ -129,7 +129,9 @@ async function dataSourcesPostDatapointBulkHandler(
   response: Response
 ): Promise<void> {
   try {
-    if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
+    if (
+      !['ioshield', 's7', 'energy'].includes(request.params.datasourceProtocol)
+    ) {
       response.status(404).json({ error: 'Protocol not valid' });
       winston.error(
         `dataSourcesPostDatapointBulkHandler error due to no valid protocol!`
@@ -266,7 +268,9 @@ async function dataSourcesPatchDatapointHandler(
  */
 function dataSourceGetStatusHandler(request: Request, response: Response) {
   //TODO: Make more generic
-  if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
+  if (
+    !['ioshield', 's7', 'energy'].includes(request.params.datasourceProtocol)
+  ) {
     response.status(404).json({ error: 'Protocol not valid' });
     winston.error(`dataSourceGetStatusHandler error due to no valid protocol!`);
     return;
@@ -294,37 +298,47 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
 
 /**
  * Send ICMP ping to sps. Send back response with avg of ping
- * 
- * @param request 
- * @param response 
+ *
+ * @param request
+ * @param response
  */
-function pingNC(request: Request, response: Response) {
-  const logPrefix = `Backend::DataSources::pingNC`;
-  winston.debug(`${logPrefix} called.`)
-  if(request.params.datasourceProtocol !== 's7') {
-    winston.debug(`${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`);
-    response.json({
-      error: {
-        msg: `Not possible for ${request.params.datasourceProtocol} source`
-      }
-    }).status(404);
+function pingDataSource(request: Request, response: Response) {
+  const logPrefix = `Backend::DataSources::pingDataSource`;
+  winston.debug(`${logPrefix} called.`);
+  let datasourceProtocol;
+  if (!['s7', 'energy'].includes(request.params.datasourceProtocol)) {
+    winston.debug(
+      `${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`
+    );
+    datasourceProtocol = request.params.datasourceProtocol;
+    response
+      .json({
+        error: {
+          msg: `Not possible for ${request.params.datasourceProtocol} source`
+        }
+      })
+      .status(404);
     return;
   }
-  const {connection: {ipAddr: ip}} = configManager.config.dataSources.find((src) => {
-    return src.protocol === request.params.datasourceProtocol
-  })
+  const {
+    connection: { ipAddr: ip }
+  } = configManager.config.dataSources.find((src) => {
+    return src.protocol === datasourceProtocol;
+  });
   winston.debug(`${logPrefix} get ip: ${ip}`);
   if (!ip) {
-    response.json({
-      error: {
-        msg: `No ip for s7 found.`
-      }
-    }).status(404);
+    response
+      .json({
+        error: {
+          msg: `No ip for ${datasourceProtocol} found.`
+        }
+      })
+      .status(404);
     return;
   }
   const cmd = `ping -w 1 -i 0.3 ${ip}`;
   exec(cmd, (error, stdout, stderr) => {
-    if (error || stderr !== '' || stdout === ''){
+    if (error || stderr !== '' || stdout === '') {
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
         error: {
@@ -333,8 +347,10 @@ function pingNC(request: Request, response: Response) {
       });
       return;
     }
-    let filtered = stdout.match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g).join();
-    const [min, avg , max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
+    let filtered = stdout
+      .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
+      .join();
+    const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
     if (!avg) {
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
@@ -348,7 +364,7 @@ function pingNC(request: Request, response: Response) {
     response.status(200).json({
       delay: avg
     });
-  })
+  });
 }
 
 export const dataSourceHandlers = {
@@ -365,5 +381,5 @@ export const dataSourceHandlers = {
   dataSourcesDeleteDatapoint: dataSourcesDeleteDatapointHandler,
   dataSourcesPatchDatapoint: dataSourcesPatchDatapointHandler,
   // ping to s7
-  dataSourceGetPing: pingNC
+  dataSourceGetPing: pingDataSource
 };

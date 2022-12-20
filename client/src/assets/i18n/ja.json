@@ -172,7 +172,7 @@
     "FanucSNumber": "SNumber",
     "FanucENumber": "ENumber",
     "FanucLength": "Length",
-    "TypeAddress": "",
+    "FanucDataType": "Data Type",
     "Address": "アドレス",
     "LiveData": "ライブデータ",
     "Actions": "動作",

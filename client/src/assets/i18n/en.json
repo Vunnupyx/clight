@@ -172,7 +172,7 @@
     "FanucSNumber": "SNumber",
     "FanucENumber": "ENumber",
     "FanucLength": "Length",
-    "TypeAddress": "Type Address",
+    "FanucDataType": "Data Type",
     "Address": "Address",
     "LiveData": "Live Data",
     "Actions": "Actions",
@@ -198,7 +198,7 @@
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
     "Port": "Port",
-    "Fanuc": {
+    "FanucErrorStatus": {
       "LivedataError": "Could not read data point",
       "unexpected_error": "There was an unexpected error while reading data point",
       "no_response": "There was no response for the data point",

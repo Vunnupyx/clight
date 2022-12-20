@@ -172,7 +172,7 @@
     "FanucSNumber": "SNumber",
     "FanucENumber": "ENumber",
     "FanucLength": "Length",
-    "TypeAddress": "",
+    "FanucDataType": "Datentyp",
     "Address": "Adressse",
     "LiveData": "Aktualwert",
     "Actions": "Aktionen",
@@ -197,7 +197,7 @@
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
     "Port": "Port",
-    "Fanuc": {
+    "FanucErrorStatus": {
       "LivedataError": "Datenpunkt konnte nicht gelesen werden",
       "unexpected_error": "Beim Lesen des Datenpunktes ist ein unerwarteter Fehler aufgetreten",
       "no_response": "Es gab keine Antwort für den Datenpunkt",

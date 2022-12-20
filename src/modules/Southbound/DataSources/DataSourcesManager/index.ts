@@ -16,6 +16,7 @@ import winston from 'winston';
 import { ConfigManager } from '../../../ConfigManager';
 import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
+import { EnergyDataSource } from '../Energy';
 
 interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
@@ -134,6 +135,8 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
         return new S7DataSource(params);
       case DataSourceProtocols.IOSHIELD:
         return new IoshieldDataSource(params);
+      case DataSourceProtocols.ENERGY:
+        return new EnergyDataSource(params);
       default:
         throw new Error('Invalid data source!');
     }

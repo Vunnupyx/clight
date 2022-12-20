@@ -20,6 +20,23 @@
 <mat-divider></mat-divider>
 
 <div class="d-block m-20">
+  <!--<ng-container [ngSwitch]="dataSource?.protocol">
+    <app-data-source-content
+      *ngSwitchCase="Protocol.S7"
+      [dataSource]="dataSource"
+      (dataPointsChange)="onDataPoints($event)"
+    ></app-data-source-content>
+    <app-data-source-content
+      *ngSwitchCase="Protocol.Fanuc"
+      [dataSource]="dataSource"
+      (dataPointsChange)="onDataPoints($event)"
+    ></app-data-source-content>
+    <app-data-source-content
+      *ngSwitchCase="Protocol.IOShield"
+      [dataSource]="dataSource"
+      (dataPointsChange)="onDataPoints($event)"
+    ></app-data-source-content>
+  </ng-container>-->
   <div class="row">
     <div class="col-12 col-md-6 col-lg-4">
       <div class="row mb-25 align-items-center">
@@ -482,12 +499,12 @@
         [headerHeight]="50"
         [rows]="datapointRows"
         rowHeight="auto"
-        columnMode="flex"
+        columnMode="force"
       >
         <ngx-datatable-column
           [name]="'settings-data-source.Name' | translate"
           prop="name"
-          [flexGrow]="1"
+          [width]="150"
           cellClass="input-cell"
         >
           <ng-template
@@ -521,7 +538,7 @@
           *ngIf="dataSource?.protocol != Protocol.IOShield"
           [name]="'settings-data-source.Type' | translate"
           prop="type"
-          [flexGrow]="1"
+          [width]="100"
           cellClass="input-cell"
         >
           <ng-template
@@ -574,7 +591,7 @@
         <ngx-datatable-column
           [name]="'settings-data-source.LiveData' | translate"
           prop="livedata"
-          [flexGrow]="1"
+          [width]="100"
           [sortable]="false"
         >
           <ng-template
@@ -622,7 +639,7 @@
           <ngx-datatable-column
             [name]="'settings-data-source.FanucAddressType' | translate"
             prop="fanucAddressType"
-            [flexGrow]="1"
+            [width]="100"
             [sortable]="false"
           >
             <ng-template
@@ -637,7 +654,7 @@
           <ngx-datatable-column
             [name]="'settings-data-source.FanucSNumber' | translate"
             prop="fanucSNumber"
-            [flexGrow]="1"
+            [width]="100"
             [sortable]="false"
           >
             <ng-template
@@ -652,7 +669,7 @@
           <ngx-datatable-column
             [name]="'settings-data-source.FanucENumber' | translate"
             prop="fanucENumber"
-            [flexGrow]="1"
+            [width]="100"
             [sortable]="false"
           >
             <ng-template
@@ -667,7 +684,7 @@
           <ngx-datatable-column
             [name]="'settings-data-source.FanucLength' | translate"
             prop="fanucLength"
-            [flexGrow]="1"
+            [width]="100"
             [sortable]="false"
           >
             <ng-template
@@ -682,7 +699,7 @@
           <ngx-datatable-column
             [name]="'settings-data-source.FanucDataType' | translate"
             prop="fanucDataType"
-            [flexGrow]="1"
+            [width]="100"
             cellClass="input-cell"
           >
             <ng-template
@@ -750,7 +767,7 @@
         <ngx-datatable-column
           [name]="'settings-data-source.Address' | translate"
           prop="address"
-          [flexGrow]="3"
+          [width]="200"
           cellClass="input-cell address-cell"
         >
           <ng-template
@@ -843,7 +860,7 @@
         </ngx-datatable-column>
         <ngx-datatable-column
           [name]="'settings-data-source.Actions' | translate"
-          [flexGrow]="1"
+          [width]="100"
           cellClass="button-cell"
           [sortable]="false"
         >

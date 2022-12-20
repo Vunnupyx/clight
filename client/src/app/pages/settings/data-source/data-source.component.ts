@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { TranslateService } from '@ngx-translate/core';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { Connection } from 'app/api/models';
 import {
   DataPointLiveData,
@@ -143,10 +143,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     );
 
     this.dataSourceService.getDataSources();
-  }
-
-  ngAfterViewInit() {
-    this.ngxDatatable.columnMode = ColumnMode.force;
   }
 
   toString(x: any): string {

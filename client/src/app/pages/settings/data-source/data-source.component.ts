@@ -31,6 +31,11 @@ import { IP_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 
+const FANUC_ADDRESS_IF_UNACCEPTABLE = [
+  'cnc_exeprgname2.path_name',
+  'cnc_pdf_rdmain.file_path'
+];
+
 @Component({
   selector: 'app-data-source',
   templateUrl: './data-source.component.html',
@@ -367,12 +372,29 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.datapointRows = this.datapointRows?.filter((x) => x.id) || [];
   }
 
+  private isTypeFanucAcceptable(type: FanucTypes): boolean {
+    if (this.dataSource?.protocol === this.Protocol.Fanuc)
+      return [
+        FanucTypes.Fanuc_0iD,
+        FanucTypes.Fanuc_0iF,
+        FanucTypes.Fanuc_30iA,
+        FanucTypes.Fanuc_30iB
+      ].includes(type);
+
+    return true;
+  }
+
   onAddressSelect(obj: SourceDataPoint) {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
       data: {
         selection: obj.address,
         protocol: this.dataSource?.protocol,
-        existingAddresses: this.datapointRows?.map((x) => x.address) || []
+        existingAddresses: this.datapointRows?.map((x) => x.address) || [],
+        unsupportedAddress: this.isTypeFanucAcceptable(
+          this.dataSource?.type as FanucTypes
+        )
+          ? []
+          : FANUC_ADDRESS_IF_UNACCEPTABLE
       },
       width: '650px'
     });

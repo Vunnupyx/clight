@@ -9,6 +9,7 @@ export interface SelectTypeModalData {
   selection: string;
   protocol: DataSourceProtocol;
   existingAddresses: string[];
+  unsupportedAddress: string[];
 }
 
 @Component({
@@ -43,6 +44,10 @@ export class SelectTypeModalComponent implements OnInit {
 
   isExisting({ address }) {
     return this.data.existingAddresses.includes(address);
+  }
+
+  isUnsupported({ address }) {
+    return this.data.unsupportedAddress.includes(address);
   }
 
   onClose() {

@@ -181,7 +181,8 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Modul"
+      "ioshield": "Input Modul",
+      "fanuc": "Fanuc"
     },
     "Livedata": {
       "ioshield": {
@@ -196,6 +197,7 @@
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
+    "UnsupportedAddress": "Unsupported Address",
     "Port": "Port",
     "FanucErrorStatus": {
       "LivedataError": "Datenpunkt konnte nicht gelesen werden",

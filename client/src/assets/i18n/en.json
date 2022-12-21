@@ -197,6 +197,7 @@
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
+    "UnsupportedAddress": "Unsupported Address",
     "Port": "Port",
     "FanucErrorStatus": {
       "LivedataError": "Could not read data point",

@@ -181,7 +181,8 @@
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再度試してください。",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "デジタル入力"
+      "ioshield": "デジタル入力",
+      "fanuc": "Fanuc"
     },
     "Livedata": {
       "ioshield": {
@@ -196,6 +197,7 @@
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
+    "UnsupportedAddress": "Unsupported Address",
     "Port": "Port",
     "FanucErrorStatus": {
       "LivedataError": "Could not read data point",

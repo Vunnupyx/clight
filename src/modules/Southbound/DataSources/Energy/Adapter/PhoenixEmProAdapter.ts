@@ -36,6 +36,8 @@ export class PhoenixEmProAdapter {
     const logPrefix = `${PhoenixEmProAdapter.name}::readAllDatapoints`;
     return new Promise(async (resolve, reject) => {
       let resultArray: IMeasurement[] = [];
+      let hasMeasurementReadingError = false;
+      let hasMeterReadingError = false;
       //Get all measurements
       try {
         const allMeasurements: IEmProBulkReadingResponse =
@@ -56,6 +58,7 @@ export class PhoenixEmProAdapter {
         winston.warn(
           `${logPrefix} Error reading all measurements: ${e?.message || e}`
         );
+        hasMeasurementReadingError = true;
       }
       //Get all meters
       try {
@@ -76,10 +79,14 @@ export class PhoenixEmProAdapter {
         winston.warn(
           `${logPrefix} Error reading all meters: ${e?.message || e}`
         );
-        return reject(e);
+        hasMeterReadingError = true;
       }
 
-      return resolve(resultArray);
+      if (hasMeasurementReadingError && hasMeterReadingError) {
+        return reject('Could not read any values');
+      } else {
+        return resolve(resultArray);
+      }
     });
   }
 
@@ -93,7 +100,7 @@ export class PhoenixEmProAdapter {
     return new Promise(async (resolve, reject) => {
       if (!['1', '2', '3', '4'].includes(String(newTariffNo))) {
         winston.warn(`${logPrefix} new tariff number is wrong: ${newTariffNo}`);
-        return;
+        return reject('Wrong tariff number');
       }
       const putEndpoint = `/api/v1/measurement-system-control/tariff-number?value=${newTariffNo}`;
 
@@ -106,17 +113,17 @@ export class PhoenixEmProAdapter {
           winston.debug(
             `${logPrefix} tariff changed successfully to: ${newTariffNo}`
           );
-          resolve(true);
+          return resolve(true);
         } else {
           // Fail
           winston.error(
             `${logPrefix} error occurred while trying to change tariff: ${result.error} ${result.code}`
           );
-          reject(new Error(result.error));
+          return reject(new Error(result.error));
         }
       } catch (e) {
         winston.warn(`${logPrefix} Error changing tariff: ${e?.message || e}`);
-        reject(e);
+        return reject(e);
       }
     });
   }
@@ -133,19 +140,19 @@ export class PhoenixEmProAdapter {
         winston.warn(
           `${logPrefix} Trying to read unknown data point: ${dataPointAddress}`
         );
-        reject(new Error('Datapoint not found'));
+        return reject(new Error('Datapoint not found'));
       }
       try {
         const result = await this.performApiCall(
           'GET',
           `${this.hostname}${EMPRO_GET_ENDPOINTS[dataPointAddress]}`
         );
-        resolve(result);
+        return resolve(result);
       } catch (e) {
         winston.warn(
           `${logPrefix} Error reading data point: ${e?.message || e}`
         );
-        reject(e);
+        return reject(e);
       }
     });
   }
@@ -160,12 +167,12 @@ export class PhoenixEmProAdapter {
       try {
         const result = await this.performApiCall(
           'GET',
-          `${this.hostname}/api/v1/measurement-system-control/tariff-number`
+          `${this.hostname}${EMPRO_GET_ENDPOINTS['Tariff Number']}`
         );
-        resolve(result?.value ?? '0');
+        return resolve(result?.value ?? '0');
       } catch (e) {
         winston.warn(`${logPrefix} Error reading tariff: ${e?.message || e}`);
-        reject(e);
+        return reject(e);
       }
     });
   }
@@ -180,7 +187,7 @@ export class PhoenixEmProAdapter {
     return new Promise(async (resolve, reject) => {
       if (!['GET', 'PUT'].includes(method) || typeof url !== 'string') {
         winston.error(`${logPrefix} invalid parameters: ${method} ${url}`);
-        reject(new Error('Invalid Parameter'));
+        return reject(new Error('Invalid Parameter'));
       }
       try {
         const response = await fetch(url, {
@@ -189,17 +196,17 @@ export class PhoenixEmProAdapter {
         if (response.ok) {
           const data = await response?.json();
           //Success
-          resolve(data);
+          return resolve(data);
         }
         winston.error(
           `${logPrefix} response was NOT ok from the endpoint: ${url}`
         );
-        reject(new Error('Response not OK'));
+        return reject(new Error('Response not OK'));
       } catch (e) {
         winston.error(
           `${logPrefix} unexpected error occurred while trying to change tariff: ${e?.message}`
         );
-        reject(new Error(e?.message || 'Unexpected Error'));
+        return reject(new Error(e?.message || 'Unexpected Error'));
       }
     });
   }

@@ -2030,6 +2030,9 @@
         "status": {
           "type": "string",
           "enum": ["connected", "disconnected"]
+        },
+        "emProTariffNumber": {
+          "type": "string"
         }
       }
     },

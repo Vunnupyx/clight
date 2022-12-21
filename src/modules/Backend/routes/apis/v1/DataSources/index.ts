@@ -283,17 +283,22 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  let status;
+  let status, emProTariffNumber;
 
   try {
     status = dataSourcesManager
       .getDataSourceByProto(request.params.datasourceProtocol)
       .getCurrentStatus();
+    if (request.params.datasourceProtocol === 'energy') {
+      emProTariffNumber = dataSourcesManager
+        .getDataSourceByProto(request.params.datasourceProtocol)
+        .getCurrentTariffNumber();
+    }
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;
   }
 
-  response.status(200).json({ status });
+  response.status(200).json({ status, emProTariffNumber });
 }
 
 /**

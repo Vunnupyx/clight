@@ -7,10 +7,210 @@
     "model": "",
     "control": ""
   },
-  "dataSources": [],
-  "dataSinks": [],
+  "dataSources": [
+    {
+      "dataPoints": [
+        {
+          "type": "cnc",
+          "name": "ControlType",
+          "address": "cnc_sysinfo.cnc_type",
+          "id": "ec1c52c0-cfb5-45dc-802d-0526509a5215"
+        },
+        {
+          "type": "cnc",
+          "name": "MachineType",
+          "address": "cnc_sysinfo.mt_type",
+          "id": "e28123c8-5ec5-4412-a067-5546ffc6edaf"
+        },
+        {
+          "type": "cnc",
+          "name": "AutomaticOp",
+          "address": "cnc_statinfo.run",
+          "id": "b89b3994-f70c-49ff-842d-74c7a80aca86"
+        },
+        {
+          "type": "cnc",
+          "name": "MSTB",
+          "address": "cnc_statinfo.mstb",
+          "id": "a3b318e3-3aad-4bb7-ba04-1d9361f83f5b"
+        },
+        {
+          "type": "cnc",
+          "name": "AxisMovement",
+          "address": "cnc_statinfo.motion",
+          "id": "be789562-cfa9-475b-afd5-17428d94885f"
+        },
+        {
+          "type": "cnc",
+          "name": "Alarm",
+          "address": "cnc_statinfo.alarm",
+          "id": "49978910-5d22-4c53-b0ac-4424f42cd043"
+        },
+        {
+          "type": "cnc",
+          "name": "Mode",
+          "address": "cnc_statinfo.aut",
+          "id": "afc3c93b-dd09-4529-9306-4dad313ec13f"
+        },
+        {
+          "type": "cnc",
+          "name": "JogOvr",
+          "address": "cnc_rdopnlsgnl.jog_ovrd",
+          "id": "ff7f7c9a-a468-4c3e-8f8b-7956897ff384"
+        },
+        {
+          "type": "cnc",
+          "name": "FeedOvr",
+          "address": "cnc_rdopnlsgnl.feed_ovrd",
+          "id": "aeafbbce-22e3-4948-b01f-9d4bef860ccc"
+        },
+        {
+          "type": "cnc",
+          "name": "RpdOvr",
+          "address": "cnc_rdopnlsgnl.rpd_ovrd",
+          "id": "7d7eab84-ad3e-4601-8146-0e92ea49a9cc"
+        },
+        {
+          "type": "cnc",
+          "name": "BDL",
+          "address": "cnc_rdopnlsgnl.blck_del",
+          "id": "26e8d8a1-f67e-4b61-a551-cc172f91f410"
+        },
+        {
+          "type": "cnc",
+          "name": "SBL",
+          "address": "cnc_rdopnlsgnl.sngl_blck",
+          "id": "c1261f47-5556-4937-bdfd-bfa78f175af4"
+        },
+        {
+          "type": "cnc",
+          "name": "DRY",
+          "address": "cnc_rdopnlsgnl.dry_run",
+          "id": "0408bf75-6283-4bb1-aea0-02bc040b4829"
+        },
+        {
+          "type": "cnc",
+          "name": "PNumber",
+          "address": "cnc_rdprgnum.data",
+          "id": "1efe0fed-f1af-4876-b06f-29559cd146f2"
+        },
+        {
+          "type": "cnc",
+          "name": "MPNumber",
+          "address": "cnc_rdprgnum.mdata",
+          "id": "081b771a-9141-40c5-99db-7c41ce3ce0d4"
+        },
+        {
+          "type": "cnc",
+          "name": "PathName",
+          "address": "cnc_exeprgname2.path_name",
+          "id": "e37241cc-1913-4ddc-a04c-cd25609f2d6b"
+        },
+        {
+          "type": "cnc",
+          "name": "FilePath",
+          "address": "cnc_pdf_rdmain.file_path",
+          "id": "e0dd0a37-b27e-47aa-9b8a-84002194c988"
+        }
+      ],
+      "protocol": "fanuc",
+      "enabled": true,
+      "type": "fanuc_0iD",
+      "connection": {
+        "ipAddr": "192.168.214.1",
+        "port": 8193
+      }
+    }
+  ],
+  "dataSinks": [
+    {
+      "dataPoints": [],
+      "enabled": false,
+      "protocol": "datahub"
+    },
+    {
+      "dataPoints": [
+        {
+          "address": "jogoverride1",
+          "type": "event",
+          "name": "Jog Override 1",
+          "enabled": true,
+          "id": "31e4373f-81ae-41d8-bf21-a1c627a2ccb8"
+        },
+        {
+          "address": "rapidoverride1",
+          "type": "event",
+          "name": "Rapid Override 1",
+          "enabled": true,
+          "id": "d7563140-639a-48b8-a128-cd4028b37fa6"
+        },
+        {
+          "name": "Controller Mode 1",
+          "address": "mode1",
+          "type": "event",
+          "initialValue": "AUTOMATIC",
+          "map": {
+            "0": "MANUAL_DATA_INPUT",
+            "2": "AUTOMATIC",
+            "3": "EDIT",
+            "5": "MANUAL",
+            "6": "MANUAL"
+          },
+          "mandatory": true,
+          "enabled": true,
+          "id": "5cc8d6e1-c58a-4ecc-b763-19b6d97f8638"
+        }
+      ],
+      "enabled": true,
+      "protocol": "mtconnect"
+    },
+    {
+      "dataPoints": [
+        {
+          "name": "Operation Mode",
+          "address": "Monitoring.MachineTool.OperationMode",
+          "enabled": true,
+          "id": "585ce20e-efbe-47dd-98c6-b6e4af489549"
+        },
+        {
+          "name": "Program Path",
+          "address": "Production.ActiveProgram.ProgramPath",
+          "enabled": true,
+          "id": "a0bc7038-3cee-4162-8881-f2bac1af240b"
+        }
+      ],
+      "enabled": true,
+      "protocol": "opcua"
+    }
+  ],
   "virtualDataPoints": [],
-  "mapping": [],
+  "mapping": [
+    {
+      "target": "31e4373f-81ae-41d8-bf21-a1c627a2ccb8",
+      "source": "ff7f7c9a-a468-4c3e-8f8b-7956897ff384",
+      "id": "7c2d97d9-42b1-451d-950a-501508b028f3"
+    },
+    {
+      "source": "7d7eab84-ad3e-4601-8146-0e92ea49a9cc",
+      "target": "d7563140-639a-48b8-a128-cd4028b37fa6",
+      "id": "b9f3cc9f-a208-4780-8ff0-675ff8b4cd98"
+    },
+    {
+      "source": "afc3c93b-dd09-4529-9306-4dad313ec13f",
+      "target": "5cc8d6e1-c58a-4ecc-b763-19b6d97f8638",
+      "id": "966d7684-59c2-485a-b8ea-b0ed67d7befb"
+    },
+    {
+      "target": "585ce20e-efbe-47dd-98c6-b6e4af489549",
+      "source": "afc3c93b-dd09-4529-9306-4dad313ec13f",
+      "id": "40ae92c2-a2ff-45d6-b954-daac5533fa5a"
+    },
+    {
+      "target": "a0bc7038-3cee-4162-8881-f2bac1af240b",
+      "source": "e37241cc-1913-4ddc-a04c-cd25609f2d6b",
+      "id": "bd97e08f-4ff5-45e2-98c4-a6ddf446310d"
+    }
+  ],
   "systemInfo": [],
   "templates": {
     "completed": true

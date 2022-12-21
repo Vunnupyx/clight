@@ -648,7 +648,21 @@
               let-value="value"
               let-row="row"
             >
-              {{ value }}
+              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+                <div class="text-ellipsis" [title]="value">
+                  {{ value }}
+                </div>
+              </ng-container>
+              <ng-container *ngIf="unsavedRowIndex === rowIndex">
+                <input
+                  type="text"
+                  class="w-100"
+                  [ngModel]="value"
+                  (ngModelChange)="
+                    unsavedRow && (unsavedRow.fanucAddressType = $event)
+                  "
+                />
+              </ng-container>
             </ng-template>
           </ngx-datatable-column>
           <ngx-datatable-column
@@ -663,7 +677,21 @@
               let-value="value"
               let-row="row"
             >
-              {{ value }}
+              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+                <div class="text-ellipsis" [title]="value">
+                  {{ value }}
+                </div>
+              </ng-container>
+              <ng-container *ngIf="unsavedRowIndex === rowIndex">
+                <input
+                  type="text"
+                  class="w-100"
+                  [ngModel]="value"
+                  (ngModelChange)="
+                    unsavedRow && (unsavedRow.fanucSNumber = $event)
+                  "
+                />
+              </ng-container>
             </ng-template>
           </ngx-datatable-column>
           <ngx-datatable-column
@@ -678,7 +706,21 @@
               let-value="value"
               let-row="row"
             >
-              {{ value }}
+              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+                <div class="text-ellipsis" [title]="value">
+                  {{ value }}
+                </div>
+              </ng-container>
+              <ng-container *ngIf="unsavedRowIndex === rowIndex">
+                <input
+                  type="text"
+                  class="w-100"
+                  [ngModel]="value"
+                  (ngModelChange)="
+                    unsavedRow && (unsavedRow.fanucENumber = $event)
+                  "
+                />
+              </ng-container>
             </ng-template>
           </ngx-datatable-column>
           <ngx-datatable-column
@@ -693,7 +735,21 @@
               let-value="value"
               let-row="row"
             >
-              {{ value }}
+              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+                <div class="text-ellipsis" [title]="value">
+                  {{ value }}
+                </div>
+              </ng-container>
+              <ng-container *ngIf="unsavedRowIndex === rowIndex">
+                <input
+                  type="text"
+                  class="w-100"
+                  [ngModel]="value"
+                  (ngModelChange)="
+                    unsavedRow && (unsavedRow.fanucLength = $event)
+                  "
+                />
+              </ng-container>
             </ng-template>
           </ngx-datatable-column>
           <ngx-datatable-column

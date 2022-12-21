@@ -345,6 +345,8 @@ export class SourceDataPointService
         }
 
         return `[DI]`;
+      case DataSourceProtocol.Fanuc:
+        return `[FANUC]`;
       default:
         return '';
     }

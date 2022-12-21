@@ -87,6 +87,7 @@
         "10diIoShieldMessenger": "Eingangsmodul zu DMG MORI Messenger",
         "ai2ioShieldMessenger": "Eingangsmodul zu DMG MORI Messenger",
         "empty": "Leere Vorlage",
+        "energy": "EEM Kit",
         "gm": "GM Reihe",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
@@ -95,6 +96,7 @@
         "10diIoShieldMessenger": "Eingangsmodul mit 10 digitalen Eingängen zu DMG MORI Messenger",
         "ai2ioShieldMessenger": "Eingangsmodul mit Stromsensoren + 5 digitalen Eingängen zu DMG MORI Messenger",
         "empty": "Die Vorlage enthält keine Datenquelle, keine virtuellen Datenpunkte, keine Mappings und keine Anwendungsschnittstelle",
+        "energy": "Enthält alle unterstützte Datenpunkte von EEM Kit",
         "gm": "GM 16-6 oder GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger, OPC UA und CELOS Xchange",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
@@ -299,6 +301,7 @@
     "Close": "Schließen",
     "Event": "Event",
     "Condition": "Condition",
+    "Sample": "Sample",
     "SelectAVariable": "Datenpunktauswahl",
     "CreateDataPoint": "Datenpunkt erstellen",
     "SelectVariable": "Variable auswählen",

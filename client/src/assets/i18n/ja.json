@@ -87,6 +87,7 @@
         "10diIoShieldMessenger": "Input board to DMG MORI Messenger",
         "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
         "empty": "Empty Template",
+        "energy": "EEM Kit",
         "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
@@ -95,6 +96,7 @@
         "10diIoShieldMessenger": "10 digital input board to DMG MORI Messenger",
         "ai2ioShieldMessenger": "Current sensors + 5 digital input board to DMG MORI Messenger",
         "empty": "Template does not include any data source, virtual data points, mappings and application interface",
+        "energy": "Includes all data points readable from EEM Kit",
         "gm": "GM 16-6 or GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
@@ -299,6 +301,7 @@
     "Close": "Close",
     "Event": "イベント",
     "Condition": "条件",
+    "Sample": "Sample",
     "SelectAVariable": "変数を選択",
     "CreateDataPoint": "データアイテムを作成",
     "SelectVariable": "選択変数",

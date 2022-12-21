@@ -150,15 +150,36 @@
           "type": "event",
           "initialValue": "AUTOMATIC",
           "map": {
-            "0": "MANUAL_DATA_INPUT",
+            "0": "MANUAL",
+            "1": "MANUAL_DATA_INPUT",
             "2": "AUTOMATIC",
             "3": "EDIT",
-            "5": "MANUAL",
-            "6": "MANUAL"
+            "4": "SINGLE_BLOCK"
           },
           "mandatory": true,
           "enabled": true,
-          "id": "5cc8d6e1-c58a-4ecc-b763-19b6d97f8638"
+          "id": "5cc8d6e1-c58a-4ecc-b763-19b6d97f8638",
+          "dataMapping": {
+            "source": "afc3c93b-dd09-4529-9306-4dad313ec13f",
+            "target": "5cc8d6e1-c58a-4ecc-b763-19b6d97f8638",
+            "id": "966d7684-59c2-485a-b8ea-b0ed67d7befb"
+          }
+        },
+        {
+          "name": "Execution 1",
+          "address": "execution1",
+          "type": "event",
+          "initialValue": "ACTIVE",
+          "map": {
+            "0": "READY",
+            "1": "ACTIVE",
+            "2": "INTERRUPTED",
+            "3": "FEED_HOLD",
+            "4": "STOPPED"
+          },
+          "mandatory": true,
+          "enabled": true,
+          "id": "c0e48d1f-e003-4d88-8706-f32e4efabf73"
         }
       ],
       "enabled": true,
@@ -177,13 +198,259 @@
           "address": "Production.ActiveProgram.ProgramPath",
           "enabled": true,
           "id": "a0bc7038-3cee-4162-8881-f2bac1af240b"
+        },
+        {
+          "name": "Current State",
+          "address": "Production.ActiveProgram.State.CurrentState",
+          "enabled": true,
+          "id": "ac6d6e58-abce-4332-bf91-0481e4d9c183"
         }
       ],
       "enabled": true,
       "protocol": "opcua"
     }
   ],
-  "virtualDataPoints": [],
+  "virtualDataPoints": [
+    {
+      "id": "0118934c-bd39-468b-964f-adbc3da6db73",
+      "sources": ["afc3c93b-dd09-4529-9306-4dad313ec13f"],
+      "operationType": "equal",
+      "name": "Mode_Edit",
+      "thresholds": {},
+      "comparativeValue": "3",
+      "resetSchedules": []
+    },
+    {
+      "id": "eb54f6db-5582-4f92-b33e-4b8385ccb99e",
+      "sources": ["afc3c93b-dd09-4529-9306-4dad313ec13f"],
+      "operationType": "equal",
+      "name": "Mode_MDI",
+      "thresholds": {},
+      "comparativeValue": "0",
+      "resetSchedules": []
+    },
+    {
+      "id": "c77a0c69-b2d0-413b-a29e-ed7a48bf3c76",
+      "sources": ["afc3c93b-dd09-4529-9306-4dad313ec13f"],
+      "operationType": "equal",
+      "name": "Mode_JOG",
+      "thresholds": {},
+      "comparativeValue": "5",
+      "resetSchedules": []
+    },
+    {
+      "id": "eaa02591-7daa-41d7-b569-d18142b43aab",
+      "sources": ["afc3c93b-dd09-4529-9306-4dad313ec13f"],
+      "operationType": "equal",
+      "name": "Mode_Teach in JOG",
+      "thresholds": {},
+      "comparativeValue": "6",
+      "resetSchedules": []
+    },
+    {
+      "id": "162ec362-22f0-4735-9c6a-d88041ff8d65",
+      "sources": [
+        "unsaved:1671621473240",
+        "unsaved:1671621504576",
+        "unsaved:1671621582274",
+        "unsaved:1671621628823"
+      ],
+      "operationType": "or",
+      "name": "Mode_Any_Non_Auto",
+      "resetSchedules": []
+    },
+    {
+      "id": "daeafa49-b77e-40ad-8722-7afe71b60cbb",
+      "sources": ["unsaved:1671621671890"],
+      "operationType": "not",
+      "name": "Mode_Auto",
+      "resetSchedules": []
+    },
+    {
+      "id": "5b7d335e-bc66-4900-b69a-6571b8dab09d",
+      "sources": [
+        "c1261f47-5556-4937-bdfd-bfa78f175af4",
+        "unsaved:1671621694890"
+      ],
+      "operationType": "and",
+      "name": "Mode_Single_Block",
+      "resetSchedules": []
+    },
+    {
+      "id": "8a4b96b7-ff46-4151-89c6-7e0244e7fbfe",
+      "sources": [
+        "0118934c-bd39-468b-964f-adbc3da6db73",
+        "eb54f6db-5582-4f92-b33e-4b8385ccb99e",
+        "c77a0c69-b2d0-413b-a29e-ed7a48bf3c76",
+        "eaa02591-7daa-41d7-b569-d18142b43aab",
+        "daeafa49-b77e-40ad-8722-7afe71b60cbb",
+        "5b7d335e-bc66-4900-b69a-6571b8dab09d"
+      ],
+      "operationType": "enumeration",
+      "name": "Controller Mode",
+      "enumeration": {
+        "items": [
+          {
+            "source": "c77a0c69-b2d0-413b-a29e-ed7a48bf3c76",
+            "returnValueIfTrue": "0",
+            "priority": 0
+          },
+          {
+            "source": "eaa02591-7daa-41d7-b569-d18142b43aab",
+            "returnValueIfTrue": "0",
+            "priority": 1
+          },
+          {
+            "source": "eb54f6db-5582-4f92-b33e-4b8385ccb99e",
+            "returnValueIfTrue": "1",
+            "priority": 2
+          },
+          {
+            "source": "daeafa49-b77e-40ad-8722-7afe71b60cbb",
+            "returnValueIfTrue": "2",
+            "priority": 3
+          },
+          {
+            "source": "0118934c-bd39-468b-964f-adbc3da6db73",
+            "returnValueIfTrue": "3",
+            "priority": 4
+          },
+          {
+            "source": "5b7d335e-bc66-4900-b69a-6571b8dab09d",
+            "returnValueIfTrue": "4",
+            "priority": 5
+          }
+        ]
+      },
+      "resetSchedules": []
+    },
+    {
+      "id": "dfd57163-75dd-4a3a-81b7-bde25408f9f3",
+      "sources": ["b89b3994-f70c-49ff-842d-74c7a80aca86"],
+      "operationType": "equal",
+      "name": "Execution_STaRT",
+      "thresholds": {},
+      "comparativeValue": "3",
+      "resetSchedules": []
+    },
+    {
+      "id": "41ada1df-a64d-4e1d-8a12-7a936f394b33",
+      "sources": ["b89b3994-f70c-49ff-842d-74c7a80aca86"],
+      "operationType": "equal",
+      "name": "Execution_MSTR",
+      "thresholds": {},
+      "comparativeValue": "4",
+      "resetSchedules": []
+    },
+    {
+      "id": "37f42564-4926-4778-afea-6807125c7a9d",
+      "sources": ["b89b3994-f70c-49ff-842d-74c7a80aca86"],
+      "operationType": "equal",
+      "name": "Execution_Hold",
+      "thresholds": {},
+      "comparativeValue": "2",
+      "resetSchedules": []
+    },
+    {
+      "id": "55ba9912-3a19-4f8f-8a64-ca66f34a29ab",
+      "sources": ["b89b3994-f70c-49ff-842d-74c7a80aca86"],
+      "operationType": "equal",
+      "name": "Execution_STOP",
+      "thresholds": {},
+      "comparativeValue": "1",
+      "resetSchedules": []
+    },
+    {
+      "id": "20e6600e-7d49-4bd3-9ff3-72ff8f8aac34",
+      "sources": ["be789562-cfa9-475b-afd5-17428d94885f"],
+      "operationType": "equal",
+      "name": "Axis_MoTioN",
+      "thresholds": {},
+      "comparativeValue": "2",
+      "resetSchedules": []
+    },
+    {
+      "id": "64a0fd11-2485-4732-8fcd-33013221054e",
+      "sources": ["a3b318e3-3aad-4bb7-ba04-1d9361f83f5b"],
+      "operationType": "unequal",
+      "name": "MSTB_Mcode",
+      "thresholds": {},
+      "comparativeValue": "0",
+      "resetSchedules": []
+    },
+    {
+      "id": "4ec0a333-c9f9-4a50-8ffa-9c9ab7b6064e",
+      "sources": ["unsaved:1671622336092", "unsaved:1671622355921"],
+      "operationType": "or",
+      "name": "Execution_ACTIVE",
+      "resetSchedules": []
+    },
+    {
+      "id": "8f9dad0b-0561-4af5-98d4-162ee09a4f70",
+      "sources": [
+        "unsaved:1671622385570",
+        "unsaved:1671622445911",
+        "unsaved:1671622475090"
+      ],
+      "operationType": "or",
+      "name": "Execution_FEED_HOLD",
+      "resetSchedules": []
+    },
+    {
+      "id": "ff1eecd3-47e8-40e0-8004-b2e4bae8a897",
+      "sources": [
+        "unsaved:1671622403907",
+        "unsaved:1671622547890",
+        "unsaved:1671622571073"
+      ],
+      "operationType": "or",
+      "name": "Execution_ActiveOrHoldOrStopped",
+      "resetSchedules": []
+    },
+    {
+      "id": "4db896e1-a77a-4843-9421-a3f9993d029d",
+      "sources": ["unsaved:1671622640269"],
+      "operationType": "not",
+      "name": "Execution_READY",
+      "resetSchedules": []
+    },
+    {
+      "id": "8d07a36c-0e79-4e0a-812c-f92681034d24",
+      "sources": [
+        "unsaved:1671622403907",
+        "unsaved:1671622547890",
+        "unsaved:1671622571073",
+        "unsaved:1671622662324"
+      ],
+      "operationType": "enumeration",
+      "name": "Execution State",
+      "enumeration": {
+        "items": [
+          {
+            "source": "unsaved:1671622662324",
+            "returnValueIfTrue": "0",
+            "priority": 0
+          },
+          {
+            "source": "unsaved:1671622547890",
+            "returnValueIfTrue": "1",
+            "priority": 1
+          },
+          {
+            "source": "unsaved:1671622571073",
+            "returnValueIfTrue": "3",
+            "priority": 2
+          },
+          {
+            "source": "unsaved:1671622403907",
+            "returnValueIfTrue": "4",
+            "priority": 3
+          }
+        ]
+      },
+      "resetSchedules": []
+    }
+  ],
   "mapping": [
     {
       "target": "31e4373f-81ae-41d8-bf21-a1c627a2ccb8",
@@ -196,19 +463,29 @@
       "id": "b9f3cc9f-a208-4780-8ff0-675ff8b4cd98"
     },
     {
-      "source": "afc3c93b-dd09-4529-9306-4dad313ec13f",
+      "source": "8a4b96b7-ff46-4151-89c6-7e0244e7fbfe",
       "target": "5cc8d6e1-c58a-4ecc-b763-19b6d97f8638",
       "id": "966d7684-59c2-485a-b8ea-b0ed67d7befb"
     },
     {
       "target": "585ce20e-efbe-47dd-98c6-b6e4af489549",
-      "source": "afc3c93b-dd09-4529-9306-4dad313ec13f",
+      "source": "8a4b96b7-ff46-4151-89c6-7e0244e7fbfe",
       "id": "40ae92c2-a2ff-45d6-b954-daac5533fa5a"
     },
     {
       "target": "a0bc7038-3cee-4162-8881-f2bac1af240b",
       "source": "e37241cc-1913-4ddc-a04c-cd25609f2d6b",
       "id": "bd97e08f-4ff5-45e2-98c4-a6ddf446310d"
+    },
+    {
+      "target": "c0e48d1f-e003-4d88-8706-f32e4efabf73",
+      "source": "8d07a36c-0e79-4e0a-812c-f92681034d24",
+      "id": "eea9d2ea-9378-40c8-b8b1-14eb5b5f3de0"
+    },
+    {
+      "target": "ac6d6e58-abce-4332-bf91-0481e4d9c183",
+      "source": "8d07a36c-0e79-4e0a-812c-f92681034d24",
+      "id": "fca6bde3-e672-4545-8ab1-90c8c298c2ea"
     }
   ],
   "systemInfo": [],

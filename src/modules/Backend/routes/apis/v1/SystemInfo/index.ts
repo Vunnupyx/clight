@@ -187,16 +187,21 @@ async function sendGetMDCLUpdateInfos(cb: (req, res) => {}) {
 }
 
 /**
- * Returns current set env variable ENV
+ * Performs factory reset
  * @param request HTTP Request
  * @param response
  */
-function systemGetEnvironment(request: Request, response: Response) {
-  response.json({ env: configManager.config.env.selected }).status(200);
+async function systemFactoryResetHandler(request: Request, response: Response) {
+  try {
+    await configManager.factoryResetConfiguration();
+    response.status(200).send();
+  } catch (e) {
+    response.sendStatus(500);
+  }
 }
 
 export const systemInfoHandlers = {
   systemInfoGet: systemInfoGetHandler,
   updateGet: getUpdateInfos,
-  systemEnvironmentGet: systemGetEnvironment
+  systemFactoryReset: systemFactoryResetHandler
 };

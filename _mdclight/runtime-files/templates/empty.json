@@ -1,0 +1,27 @@
+{
+  "name": "quick-start.Templates.name.empty",
+  "description": "quick-start.Templates.description.empty",
+  "general": {
+    "manufacturer": "DMGMORI",
+    "serialNumber": "",
+    "model": "",
+    "control": ""
+  },
+  "dataSources": [],
+  "dataSinks": [],
+  "virtualDataPoints": [],
+  "mapping": [],
+  "systemInfo": [],
+  "templates": {
+    "completed": true
+  },
+  "messenger": {
+    "hostname": "",
+    "username": "",
+    "password": "",
+    "name": "",
+    "model": 0,
+    "organization": "",
+    "timezone": 0
+  }
+}

@@ -81,6 +81,24 @@
       "Step2": "Hier können Sie die für Sie passende Vorkonfiguration auswählen.",
       "Step3": "Wählen Sie hier die gewünschten Datenquellen an oder ab. Angewählte Datenquellen werden nach erfolgreichen Abschließen des Setups automatisch gestartet. Diese Einstellung lässt sich später ändern.",
       "Step4": "Wählen Sie hier die gewünschten Applikations Schnittstellen, die vom System bereitgestellt und aktiviert werden sollen. Diese Einstellung lässt sich später ändern."
+    },
+    "Templates": {
+      "name": {
+        "10diIoShieldMessenger": "Eingangsmodul zu DMG MORI Messenger",
+        "ai2ioShieldMessenger": "Eingangsmodul zu DMG MORI Messenger",
+        "empty": "Leere Vorlage",
+        "gm": "GM Reihe",
+        "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
+      },
+      "description": {
+        "10diIoShieldMessenger": "Eingangsmodul mit 10 digitalen Eingängen zu DMG MORI Messenger",
+        "ai2ioShieldMessenger": "Eingangsmodul mit Stromsensoren + 5 digitalen Eingängen zu DMG MORI Messenger",
+        "empty": "Die Vorlage enthält keine Datenquelle, keine virtuellen Datenpunkte, keine Mappings und keine Anwendungsschnittstelle",
+        "gm": "GM 16-6 oder GM 20-6",
+        "ncAll": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger, OPC UA und CELOS Xchange",
+        "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
+      }
     }
   },
   "settings-general": {
@@ -411,7 +429,7 @@
     "TimeSettings": "Systemzeit",
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
-    "SetCurrentTime": "Systemzeit setzen",
+    "SetCurrentTime": "Systemzeit setzen (UTC)",
     "ChooseTimeZone": "Zeitzone",
     "nptUnreachable": "NTP Server nicht erreichbar",
     "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
@@ -433,13 +451,19 @@
     "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
     "MaterialThemeVersion": "CELOS X Material Themaversion",
     "SoftwareComponent": "Software Komponent",
-    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut"
+    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut",
+    "FactoryReset": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
+    "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
+    "FactoryResetError": "Beim Zurücksetzen auf die Werkseinstellungen ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal."
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"
   },
   "clock": {
-    "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
+    "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen. Klicken Sie auf diese Warnung, um zur Einstellungsseite zu gelangen, und wählen Sie die Registerkarte Zeit, um die Zeiteinstellungen anzupassen."
   },
   "data-type": {
     "String": "String",

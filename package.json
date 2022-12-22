@@ -48,7 +48,7 @@
     "dev:mock:api": "docker run --mount type=bind,source=$PWD/src/modules/Backend/routes/swagger.json,target=/data,readonly -p 1885:1884 -d mockoon/cli:latest",
     "setup:local:dev": "./scripts/localMocks/createLocalTestingEnv.sh",
     "build": "tsc -p tsconfig.json",
-    "build:webserver": "cd client && yarn && yarn build && cd .. && cd user-docs && yarn && yarn build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",
+    "build:webserver": "cd client && npm install && npm run build && cd .. && cd user-docs && npm install && npm run build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",
     "test": "jest",
     "format": "prettier --write .",
     "connect:cs:machine": "sudo ssh -N -L 102:192.168.214.1:102 root@192.168.185.200 -v"

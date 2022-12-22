@@ -330,27 +330,27 @@ export class NetworkService {
       }
     };
   }
+
+  private _deserializeNetmask(netmask: unknown): number[] {
+    const mask = 0xffffffff << (32 - Number(netmask));
+    return [mask >>> 24, (mask >> 16) & 0xff, (mask >> 8) & 0xff, mask & 0xff];
+  }
+
   private _deserializeNetworkAdapters(
     adapters: NetworkAdapter[]
   ): NetworkAdapter[] {
     return adapters.map((adapter) => {
-      const mask =
-        0xffffffff <<
-        (32 - Number(adapter.ipv4Settings.ipAddresses[0].Netmask));
-      const maskStr = [
-        mask >>> 24,
-        (mask >> 16) & 0xff,
-        (mask >> 8) & 0xff,
-        mask & 0xff
-      ].join('.');
+      const address = adapter?.ipv4Settings?.ipAddresses[0];
       return {
         ...adapter,
         ipv4Settings: {
           ...adapter.ipv4Settings,
           ipAddresses: [
             {
-              Address: adapter.ipv4Settings.ipAddresses[0].Address,
-              Netmask: maskStr
+              Address: address?.Address,
+              Netmask:
+                address?.Netmask &&
+                this._deserializeNetmask(address.Netmask).join('.')
             }
           ]
         }
@@ -362,10 +362,7 @@ export class NetworkService {
     timestamp: NetworkTimestamp
   ): NetworkDateTime {
     return {
-      datetime: moment(timestamp?.Timestamp)
-        .parseZone()
-        .format('YYYY-MM-DDTHH:mm:ss'),
-      timezone: 'Universal'
+      datetime: moment(timestamp?.Timestamp).format('YYYY-MM-DDTHH:mm:ss')
     };
   }
 
@@ -374,8 +371,9 @@ export class NetworkService {
   ): NetworkTimestamp {
     return {
       Timestamp: moment
-        .tz(timestamp.datetime, timestamp.timezone)
-        .toISOString(true)
+        .utc(timestamp.datetime)
+        .add(moment(timestamp.datetime).utcOffset(), 'm')
+        .toISOString()
     };
   }
 }

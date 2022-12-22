@@ -5,36 +5,6 @@
     "model": "GM",
     "control": "S7 1500"
   },
-  "networkConfig": {
-    "x1": {
-      "useDhcp": true,
-      "ipAddr": "",
-      "netmask": "",
-      "defaultGateway": "",
-      "dnsServer": ""
-    },
-    "x2": {
-      "useDhcp": false,
-      "ipAddr": "192.168.214.230",
-      "netmask": "255.255.255.0",
-      "defaultGateway": "",
-      "dnsServer": ""
-    },
-    "proxy": {
-      "useProxy": false,
-      "password": "",
-      "username": "",
-      "port": "",
-      "ipAddr": "",
-      "type": "http"
-    },
-    "time": {
-      "useNtp": true,
-      "ntpHost": "pool.ntp.org",
-      "currentTime": "",
-      "timezone": "Europe/Berlin"
-    }
-  },
   "dataSources": [
     {
       "dataPoints": [
@@ -483,18 +453,15 @@
   "quickStart": {
     "completed": true
   },
-  "name": "GM Series",
-  "description": "GM 16-6 or GM 20-6",
-  "env": {
-    "selected": "prod",
-    "web": {
-      "tag": "main"
-    },
-    "mdc": {
-      "tag": "main"
-    },
-    "mtc": {
-      "tag": "latest"
-    }
+  "name": "quick-start.Templates.name.gm",
+  "description": "quick-start.Templates.description.gm",
+  "messenger": {
+    "hostname": "",
+    "username": "",
+    "password": "",
+    "name": "",
+    "model": 0,
+    "organization": "",
+    "timezone": 0
   }
 }

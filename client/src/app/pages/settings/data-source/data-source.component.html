@@ -541,21 +541,42 @@
             let-row="row"
           >
             <span *ngIf="liveData && liveData[row.id]; else noLiveData">
-              <ng-container *ngIf="dataSource?.protocol == Protocol.IOShield">
-                <ng-container
-                  *ngIf="row.address?.startsWith('DI'); else noTranslate"
-                  >{{
-                    'settings-data-source.Livedata.ioshield.' +
-                      liveData[row.id].value | translate
-                  }}
+              <ng-container [ngSwitch]="dataSource?.protocol">
+                <ng-container *ngSwitchCase="Protocol.IOShield">
+                  <ng-container
+                    *ngIf="row.address?.startsWith('DI'); else noTranslate"
+                    >{{
+                      'settings-data-source.Livedata.ioshield.' +
+                        liveData[row.id].value | translate
+                    }}
+                  </ng-container>
+                  <ng-template #noTranslate>{{
+                    liveData[row.id].value
+                  }}</ng-template>
                 </ng-container>
-                <ng-template #noTranslate>{{
-                  liveData[row.id].value
-                }}</ng-template>
-              </ng-container>
-
-              <ng-container *ngIf="dataSource?.protocol != Protocol.IOShield">
-                {{ liveData[row.id].value }}
+                <ng-container *ngSwitchCase="Protocol.Energy">
+                  {{ liveData[row.id].value }}
+                  <ng-container
+                    *ngIf="
+                      row.type?.startsWith(SourceDataPointType.Measurement)
+                    "
+                  >
+                    {{
+                      'settings-data-source.Livedata.energy.watt' | translate
+                    }}
+                  </ng-container>
+                  <ng-container
+                    *ngIf="row.type?.startsWith(SourceDataPointType.Meter)"
+                  >
+                    {{
+                      'settings-data-source.Livedata.energy.wattHour'
+                        | translate
+                    }}
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  {{ liveData[row.id].value }}
+                </ng-container>
               </ng-container>
             </span>
             <ng-template #noLiveData>-</ng-template>
@@ -574,14 +595,29 @@
             let-value="value"
             let-row="row"
           >
-            <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-              <div class="text-ellipsis" [title]="value">
-                {{ value }}
-              </div>
-            </ng-container>
-            <ng-container *ngIf="unsavedRowIndex === rowIndex">
-              <input type="text" class="w-100" [ngModel]="value" />
-            </ng-container>
+            <span *ngIf="unsavedRowIndex !== rowIndex">
+                <ng-container [ngSwitch]="value">
+                  <ng-container *ngSwitchCase="SourceDataPointDescription.ActivePower">{{
+                    'settings-data-source.ActivePower' | translate
+                    }}</ng-container>
+                  <ng-container *ngSwitchCase="SourceDataPointDescription.TotalEnergy">{{
+                    'settings-data-source.TotalEnergy' | translate
+                    }}</ng-container>
+                </ng-container>
+            </span>
+            <mat-select
+              disableOptionCentering="true"
+              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              [ngModel]="value"
+              (ngModelChange)="unsavedRow.description = $event"
+            >
+              <mat-option [value]="SourceDataPointDescription.ActivePower">{{
+                'settings-data-source.ActivePower' | translate
+                }}</mat-option>
+              <mat-option [value]="SourceDataPointDescription.TotalEnergy">{{
+                'settings-data-source.TotalEnergy' | translate
+                }}</mat-option>
+            </mat-select>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column

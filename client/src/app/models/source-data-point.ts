@@ -5,9 +5,14 @@ export enum SourceDataPointType {
   Meter = 'meter'
 }
 
+export enum SourceDataPointDescription {
+  ActivePower = 'activePower',
+  TotalEnergy = 'totalEnergy'
+}
+
 export class SourceDataPoint {
   address!: string;
-  description?: string;
+  description?: SourceDataPointDescription;
   id!: string;
   name!: string;
   readFrequency!: number;

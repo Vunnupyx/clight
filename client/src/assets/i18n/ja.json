@@ -186,6 +186,10 @@
         "0": "0 (オフ)",
         "1": "1 (オン)",
         "2": "2 (点滅)"
+      },
+      "energy": {
+        "watt": "W",
+        "wattHour": "Wh"
       }
     },
     "DiscardChanges": "変更を破棄",
@@ -193,7 +197,9 @@
     "TestConnection": "テスト接続",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "ActivePower": "Active Power",
+    "TotalEnergy": "Total Energy"
   },
   "settings-virtual-data-point": {
     "DataPoints": "仮想データポイント",

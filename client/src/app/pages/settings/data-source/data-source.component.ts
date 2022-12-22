@@ -14,7 +14,8 @@ import {
   S7Types,
   EnergyTypes,
   SourceDataPoint,
-  SourceDataPointType
+  SourceDataPointType,
+  SourceDataPointDescription
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
@@ -35,6 +36,7 @@ import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.
 })
 export class DataSourceComponent implements OnInit, OnDestroy {
   SourceDataPointType = SourceDataPointType;
+  SourceDataPointDescription = SourceDataPointDescription;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;

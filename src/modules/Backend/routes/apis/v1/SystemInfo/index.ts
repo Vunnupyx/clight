@@ -38,7 +38,7 @@ async function systemInfoGetHandler(request: Request, response: Response) {
 }
 
 /**
- * Trigger update mechanism of docker images
+ * Trigger update mechanism of docker images.
  */
 async function getUpdateInfos(request: Request, response: Response) {
   const logPrefix = `SystemInfo::triggerAzureFunction`;

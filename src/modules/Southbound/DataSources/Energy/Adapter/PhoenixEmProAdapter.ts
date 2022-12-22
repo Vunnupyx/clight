@@ -31,6 +31,8 @@ export class PhoenixEmProAdapter {
         ? this.connection.ipAddr
         : 'TBDdefaultValue';
         */
+      //TODO remove after isValidIpOrHostname is merged
+      this.hostname = 'http://www.empro.phoenixcontact.com';
     }
   }
 

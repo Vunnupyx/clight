@@ -25,3 +25,5 @@ export interface IEmProTariffChangeResponse {
   message?: string;
   error?: string;
 }
+
+export type TariffNumbers = '0' | '1' | '2' | '3' | '4';

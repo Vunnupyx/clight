@@ -77,9 +77,9 @@ export interface IOPCUAConfig extends OPCUAServerOptions {
 
 export type IS7DataSourceConnection = {
   ipAddr: string;
-  port: number;
-  rack: number;
-  slot: number;
+  port?: number;
+  rack?: number;
+  slot?: number;
 };
 export type IS7DataSourceTypes =
   | 's7-300/400'

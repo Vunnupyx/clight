@@ -12,6 +12,7 @@ import {
   DataSourceSoftwareVersion,
   IOShieldTypes,
   S7Types,
+  EnergyTypes,
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
@@ -38,6 +39,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;
   IOShieldTypes = IOShieldTypes;
+  EnergyTypes = EnergyTypes;
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;

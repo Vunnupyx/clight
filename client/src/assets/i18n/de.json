@@ -166,8 +166,10 @@
     "DataPoints": "Datenpunkte",
     "SelectAVariable": "Wählen Sie einen Datenpunkt",
     "ControllerType": "Typ",
+    "CurrentTariff": "Current Tariff",
     "Name": "Name",
     "Type": "Typ",
+    "Description": "Description",
     "Address": "Adressse",
     "LiveData": "Aktualwert",
     "Actions": "Aktionen",
@@ -176,7 +178,8 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Modul"
+      "ioshield": "Input Modul",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {

@@ -120,6 +120,55 @@
               </div>
             </div>
           </ng-container>
+          <ng-container *ngSwitchCase="'energy'">
+            <form #form="ngForm">
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-label">
+                  {{ 'settings-data-source.IPAddress' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="ipAddress"
+                    #ipAddr="ngModel"
+                    [ngModel]="dataSource?.connection?.ipAddr"
+                    [pattern]="ipRegex"
+                    [required]="true"
+                    (ngModelChange)="updateIpAddress(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+            </form>
+            <div class="row d-flex align-items-center">
+              <div class="col-12 col-md-5 pb-label">
+                <label>{{
+                  'settings-data-source.ControllerType' | translate
+                }}</label>
+              </div>
+              <div class="col-12 col-md-7">
+                <mat-form-field>
+                  <mat-select
+                    disableOptionCentering="true"
+                    [ngModel]="dataSource?.type"
+                  >
+                    <mat-option [value]="EnergyTypes.PhoenixEMpro"
+                      >Phoenix EMpro</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row mb-40 d-flex align-items-center">
+              <div class="col-12 col-md-5">
+                <label>{{
+                  'settings-data-source.CurrentTariff' | translate
+                }}</label>
+              </div>
+              <div class="col-12 col-md-7">
+                {{ connection?.emProTariffNumber }}
+              </div>
+            </div>
+          </ng-container>
         </ng-container>
 
         <div *ngIf="false">
@@ -448,6 +497,12 @@
                 <ng-container *ngSwitchCase="SourceDataPointType.NCK"
                   >NCK</ng-container
                 >
+                <ng-container *ngSwitchCase="SourceDataPointType.Measurement"
+                  >Measurement</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.Meter"
+                  >Meter</ng-container
+                >
               </ng-container>
             </span>
             <mat-select
@@ -456,8 +511,20 @@
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
             >
-              <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
-              <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
+              <ng-container [ngSwitch]="dataSource?.protocol">
+                <ng-container *ngSwitchCase="Protocol.S7">
+                  <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
+                  <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
+                </ng-container>
+                <ng-container *ngSwitchCase="Protocol.Energy">
+                  <mat-option [value]="SourceDataPointType.Measurement"
+                    >Measurement</mat-option
+                  >
+                  <mat-option [value]="SourceDataPointType.Meter"
+                    >Meter</mat-option
+                  >
+                </ng-container>
+              </ng-container>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
@@ -495,6 +562,30 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
+          *ngIf="dataSource?.protocol === Protocol.Energy"
+          [name]="'settings-data-source.Description' | translate"
+          prop="description"
+          [width]="100"
+          [sortable]="false"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+              <div class="text-ellipsis" [title]="value">
+                {{ value }}
+              </div>
+            </ng-container>
+            <ng-container *ngIf="unsavedRowIndex === rowIndex">
+              <input type="text" class="w-100" [ngModel]="value" />
+            </ng-container>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          *ngIf="dataSource?.protocol != Protocol.Energy"
           [name]="'settings-data-source.Address' | translate"
           prop="address"
           [flexGrow]="3"

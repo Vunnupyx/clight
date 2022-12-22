@@ -9,6 +9,7 @@ import {
   IEmProBulkReadingResponse,
   IEmProTariffChangeResponse
 } from '../interfaces';
+//import {isValidIpOrHostname} from '../../../../Utilities'
 
 /**
  * Phoenix Contact EMpro Adapter
@@ -22,17 +23,22 @@ export class PhoenixEmProAdapter {
   public currentTariff = '0';
 
   constructor(private connection: IS7DataSourceConnection) {
-    this.hostname =
-      process.env.NODE_ENV === 'development'
-        ? 'http://www.empro.phoenixcontact.com'
-        : this.connection.ipAddr;
+    if (process.env.NODE_ENV === 'development') {
+      this.hostname = 'http://www.empro.phoenixcontact.com';
+    } else {
+      /* TODO after isValidIpOrHostname is merged
+      this.hostname = isValidIpOrHostname(this.connection.ipAddr)
+        ? this.connection.ipAddr
+        : 'TBDdefaultValue';
+        */
+    }
   }
 
   /**
    * It reads all measurements and meters from EMpro
    * @returns {Array<IMeasurement>}
    */
-  public readAllDatapoints(): Promise<Array<IMeasurement>> {
+  public getAllDatapoints(): Promise<Array<IMeasurement>> {
     const logPrefix = `${PhoenixEmProAdapter.name}::readAllDatapoints`;
     return new Promise(async (resolve, reject) => {
       let resultArray: IMeasurement[] = [];
@@ -83,7 +89,7 @@ export class PhoenixEmProAdapter {
       }
 
       if (hasMeasurementReadingError && hasMeterReadingError) {
-        return reject('Could not read any values');
+        return reject(new Error('Could not read any values'));
       } else {
         return resolve(resultArray);
       }
@@ -100,7 +106,7 @@ export class PhoenixEmProAdapter {
     return new Promise(async (resolve, reject) => {
       if (!['1', '2', '3', '4'].includes(String(newTariffNo))) {
         winston.warn(`${logPrefix} new tariff number is wrong: ${newTariffNo}`);
-        return reject('Wrong tariff number');
+        return reject(new Error('Wrong tariff number'));
       }
       const putEndpoint = `/api/v1/measurement-system-control/tariff-number?value=${newTariffNo}`;
 
@@ -131,9 +137,9 @@ export class PhoenixEmProAdapter {
   /**
    *  Reads single data point
    * @param dataPointAddress Address field of the data point
-   * @returns {Promise<IEmProReadingResponse>}
+   * @returns {Promise<IMeasurement>}
    */
-  public getSingleDataPoint(dataPointAddress): Promise<IEmProReadingResponse> {
+  public getSingleDataPoint(dataPointAddress): Promise<IMeasurement> {
     const logPrefix = `${PhoenixEmProAdapter.name}::getSingleDataPoint`;
     return new Promise(async (resolve, reject) => {
       if (!EMPRO_GET_ENDPOINTS[dataPointAddress]) {
@@ -143,10 +149,18 @@ export class PhoenixEmProAdapter {
         return reject(new Error('Datapoint not found'));
       }
       try {
-        const result = await this.performApiCall(
+        const measurement = await this.performApiCall(
           'GET',
           `${this.hostname}${EMPRO_GET_ENDPOINTS[dataPointAddress]}`
         );
+        let result = {
+          id: measurement.id,
+          name: measurement.name,
+          value: measurement.value,
+          unit: measurement.unit,
+          description: measurement.description
+        };
+
         return resolve(result);
       } catch (e) {
         winston.warn(
@@ -169,7 +183,9 @@ export class PhoenixEmProAdapter {
           'GET',
           `${this.hostname}${EMPRO_GET_ENDPOINTS['Tariff Number']}`
         );
-        return resolve(result?.value ?? '0');
+        return resolve(
+          typeof result?.value === 'number' ? String(result.value) : '0'
+        );
       } catch (e) {
         winston.warn(`${logPrefix} Error reading tariff: ${e?.message || e}`);
         return reject(e);

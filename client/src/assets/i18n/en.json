@@ -166,8 +166,10 @@
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
     "ControllerType": "Type",
+    "CurrentTariff": "Current Tariff",
     "Name": "Name",
     "Type": "Type",
+    "Description": "Description",
     "Address": "Address",
     "LiveData": "Live Data",
     "Actions": "Actions",
@@ -176,7 +178,8 @@
     "LoadError": "Failed to load data sources. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Board"
+      "ioshield": "Input Board",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {

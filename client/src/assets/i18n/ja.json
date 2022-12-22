@@ -166,8 +166,10 @@
     "DataPoints": "データポイント",
     "SelectAVariable": "変数を選択",
     "ControllerType": "Type",
+    "CurrentTariff": "Current Tariff",
     "Name": "名前",
     "Type": "型",
+    "Description": "Description",
     "Address": "アドレス",
     "LiveData": "ライブデータ",
     "Actions": "動作",
@@ -176,7 +178,8 @@
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再度試してください。",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "デジタル入力"
+      "ioshield": "デジタル入力",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {

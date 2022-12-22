@@ -9,7 +9,8 @@ import {
   DataSourceConnection,
   DataSourceProtocol,
   IOShieldTypes,
-  S7Types
+  S7Types,
+  EnergyTypes
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -25,7 +26,11 @@ export class DataSourcesState {
   connection?: DataSourceConnection;
 }
 
-const DATA_SOURCES_ORDER = [DataSourceProtocol.S7, DataSourceProtocol.IOShield];
+const DATA_SOURCES_ORDER = [
+  DataSourceProtocol.S7,
+  DataSourceProtocol.IOShield,
+  DataSourceProtocol.Energy
+];
 
 @Injectable()
 export class DataSourceService {
@@ -168,7 +173,7 @@ export class DataSourceService {
 
   async getDataSourceType(
     protocol: DataSourceProtocol
-  ): Promise<S7Types | IOShieldTypes | null> {
+  ): Promise<S7Types | IOShieldTypes | EnergyTypes | null> {
     try {
       const ds = await this.httpService.get<DataSource>(
         `/datasources/${protocol}`

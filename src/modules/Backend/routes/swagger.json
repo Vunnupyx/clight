@@ -2032,7 +2032,8 @@
           "enum": ["connected", "disconnected"]
         },
         "emProTariffNumber": {
-          "type": "string"
+          "type": "string",
+          "enum": ["0", "1", "2", "3", "4"]
         }
       }
     },

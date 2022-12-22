@@ -99,12 +99,12 @@ export class PhoenixEmProAdapter {
   /**
    * Changes tariff to the given tariff number
    * @param newTariffNo new tariff number, must be 1, 2, 3 or 4
-   * @returns {boolean}
+   * @returns {Promise<true>}  resolves to true or rejects
    */
-  public changeTariff(newTariffNo: number | string): Promise<boolean> {
+  public changeTariff(newTariffNo: number | string): Promise<true> {
     const logPrefix = `${PhoenixEmProAdapter.name}::changeTariff`;
     return new Promise(async (resolve, reject) => {
-      if (!['1', '2', '3', '4'].includes(String(newTariffNo))) {
+      if (!['0', '1', '2', '3', '4'].includes(String(newTariffNo))) {
         winston.warn(`${logPrefix} new tariff number is wrong: ${newTariffNo}`);
         return reject(new Error('Wrong tariff number'));
       }

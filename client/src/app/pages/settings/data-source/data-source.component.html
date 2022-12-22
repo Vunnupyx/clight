@@ -804,29 +804,6 @@
           </ngx-datatable-column>
         </ng-container>
         <ngx-datatable-column
-          [name]="'settings-data-source.Description' | translate"
-          prop="description"
-          [width]="100"
-          [sortable]="false"
-        >
-          <ng-template
-            ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
-            let-value="value"
-            let-row="row"
-          >
-            <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-              <div class="text-ellipsis" [title]="value">
-                {{ value }}
-              </div>
-            </ng-container>
-            <ng-container *ngIf="unsavedRowIndex === rowIndex">
-              <input type="text" class="w-100" [ngModel]="value" />
-            </ng-container>
-          </ng-template>
-        </ngx-datatable-column>
-        <ngx-datatable-column
-          *ngIf="dataSource?.protocol != Protocol.Energy"
           [name]="'settings-data-source.Address' | translate"
           prop="address"
           [width]="200"

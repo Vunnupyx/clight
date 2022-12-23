@@ -186,6 +186,10 @@
         "0": "0 (Off)",
         "1": "1 (On)",
         "2": "2 (Blinking)"
+      },
+      "energy": {
+        "watt": "W",
+        "wattHour": "Wh"
       }
     },
     "DiscardChanges": "Discard Changes",
@@ -193,7 +197,9 @@
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "ActivePower": "Active Power",
+    "TotalEnergy": "Total Energy"
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",

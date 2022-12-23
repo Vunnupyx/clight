@@ -18,8 +18,9 @@ RUN echo Building runtime ${MDC_LIGHT_RUNTIME_VERSION} \
     && npm install \
     && npm cache clean -f \
     && mkdir -p /etc/mdc-light/{config,logs,jwtkeys,sslkeys,certs} \
+    && mkdir -p /app \
     && npm run build \
-    && mv build/main/* app \
+    && mv build/main/* /app \
     && rm -rf /build /package.json /tsconfig.json /package-lock.json
 
 WORKDIR /app

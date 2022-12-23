@@ -5,9 +5,8 @@
 # Last Update:  12-06-2022 Reduce layer count
 
 ARG DOCKER_REGISTRY
-ARG DOCKER_REGISTRY_PATH=$DOCKER_REGISTRY + "/"
 
-FROM ${DOCKER_REGISTRY_PATH}mdclight-fanuc:latest
+FROM ${DOCKER_REGISTRY}/mdclight-fanuc:latest
 
 ARG MDC_LIGHT_RUNTIME_VERSION
 # Install compiled MDC light runtime

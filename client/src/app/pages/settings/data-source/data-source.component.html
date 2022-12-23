@@ -596,14 +596,20 @@
             let-row="row"
           >
             <span *ngIf="unsavedRowIndex !== rowIndex">
-                <ng-container [ngSwitch]="value">
-                  <ng-container *ngSwitchCase="SourceDataPointDescription.ActivePower">{{
+              <ng-container [ngSwitch]="value">
+                <ng-container
+                  *ngSwitchCase="SourceDataPointDescription.ActivePower"
+                  >{{
                     'settings-data-source.ActivePower' | translate
-                    }}</ng-container>
-                  <ng-container *ngSwitchCase="SourceDataPointDescription.TotalEnergy">{{
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="SourceDataPointDescription.TotalEnergy"
+                  >{{
                     'settings-data-source.TotalEnergy' | translate
-                    }}</ng-container>
-                </ng-container>
+                  }}</ng-container
+                >
+              </ng-container>
             </span>
             <mat-select
               disableOptionCentering="true"
@@ -613,10 +619,10 @@
             >
               <mat-option [value]="SourceDataPointDescription.ActivePower">{{
                 'settings-data-source.ActivePower' | translate
-                }}</mat-option>
+              }}</mat-option>
               <mat-option [value]="SourceDataPointDescription.TotalEnergy">{{
                 'settings-data-source.TotalEnergy' | translate
-                }}</mat-option>
+              }}</mat-option>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>

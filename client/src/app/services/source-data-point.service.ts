@@ -342,7 +342,7 @@ export class SourceDataPointService
 
         return `[DI]`;
       case DataSourceProtocol.Energy:
-        return `[ENERGY]`;
+        return `[Energy]`;
       default:
         return '';
     }

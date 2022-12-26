@@ -17,6 +17,7 @@ import { Status, Store, StoreFactory } from 'app/shared/state';
 import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
+import ENERGY_ADDRESSES from 'app/services/constants/energyAddresses';
 
 export class DataSourcesState {
   status!: Status;
@@ -169,6 +170,10 @@ export class DataSourceService {
 
   getNckAddresses() {
     return NCK_ADDRESSES;
+  }
+
+  getEnergyAddresses() {
+    return ENERGY_ADDRESSES;
   }
 
   async getDataSourceType(

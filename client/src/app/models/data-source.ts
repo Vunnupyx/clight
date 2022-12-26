@@ -28,7 +28,6 @@ export enum DataSourceConnectionStatus {
 
 export class DataSourceConnection {
   status!: DataSourceConnectionStatus;
-  emProTariffNumber!: number;
 }
 
 export class Connection {

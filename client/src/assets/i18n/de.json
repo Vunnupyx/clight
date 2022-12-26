@@ -199,7 +199,13 @@
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
     "ActivePower": "Active Power",
-    "TotalEnergy": "Total Energy"
+    "TotalEnergy": "Total Energy",
+    "TariffStatus": {
+      "1": "Running",
+      "2": "Idle",
+      "3": "Waiting",
+      "4": "Alarm"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtuelle Datenpunkte",

@@ -165,7 +165,7 @@
                 }}</label>
               </div>
               <div class="col-12 col-md-7">
-                {{ connection?.emProTariffNumber }}
+                {{ getTariffText() }}
               </div>
             </div>
           </ng-container>
@@ -456,14 +456,21 @@
             let-row="row"
           >
             <div
-              *ngIf="unsavedRowIndex !== rowIndex"
+              *ngIf="
+                unsavedRowIndex !== rowIndex ||
+                dataSource?.protocol === Protocol.Energy
+              "
               class="text-ellipsis"
               [title]="value"
             >
               {{ getDataSourceDataPointPrefix(row.id) }} {{ value }}
             </div>
             <input
-              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              *ngIf="
+                unsavedRow &&
+                unsavedRowIndex === rowIndex &&
+                dataSource?.protocol !== Protocol.Energy
+              "
               type="text"
               class="w-100"
               [ngModel]="value"
@@ -503,6 +510,12 @@
                 <ng-container *ngSwitchCase="SourceDataPointType.Meter"
                   >Meter</ng-container
                 >
+                <ng-container *ngSwitchCase="SourceDataPointType.Tariff"
+                  >Tariff</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.Device"
+                  >Device</ng-container
+                >
               </ng-container>
             </span>
             <mat-select
@@ -522,6 +535,12 @@
                   >
                   <mat-option [value]="SourceDataPointType.Meter"
                     >Meter</mat-option
+                  >
+                  <mat-option [value]="SourceDataPointType.Tariff"
+                    >Tariff</mat-option
+                  >
+                  <mat-option [value]="SourceDataPointType.Device"
+                    >Device</mat-option
                   >
                 </ng-container>
               </ng-container>
@@ -583,51 +602,6 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          *ngIf="dataSource?.protocol === Protocol.Energy"
-          [name]="'settings-data-source.Description' | translate"
-          prop="description"
-          [width]="100"
-          [sortable]="false"
-        >
-          <ng-template
-            ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
-            let-value="value"
-            let-row="row"
-          >
-            <span *ngIf="unsavedRowIndex !== rowIndex">
-              <ng-container [ngSwitch]="value">
-                <ng-container
-                  *ngSwitchCase="SourceDataPointDescription.ActivePower"
-                  >{{
-                    'settings-data-source.ActivePower' | translate
-                  }}</ng-container
-                >
-                <ng-container
-                  *ngSwitchCase="SourceDataPointDescription.TotalEnergy"
-                  >{{
-                    'settings-data-source.TotalEnergy' | translate
-                  }}</ng-container
-                >
-              </ng-container>
-            </span>
-            <mat-select
-              disableOptionCentering="true"
-              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
-              [ngModel]="value"
-              (ngModelChange)="unsavedRow.description = $event"
-            >
-              <mat-option [value]="SourceDataPointDescription.ActivePower">{{
-                'settings-data-source.ActivePower' | translate
-              }}</mat-option>
-              <mat-option [value]="SourceDataPointDescription.TotalEnergy">{{
-                'settings-data-source.TotalEnergy' | translate
-              }}</mat-option>
-            </mat-select>
-          </ng-template>
-        </ngx-datatable-column>
-        <ngx-datatable-column
-          *ngIf="dataSource?.protocol != Protocol.Energy"
           [name]="'settings-data-source.Address' | translate"
           prop="address"
           [flexGrow]="3"
@@ -644,37 +618,10 @@
                 {{ mapAddressLabel(value) }}
               </div>
             </ng-container>
-            <div
-              *ngIf="unsavedRowIndex === rowIndex"
-              class="d-flex align-items-center"
-              [class.address-nck]="unsavedRow!.type === SourceDataPointType.NCK"
-            >
-              <ng-container [ngSwitch]="unsavedRow!.type">
-                <ng-container *ngSwitchCase="SourceDataPointType.NCK">
-                  <div>{{ unsavedRow?.address }}</div>
-                  <mat-button-toggle-group
-                    class="mt-0 ml-10"
-                    #group="matButtonToggleGroup"
-                  >
-                    <mat-button-toggle
-                      class="small-button"
-                      (click)="
-                        unsavedRow && onAddressSelect(unsavedRow);
-                        group.value = null
-                      "
-                      [matTooltip]="'settings-data-source.Select' | translate"
-                      matTooltipPosition="above"
-                    >
-                      <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
-                    </mat-button-toggle>
-                  </mat-button-toggle-group>
-                </ng-container>
-                <ng-container *ngSwitchDefault>
+            <ng-container *ngIf="unsavedRowIndex === rowIndex">
+              <ng-container [ngSwitch]="dataSource?.protocol">
+                <ng-container *ngSwitchCase="Protocol.IOShield">
                   <mat-select
-                    *ngIf="
-                      dataSource?.protocol === Protocol.IOShield;
-                      else s7InputAddress
-                    "
                     disableOptionCentering="true"
                     [ngModel]="value"
                     (ngModelChange)="
@@ -700,13 +647,41 @@
                       >{{ mapAddressLabel(address) }}</mat-option
                     >
                   </mat-select>
-                  <ng-template #s7InputAddress>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <div
+                    *ngIf="
+                      isAbleToSelectAddress(unsavedRow?.type);
+                      else otherAddress
+                    "
+                    class="d-flex align-items-center address-nck"
+                  >
+                    <div>{{ unsavedRow?.address }}</div>
+                    <mat-button-toggle-group
+                      class="mt-0 ml-10"
+                      #group="matButtonToggleGroup"
+                    >
+                      <mat-button-toggle
+                        class="small-button"
+                        (click)="
+                          unsavedRow && onAddressSelect(unsavedRow);
+                          group.value = null
+                        "
+                        [matTooltip]="'settings-data-source.Select' | translate"
+                        matTooltipPosition="above"
+                      >
+                        <mat-icon svgIcon="mdc:order-move-up"></mat-icon>
+                      </mat-button-toggle>
+                    </mat-button-toggle-group>
+                  </div>
+                  <ng-template #otherAddress>
                     <input
-                      *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
                       type="text"
                       class="w-100"
                       [ngModel]="value"
-                      (ngModelChange)="unsavedRow.address = $event"
+                      (ngModelChange)="
+                        unsavedRow && (unsavedRow.address = $event)
+                      "
                       [matTooltip]="
                         'settings-data-source.DuplicatedAddress' | translate
                       "
@@ -717,7 +692,39 @@
                   </ng-template>
                 </ng-container>
               </ng-container>
-            </div>
+            </ng-container>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          *ngIf="dataSource?.protocol === Protocol.Energy"
+          [name]="'settings-data-source.Description' | translate"
+          prop="description"
+          [width]="100"
+          [sortable]="false"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
+          >
+            <span *ngIf="unsavedRowIndex !== rowIndex">
+              {{ value }}
+              <!--<ng-container [ngSwitch]="value">
+                <ng-container
+                  *ngSwitchCase="SourceDataPointDescription.ActivePower"
+                  >{{
+                    'settings-data-source.ActivePower' | translate
+                  }}</ng-container
+                >
+                <ng-container
+                  *ngSwitchCase="SourceDataPointDescription.TotalEnergy"
+                  >{{
+                    'settings-data-source.TotalEnergy' | translate
+                  }}</ng-container
+                >
+              </ng-container>-->
+            </span>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
@@ -744,9 +751,13 @@
                 <mat-icon svgIcon="mdc:edit"></mat-icon>
               </mat-button-toggle>
               <mat-button-toggle
-                (click)="onDelete(row); group.value = null"
+                (click)="
+                  row.type !== SourceDataPointType.Device && onDelete(row);
+                  group.value = null
+                "
                 [matTooltip]="'settings-data-source.Delete' | translate"
                 matTooltipPosition="above"
+                [disabled]="row.type === SourceDataPointType.Device"
               >
                 <mat-icon svgIcon="mdc:delete"></mat-icon>
               </mat-button-toggle>

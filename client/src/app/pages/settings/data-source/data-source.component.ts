@@ -28,6 +28,7 @@ import { clone, ObjectMap } from 'app/shared/utils';
 import { IP_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-data-source',
@@ -110,7 +111,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
     private dialog: MatDialog,
-    private promptService: PromptService
+    private promptService: PromptService,
+    private translate: TranslateService
   ) {
     this.promptService.initWarnBeforePageUnload(
       () => this.sourceDataPointService.isTouched
@@ -439,6 +441,25 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onApply() {
     return this.sourceDataPointService.apply(this.dataSource?.protocol!);
+  }
+
+  isAbleToSelectAddress(type: SourceDataPointType | undefined): boolean {
+    if (this.dataSource?.protocol === DataSourceProtocol.Energy) {
+      return true;
+    }
+
+    return [SourceDataPointType.NCK].includes(type);
+  }
+
+  getTariffText() {
+    const deviceDatapoint = this.datapointRows.find(
+      (dp) => dp.type === SourceDataPointType.Device
+    );
+    const translationKey = `settings-data-source.TariffStatus.${
+      this.liveData?.[deviceDatapoint?.id]?.value
+    }`;
+    const result = this.translate.instant(translationKey);
+    return result !== translationKey ? result : '';
   }
 
   async onPing() {

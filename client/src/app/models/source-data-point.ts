@@ -22,9 +22,5 @@ export class SourceDataPoint {
   readFrequency!: number;
   type?: SourceDataPointType;
   fanucDataType?: SourceDataPointFanucDataType;
-  fanucAddressType?: string;
-  fanucSNumber?: string;
-  fanucENumber?: string;
-  fanucLength?: string;
   enabled?: boolean;
 }

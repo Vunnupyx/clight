@@ -618,191 +618,74 @@
             <ng-template #noLiveData>-</ng-template>
           </ng-template>
         </ngx-datatable-column>
-        <ng-container *ngIf="dataSource?.protocol === Protocol.Fanuc">
-          <ngx-datatable-column
-            [name]="'settings-data-source.FanucAddressType' | translate"
-            prop="fanucAddressType"
-            [width]="100"
-            [sortable]="false"
+        <ngx-datatable-column
+          *ngIf="dataSource?.protocol === Protocol.Fanuc"
+          [name]="'settings-data-source.FanucDataType' | translate"
+          prop="fanucDataType"
+          [width]="100"
+          cellClass="input-cell"
+        >
+          <ng-template
+            ngx-datatable-cell-template
+            let-rowIndex="rowIndex"
+            let-value="value"
+            let-row="row"
           >
-            <ng-template
-              ngx-datatable-cell-template
-              let-rowIndex="rowIndex"
-              let-value="value"
-              let-row="row"
-            >
-              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                <div class="text-ellipsis" [title]="value">
-                  {{ value }}
-                </div>
-              </ng-container>
-              <ng-container *ngIf="unsavedRowIndex === rowIndex">
-                <input
-                  type="text"
-                  class="w-100"
-                  [ngModel]="value"
-                  (ngModelChange)="
-                    unsavedRow && (unsavedRow.fanucAddressType = $event)
-                  "
-                />
-              </ng-container>
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column
-            [name]="'settings-data-source.FanucSNumber' | translate"
-            prop="fanucSNumber"
-            [width]="100"
-            [sortable]="false"
-          >
-            <ng-template
-              ngx-datatable-cell-template
-              let-rowIndex="rowIndex"
-              let-value="value"
-              let-row="row"
-            >
-              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                <div class="text-ellipsis" [title]="value">
-                  {{ value }}
-                </div>
-              </ng-container>
-              <ng-container *ngIf="unsavedRowIndex === rowIndex">
-                <input
-                  type="text"
-                  class="w-100"
-                  [ngModel]="value"
-                  (ngModelChange)="
-                    unsavedRow && (unsavedRow.fanucSNumber = $event)
-                  "
-                />
-              </ng-container>
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column
-            [name]="'settings-data-source.FanucENumber' | translate"
-            prop="fanucENumber"
-            [width]="100"
-            [sortable]="false"
-          >
-            <ng-template
-              ngx-datatable-cell-template
-              let-rowIndex="rowIndex"
-              let-value="value"
-              let-row="row"
-            >
-              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                <div class="text-ellipsis" [title]="value">
-                  {{ value }}
-                </div>
-              </ng-container>
-              <ng-container *ngIf="unsavedRowIndex === rowIndex">
-                <input
-                  type="text"
-                  class="w-100"
-                  [ngModel]="value"
-                  (ngModelChange)="
-                    unsavedRow && (unsavedRow.fanucENumber = $event)
-                  "
-                />
-              </ng-container>
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column
-            [name]="'settings-data-source.FanucLength' | translate"
-            prop="fanucLength"
-            [width]="100"
-            [sortable]="false"
-          >
-            <ng-template
-              ngx-datatable-cell-template
-              let-rowIndex="rowIndex"
-              let-value="value"
-              let-row="row"
-            >
-              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                <div class="text-ellipsis" [title]="value">
-                  {{ value }}
-                </div>
-              </ng-container>
-              <ng-container *ngIf="unsavedRowIndex === rowIndex">
-                <input
-                  type="text"
-                  class="w-100"
-                  [ngModel]="value"
-                  (ngModelChange)="
-                    unsavedRow && (unsavedRow.fanucLength = $event)
-                  "
-                />
-              </ng-container>
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column
-            [name]="'settings-data-source.FanucDataType' | translate"
-            prop="fanucDataType"
-            [width]="100"
-            cellClass="input-cell"
-          >
-            <ng-template
-              ngx-datatable-cell-template
-              let-rowIndex="rowIndex"
-              let-value="value"
-              let-row="row"
-            >
-              <ng-container *ngIf="unsavedRowIndex !== rowIndex">
-                <div
-                  *ngIf="
-                    isAbleToSelectTypeAddress(row?.type);
-                    else noFanucDataType
-                  "
-                  class="text-ellipsis"
-                  [title]="value"
-                >
-                  <ng-container [ngSwitch]="value">
-                    <ng-container
-                      *ngSwitchCase="SourceDataPointFanucDataType.Bit"
-                      >{{ 'data-type.Bit' | translate }}</ng-container
-                    >
-                    <ng-container
-                      *ngSwitchCase="SourceDataPointFanucDataType.Byte"
-                      >{{ 'data-type.Byte' | translate }}</ng-container
-                    >
-                    <ng-container
-                      *ngSwitchCase="SourceDataPointFanucDataType.Word"
-                      >{{ 'data-type.Word' | translate }}</ng-container
-                    >
-                    <ng-container
-                      *ngSwitchCase="SourceDataPointFanucDataType.DoubleWord"
-                      >{{ 'data-type.DoubleWord' | translate }}</ng-container
-                    >
-                    <ng-container
-                      *ngSwitchCase="SourceDataPointFanucDataType.Real"
-                      >{{ 'data-type.Real' | translate }}</ng-container
-                    >
-                    <ng-container *ngSwitchDefault>{{
-                      value | uppercase
-                    }}</ng-container>
-                  </ng-container>
-                </div>
-                <ng-template #noFanucDataType>-</ng-template>
-              </ng-container>
-              <ng-container *ngIf="unsavedRowIndex === rowIndex">
-                <mat-select
-                  *ngIf="isAbleToSelectTypeAddress(unsavedRow?.type)"
-                  (ngModelChange)="unsavedRow.fanucDataType = $event"
-                  [ngModel]="unsavedRow.fanucDataType"
-                  disableOptionCentering="true"
-                >
-                  <mat-option
-                    *ngFor="
-                      let dataType of SourceDataPointFanucDataType | keyvalue
-                    "
-                    [value]="dataType.value"
-                    >{{ dataType.key }}</mat-option
+            <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+              <div
+                *ngIf="
+                  isAbleToSelectTypeAddress(row?.type);
+                  else noFanucDataType
+                "
+                class="text-ellipsis"
+                [title]="value"
+              >
+                <ng-container [ngSwitch]="value">
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Bit"
+                    >{{ 'data-type.Bit' | translate }}</ng-container
                   >
-                </mat-select>
-              </ng-container>
-            </ng-template>
-          </ngx-datatable-column>
-        </ng-container>
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Byte"
+                    >{{ 'data-type.Byte' | translate }}</ng-container
+                  >
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Word"
+                    >{{ 'data-type.Word' | translate }}</ng-container
+                  >
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.DoubleWord"
+                    >{{ 'data-type.DoubleWord' | translate }}</ng-container
+                  >
+                  <ng-container
+                    *ngSwitchCase="SourceDataPointFanucDataType.Real"
+                    >{{ 'data-type.Real' | translate }}</ng-container
+                  >
+                  <ng-container *ngSwitchDefault>{{
+                    value | uppercase
+                  }}</ng-container>
+                </ng-container>
+              </div>
+              <ng-template #noFanucDataType>-</ng-template>
+            </ng-container>
+            <ng-container *ngIf="unsavedRowIndex === rowIndex">
+              <mat-select
+                *ngIf="isAbleToSelectTypeAddress(unsavedRow?.type)"
+                (ngModelChange)="unsavedRow.fanucDataType = $event"
+                [ngModel]="unsavedRow.fanucDataType"
+                disableOptionCentering="true"
+              >
+                <mat-option
+                  *ngFor="
+                    let dataType of SourceDataPointFanucDataType | keyvalue
+                  "
+                  [value]="dataType.value"
+                  >{{ dataType.key }}</mat-option
+                >
+              </mat-select>
+            </ng-container>
+          </ng-template>
+        </ngx-datatable-column>
         <ngx-datatable-column
           [name]="'settings-data-source.Address' | translate"
           prop="address"

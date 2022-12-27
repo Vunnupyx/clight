@@ -7,14 +7,9 @@ export enum SourceDataPointType {
   Device = 'device'
 }
 
-export enum SourceDataPointDescription {
-  ActivePower = 'activePower',
-  TotalEnergy = 'totalEnergy'
-}
-
 export class SourceDataPoint {
   address!: string;
-  description?: SourceDataPointDescription;
+  description?: string;
   id!: string;
   name!: string;
   readFrequency!: number;

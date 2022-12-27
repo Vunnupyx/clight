@@ -708,23 +708,9 @@
             let-value="value"
             let-row="row"
           >
-            <span *ngIf="unsavedRowIndex !== rowIndex">
+            <div class="text-ellipsis" [title]="value">
               {{ value }}
-              <!--<ng-container [ngSwitch]="value">
-                <ng-container
-                  *ngSwitchCase="SourceDataPointDescription.ActivePower"
-                  >{{
-                    'settings-data-source.ActivePower' | translate
-                  }}</ng-container
-                >
-                <ng-container
-                  *ngSwitchCase="SourceDataPointDescription.TotalEnergy"
-                  >{{
-                    'settings-data-source.TotalEnergy' | translate
-                  }}</ng-container
-                >
-              </ng-container>-->
-            </span>
+            </div>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column

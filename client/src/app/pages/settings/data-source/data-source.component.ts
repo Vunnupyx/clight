@@ -14,8 +14,7 @@ import {
   S7Types,
   EnergyTypes,
   SourceDataPoint,
-  SourceDataPointType,
-  SourceDataPointDescription
+  SourceDataPointType
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
@@ -37,7 +36,6 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class DataSourceComponent implements OnInit, OnDestroy {
   SourceDataPointType = SourceDataPointType;
-  SourceDataPointDescription = SourceDataPointDescription;
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;

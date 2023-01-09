@@ -13,7 +13,8 @@ import {
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { LogsService } from 'app/services/logs.service';
+import { Download, LogsService } from 'app/services/logs.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-general',
@@ -22,7 +23,7 @@ import { LogsService } from 'app/services/logs.service';
 })
 export class GeneralComponent implements OnInit {
   public showLoadingRestart = false;
-
+  public download$: Observable<Download>;
   constructor(
     private backupService: BackupService,
     private logsService: LogsService,
@@ -60,7 +61,7 @@ export class GeneralComponent implements OnInit {
   }
 
   async downloadLogs() {
-    await this.logsService.download();
+    this.download$ = this.logsService.download();
   }
 
   async restart() {

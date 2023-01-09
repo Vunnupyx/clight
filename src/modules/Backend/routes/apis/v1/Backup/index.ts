@@ -134,8 +134,10 @@ async function logsGetHandler(
     return;
   }
   winston.debug(`${logPrefix} writing response...`);
+  const stat = fs.statSync(`${outPath}/${outFileName}`);
   response.writeHead(200, {
     'Content-Type': 'application/octet-stream',
+    'Content-Length': `${stat.size}`,
     'Content-Disposition': `attachment; filename=${outFileName}`
   });
   let stream;

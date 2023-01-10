@@ -204,7 +204,8 @@
       "1": "Running",
       "2": "Idle",
       "3": "Waiting",
-      "4": "Alarm"
+      "4": "Alarm",
+      "Unknown": "Unknown"
     }
   },
   "settings-virtual-data-point": {

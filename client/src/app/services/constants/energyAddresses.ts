@@ -1,4 +1,4 @@
 export default [
-  { name: 'P', address: 'p' },
-  { name: 'Ea+', address: 'ea-pos-total' }
+  { name: 'P', type: 'measurement', address: 'p' },
+  { name: 'Ea+', type: 'meter', address: 'ea-pos-total' }
 ];

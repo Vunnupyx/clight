@@ -40,6 +40,7 @@ export class UpdateManager {
   private stateMachine: StateMachine;
   private startState = 'GET_UPDATES';
   private newVersionToInstall = '';
+  private newBaseLayerVersionToInstall = '';
   private updateFlow: StateAndTransitions = {
     INIT: {
       transition: () => 'START_UPDATE',
@@ -107,7 +108,7 @@ export class UpdateManager {
   };
 
   constructor(
-    private apiEndpoint: HttpService,
+    private httpService: HttpService,
     private configAgentEndpoint: ConfigurationAgentHttpService,
     private onStateChange
   ) {}
@@ -124,13 +125,33 @@ export class UpdateManager {
   private async getUpdates() {
     const logPrefix = `${UpdateManager.name}::getUpdates`;
     try {
-      const response = undefined; /*await this.apiEndpoint.get(
-        `/getUpdates`,
-      );*/
-      //TBD
-      this.newVersionToInstall = response || '3.0.0';
-      return 'UPDATE_FOUND';
-      //return 'NO_UPDATE_FOUND';
+      const response = await this.httpService.get(`/systemInfo/update`, {
+        observe: 'response'
+      } as any);
+
+      const statusCode: number = response.status;
+      if (statusCode === 204) {
+        return 'NO_UPDATE_FOUND';
+      } else if (statusCode === 503) {
+        return 'UNEXPECTED_ERROR';
+      } else if (statusCode === 200) {
+        let availableVersions: Array<{
+          release: string;
+          BaseLayerVersion: string;
+          releaseNotes: string;
+          OSVersion: string;
+          releaseNotesMissingReason: string;
+        }> = response.body;
+
+        if (availableVersions.length === 0) {
+          return 'NO_UPDATE_FOUND';
+        }
+        //TBD availableVersions[0]?
+        this.newVersionToInstall = availableVersions[0].release;
+        this.newBaseLayerVersionToInstall =
+          availableVersions[0].BaseLayerVersion;
+        return 'UPDATE_FOUND';
+      }
     } catch (err) {
       console.log(logPrefix, err);
       return 'UNEXPECTED_ERROR';
@@ -260,12 +281,31 @@ export class UpdateManager {
     const logPrefix = `${UpdateManager.name}::applyModuleUpdates`;
 
     try {
-      /*const response = await this.apiEndpoint.get(
-        `/applyModuleUpdates`,
-      );*/
-      //TBD
+      const response = await this.httpService.post(
+        `/systemInfo/update`,
+        {
+          release: this.newVersionToInstall,
+          BaseLayerVersion: this.newBaseLayerVersionToInstall
+        },
+        {
+          observe: 'response'
+        } as any
+      );
+      const statusCode: number = response.status;
 
-      return 'MODULE_UPDATE_APPLIED';
+      if (statusCode === 202) {
+        return 'MODULE_UPDATE_APPLIED';
+      } else if (statusCode === 400) {
+        console.log(logPrefix, 'Version info missing');
+        //TBD
+        return 'UNEXPECTED_ERROR';
+      } else if (statusCode === 404) {
+        console.log(logPrefix, 'Version not found');
+        //TBD
+        return 'UNEXPECTED_ERROR';
+      } else if (statusCode === 503) {
+        return 'UNEXPECTED_ERROR';
+      }
     } catch (err) {
       return 'UNEXPECTED_ERROR';
     }
@@ -346,7 +386,7 @@ export class UpdateManager {
   }
 
   private async checkRuntimeHealth() {
-    return await this.apiEndpoint.get<HealthcheckResponse>(`/healthcheck`);
+    return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
   }
 
   private async checkSystemVersions(): Promise<Array<CosInstalledVersion>> {

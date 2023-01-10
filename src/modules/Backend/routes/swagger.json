@@ -1368,6 +1368,18 @@
         }
       }
     },
+    "/systemInfo/factoryreset": {
+      "post": {
+        "tags": ["systemInfo"],
+        "description": "Perform factory reset",
+        "operationId": "systemFactoryReset",
+        "responses": {
+          "200": {
+            "description": "Factory reset performed successfully"
+          }
+        }
+      }
+    },
     "/terms-and-conditions": {
       "get": {
         "parameters": [
@@ -2246,16 +2258,6 @@
           }
         },
         "deleted": ["entityId"]
-      }
-    },
-    "envResponse": {
-      "type": "object",
-      "required": ["env"],
-      "properties": {
-        "env": {
-          "type": "string",
-          "enum": ["stag", "dev", "prod"]
-        }
       }
     },
     "messengerServerConfiguration": {

@@ -235,6 +235,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
+    "AddEnumeration": "Add enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
@@ -429,7 +430,7 @@
     "TimeSettings": "Time Settings",
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
-    "SetCurrentTime": "Set Current Time",
+    "SetCurrentTime": "Set Current Time (UTC)",
     "ChooseTimeZone": "Choose Time Zone",
     "nptUnreachable": "NTP Server unreachable",
     "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply."
@@ -461,13 +462,19 @@
     "UpdateInstallFailed": "Failed to install updates. Please contact support.",
     "MaterialThemeVersion": "CELOS X material theme",
     "SoftwareComponent": "Software component",
-    "LoadError": "Failed to load system information. Try again later"
+    "LoadError": "Failed to load system information. Try again later",
+    "FactoryReset": "Factory Reset",
+    "FactoryResetNow": "Reset device to factory settings",
+    "FactoryResetDeviceTitle": "Perform Factory Reset",
+    "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",
+    "FactoryResetSuccess": "Factory reset performed successfully!",
+    "FactoryResetError": "Error occurred while performing factory reset. Please try again later."
   },
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"
   },
   "clock": {
-    "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces."
+    "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces. Click on this warning to go to settings page and choose Time tab to adjust time settings."
   },
   "data-type": {
     "String": "String",

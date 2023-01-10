@@ -461,37 +461,6 @@
                 </mat-form-field>
               </div>
             </div>
-            <div class="d-flex align-items-center justify-content-between">
-              <div class="mr-30">
-                {{ 'settings-network.ChooseTimeZone' | translate }}
-              </div>
-
-              <div>
-                <mat-form-field>
-                  <mat-select
-                    disableOptionCentering="true"
-                    [(ngModel)]="config[NetworkType.NTP].timestamp.timezone"
-                    name="timezone"
-                    required
-                  >
-                    <mat-option>
-                      <ngx-mat-select-search
-                        [(ngModel)]="timezoneOptionKeyphrase"
-                        [ngModelOptions]="{ standalone: true }"
-                        noEntriesFoundLabel="No results found"
-                        placeholderLabel="Search..."
-                      ></ngx-mat-select-search>
-                    </mat-option>
-                    <mat-option
-                      *ngFor="let opt of timezoneOptionsSearchResults"
-                      [value]="opt"
-                    >
-                      {{ opt }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
           </ng-container>
           <div class="d-flex justify-content-end mt-25">
             <button

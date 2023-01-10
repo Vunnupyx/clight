@@ -30,6 +30,17 @@ interface CosApplyUpdateResponse {
   Error: string;
 }
 
+interface CosAvailableUpdates {
+  message: string;
+  updateList: Array<{
+    release: string;
+    BaseLayerVersion: string;
+    releaseNotes: string;
+    OSVersion: string;
+    releaseNotesMissingReason: string;
+  }>;
+}
+
 const DOWNLOAD_STATUS_POLLING_INTERVAL_MS = 5_000;
 const RESTART_STATUS_POLLING_INTERVAL_MS = 5_000;
 const CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS = 5_000;
@@ -135,21 +146,21 @@ export class UpdateManager {
       } else if (statusCode === 503) {
         return 'UNEXPECTED_ERROR';
       } else if (statusCode === 200) {
-        let availableVersions: Array<{
-          release: string;
-          BaseLayerVersion: string;
-          releaseNotes: string;
-          OSVersion: string;
-          releaseNotesMissingReason: string;
-        }> = response.body;
-
-        if (availableVersions.length === 0) {
+        let responseBody: CosAvailableUpdates = response.body;
+        const availableVersions = responseBody?.updateList;
+        if (!availableVersions) {
+          return 'UNEXPECTED_ERROR';
+        } else if (availableVersions.length === 0) {
           return 'NO_UPDATE_FOUND';
         }
         //TBD availableVersions[0]?
         this.newVersionToInstall = availableVersions[0].release;
         this.newBaseLayerVersionToInstall =
           availableVersions[0].BaseLayerVersion;
+
+        if (!this.newVersionToInstall || !this.newBaseLayerVersionToInstall) {
+          //TBD
+        }
         return 'UPDATE_FOUND';
       }
     } catch (err) {
@@ -295,15 +306,8 @@ export class UpdateManager {
 
       if (statusCode === 202) {
         return 'MODULE_UPDATE_APPLIED';
-      } else if (statusCode === 400) {
-        console.log(logPrefix, 'Version info missing');
+      } else {
         //TBD
-        return 'UNEXPECTED_ERROR';
-      } else if (statusCode === 404) {
-        console.log(logPrefix, 'Version not found');
-        //TBD
-        return 'UNEXPECTED_ERROR';
-      } else if (statusCode === 503) {
         return 'UNEXPECTED_ERROR';
       }
     } catch (err) {

@@ -573,28 +573,9 @@
                     liveData[row.id].value
                   }}</ng-template>
                 </ng-container>
-                <ng-container *ngSwitchCase="Protocol.Energy">
-                  {{ liveData[row.id].value }}
-                  <ng-container
-                    *ngIf="
-                      row.type?.startsWith(SourceDataPointType.Measurement)
-                    "
-                  >
-                    {{
-                      'settings-data-source.Livedata.energy.watt' | translate
-                    }}
-                  </ng-container>
-                  <ng-container
-                    *ngIf="row.type?.startsWith(SourceDataPointType.Meter)"
-                  >
-                    {{
-                      'settings-data-source.Livedata.energy.wattHour'
-                        | translate
-                    }}
-                  </ng-container>
-                </ng-container>
                 <ng-container *ngSwitchDefault>
                   {{ liveData[row.id].value }}
+                  {{ liveData[row.id]?.unit }}
                 </ng-container>
               </ng-container>
             </span>

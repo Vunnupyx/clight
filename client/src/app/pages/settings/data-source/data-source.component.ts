@@ -29,6 +29,8 @@ import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 
+const ENERGY_ADDRESS_REQUIRED = 'tariff-number';
+
 @Component({
   selector: 'app-data-source',
   templateUrl: './data-source.component.html',
@@ -370,6 +372,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
       data: {
         selection: obj.address,
+        type: obj.type,
         protocol: this.dataSource?.protocol,
         existingAddresses: this.datapointRows?.map((x) => x.address) || []
       },
@@ -449,15 +452,24 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return [SourceDataPointType.NCK].includes(type);
   }
 
+  isDataPointRequired(obj: SourceDataPoint): boolean {
+    return (
+      obj.type === SourceDataPointType.Device &&
+      obj.address === ENERGY_ADDRESS_REQUIRED
+    );
+  }
+
   getTariffText() {
-    const deviceDatapoint = this.datapointRows.find(
-      (dp) => dp.type === SourceDataPointType.Device
+    const deviceDatapoint = this.datapointRows.find((dp) =>
+      this.isDataPointRequired(dp)
     );
     const translationKey = `settings-data-source.TariffStatus.${
       this.liveData?.[deviceDatapoint?.id]?.value
     }`;
     const result = this.translate.instant(translationKey);
-    return result !== translationKey ? result : '';
+    return result !== translationKey
+      ? result
+      : this.translate.instant('settings-data-source.TariffStatus.Unknown');
   }
 
   async onPing() {

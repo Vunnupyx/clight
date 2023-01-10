@@ -738,12 +738,11 @@
               </mat-button-toggle>
               <mat-button-toggle
                 (click)="
-                  row.type !== SourceDataPointType.Device && onDelete(row);
-                  group.value = null
+                  !isDataPointRequired(row) && onDelete(row); group.value = null
                 "
                 [matTooltip]="'settings-data-source.Delete' | translate"
                 matTooltipPosition="above"
-                [disabled]="row.type === SourceDataPointType.Device"
+                [disabled]="isDataPointRequired(row)"
               >
                 <mat-icon svgIcon="mdc:delete"></mat-icon>
               </mat-button-toggle>

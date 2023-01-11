@@ -92,86 +92,6 @@
           </div>
         </div>
       </div>
-
-      <div *ngSwitchCase="Protocol.DH">
-        <form #form="ngForm" class="mt-25">
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.ProvisioningHost' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="provisioningHost"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.provisioningHost"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.ScopeId' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="scopeId"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.scopeId"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.RegId' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="regId"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.regId"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.SymKey' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="symKey"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.symKey"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-        </form>
-      </div>
     </ng-container>
   </div>
 
@@ -179,30 +99,6 @@
     *ngIf="dataSink?.protocol === Protocol.DH"
     class="col-12 col-md-6 col-lg-7 offset-lg-1"
   >
-    <div class="d-flex align-items-center justify-content-end">
-      <button
-        mat-button
-        type="button"
-        class="btn-sm mr-10"
-        *ngIf="isTouchedTable && !isLoading"
-        (click)="onDiscard()"
-      >
-        {{ 'settings-data-sink.DiscardChanges' | translate }}
-      </button>
-
-      <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
-
-      <button
-        mat-button
-        color="primary"
-        type="button"
-        class="btn-sm"
-        [disabled]="!isTouchedTable || isLoading || !dsFormValid"
-        (click)="onApply()"
-      >
-        {{ 'settings-data-sink.ApplyChanges' | translate }}
-      </button>
-    </div>
     <div>
       <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
     </div>
@@ -325,7 +221,7 @@
   </div>
 </div>
 
-<div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
+<div class="row">
   <div class="col-12">
     <div class="row">
       <div class="col-12 col-md-6">
@@ -393,7 +289,7 @@
       </ngx-datatable-column>
       <ngx-datatable-column
         [name]="
-          (dataSink?.protocol !== Protocol.OPC
+          (dataSink?.protocol === Protocol.MTConnect
             ? 'settings-data-sink.DataItem'
             : 'settings-data-sink.Address'
           ) | translate
@@ -483,6 +379,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="'settings-data-sink.InitialValue' | translate"
         prop="initialValue"
         [flexGrow]="1"
@@ -559,6 +456,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="'settings-data-sink.Actions' | translate"
         [flexGrow]="1"
         cellClass="button-cell"

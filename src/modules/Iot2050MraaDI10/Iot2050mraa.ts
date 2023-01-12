@@ -199,7 +199,7 @@ export class Iot2050MraaDI10 {
       newState = this.parseOutput(data.toString());
     } catch (e) {
       winston.error(
-        `${logPrefix} Error parsing mraa-gpio output, ${e.message}`
+        `${logPrefix} error parsing mraa-gpio output: ${e.message}`
       );
       return;
     }
@@ -236,7 +236,7 @@ export class Iot2050MraaDI10 {
       output.includes('Failed to register')
     ) {
       winston.error(
-        `${logPrefix} Error accessing gpio pin via mraa-gpio, error: ${output}`
+        `${logPrefix} error accessing gpio pin via mraa-gpio, error: ${output}`
       );
       throw Error('Error accessing gpio pin via mraa-gpio');
     }

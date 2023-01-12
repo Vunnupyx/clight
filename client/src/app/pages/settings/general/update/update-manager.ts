@@ -32,7 +32,7 @@ interface CosApplyUpdateResponse {
 
 interface CosAvailableUpdates {
   message: string;
-  updateList: Array<{
+  updates: Array<{
     release: string;
     BaseLayerVersion: string;
     releaseNotes: string;
@@ -147,7 +147,7 @@ export class UpdateManager {
         return 'UNEXPECTED_ERROR';
       } else if (statusCode === 200) {
         let responseBody: CosAvailableUpdates = response.body;
-        const availableVersions = responseBody?.updateList;
+        const availableVersions = responseBody?.updates;
         if (!availableVersions) {
           return 'UNEXPECTED_ERROR';
         } else if (availableVersions.length === 0) {
@@ -296,7 +296,7 @@ export class UpdateManager {
         `/systemInfo/update`,
         {
           release: this.newVersionToInstall,
-          BaseLayerVersion: this.newBaseLayerVersionToInstall
+          baseLayerVersion: this.newBaseLayerVersionToInstall
         },
         {
           observe: 'response'
@@ -305,9 +305,10 @@ export class UpdateManager {
       const statusCode: number = response.status;
 
       if (statusCode === 202) {
+        //TBD version can be read from response
         return 'MODULE_UPDATE_APPLIED';
       } else {
-        //TBD
+        //TBD error can be read from response
         return 'UNEXPECTED_ERROR';
       }
     } catch (err) {

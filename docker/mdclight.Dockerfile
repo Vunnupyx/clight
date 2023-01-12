@@ -6,7 +6,7 @@
 
 ARG DOCKER_REGISTRY
 
-FROM ${DOCKER_REGISTRY}/mdclight-base:latest
+FROM ${DOCKER_REGISTRY}/mdclight-fanuc:latest
 
 ARG MDC_LIGHT_RUNTIME_VERSION
 # Install compiled MDC light runtime

@@ -373,6 +373,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       data: {
         selection: obj.address,
         type: obj.type,
+        tariff:
+          this.liveData?.[obj?.id]?.value ??
+          this.translate.instant('settings-data-source.TariffStatus.Unknown'),
         protocol: this.dataSource?.protocol,
         existingAddresses: this.datapointRows?.map((x) => x.address) || []
       },

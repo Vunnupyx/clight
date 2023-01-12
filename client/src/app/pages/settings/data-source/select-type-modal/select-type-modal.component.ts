@@ -8,6 +8,7 @@ import { DataSourceService } from '../../../../services';
 export interface SelectTypeModalData {
   selection: string;
   type: SourceDataPointType;
+  tariff: string;
   protocol: DataSourceProtocol;
   existingAddresses: string[];
 }
@@ -31,7 +32,9 @@ export class SelectTypeModalComponent implements OnInit {
     this.rows =
       this.data.protocol === DataSourceProtocol.S7
         ? this.dataSourceService.getNckAddresses()
-        : this.dataSourceService.getEnergyAddresses();
+        : this.dataSourceService.getEnergyAddresses(
+            this.data.tariff.toLowerCase()
+          );
   }
 
   ngAfterViewInit() {

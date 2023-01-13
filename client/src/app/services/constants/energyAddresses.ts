@@ -35,5 +35,6 @@ export default [
   { name: 'T4 Er-', type: 'meter', address: 't4-er-neg' },
   { name: 'T4 Es', type: 'meter', address: 't4-es' },
   { name: 'T4 Er', type: 'meter', address: 't4-er' },
-  { name: 'T4 Runtime', type: 'meter', address: 't4-runtime' }
+  { name: 'T4 Runtime', type: 'meter', address: 't4-runtime' },
+  { name: 'Firmware Version', type: 'device', address: 'fw' }
 ];

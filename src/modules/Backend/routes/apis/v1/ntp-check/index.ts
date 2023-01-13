@@ -1,42 +1,21 @@
 import { createSocket } from 'dgram';
 import { Response, Request } from 'express';
 import winston from 'winston';
-import fetch from 'node-fetch';
+import { ConfigurationAgentManager } from '../../../../../ConfigurationAgentManager';
+import {
+  ICosNetworkAdapterSetting,
+  ICosNetworkAdapterSettings,
+  ICosNetworkAdapterStatus,
+  ICosResponseError
+} from '../../../../../ConfigurationAgentManager/interfaces';
 const dns = require('dns').promises;
-
-interface IAdapterSettings {
-  id: string;
-  displayName?: string;
-  enabled: boolean;
-  ipv4Settings: any; // currently not required
-  ipv6Settings?: any; // currently not required
-  macAddress?: string;
-  ssid?: string;
-}
-
-interface IAdapterStatus {
-  linkStatus: 'disabled' | 'disconnected' | 'connected' | 'unknown';
-  configurationStatus:
-    | 'configuring'
-    | 'unmanaged'
-    | 'failed'
-    | 'pending'
-    | 'linger'
-    | 'unknown';
-  message: string;
-}
-
-interface IResponseError {
-  message: string;
-  error: string;
-}
 
 /**
  * Type guard for ResponseError
- * @param obj Object to check if it is a IResponseError
+ * @param obj Object to check if it is a ICosResponseError
  * @returns
  */
-function isResponseError(obj: any): obj is IResponseError {
+function isResponseError(obj: any): obj is ICosResponseError {
   return typeof obj.error === 'string' && typeof obj.message === 'string';
 }
 
@@ -45,11 +24,11 @@ function isResponseError(obj: any): obj is IResponseError {
  * @param obj Object to check if it is a IAdapterSettings
  * @returns
  */
-function isAdapterSettings(obj: any): obj is IAdapterSettings {
-  obj = obj as IAdapterSettings;
+function isAdapterSettings(obj: any): obj is ICosNetworkAdapterSetting {
+  obj = obj as ICosNetworkAdapterSetting;
   return (
-    typeof (obj as IAdapterSettings).enabled === 'boolean' &&
-    typeof (obj as IAdapterSettings).id === 'string'
+    typeof (obj as ICosNetworkAdapterSetting).enabled === 'boolean' &&
+    typeof (obj as ICosNetworkAdapterSetting).id === 'string'
   );
 }
 
@@ -150,7 +129,7 @@ function isIpAddress(toCheck: string): boolean {
 }
 
 /**
- * Checkl if is a valid hostname.
+ * Check if is a valid hostname.
  * @param toCheck Address to check
  * @returns
  */
@@ -234,44 +213,29 @@ function testNTPServer(server: string): Promise<boolean> {
  */
 async function checkInterfaces(): Promise<boolean> {
   const logPrefix = `NTPCheck::checkInterfaces`;
-  const basePath =
-    (process.env.NODE_ENV === 'development'
-      ? 'http://localhost:1884'
-      : 'http://172.17.0.1:1884') + '/api/v1';
-  const adaptersEndpoint = '/network/adapters';
-  const adapterStatus = '/network/adapters/{adapterID}/status';
-  let adapterInfos: Array<IAdapterSettings['id']>;
-  winston.debug(
-    `${logPrefix} send request to get all interfaces. GET ${
-      basePath + adaptersEndpoint
-    }`
-  );
 
-  return await fetch(basePath + adaptersEndpoint, {
-    method: 'GET'
-  })
-    .then((res) => {
-      winston.verbose(`${logPrefix} got response: ${JSON.stringify(res)}`);
-      return Promise.all[(res.json(), res.status)];
-    })
-    .then((payload: [Array<IAdapterSettings> | IResponseError, number]) => {
-      if (payload[1] !== 200) {
-        if (isResponseError(payload[0])) {
-          return Promise.reject(new Error(payload[0].message));
-        }
+  let adapterInfos: Array<ICosNetworkAdapterSetting['id']>;
+  winston.debug(`${logPrefix} sending request to get all interfaces.`);
+
+  return await ConfigurationAgentManager.getNetworkAdapters()
+    .then((payload: ICosNetworkAdapterSettings | ICosResponseError) => {
+      if (isResponseError(payload)) {
+        return Promise.reject(
+          new Error((payload as ICosResponseError).message)
+        );
       }
       if (
         !(
-          Array.isArray(payload[0]) &&
-          payload[0].length > 0 &&
-          isAdapterSettings(payload[0][0])
+          Array.isArray(payload) &&
+          payload.length > 0 &&
+          isAdapterSettings(payload[0])
         )
       ) {
         return Promise.reject(
           new Error(`${logPrefix} invalid payload: ${payload}`)
         );
       }
-      payload[0].forEach(({ enabled, id }) => {
+      payload.forEach(({ enabled, id }) => {
         // Filter disabled Adapters
         if (enabled) {
           adapterInfos.push(id);
@@ -282,15 +246,12 @@ async function checkInterfaces(): Promise<boolean> {
       );
     })
     .then(() => {
-      const requests = Object.keys(adapterInfos).map((id) => {
-        return fetch(basePath + adapterStatus.replace('{adapterID}', id));
-      });
+      const requests = Object.keys(adapterInfos).map((id: 'enoX1' | 'enoX2') =>
+        ConfigurationAgentManager.getSingleNetworkAdapterStatus(id)
+      );
       return Promise.all(requests);
     })
-    .then((resArray) => {
-      return Promise.all(resArray.map((res) => res.json()));
-    })
-    .then((payload: Array<IAdapterStatus>) => {
+    .then((payload: Array<ICosNetworkAdapterStatus>) => {
       for (const [index] of adapterInfos.entries()) {
         if (payload[index].linkStatus === 'connected') {
           winston.debug(

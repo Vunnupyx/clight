@@ -11,6 +11,7 @@ import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
+import { ConfigurationAgentManager } from '../../ConfigurationAgentManager';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager;
@@ -85,41 +86,39 @@ export class RestApiManager {
   private getProxySettings(authManager: AuthManager) {
     const logPrefix = `${RestApiManager.className}::getProxySettings`;
 
-    const PATH_PREFIX = '/api/v1';
-    const confAgentAddress =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:1884'
-        : 'http://172.17.0.1:1884';
-    return proxy(confAgentAddress, {
-      filter: (req: Request, res: Response) => {
-        const isAuthenticated = authManager.verifyJWTAuth({
-          withPasswordChangeDetection: true,
-          withBooleanResponse: true
-        })(req, res);
+    return proxy(
+      `${ConfigurationAgentManager.hostname}:${ConfigurationAgentManager.port}`,
+      {
+        filter: (req: Request, res: Response) => {
+          const isAuthenticated = authManager.verifyJWTAuth({
+            withPasswordChangeDetection: true,
+            withBooleanResponse: true
+          })(req, res);
 
-        if (!isAuthenticated) {
-          winston.warn(
-            `${logPrefix} Unauthorized attempt to access Configuration Agent proxy, requested URL: ${req.url}`
+          if (!isAuthenticated) {
+            winston.warn(
+              `${logPrefix} Unauthorized attempt to access Configuration Agent proxy, requested URL: ${req.url}`
+            );
+          }
+          return isAuthenticated;
+        },
+        proxyReqOptDecorator: (proxyReqOpts) => {
+          // Update headers
+          delete proxyReqOpts.headers['Authorization'];
+          delete proxyReqOpts.headers['authorization'];
+          return proxyReqOpts;
+        },
+        proxyReqPathResolver: (req) => {
+          return `${ConfigurationAgentManager.pathPrefix}${req.url}`;
+        },
+        proxyErrorHandler: function (err, res, next) {
+          winston.error(
+            `${logPrefix} Error at Configuration Agent proxy:${err?.code}`
           );
+          next(err);
         }
-        return isAuthenticated;
-      },
-      proxyReqOptDecorator: (proxyReqOpts) => {
-        // Update headers
-        delete proxyReqOpts.headers['Authorization'];
-        delete proxyReqOpts.headers['authorization'];
-        return proxyReqOpts;
-      },
-      proxyReqPathResolver: (req) => {
-        return `${PATH_PREFIX}${req.url}`;
-      },
-      proxyErrorHandler: function (err, res, next) {
-        winston.error(
-          `${logPrefix} Error at Configuration Agent proxy:${err?.code}`
-        );
-        next(err);
       }
-    });
+    );
   }
 
   /**

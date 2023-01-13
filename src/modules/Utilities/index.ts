@@ -83,6 +83,6 @@ export function isValidIpOrHostname(textInput: string): boolean {
   const validHostnameRegex =
     /^(http([s]){0,1}:\/\/){0,1}([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$/;
 
-  const isValidHostname = !!textInput.match(validHostnameRegex);
+  const isValidHostname = validHostnameRegex.test(textInput);
   return isValidIP || isValidHostname;
 }

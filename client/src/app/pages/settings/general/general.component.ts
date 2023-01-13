@@ -3,7 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
 import {
-  BackupService,
+  Download,
+  GeneralService,
   SystemInformationService,
   TemplateService
 } from 'app/services';
@@ -13,7 +14,6 @@ import {
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Download, LogsService } from 'app/services/logs.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -23,10 +23,10 @@ import { Observable } from 'rxjs';
 })
 export class GeneralComponent implements OnInit {
   public showLoadingRestart = false;
-  public download$: Observable<Download>;
+  public downloadLogs$: Observable<Download>;
+  public downloadBackup$: Observable<Download>;
   constructor(
-    private backupService: BackupService,
-    private logsService: LogsService,
+    private logsService: GeneralService,
     private systemInformationService: SystemInformationService,
     private translate: TranslateService,
     private localStorageService: LocalStorageService,
@@ -56,12 +56,12 @@ export class GeneralComponent implements OnInit {
     this.localStorageService.set('ui-lang', value);
   }
 
-  async download() {
-    await this.backupService.download();
+  downloadBackup() {
+    this.downloadBackup$ = this.logsService.downloadBackup();
   }
 
-  async downloadLogs() {
-    this.download$ = this.logsService.download();
+  downloadLogs() {
+    this.downloadLogs$ = this.logsService.downloadLogs();
   }
 
   async restart() {
@@ -104,7 +104,7 @@ export class GeneralComponent implements OnInit {
 
       try {
         const parsedJSON = JSON.parse(await file.text());
-        await this.backupService.upload(file);
+        await this.logsService.uploadBackup(file);
         this.toastr.success(
           this.translate.instant('settings-general.BackupHasBeenUploaded')
         );

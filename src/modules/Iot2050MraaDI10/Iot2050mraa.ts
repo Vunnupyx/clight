@@ -1,5 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import winston from 'winston';
+
 const child = require('child_process');
 
 interface PinStatus {
@@ -191,10 +193,14 @@ export class Iot2050MraaDI10 {
    * @param data output (buffer) of mraa-gpio
    */
   private monitorCallback(data: object) {
+    const logPrefix = `${Iot2050MraaDI10.name}::monitorCallback`;
     let newState: PinStatus | null = null;
     try {
       newState = this.parseOutput(data.toString());
     } catch (e) {
+      winston.error(
+        `${logPrefix} error parsing mraa-gpio output: ${e.message}`
+      );
       return;
     }
 
@@ -224,6 +230,16 @@ export class Iot2050MraaDI10 {
    * @returns PinStatus: .pin = pin number, .state = current pin state
    */
   private parseOutput(output: string): PinStatus {
+    const logPrefix = `${Iot2050MraaDI10.name}::parseOutput`;
+    if (
+      output.includes('Could not initialize') ||
+      output.includes('Failed to register')
+    ) {
+      winston.error(
+        `${logPrefix} error accessing gpio pin via mraa-gpio, error: ${output}`
+      );
+      throw Error('Error accessing gpio pin via mraa-gpio');
+    }
     const noLineBreaks = output.replace(/\n/g, '');
     const noSpaces = noLineBreaks.replace(/ /g, '');
     const noText = noSpaces.replace(/Pin/g, '');

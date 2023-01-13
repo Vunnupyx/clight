@@ -235,6 +235,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Enumeration speichern",
+    "AddEnumeration": "Enumeration hinzufügen",
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
     "CurrentLiveValue": "Aktualwert",

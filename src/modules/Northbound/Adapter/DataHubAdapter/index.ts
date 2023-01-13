@@ -1,5 +1,5 @@
 import { Message, Twin, ModuleClient } from 'azure-iot-device';
-import { MqttWs as IotHubTransport } from 'azure-iot-device-mqtt';
+import { Mqtt as IotHubTransport } from 'azure-iot-device-mqtt';
 
 import winston from 'winston';
 import { NorthBoundError } from '../../../../common/errors';
@@ -226,11 +226,11 @@ export class DataHubAdapter {
     this.dataHubClient
       .close()
       .then(() => {
+        this.onStateChange(LifecycleEventStatus.Disconnected);
         Object.keys(this).forEach((key) => {
           delete this[key];
         });
         winston.info(`${logPrefix} successfully stopped adapter.`);
-        this.onStateChange(LifecycleEventStatus.Disconnected);
       })
       .catch((err) => {
         return Promise.reject(

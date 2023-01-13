@@ -59,6 +59,21 @@ export function areObjectsEqual(
 
 /**
  * Validates the input to be valid ip or hostname
+ *
+ * @see https://www.rfc-editor.org/rfc/rfc1123
+ * "The DNS defines domain name syntax very generally
+ * -- a string of labels each containing up to 63 8-bit octets,
+ * separated by dots, and with a maximum total of 255
+ * octets." See the link for remainder of the specification
+ * @see https://www.rfc-editor.org/rfc/rfc952
+ * "A "name" (Net, Host, Gateway, or Domain name) is a text string up
+ * to 24 characters drawn from the alphabet (A-Z), digits (0-9), minus
+ * sign (-), and period (.)" See the link for remainder of the specification
+ * @see https://stackoverflow.com/a/3824105
+ * The link for Regex, which conforms above specifications.
+ * Regex used below is an extended version of this to also allow
+ * http:// or https:// in the beginning of hostname,
+ * as user can paste the hostname together with http
  */
 export function isValidIpOrHostname(textInput: string): boolean {
   if (!textInput || typeof textInput !== 'string') {

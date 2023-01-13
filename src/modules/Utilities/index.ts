@@ -59,8 +59,6 @@ export function areObjectsEqual(
 
 /**
  * Validates the input to be valid ip or hostname
- * @param {string} textInput
- * @returns {boolean} whether the input is valid ip/hostname
  */
 export function isValidIpOrHostname(textInput: string): boolean {
   if (!textInput || typeof textInput !== 'string') {

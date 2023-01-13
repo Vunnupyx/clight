@@ -94,72 +94,11 @@
       </div>
     </ng-container>
   </div>
-
-  <div
-    *ngIf="dataSink?.protocol === Protocol.DH"
-    class="col-12 col-md-6 col-lg-7 offset-lg-1"
-  >
-    <div>
-      <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
-    </div>
-
-    <table mat-table [dataSource]="desiredServices" class="mt-15">
-      <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-      </ng-container>
-
-      <!-- Enabled Column -->
-      <ng-container matColumnDef="enabled">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ 'settings-data-sink.Desired.Enabled' | translate }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <div
-            class="d-flex align-items-center"
-            [class.color-success]="element.enabled"
-            [class.color-danger]="!element.enabled"
-          >
-            <mat-icon
-              class="mr-5"
-              *ngIf="element.enabled"
-              svgIcon="mdc:success"
-            ></mat-icon>
-            <mat-icon
-              class="mr-5"
-              *ngIf="!element.enabled"
-              svgIcon="mdc:error"
-            ></mat-icon>
-            <label>{{
-              (element.enabled
-                ? 'settings-data-sink.Desired.Enabled'
-                : 'settings-data-sink.Desired.Disabled'
-              ) | translate
-            }}</label>
-          </div>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="2">
-          {{ 'settings-data-sink.NoData' | translate }}
-        </td>
-      </tr>
-    </table>
-  </div>
-
-  <div
-    class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4"
-    *ngIf="dataSink?.protocol !== Protocol.DH"
-  >
-    <div class="d-flex align-items-center justify-content-end">
+  <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">
+    <div
+      class="d-flex align-items-center justify-content-end"
+      *ngIf="dataSink?.protocol !== Protocol.DH"
+    >
       <button
         mat-button
         type="button"
@@ -202,7 +141,6 @@
         </button>
       </div>
     </div>
-
     <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
       <div style="display: flex; width: 100%">
         <button
@@ -218,13 +156,17 @@
         </button>
       </div>
     </div>
+    <div
+      *ngIf="dataSink?.protocol === Protocol.DH"
+      class="spacing-bottom-xl"
+    ></div>
   </div>
 </div>
 
 <div class="row">
   <div class="col-12">
     <div class="row">
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6" *ngIf="dataSink?.protocol !== Protocol.DH">
         <div class="d-flex align-items-center">
           <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
           <button
@@ -521,6 +463,42 @@
               <mat-icon class="color-error" svgIcon="mdc:close"></mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        *ngIf="dataSink?.protocol === Protocol.DH"
+        [name]="'settings-data-sink.Desired.Enabled' | translate"
+        prop="enabled"
+        [flexGrow]="1"
+      >
+        <ng-template
+          ngx-datatable-cell-template
+          let-rowIndex="rowIndex"
+          let-value="value"
+          let-row="row"
+        >
+          <div
+            class="d-flex align-items-center"
+            [class.color-success]="row.enabled"
+            [class.color-danger]="!row.enabled"
+          >
+            <mat-icon
+              class="mr-5"
+              *ngIf="row.enabled"
+              svgIcon="mdc:success"
+            ></mat-icon>
+            <mat-icon
+              class="mr-5"
+              *ngIf="!row.enabled"
+              svgIcon="mdc:error"
+            ></mat-icon>
+            <label>{{
+              (row.enabled
+                ? 'settings-data-sink.Desired.Enabled'
+                : 'settings-data-sink.Desired.Disabled'
+              ) | translate
+            }}</label>
+          </div>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

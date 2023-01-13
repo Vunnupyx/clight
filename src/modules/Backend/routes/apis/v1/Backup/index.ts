@@ -86,9 +86,10 @@ async function logsGetHandler(
   const hostname = await new System().getHostname();
 
   const outFileName = `${hostname}-${dateString}.zip`;
-  const outPath = '/mdclight/logs';
-  const inputPaths = `${outPath}/*log`;
-  const zipCommand = `zip -0 -r ${outPath}/${outFileName} ${inputPaths}`;
+  const logFolderPath = '/mdclight/logs';
+  const inputPaths = `${logFolderPath}/*log`;
+  const outPath = '/mdclight/logs/out';
+  const zipCommand = `mkdir -p ${outPath} && zip -0 -r ${outPath}/${outFileName} ${inputPaths}`;
 
   /**
    * Deletes all log archives inside the log folder

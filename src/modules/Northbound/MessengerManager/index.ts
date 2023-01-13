@@ -7,7 +7,7 @@ import {
   IMessengerServerStatus
 } from '../../ConfigManager/interfaces';
 import { System } from '../../System';
-import { areObjectsEqual } from '../../Utilities';
+import { areObjectsEqual, isValidIpOrHostname } from '../../Utilities';
 
 interface IMachineCatalog {
   name: string;
@@ -195,6 +195,12 @@ export class MessengerManager {
       await this.getLoginToken();
     }
     try {
+      if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+        winston.warn(
+          `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+        );
+        throw new Error('Invalid hostname');
+      }
       let response = await fetch(
         `${this.messengerConfig?.hostname}/adm/api/machines`,
         {
@@ -240,6 +246,12 @@ export class MessengerManager {
           if (matchingRegisteredMachineFromMessenger) {
             //Check detail info with secondary API call to verify if they are the same or duplicate
             try {
+              if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+                winston.warn(
+                  `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+                );
+                throw new Error('Invalid hostname');
+              }
               let response = await fetch(
                 `${this.messengerConfig?.hostname}/adm/api/machines/${matchingRegisteredMachineFromMessenger.Id}`,
                 {
@@ -334,6 +346,12 @@ export class MessengerManager {
         }),
         new Promise<void>(async (resolve, reject) => {
           try {
+            if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+              winston.warn(
+                `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+              );
+              throw new Error('Invalid hostname');
+            }
             response = await fetch(
               `${this.messengerConfig?.hostname}/adm/api/auth/login`,
               {
@@ -411,6 +429,12 @@ export class MessengerManager {
         new Promise<void>(async (resolve, reject) => {
           //Read MachineCatalog
           try {
+            if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+              winston.warn(
+                `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+              );
+              throw new Error('Invalid hostname');
+            }
             const response = await fetch(
               `${this.messengerConfig?.hostname}/adm/api/machinecatalog`,
               {
@@ -455,6 +479,12 @@ export class MessengerManager {
         new Promise<void>(async (resolve, reject) => {
           //Read MachineObject for TimezoneID
           try {
+            if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+              winston.warn(
+                `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+              );
+              throw new Error('Invalid hostname');
+            }
             const response = await fetch(
               `${this.messengerConfig?.hostname}/adm/api/machines/new`,
               {
@@ -497,6 +527,12 @@ export class MessengerManager {
         new Promise<void>(async (resolve, reject) => {
           // Read organization units
           try {
+            if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+              winston.warn(
+                `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+              );
+              throw new Error('Invalid hostname');
+            }
             const response = await fetch(
               `${this.messengerConfig?.hostname}/adm/api/orgunits`,
               {
@@ -544,6 +580,12 @@ export class MessengerManager {
         new Promise<void>(async (resolve, reject) => {
           // Read timezones
           try {
+            if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+              winston.warn(
+                `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+              );
+              throw new Error('Invalid hostname');
+            }
             const response = await fetch(
               `${this.messengerConfig?.hostname}/adm/api/classifiers/timezones`,
               {
@@ -619,6 +661,12 @@ export class MessengerManager {
 
     //Create machine
     try {
+      if (!isValidIpOrHostname(this.messengerConfig?.hostname)) {
+        winston.warn(
+          `${logPrefix} Hostname is invalid:${this.messengerConfig?.hostname}`
+        );
+        throw new Error('Invalid hostname');
+      }
       const newMachineConfig = JSON.stringify({
         Id: isUpdating ? this.registeredMachineId : undefined,
         ChannelNumber: 1, // By default 0, but then Messenger UI doesn't let user to update anything because Messenger UI always sends channel id 1 and ids mismatch.

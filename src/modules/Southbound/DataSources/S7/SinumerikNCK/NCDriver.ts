@@ -51,6 +51,8 @@ interface NCKObjectLevel {
  */
 export default class SinumerikNCKProtocolDriver {
   private timeout: number = 60000;
+  private RECONNECT_DELAY = 10000;
+  private lastReconnectAttemptTime = 0;
   private tcpClient: any;
 
   private connectionState = ConnectionState.NOT_CONNECTED;
@@ -138,7 +140,7 @@ export default class SinumerikNCKProtocolDriver {
       this.tcpClient.setTimeout(this.timeout);
       this.tcpClient.once('close', () => {
         winston.warn('NC: Unexpected close event on socket!');
-        this.connect(host, port, rack, slot);
+        this.reconnect(host, port, rack, slot);
       });
       this.connectionState = ConnectionState.NOT_CONNECTED;
       await this.connectTCP(host, port);
@@ -156,6 +158,25 @@ export default class SinumerikNCKProtocolDriver {
         await this.disconnect();
       } catch (e) {}
       throw new Error(errorMessage);
+    }
+  }
+
+  /**
+   * Reconnects to NCK with a time delay to avoid too many retries
+   */
+  private reconnect(host, port, rack, slot) {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::reconnect`;
+    if (Date.now() - this.lastReconnectAttemptTime > this.RECONNECT_DELAY) {
+      winston.info(
+        `${logPrefix} reconnecting to nc using host: ${host}:${port} (rack: ${rack}, slot: ${slot})`
+      );
+      this.lastReconnectAttemptTime = Date.now();
+      this.connect(host, port, rack, slot);
+    } else {
+      setTimeout(
+        () => this.reconnect(host, port, rack, slot),
+        this.RECONNECT_DELAY
+      );
     }
   }
 

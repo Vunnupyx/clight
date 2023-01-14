@@ -128,6 +128,9 @@ export class NetworkService {
           }
         });
       });
+      this.toastr.success(
+        this.translate.instant('settings-network.UpdateAdapterSuccess')
+      );
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
       errorHandler(err);
@@ -170,6 +173,9 @@ export class NetworkService {
         state.status = Status.Ready;
         state.proxy = obj;
       });
+      this.toastr.success(
+        this.translate.instant('settings-network.UpdateProxySuccess')
+      );
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
       errorHandler(err);
@@ -213,6 +219,9 @@ export class NetworkService {
         state.status = Status.Ready;
         state.ntp = obj;
       });
+      this.toastr.success(
+        this.translate.instant('settings-network.UpdateNtpSuccess')
+      );
       !!obj?.[0] && this.getNtpReachable(obj);
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
@@ -280,6 +289,9 @@ export class NetworkService {
         state.status = Status.Ready;
         state.timestamp = obj;
       });
+      this.toastr.success(
+        this.translate.instant('settings-network.UpdateTimestampSuccess')
+      );
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
       errorHandler(err);

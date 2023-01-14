@@ -17,13 +17,13 @@ export interface Download {
   state: 'PENDING' | 'IN_PROGRESS' | 'DONE';
 }
 @Injectable()
-export class LogsService {
+export class GeneralService {
   constructor(
     private httpService: HttpService,
     private toastr: ToastrService
   ) {}
 
-  download(): Observable<Download> {
+  downloadLogs(): Observable<Download> {
     try {
       return this.httpService
         .download('/logs', {
@@ -36,6 +36,37 @@ export class LogsService {
         );
     } catch {
       this.toastr.error('settings-general.LogDownloadError');
+    }
+  }
+
+  downloadBackup(): Observable<Download> {
+    try {
+      return this.httpService
+        .download('/backup', {
+          responseType: 'blob',
+          observe: 'events',
+          reportProgress: true
+        })
+        .pipe(
+          this._getEventMessage((blob, filename) => saveAs(blob, filename))
+        );
+    } catch {
+      this.toastr.error('settings-general.BackupDownloadError');
+    }
+  }
+
+  async uploadBackup(file: File) {
+    try {
+      const formData = new FormData();
+      formData.append('config', file);
+
+      let headers = new Headers();
+      headers.append('Content-Type', 'multipart/form-data');
+      headers.append('Accept', 'application/json');
+
+      await this.httpService.post('/backup', formData);
+    } catch (err: any) {
+      this.toastr.error(err.error.message);
     }
   }
 

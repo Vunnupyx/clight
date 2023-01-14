@@ -31,14 +31,16 @@ export class LogsService {
           observe: 'events',
           reportProgress: true
         })
-        .pipe(this._getEventMessage((blob) => saveAs(blob, 'logs.zip')));
+        .pipe(
+          this._getEventMessage((blob, filename) => saveAs(blob, filename))
+        );
     } catch {
       this.toastr.error('settings-general.LogDownloadError');
     }
   }
 
   private _getEventMessage(
-    saver?: (b: Blob) => void
+    saver?: (b: Blob, f: string) => void
   ): (source: Observable<HttpEvent<Blob>>) => Observable<Download> {
     return (source: Observable<HttpEvent<Blob>>) =>
       source.pipe(
@@ -54,7 +56,15 @@ export class LogsService {
             }
             if (this._isHttpResponse(event)) {
               if (saver) {
-                saver(event.body);
+                const contentDisposition = event.headers.get(
+                  'content-disposition'
+                );
+                const filename = contentDisposition
+                  .split(';')[1]
+                  .split('filename')[1]
+                  .split('=')[1]
+                  .trim();
+                saver(event.body, filename);
               }
               return {
                 progress: 100,

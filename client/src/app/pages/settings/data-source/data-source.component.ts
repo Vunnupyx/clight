@@ -312,6 +312,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       type:
         this.dataSource?.protocol === DataSourceProtocol.S7
           ? SourceDataPointType.NCK
+          : this.dataSource?.protocol === DataSourceProtocol.Energy
+          ? SourceDataPointType.Measurement
           : null
     } as SourceDataPoint;
 

@@ -89,7 +89,11 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
       )}`
     );
 
-    const initFunc = [DataSourceProtocols.S7, DataSourceProtocols.IOSHIELD]
+    const initFunc = [
+      DataSourceProtocols.S7,
+      DataSourceProtocols.IOSHIELD,
+      DataSourceProtocols.ENERGY
+    ]
       .filter(
         (protocol) =>
           !this.dataSources.some(

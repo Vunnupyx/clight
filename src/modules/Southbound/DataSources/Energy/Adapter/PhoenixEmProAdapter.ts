@@ -38,6 +38,9 @@ export class PhoenixEmProAdapter {
       let resultArray: IMeasurement[] = [];
       let hasMeasurementReadingError = false;
       let hasMeterReadingError = false;
+      let hasTariffReadingError = false;
+      let hasDeviceInformationReadingError = false;
+
       //Get all measurements
       try {
         const allMeasurements: IEmProBulkReadingResponse =
@@ -82,7 +85,53 @@ export class PhoenixEmProAdapter {
         hasMeterReadingError = true;
       }
 
-      if (hasMeasurementReadingError && hasMeterReadingError) {
+      // Get device information
+      try {
+        const allDeviceInfo: IEmProBulkReadingResponse =
+          await this.performApiCall(
+            'GET',
+            `${this.hostname}${this.allInformationEndpoint}`
+          );
+        for (let measurement of allDeviceInfo.items) {
+          resultArray.push({
+            id: measurement.id,
+            name: measurement.name,
+            value: measurement.value,
+            unit: measurement.unit,
+            description: measurement.description
+          });
+        }
+      } catch (e) {
+        winston.warn(
+          `${logPrefix} Error reading device information: ${e?.message || e}`
+        );
+        hasDeviceInformationReadingError = true;
+      }
+
+      // Get tariff number
+      try {
+        const currentTariff = (await this.getCurrentTariff(
+          true
+        )) as IEmProReadingResponse;
+        resultArray.push({
+          id: currentTariff.id,
+          name: currentTariff.name,
+          value: currentTariff.value,
+          unit: currentTariff.unit,
+          description: currentTariff.description
+        });
+      } catch (e) {
+        winston.warn(
+          `${logPrefix} Error reading current tariff: ${e?.message || e}`
+        );
+        hasTariffReadingError = true;
+      }
+      if (
+        hasMeasurementReadingError &&
+        hasMeterReadingError &&
+        hasTariffReadingError &&
+        hasDeviceInformationReadingError
+      ) {
         return reject(new Error('Could not read any values'));
       } else {
         return resolve(resultArray);
@@ -167,9 +216,12 @@ export class PhoenixEmProAdapter {
 
   /**
    *  Reads current tariff
+   * @param fullResponse By default false and returns tariff number, true returns full response
    * @returns {Promise<string>}
    */
-  public getCurrentTariff(): Promise<string> {
+  public getCurrentTariff(
+    fullResponse = false
+  ): Promise<string | IEmProReadingResponse> {
     const logPrefix = `${PhoenixEmProAdapter.name}::getCurrentTariff`;
     return new Promise(async (resolve, reject) => {
       try {
@@ -178,7 +230,11 @@ export class PhoenixEmProAdapter {
           `${this.hostname}${EMPRO_GET_ENDPOINTS['tariff-number']}`
         );
         return resolve(
-          typeof result?.value === 'number' ? String(result.value) : '0'
+          fullResponse
+            ? result
+            : typeof result?.value === 'number'
+            ? String(result.value)
+            : '0'
         );
       } catch (e) {
         winston.warn(`${logPrefix} Error reading tariff: ${e?.message || e}`);
@@ -214,7 +270,7 @@ export class PhoenixEmProAdapter {
         return reject(new Error('Response not OK'));
       } catch (e) {
         winston.error(
-          `${logPrefix} unexpected error occurred while trying to change tariff: ${e?.message}`
+          `${logPrefix} unexpected error occurred while making API call: ${e?.message}`
         );
         return reject(new Error(e?.message || 'Unexpected Error'));
       }

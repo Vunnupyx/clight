@@ -172,8 +172,8 @@ export class DataSourceService {
     return NCK_ADDRESSES;
   }
 
-  getEnergyAddresses() {
-    return ENERGY_ADDRESSES;
+  getEnergyAddresses(tariff: string) {
+    return ENERGY_ADDRESSES(tariff);
   }
 
   async getDataSourceType(

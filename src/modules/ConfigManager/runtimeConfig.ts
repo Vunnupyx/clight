@@ -4,7 +4,7 @@ export const runtimeConfig: IRuntimeConfig = {
   users: [],
   systemInfo: [],
   auth: {
-    expiresIn: 3600
+    expiresIn: 7200
   },
   mtconnect: { listenerPort: 7878 },
   restApi: {

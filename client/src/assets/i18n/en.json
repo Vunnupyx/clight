@@ -307,10 +307,6 @@
     "From": "From",
     "To": "To",
     "AddMapping": "Add mapping",
-    "ProvisioningHost": "Provisioning Host",
-    "ScopeId": "Scope Id",
-    "RegId": "Reg Id",
-    "SymKey": "Sym Key",
     "AlreadyExistDataPoint": "This item is already added!",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
@@ -433,7 +429,11 @@
     "SetCurrentTime": "Set Current Time (UTC)",
     "ChooseTimeZone": "Choose Time Zone",
     "nptUnreachable": "NTP Server unreachable",
-    "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply."
+    "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply.",
+    "UpdateNtpSuccess": "Updated NTP Server successfully",
+    "UpdateProxySuccess": "Updated proxy successfully",
+    "UpdateAdapterSuccess": "Updated network adapter successfully",
+    "UpdateTimestampSuccess": "Updated timestamp successfully"
   },
   "system-information": {
     "SystemInformation": "System Information",

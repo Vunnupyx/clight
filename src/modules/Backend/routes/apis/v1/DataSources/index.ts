@@ -6,12 +6,13 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
-import {exec} from 'child_process';
+import { exec } from 'child_process';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import {
   DataSourceProtocols,
   LifecycleEventStatus
 } from '../../../../../../common/interfaces';
+import { isValidIpOrHostname } from '../../../../../Utilities';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -294,37 +295,54 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
 
 /**
  * Send ICMP ping to sps. Send back response with avg of ping
- * 
- * @param request 
- * @param response 
+ *
+ * @param request
+ * @param response
  */
 function pingNC(request: Request, response: Response) {
   const logPrefix = `Backend::DataSources::pingNC`;
-  winston.debug(`${logPrefix} called.`)
-  if(request.params.datasourceProtocol !== 's7') {
-    winston.debug(`${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`);
-    response.json({
-      error: {
-        msg: `Not possible for ${request.params.datasourceProtocol} source`
-      }
-    }).status(404);
+  winston.debug(`${logPrefix} called.`);
+  if (request.params.datasourceProtocol !== 's7') {
+    winston.debug(
+      `${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`
+    );
+    response
+      .json({
+        error: {
+          msg: `Not possible for ${request.params.datasourceProtocol} source`
+        }
+      })
+      .status(404);
     return;
   }
-  const {connection: {ipAddr: ip}} = configManager.config.dataSources.find((src) => {
-    return src.protocol === request.params.datasourceProtocol
-  })
+  const {
+    connection: { ipAddr: ip }
+  } = configManager.config.dataSources.find((src) => {
+    return src.protocol === request.params.datasourceProtocol;
+  });
   winston.debug(`${logPrefix} get ip: ${ip}`);
   if (!ip) {
-    response.json({
-      error: {
-        msg: `No ip for s7 found.`
-      }
-    }).status(404);
+    response
+      .json({
+        error: {
+          msg: `No ip for s7 found.`
+        }
+      })
+      .status(404);
+    return;
+  } else if (!isValidIpOrHostname(ip)) {
+    response
+      .json({
+        error: {
+          msg: `Incorrect input.`
+        }
+      })
+      .status(400);
     return;
   }
   const cmd = `ping -w 1 -i 0.3 ${ip}`;
   exec(cmd, (error, stdout, stderr) => {
-    if (error || stderr !== '' || stdout === ''){
+    if (error || stderr !== '' || stdout === '') {
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
         error: {
@@ -333,8 +351,10 @@ function pingNC(request: Request, response: Response) {
       });
       return;
     }
-    let filtered = stdout.match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g).join();
-    const [min, avg , max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
+    let filtered = stdout
+      .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
+      .join();
+    const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
     if (!avg) {
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
@@ -348,7 +368,7 @@ function pingNC(request: Request, response: Response) {
     response.status(200).json({
       delay: avg
     });
-  })
+  });
 }
 
 export const dataSourceHandlers = {

@@ -90,6 +90,7 @@
         "energy": "EEM Kit",
         "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       },
       "description": {
@@ -99,6 +100,7 @@
         "energy": "Includes all data points readable from EEM Kit",
         "gm": "GM 16-6 or GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "fanucAll": "Includes data points for Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       }
     }
@@ -436,7 +438,7 @@
     "UpdateNtpSuccess": "Updated NTP Server successfully",
     "UpdateProxySuccess": "Updated proxy successfully",
     "UpdateAdapterSuccess": "Updated network adapter successfully",
-    "UpdateTimestampSuccess": "Updated timestamp successfully"
+    "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
   "system-information": {
     "SystemInformation": "System Information",

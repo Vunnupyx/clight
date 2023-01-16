@@ -34,7 +34,7 @@ check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
 
 node ./scripts/deployment/deployment.manifest.js $version > $fileName
 
-az iot edge deployment create -d $name -n iot-datahub-euw-devd --content $fileName --target-condition "$target" --priority 0 --verbose --layered false
+az iot edge deployment create -d $name -n $iotHub --content $fileName --target-condition "$target" --priority 0 --verbose --layered false
 
 az iot hub device-twin update -n $iotHub -d $deviceId --tags "{\"mdclight\": \"iotflex-${version}\"}"
 

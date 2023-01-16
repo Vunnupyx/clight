@@ -12,6 +12,7 @@ import {
   DataSourceProtocols,
   LifecycleEventStatus
 } from '../../../../../../common/interfaces';
+import { isValidIpOrHostname } from '../../../../../Utilities';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -339,6 +340,15 @@ function pingDataSource(request: Request, response: Response) {
         }
       })
       .status(404);
+    return;
+  } else if (!isValidIpOrHostname(ip)) {
+    response
+      .json({
+        error: {
+          msg: `Incorrect input.`
+        }
+      })
+      .status(400);
     return;
   }
   const cmd = `ping -w 1 -i 0.3 ${ip}`;

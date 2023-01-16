@@ -237,6 +237,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Enumeration speichern",
+    "AddEnumeration": "Enumeration hinzufügen",
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
     "CurrentLiveValue": "Aktualwert",
@@ -309,10 +310,6 @@
     "From": "Von",
     "To": "Zu",
     "AddMapping": "Mapping hinzufügen",
-    "ProvisioningHost": "Provisionierungs Host",
-    "ScopeId": "Scope ID",
-    "RegId": "Registration ID",
-    "SymKey": "Symetrischer Schlüssel",
     "AlreadyExistDataPoint": "Der Datenpunkt ist bereits vorhanden.",
     "AuthenticationLevels": {
       "anonymous": "Anonym",
@@ -435,7 +432,11 @@
     "SetCurrentTime": "Systemzeit setzen (UTC)",
     "ChooseTimeZone": "Zeitzone",
     "nptUnreachable": "NTP Server nicht erreichbar",
-    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern.",
+    "UpdateNtpSuccess": "NTP wurde erfolgreich aktualisiert",
+    "UpdateProxySuccess": "Proxy wurde erfolgreich aktualisiert",
+    "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
+    "UpdateTimestampSuccess": "Zeiteinstellung wurde erfolgreich aktualisiert"
   },
   "system-information": {
     "SystemInformation": "System Informationen",

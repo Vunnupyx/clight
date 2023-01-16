@@ -23,8 +23,10 @@ export class PhoenixEmProAdapter {
   public currentTariff = '0';
 
   constructor(private connection: IEnergyDataSourceConnection) {
-    this.hostname = isValidIpOrHostname(this.connection.ipAddr)
-      ? this.connection.ipAddr
+    this.hostname = isValidIpOrHostname(this.connection?.ipAddr)
+      ? this.connection?.ipAddr?.startsWith('http')
+        ? this.connection?.ipAddr
+        : `http://${this.connection?.ipAddr}`
       : 'http://172.17.0.1'; //TBD
   }
 

@@ -29,7 +29,7 @@ check_docker_image () {
 # select device to deploy to
 select_edge_device() {
     echo "Select IoT2050 device: "
-    devices=("IoTEdge- (Cem)" "IoTEdge-8C-F3-19-C3-0E-61 (Markus)" "IoTEdge-8C-F3-19-6A-E6-B5 (Patrick)" "OTHER")
+    devices=("IoTEdge-8C-F3-19-C3-0E-B1 (Cem)" "IoTEdge-8C-F3-19-C3-0E-61 (Markus)" "IoTEdge-8C-F3-19-6A-E6-B5 (Patrick)" "OTHER")
     select yn in "${devices[@]}" ; do
     # ${devices[-1]} for bash > 4.2
     if [[ "$yn" == "${devices[${#devices[@]} - 1]}" ]]; then

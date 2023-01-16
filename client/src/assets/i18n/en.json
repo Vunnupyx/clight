@@ -434,9 +434,9 @@
     "ChooseTimeZone": "Choose Time Zone",
     "nptUnreachable": "NTP Server unreachable",
     "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply.",
-    "UpdateNtpSuccess": "Updated ntp successfully",
+    "UpdateNtpSuccess": "Updated NTP Server successfully",
     "UpdateProxySuccess": "Updated proxy successfully",
-    "UpdateAdapterSuccess": "Updated adapter successfully",
+    "UpdateAdapterSuccess": "Updated network adapter successfully",
     "UpdateTimestampSuccess": "Updated timestamp successfully"
   },
   "system-information": {

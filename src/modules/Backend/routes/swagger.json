@@ -1353,21 +1353,6 @@
         }
       }
     },
-    "systemInfo/environment": {
-      "get": {
-        "tags": ["systemInfo"],
-        "description": "Get system environment",
-        "operationId": "systemEnvironmentGet",
-        "responses": {
-          "200": {
-            "description": "Returns all information about the current environment",
-            "schema": {
-              "$ref": "#/definitions/envResponse"
-            }
-          }
-        }
-      }
-    },
     "/systemInfo/factoryreset": {
       "post": {
         "tags": ["systemInfo"],

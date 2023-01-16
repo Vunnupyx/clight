@@ -6,15 +6,17 @@
 # az login
 # az account set --subscription "CELOS Next Datahub DEV"
 
-version="3.0.0-beta-1-133-gd55131b0"
+
+read -p "Device Id: " deviceId
+read -p "Version of containers: " version
+
 versionForName=$(sed 's/[.]/-/g' <<< $version)
 
 target="tags.mdclight='iotflex-$version'"
 name=iotflex-${versionForName}-mdclight
-fileName=./deployment.manifest.${version}.json
+fileName=./scripts/deployment/deployment.manifest.${version}.json
 
 iotHub=iot-datahub-euw-devd
-deviceId=IoTEdge-8C-F3-19-6A-E6-B5
 
 check_docker_image () {
     docker manifest inspect $1 > /dev/null;
@@ -30,8 +32,10 @@ check_docker_image mdclightdev.azurecr.io/mdclight:$version
 check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
 check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
 
-node deployment.manifest.js $version > $fileName
+node ./scripts/deployment/deployment.manifest.js $version > $fileName
 
-az iot edge deployment create -d $name -n iot-datahub-euw-devd --content $fileName --target-condition "$target" --priority 0 --verbose --layered false
+az iot edge deployment create -d $name -n $iotHub --content $fileName --target-condition "$target" --priority 1 --verbose --layered false
 
 az iot hub device-twin update -n $iotHub -d $deviceId --tags "{\"mdclight\": \"iotflex-${version}\"}"
+
+rm $fileName

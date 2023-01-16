@@ -28,7 +28,6 @@ check_docker_image () {
 
 # select device to deploy to
 select_edge_device() {
-    echo "Select IoT2050 device: "
     devices=("IoTEdge-8C-F3-19-C3-0E-B1 (Cem)" "IoTEdge-8C-F3-19-C3-0E-61 (Markus)" "IoTEdge-8C-F3-19-6A-E6-B5 (Patrick)" "OTHER")
     select yn in "${devices[@]}" ; do
     # ${devices[-1]} for bash > 4.2
@@ -37,7 +36,7 @@ select_edge_device() {
         echo "$id"
         break
     fi
-    splitt=( "$yn" )
+    splitt=( $yn )
     echo "${splitt[0]}"
     break
     done
@@ -45,9 +44,9 @@ select_edge_device() {
 
 # select iot hub to publish deployment
 select_datahub() {
-    echo "Select iothub: "
+    
     iothubs=("iot-datahub-euw-devd" "iot-datahub-euw-dev" "OTHER")
-    select yn in "${devices[@]}" ; do
+    select yn in "${iothubs[@]}" ; do
     # ${devices[-1]} for bash > 4.2
     if [[ "$yn" == "${iothubs[${#iothubs[@]} - 1]}" ]]; then
         read -p "iothubs ID: " id
@@ -59,7 +58,9 @@ select_datahub() {
     done
 }
 
+echo "Select IoT2050 device: "
 deviceId=$(select_edge_device)
+echo "Select iothub: "
 iotHub=$(select_datahub)
 
 check_docker_image mdclightdev.azurecr.io/mdclight:$version 
@@ -67,6 +68,6 @@ check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
 check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
 
 node ./scripts/deployment/deployment.manifest.js $version > $fileName
-az iot edge deployment create -d $name -n $iotHub --content $fileName --target-condition "$target" --priority 1 --verbose --layered false
-az iot hub device-twin update -n $iotHub -d $deviceId --tags "{\"mdclight\": \"${version}\"}"
-rm $fileName
+az iot edge deployment create -d "$name" -n "$iotHub" --content "$fileName" --target-condition "$target" --priority 1 --verbose --layered false
+az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight\": \"${version}\"}"
+rm "$fileName"

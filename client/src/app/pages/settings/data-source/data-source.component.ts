@@ -466,7 +466,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       this.isDataPointRequired(dp)
     );
     const translationKey = `settings-data-source.TariffStatus.${
-      this.liveData?.[deviceDatapoint?.id]?.value
+      this.liveData?.[deviceDatapoint?.address]?.value
     }`;
     const result = this.translate.instant(translationKey);
     return result !== translationKey

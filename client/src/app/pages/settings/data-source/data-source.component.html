@@ -559,7 +559,13 @@
             let-value="value"
             let-row="row"
           >
-            <span *ngIf="liveData && liveData[row.id]; else noLiveData">
+            <span
+              *ngIf="
+                liveData &&
+                  (Protocol.Energy ? liveData[row.address] : liveData[row.id]);
+                else noLiveData
+              "
+            >
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
                   <ng-container
@@ -573,9 +579,12 @@
                     liveData[row.id].value
                   }}</ng-template>
                 </ng-container>
+                <ng-container *ngSwitchCase="Protocol.Energy">
+                  {{ liveData[row.address].value }}
+                  {{ liveData[row.address]?.unit }}
+                </ng-container>
                 <ng-container *ngSwitchDefault>
                   {{ liveData[row.id].value }}
-                  {{ liveData[row.id]?.unit }}
                 </ng-container>
               </ng-container>
             </span>
@@ -680,7 +689,7 @@
           *ngIf="dataSource?.protocol === Protocol.Energy"
           [name]="'settings-data-source.Description' | translate"
           prop="description"
-          [width]="100"
+          [width]="300"
           [sortable]="false"
         >
           <ng-template
@@ -690,7 +699,7 @@
             let-row="row"
           >
             <div class="text-ellipsis" [title]="value">
-              {{ value }}
+              {{ liveData[row.address]?.description }}
             </div>
           </ng-template>
         </ngx-datatable-column>

@@ -199,11 +199,12 @@
     "ActivePower": "Active Power",
     "TotalEnergy": "Total Energy",
     "TariffStatus": {
-      "1": "Running",
-      "2": "Idle",
-      "3": "Waiting",
+      "0": "Keine Tariffzähler aktiv",
+      "1": "Läuft",
+      "2": "Leerlauf",
+      "3": "Warten",
       "4": "Alarm",
-      "Unknown": "Unknown"
+      "Unknown": "Unbekannt"
     }
   },
   "settings-virtual-data-point": {

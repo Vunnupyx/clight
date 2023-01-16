@@ -199,6 +199,7 @@
     "ActivePower": "Active Power",
     "TotalEnergy": "Total Energy",
     "TariffStatus": {
+      "0": "No tariff counter active",
       "1": "Running",
       "2": "Idle",
       "3": "Waiting",

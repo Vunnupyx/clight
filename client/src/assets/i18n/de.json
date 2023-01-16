@@ -235,6 +235,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Enumeration speichern",
+    "AddEnumeration": "Enumeration hinzufügen",
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
     "CurrentLiveValue": "Aktualwert",
@@ -306,10 +307,6 @@
     "From": "Von",
     "To": "Zu",
     "AddMapping": "Mapping hinzufügen",
-    "ProvisioningHost": "Provisionierungs Host",
-    "ScopeId": "Scope ID",
-    "RegId": "Registration ID",
-    "SymKey": "Symetrischer Schlüssel",
     "AlreadyExistDataPoint": "Der Datenpunkt ist bereits vorhanden.",
     "AuthenticationLevels": {
       "anonymous": "Anonym",
@@ -429,10 +426,14 @@
     "TimeSettings": "Systemzeit",
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
-    "SetCurrentTime": "Systemzeit setzen",
+    "SetCurrentTime": "Systemzeit setzen (UTC)",
     "ChooseTimeZone": "Zeitzone",
     "nptUnreachable": "NTP Server nicht erreichbar",
-    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern.",
+    "UpdateNtpSuccess": "NTP wurde erfolgreich aktualisiert",
+    "UpdateProxySuccess": "Proxy wurde erfolgreich aktualisiert",
+    "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
+    "UpdateTimestampSuccess": "Zeiteinstellung wurde erfolgreich aktualisiert"
   },
   "system-information": {
     "SystemInformation": "System Informationen",
@@ -451,13 +452,19 @@
     "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
     "MaterialThemeVersion": "CELOS X Material Themaversion",
     "SoftwareComponent": "Software Komponent",
-    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut"
+    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut",
+    "FactoryReset": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
+    "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
+    "FactoryResetError": "Beim Zurücksetzen auf die Werkseinstellungen ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal."
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"
   },
   "clock": {
-    "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
+    "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen. Klicken Sie auf diese Warnung, um zur Einstellungsseite zu gelangen, und wählen Sie die Registerkarte Zeit, um die Zeiteinstellungen anzupassen."
   },
   "data-type": {
     "String": "String",

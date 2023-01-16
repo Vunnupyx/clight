@@ -2,9 +2,8 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from 'app/shared/shared.module';
 
 import { LayoutComponent } from './layout.component';
-import { ClockComponent } from './clock/clock.component';
 
-const COMPONENTS = [ClockComponent, LayoutComponent];
+const COMPONENTS = [LayoutComponent];
 
 @NgModule({
   imports: [SharedModule],

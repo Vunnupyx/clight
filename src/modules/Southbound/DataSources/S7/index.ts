@@ -435,7 +435,7 @@ export class S7DataSource extends DataSource {
         },
         (error) => {
           if (error) {
-            winston.error(`PLC connection error ${error.message}`);
+            winston.error(`PLC connection error ${error.message ?? error}`); //The error response on ISO failing is only a string from NodeS7 library
             reject(error);
           } else {
             winston.debug(`PLC connected successfully`);

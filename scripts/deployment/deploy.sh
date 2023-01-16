@@ -46,7 +46,7 @@ select_edge_device() {
 # select iot hub to publish deployment
 select_datahub() {
     echo "Select iothub: "
-    iothubs=("iot-datahub-euw-devd" "iot-datahub-euw-devd" "use other")
+    iothubs=("iot-datahub-euw-devd" "iot-datahub-euw-dev" "OTHER")
     select yn in "${devices[@]}" ; do
     # ${devices[-1]} for bash > 4.2
     if [[ "$yn" == "${iothubs[${#iothubs[@]} - 1]}" ]]; then

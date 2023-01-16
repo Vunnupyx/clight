@@ -75,6 +75,10 @@ export interface IOPCUAConfig extends OPCUAServerOptions {
   nodesetDir: string;
 }
 
+export type IEnergyDataSourceConnection = {
+  ipAddr: string;
+};
+
 export type IS7DataSourceConnection = {
   ipAddr: string;
   port?: number;

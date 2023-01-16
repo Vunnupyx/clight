@@ -1,7 +1,7 @@
 import winston from 'winston';
 import fetch from 'node-fetch';
 
-import { IS7DataSourceConnection } from '../../../../ConfigManager/interfaces';
+import { IEnergyDataSourceConnection } from '../../../../ConfigManager/interfaces';
 import { EMPRO_GET_ENDPOINTS } from './EmProGetEndpoints';
 import { IMeasurement } from '../../interfaces';
 import {
@@ -22,14 +22,10 @@ export class PhoenixEmProAdapter {
 
   public currentTariff = '0';
 
-  constructor(private connection: IS7DataSourceConnection) {
-    if (process.env.NODE_ENV === 'development') {
-      this.hostname = 'http://www.empro.phoenixcontact.com';
-    } else {
-      this.hostname = isValidIpOrHostname(this.connection.ipAddr)
-        ? this.connection.ipAddr
-        : 'http://www.empro.phoenixcontact.com'; //TBD
-    }
+  constructor(private connection: IEnergyDataSourceConnection) {
+    this.hostname = isValidIpOrHostname(this.connection.ipAddr)
+      ? this.connection.ipAddr
+      : 'http://172.17.0.1'; //TBD
   }
 
   /**

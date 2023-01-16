@@ -433,7 +433,7 @@
     "UpdateNtpSuccess": "Updated NTP Server successfully",
     "UpdateProxySuccess": "Updated proxy successfully",
     "UpdateAdapterSuccess": "Updated network adapter successfully",
-    "UpdateTimestampSuccess": "Updated timestamp successfully"
+    "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
   "system-information": {
     "SystemInformation": "System Information",

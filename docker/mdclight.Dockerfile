@@ -5,9 +5,8 @@
 # Last Update:  12-06-2022 Reduce layer count
 
 ARG DOCKER_REGISTRY
-ARG DOCKER_REGISTRY_PATH=$DOCKER_REGISTRY + "/"
 
-FROM ${DOCKER_REGISTRY_PATH}mdclight-fanuc:latest
+FROM ${DOCKER_REGISTRY}/mdclight-fanuc:latest
 
 ARG MDC_LIGHT_RUNTIME_VERSION
 # Install compiled MDC light runtime
@@ -19,13 +18,14 @@ RUN echo Building runtime ${MDC_LIGHT_RUNTIME_VERSION} \
     && npm install \
     && npm cache clean -f \
     && mkdir -p /etc/mdc-light/{config,logs,jwtkeys,sslkeys,certs} \
+    && mkdir -p /app \
     && npm run build \
-    && mv build/main/* app \
+    && mv build/main/* /app \
     && rm -rf /build /package.json /tsconfig.json /package-lock.json
 
 WORKDIR /app
 
-ENV LOG_LEVEL=info
+ENV LOG_LEVEL=debug
 ENV MDC_LIGHT_FOLDER=/etc/mdc-light
 ENV MDC_LIGHT_RUNTIME_VERSION=$MDC_LIGHT_RUNTIME_VERSION
 

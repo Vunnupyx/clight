@@ -89,6 +89,7 @@
         "empty": "Empty Template",
         "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       },
       "description": {
@@ -97,6 +98,7 @@
         "empty": "Template does not include any data source, virtual data points, mappings and application interface",
         "gm": "GM 16-6 or GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "fanucAll": "Includes data points for Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       }
     }
@@ -247,6 +249,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
+    "AddEnumeration": "Add enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
@@ -318,10 +321,6 @@
     "From": "から",
     "To": "へ",
     "AddMapping": "マッピングを追加",
-    "ProvisioningHost": "プロビジョニングホスト",
-    "ScopeId": "スコープID",
-    "RegId": "Reg Id",
-    "SymKey": "Symキー",
     "AlreadyExistDataPoint": "このアイテムは既に登録されています。",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
@@ -444,7 +443,11 @@
     "SetCurrentTime": "Set Current Time (UTC)",
     "ChooseTimeZone": "Choose Time Zone",
     "nptUnreachable": "NTPサーバーに到達できない",
-    "nptUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。"
+    "nptUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。",
+    "UpdateNtpSuccess": "Updated NTP Server successfully",
+    "UpdateProxySuccess": "Updated proxy successfully",
+    "UpdateAdapterSuccess": "Updated network adapter successfully",
+    "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
   "system-information": {
     "SystemInformation": "システム情報",

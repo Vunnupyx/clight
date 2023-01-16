@@ -89,6 +89,7 @@
         "empty": "Empty Template",
         "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       },
       "description": {
@@ -97,6 +98,7 @@
         "empty": "Template does not include any data source, virtual data points, mappings and application interface",
         "gm": "GM 16-6 or GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "fanucAll": "Includes data points for Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       }
     }
@@ -247,6 +249,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
+    "AddEnumeration": "Add enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
@@ -318,10 +321,6 @@
     "From": "From",
     "To": "To",
     "AddMapping": "Add mapping",
-    "ProvisioningHost": "Provisioning Host",
-    "ScopeId": "Scope Id",
-    "RegId": "Reg Id",
-    "SymKey": "Sym Key",
     "AlreadyExistDataPoint": "This item is already added!",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
@@ -444,7 +443,11 @@
     "SetCurrentTime": "Set Current Time (UTC)",
     "ChooseTimeZone": "Choose Time Zone",
     "nptUnreachable": "NTP Server unreachable",
-    "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply."
+    "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply.",
+    "UpdateNtpSuccess": "Updated NTP Server successfully",
+    "UpdateProxySuccess": "Updated proxy successfully",
+    "UpdateAdapterSuccess": "Updated network adapter successfully",
+    "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
   "system-information": {
     "SystemInformation": "System Information",

@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Subscription } from 'rxjs';
-import { NgForm } from '@angular/forms';
 
 import {
   DataMapping,
@@ -89,7 +88,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   statusSub!: Subscription;
 
   filterAddressStr = '';
-  dsFormValid: boolean = false;
 
   @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
@@ -193,20 +191,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       .setStatusTimer(dataSink.protocol)
       .subscribe();
 
-    if (dataSink.protocol !== DataSinkProtocol.DH) {
-      this.dataPointService.getDataPoints(dataSink.protocol);
-      this.dataMappingService.getDataMappingsAll();
-    } else {
-      if (dataSink.desired?.services) {
-        this.desiredServices = Object.entries(dataSink.desired?.services).map(
-          ([name, { enabled }]) => ({
-            name,
-            enabled
-          })
-        );
-      } else {
-        this.desiredServices = [];
-      }
+    this.dataPointService.getDataPoints(dataSink.protocol);
+    this.dataMappingService.getDataMappingsAll();
+    if (dataSink.protocol === DataSinkProtocol.DH) {
+      this.desiredServices = dataSink.desired?.services
+        ? Object.entries(dataSink.desired?.services).map(
+            ([name, { enabled }]) => ({
+              name,
+              enabled
+            })
+          )
+        : [];
     }
   }
 
@@ -416,14 +411,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
       return;
     }
     return this.dataSink.customDataPoints.find((dp) => dp.address === address);
-  }
-
-  saveDatahubConfig(form: NgForm) {
-    this.dsFormValid = form.valid!;
-
-    this.dataSinkService.updateDataSink(this.dataSink?.protocol!, {
-      datahub: form.value
-    });
   }
 
   goToMtConnectStream() {

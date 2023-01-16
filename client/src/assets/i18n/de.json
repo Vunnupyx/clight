@@ -89,6 +89,7 @@
         "empty": "Leere Vorlage",
         "gm": "GM Reihe",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Geräte",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
       },
       "description": {
@@ -97,6 +98,7 @@
         "empty": "Die Vorlage enthält keine Datenquelle, keine virtuellen Datenpunkte, keine Mappings und keine Anwendungsschnittstelle",
         "gm": "GM 16-6 oder GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger, OPC UA und CELOS Xchange",
+        "fanucAll": "Beinhaltet Datenpunkte für Fanuc Geräte",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
       }
     }
@@ -247,6 +249,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Enumeration speichern",
+    "AddEnumeration": "Enumeration hinzufügen",
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
     "CurrentLiveValue": "Aktualwert",
@@ -318,10 +321,6 @@
     "From": "Von",
     "To": "Zu",
     "AddMapping": "Mapping hinzufügen",
-    "ProvisioningHost": "Provisionierungs Host",
-    "ScopeId": "Scope ID",
-    "RegId": "Registration ID",
-    "SymKey": "Symetrischer Schlüssel",
     "AlreadyExistDataPoint": "Der Datenpunkt ist bereits vorhanden.",
     "AuthenticationLevels": {
       "anonymous": "Anonym",
@@ -444,7 +443,11 @@
     "SetCurrentTime": "Systemzeit setzen (UTC)",
     "ChooseTimeZone": "Zeitzone",
     "nptUnreachable": "NTP Server nicht erreichbar",
-    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern.",
+    "UpdateNtpSuccess": "NTP wurde erfolgreich aktualisiert",
+    "UpdateProxySuccess": "Proxy wurde erfolgreich aktualisiert",
+    "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
+    "UpdateTimestampSuccess": "Zeiteinstellung wurde erfolgreich aktualisiert"
   },
   "system-information": {
     "SystemInformation": "System Informationen",

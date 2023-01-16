@@ -2199,6 +2199,12 @@
                   },
                   "value": {
                     "type": "string"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
                   }
                 }
               }

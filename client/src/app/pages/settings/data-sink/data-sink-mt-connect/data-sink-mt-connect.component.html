@@ -230,6 +230,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="
           (dataSink?.protocol === Protocol.MTConnect
             ? 'settings-data-sink.DataItem'
@@ -284,7 +285,10 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
-        *ngIf="dataSink?.protocol !== Protocol.OPC"
+        *ngIf="
+          dataSink?.protocol !== Protocol.OPC &&
+          dataSink?.protocol !== Protocol.DH
+        "
         [name]="'settings-data-sink.Type' | translate"
         prop="type"
         [flexGrow]="1"
@@ -351,6 +355,7 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="'settings-data-sink.Map' | translate"
         prop="map"
         [flexGrow]="1.5"

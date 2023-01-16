@@ -14,7 +14,7 @@ let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 let emProClient: PhoenixEmProAdapter;
 
 const connection = {
-  ipAddr: 'http://www.empro.phoenixcontact.com' //TODO change this to '1.1.1.1' after merge of isValidIpOrHostname
+  ipAddr: '1.1.1.1'
 };
 describe('PhoenixEmProAdapter', () => {
   beforeEach(() => {
@@ -167,7 +167,7 @@ describe('PhoenixEmProAdapter', () => {
         Promise.resolve(new Response(JSON.stringify(mockMeasurementResponse)))
       );
 
-      let result: IMeasurement = await emProClient.getSingleDataPoint('P3');
+      let result: IMeasurement = await emProClient.getSingleDataPoint('p3');
       expect(mockedFetch).toHaveBeenCalledWith(
         `${connection.ipAddr}${mockMeasurementResponse.context.replace(
           '?',
@@ -182,7 +182,7 @@ describe('PhoenixEmProAdapter', () => {
       mockedFetch.mockResolvedValueOnce(Promise.reject(new Error('reason')));
 
       try {
-        let result: IMeasurement = await emProClient.getSingleDataPoint('P3');
+        let result: IMeasurement = await emProClient.getSingleDataPoint('p3');
       } catch (e) {
         expect(mockedFetch).toHaveBeenCalledWith(
           `${connection.ipAddr}${'/api/v1/measurements/p3'}`,

@@ -9,7 +9,7 @@ import {
   IEmProBulkReadingResponse,
   IEmProTariffChangeResponse
 } from '../interfaces';
-//import {isValidIpOrHostname} from '../../../../Utilities'
+import { isValidIpOrHostname } from '../../../../Utilities';
 
 /**
  * Phoenix Contact EMpro Adapter
@@ -26,13 +26,9 @@ export class PhoenixEmProAdapter {
     if (process.env.NODE_ENV === 'development') {
       this.hostname = 'http://www.empro.phoenixcontact.com';
     } else {
-      /* TODO after isValidIpOrHostname is merged
       this.hostname = isValidIpOrHostname(this.connection.ipAddr)
         ? this.connection.ipAddr
-        : 'TBDdefaultValue';
-        */
-      //TODO remove after isValidIpOrHostname is merged
-      this.hostname = 'http://www.empro.phoenixcontact.com';
+        : 'http://www.empro.phoenixcontact.com'; //TBD
     }
   }
 
@@ -183,7 +179,7 @@ export class PhoenixEmProAdapter {
       try {
         const result = await this.performApiCall(
           'GET',
-          `${this.hostname}${EMPRO_GET_ENDPOINTS['Tariff Number']}`
+          `${this.hostname}${EMPRO_GET_ENDPOINTS['tariff-number']}`
         );
         return resolve(
           typeof result?.value === 'number' ? String(result.value) : '0'

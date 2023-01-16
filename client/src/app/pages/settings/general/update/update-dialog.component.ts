@@ -22,7 +22,7 @@ export class UpdateDialogComponent implements OnInit {
   sub = new Subscription();
   checkingForUpdates = false;
   updateInProgress = false;
-  currentState = '';
+  currentState = 'GET_UPDATES';
   endReason = '';
   updateManager: UpdateManager;
 

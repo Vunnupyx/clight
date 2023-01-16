@@ -429,7 +429,11 @@
     "SetCurrentTime": "Systemzeit setzen (UTC)",
     "ChooseTimeZone": "Zeitzone",
     "nptUnreachable": "NTP Server nicht erreichbar",
-    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
+    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern.",
+    "UpdateNtpSuccess": "NTP wurde erfolgreich aktualisiert",
+    "UpdateProxySuccess": "Proxy wurde erfolgreich aktualisiert",
+    "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
+    "UpdateTimestampSuccess": "Zeiteinstellung wurde erfolgreich aktualisiert"
   },
   "system-information": {
     "SystemInformation": "System Informationen",

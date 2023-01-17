@@ -565,6 +565,9 @@ async function systemFactoryResetHandler(request: Request, response: Response) {
     await configManager.factoryResetConfiguration();
     response.status(200).send();
   } catch (e) {
+    winston.error(
+      `systemFactoryResetHandler:: Error performing factory reset: ${e?.message}`
+    );
     response.sendStatus(500);
   }
 }

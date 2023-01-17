@@ -252,7 +252,89 @@
     }
   ],
   "dataSinks": [],
-  "virtualDataPoints": [],
+  "virtualDataPoints": [
+    "virtualDataPoints": [
+      {
+        "id": "8cbe9aaa-d420-41d0-bc9f-5e8773c61037",
+        "sources": [
+          "36581bee-e756-47b7-a626-d1071f6a8bd3"
+        ],
+        "operationType": "equal",
+        "name": "EEM - Machine Running",
+        "mandatory":true,
+        "resetSchedules": []
+      },
+      {
+        "id": "e0be9b18-5ebf-499c-83f3-9439364a8454",
+        "sources": [
+          "40e97f5e-f155-4026-8fb2-f6837a7079e7"
+        ],
+        "operationType": "equal",
+        "name": "EEM - Machine Idle",
+        "mandatory":true,
+        "resetSchedules": []
+      },
+      {
+        "id": "8429dd77-7b31-49aa-954b-d5c2426a851e",
+        "sources": [
+          "b752c30c-0995-431d-8eb0-d0199bed57f9"
+        ],
+        "operationType": "equal",
+        "name": "EEM - Machine Waiting",
+        "mandatory":true,
+        "resetSchedules": []
+      },
+      {
+        "id": "6b196ab8-670e-4d1e-a279-7250a03e0e3c",
+        "sources": [
+          "63c378b3-69c6-44c1-bc9e-f55c3d56cf1b"
+        ],
+        "operationType": "equal",
+        "name": "EEM - Machine Alarm",
+        "mandatory":true,
+        "resetSchedules": []
+      },
+      {
+        "id": "022bc5b5-ed5e-4604-9997-a61efdb2943f",
+        "sources": [
+          "8cbe9aaa-d420-41d0-bc9f-5e8773c61037",
+          "e0be9b18-5ebf-499c-83f3-9439364a8454",
+          "8429dd77-7b31-49aa-954b-d5c2426a851e",
+          "6b196ab8-670e-4d1e-a279-7250a03e0e3c"
+        ],
+        "operationType": "enumeration",
+        "name": "EEM - Machine Status",
+        "mandatory":true,
+        "enumeration": {
+          "defaultValue": "0",
+          "items": [
+            {
+              "source": "8cbe9aaa-d420-41d0-bc9f-5e8773c61037",
+              "returnValueIfTrue": "running",
+              "priority": 0
+            },
+            {
+              "source": "e0be9b18-5ebf-499c-83f3-9439364a8454",
+              "returnValueIfTrue": "idle",
+              "priority": 1
+            },
+            {
+              "source": "8429dd77-7b31-49aa-954b-d5c2426a851e",
+              "returnValueIfTrue": "waiting",
+              "priority": 2
+            },
+            {
+              "source": "6b196ab8-670e-4d1e-a279-7250a03e0e3c",
+              "returnValueIfTrue": "alarm",
+              "priority": 3
+            }
+          ]
+        },
+        "resetSchedules": []
+      }
+    ],
+  
+  ],
   "mapping": [],
   "systemInfo": [],
   "templates": {

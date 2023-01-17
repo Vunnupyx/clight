@@ -140,7 +140,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
       case DataSourceProtocols.IOSHIELD:
         return new IoshieldDataSource(params);
       case DataSourceProtocols.ENERGY:
-        return new EnergyDataSource(params);
+        return new EnergyDataSource(params, this.virtualDataPointManager);
       default:
         throw new Error('Invalid data source!');
     }

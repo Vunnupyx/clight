@@ -170,7 +170,7 @@ export class PhoenixEmProAdapter {
           winston.error(
             `${logPrefix} error occurred while trying to change tariff: ${result.error} ${result.code}`
           );
-          return reject(new Error(result.error));
+          return reject(new Error(result?.error));
         }
       } catch (e) {
         winston.warn(`${logPrefix} Error changing tariff: ${e?.message || e}`);

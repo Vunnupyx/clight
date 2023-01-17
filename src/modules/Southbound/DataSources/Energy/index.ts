@@ -1,9 +1,10 @@
 import winston from 'winston';
 import { DataSource } from '../DataSource';
 import { LifecycleEventStatus } from '../../../../common/interfaces';
-import { IMeasurement } from '../interfaces';
+import { IDataSourceParams, IMeasurement } from '../interfaces';
 import { TariffNumbers } from './interfaces';
 import { PhoenixEmProAdapter } from './Adapter/PhoenixEmProAdapter';
+import { VirtualDataPointManager } from '../../../VirtualDataPointManager';
 
 /**
  * Implementation of Energy data source
@@ -11,6 +12,16 @@ import { PhoenixEmProAdapter } from './Adapter/PhoenixEmProAdapter';
 export class EnergyDataSource extends DataSource {
   protected name = EnergyDataSource.name;
   private phoenixEemClient: PhoenixEmProAdapter;
+  private virtualDataPointManager: VirtualDataPointManager;
+
+  constructor(
+    params: IDataSourceParams,
+    virtualDataPointManager: VirtualDataPointManager
+  ) {
+    super(params);
+    this.virtualDataPointManager = virtualDataPointManager;
+  }
+
   /**
    * Initializes Energy data source
    * @returns void
@@ -40,6 +51,9 @@ export class EnergyDataSource extends DataSource {
     }
 
     this.phoenixEemClient = new PhoenixEmProAdapter(connection);
+    this.virtualDataPointManager.setEnergyCallback(
+      this.handleMachineStatusChange.bind(this)
+    );
 
     this.setupDataPoints();
     this.updateCurrentStatus(LifecycleEventStatus.Connected);
@@ -95,12 +109,10 @@ export class EnergyDataSource extends DataSource {
   /**
    * Changes the current tariff number of the EMpro after new status of the machine
    * @param newStatus
-   * @returns {Promise<TariffNumbers>} resolves to new tariff number or rejects
    */
-  public handleMachineStatusChange(newStatus): Promise<TariffNumbers> {
+  public async handleMachineStatusChange(newStatus): Promise<void> {
     const logPrefix = `${this.name}::handleMachineStatusChange`;
-    //TBD how is this will be triggered?
-    // TBD will user enter the mapping from UI?
+
     const tariffStatusMapping = {
       running: '1',
       idle: '2',
@@ -116,18 +128,17 @@ export class EnergyDataSource extends DataSource {
       newTariffNo = '0';
     }
 
-    return new Promise((resolve, reject) => {
-      try {
-        const changeResult = this.phoenixEemClient.changeTariff(newTariffNo);
-        if (changeResult) {
-          resolve(newTariffNo);
-        }
-      } catch (e) {
-        winston.warn(
-          `${logPrefix} Error occurred while changing tariff: ${e?.message}`
-        );
-        reject(e);
+    try {
+      const changeResult = await this.phoenixEemClient.changeTariff(
+        newTariffNo
+      );
+      if (changeResult) {
+        winston.debug(`${logPrefix} EEM Tariff changed to: ${newTariffNo}`);
       }
-    });
+    } catch (e) {
+      winston.warn(
+        `${logPrefix} Error occurred while changing tariff: ${e?.message}`
+      );
+    }
   }
 }

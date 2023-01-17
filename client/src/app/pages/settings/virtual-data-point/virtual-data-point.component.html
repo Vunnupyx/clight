@@ -404,15 +404,20 @@
                 ><mat-icon svgIcon="mdc:system"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
-                (click)="onEditStart(rowIndex, row); group.value = null"
+                (click)="
+                  !row.mandatory && onEditStart(rowIndex, row);
+                  group.value = null
+                "
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
+                [disabled]="row.mandatory"
                 ><mat-icon svgIcon="mdc:edit"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
-                (click)="onDelete(row); group.value = null"
+                (click)="!row.mandatory && onDelete(row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
+                [disabled]="row.mandatory"
                 ><mat-icon svgIcon="mdc:delete"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle

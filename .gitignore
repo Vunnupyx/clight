@@ -36,3 +36,5 @@ _mdclight/local/ssl*
 _mdclight/local/config/*
 _mdclight/local/fakeSSH/**
 _mdclight/local/logs/*
+
+scripts/deployment/deployment.manifest.*.json

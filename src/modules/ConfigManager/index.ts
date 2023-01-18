@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import { promisify } from 'util';
 import { generateKeyPair } from 'crypto';
+import fetch from 'node-fetch';
 
 import {
   DataSinkProtocols,

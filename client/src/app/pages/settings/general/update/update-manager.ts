@@ -30,21 +30,26 @@ interface CosApplyUpdateResponse {
   Error: string;
 }
 
+interface CosAvailableUpdateFormat {
+  release: string;
+  BaseLayerVersion: string;
+  releaseNotes: string;
+  OSVersion: string;
+  releaseNotesMissingReason: string;
+}
+
 interface CosAvailableUpdates {
   message: string;
-  updates: Array<{
-    release: string;
-    BaseLayerVersion: string;
-    releaseNotes: string;
-    OSVersion: string;
-    releaseNotesMissingReason: string;
-  }>;
+  updates: Array<CosAvailableUpdateFormat>;
 }
 
 const DOWNLOAD_STATUS_POLLING_INTERVAL_MS = 5_000;
 const RESTART_STATUS_POLLING_INTERVAL_MS = 5_000;
 const CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS = 5_000;
 
+/**
+ * CELOS Software Update Manager
+ */
 export class UpdateManager {
   public retryCount = 0;
 
@@ -124,6 +129,9 @@ export class UpdateManager {
     private onStateChange
   ) {}
 
+  /**
+   * Starts the state machine to check CELOS updates
+   */
   public async start() {
     this.stateMachine = new StateMachine(
       this.updateFlow,
@@ -133,6 +141,9 @@ export class UpdateManager {
     await this.stateMachine.start();
   }
 
+  /**
+   * Gets new available versions and decides if there is a newer version available
+   */
   private async getUpdates() {
     const logPrefix = `${UpdateManager.name}::getUpdates`;
     try {
@@ -153,12 +164,16 @@ export class UpdateManager {
         } else if (availableVersions.length === 0) {
           return 'NO_UPDATE_FOUND';
         }
-        //TBD availableVersions[0]?
-        this.newVersionToInstall = availableVersions[0].release;
-        this.newBaseLayerVersionToInstall =
-          availableVersions[0].BaseLayerVersion;
+
+        const newestVersion =
+          this.findNewestAvailableVersion(availableVersions);
+        this.newVersionToInstall = newestVersion.release;
+        this.newBaseLayerVersionToInstall = newestVersion.BaseLayerVersion;
 
         if (!this.newVersionToInstall || !this.newBaseLayerVersionToInstall) {
+          console.log(
+            `${logPrefix} could not find release or BaseLayerVersion`
+          );
           //TBD
         }
         return 'UPDATE_FOUND';
@@ -169,6 +184,9 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Checks installed CELOS Version
+   */
   private async checkInstalledCosVersion() {
     const logPrefix = `${UpdateManager.name}::checkInstalledCosVersion`;
     try {
@@ -185,6 +203,9 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Checks if desired CELOS update version already downloaded
+   */
   private async checkDownloadedCosUpdates() {
     const logPrefix = `${UpdateManager.name}::checkDownloadedCosUpdates`;
     try {
@@ -201,6 +222,9 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Triggers download of new CELOS version
+   */
   private async downloadCosUpdates() {
     const logPrefix = `${UpdateManager.name}::downloadCosUpdates`;
     try {
@@ -221,6 +245,9 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Validates downloaded CELOS Version
+   */
   private async validateCosDownload() {
     const logPrefix = `${UpdateManager.name}::validateCosDownload`;
     try {
@@ -247,6 +274,9 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Applies downloadaed CELOS update
+   */
   private async applyCosUpdates() {
     const logPrefix = `${UpdateManager.name}::applyCosUpdates`;
     try {
@@ -270,6 +300,9 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Waits for system restart to detect that CELOS update successfully applied
+   */
   private async waitForSystemRestart() {
     const logPrefix = `${UpdateManager.name}::waitForSystemRestart`;
     try {
@@ -288,6 +321,9 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Triggers applying module software updates
+   */
   private async applyModuleUpdates() {
     const logPrefix = `${UpdateManager.name}::applyModuleUpdates`;
 
@@ -316,6 +352,11 @@ export class UpdateManager {
     }
   }
 
+  /**
+   * Waits for module updates by waiting for backend to restart in between
+   * @param hasBackendRestarted
+   * @returns
+   */
   private async waitForModuleUpdates(hasBackendRestarted = false) {
     const logPrefix = `${UpdateManager.name}::waitForModuleUpdates`;
 
@@ -348,7 +389,14 @@ export class UpdateManager {
     }
   }
 
-  private async checkContinuously(fn, msDelayBetweenCalls: number) {
+  /**
+   * Periodically checks given function with given delay until it resolves
+   *
+   * @param fn function to check periodically
+   * @param msDelayBetweenCalls delay between checks
+   * @returns
+   */
+  private async checkContinuously(fn: Function, msDelayBetweenCalls: number) {
     const logPrefix = `${UpdateManager.name}::checkContinuously`;
     return new Promise(async (resolve, reject) => {
       resolve(await fn());
@@ -368,6 +416,9 @@ export class UpdateManager {
       });
   }
 
+  /**
+   * Checks download status of CELOS update
+   */
   private async checkCosDownloadStatus(): Promise<checkDownloadStatus> {
     const logPrefix = `${UpdateManager.name}::checkCosDownloadStatus`;
     try {
@@ -390,10 +441,16 @@ export class UpdateManager {
     }
   }
 
-  private async checkRuntimeHealth() {
+  /**
+   * Returns system time from backend. Used as checking availability of backend
+   */
+  private async checkRuntimeHealth(): Promise<HealthcheckResponse> {
     return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
   }
 
+  /**
+   * Gets installed CELOS version from configuration agent
+   */
   private async checkSystemVersions(): Promise<Array<CosInstalledVersion>> {
     try {
       const response: Array<CosInstalledVersion> =
@@ -402,5 +459,42 @@ export class UpdateManager {
     } catch (e) {
       throw e;
     }
+  }
+
+  /**
+   * Finds newest semantic version among given available versions
+   * @param availableVersions
+   */
+  private findNewestAvailableVersion(
+    availableVersions: CosAvailableUpdates['updates']
+  ): CosAvailableUpdateFormat {
+    const sortedVersions = availableVersions.sort((first, second): number => {
+      const [major1, minor1, patch1] = first.release.split('-')[0].split('.');
+      const [major2, minor2, patch2] = second.release.split('-')[0].split('.');
+
+      if (
+        parseInt(major2, 10) > parseInt(major1, 10) ||
+        (major2 === major1 && parseInt(minor2, 10) > parseInt(minor1, 10)) ||
+        (major2 === major1 &&
+          minor2 === minor1 &&
+          parseInt(patch2, 10) > parseInt(patch1, 10))
+      ) {
+        return 1;
+      }
+
+      if (
+        parseInt(major1, 10) > parseInt(major2, 10) ||
+        (major1 === major2 && parseInt(minor1, 10) > parseInt(minor2, 10)) ||
+        (major1 === major2 &&
+          minor1 === minor2 &&
+          parseInt(patch1, 10) > parseInt(patch2, 10))
+      ) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+    return sortedVersions[0];
   }
 }

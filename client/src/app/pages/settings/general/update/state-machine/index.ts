@@ -7,6 +7,9 @@ export interface StateAndTransitions {
   };
 }
 
+/**
+ * Generic state machine class
+ */
 export class StateMachine {
   private currentState: string;
   private endReason: string | undefined;
@@ -18,6 +21,9 @@ export class StateMachine {
     private isInfiniteLoop = false
   ) {}
 
+  /**
+   * Starts the state machine with initial state and runs through the states using transitions
+   */
   public async start() {
     this.currentState = this.initialState;
 
@@ -58,6 +64,9 @@ export class StateMachine {
     }
   }
 
+  /**
+   * Executes current step and its transitions and returns the next state
+   */
   private async executeCurrentStep(): Promise<string> {
     const transition =
       this.stateAndTransitions?.[this.currentState]?.transition;

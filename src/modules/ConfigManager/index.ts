@@ -410,11 +410,17 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       { encoding: 'utf-8' }
     );
 
-    await promisefs.unlink(authConfig);
-    await promisefs.unlink(path.join(this.keyFolder, this.privateKeyName));
-    await promisefs.unlink(path.join(this.keyFolder, this.publicKeyName));
-    await promisefs.unlink(path.join(this.sslFolder, 'ssl.crt'));
-    await promisefs.unlink(path.join(this.sslFolder, 'ssl_private.key'));
+    await promisefs.rm(authConfig, { force: true });
+    await promisefs.rm(path.join(this.keyFolder, this.privateKeyName), {
+      force: true
+    });
+    await promisefs.rm(path.join(this.keyFolder, this.publicKeyName), {
+      force: true
+    });
+    await promisefs.rm(path.join(this.sslFolder, 'ssl.crt'), { force: true });
+    await promisefs.rm(path.join(this.sslFolder, 'ssl_private.key'), {
+      force: true
+    });
 
     if (fs.existsSync(this.certificateFolder)) {
       let certFiles = await promisefs.readdir(this.certificateFolder);

@@ -744,6 +744,7 @@ export class VirtualDataPointManager {
       virtualEvents.push(newEvent);
 
       if (
+        process.env.ALLOW_EEM_AUTO_TARIFF_UPDATE &&
         newEvent.dataSource.protocol === 'virtual' &&
         vdpConfig.name === 'EEM - Machine Status'
       ) {

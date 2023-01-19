@@ -561,8 +561,12 @@ async function sendMdclUpdateCommand(
  * @param response
  */
 async function systemFactoryResetHandler(request: Request, response: Response) {
+  const logPrefix = `systemInfo::systemFactoryResetHandler`;
+  winston.info(`${logPrefix} factory reset requested`);
+
   try {
     await configManager.factoryResetConfiguration();
+    winston.info(`${logPrefix} factory reset successfully done`);
     response.status(200).send();
   } catch (e) {
     winston.error(

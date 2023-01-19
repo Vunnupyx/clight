@@ -1,7 +1,5 @@
 import { StateMachine, StateAndTransitions } from '..';
 
-jest.mock('winston');
-
 const stateAndTransitions: StateAndTransitions = {
   INIT: {
     transition: () => 'START',

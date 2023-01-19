@@ -96,6 +96,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
   private sslFolder = path.join(this.mdcFolder, 'sslkeys');
   private runtimeFolder = path.join(this.mdcFolder, 'runtime-files');
+  private certificateFolder = path.join(this.mdcFolder, 'certs');
 
   private configName = 'config.json';
   private authUsersConfigName = 'auth.json';
@@ -415,11 +416,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     await promisefs.unlink(path.join(this.sslFolder, 'ssl.crt'));
     await promisefs.unlink(path.join(this.sslFolder, 'ssl_private.key'));
 
-    if (fs.existsSync(`${this.mdcFolder}/certs`)) {
-      let certFiles = await promisefs.readdir(`${this.mdcFolder}/certs`);
+    if (fs.existsSync(this.certificateFolder)) {
+      let certFiles = await promisefs.readdir(this.certificateFolder);
       await Promise.all(
-        certFiles.map((filename) =>
-          promisefs.unlink(path.join(`${this.mdcFolder}/certs`, filename))
+        certFiles.map((fileOrFolderName) =>
+          promisefs.rm(path.join(this.certificateFolder, fileOrFolderName), {
+            recursive: true,
+            force: true
+          })
         )
       );
     }

@@ -6,6 +6,10 @@ title: Changelog
 
 ## [3.0.0]
 
+## Added
+
+- [DIGMDCLGHT-244](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-244) Update mechanism for CELOS implemented
+
 ## Fixed
 
 - [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixed missing value for NCK data point basicLengthUnit

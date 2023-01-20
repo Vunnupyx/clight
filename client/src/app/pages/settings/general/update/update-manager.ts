@@ -350,12 +350,14 @@ export class UpdateManager {
         } as any
       );
       const statusCode: number = response.status;
-      console.log('DEBUG', response);
+
       if (statusCode === 202) {
-        //TBD version can be read from response
+        const versionInstalling = response.body?.version;
+        const message = response.body?.message;
+
         return 'MODULE_UPDATE_APPLIED';
       } else {
-        //TBD error can be read from response
+        console.log(response.body);
         return 'UNEXPECTED_ERROR';
       }
     } catch (err) {
@@ -401,27 +403,28 @@ export class UpdateManager {
   }
 
   /**
-   * Periodically checks given function with given delay until it resolves
+   * Periodically checks given Promise with given delay until it resolves
    *
-   * @param fn function to check periodically
+   * @param fn function that returns a Promise to check periodically
    * @param msDelayBetweenCalls delay between checks
    * @returns
    */
-  private async checkContinuously(fn: Function, msDelayBetweenCalls: number) {
+  private async checkContinuously(
+    fn: () => Promise<any>,
+    msDelayBetweenCalls: number
+  ) {
     const logPrefix = `${UpdateManager.name}::checkContinuously`;
-    return new Promise(async (resolve, reject) => {
-      resolve(await fn());
-    })
+    return fn()
       .then(async (result) => {
         if (result) {
           return result;
         } else {
-          // TBD Will unreachability error go to here or catch? To test after mockups are removed
           await sleep(msDelayBetweenCalls);
           return this.checkContinuously(fn, msDelayBetweenCalls);
         }
       })
       .catch((err) => {
+        // When server is down response is 502, so it will come here as expected
         console.log(logPrefix, err);
         return 'ERROR';
       });

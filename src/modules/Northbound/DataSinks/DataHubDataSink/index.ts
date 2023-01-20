@@ -47,6 +47,14 @@ export class DataHubDataSink extends DataSink {
     );
   }
 
+  /**
+   * Returns datahub adapter
+   * @returns
+   */
+  public getAdapter(): DataHubAdapter {
+    return this.#datahubAdapter;
+  }
+
   private handleAdapterStateChange(newState: LifecycleEventStatus) {
     this.updateCurrentStatus(newState);
   }
@@ -131,10 +139,9 @@ export class DataHubDataSink extends DataSink {
 
     if (!this.enabled) {
       winston.info(
-        `${logPrefix} datahub data sink is disabled. Skipping initialization.`
+        `${logPrefix} datahub data sink is disabled. Continue initialization for update mechanism.`
       );
       this.updateCurrentStatus(LifecycleEventStatus.Disabled);
-      return this;
     }
 
     if (!this.termsAndConditionsAccepted) {

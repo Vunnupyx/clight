@@ -380,6 +380,7 @@ export class UpdateManager {
       );
       if (result === 'ERROR') {
         // Expected status of configuration agent being down due to restart, so after this a reachability will show update was successful
+        await sleep(DOWNLOAD_STATUS_POLLING_INTERVAL_MS);
         return this.waitForModuleUpdates(true);
       } else if (hasBackendRestarted) {
         //With healthcheck make sure runtime is also running
@@ -425,7 +426,6 @@ export class UpdateManager {
       })
       .catch((err) => {
         // When server is down response is 502, so it will come here as expected
-        console.log(logPrefix, err);
         return 'ERROR';
       });
   }

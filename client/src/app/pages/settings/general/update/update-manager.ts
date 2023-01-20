@@ -55,8 +55,9 @@ export class UpdateManager {
 
   private stateMachine: StateMachine;
   private startState = 'GET_UPDATES';
-  private newVersionToInstall = '';
+  private newReleaseToInstall = '';
   private newBaseLayerVersionToInstall = '';
+  private newOsVersionToInstall = '';
   private updateFlow: StateAndTransitions = {
     INIT: {
       transition: () => 'START_UPDATE',
@@ -167,10 +168,11 @@ export class UpdateManager {
 
         const newestVersion =
           this.findNewestAvailableVersion(availableVersions);
-        this.newVersionToInstall = newestVersion.release;
+        this.newReleaseToInstall = newestVersion.release;
         this.newBaseLayerVersionToInstall = newestVersion.BaseLayerVersion;
+        this.newOsVersionToInstall = newestVersion.OSVersion;
 
-        if (!this.newVersionToInstall || !this.newBaseLayerVersionToInstall) {
+        if (!this.newReleaseToInstall || !this.newBaseLayerVersionToInstall) {
           console.log(
             `${logPrefix} could not find release or BaseLayerVersion`
           );
@@ -192,11 +194,19 @@ export class UpdateManager {
     try {
       const response = await this.checkSystemVersions();
 
-      const isVersionInstalled = response?.find(
-        (x) => x.Version === this.newVersionToInstall
+      const installedOsVersion = response?.find(
+        (x) => x.Name === 'COS'
+      )?.Version;
+      const resultOfVersionComparison = this.compareVersionSemver(
+        installedOsVersion,
+        this.newOsVersionToInstall
       );
 
-      return isVersionInstalled ? 'VERSION_OK' : 'VERSION_NOT_OK';
+      const isCorrectVersionInstalled =
+        typeof resultOfVersionComparison === 'number' &&
+        resultOfVersionComparison < 1;
+
+      return isCorrectVersionInstalled ? 'VERSION_OK' : 'VERSION_NOT_OK';
     } catch (err) {
       console.log(logPrefix, err);
       return 'UNEXPECTED_ERROR';
@@ -213,7 +223,8 @@ export class UpdateManager {
         `/system/update`
       );
 
-      const isUpdateAvailable = response?.Version === this.newVersionToInstall;
+      const isUpdateAvailable =
+        response?.Version === this.newOsVersionToInstall;
 
       return isUpdateAvailable ? 'UPDATE_AVAILABLE' : 'UPDATE_NOT_AVAILABLE';
     } catch (err) {
@@ -229,12 +240,12 @@ export class UpdateManager {
     const logPrefix = `${UpdateManager.name}::downloadCosUpdates`;
     try {
       const response: { Version: string } = await this.configAgentEndpoint.post(
-        `/system/update/${this.newVersionToInstall}/download`,
-        this.newVersionToInstall
+        `/system/update/${this.newOsVersionToInstall}/download`,
+        this.newOsVersionToInstall
       );
 
       const isDownloadStarted =
-        true || response?.Version === this.newVersionToInstall;
+        true || response?.Version === this.newOsVersionToInstall;
 
       if (isDownloadStarted) {
         return 'COS_DOWNLOAD_STARTED';
@@ -283,7 +294,7 @@ export class UpdateManager {
       const response: CosApplyUpdateResponse =
         await this.configAgentEndpoint.post(`/system/applyupdate`, {
           Title: '',
-          Version: this.newVersionToInstall,
+          Version: this.newOsVersionToInstall,
           Description: ''
         });
 
@@ -331,7 +342,7 @@ export class UpdateManager {
       const response = await this.httpService.post(
         `/systemInfo/update`,
         {
-          release: this.newVersionToInstall,
+          release: this.newReleaseToInstall,
           baseLayerVersion: this.newBaseLayerVersionToInstall
         },
         {
@@ -339,7 +350,7 @@ export class UpdateManager {
         } as any
       );
       const statusCode: number = response.status;
-
+      console.log('DEBUG', response);
       if (statusCode === 202) {
         //TBD version can be read from response
         return 'MODULE_UPDATE_APPLIED';
@@ -468,9 +479,28 @@ export class UpdateManager {
   private findNewestAvailableVersion(
     availableVersions: CosAvailableUpdates['updates']
   ): CosAvailableUpdateFormat {
-    const sortedVersions = availableVersions.sort((first, second): number => {
-      const [major1, minor1, patch1] = first.release.split('-')[0].split('.');
-      const [major2, minor2, patch2] = second.release.split('-')[0].split('.');
+    const sortedVersions = availableVersions.sort((first, second) =>
+      this.compareVersionSemver(first.release, second.release)
+    );
+
+    return sortedVersions[0];
+  }
+
+  /**
+   * Compares two semantic versions to determine which one is newer.
+   * Returns 1 if second > first, 0 if equal and -1 if first > second.
+   * Returns null if error
+   * @param first
+   * @param second
+   * @returns
+   */
+  private compareVersionSemver(
+    first: string,
+    second: string
+  ): 1 | 0 | -1 | null {
+    try {
+      const [major1, minor1, patch1] = first?.split('-')?.[0]?.split('.');
+      const [major2, minor2, patch2] = second?.split('-')?.[0]?.split('.');
 
       if (
         parseInt(major2, 10) > parseInt(major1, 10) ||
@@ -493,8 +523,8 @@ export class UpdateManager {
       }
 
       return 0;
-    });
-
-    return sortedVersions[0];
+    } catch (e) {
+      return null;
+    }
   }
 }

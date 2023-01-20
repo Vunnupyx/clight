@@ -193,7 +193,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Returns data sink by protocol
    */
-  public getDataSinkByProto(protocol: string) {
+  public getDataSinkByProto(protocol: DataSinkProtocols | string) {
     return this.dataSinks.find((sink) => sink.protocol === protocol);
   }
 

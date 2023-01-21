@@ -25,6 +25,7 @@ const config = {
               'celos.module.visible': 'true'
             },
             HostConfig: {
+              Privileged: true,
               NetworkMode: 'azure-iot-edge',
               PortBindings: {
                 '4840/tcp': [{ HostPort: '4840' }],

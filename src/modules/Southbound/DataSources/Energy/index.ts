@@ -107,10 +107,12 @@ export class EnergyDataSource extends DataSource {
   }
 
   /**
-   * Changes the current tariff number of the EMpro after new status of the machine
+   * Changes the current tariff number of the EMpro after new status of the machine and
+   * returns the new tariff number. Error case is just logged and not returned as it is
+   * not processed in VDP side
    * @param newStatus
    */
-  public async handleMachineStatusChange(newStatus): Promise<void> {
+  public async handleMachineStatusChange(newStatus): Promise<TariffNumbers> {
     const logPrefix = `${this.name}::handleMachineStatusChange`;
 
     const tariffStatusMapping = {
@@ -134,6 +136,7 @@ export class EnergyDataSource extends DataSource {
       );
       if (changeResult) {
         winston.debug(`${logPrefix} EEM Tariff changed to: ${newTariffNo}`);
+        return newTariffNo;
       }
     } catch (e) {
       winston.warn(

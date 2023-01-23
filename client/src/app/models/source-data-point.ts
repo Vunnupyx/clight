@@ -1,6 +1,10 @@
 export enum SourceDataPointType {
   PLC = 's7',
-  NCK = 'nck'
+  NCK = 'nck',
+  Measurement = 'measurement',
+  Meter = 'meter',
+  Tariff = 'tariff',
+  Device = 'device'
 }
 
 export class SourceDataPoint {

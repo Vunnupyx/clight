@@ -168,8 +168,10 @@
     "DataPoints": "データポイント",
     "SelectAVariable": "変数を選択",
     "ControllerType": "Type",
+    "CurrentTariff": "Current Tariff",
     "Name": "名前",
     "Type": "型",
+    "Description": "Description",
     "Address": "アドレス",
     "LiveData": "ライブデータ",
     "Actions": "動作",
@@ -178,7 +180,8 @@
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再度試してください。",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "デジタル入力"
+      "ioshield": "デジタル入力",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
@@ -192,7 +195,17 @@
     "TestConnection": "テスト接続",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "ActivePower": "Active Power",
+    "TotalEnergy": "Total Energy",
+    "TariffStatus": {
+      "0": "No tariff counter active",
+      "1": "Running",
+      "2": "Idle",
+      "3": "Waiting",
+      "4": "Alarm",
+      "Unknown": "Unknown"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "仮想データポイント",

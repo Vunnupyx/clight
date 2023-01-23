@@ -2,20 +2,10 @@
   <p>
     <mat-spinner></mat-spinner>
   </p>
-  <ng-container *ngIf="checkingForUpdates">
-    <h3 class="text-center">
-      {{ 'system-information.CheckUpdate' | translate }}
-    </h3>
-    <p class="text-center">
-      {{ 'system-information.CheckUpdateDescr' | translate }}
-    </p>
-  </ng-container>
-  <ng-container *ngIf="updateInProgress">
-    <h3 class="text-center">
-      {{ 'system-information.InstallingUpdate' | translate }}
-    </h3>
-    <p class="text-center">
-      {{ 'system-information.InstallingUpdateDescr' | translate }}
-    </p>
-  </ng-container>
+  <h3 class="text-center">
+    {{ currentStateText | translate }}
+  </h3>
+  <p *ngIf="updateInProgress" class="text-center">
+    {{ 'system-information.InstallingUpdateDescr' | translate }}
+  </p>
 </div>

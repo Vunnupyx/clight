@@ -44,6 +44,7 @@ export class VirtualDataPointManager {
     info: [],
     debug: []
   };
+  private energyMachineStatusChangeCallback: Function;
 
   private static className: string = VirtualDataPointManager.name;
 
@@ -741,6 +742,21 @@ export class VirtualDataPointManager {
 
       _events.push(newEvent);
       virtualEvents.push(newEvent);
+
+      if (
+        process.env.ALLOW_EEM_AUTO_TARIFF_UPDATE &&
+        newEvent.dataSource.protocol === 'virtual' &&
+        vdpConfig.name === 'EEM - Machine Status'
+      ) {
+        const currentValue = this.cache.getLastestValue(
+          newEvent.measurement.id
+        )?.value;
+        const newValue = newEvent.measurement.value;
+
+        if (newValue !== currentValue) {
+          this.energyMachineStatusChangeCallback(newValue);
+        }
+      }
     }
 
     this.cache.update(virtualEvents);
@@ -755,5 +771,12 @@ export class VirtualDataPointManager {
   public resetCounter(id: string): void {
     winston.info(`${this.constructor.name}::resetCounter `);
     this.counters.reset(id);
+  }
+
+  /**
+   * Sets the callback function for Energy use case, where machine status change triggers EEM tariff change
+   */
+  public setEnergyCallback(cb: Function): void {
+    this.energyMachineStatusChangeCallback = cb;
   }
 }

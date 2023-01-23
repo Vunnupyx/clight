@@ -2,7 +2,8 @@ import { SourceDataPoint } from './source-data-point';
 
 export enum DataSourceProtocol {
   S7 = 's7',
-  IOShield = 'ioshield'
+  IOShield = 'ioshield',
+  Energy = 'energy'
 }
 
 export enum DataSourceSoftwareVersion {
@@ -49,8 +50,12 @@ export enum IOShieldTypes {
   AI_150_5di = 'ai-150+5di'
 }
 
+export enum EnergyTypes {
+  PhoenixEMpro = 'PhoenixEMpro'
+}
+
 export class DataSource {
-  type?: S7Types | IOShieldTypes;
+  type?: S7Types | IOShieldTypes | EnergyTypes;
   connection?: Connection;
   dataPoints?: SourceDataPoint[];
   enabled?: boolean;

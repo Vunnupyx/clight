@@ -13,6 +13,7 @@ import {
   LifecycleEventStatus
 } from '../../../../../../common/interfaces';
 import { isValidIpOrHostname } from '../../../../../Utilities';
+import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -130,7 +131,9 @@ async function dataSourcesPostDatapointBulkHandler(
   response: Response
 ): Promise<void> {
   try {
-    if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
+    if (
+      !['ioshield', 's7', 'energy'].includes(request.params.datasourceProtocol)
+    ) {
       response.status(404).json({ error: 'Protocol not valid' });
       winston.error(
         `dataSourcesPostDatapointBulkHandler error due to no valid protocol!`
@@ -267,7 +270,9 @@ async function dataSourcesPatchDatapointHandler(
  */
 function dataSourceGetStatusHandler(request: Request, response: Response) {
   //TODO: Make more generic
-  if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
+  if (
+    !['ioshield', 's7', 'energy'].includes(request.params.datasourceProtocol)
+  ) {
     response.status(404).json({ error: 'Protocol not valid' });
     winston.error(`dataSourceGetStatusHandler error due to no valid protocol!`);
     return;
@@ -280,17 +285,23 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  let status;
+  let status, emProTariffNumber;
 
   try {
     status = dataSourcesManager
       .getDataSourceByProto(request.params.datasourceProtocol)
       .getCurrentStatus();
+    if (request.params.datasourceProtocol === 'energy') {
+      const energyDataSource = dataSourcesManager.getDataSourceByProto(
+        request.params.datasourceProtocol
+      ) as EnergyDataSource;
+      emProTariffNumber = energyDataSource.getCurrentTariffNumber();
+    }
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;
   }
 
-  response.status(200).json({ status });
+  response.status(200).json({ status, emProTariffNumber });
 }
 
 /**
@@ -299,13 +310,15 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
  * @param request
  * @param response
  */
-function pingNC(request: Request, response: Response) {
-  const logPrefix = `Backend::DataSources::pingNC`;
+function pingDataSource(request: Request, response: Response) {
+  const logPrefix = `Backend::DataSources::pingDataSource`;
   winston.debug(`${logPrefix} called.`);
-  if (request.params.datasourceProtocol !== 's7') {
+  let datasourceProtocol;
+  if (!['s7', 'energy'].includes(request.params.datasourceProtocol)) {
     winston.debug(
       `${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`
     );
+    datasourceProtocol = request.params.datasourceProtocol;
     response
       .json({
         error: {
@@ -318,14 +331,14 @@ function pingNC(request: Request, response: Response) {
   const {
     connection: { ipAddr: ip }
   } = configManager.config.dataSources.find((src) => {
-    return src.protocol === request.params.datasourceProtocol;
+    return src.protocol === datasourceProtocol;
   });
   winston.debug(`${logPrefix} get ip: ${ip}`);
   if (!ip) {
     response
       .json({
         error: {
-          msg: `No ip for s7 found.`
+          msg: `No ip for ${datasourceProtocol} found.`
         }
       })
       .status(404);
@@ -385,5 +398,5 @@ export const dataSourceHandlers = {
   dataSourcesDeleteDatapoint: dataSourcesDeleteDatapointHandler,
   dataSourcesPatchDatapoint: dataSourcesPatchDatapointHandler,
   // ping to s7
-  dataSourceGetPing: pingNC
+  dataSourceGetPing: pingDataSource
 };

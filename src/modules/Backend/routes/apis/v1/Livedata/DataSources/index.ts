@@ -41,7 +41,9 @@ function livedataDataSourceDataPointsGetHandler(
     return;
   }
 
-  const dataPointIds = dataSource.dataPoints.map((dp) => dp.id);
+  const dataPointIds = dataSource.dataPoints.map((dp) =>
+    request.params.datasourceProtocol === 'energy' ? dp.address : dp.id
+  );
 
   const timeseriesIncluded = request.query.timeseries === 'true';
 
@@ -56,6 +58,8 @@ function livedataDataSourceDataPointsGetHandler(
       const obj: any = {
         dataPointId,
         value: value.value,
+        unit: value.unit,
+        description: value.description,
         timestamp: Math.round(new Date(value.ts).getTime() / 1000)
       };
 
@@ -92,6 +96,8 @@ function livedataDataSourceDataPointGetHandler(
   const payload: any = {
     dataPointId: request.params.dataPointId,
     value: value.value,
+    unit: value.unit,
+    description: value.description,
     timestamp: Math.round(new Date(value.ts).getTime() / 1000)
   };
 

@@ -14,6 +14,8 @@ export interface IMeasurement {
   id: string;
   name: string;
   value: string | number | boolean;
+  unit?: string;
+  description?: string;
 }
 
 export interface IDataSourceParams {

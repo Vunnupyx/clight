@@ -1,23 +1,13 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA
-} from '@angular/material/dialog';
-import {
-  ColumnMode,
-  DatatableComponent
-} from '@swimlane/ngx-datatable';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 
-import { DataSourceProtocol } from '../../../../models';
+import { DataSourceProtocol, SourceDataPointType } from '../../../../models';
 import { DataSourceService } from '../../../../services';
 
 export interface SelectTypeModalData {
   selection: string;
+  type: SourceDataPointType;
   protocol: DataSourceProtocol;
   existingAddresses: string[];
 }
@@ -38,7 +28,10 @@ export class SelectTypeModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.rows = this.dataSourceService.getNckAddresses();
+    this.rows =
+      this.data.protocol === DataSourceProtocol.S7
+        ? this.dataSourceService.getNckAddresses()
+        : this.dataSourceService.getEnergyAddresses();
   }
 
   ngAfterViewInit() {
@@ -51,6 +44,13 @@ export class SelectTypeModalComponent implements OnInit {
 
   isExisting({ address }) {
     return this.data.existingAddresses.includes(address);
+  }
+
+  isUnsupported({ type }) {
+    if (this.data.protocol === DataSourceProtocol.Energy) {
+      return this.data.type !== type;
+    }
+    return false;
   }
 
   onClose() {

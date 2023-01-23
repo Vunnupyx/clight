@@ -16,6 +16,7 @@ title: Changelog
 - [DIGMDCLGHT-70](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-70) Fixed the case where Add new data point button might remain disabled after deleting a data point
 - [DIGMDCLGHT-258](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-258) Fixes list of sources of a VDP not being reset after operator type change
 - [DIGMDCLGHT-311](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-311) Fixes display of success/error notifications for network setting changes
+- [DIGMDCLGHT-312](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-312) Fixes error on factory reset API endpoint
 
 ### Changed
 

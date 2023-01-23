@@ -170,8 +170,10 @@
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
     "ControllerType": "Type",
+    "CurrentTariff": "Current Tariff",
     "Name": "Name",
     "Type": "Type",
+    "Description": "Description",
     "Address": "Address",
     "LiveData": "Live Data",
     "Actions": "Actions",
@@ -180,7 +182,8 @@
     "LoadError": "Failed to load data sources. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Board"
+      "ioshield": "Input Board",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
@@ -194,7 +197,17 @@
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "ActivePower": "Active Power",
+    "TotalEnergy": "Total Energy",
+    "TariffStatus": {
+      "0": "No tariff counter active",
+      "1": "Running",
+      "2": "Idle",
+      "3": "Waiting",
+      "4": "Alarm",
+      "Unknown": "Unknown"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",

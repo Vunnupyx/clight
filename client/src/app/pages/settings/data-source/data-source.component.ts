@@ -12,6 +12,7 @@ import {
   DataSourceSoftwareVersion,
   IOShieldTypes,
   S7Types,
+  EnergyTypes,
   SourceDataPoint,
   SourceDataPointType
 } from 'app/models';
@@ -26,6 +27,9 @@ import { clone, ObjectMap } from 'app/shared/utils';
 import { IP_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
+import { TranslateService } from '@ngx-translate/core';
+
+const ENERGY_ADDRESS_REQUIRED = 'tariff-number';
 
 @Component({
   selector: 'app-data-source',
@@ -38,6 +42,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;
   IOShieldTypes = IOShieldTypes;
+  EnergyTypes = EnergyTypes;
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;
@@ -106,7 +111,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
     private dialog: MatDialog,
-    private promptService: PromptService
+    private promptService: PromptService,
+    private translate: TranslateService
   ) {
     this.promptService.initWarnBeforePageUnload(
       () => this.sourceDataPointService.isTouched
@@ -293,6 +299,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       type:
         this.dataSource?.protocol === DataSourceProtocol.S7
           ? SourceDataPointType.NCK
+          : this.dataSource?.protocol === DataSourceProtocol.Energy
+          ? SourceDataPointType.Measurement
           : null
     } as SourceDataPoint;
 
@@ -353,6 +361,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
       data: {
         selection: obj.address,
+        type: obj.type,
         protocol: this.dataSource?.protocol,
         existingAddresses: this.datapointRows?.map((x) => x.address) || []
       },
@@ -422,6 +431,34 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onApply() {
     return this.sourceDataPointService.apply(this.dataSource?.protocol!);
+  }
+
+  isAbleToSelectAddress(type: SourceDataPointType | undefined): boolean {
+    if (this.dataSource?.protocol === DataSourceProtocol.Energy) {
+      return true;
+    }
+
+    return [SourceDataPointType.NCK].includes(type);
+  }
+
+  isDataPointRequired(obj: SourceDataPoint): boolean {
+    return (
+      obj.type === SourceDataPointType.Device &&
+      obj.address === ENERGY_ADDRESS_REQUIRED
+    );
+  }
+
+  getTariffText() {
+    const deviceDatapoint = this.datapointRows.find((dp) =>
+      this.isDataPointRequired(dp)
+    );
+    const translationKey = `settings-data-source.TariffStatus.${
+      this.liveData?.[deviceDatapoint?.address]?.value
+    }`;
+    const result = this.translate.instant(translationKey);
+    return result !== translationKey
+      ? result
+      : this.translate.instant('settings-data-source.TariffStatus.Unknown');
   }
 
   async onPing() {

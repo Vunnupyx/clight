@@ -170,8 +170,10 @@
     "DataPoints": "Datenpunkte",
     "SelectAVariable": "Wählen Sie einen Datenpunkt",
     "ControllerType": "Typ",
+    "CurrentTariff": "Current Tariff",
     "Name": "Name",
     "Type": "Typ",
+    "Description": "Description",
     "Address": "Adressse",
     "LiveData": "Aktualwert",
     "Actions": "Aktionen",
@@ -180,7 +182,8 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Modul"
+      "ioshield": "Input Modul",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
@@ -194,7 +197,17 @@
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
-    "SelectVariable": "Wählen Sie eine Variable"
+    "SelectVariable": "Wählen Sie eine Variable",
+    "ActivePower": "Active Power",
+    "TotalEnergy": "Total Energy",
+    "TariffStatus": {
+      "0": "Keine Tariffzähler aktiv",
+      "1": "Läuft",
+      "2": "Leerlauf",
+      "3": "Warten",
+      "4": "Alarm",
+      "Unknown": "Unbekannt"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtuelle Datenpunkte",

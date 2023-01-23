@@ -259,9 +259,4 @@ export abstract class DataSource extends EventEmitter {
   public getCurrentStatus(): LifecycleEventStatus {
     return this.currentStatus;
   }
-
-  /**
-   * Returns current tariff number for energy data source
-   */
-  public abstract getCurrentTariffNumber(): string;
 }

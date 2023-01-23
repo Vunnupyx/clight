@@ -508,7 +508,7 @@
           >
             <ng-container *ngIf="unsavedRowIndex !== rowIndex">
               <div class="text-ellipsis" [title]="value">
-                {{ mapAddressLabel(value) }}
+                {{ value }}
               </div>
             </ng-container>
             <div
@@ -564,7 +564,7 @@
                     <mat-option
                       *ngFor="let address of ioshieldAddresses"
                       [value]="address"
-                      >{{ mapAddressLabel(address) }}</mat-option
+                      >{{ address }}</mat-option
                     >
                   </mat-select>
                   <ng-template #s7InputAddress>

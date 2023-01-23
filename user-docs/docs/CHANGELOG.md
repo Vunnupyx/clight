@@ -6,6 +6,10 @@ title: Changelog
 
 ## [3.0.0]
 
+## Added
+
+- [DIGMDCLGHT-244](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-244) Update mechanism for CELOS implemented
+
 ## Fixed
 
 - [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixed missing value for NCK data point basicLengthUnit
@@ -20,6 +24,7 @@ title: Changelog
 - [DIGMDCLGHT-250](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-250) The runtime now works with an empty file system that hasn't the application file installed. Also the folder structure where application data are stored has changed.
 - [DIGMDCLGHT-260](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-260) The MAC address license check has been removed.
 - [DIGMDCLGHT-261](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-261) Pipelines do now created versioned containers
+- [DIGMDCLGHT-244](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-244) Software update mechanism is updated according to CELOS migration
 - [DIGMDCLGHT-164](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-261) Updated factory reset mechanism according to CELOS migration
 - [DIGMDCLGHT-264](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-264) Updated NTP server reachability after CELOS migration
 

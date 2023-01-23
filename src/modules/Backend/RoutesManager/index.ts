@@ -45,7 +45,8 @@ import {
 } from '../routes/apis/v1/Mapping';
 import {
   systemInfoHandlers,
-  setConfigManager as systemInfoSetConfigManager
+  setConfigManager as systemInfoSetConfigManager,
+  setDatahubAdapter
 } from '../routes/apis/v1/SystemInfo';
 import {
   templatesHandlers,
@@ -71,6 +72,8 @@ import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
 import swaggerFile from '../routes/swagger.json';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
+import { DataSinkProtocols } from '../../../common/interfaces';
+import { DataHubDataSink } from '../../Northbound/DataSinks/DataHubDataSink';
 
 interface RoutesManagerOptions {
   app: Application;
@@ -131,6 +134,11 @@ export class RoutesManager {
       messengerConfigSetConfigManager,
       termsAndConditionsSetConfigManager
     ].forEach((func) => func(options.configManager));
+    const datahubSink = options.dataSinksManager.getDataSinkByProto(
+      DataSinkProtocols.DATAHUB
+    ) as DataHubDataSink;
+
+    setDatahubAdapter(datahubSink.getAdapter());
     authSetAuthManager(options.authManager);
     setDataSinksDataSinksManager(options.dataSinksManager);
     setMessengerDataSinksManager(options.dataSinksManager);

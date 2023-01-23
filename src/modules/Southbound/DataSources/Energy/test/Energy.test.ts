@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import { TariffNumbers } from '../interfaces';
 import { IDataSourceParams } from '../../interfaces';
 import { DataSourceProtocols } from '../../../../../common/interfaces';
+import { VirtualDataPointManager } from '../../../../VirtualDataPointManager';
 
 jest.mock('winston');
 jest.mock('node-fetch');
@@ -36,11 +37,19 @@ const mockConfig: IDataSourceParams = {
   },
   termsAndConditionsAccepted: true
 };
+const virtualDpManager = jest.createMockFromModule(
+  '../../../../VirtualDataPointManager'
+) as VirtualDataPointManager;
+
+let vdpEnergyCallback;
 
 describe('EnergyDataSource', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    energyDataSource = new EnergyDataSource(mockConfig);
+    energyDataSource = new EnergyDataSource(mockConfig, virtualDpManager);
+    virtualDpManager.setEnergyCallback = (cb) => {
+      vdpEnergyCallback = cb;
+    };
     energyDataSource.init();
   });
   describe('handleMachineStatusChange', () => {
@@ -56,8 +65,7 @@ describe('EnergyDataSource', () => {
     ])(
       'Machine status change to $newStatus triggers tariff update to:$expectedTariffNo',
       async ({ newStatus, expectedTariffNo }) => {
-        let result: TariffNumbers =
-          await energyDataSource.handleMachineStatusChange(newStatus);
+        let result: TariffNumbers = await vdpEnergyCallback(newStatus);
         expect(result).toBe(expectedTariffNo);
       }
     );

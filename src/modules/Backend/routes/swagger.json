@@ -2154,6 +2154,10 @@
         "status": {
           "type": "string",
           "enum": ["connected", "disconnected"]
+        },
+        "emProTariffNumber": {
+          "type": "string",
+          "enum": ["0", "1", "2", "3", "4"]
         }
       }
     },
@@ -2318,6 +2322,12 @@
                     "type": "number"
                   },
                   "value": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "description": {
                     "type": "string"
                   }
                 }

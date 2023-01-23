@@ -307,6 +307,9 @@
               <ng-container *ngSwitchCase="DataPointType.Condition">{{
                 'settings-data-sink.Condition' | translate
               }}</ng-container>
+              <ng-container *ngSwitchCase="DataPointType.Sample">{{
+                'settings-data-sink.Sample' | translate
+              }}</ng-container>
             </ng-container>
           </span>
           <mat-select
@@ -320,6 +323,9 @@
             }}</mat-option>
             <mat-option [value]="DataPointType.Condition">{{
               'settings-data-sink.Condition' | translate
+            }}</mat-option>
+            <mat-option [value]="DataPointType.Sample">{{
+              'settings-data-sink.Sample' | translate
             }}</mat-option>
           </mat-select>
         </ng-template>

@@ -1,4 +1,4 @@
-import { PreDefinedDataPoint } from "app/models";
+import { PreDefinedDataPoint } from 'app/models';
 
 export default [
   {
@@ -437,5 +437,35 @@ export default [
     address: 'part_count_overall4',
     type: 'event',
     name: 'Overall Part Count 4'
+  } as PreDefinedDataPoint,
+  {
+    name: 'VoltAmpere (S)',
+    address: 'VoltAmpere',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'VoltAmpereReactive (Q)',
+    address: 'VoltAmpereReactive',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'Wattage (P)',
+    address: 'Wattage',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'ElectricalEnergy (Ea+)',
+    address: 'ElectricalEnergy',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'PowerFactor (PF)',
+    address: 'PowerFactor',
+    type: 'sample'
+    //TBD mandatory: true,
   } as PreDefinedDataPoint
 ];

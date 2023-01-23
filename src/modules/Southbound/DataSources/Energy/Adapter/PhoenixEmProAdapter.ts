@@ -7,7 +7,8 @@ import { IMeasurement } from '../../interfaces';
 import {
   IEmProReadingResponse,
   IEmProBulkReadingResponse,
-  IEmProTariffChangeResponse
+  IEmProTariffChangeResponse,
+  IHostConnectivityState
 } from '../interfaces';
 import { isValidIpOrHostname } from '../../../../Utilities';
 
@@ -15,6 +16,8 @@ import { isValidIpOrHostname } from '../../../../Utilities';
  * Phoenix Contact EMpro Adapter
  */
 export class PhoenixEmProAdapter {
+  public hostConnectivityState = IHostConnectivityState.UNKNOWN;
+  private connectivityTimeout = 3000;
   private hostname;
   private allMeasurementsEndpoint = '/api/v1/measurements';
   private allMetersEndpoint = '/api/v1/meters';
@@ -27,7 +30,40 @@ export class PhoenixEmProAdapter {
       ? this.connection?.ipAddr?.startsWith('http')
         ? this.connection?.ipAddr
         : `http://${this.connection?.ipAddr}`
-      : 'http://172.17.0.1'; //TBD
+      : '';
+  }
+
+  /**
+   * Tests connectivity to given hostname
+   */
+  public async testHostConnectivity() {
+    const logPrefix = `${PhoenixEmProAdapter.name}::testHostConnectivity`;
+
+    await Promise.race([
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject();
+        }, this.connectivityTimeout);
+      }),
+      new Promise<void>(async (resolve, reject) => {
+        const result = await this.performApiCall(
+          'GET',
+          `${this.hostname}${this.allInformationEndpoint}`
+        );
+
+        if (result) {
+          this.hostConnectivityState = IHostConnectivityState.OK;
+          return resolve();
+        } else {
+          return reject();
+        }
+      })
+    ]).catch((err) => {
+      winston.warn(
+        `${logPrefix} error connecting to Phoenix EMpro host at ${this.hostname}`
+      );
+      this.hostConnectivityState = IHostConnectivityState.ERROR;
+    });
   }
 
   /**

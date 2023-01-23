@@ -61,6 +61,9 @@ export class EnergyDataSource extends DataSource {
       ) {
         clearTimeout(this.reconnectTimeoutId);
         this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        winston.info(
+          `${logPrefix} successfully connected to Phoenix EEM client`
+        );
         this.virtualDataPointManager.setEnergyCallback(
           this.handleMachineStatusChange.bind(this)
         );

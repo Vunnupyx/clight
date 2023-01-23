@@ -14,7 +14,7 @@ let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 let emProClient: PhoenixEmProAdapter;
 
 const connection = {
-  ipAddr: '1.1.1.1'
+  ipAddr: 'http://1.1.1.1'
 };
 describe('PhoenixEmProAdapter', () => {
   beforeEach(() => {
@@ -212,7 +212,7 @@ describe('PhoenixEmProAdapter', () => {
         Promise.resolve(new Response(JSON.stringify(mockMeasurementResponse)))
       );
 
-      let result: string = await emProClient.getCurrentTariff();
+      let result: string = (await emProClient.getCurrentTariff()) as string;
       expect(mockedFetch).toHaveBeenCalledWith(
         `${connection.ipAddr}${mockMeasurementResponse.context.replace(
           '?',
@@ -221,6 +221,36 @@ describe('PhoenixEmProAdapter', () => {
         { method: 'GET' }
       );
       expect(result).toStrictEqual(String(mockTariffResponse.value));
+    });
+    it('gets current tariff info correctly as full response', async () => {
+      let mockTariffResponse = {
+        id: 'tariff-number',
+        name: 'Tariff number',
+        value: 2,
+        unit: '',
+        description: ''
+      };
+      const mockMeasurementResponse: IEmProReadingResponse = {
+        context: '/api/v1/measurement-system-control/tariff-number?',
+        timestamp: Date.now().toString(),
+        ...mockTariffResponse
+      };
+
+      mockedFetch.mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify(mockMeasurementResponse)))
+      );
+
+      let result: IEmProReadingResponse = (await emProClient.getCurrentTariff(
+        true
+      )) as IEmProReadingResponse;
+      expect(mockedFetch).toHaveBeenCalledWith(
+        `${connection.ipAddr}${mockMeasurementResponse.context.replace(
+          '?',
+          ''
+        )}`,
+        { method: 'GET' }
+      );
+      expect(result).toMatchObject(mockTariffResponse);
     });
     it('non-number value is returned as 0', async () => {
       let mockTariffResponse = {
@@ -240,7 +270,7 @@ describe('PhoenixEmProAdapter', () => {
         Promise.resolve(new Response(JSON.stringify(mockMeasurementResponse)))
       );
 
-      let result: string = await emProClient.getCurrentTariff();
+      let result: string = (await emProClient.getCurrentTariff()) as string;
       expect(mockedFetch).toHaveBeenCalledWith(
         `${connection.ipAddr}${mockMeasurementResponse.context.replace(
           '?',

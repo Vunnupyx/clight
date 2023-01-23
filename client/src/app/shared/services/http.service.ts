@@ -10,7 +10,7 @@ import {
   HttpErrorResponse
 } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import { EMPTY, of } from 'rxjs';
+import { EMPTY } from 'rxjs';
 
 const OPTIONS_DEFAULTS = {
   withCredentials: true,
@@ -35,6 +35,7 @@ export interface RequestOptionsArgs {
   withCredentials?: boolean;
   responseType: string;
   observe?: string;
+  reportProgress?: boolean;
 }
 
 @Injectable()
@@ -87,6 +88,12 @@ export class HttpService {
         // .pipe(catchError((err, caught) => this._catchError(err, caught)))
         .toPromise()
     );
+  }
+
+  download<T = any>(url: string, options?: RequestOptionsArgs) {
+    return this.http
+      .get<T>(this._getUrl(url), this._getOptions(options))
+      .pipe(catchError((err) => this._catchError(err)));
   }
 
   protected _getUrl(url: string) {

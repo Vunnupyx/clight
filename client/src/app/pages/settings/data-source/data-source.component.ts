@@ -173,19 +173,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     }
   }
 
-  mapAddressLabel(address: string) {
-    if (
-      this.dataSource?.protocol === this.Protocol.IOShield &&
-      [IOShieldTypes.AI_100_5di, IOShieldTypes.AI_150_5di].includes(
-        this.dataSource?.type as IOShieldTypes
-      )
-    ) {
-      return this.mapIOShieldsAIAddresses[address] || address;
-    }
-
-    return address;
-  }
-
   onDataSources(arr: DataSource[]) {
     if (!arr || !arr.length) {
       return;

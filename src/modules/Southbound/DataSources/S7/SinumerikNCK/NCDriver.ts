@@ -140,6 +140,7 @@ export default class SinumerikNCKProtocolDriver {
       this.tcpClient.setTimeout(this.timeout);
       this.tcpClient.once('close', () => {
         winston.warn('NC: Unexpected close event on socket!');
+        this.connectionState = ConnectionState.NOT_CONNECTED;
         this.reconnect(host, port, rack, slot);
       });
       this.connectionState = ConnectionState.NOT_CONNECTED;

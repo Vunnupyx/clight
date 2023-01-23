@@ -167,7 +167,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   /**
    * Returns the datasource object by its protocol
    */
-  public getDataSourceByProto(protocol: string) {
+  public getDataSourceByProto(protocol: DataSourceProtocols | string) {
     return this.dataSources.find((src) => src.protocol === protocol);
   }
 

@@ -13,6 +13,7 @@ import {
   LifecycleEventStatus
 } from '../../../../../../common/interfaces';
 import { isValidIpOrHostname } from '../../../../../Utilities';
+import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -291,9 +292,10 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
       .getDataSourceByProto(request.params.datasourceProtocol)
       .getCurrentStatus();
     if (request.params.datasourceProtocol === 'energy') {
-      emProTariffNumber = dataSourcesManager
-        .getDataSourceByProto(request.params.datasourceProtocol)
-        .getCurrentTariffNumber();
+      const energyDataSource = dataSourcesManager.getDataSourceByProto(
+        request.params.datasourceProtocol
+      ) as EnergyDataSource;
+      emProTariffNumber = energyDataSource.getCurrentTariffNumber();
     }
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;

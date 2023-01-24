@@ -143,9 +143,7 @@ export class SourceDataPointService
         this.translate.instant('settings-data-source-point.HostUnreachable')
       );
     };
-    if (protocol !== DataSourceProtocol.S7) {
-      return errorHandler();
-    }
+
     return this.httpService
       .get(`/datasources/${protocol}/ping`)
       .then((res) => {

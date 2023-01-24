@@ -129,7 +129,6 @@
     "RestartDeviceText": "デバイスを再起動しますか？再起動にかかる約1分間はデバイスにアクセスできません。",
     "RestartDeviceSuccess": "デバイスを再起動しました。",
     "RestartDeviceError": "デバイス再起動に失敗しました。",
-    "RestartDeviceDescription": "Performing factory reset. It can take up to 5 minutes. Please do not reload the page.",
     "BackupDownloadError": "バックアップをダウンロードできません。時間をおいて再度試してください。",
     "Logs": "Logs",
     "ExportLogs": "Export logs"
@@ -483,6 +482,7 @@
     "SoftwareComponent": "Software component",
     "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。",
     "FactoryReset": "Factory Reset",
+    "FactoryResetDescription": "Performing factory reset. It can take up to 5 minutes. Please do not reload the page.",
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",

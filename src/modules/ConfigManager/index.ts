@@ -67,6 +67,15 @@ const defaultIoShieldDataSource: IDataSourceConfig = {
   enabled: false,
   type: 'ai-100+5di'
 };
+const defaultEnergyDataSource: IDataSourceConfig = {
+  dataPoints: [],
+  protocol: DataSourceProtocols.ENERGY,
+  enabled: false,
+  type: 'PhoenixEMpro',
+  connection: {
+    ipAddr: ''
+  }
+};
 const defaultOpcuaDataSink: IDataSinkConfig = {
   dataPoints: [],
   enabled: false,
@@ -260,7 +269,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Adds missing data sources on startup
    */
   public setupDefaultDataSources() {
-    const sources = [defaultS7DataSource, defaultIoShieldDataSource];
+    const sources = [
+      defaultS7DataSource,
+      defaultIoShieldDataSource,
+      defaultEnergyDataSource
+    ];
 
     this._config = {
       ...this._config,

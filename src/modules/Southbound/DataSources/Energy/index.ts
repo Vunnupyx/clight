@@ -2,7 +2,7 @@ import winston from 'winston';
 import { DataSource } from '../DataSource';
 import { LifecycleEventStatus } from '../../../../common/interfaces';
 import { IDataSourceParams, IMeasurement } from '../interfaces';
-import { TariffNumbers } from './interfaces';
+import { IHostConnectivityState, ITariffNumbers } from './interfaces';
 import { PhoenixEmProAdapter } from './Adapter/PhoenixEmProAdapter';
 import { VirtualDataPointManager } from '../../../VirtualDataPointManager';
 
@@ -26,7 +26,7 @@ export class EnergyDataSource extends DataSource {
    * Initializes Energy data source
    * @returns void
    */
-  public init(): void {
+  public async init(): Promise<void> {
     const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
 
@@ -49,15 +49,41 @@ export class EnergyDataSource extends DataSource {
       );
       return;
     }
-
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
     this.phoenixEemClient = new PhoenixEmProAdapter(connection);
-    this.virtualDataPointManager.setEnergyCallback(
-      this.handleMachineStatusChange.bind(this)
-    );
 
-    this.setupDataPoints();
-    this.updateCurrentStatus(LifecycleEventStatus.Connected);
-    this.setupLogCycle();
+    try {
+      await this.phoenixEemClient.testHostConnectivity();
+
+      if (
+        this.phoenixEemClient.hostConnectivityState ===
+        IHostConnectivityState.OK
+      ) {
+        clearTimeout(this.reconnectTimeoutId);
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        winston.info(
+          `${logPrefix} successfully connected to Phoenix EEM client`
+        );
+        this.virtualDataPointManager.setEnergyCallback(
+          this.handleMachineStatusChange.bind(this)
+        );
+        this.setupDataPoints();
+        this.setupLogCycle();
+      } else {
+        throw new Error(
+          `Host status:${this.phoenixEemClient.hostConnectivityState}`
+        );
+      }
+    } catch (error) {
+      winston.error(`${logPrefix} ${error?.message}`);
+
+      this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
+      this.reconnectTimeoutId = setTimeout(() => {
+        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+        this.init();
+      }, this.RECONNECT_TIMEOUT);
+      return;
+    }
   }
 
   /**
@@ -112,7 +138,7 @@ export class EnergyDataSource extends DataSource {
    * not processed in VDP side
    * @param newStatus
    */
-  public async handleMachineStatusChange(newStatus): Promise<TariffNumbers> {
+  public async handleMachineStatusChange(newStatus): Promise<ITariffNumbers> {
     const logPrefix = `${this.name}::handleMachineStatusChange`;
 
     const tariffStatusMapping = {
@@ -121,7 +147,7 @@ export class EnergyDataSource extends DataSource {
       waiting: '3',
       alarm: '4'
     };
-    let newTariffNo: TariffNumbers = tariffStatusMapping[newStatus];
+    let newTariffNo: ITariffNumbers = tariffStatusMapping[newStatus];
 
     if (!newTariffNo) {
       winston.info(

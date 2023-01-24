@@ -26,4 +26,10 @@ export interface IEmProTariffChangeResponse {
   error?: string;
 }
 
-export type TariffNumbers = '0' | '1' | '2' | '3' | '4';
+export type ITariffNumbers = '0' | '1' | '2' | '3' | '4';
+
+export enum IHostConnectivityState {
+  UNKNOWN = 'unknown',
+  OK = 'ok',
+  ERROR = 'error'
+}

@@ -3,14 +3,15 @@ import { saveAs } from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
 
 import { HttpService } from 'app/shared';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import {
   HttpEvent,
   HttpEventType,
   HttpProgressEvent,
   HttpResponse
 } from '@angular/common/http';
-import { distinctUntilChanged, scan } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, scan } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface Download {
   progress: number;
@@ -20,39 +21,44 @@ export interface Download {
 export class GeneralService {
   constructor(
     private httpService: HttpService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   downloadLogs(): Observable<Download> {
-    try {
-      return this.httpService
-        .download('/logs', {
-          responseType: 'blob',
-          observe: 'events',
-          reportProgress: true
+    return this.httpService
+      .download('/logs', {
+        responseType: 'blob',
+        observe: 'events',
+        reportProgress: true
+      })
+      .pipe(
+        this._getEventMessage((blob, filename) => saveAs(blob, filename)),
+        catchError((err) => {
+          this.toastr.error(
+            this.translate.instant('settings-general.LogDownloadError')
+          );
+          return throwError(err);
         })
-        .pipe(
-          this._getEventMessage((blob, filename) => saveAs(blob, filename))
-        );
-    } catch {
-      this.toastr.error('settings-general.LogDownloadError');
-    }
+      );
   }
 
   downloadBackup(): Observable<Download> {
-    try {
-      return this.httpService
-        .download('/backup', {
-          responseType: 'blob',
-          observe: 'events',
-          reportProgress: true
+    return this.httpService
+      .download('/backup', {
+        responseType: 'blob',
+        observe: 'events',
+        reportProgress: true
+      })
+      .pipe(
+        this._getEventMessage((blob, filename) => saveAs(blob, filename)),
+        catchError((err) => {
+          this.toastr.error(
+            this.translate.instant('settings-general.BackupDownloadError')
+          );
+          return throwError(err);
         })
-        .pipe(
-          this._getEventMessage((blob, filename) => saveAs(blob, filename))
-        );
-    } catch {
-      this.toastr.error('settings-general.BackupDownloadError');
-    }
+      );
   }
 
   async uploadBackup(file: File) {

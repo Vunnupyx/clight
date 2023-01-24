@@ -15,6 +15,7 @@ import {
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { LoadingDialogComponent } from '../../../shared/components/loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-general',
@@ -22,7 +23,6 @@ import { Observable } from 'rxjs';
   styleUrls: ['./general.component.scss']
 })
 export class GeneralComponent implements OnInit {
-  public showLoadingRestart = false;
   public downloadLogs$: Observable<Download>;
   public downloadBackup$: Observable<Download>;
   constructor(
@@ -76,8 +76,13 @@ export class GeneralComponent implements OnInit {
       if (!dialogResult) {
         return;
       }
-
-      this.showLoadingRestart = true;
+      const dialogRefLoad = this.dialog.open(LoadingDialogComponent, {
+        data: new ConfirmDialogModel(
+          this.translate.instant('settings-general.RestartDeviceTitle'),
+          this.translate.instant('settings-general.RestartDeviceDescription')
+        ),
+        disableClose: true
+      });
 
       const success = await this.systemInformationService.restartDevice();
 
@@ -85,14 +90,13 @@ export class GeneralComponent implements OnInit {
         this.toastr.error(
           this.translate.instant('settings-general.RestartDeviceError')
         );
-        this.showLoadingRestart = false;
+        dialogRefLoad.close();
       } else {
         setTimeout(() => {
           this.toastr.success(
             this.translate.instant('settings-general.RestartDeviceSuccess')
           );
-
-          this.showLoadingRestart = false;
+          dialogRefLoad.close();
         }, 2.5 * 60 * 1000); // Show loading indicator for 2.5 minutes
       }
     });

@@ -5,23 +5,24 @@ import { SharedModule } from 'app/shared/shared.module';
 
 import { GeneralComponent } from './general.component';
 import { DeviceInfoComponent } from './device-info/device-info.component';
-import {AuthGuard} from "../../../shared/guards/auth.guard";
+import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { UpdateDialogComponent } from './update/update-dialog.component';
 import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
 import { AlertDialogModule } from 'app/shared/components/alert-dialog/alert-dialog.module';
+import { LoadingDialogModule } from '../../../shared/components/loading-dialog/loading-dialog.module';
 
 const routes: Routes = [
   {
     path: 'settings/general',
     component: GeneralComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard]
   }
 ];
 
 const COMPONENTS = [
-  GeneralComponent, 
+  GeneralComponent,
   DeviceInfoComponent,
-  UpdateDialogComponent,
+  UpdateDialogComponent
 ];
 
 @NgModule({
@@ -29,7 +30,8 @@ const COMPONENTS = [
     SharedModule,
     AlertDialogModule,
     ConfirmDialogModule,
-    RouterModule.forRoot(routes),
+    LoadingDialogModule,
+    RouterModule.forRoot(routes)
   ],
   declarations: COMPONENTS,
   exports: [RouterModule, ...COMPONENTS]

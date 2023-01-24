@@ -129,6 +129,7 @@
     "RestartDeviceText": "Wollen Sie das Gerät wirklich neustarten? Das Gerät ist danach für ca. 2 Minuten nicht verfügbar.",
     "RestartDeviceSuccess": "Das Gerät wurde erfolgreich neugestartet!",
     "RestartDeviceError": "Das Gerät konnte nicht neugestartet werden.",
+    "RestartDeviceDescription": "Das Zurücksetzen auf die Werkseinstellungen wird durchgeführt. Dies kann bis zu 5 Minuten dauern. Bitte laden Sie die Seite nicht neu",
     "BackupDownloadError": "Es könnte keine Sicherung der Konfiguration heruntergeladen werden. Versuchen Sie es später erneut!",
     "Logs": "Logs",
     "ExportLogs": "Logs exportieren"

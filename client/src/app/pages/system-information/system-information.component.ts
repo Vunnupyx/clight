@@ -21,6 +21,10 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  LoadingDialogComponent,
+  LoadingDialogModel
+} from 'app/shared/components/loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-system-information',
@@ -29,7 +33,6 @@ import {
 })
 export class SystemInformationComponent implements OnInit, OnDestroy {
   readonly MaterialThemeVersion = MaterialThemeVersion;
-  public showLoadingFactoryReset = false;
 
   data: SystemInformationSection[] = [];
 
@@ -114,8 +117,12 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
       if (!dialogResult) {
         return;
       }
-
-      this.showLoadingFactoryReset = true;
+      const dialogRefLoad = this.dialog.open(LoadingDialogComponent, {
+        data: new LoadingDialogModel(
+          this.translate.instant('settings-general.RestartDeviceDescription')
+        ),
+        disableClose: true
+      });
 
       this.systemInformationService.factoryReset(); // without await, as connection will be lost and it will keep waiting for a response
 
@@ -123,8 +130,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
         this.toastr.success(
           this.translate.instant('system-information.FactoryResetSuccess')
         );
-
-        this.showLoadingFactoryReset = false;
+        dialogRefLoad.close();
       }, 5 * 60 * 1000); //Show loading indicator for 5 minute
     });
   }

@@ -9,7 +9,6 @@ import { AuthGuard } from '../../../shared/guards/auth.guard';
 import { UpdateDialogComponent } from './update/update-dialog.component';
 import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
 import { AlertDialogModule } from 'app/shared/components/alert-dialog/alert-dialog.module';
-import { LoadingDialogModule } from '../../../shared/components/loading-dialog/loading-dialog.module';
 
 const routes: Routes = [
   {
@@ -30,7 +29,6 @@ const COMPONENTS = [
     SharedModule,
     AlertDialogModule,
     ConfirmDialogModule,
-    LoadingDialogModule,
     RouterModule.forRoot(routes)
   ],
   declarations: COMPONENTS,

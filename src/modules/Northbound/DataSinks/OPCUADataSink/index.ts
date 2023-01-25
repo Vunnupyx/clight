@@ -7,7 +7,7 @@ import {
 } from '../../../../common/interfaces';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
-import { Variant, UAVariable } from 'node-opcua';
+import { Variant, UAVariable, LocalizedText, DataType } from 'node-opcua';
 import {
   IGeneralConfig,
   IOPCUAConfig
@@ -143,7 +143,10 @@ export class OPCUADataSink extends DataSink {
         //@ts-ignore
         node.setValueFromSource(
           new Variant({
-            value,
+            value:
+              node.dataType.value === DataType.LocalizedText
+                ? new LocalizedText({ locale: 'en', text: value })
+                : value,
             //@ts-ignore
             dataType: node.dataType.value
           })

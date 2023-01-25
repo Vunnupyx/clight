@@ -13,7 +13,9 @@ versionForName=$(sed 's/[.]/-/g' <<< $version) # replace all . with -
 
 target="tags.mdclight='$version'"
 name=${versionForName}-mdclight
-fileName=./deployment.manifest.${version}.json
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+manifestName=deployment.manifest.${version}.json
+manifestPath=$script_dir/$manifestName
 
 # check if docker image is available at registry
 check_docker_image () {
@@ -67,7 +69,9 @@ check_docker_image mdclightdev.azurecr.io/mdclight:$version
 check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
 check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
 
-node ./scripts/deployment/deployment.manifest.js $version > $fileName
-az iot edge deployment create -d "$name" -n "$iotHub" --content "$fileName" --target-condition "$target" --priority 1 --verbose --layered false
+
+
+node "$script_dir"/deployment.manifest.js $version > $manifestPath
+az iot edge deployment create -d "$name" -n "$iotHub" --content "$manifestPath" --target-condition "$target" --priority 1 --verbose --layered false
 az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight\": \"${version}\"}"
-rm "$fileName"
+rm "$manifestPath"

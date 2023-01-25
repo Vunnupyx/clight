@@ -65,9 +65,9 @@ deviceId=$(select_edge_device)
 echo "Select iothub: "
 iotHub=$(select_datahub)
 
-check_docker_image mdclightdev.azurecr.io/mdclight:$version 
-check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
-check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
+#check_docker_image mdclightdev.azurecr.io/mdclight:$version 
+#check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
+#check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
 
 
 

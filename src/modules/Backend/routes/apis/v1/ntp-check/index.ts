@@ -219,7 +219,9 @@ async function checkInterfaces(): Promise<boolean> {
 
   return await ConfigurationAgentManager.getNetworkAdapters()
     .then((payload: ICosNetworkAdapterSettings | ICosResponseError) => {
+      winston.debug(`${logPrefix} Got payload: ${JSON.stringify(payload)}`);
       if (isResponseError(payload)) {
+        winston.debug(`${logPrefix} Payload is error response`);
         return Promise.reject(
           new Error((payload as ICosResponseError).message)
         );
@@ -231,10 +233,12 @@ async function checkInterfaces(): Promise<boolean> {
           isAdapterSettings(payload[0])
         )
       ) {
+        winston.debug(`${logPrefix} Payload is invalid`);
         return Promise.reject(
           new Error(`${logPrefix} invalid payload: ${payload}`)
         );
       }
+      winston.debug(`${logPrefix} Payload is valid`);
       payload.forEach(({ enabled, id }) => {
         // Filter disabled Adapters
         if (enabled) {
@@ -246,12 +250,18 @@ async function checkInterfaces(): Promise<boolean> {
       );
     })
     .then(() => {
+      winston.debug(
+        `${logPrefix} Single network adapter status will be requested`
+      );
       const requests = Object.keys(adapterInfos).map((id: 'enoX1' | 'enoX2') =>
         ConfigurationAgentManager.getSingleNetworkAdapterStatus(id)
       );
       return Promise.all(requests);
     })
     .then((payload: Array<ICosNetworkAdapterStatus>) => {
+      winston.debug(
+        `${logPrefix} Checking connection status of network adapters`
+      );
       for (const [index] of adapterInfos.entries()) {
         if (payload[index].linkStatus === 'connected') {
           winston.debug(

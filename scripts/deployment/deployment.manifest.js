@@ -57,13 +57,13 @@ const config = {
         }
       },
       'properties.desired.modules.mtconnect-agent': {
-        version,
+        version: '3.0.3',
         type: 'docker',
         status: 'running',
         restartPolicy: 'always',
         startupOrder: 11,
         settings: {
-          image: `mdclightdev.azurecr.io/mtconnect-agent:${version}`,
+          image: `mdclightdev.azurecr.io/mtconnect-agent:3.0.3`,
           createOptions: JSON.stringify({
             StopSignal: 'SIGKILL',
             Labels: {
@@ -93,13 +93,13 @@ const config = {
         }
       },
       'properties.desired.modules.mdc-web-server': {
-        version,
+        version: '3.0.3',
         type: 'docker',
         status: 'running',
         restartPolicy: 'on-failure',
         startupOrder: 12,
         settings: {
-          image: `mdclightdev.azurecr.io/mdc-web-server:${version}`,
+          image: `mdclightdev.azurecr.io/mdc-web-server:3.0.3`,
           createOptions: JSON.stringify({
             StopSignal: 'SIGKILL',
             Labels: {

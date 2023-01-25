@@ -29,26 +29,26 @@ steps:
     displayName: BuildBase
     inputs:
       script: | # Only build image if dockerfile has changed
-        MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
+        # MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
 
-        echo "$MATCH_COUNT match(es) found."
-        if [[ $MATCH_COUNT -gt 0 ]]; then
-         docker run --privileged --rm tonistiigi/binfmt --install arm64
-         docker run --privileged --rm tonistiigi/binfmt
-         docker buildx create --use
-         scripts/build/dockerBuildMdclightBase.sh
-        fi
+        # echo "$MATCH_COUNT match(es) found."
+        # if [[ $MATCH_COUNT -gt 0 ]]; then
+        docker run --privileged --rm tonistiigi/binfmt --install arm64
+        docker run --privileged --rm tonistiigi/binfmt
+        docker buildx create --use
+        scripts/build/dockerBuildMdclightBase.sh
+        # fi
   - task: CmdLine@2
     displayName: Build Fanuc image layer
     inputs:
       script: | # Only build image if dockerfile has changed
-        CHANGE_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-fanuc.Dockerfile")
-        echo "$CHANGE_COUNT change(s) found."
-        if [[ $CHANGE_COUNT -gt 0 ]]; then
-         docker run --privileged --rm tonistiigi/binfmt --install arm64,arm
-         docker buildx create --use
-         scripts/build/dockerBuildFanuc.sh
-        fi
+        # CHANGE_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-fanuc.Dockerfile")
+        # echo "$CHANGE_COUNT change(s) found."
+        # if [[ $CHANGE_COUNT -gt 0 ]]; then
+        docker run --privileged --rm tonistiigi/binfmt --install arm64,arm
+        docker buildx create --use
+        scripts/build/dockerBuildFanuc.sh
+        # fi
   - task: CmdLine@2
     displayName: BuildMdc
     inputs:

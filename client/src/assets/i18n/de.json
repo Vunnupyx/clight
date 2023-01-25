@@ -482,6 +482,7 @@
     "SoftwareComponent": "Software Komponent",
     "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut",
     "FactoryReset": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetDescription": "Das Zurücksetzen auf die Werkseinstellungen wird durchgeführt. Dies kann bis zu 5 Minuten dauern. Bitte laden Sie die Seite nicht neu.",
     "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
     "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
     "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",

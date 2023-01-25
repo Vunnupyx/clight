@@ -76,7 +76,6 @@ export class GeneralComponent implements OnInit {
       if (!dialogResult) {
         return;
       }
-
       this.showLoadingRestart = true;
 
       const success = await this.systemInformationService.restartDevice();
@@ -91,7 +90,6 @@ export class GeneralComponent implements OnInit {
           this.toastr.success(
             this.translate.instant('settings-general.RestartDeviceSuccess')
           );
-
           this.showLoadingRestart = false;
         }, 2.5 * 60 * 1000); // Show loading indicator for 2.5 minutes
       }

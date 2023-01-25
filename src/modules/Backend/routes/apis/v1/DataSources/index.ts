@@ -313,16 +313,15 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
 function pingDataSource(request: Request, response: Response) {
   const logPrefix = `Backend::DataSources::pingDataSource`;
   winston.debug(`${logPrefix} called.`);
-  let datasourceProtocol;
-  if (!['s7', 'energy'].includes(request.params.datasourceProtocol)) {
+  let datasourceProtocol = request.params.datasourceProtocol;
+  if (!['s7', 'energy'].includes(datasourceProtocol)) {
     winston.debug(
-      `${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`
+      `${logPrefix} selected protocol is invalid: ${datasourceProtocol}`
     );
-    datasourceProtocol = request.params.datasourceProtocol;
     response
       .json({
         error: {
-          msg: `Not possible for ${request.params.datasourceProtocol} source`
+          msg: `Not possible for ${datasourceProtocol} source`
         }
       })
       .status(404);

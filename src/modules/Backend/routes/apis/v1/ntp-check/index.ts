@@ -238,28 +238,35 @@ async function checkInterfaces(): Promise<boolean> {
           new Error(`${logPrefix} invalid payload: ${payload}`)
         );
       }
-      winston.debug(`${logPrefix} Payload is valid, typeof: ${typeof payload}`);
-      if (typeof payload === 'string') {
-        //DEBUG
-        payload = JSON.parse(payload) as ICosNetworkAdapterSettings;
-      }
-      payload.forEach(({ enabled, id }) => {
-        winston.debug(`${enabled},${id}`);
-        // Filter disabled Adapters
-        if (enabled) {
-          winston.debug(`pushing ${id} to adapterInfos`);
-          adapterInfos.push(id);
+      try {
+        winston.debug(
+          `${logPrefix} Payload is valid, typeof: ${typeof payload}`
+        );
+        if (typeof payload === 'string') {
+          //DEBUG
+          winston.debug(`${logPrefix} Payload is string!`);
+          payload = JSON.parse(payload) as ICosNetworkAdapterSettings;
         }
-      });
-      winston.debug(
-        `${logPrefix} received interfaces ${JSON.stringify(adapterInfos)}`
-      );
+        payload.forEach(({ enabled, id }) => {
+          winston.debug(`${enabled},${id}`);
+          // Filter disabled Adapters
+          if (enabled) {
+            winston.debug(`pushing ${id} to adapterInfos`);
+            adapterInfos.push(id);
+          }
+        });
+        winston.debug(
+          `${logPrefix} received interfaces ${JSON.stringify(adapterInfos)}`
+        );
+      } catch (e) {
+        winston.error(e);
+      }
     })
     .then(() => {
       winston.debug(
         `${logPrefix} Single network adapter status will be requested`
       );
-      const requests = Object.keys(adapterInfos).map((id: 'enoX1' | 'enoX2') =>
+      const requests = adapterInfos.map((id: 'enoX1' | 'enoX2') =>
         ConfigurationAgentManager.getSingleNetworkAdapterStatus(id)
       );
       return Promise.all(requests);

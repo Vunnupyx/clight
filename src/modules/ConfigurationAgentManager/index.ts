@@ -90,7 +90,6 @@ export class ConfigurationAgentManager {
       'GET',
       '/network/adapters'
     )) as ICosNetworkAdapterSettings;
-    winston.debug(`getNetworkAdapters:: result: ${JSON.stringify(result)}`);
 
     return result;
   }

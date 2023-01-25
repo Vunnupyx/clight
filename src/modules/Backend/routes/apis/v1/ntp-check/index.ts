@@ -214,7 +214,7 @@ function testNTPServer(server: string): Promise<boolean> {
 async function checkInterfaces(): Promise<boolean> {
   const logPrefix = `NTPCheck::checkInterfaces`;
 
-  let adapterInfos: Array<ICosNetworkAdapterSetting['id']>;
+  let adapterInfos: Array<ICosNetworkAdapterSetting['id']> = [];
   winston.debug(`${logPrefix} sending request to get all interfaces.`);
 
   return await ConfigurationAgentManager.getNetworkAdapters()
@@ -238,43 +238,23 @@ async function checkInterfaces(): Promise<boolean> {
           new Error(`${logPrefix} invalid payload: ${payload}`)
         );
       }
-      try {
-        winston.debug(
-          `${logPrefix} Payload is valid, typeof: ${typeof payload}`
-        );
-        if (typeof payload === 'string') {
-          //DEBUG
-          winston.debug(`${logPrefix} Payload is string!`);
-          payload = JSON.parse(payload) as ICosNetworkAdapterSettings;
+      payload.forEach(({ enabled, id }) => {
+        // Filter disabled Adapters
+        if (enabled) {
+          adapterInfos.push(id);
         }
-        payload.forEach((x) => {
-          console.log(x);
-          // Filter disabled Adapters
-          if (x?.enabled) {
-            winston.debug(`pushing ${x?.id} to adapterInfos`);
-            adapterInfos.push(x?.id);
-          }
-        });
-        winston.debug(
-          `${logPrefix} received interfaces ${JSON.stringify(adapterInfos)}`
-        );
-      } catch (e) {
-        console.log(e);
-      }
+      });
+      winston.debug(
+        `${logPrefix} received interfaces ${JSON.stringify(adapterInfos)}`
+      );
     })
     .then(() => {
-      winston.debug(
-        `${logPrefix} Single network adapter status will be requested`
-      );
       const requests = adapterInfos.map((id: 'enoX1' | 'enoX2') =>
         ConfigurationAgentManager.getSingleNetworkAdapterStatus(id)
       );
       return Promise.all(requests);
     })
     .then((payload: Array<ICosNetworkAdapterStatus>) => {
-      winston.debug(
-        `${logPrefix} Checking connection status of network adapters`
-      );
       for (const [index] of adapterInfos.entries()) {
         if (payload[index].linkStatus === 'connected') {
           winston.debug(

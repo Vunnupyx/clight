@@ -247,19 +247,19 @@ async function checkInterfaces(): Promise<boolean> {
           winston.debug(`${logPrefix} Payload is string!`);
           payload = JSON.parse(payload) as ICosNetworkAdapterSettings;
         }
-        payload.forEach(({ enabled, id }) => {
-          winston.debug(`${enabled},${id}`);
+        payload.forEach((x) => {
+          console.log(x);
           // Filter disabled Adapters
-          if (enabled) {
-            winston.debug(`pushing ${id} to adapterInfos`);
-            adapterInfos.push(id);
+          if (x?.enabled) {
+            winston.debug(`pushing ${x?.id} to adapterInfos`);
+            adapterInfos.push(x?.id);
           }
         });
         winston.debug(
           `${logPrefix} received interfaces ${JSON.stringify(adapterInfos)}`
         );
       } catch (e) {
-        winston.error(e);
+        console.log(e);
       }
     })
     .then(() => {

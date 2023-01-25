@@ -235,7 +235,7 @@
             let-row="row"
           >
             <ng-container *ngIf="unsavedRow?.id !== row.id">
-              <div class="text-ellipsis" [title]="value">
+              <div class="text-ellipsis" [title]="getSourceNames(value)">
                 {{ getSourceNames(value) }}
               </div>
             </ng-container>

@@ -1,6 +1,6 @@
 import { StateMachine, StateAndTransitions } from './state-machine';
 import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
-import { sleep } from 'app/shared/utils';
+import { sleep, compareVersionSemver } from 'app/shared/utils';
 import { HealthcheckResponse } from 'app/services';
 
 interface CosInstalledVersion {
@@ -197,7 +197,7 @@ export class UpdateManager {
       const installedOsVersion = response?.find(
         (x) => x.Name === 'COS'
       )?.Version;
-      const resultOfVersionComparison = this.compareVersionSemver(
+      const resultOfVersionComparison = compareVersionSemver(
         installedOsVersion,
         this.newOsVersionToInstall
       );
@@ -483,51 +483,9 @@ export class UpdateManager {
     availableVersions: CosAvailableUpdates['updates']
   ): CosAvailableUpdateFormat {
     const sortedVersions = availableVersions.sort((first, second) =>
-      this.compareVersionSemver(first.release, second.release)
+      compareVersionSemver(first.release, second.release)
     );
 
     return sortedVersions[0];
-  }
-
-  /**
-   * Compares two semantic versions to determine which one is newer.
-   * Returns 1 if second > first, 0 if equal and -1 if first > second.
-   * Returns null if error
-   * @param first
-   * @param second
-   * @returns
-   */
-  private compareVersionSemver(
-    first: string,
-    second: string
-  ): 1 | 0 | -1 | null {
-    try {
-      const [major1, minor1, patch1] = first?.split('-')?.[0]?.split('.');
-      const [major2, minor2, patch2] = second?.split('-')?.[0]?.split('.');
-
-      if (
-        parseInt(major2, 10) > parseInt(major1, 10) ||
-        (major2 === major1 && parseInt(minor2, 10) > parseInt(minor1, 10)) ||
-        (major2 === major1 &&
-          minor2 === minor1 &&
-          parseInt(patch2, 10) > parseInt(patch1, 10))
-      ) {
-        return 1;
-      }
-
-      if (
-        parseInt(major1, 10) > parseInt(major2, 10) ||
-        (major1 === major2 && parseInt(minor1, 10) > parseInt(minor2, 10)) ||
-        (major1 === major2 &&
-          minor1 === minor2 &&
-          parseInt(patch1, 10) > parseInt(patch2, 10))
-      ) {
-        return -1;
-      }
-
-      return 0;
-    } catch (e) {
-      return null;
-    }
   }
 }

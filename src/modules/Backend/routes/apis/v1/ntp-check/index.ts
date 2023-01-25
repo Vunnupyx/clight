@@ -238,10 +238,16 @@ async function checkInterfaces(): Promise<boolean> {
           new Error(`${logPrefix} invalid payload: ${payload}`)
         );
       }
-      winston.debug(`${logPrefix} Payload is valid`);
+      winston.debug(`${logPrefix} Payload is valid, typeof: ${typeof payload}`);
+      if (typeof payload === 'string') {
+        //DEBUG
+        payload = JSON.parse(payload) as ICosNetworkAdapterSettings;
+      }
       payload.forEach(({ enabled, id }) => {
+        winston.debug(`${enabled},${id}`);
         // Filter disabled Adapters
         if (enabled) {
+          winston.debug(`pushing ${id} to adapterInfos`);
           adapterInfos.push(id);
         }
       });

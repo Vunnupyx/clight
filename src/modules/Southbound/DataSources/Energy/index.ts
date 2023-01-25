@@ -121,6 +121,7 @@ export class EnergyDataSource extends DataSource {
     const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
+    clearTimeout(this.reconnectTimeoutId);
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 

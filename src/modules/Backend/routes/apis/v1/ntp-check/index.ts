@@ -214,12 +214,14 @@ function testNTPServer(server: string): Promise<boolean> {
 async function checkInterfaces(): Promise<boolean> {
   const logPrefix = `NTPCheck::checkInterfaces`;
 
-  let adapterInfos: Array<ICosNetworkAdapterSetting['id']>;
+  let adapterInfos: Array<ICosNetworkAdapterSetting['id']> = [];
   winston.debug(`${logPrefix} sending request to get all interfaces.`);
 
   return await ConfigurationAgentManager.getNetworkAdapters()
     .then((payload: ICosNetworkAdapterSettings | ICosResponseError) => {
+      winston.debug(`${logPrefix} Got payload: ${JSON.stringify(payload)}`);
       if (isResponseError(payload)) {
+        winston.debug(`${logPrefix} Payload is error response`);
         return Promise.reject(
           new Error((payload as ICosResponseError).message)
         );
@@ -231,6 +233,7 @@ async function checkInterfaces(): Promise<boolean> {
           isAdapterSettings(payload[0])
         )
       ) {
+        winston.debug(`${logPrefix} Payload is invalid`);
         return Promise.reject(
           new Error(`${logPrefix} invalid payload: ${payload}`)
         );
@@ -246,7 +249,7 @@ async function checkInterfaces(): Promise<boolean> {
       );
     })
     .then(() => {
-      const requests = Object.keys(adapterInfos).map((id: 'enoX1' | 'enoX2') =>
+      const requests = adapterInfos.map((id: 'enoX1' | 'enoX2') =>
         ConfigurationAgentManager.getSingleNetworkAdapterStatus(id)
       );
       return Promise.all(requests);

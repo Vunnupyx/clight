@@ -133,7 +133,6 @@ export class SourceDataPointService
    * @returns
    */
   async ping(protocol: DataSourceProtocol | undefined): Promise<string> {
-    // Info: currently only s7 supports ping!
     if (protocol === undefined) protocol = DataSourceProtocol.S7;
     const errorHandler = () => {
       this.toastr.error(

@@ -41,9 +41,7 @@ function livedataDataSourceDataPointsGetHandler(
     return;
   }
 
-  const dataPointIds = dataSource.dataPoints.map((dp) =>
-    request.params.datasourceProtocol === 'energy' ? dp.address : dp.id
-  );
+  const dataPointIds = dataSource.dataPoints.map((dp) => dp.id);
 
   const timeseriesIncluded = request.query.timeseries === 'true';
 

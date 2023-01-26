@@ -9,7 +9,7 @@
     (click)="onAdd()"
     [matTooltip]="'settings-data-sink.AddMapping' | translate"
     matTooltipPosition="above"
-    style="margin-top: -15px;"
+    style="margin-top: -15px"
   >
     <mat-icon svgIcon="mdc:order-add"></mat-icon>
   </button>
@@ -26,6 +26,7 @@
       prop="from"
       [flexGrow]="1"
       cellClass="input-cell"
+      [minWidth]="80"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -48,12 +49,8 @@
           (ngModelChange)="unsavedRow.from = $event"
           [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
           matTooltipPosition="above"
-          [matTooltipDisabled]="
-            !isDuplicatingField('from', unsavedRowIndex!)
-          "
-          [class.border-danger]="
-            isDuplicatingField('from', unsavedRowIndex!)
-          "
+          [matTooltipDisabled]="!isDuplicatingField('from', unsavedRowIndex!)"
+          [class.border-danger]="isDuplicatingField('from', unsavedRowIndex!)"
           autofocus
         />
       </ng-template>
@@ -63,6 +60,7 @@
       prop="to"
       [flexGrow]="1"
       cellClass="input-cell"
+      [minWidth]="80"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -92,6 +90,7 @@
       [flexGrow]="1"
       cellClass="button-cell"
       [sortable]="false"
+      [minWidth]="80"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -107,14 +106,14 @@
             (click)="onEditStart(rowIndex, row); group.value = null"
             [matTooltip]="'settings-data-sink.Edit' | translate"
             matTooltipPosition="above"
-            ><mat-icon svgIcon="mdc:edit"></mat-icon></mat-button-toggle
-          >
+            ><mat-icon svgIcon="mdc:edit"></mat-icon
+          ></mat-button-toggle>
           <mat-button-toggle
             (click)="onDelete(row); group.value = null"
             [matTooltip]="'settings-data-sink.Delete' | translate"
             matTooltipPosition="above"
-            ><mat-icon svgIcon="mdc:delete"></mat-icon></mat-button-toggle
-          >
+            ><mat-icon svgIcon="mdc:delete"></mat-icon
+          ></mat-button-toggle>
         </mat-button-toggle-group>
         <mat-button-toggle-group
           *ngIf="unsavedRowIndex === rowIndex"
@@ -122,20 +121,19 @@
         >
           <mat-button-toggle
             (click)="
-              !isDuplicatingField('from', unsavedRowIndex!) &&
-                onEditEnd();
+              !isDuplicatingField('from', unsavedRowIndex!) && onEditEnd();
               group.value = null
             "
             [matTooltip]="'settings-data-sink.Save' | translate"
             matTooltipPosition="above"
-            ><mat-icon class="color-success" svgIcon="mdc:checkmark"></mat-icon></mat-button-toggle
-          >
+            ><mat-icon class="color-success" svgIcon="mdc:checkmark"></mat-icon
+          ></mat-button-toggle>
           <mat-button-toggle
             (click)="onEditCancel(); group.value = null"
             [matTooltip]="'settings-data-sink.Cancel' | translate"
             matTooltipPosition="above"
-            ><mat-icon class="color-error" svgIcon="mdc:close"></mat-icon></mat-button-toggle
-          >
+            ><mat-icon class="color-error" svgIcon="mdc:close"></mat-icon
+          ></mat-button-toggle>
         </mat-button-toggle-group>
       </ng-template>
     </ngx-datatable-column>

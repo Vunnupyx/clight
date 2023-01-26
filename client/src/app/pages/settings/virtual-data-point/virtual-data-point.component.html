@@ -74,6 +74,7 @@
           prop="name"
           [flexGrow]="1"
           cellClass="input-cell"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -109,6 +110,7 @@
           prop="operationType"
           [flexGrow]="1"
           cellClass="input-cell"
+          [minWidth]="120"
         >
           <ng-template ngx-datatable-header-template let-sort="sortFn">
             <span class="pointer" (click)="sort()">{{
@@ -227,6 +229,7 @@
           prop="sources"
           [flexGrow]="3"
           cellClass="input-cell"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -302,6 +305,7 @@
           prop="livedata"
           [flexGrow]="1"
           [sortable]="false"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -320,6 +324,7 @@
           [flexGrow]="1"
           cellClass="button-cell"
           [sortable]="false"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template

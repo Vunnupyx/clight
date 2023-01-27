@@ -551,7 +551,7 @@
         </ngx-datatable-column>
         <ngx-datatable-column
           [name]="'settings-data-source.LiveData' | translate"
-          prop="livedata"
+          prop="liveData"
           [flexGrow]="1"
           [sortable]="false"
           [minWidth]="120"
@@ -562,32 +562,26 @@
             let-value="value"
             let-row="row"
           >
-            <span
-              *ngIf="
-                liveData &&
-                  (Protocol.Energy ? liveData[row.address] : liveData[row.id]);
-                else noLiveData
-              "
-            >
+            <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
                   <ng-container
                     *ngIf="row.address?.startsWith('DI'); else noTranslate"
                     >{{
                       'settings-data-source.Livedata.ioshield.' +
-                        liveData[row.id].value | translate
+                        liveData?.[row.id]?.value | translate
                     }}
                   </ng-container>
                   <ng-template #noTranslate>{{
-                    liveData[row.id].value
+                    liveData?.[row.id]?.value
                   }}</ng-template>
                 </ng-container>
                 <ng-container *ngSwitchCase="Protocol.Energy">
-                  {{ liveData[row.address].value }}
-                  {{ liveData[row.address]?.unit }}
+                  {{ liveData?.[row.id]?.value }}
+                  {{ liveData?.[row.id]?.unit }}
                 </ng-container>
                 <ng-container *ngSwitchDefault>
-                  {{ liveData[row.id].value }}
+                  {{ liveData?.[row.id]?.value }}
                 </ng-container>
               </ng-container>
             </span>
@@ -704,7 +698,7 @@
             let-row="row"
           >
             <div class="text-ellipsis" [title]="value">
-              {{ liveData?.[row.address]?.description }}
+              {{ liveData?.[row.id]?.description }}
             </div>
           </ng-template>
         </ngx-datatable-column>

@@ -116,8 +116,7 @@ export class SystemInformationService {
 
   private _emptyState() {
     return <SystemInformationState>{
-      status: Status.NotInitialized,
-      serverOffset: 0 // TODO: remove it when backend is ready
+      status: Status.NotInitialized
     };
   }
 }

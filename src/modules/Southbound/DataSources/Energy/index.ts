@@ -5,6 +5,7 @@ import { IDataSourceParams, IMeasurement } from '../interfaces';
 import { IHostConnectivityState, ITariffNumbers } from './interfaces';
 import { PhoenixEmProAdapter } from './Adapter/PhoenixEmProAdapter';
 import { VirtualDataPointManager } from '../../../VirtualDataPointManager';
+import { IDataPointConfig } from '../../../ConfigManager/interfaces';
 
 /**
  * Implementation of Energy data source
@@ -13,12 +14,15 @@ export class EnergyDataSource extends DataSource {
   protected name = EnergyDataSource.name;
   private phoenixEemClient: PhoenixEmProAdapter;
   private virtualDataPointManager: VirtualDataPointManager;
+  private dataPoints: IDataPointConfig[];
 
   constructor(
     params: IDataSourceParams,
     virtualDataPointManager: VirtualDataPointManager
   ) {
     super(params);
+
+    this.dataPoints = params.config.dataPoints;
     this.virtualDataPointManager = virtualDataPointManager;
   }
 
@@ -100,10 +104,18 @@ export class EnergyDataSource extends DataSource {
       const readings = await this.phoenixEemClient.getAllDatapoints();
 
       const measurements: IMeasurement[] = [];
-      for (const reading of readings) {
-        if (typeof reading.value === 'undefined') continue;
-
-        measurements.push(reading);
+      for (const sourceDp of this.dataPoints) {
+        const matchingMeasurementReading = readings.find(
+          (reading) =>
+            reading.id === sourceDp.address &&
+            typeof reading.value !== 'undefined'
+        );
+        if (matchingMeasurementReading) {
+          measurements.push({
+            ...matchingMeasurementReading,
+            id: sourceDp.id
+          });
+        }
       }
       if (measurements.length > 0) {
         this.onDataPointMeasurement(measurements);

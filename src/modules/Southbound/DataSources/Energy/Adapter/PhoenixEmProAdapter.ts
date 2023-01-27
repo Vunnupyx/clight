@@ -285,7 +285,8 @@ export class PhoenixEmProAdapter {
       try {
         const response = await fetch(url, {
           method,
-          timeout: 3000
+          timeout: 3000,
+          compress: false
         });
         if (response.ok) {
           const data = await response?.json();

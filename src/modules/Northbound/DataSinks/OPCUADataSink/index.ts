@@ -140,15 +140,15 @@ export class OPCUADataSink extends DataSink {
     const logPrefix = `${this.name}::setNodeValue`;
     try {
       if (node) {
-        //@ts-ignore
         node.setValueFromSource(
           new Variant({
             value:
               node.dataType.value === DataType.LocalizedText
                 ? new LocalizedText({ locale: 'en', text: value })
+                : node.dataType.value === DataType.Boolean
+                ? Boolean(value)
                 : value,
-            //@ts-ignore
-            dataType: node.dataType.value
+            dataType: node.dataTypeObj.basicDataType
           })
         );
       }

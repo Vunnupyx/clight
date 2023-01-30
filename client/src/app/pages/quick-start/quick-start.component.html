@@ -1,6 +1,6 @@
 <div class="container">
   <mat-stepper class="pt-20" [linear]="true" #stepper>
-    <mat-step>
+    <mat-step [completed]="termsAccepted">
       <ng-template matStepLabel>
         {{ 'quick-start.TermsAndConditions' | translate }}
       </ng-template>
@@ -55,7 +55,12 @@
         </mat-expansion-panel>
 
         <div class="d-flex justify-content-end pt-20">
-          <button mat-button class="mr-25" (click)="continueWithoutTemplate()">
+          <button
+            mat-button
+            class="mr-25"
+            (click)="continueWithoutTemplate()"
+            [disabled]="!termsAccepted"
+          >
             {{ 'quick-start.ContinueWithoutTemplate' | translate }}
           </button>
 

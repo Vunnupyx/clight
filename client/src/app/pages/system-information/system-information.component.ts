@@ -22,6 +22,7 @@ import {
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { LoadingDialogComponent } from '../../shared/components/loading-dialog/loading-dialog.component';
+import { AuthService, LocalStorageService } from 'app/shared';
 
 @Component({
   selector: 'app-system-information',
@@ -38,6 +39,8 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
   constructor(
     private systemInformationService: SystemInformationService,
     private translate: TranslateService,
+    private auth: AuthService,
+    private localStorageService: LocalStorageService,
     private dialog: MatDialog,
     private toastr: ToastrService
   ) {}
@@ -131,6 +134,10 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
         );
 
         dialogRefLoad.close();
+        const languageAfterFactoryReset = 'en';
+        this.translate.use(languageAfterFactoryReset);
+        this.localStorageService.set('ui-lang', languageAfterFactoryReset);
+        this.auth.logout();
       }, 5 * 60 * 1000); //Show loading indicator for 5 minute
     });
   }

@@ -185,20 +185,28 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   /**
    * Initializes and parses config items
+   * @param factoryReset True would indicate initialization after factory reset, default false
    */
-  public async init(): Promise<void> {
+  public async init(factoryReset = false): Promise<void> {
     const logPrefix = `${ConfigManager.className}::init`;
     winston.info(`${logPrefix} initializing.`);
+    if (!factoryReset) {
+      this._dataSinksManager.on(
+        'dataSinksRestarted',
+        this.onDataSinksRestarted.bind(this)
+      );
+      this._dataSourcesManager.on(
+        'dataSourcesRestarted',
+        this.onDataSourcesRestarted.bind(this)
+      );
+    } else {
+      winston.warn(`${logPrefix} Factory reset requested`);
 
-    this._dataSinksManager.on(
-      'dataSinksRestarted',
-      this.onDataSinksRestarted.bind(this)
-    );
-    this._dataSourcesManager.on(
-      'dataSourcesRestarted',
-      this.onDataSourcesRestarted.bind(this)
-    );
-
+      // Remove saved auth users after factory reset
+      this._authUsers = {
+        users: []
+      };
+    }
     await this.checkConfigFolder();
 
     return Promise.allSettled([
@@ -417,12 +425,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       )
     );
 
-    await promisefs.writeFile(
-      this.configPath,
-      JSON.stringify(factoryConfig, null, 2),
-      { encoding: 'utf-8' }
-    );
-
     await promisefs.rm(authConfig, { force: true });
     await promisefs.rm(path.join(this.keyFolder, this.privateKeyName), {
       force: true
@@ -446,6 +448,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         )
       );
     }
+    await this.saveConfig(factoryConfig, true);
+    await this.init(true);
   }
 
   /**
@@ -552,7 +556,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         return defaultConfig;
       })
       .then((parsedFile) => {
-        const mergedFile = this.mergeDeep(defaultConfig, parsedFile);
+        // Make a copy of the defaultConfig to avoid overwriting it
+        const mergedFile = this.mergeDeep(
+          JSON.parse(JSON.stringify(defaultConfig)),
+          parsedFile
+        );
         return mergedFile;
       })
       .catch((error) => {
@@ -958,17 +966,26 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   /**
    * Save the current data from config property into a JSON config file on hard drive
+   * @param obj full or partial config object to use for saving
+   * @param replace True would replace existing config with given obj. Default is false and it merges obj and existing config
    */
-  public saveConfig(obj: Partial<IConfig> = null): void {
+  public saveConfig(
+    obj: Partial<IConfig> = null,
+    replace = false
+  ): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfig`;
 
     if (obj) {
-      this._config = this.mergeDeep(this._config, obj);
+      if (replace) {
+        this._config = obj as IConfig;
+      } else {
+        this._config = this.mergeDeep(this._config, obj);
+      }
     }
 
     winston.debug(`${logPrefix}`);
 
-    this.saveConfigToFile();
+    return this.saveConfigToFile();
   }
 
   // reads terms and conditions

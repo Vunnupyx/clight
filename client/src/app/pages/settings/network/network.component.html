@@ -293,10 +293,10 @@
               <mat-form-field>
                 <input
                   matInput
-                  name="ipAddr"
-                  #ipAddr="ngModel"
+                  name="host"
+                  #host="ngModel"
                   [(ngModel)]="config[NetworkType.PROXY].host"
-                  [pattern]="hostRegex"
+                  [pattern]="ipOrHostRegex"
                   [required]="!!config[NetworkType.PROXY].enabled"
                   [disabled]="!config[NetworkType.PROXY].enabled"
                 />

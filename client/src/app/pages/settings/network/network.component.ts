@@ -96,10 +96,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.ntpReachable = x;
   }
 
-  getNtpReachableByAddress(address: string): boolean {
-    return this.ntpReachable.find(
+  getNtpReachableStatusByAddress(address: string): 'success' | 'error' | null {
+    const reachable = this.ntpReachable.find(
       (obj: NetworkNtpReachable) => obj.address === address
     )?.reachable;
+    if (
+      this.originalConfig.ntp.ntpEnabled === false ||
+      typeof reachable === 'undefined' ||
+      !this.mainForm.submitted
+    ) {
+      return null;
+    }
+    return reachable ? 'success' : 'error';
   }
 
   onSelectTab(tab: string) {

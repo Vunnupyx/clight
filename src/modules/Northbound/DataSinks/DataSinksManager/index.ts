@@ -51,7 +51,15 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     super();
 
     this.configManager = params.configManager;
-    this.configManager.once('configsLoaded', () => this.init());
+    this.configManager.once('configsLoaded', () => {
+      try {
+        this.init();
+      } catch (err) {
+        winston.error(
+          `Error initializing DataSinksManager after configsLoaded due to:${err?.message}`
+        );
+      }
+    });
     this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;

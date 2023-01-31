@@ -31,7 +31,7 @@ async function deviceInfosPatchHandler(
 ): Promise<void> {
   const newData = { ...configManager.config.general, ...request.body };
 
-  configManager.saveConfig({ general: request.body });
+  await configManager.saveConfig({ general: request.body });
   await configManager.configChangeCompleted();
   response.status(200).json(newData);
 }

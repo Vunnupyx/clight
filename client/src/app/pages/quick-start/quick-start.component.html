@@ -123,7 +123,12 @@
           <!-- <button mat-button color="primary" matStepperNext>
             {{ 'quick-start.Next' | translate }}
           </button> -->
-          <button mat-button color="primary" matStepperNext>
+          <button
+            mat-button
+            color="primary"
+            [disabled]="!templateForm?.value?.templateId"
+            matStepperNext
+          >
             {{ 'quick-start.Save' | translate }}
           </button>
         </div>

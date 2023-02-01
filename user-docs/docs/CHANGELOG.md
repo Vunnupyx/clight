@@ -4,7 +4,7 @@ title: Changelog
 
 # Changelog
 
-## [3.0.0]
+## [3.0.6]
 
 ## Added
 

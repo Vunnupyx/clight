@@ -25,7 +25,7 @@ import {
   PromptDialogComponent,
   PromptDialogModel
 } from 'app/shared/components/prompt-dialog/prompt-dialog.component';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 import {
   SetFormulaModalComponent,
   SetFormulaModalData
@@ -194,10 +194,6 @@ export class VirtualDataPointComponent implements OnInit {
     this.virtualDataPointService.getDataPoints();
     this.virtualDataPointService.getLiveDataForDataPoints();
     this.sourceDataPointService.getSourceDataPointsAll();
-  }
-
-  ngAfterViewInit() {
-    this.ngxDatatable.columnMode = ColumnMode.force;
   }
 
   onDiscard() {

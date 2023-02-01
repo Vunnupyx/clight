@@ -6,6 +6,39 @@ title: Changelog
 
 ## [3.0.6]
 
+## Fixed
+
+- [DIGMDCLGHT-312](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-312) Fixes error on factory reset API endpoint
+- [DIGMDCLGHT-328](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-328) Fixes OPCUA data points missing values for custom data types
+
+### Changed
+
+- [DIGMDCLGHT-326](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-326) Configuration wizard closes only after accepting terms and conditions
+
+## [3.0.5]
+
+## Fixed
+
+- [DIGMDCLGHT-67](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-67) Fixes column resizing to prevent disappearing columns
+- [DIGMDCLGHT-139](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-328) Fixes OPCUA for localized text data types
+- [DIGMDCLGHT-316](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-316) Fixes VDP tooltip display
+- [DIGMDCLGHT-324](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-324) Fixes NTP server reachability check
+- [DIGMDCLGHT-327](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-327) Fixes live data display errors
+
+## [3.0.3]
+
+## Fixed
+
+- [DIGMDCLGHT-314](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-314) Fixes popup menu prompt while saving template in configuration wizard
+- [DIGMDCLGHT-321](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-321) Fixes notification in case log exporting has an error
+- [DIGMDCLGHT-322](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-322) Fixes Add New Datapoint button remaining disabled
+
+### Changed
+
+- [DIGMDCLGHT-320](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-320) Updates text displayed for factory reset popup menu
+
+## [3.0.2]
+
 ## Added
 
 - [DIGMDCLGHT-92](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-92) Adds translation to templates
@@ -14,9 +47,7 @@ title: Changelog
 ## Fixed
 
 - [DIGMDCLGHT-59](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-59) Fixes dropdown menus overlapping
-- [DIGMDCLGHT-67](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-67) Fixes column resizing to prevent disappearing columns
 - [DIGMDCLGHT-70](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-70) Fixes the case where Add new data point button might remain disabled after deleting a data point
-- [DIGMDCLGHT-139](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-328) Fixes OPCUA for localized text data types
 - [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixes missing value for NCK data point basicLengthUnit
 - [DIGMDCLGHT-207](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-207) Fixes Threshold type VDP graph double displaying of data point
 - [DIGMDCLGHT-213](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-213) Fixes sorting table while adding new data point
@@ -30,15 +61,8 @@ title: Changelog
 - [DIGMDCLGHT-306](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-306) Fixes logs being deleted after downloading
 - [DIGMDCLGHT-308](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-308) Fixes button text of Enumeration VDP
 - [DIGMDCLGHT-311](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-311) Fixes display of success/error notifications for network setting changes
-- [DIGMDCLGHT-312](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-312) Fixes error on factory reset API endpoint
 - [DIGMDCLGHT-313](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-313) Fixes digital input addresses mixing up after changing input board type
-- [DIGMDCLGHT-314](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-314) Fixes popup menu prompt while saving template in configuration wizard
 - [DIGMDCLGHT-315](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-315) Fixes navigation before configuration wizard is completed
-- [DIGMDCLGHT-316](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-316) Fixes VDP tooltip display
-- [DIGMDCLGHT-321](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-321) Fixes notification in case log exporting has an error
-- [DIGMDCLGHT-322](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-322) Fixes Add New Datapoint button remaining disabled
-- [DIGMDCLGHT-327](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-327) Fixes live data display errors
-- [DIGMDCLGHT-328](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-328) Fixes OPCUA data points missing values for custom data types
 - [DIGMDCLGHT-329](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-329) Fixes configuration wizard selection display
 
 ### Changed
@@ -57,8 +81,6 @@ title: Changelog
 - [DIGMDCLGHT-281](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-281) Removes the clock from the UI
 - [DIGMDCLGHT-282](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-282) Updates time configuration settings to use UTC time
 - [DIGMDCLGHT-302](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-302) Adds progress bar to log exporting
-- [DIGMDCLGHT-320](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-320) Updates text displayed for factory reset popup menu
-- [DIGMDCLGHT-326](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-326) Configuration wizard closes only after accepting terms and conditions
 
 ## [2.4.0]
 

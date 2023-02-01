@@ -484,6 +484,27 @@
       </ngx-datatable-column>
       <ngx-datatable-column
         *ngIf="dataSink?.protocol === Protocol.DH"
+        [name]="'settings-data-source.LiveData' | translate"
+        prop="liveData"
+        [flexGrow]="1"
+        [sortable]="false"
+        [minWidth]="120"
+      >
+        <ng-template
+          ngx-datatable-cell-template
+          let-rowIndex="rowIndex"
+          let-value="value"
+          let-row="row"
+        >
+          <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
+            {{ liveData?.[row.id]?.value }}
+            {{ liveData?.[row.id]?.unit }}
+          </span>
+          <ng-template #noLiveData>-</ng-template>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        *ngIf="dataSink?.protocol === Protocol.DH"
         [name]="'settings-data-sink.Desired.Enabled' | translate"
         prop="enabled"
         [flexGrow]="1"

@@ -82,11 +82,17 @@ export class TermsAndConditionsService {
     }
   }
 
+  async isAccepted() {
+    if (this._store.snapshot.accepted === undefined) {
+      return await this.getTermsAndConditions(this.translate.currentLang);
+    }
+    return this._store.snapshot.accepted;
+  }
+
   private _emptyState() {
     return <TermsAndConditionsState>{
       status: Status.NotInitialized,
-      text: '',
-      accepted: false
+      text: ''
     };
   }
 }

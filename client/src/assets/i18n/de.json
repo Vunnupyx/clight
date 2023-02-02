@@ -325,6 +325,10 @@
     "From": "Von",
     "To": "Zu",
     "AddMapping": "Mapping hinzufügen",
+    "ProvisioningHost": "Provisionierungs Host",
+    "ScopeId": "Scope ID",
+    "RegId": "Registration ID",
+    "SymKey": "Symetrischer Schlüssel",
     "AlreadyExistDataPoint": "Der Datenpunkt ist bereits vorhanden.",
     "AuthenticationLevels": {
       "anonymous": "Anonym",

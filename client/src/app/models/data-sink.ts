@@ -37,6 +37,13 @@ export class DataSinkConnection {
   status!: DataSinkConnectionStatus;
 }
 
+export class DataHubConfig {
+  provisioningHost!: string;
+  scopeId!: string;
+  regId!: string;
+  symKey!: string;
+}
+
 export class DataSink {
   id?: string;
   name!: string;
@@ -44,6 +51,7 @@ export class DataSink {
   enabled!: boolean;
   protocol!: DataSinkProtocol;
   auth?: DataSinkAuth;
+  datahub?: DataHubConfig;
   desired?: {
     services?: {
       [key: string]: {

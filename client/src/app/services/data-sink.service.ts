@@ -130,6 +130,12 @@ export class DataSinkService {
       }
     }
 
+    if (protocol === DataSinkProtocol.DH) {
+      if (ds.datahub) {
+        payload.datahub = ds.datahub;
+      }
+    }
+
     await this.httpService.patch(`/datasinks/${protocol}`, payload);
 
     this._store.patchState((state) => {

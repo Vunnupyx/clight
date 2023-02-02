@@ -92,6 +92,58 @@
           </div>
         </div>
       </div>
+      <div class="row" *ngSwitchCase="Protocol.DH">
+        <table mat-table [dataSource]="desiredServices" class="mt-15">
+          <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+          </ng-container>
+
+          <!-- Enabled Column -->
+          <ng-container matColumnDef="enabled">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'settings-data-sink.Desired.Enabled' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div
+                class="d-flex align-items-center"
+                [class.color-success]="element.enabled"
+                [class.color-danger]="!element.enabled"
+              >
+                <mat-icon
+                  class="mr-5"
+                  *ngIf="element.enabled"
+                  svgIcon="mdc:success"
+                ></mat-icon>
+                <mat-icon
+                  class="mr-5"
+                  *ngIf="!element.enabled"
+                  svgIcon="mdc:error"
+                ></mat-icon>
+                <label>{{
+                  (element.enabled
+                    ? 'settings-data-sink.Desired.Enabled'
+                    : 'settings-data-sink.Desired.Disabled'
+                  ) | translate
+                }}</label>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="2">
+              {{ 'settings-data-sink.NoData' | translate }}
+            </td>
+          </tr>
+        </table>
+      </div>
     </ng-container>
   </div>
   <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">

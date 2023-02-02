@@ -325,6 +325,10 @@
     "From": "から",
     "To": "へ",
     "AddMapping": "マッピングを追加",
+    "ProvisioningHost": "プロビジョニングホスト",
+    "ScopeId": "スコープID",
+    "RegId": "Reg Id",
+    "SymKey": "Symキー",
     "AlreadyExistDataPoint": "このアイテムは既に登録されています。",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",

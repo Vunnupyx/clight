@@ -450,4 +450,17 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   private onDataPointsLiveData(x: ObjectMap<DataPointLiveData>) {
     this.liveData = x;
   }
+
+  public getDatahubLivedata(rowId) {
+    let rowDataMapping = this.datapointRows?.find((r) => r.id === rowId)?.map;
+
+    let rowValue = this.liveData?.[rowId]?.value;
+
+    if (!rowDataMapping) {
+      return rowValue;
+    }
+    let index =
+      rowValue === false ? 0 : rowValue === true ? 1 : String(rowValue);
+    return `${rowValue} (${rowDataMapping[index]})`;
+  }
 }

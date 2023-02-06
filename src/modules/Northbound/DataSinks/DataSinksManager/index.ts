@@ -225,6 +225,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
+          this.configManager.config.mapping,
           this.configManager.config.termsAndConditions.accepted
         )
       ) {

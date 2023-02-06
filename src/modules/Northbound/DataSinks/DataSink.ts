@@ -43,6 +43,7 @@ export type OptionalConfigs = {
 export abstract class DataSink {
   protected name = DataSink.name;
   protected config: IDataSinkConfig;
+  protected mappingConfig: IDataPointMapping[];
   protected dataPointMapper: DataPointMapper;
   protected readonly _protocol: DataSinkProtocols;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
@@ -55,6 +56,7 @@ export abstract class DataSink {
    */
   constructor(options: IDataSinkOptions) {
     this.config = JSON.parse(JSON.stringify(options.dataSinkConfig));
+    this.mappingConfig = options.mapping;
     this.dataPointMapper = new DataPointMapper(options.mapping);
     this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
     this.enabled = options.dataSinkConfig.enabled;
@@ -65,11 +67,13 @@ export abstract class DataSink {
    */
   configEqual(
     config: IDataSinkConfig,
+    mappingConfig: IDataPointMapping[],
     termsAndConditions: boolean,
     optionalConfigs?: OptionalConfigs
   ) {
     return (
       JSON.stringify(this.config) === JSON.stringify(config) &&
+      JSON.stringify(this.mappingConfig) === JSON.stringify(mappingConfig) &&
       this.termsAndConditionsAccepted === termsAndConditions
     );
   }

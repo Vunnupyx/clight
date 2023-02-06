@@ -8,14 +8,14 @@ import { TSubscriberFn } from './interfaces';
  * Implementation of runtimes event bus
  */
 export class EventBus<TEventType> {
-  private callbacks: TSubscriberFn<TEventType>[] = [];
+  private callbacks: { [key: string]: TSubscriberFn<TEventType> } = {};
   protected logLevel: string;
 
   constructor(logLevel: LogLevel = null) {
     this.logLevel = logLevel;
 
     if (this.logLevel) {
-      this.addEventListener(this.log.bind(this));
+      this.addEventListener(this.log.bind(this), `EventBus_log`);
     }
   }
 
@@ -42,9 +42,9 @@ export class EventBus<TEventType> {
    * @param  {TSubscriberFn<TEventType>} cb
    * @returns void
    */
-  public addEventListener(cb: TSubscriberFn<TEventType>): void {
-    if (!this.callbacks.some((_cb) => _cb === cb)) {
-      this.callbacks.push(cb);
+  public addEventListener(cb: TSubscriberFn<TEventType>, id: string): void {
+    if (!this.callbacks[id]) {
+      this.callbacks[id] = cb;
     }
   }
 
@@ -52,10 +52,9 @@ export class EventBus<TEventType> {
    * Removes a call back from the event bus
    * @param cb The callback that should be removed
    */
-  public removeEventListener(cb: TSubscriberFn<TEventType>): void {
-    const index = this.callbacks.findIndex((_cb) => _cb === cb);
-    if (index > -1) {
-      this.callbacks.splice(index, 1);
+  public removeEventListener(id: string): void {
+    if (this.callbacks[id]) {
+      delete this.callbacks[id];
     }
   }
 
@@ -69,7 +68,7 @@ export class EventBus<TEventType> {
     // TODO These are not promises
     const logPrefix = `${EventBus.name}::push`;
 
-    const promises = this.callbacks.map((cb) => cb(event));
+    const promises = Object.values(this.callbacks).map((cb) => cb(event));
     await Promise.allSettled(promises).then((results) => {
       results.forEach((result) => {
         if (result.status === 'rejected')

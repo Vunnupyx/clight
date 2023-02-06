@@ -171,20 +171,6 @@ export class DataHubDataSink extends DataSink {
   }
 
   /**
-   * Compares given config with the current data sink config to determine if data source should be restarted or not
-   */
-  configEqual(
-    config: IDataSinkConfig,
-    termsAndConditions: boolean,
-    optionalConfigs?: OptionalConfigs
-  ) {
-    return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
-      this.termsAndConditionsAccepted === termsAndConditions
-    );
-  }
-
-  /**
    * Shutdown datasink
    */
   public shutdown(): Promise<void> {

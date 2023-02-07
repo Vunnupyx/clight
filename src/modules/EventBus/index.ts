@@ -43,9 +43,13 @@ export class EventBus<TEventType> {
    * @returns void
    */
   public addEventListener(cb: TSubscriberFn<TEventType>, id: string): void {
-    if (!this.callbacks[id]) {
-      this.callbacks[id] = cb;
+    const logPrefix = `${EventBus.name}::addEventListener`;
+    if (this.callbacks[id]) {
+      winston.warn(
+        `${logPrefix} callback with id ${id} already exists. Overwriting the event listener.`
+      );
     }
+    this.callbacks[id] = cb;
   }
 
   /**
@@ -53,8 +57,13 @@ export class EventBus<TEventType> {
    * @param cb The callback that should be removed
    */
   public removeEventListener(id: string): void {
+    const logPrefix = `${EventBus.name}::removeEventListener`;
     if (this.callbacks[id]) {
       delete this.callbacks[id];
+    } else {
+      winston.warn(
+        `${logPrefix} trying to remove event listener with id ${id} which does not exists.`
+      );
     }
   }
 

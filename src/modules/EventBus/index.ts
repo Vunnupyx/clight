@@ -40,6 +40,7 @@ export class EventBus<TEventType> {
   /**
    * Adds callback to the event bus
    * @param  {TSubscriberFn<TEventType>} cb
+   * @param id id of the callback
    * @returns void
    */
   public addEventListener(cb: TSubscriberFn<TEventType>, id: string): void {
@@ -54,7 +55,7 @@ export class EventBus<TEventType> {
 
   /**
    * Removes a call back from the event bus
-   * @param cb The callback that should be removed
+   * @param id The id of the callback that should be removed
    */
   public removeEventListener(id: string): void {
     const logPrefix = `${EventBus.name}::removeEventListener`;

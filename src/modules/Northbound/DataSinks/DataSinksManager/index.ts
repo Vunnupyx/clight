@@ -51,7 +51,15 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     super();
 
     this.configManager = params.configManager;
-    this.configManager.once('configsLoaded', () => this.init());
+    this.configManager.once('configsLoaded', () => {
+      try {
+        this.init();
+      } catch (err) {
+        winston.error(
+          `Error initializing DataSinksManager after configsLoaded due to:${err?.message}`
+        );
+      }
+    });
     this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
@@ -193,7 +201,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Returns data sink by protocol
    */
-  public getDataSinkByProto(protocol: string) {
+  public getDataSinkByProto(protocol: DataSinkProtocols | string) {
     return this.dataSinks.find((sink) => sink.protocol === protocol);
   }
 
@@ -217,13 +225,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
-          this.configManager.config.termsAndConditions.accepted,
-          {
-            proxy:
-              sink.protocol === DataSinkProtocols.DATAHUB
-                ? this.configManager.config.networkConfig.proxy
-                : null
-          }
+          this.configManager.config.termsAndConditions.accepted
         )
       ) {
         winston.info(

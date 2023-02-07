@@ -11,6 +11,7 @@ import {
   IMessengerMetadata
 } from '../../../../../ConfigManager/interfaces';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
+import { isValidIpOrHostname } from '../../../../../Utilities';
 
 let configManager: ConfigManager;
 let dataSinksManager: DataSinksManager;
@@ -80,6 +81,7 @@ async function messengerConfigurationPostHandler(
     let incomingMessengerConfig: IMessengerServerConfig = request.body;
 
     if (
+      !isValidIpOrHostname(incomingMessengerConfig.hostname) ||
       typeof incomingMessengerConfig.hostname !== 'string' ||
       incomingMessengerConfig.hostname.length === 0 ||
       typeof incomingMessengerConfig.username !== 'string' ||
@@ -87,7 +89,7 @@ async function messengerConfigurationPostHandler(
     ) {
       response
         .status(400)
-        .json({ error: { message: 'Missing hostname or username' } });
+        .json({ error: { message: 'Invalid hostname or username' } });
       return;
     }
 

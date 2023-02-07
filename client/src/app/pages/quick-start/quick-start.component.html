@@ -1,6 +1,6 @@
 <div class="container">
   <mat-stepper class="pt-20" [linear]="true" #stepper>
-    <mat-step>
+    <mat-step [completed]="termsAccepted">
       <ng-template matStepLabel>
         {{ 'quick-start.TermsAndConditions' | translate }}
       </ng-template>
@@ -55,7 +55,12 @@
         </mat-expansion-panel>
 
         <div class="d-flex justify-content-end pt-20">
-          <button mat-button class="mr-25" (click)="continueWithoutTemplate()">
+          <button
+            mat-button
+            class="mr-25"
+            (click)="continueWithoutTemplate()"
+            [disabled]="!termsAccepted"
+          >
             {{ 'quick-start.ContinueWithoutTemplate' | translate }}
           </button>
 
@@ -106,14 +111,24 @@
           </mat-radio-group>
         </div>
         <div class="d-flex justify-content-end">
-          <button mat-button class="mr-25" (click)="continueWithoutTemplate()">
+          <button
+            type="button"
+            mat-button
+            class="mr-25"
+            (click)="continueWithoutTemplate()"
+          >
             {{ 'quick-start.ContinueWithoutTemplate' | translate }}
           </button>
 
           <!-- <button mat-button color="primary" matStepperNext>
             {{ 'quick-start.Next' | translate }}
           </button> -->
-          <button mat-button color="primary" matStepperNext>
+          <button
+            mat-button
+            color="primary"
+            [disabled]="!templateForm?.value?.templateId"
+            matStepperNext
+          >
             {{ 'quick-start.Save' | translate }}
           </button>
         </div>

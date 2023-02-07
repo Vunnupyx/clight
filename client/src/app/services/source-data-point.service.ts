@@ -130,27 +130,34 @@ export class SourceDataPointService
   /**
    * Send a request to ping endpoint of the data source api and wait for a returned delay float value as string
    * @param protocol destination for the request
-   * @returns 
+   * @returns
    */
   async ping(protocol: DataSourceProtocol | undefined): Promise<string> {
-    // Info: currently only s7 supports ping!
-    if (protocol === undefined) protocol = DataSourceProtocol.S7
+    if (protocol === undefined) protocol = DataSourceProtocol.S7;
     const errorHandler = () => {
-      this.toastr.error(this.translate.instant('settings-data-source-point.HostUnreachable'));
-      return Promise.resolve(this.translate.instant('settings-data-source-point.HostUnreachable'));
+      this.toastr.error(
+        this.translate.instant('settings-data-source-point.HostUnreachable')
+      );
+      return Promise.resolve(
+        this.translate.instant('settings-data-source-point.HostUnreachable')
+      );
     };
-    if (protocol !== DataSourceProtocol.S7) {
-      return errorHandler();
-    }
-    return this.httpService.get(`/datasources/${protocol}/ping`)
+
+    return this.httpService
+      .get(`/datasources/${protocol}/ping`)
       .then((res) => {
         this.toastr.success(
-          this.translate.instant(`settings-data-source-point.ConnectionAvailableWithDelay`) + res.delay + ' ms'
+          this.translate.instant(
+            `settings-data-source-point.ConnectionAvailableWithDelay`
+          ) +
+            res.delay +
+            ' ms'
         );
         return res.delay;
-      }).catch(() => {
-        return errorHandler();
       })
+      .catch(() => {
+        return errorHandler();
+      });
   }
 
   async getDataPoints(datasourceProtocol: DataSourceProtocol) {
@@ -199,7 +206,9 @@ export class SourceDataPointService
         };
 
         dataPoints = dataPoints.concat(
-          ...dataSource.dataPoints.map(x => this._parseDataPoint(x, dataSource))
+          ...dataSource.dataPoints.map((x) =>
+            this._parseDataPoint(x, dataSource)
+          )
         );
       }
 
@@ -329,6 +338,8 @@ export class SourceDataPointService
         }
 
         return `[DI]`;
+      case DataSourceProtocol.Energy:
+        return `[Energy]`;
       default:
         return '';
     }
@@ -351,7 +362,10 @@ export class SourceDataPointService
     });
   }
 
-  private _parseDataPoint(obj: api.Sourcedatapoint, parentSource?: api.DataSourceType) {
+  private _parseDataPoint(
+    obj: api.Sourcedatapoint,
+    parentSource?: api.DataSourceType
+  ) {
     const dataPoint = obj as SourceDataPoint;
     if (parentSource) {
       dataPoint.enabled = Boolean(parentSource.enabled);

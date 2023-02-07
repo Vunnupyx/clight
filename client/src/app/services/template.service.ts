@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 import { Status, Store, StoreFactory } from '../shared/state';
 import { ITemplate, TemplatesStatus } from '../models/template';
@@ -27,9 +27,11 @@ export class TemplateService {
   }
 
   get currentTemplate() {
-    return this._store.state
-      .pipe(filter((x) => x.status != Status.NotInitialized))
-      .pipe(map((x) => x.currentTemplate));
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.currentTemplate),
+      distinctUntilChanged()
+    );
   }
 
   get currentTemplateName() {
@@ -49,7 +51,7 @@ export class TemplateService {
 
   async getAvailableTemplates() {
     this._store.patchState(() => ({
-      status: Status.Loading
+      status: Status.NotInitialized
     }));
 
     try {

@@ -75,11 +75,15 @@ export interface IOPCUAConfig extends OPCUAServerOptions {
   nodesetDir: string;
 }
 
+export type IEnergyDataSourceConnection = {
+  ipAddr: string;
+};
+
 export type IS7DataSourceConnection = {
   ipAddr: string;
-  port: number;
-  rack: number;
-  slot: number;
+  port?: number;
+  rack?: number;
+  slot?: number;
 };
 export type IS7DataSourceTypes =
   | 's7-300/400'
@@ -88,6 +92,7 @@ export type IS7DataSourceTypes =
   | 'nck-pl'
   | 'custom';
 export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
+export type IEnergyDataSourcesTypes = 'PhoenixEMpro';
 
 export interface IDataPointConfig {
   id: string;
@@ -100,9 +105,12 @@ export interface IDataPointConfig {
 export interface IDataSourceConfig {
   dataPoints: IDataPointConfig[];
   protocol: DataSourceProtocols;
-  connection?: IS7DataSourceConnection;
+  connection?: IS7DataSourceConnection | IEnergyDataSourceConnection;
   enabled: boolean;
-  type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
+  type?:
+    | IS7DataSourceTypes
+    | IIoShieldDataSourcesTypes
+    | IEnergyDataSourcesTypes;
 }
 
 type IMTConnectDataPointTypes = 'event' | 'condition' | 'sample';

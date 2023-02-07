@@ -1,0 +1,270 @@
+{
+  "name": "quick-start.Templates.name.energyAll",
+  "description": "quick-start.Templates.description.energyAll",
+  "general": {
+    "manufacturer": "DMGMORI",
+    "serialNumber": "",
+    "model": "",
+    "control": ""
+  },
+  "dataSources": [
+    {
+      "dataPoints": [
+        {
+          "address": "tariff-number",
+          "type": "device",
+          "mandatory": true,
+          "id": "7155b7d3-3663-4ced-a718-e39d7fa0a4e3",
+          "name": "Tariff"
+        },
+        {
+          "type": "measurement",
+          "name": "IN",
+          "address": "in",
+          "id": "4c6b3034-c3bc-44d7-9bd8-3c263f1c151e"
+        },
+        {
+          "type": "measurement",
+          "name": "P",
+          "address": "p",
+          "id": "f3bb9f89-cd82-4af0-8651-4b938c55cf75"
+        },
+        {
+          "type": "measurement",
+          "name": "Q",
+          "address": "q",
+          "id": "1befeb36-d966-4db6-8e04-8aa020e9bdc5"
+        },
+        {
+          "type": "measurement",
+          "name": "S",
+          "address": "s",
+          "id": "57e2dd64-6cce-43fe-8336-68f77ba1fbff"
+        },
+        {
+          "type": "measurement",
+          "name": "PF",
+          "address": "pf",
+          "id": "1ae71de3-1505-4cae-b3b2-cea7cbac9e9a"
+        },
+        {
+          "type": "meter",
+          "name": "Ea+",
+          "address": "ea-pos-total",
+          "id": "2079c391-6f87-4b49-a7a0-1d0b9857fea7"
+        },
+        {
+          "type": "meter",
+          "name": "Ea-",
+          "address": "ea-neg-total",
+          "id": "690193d4-bfce-4a76-b0e8-cb1ce8f83008"
+        },
+        {
+          "type": "meter",
+          "name": "Er+",
+          "address": "er-pos-total",
+          "id": "eb87479c-2daa-475d-93ce-a812f4dfe80b"
+        },
+        {
+          "type": "meter",
+          "name": "Er-",
+          "address": "er-neg-total",
+          "id": "cd478b03-5f67-49c1-bd8b-65a77b8d0dd8"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Ea+",
+          "address": "t1-ea-pos",
+          "id": "7383170a-0c1a-429a-a57f-df538f98b7c6"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Ea-",
+          "address": "t1-ea-neg",
+          "id": "7cb9f59e-ef9c-4903-8dd9-e89c2753fba3"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Er+",
+          "address": "t1-er-pos",
+          "id": "07de18ee-7467-4675-8995-a1258ba0a7bd"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Er-",
+          "address": "t1-er-neg",
+          "id": "c005d2fe-b223-4d01-a16d-b73d60de9321"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Es",
+          "address": "t1-es",
+          "id": "82948c87-eb57-4a41-a799-a632e24f40f7"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Er",
+          "address": "t1-er",
+          "id": "bb180331-8c28-42d9-bba9-62fa3bc10ede"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Runtime",
+          "address": "t1-runtime",
+          "id": "ecb94864-0a8f-42b7-8b2d-e3500dccb178"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Ea+",
+          "address": "t2-ea-pos",
+          "id": "b192dc91-0912-4dcf-a84d-38be0c9986fd"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Ea-",
+          "address": "t2-ea-neg",
+          "id": "a1da8f7c-4394-4d0e-8997-f3921b5d7ddf"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Er+",
+          "address": "t2-er-pos",
+          "id": "717b512f-11c3-4086-8bcd-41c184e7e988"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Er-",
+          "address": "t2-er-neg",
+          "id": "0ebf67f6-d35b-4de7-9ef0-114cfcb01aeb"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Es",
+          "address": "t2-es",
+          "id": "8d29993b-cbd8-44df-a9a0-64f908568212"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Er",
+          "address": "t2-er",
+          "id": "77727839-8b40-4c8c-9244-bb14362f2a42"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Runtime",
+          "address": "t2-runtime",
+          "id": "72441295-e020-43f0-94ea-5c646972dd2e"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Ea+",
+          "address": "t3-ea-pos",
+          "id": "2f796e2d-d9af-4e25-bd11-9ca1119ccbb6"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Ea-",
+          "address": "t3-ea-neg",
+          "id": "a2942fcb-a6a1-4eeb-9fc2-d85d07fb9ba3"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Er+",
+          "address": "t3-er-pos",
+          "id": "2858b7aa-29a6-47a5-a543-651b05e65840"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Er-",
+          "address": "t3-er-neg",
+          "id": "a989973d-c95e-48f6-8a81-3e42f0de519a"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Es",
+          "address": "t3-es",
+          "id": "731a958b-62c6-40b4-8314-6f7f412a8b93"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Er",
+          "address": "t3-er",
+          "id": "47cd19fc-b663-4315-9624-c31bccd46988"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Runtime",
+          "address": "t3-runtime",
+          "id": "1ced7b58-1fdd-41d3-b7d1-14def9d8a36f"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Ea+",
+          "address": "t4-ea-pos",
+          "id": "52621195-a86d-42b2-8dc3-f5482e032403"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Ea-",
+          "address": "t4-ea-neg",
+          "id": "eb7cbb3c-40e7-464e-9199-c68995edb9d2"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Er+",
+          "address": "t4-er-pos",
+          "id": "ca7b9e64-1fda-4b87-b32e-3b9ae77f40c7"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Er-",
+          "address": "t4-er-neg",
+          "id": "e1cdd9f5-f27e-43b0-a65d-d655e91c4405"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Es",
+          "address": "t4-es",
+          "id": "03e61847-0816-4119-b35c-1dea284b2e1e"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Er",
+          "address": "t4-er",
+          "id": "7f065299-c916-417e-b217-cd940cf8bb15"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Runtime",
+          "address": "t4-runtime",
+          "id": "9bae0f02-8637-4e88-a767-33a1acb979f5"
+        },
+        {
+          "type": "device",
+          "name": "Firmware Version",
+          "address": "fw",
+          "id": "d40fb48b-a73b-4c55-a0c7-05f3259a8fcd"
+        }
+      ],
+      "protocol": "energy",
+      "enabled": true,
+      "type": "PhoenixEMpro"
+    }
+  ],
+  "dataSinks": [],
+  "virtualDataPoints": [],
+  "mapping": [],
+  "systemInfo": [],
+  "templates": {
+    "completed": true
+  },
+  "messenger": {
+    "hostname": "",
+    "username": "",
+    "password": "",
+    "name": "",
+    "model": 0,
+    "organization": "",
+    "timezone": 0
+  }
+}

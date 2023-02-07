@@ -56,6 +56,8 @@ function livedataDataSourceDataPointsGetHandler(
       const obj: any = {
         dataPointId,
         value: value.value,
+        unit: value.unit,
+        description: value.description,
         timestamp: Math.round(new Date(value.ts).getTime() / 1000)
       };
 
@@ -92,6 +94,8 @@ function livedataDataSourceDataPointGetHandler(
   const payload: any = {
     dataPointId: request.params.dataPointId,
     value: value.value,
+    unit: value.unit,
+    description: value.description,
     timestamp: Math.round(new Date(value.ts).getTime() / 1000)
   };
 

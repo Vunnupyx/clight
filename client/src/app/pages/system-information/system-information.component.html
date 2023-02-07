@@ -15,10 +15,8 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
-        <!--TODO src/modules/Backend/routes/apis/v1/SystemInfo/index.ts Line 35 -->
-        <button [disabled]="true" mat-button color="primary" (click)="update()">
-          {{ 'system-information.UpdateNow' | translate }} [CELOS Migration not
-          completed]
+        <button mat-button color="primary" (click)="update()">
+          {{ 'system-information.UpdateNow' | translate }}
         </button>
       </div>
     </mat-expansion-panel>
@@ -63,8 +61,4 @@
       <mat-divider></mat-divider>
     </ng-container>
   </div>
-</div>
-
-<div class="loading-block" *ngIf="showLoadingFactoryReset">
-  <mat-spinner></mat-spinner>
 </div>

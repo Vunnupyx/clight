@@ -1368,23 +1368,147 @@
     "/systemInfo/update": {
       "get": {
         "tags": ["systemInfo"],
-        "description": "Update all containers if possible",
-        "operationId": "updateContainerGet",
+        "description": "Trigger azure function 'get-mdclight-updates' and return all available updates.",
+        "operationId": "updateGet",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Update Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "enum": ["List of available MDCL updates."]
+                },
+                "updates": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "release": {
+                        "type": "string"
+                      },
+                      "BaseLayerVersion": {
+                        "type": "string"
+                      },
+                      "releaseNotes": {
+                        "type": "string"
+                      },
+                      "OSVersion": {
+                        "type": "string"
+                      },
+                      "releaseNotesMissingReason": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "204": {
-            "description": "Request successfully but no updates available"
+            "description": "Request successfully but no updates available",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "enum": ["No updates available."]
+                }
+              }
+            }
           },
-          "400": {
+          "503": {
             "description": "Update failed. Possibly no network connection.",
             "schema": {
               "type": "object",
               "properties": {
                 "error": {
                   "type": "string",
-                  "example": "No update possible. Please check your network configuration."
+                  "enum": ["Unable to get update information."]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["systemInfo"],
+        "description": "Trigger azure function 'update-mdclight-version'.",
+        "operationId": "updateMDCL",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "versions",
+            "required": true,
+            "description": "mdcl version string to update to and ",
+            "schema": {
+              "type": "object",
+              "required": ["release", "baseLayerVersion"],
+              "properties": {
+                "release": {
+                  "type": "string"
+                },
+                "baseLayerVersion": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "release": "3.0.0",
+                "baseLayerVersion": "1.4.3-linux-arm64v8"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Update started",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "enum": ["Update started."]
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version number the endpoint was called with."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No version information attached.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["No version information in request found."]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Version to update not found.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["Version not found."]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Update failed. Possibly no network connection.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["No update possible. Please try again later"]
                 }
               }
             }
@@ -2030,6 +2154,10 @@
         "status": {
           "type": "string",
           "enum": ["connected", "disconnected"]
+        },
+        "emProTariffNumber": {
+          "type": "string",
+          "enum": ["0", "1", "2", "3", "4"]
         }
       }
     },
@@ -2194,6 +2322,12 @@
                     "type": "number"
                   },
                   "value": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "description": {
                     "type": "string"
                   }
                 }

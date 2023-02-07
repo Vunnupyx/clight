@@ -2,18 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  SystemInformationService,
-  UpdateStatus
-} from 'app/services/system-information.service';
-import { sleep } from 'app/shared/utils';
 import { Subscription } from 'rxjs';
+import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
+import { UpdateManager } from './update-manager';
 
-const UPDATE_POLLING_INTERVAL_MS = 1000; //10_000;
-const UPDATE_TIMEOUT_MS = 10 * 60_000;
+const UPDATE_TIMEOUT_MS = 30 * 60_000;
 
 export interface UpdateDialogResult {
-  status: UpdateStatus;
+  status: string;
   error?: string;
 }
 
@@ -26,36 +22,32 @@ export class UpdateDialogComponent implements OnInit {
   sub = new Subscription();
   checkingForUpdates = false;
   updateInProgress = false;
+  currentState = 'GET_UPDATES';
+  endReason = '';
+  updateManager: UpdateManager;
 
   constructor(
     private dialogRef: MatDialogRef<any, UpdateDialogResult>,
     @Inject(MAT_DIALOG_DATA) private data: any,
-    private systemInformationService: SystemInformationService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private configurationAgentHttpMockupService: ConfigurationAgentHttpService,
+    private httpMockupService: HttpService
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    try {
-      this.checkingForUpdates = true;
-      const { startUpTime } = await this.systemInformationService.healthcheck();
-      const status = await this.systemInformationService.getUpdateStatus();
-      this.checkingForUpdates = false;
+  get currentStateText(): string {
+    return `system-information.UpdateStatus-${
+      this.currentState === 'VALIDATE_COS_DOWNLOAD' &&
+      this.updateManager.retryCount > 0
+        ? 'VALIDATE_COS_DOWNLOAD-RETRYING'
+        : this.currentState
+    }`;
+  }
 
-      if (status === UpdateStatus.UpToDate) {
-        this.dialogRef.close({ status });
-      }
-
-      if (status === UpdateStatus.NeedsUpdate) {
-        this.updateInProgress = true;
-        await this.waitForUpdateComplete(startUpTime);
-        this.dialogRef.close({ status: UpdateStatus.UpdateSuccessful });
-      }
-    } catch (err: any) {
+  async ngOnInit(): Promise<any> {
+    Promise.race([this.checkTimeout(), this.update()]).catch((err) => {
       console.error(err);
 
-      let errorText = this.translate.instant(
-        'system-information.UpdateFailedCheckNetworkConfig'
-      );
+      let errorText = '';
       if (err instanceof HttpErrorResponse && err.error) {
         try {
           const { error, code } = JSON.parse(err.error);
@@ -63,40 +55,63 @@ export class UpdateDialogComponent implements OnInit {
             ? this.translate.instant(`system-information.UpdateFailed-${code}`)
             : error;
         } catch (e) {
-          this.dialogRef.close({
-            status: UpdateStatus.UnexpectedError
-          });
+          errorText = this.translate.instant(
+            `system-information.UpdateFailed-CheckNetworkConfig`
+          );
         }
-      } else if (err?.error?.message) {
-        errorText = err.error.message;
-      }
-      this.dialogRef.close({
-        status: UpdateStatus.CheckFailed,
-        error: errorText
-      });
-    }
-  }
-
-  private async waitForUpdateComplete(systemStartTime: string) {
-    const started = Date.now();
-
-    while (!(await this.checkVersionChanged(systemStartTime))) {
-      if (Date.now() - started > UPDATE_TIMEOUT_MS) {
-        throw new Error(
-          this.translate.instant('system-information.UpdateInstallFailed')
+      } else {
+        errorText = this.translate.instant(
+          `system-information.UpdateStatus-${this.endReason}`
         );
       }
-
-      await sleep(UPDATE_POLLING_INTERVAL_MS);
-    }
+      console.log(errorText);
+      this.dialogRef.close({
+        status: 'ERROR',
+        error: errorText
+      });
+    });
   }
 
-  private async checkVersionChanged(systemStartTime: string) {
-    try {
-      const { startUpTime } = await this.systemInformationService.healthcheck();
-      return startUpTime != systemStartTime;
-    } catch (err) {
-      return false;
+  private async update(): Promise<void> {
+    this.checkingForUpdates = true;
+    this.checkTimeout();
+    this.updateManager = new UpdateManager(
+      this.httpMockupService,
+      this.configurationAgentHttpMockupService,
+      this.onStateChange.bind(this)
+    );
+    await this.updateManager.start();
+  }
+
+  private async checkTimeout() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.endReason = 'ERROR_TIMEOUT';
+        reject();
+      }, UPDATE_TIMEOUT_MS);
+    });
+  }
+
+  private onStateChange(newState: string, endReason?: string) {
+    this.currentState = newState;
+    this.endReason = endReason;
+    if (this.currentState === 'END') {
+      this.checkingForUpdates = false;
+      if (this.endReason === 'SUCCESS') {
+        this.dialogRef.close({ status: 'SUCCESS' });
+      } else if (this.endReason === 'NO_UPDATE_FOUND') {
+        this.dialogRef.close({ status: 'UP_TO_DATE' });
+      } else {
+        this.dialogRef.close({
+          status: 'ERROR',
+          error: this.translate.instant(
+            `system-information.UpdateStatus-${this.endReason}`
+          )
+        });
+      }
+    } else if (this.currentState === 'CHECK_INSTALLED_COS_VERSION') {
+      // From this step on it can show the status as update in progress
+      this.updateInProgress = true;
     }
   }
 }

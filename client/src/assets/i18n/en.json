@@ -87,16 +87,20 @@
         "10diIoShieldMessenger": "Input board to DMG MORI Messenger",
         "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
         "empty": "Empty Template",
+        "energyAll": "EEM Kit",
         "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       },
       "description": {
         "10diIoShieldMessenger": "10 digital input board to DMG MORI Messenger",
         "ai2ioShieldMessenger": "Current sensors + 5 digital input board to DMG MORI Messenger",
         "empty": "Template does not include any data source, virtual data points, mappings and application interface",
+        "energyAll": "Includes all data points readable from EEM Kit",
         "gm": "GM 16-6 or GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "fanucAll": "Includes data points for Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       }
     }
@@ -166,8 +170,10 @@
     "DataPoints": "Data points",
     "SelectAVariable": "Select a variable",
     "ControllerType": "Type",
+    "CurrentTariff": "Current Tariff",
     "Name": "Name",
     "Type": "Type",
+    "Description": "Description",
     "Address": "Address",
     "LiveData": "Live Data",
     "Actions": "Actions",
@@ -176,7 +182,8 @@
     "LoadError": "Failed to load data sources. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Board"
+      "ioshield": "Input Board",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
@@ -190,7 +197,17 @@
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "ActivePower": "Active Power",
+    "TotalEnergy": "Total Energy",
+    "TariffStatus": {
+      "0": "No tariff counter active",
+      "1": "Running",
+      "2": "Idle",
+      "3": "Waiting",
+      "4": "Alarm",
+      "Unknown": "Unknown"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtual Data Points",
@@ -235,6 +252,7 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
+    "AddEnumeration": "Add enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
@@ -299,6 +317,7 @@
     "Close": "Close",
     "Event": "Event",
     "Condition": "Condition",
+    "Sample": "Sample",
     "SelectAVariable": "Select a variable",
     "CreateDataPoint": "Create data item",
     "SelectVariable": "Select Variable",
@@ -306,10 +325,6 @@
     "From": "From",
     "To": "To",
     "AddMapping": "Add mapping",
-    "ProvisioningHost": "Provisioning Host",
-    "ScopeId": "Scope Id",
-    "RegId": "Reg Id",
-    "SymKey": "Sym Key",
     "AlreadyExistDataPoint": "This item is already added!",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
@@ -431,8 +446,12 @@
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time (UTC)",
     "ChooseTimeZone": "Choose Time Zone",
-    "nptUnreachable": "NTP Server unreachable",
-    "nptUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply."
+    "ntpUnreachable": "NTP Server unreachable",
+    "ntpUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply.",
+    "UpdateNtpSuccess": "Updated NTP Server successfully",
+    "UpdateProxySuccess": "Updated proxy successfully",
+    "UpdateAdapterSuccess": "Updated network adapter successfully",
+    "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
   "system-information": {
     "SystemInformation": "System Information",
@@ -441,18 +460,29 @@
     "YourSystemUpToDate": "Your system is up to date",
     "YourSystemUpdateSuccess": "Updated successfully",
     "YourSystemUpdateSuccessDescr": "Your system updated successfully. Reload the page to complete the update.",
-    "CheckUpdate": "Checking for updates",
-    "CheckUpdateDescr": "This will take a few minutes. Please don't reload the page.",
-    "InstallingUpdate": "Installing update",
-    "InstallingUpdateDescr": "This will take a few minutes. Please don't reload the page.",
+    "InstallingUpdateDescr": "This can take up to 30 minutes. Please don't reload the page.",
+    "UpdateStatus-INIT": "Starting to check for updates",
+    "UpdateStatus-GET_UPDATES": "Checking for available new versions",
+    "UpdateStatus-CHECK_INSTALLED_COS_VERSION": "Checking installed version",
+    "UpdateStatus-CHECK_COS_UPDATES": "Checking whether update is already ready to install",
+    "UpdateStatus-START_DOWNLOAD_COS_UPDATES": "Starting to download the update",
+    "UpdateStatus-VALIDATE_COS_DOWNLOAD": "Download is in progress",
+    "UpdateStatus-VALIDATE_COS_DOWNLOAD-RETRYING": "Download was interrupted. Retrying to download",
+    "UpdateStatus-APPLY_COS_UPDATES": "Installing the software update",
+    "UpdateStatus-WAITING_FOR_SYSTEM_RESTART": "Waiting for system to restart",
+    "UpdateStatus-APPLY_MODULE_UPDATES": "Installing module updates",
+    "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Waiting for modules to finish installing",
+    "UpdateStatus-NO_CONNECTION": "Update failed. Please check the network configuration of the device.",
+    "UpdateStatus-UNEXPECTED_ERROR": "Update failed due to an unexpected error. Please try again later.",
     "UpdateFailed": "Update Failed",
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
-    "UpdateFailedCheckNetworkConfig": "Update failed. Please check your network configuration.",
+    "UpdateFailed-CheckNetworkConfig": "Update failed. Please check your network configuration.",
     "UpdateInstallFailed": "Failed to install updates. Please contact support.",
     "MaterialThemeVersion": "CELOS X material theme",
     "SoftwareComponent": "Software component",
     "LoadError": "Failed to load system information. Try again later",
     "FactoryReset": "Factory Reset",
+    "FactoryResetDescription": "Performing factory reset. It can take up to 5 minutes. Please do not reload the page.",
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",

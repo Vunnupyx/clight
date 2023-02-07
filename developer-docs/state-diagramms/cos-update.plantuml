@@ -1,0 +1,44 @@
+@startuml COS Update
+
+
+INIT --> GET_UPDATES :  START_UPDATE (User initiated)
+INIT : Button pressed
+GET_UPDATES --> CHECK_INSTALLED_COS_VERSION : UPDATE_FOUND
+GET_UPDATES --> [*] : NO_UPDATE_FOUND
+GET_UPDATES : Call Azure Function: get-iotflex-updates
+GET_UPDATES : Proxied by backend
+GET_UPDATES --> [*] : NO_CONNECTION
+CHECK_INSTALLED_COS_VERSION --> APPLY_MODULE_UPDATES : VERSION_OK
+CHECK_INSTALLED_COS_VERSION : GET /system/versions
+CHECK_INSTALLED_COS_VERSION --> CHECK_COS_UPDATES : VERSION_NOT_OK
+CHECK_COS_UPDATES : GET  /system/update to check if the required update is already downloaded
+CHECK_COS_UPDATES : Response Code 200: Update avaible
+CHECK_COS_UPDATES : Response Code 204: No update locally available
+CHECK_COS_UPDATES --> APPLY_COS_UPDATES : UPDATE_AVAILABLE (200 AND Same Version that should be installed)
+APPLY_COS_UPDATES : POST /system/applyupdate 
+CHECK_COS_UPDATES --> START_DOWNLOAD_COS_UPDATES : UPDATE_NOT_AVAILABLE (204 OR & Other Version that should be installed)
+START_DOWNLOAD_COS_UPDATES : POST /system/update/{osversion}/download
+START_DOWNLOAD_COS_UPDATES : The request will immedatly resolve with success if version is found
+START_DOWNLOAD_COS_UPDATES : The download continues in background
+START_DOWNLOAD_COS_UPDATES --> VALIDATE_COS_DOWNLOAD : COS_DOWNLOAD_STARTED
+VALIDATE_COS_DOWNLOAD : Continuesly check the down state with GET /system/update/download/status
+VALIDATE_COS_DOWNLOAD : Until pendingCount === 0
+VALIDATE_COS_DOWNLOAD : After that, check again with GET /system/update
+VALIDATE_COS_DOWNLOAD --> APPLY_COS_UPDATES : COS_DOWNLOADED
+VALIDATE_COS_DOWNLOAD --> START_DOWNLOAD_COS_UPDATES : DOWNLOAD_FAILED (max 3x)
+VALIDATE_COS_DOWNLOAD --> [*] : NO_CONNECTION
+APPLY_COS_UPDATES --> WAITING_FOR_SYSTEM_RESTART :INSTALLING_COS
+WAITING_FOR_SYSTEM_RESTART --> APPLY_MODULE_UPDATES : SYSTEM_RESTARTED
+WAITING_FOR_SYSTEM_RESTART : Continously GET /system/versions until there is an answer again
+APPLY_MODULE_UPDATES --> WAIT_FOR_MODULE_UPDATE : MODULE_UPDATE_APPLIED
+APPLY_MODULE_UPDATES : Call Azure Function: update-iotflex-version
+APPLY_MODULE_UPDATES --> [*] : NO_CONNECTION
+WAIT_FOR_MODULE_UPDATE : The IoT Edge Hub will automatically apply updates
+WAIT_FOR_MODULE_UPDATE : after they have been set inside Azure by the Azure function
+WAIT_FOR_MODULE_UPDATE : Continously GET /system/versions until there is an answer again
+WAIT_FOR_MODULE_UPDATE : It must wait for an unavailability of the backend before the availability trggers the next step
+WAIT_FOR_MODULE_UPDATE : It must wait healthcheck with runtime to be successful
+WAIT_FOR_MODULE_UPDATE --> [*] : SUCCESS
+
+@enduml
+

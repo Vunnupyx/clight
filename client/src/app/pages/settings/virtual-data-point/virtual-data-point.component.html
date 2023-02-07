@@ -67,13 +67,13 @@
         [headerHeight]="50"
         [rows]="datapointRows"
         rowHeight="auto"
-        columnMode="flex"
+        columnMode="force"
       >
         <ngx-datatable-column
           [name]="'settings-virtual-data-point.Name' | translate"
           prop="name"
-          [flexGrow]="1"
           cellClass="input-cell"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -107,8 +107,8 @@
         <ngx-datatable-column
           [name]="'settings-virtual-data-point.Operation' | translate"
           prop="operationType"
-          [flexGrow]="1"
           cellClass="input-cell"
+          [minWidth]="120"
         >
           <ng-template ngx-datatable-header-template let-sort="sortFn">
             <span class="pointer" (click)="sort()">{{
@@ -225,8 +225,8 @@
         <ngx-datatable-column
           [name]="'settings-virtual-data-point.Sources' | translate"
           prop="sources"
-          [flexGrow]="3"
           cellClass="input-cell"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -235,7 +235,7 @@
             let-row="row"
           >
             <ng-container *ngIf="unsavedRow?.id !== row.id">
-              <div class="text-ellipsis" [title]="value">
+              <div class="text-ellipsis" [title]="getSourceNames(value)">
                 {{ getSourceNames(value) }}
               </div>
             </ng-container>
@@ -299,9 +299,9 @@
         </ngx-datatable-column>
         <ngx-datatable-column
           [name]="'settings-virtual-data-point.LiveData' | translate"
-          prop="livedata"
-          [flexGrow]="1"
+          prop="liveData"
           [sortable]="false"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -317,9 +317,9 @@
         </ngx-datatable-column>
         <ngx-datatable-column
           [name]="'settings-virtual-data-point.Actions' | translate"
-          [flexGrow]="1"
           cellClass="button-cell"
           [sortable]="false"
+          [minWidth]="120"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -410,9 +410,10 @@
                 ><mat-icon svgIcon="mdc:edit"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
-                (click)="onDelete(row); group.value = null"
+                (click)="!row.mandatory && onDelete(row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
+                [disabled]="row.mandatory"
                 ><mat-icon svgIcon="mdc:delete"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle

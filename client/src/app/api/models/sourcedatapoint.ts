@@ -4,5 +4,5 @@ export interface Sourcedatapoint {
   description?: string;
   name: string;
   readFrequency: number;
-  type: 's7' | 'nck';
+  type?: 's7' | 'nck' | 'measurement' | 'meter' | 'tariff' | 'device';
 }

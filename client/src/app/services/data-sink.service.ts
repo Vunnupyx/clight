@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { from, interval, Observable } from 'rxjs';
 
 import {
-  DataPoint,
   DataSink,
   DataSinkConnection,
   DataSinkProtocol,
@@ -111,12 +110,6 @@ export class DataSinkService {
       }
       if (ds.customDataPoints) {
         payload.customDataPoints = ds.customDataPoints;
-      }
-    }
-
-    if (protocol === DataSinkProtocol.DH) {
-      if (ds.datahub) {
-        payload.datahub = ds.datahub;
       }
     }
 

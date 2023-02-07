@@ -13,6 +13,9 @@ const config = {
         status: 'running',
         restartPolicy: 'always',
         startupOrder: 10,
+        env: {
+          LOG_LEVEL: { value: 'debug' }
+        },
         settings: {
           image: `mdclightdev.azurecr.io/mdclight:${version}`,
           createOptions: JSON.stringify({
@@ -22,6 +25,7 @@ const config = {
               'celos.module.visible': 'true'
             },
             HostConfig: {
+              Privileged: true,
               NetworkMode: 'azure-iot-edge',
               PortBindings: {
                 '4840/tcp': [{ HostPort: '4840' }],

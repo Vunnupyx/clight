@@ -280,6 +280,9 @@ describe('DataHubDataSink', () => {
           expect.stringContaining('initializing')
         );
         expect(dataHubAdapterMock.init).not.toBeCalled();
+        expect(winstonMock.info).toBeCalledWith(
+          expect.stringContaining('disabled')
+        );
         expect(dataHubAdapterMock.start).not.toBeCalled();
         expect(datasinkUUT.getCurrentStatus()).toBe(
           LifecycleEventStatus.Disabled

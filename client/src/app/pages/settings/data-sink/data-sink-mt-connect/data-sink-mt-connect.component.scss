@@ -10,6 +10,10 @@
 .desired-service-table {
   padding-left: 15px;
   margin-bottom: 20px;
+  td,
+  th {
+    padding: 0 15px;
+  }
 }
 
 .has-data-mapping {

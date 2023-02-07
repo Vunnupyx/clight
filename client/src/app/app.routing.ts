@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 // Uses nested route such as Angular does not support async guards queue
 const routes: Routes = [
   {
-    path: '',
+    path: '**',
     pathMatch: 'full',
     redirectTo: 'settings/general'
   }

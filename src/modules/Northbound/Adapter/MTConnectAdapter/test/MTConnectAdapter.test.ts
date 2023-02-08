@@ -1,5 +1,11 @@
 import { DataItem } from '../DataItem';
 
+const DataItemMock = jest.createMockFromModule('../DataItem') as DataItem;
+
+DataItemMock.itemList = () => [];
+DataItemMock.toString = () =>
+  `${DataItemMock.name}|FAULT|EX0000|100||UNNAMED_ALARM`;
+
 const mockSocket = {
   write: jest.fn((line, cb) => {
     cb();
@@ -74,8 +80,11 @@ describe('Test MTCAdapter', () => {
   });
 
   test('Server should send data items to new clients', async () => {
+    const item = new DataItem('test');
+    jest.spyOn(DataItem.prototype, 'itemList').mockReturnValue([item]);
+
     const adapter = new MTConnectAdapter({ listenerPort: 0 });
-    adapter.addDataItem(new DataItem('test'));
+    adapter.addDataItem(item);
     adapter.start();
 
     const listenForClients = mockServer.on.mock.calls[0][1];
@@ -96,8 +105,10 @@ describe('Test MTCAdapter', () => {
   });
 
   test('Server should send changes', async () => {
-    const adapter = new MTConnectAdapter({ listenerPort: 0 });
     const item = new DataItem('test1');
+    jest.spyOn(DataItem.prototype, 'itemList').mockReturnValue([item]);
+
+    const adapter = new MTConnectAdapter({ listenerPort: 0 });
     adapter.addDataItem(item);
     adapter.start();
 

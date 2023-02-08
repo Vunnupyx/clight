@@ -17,7 +17,8 @@ const winstonMock = {
   winston: jest.fn(), // Constructor
   info: jest.fn(log),
   debug: jest.fn(log),
-  warn: jest.fn(log)
+  warn: jest.fn(log),
+  error: jest.fn(log)
 };
 jest.doMock('winston', () => {
   return winstonMock;
@@ -96,6 +97,9 @@ jest.mock('node-opcua', () => {
 });
 let writtenXMLFile: string | null = null;
 
+const mockXmlFile = fs.readFileSync(path.join(__dirname, 'mock.xml'), {
+  encoding: 'utf-8'
+});
 jest.mock('fs-extra', () => {
   return {
     readdir: jest.fn(async () => ['dmgmori-umati.xml']),
@@ -103,11 +107,7 @@ jest.mock('fs-extra', () => {
     mkdirSync: jest.fn(),
     copy: jest.fn(),
     rm: jest.fn(),
-    readFileSync: jest.fn(() =>
-      fs.readFileSync(path.join(__dirname, 'mock.xml'), {
-        encoding: 'utf-8'
-      })
-    ),
+    readFileSync: jest.fn(() => mockXmlFile),
     writeFileSync: jest.fn(async (name, data) => {
       writtenXMLFile = data;
     })
@@ -117,6 +117,10 @@ jest.mock('fs-extra', () => {
 import { OPCUAAdapter } from '..';
 import { System } from '../../../../System';
 import { NorthBoundError } from '../../../../../common/errors';
+
+const systemMock = jest.createMockFromModule('../../../../System') as System;
+
+systemMock.getHostname = jest.fn(async () => `dm000000000000`);
 
 describe(`OPCUAAdapter Test`, () => {
   let testAdapter: OPCUAAdapter;
@@ -146,7 +150,6 @@ describe(`OPCUAAdapter Test`, () => {
       it(`with valid configManager `, () => {
         testAdapter = new OPCUAAdapter(configManagerMock as any);
         expect(testAdapter).toBeInstanceOf(OPCUAAdapter);
-        expect(testAdapter).toBe(testAdapter);
       });
 
       it(`with correct XML initialization (replacing DummyMachineToolName)`, async () => {
@@ -154,6 +157,13 @@ describe(`OPCUAAdapter Test`, () => {
         await testAdapter.init();
         expect(writtenXMLFile!.includes('DummyMachineToolName')).toBeFalsy();
         expect(writtenXMLFile!.includes('dm000000000000')).toBeTruthy();
+        const countOriginalString = (
+          (mockXmlFile || '').match(/DummyMachineToolName/g) || []
+        ).length;
+        const countReplacedString = (
+          (writtenXMLFile || '').match(/dm000000000000/g) || []
+        ).length;
+        expect(countOriginalString).toEqual(countReplacedString);
       });
 
       it(`with correct custom data points, if any exists`, async () => {
@@ -236,7 +246,6 @@ describe(`OPCUAAdapter Test`, () => {
 
     it(`successful`, async () => {
       await testAdapter.init();
-      expect(testAdapter).toBe(testAdapter);
       expect(OPCUAServerMock.initialize).toHaveBeenCalled();
     });
   });
@@ -248,6 +257,8 @@ describe(`OPCUAAdapter Test`, () => {
     });
 
     it(`start, without previous init, rejects`, async () => {
+      testAdapter = new OPCUAAdapter(configManagerMock as any);
+
       testAdapter
         .start()
         .catch((err) => expect(err).toBeInstanceOf(NorthBoundError));

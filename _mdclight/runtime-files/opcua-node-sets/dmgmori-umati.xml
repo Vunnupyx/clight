@@ -285,7 +285,7 @@
             <Reference ReferenceType="Organizes" IsForward="false">ns=1;s=IoTflex</Reference>
         </References>
     </UAVariable>
-    <UAVariable DataType="Double" NodeId="ns=1;s=DummyMachineToolName.Variable3" BrowseName="1:Variable3" AccessLevel="3">
+    <UAVariable DataType="String" NodeId="ns=1;s=DummyMachineToolName.Variable3" BrowseName="1:Variable3" AccessLevel="3">
         <DisplayName>Variable3</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=63</Reference>

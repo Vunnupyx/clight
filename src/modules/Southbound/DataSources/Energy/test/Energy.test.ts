@@ -28,8 +28,6 @@ jest.mock('../Adapter/PhoenixEmProAdapter', () => {
   };
 });
 
-const { Response } = jest.requireActual('node-fetch');
-let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 let energyDataSource: EnergyDataSource;
 const mockConfig: IDataSourceParams = {
   config: {

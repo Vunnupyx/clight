@@ -1,9 +1,7 @@
 import { MTConnectDataSink } from '..';
 import {
   DataSinkProtocols,
-  DataSourceLifecycleEventTypes,
-  DataSourceProtocols,
-  EventLevels
+  DataSourceProtocols
 } from '../../../../../common/interfaces';
 import { ConfigManager } from '../../../../ConfigManager';
 import emptyDefaultConfig from '../../../../../../_mdclight/runtime-files/templates/empty.json';
@@ -15,7 +13,6 @@ import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/
 import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 import { MessengerManager } from '../../../MessengerManager';
-import * as scheduler from '../../../../SyncScheduler';
 
 jest.mock('fs');
 jest.mock('winston');

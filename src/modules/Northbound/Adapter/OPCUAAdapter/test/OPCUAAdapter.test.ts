@@ -116,7 +116,7 @@ jest.mock('fs-extra', () => {
 
 import { OPCUAAdapter } from '..';
 import { System } from '../../../../System';
-import { AdapterError, NorthBoundError } from '../../../../../common/errors';
+import { NorthBoundError } from '../../../../../common/errors';
 
 describe(`OPCUAAdapter Test`, () => {
   let testAdapter: OPCUAAdapter;

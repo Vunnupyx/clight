@@ -96,6 +96,7 @@ jest.useFakeTimers();
 // All tests in this block depends on each other. Not single runnable.
 describe('DataHubAdapter', () => {
   beforeEach(async () => {
+    jest.clearAllMocks();
     UUT = new DataHubAdapter(dataHubAdapterOptionsMock, onStateChange);
     await UUT.init().then((adapter) => adapter.start());
   });
@@ -142,6 +143,7 @@ describe('DataHubAdapter', () => {
     };
     await UUT.sendData(measurement);
     expect(UUT.running).toBe(true);
+    expect(dataHubClientMock.sendEvent).not.toHaveBeenCalled();
   });
 
   test('sends data correctly with all measurements', async () => {

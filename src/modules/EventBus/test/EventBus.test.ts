@@ -2,11 +2,7 @@ import { EventBus } from '..';
 
 describe('Test EventBus', () => {
   test('emit should call all callbacks once with event', async () => {
-    type TestEvent = {
-      payload: number;
-    };
-
-    const event: TestEvent = {
+    const event = {
       payload: 123
     };
 
@@ -28,11 +24,7 @@ describe('Test EventBus', () => {
   });
 
   test('removed callbacks should not be called', async () => {
-    type TestEvent = {
-      payload: number;
-    };
-
-    const event: TestEvent = {
+    const event = {
       payload: 123
     };
 

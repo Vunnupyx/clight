@@ -3,8 +3,7 @@
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
 
 trigger:
-  always: true
-  batch: false
+  batch: true
   branches:
     exclude: [main, staging]
 
@@ -29,33 +28,59 @@ steps:
   - task: CmdLine@2
     displayName: BuildBase
     inputs:
-      script: | # Only build image if dockerfile has changed
-        # MATCH_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-base.Dockerfile")
+      script: |
+        # Gets the version of the last change that is affecting the image that is build here
+        versionOfLastChange = scripts/build/lastMdclightBaseChange.sh
+        echo "Current base version ${versionOfLastChange}" 
 
-        # echo "$MATCH_COUNT match(es) found."
-        # if [[ $MATCH_COUNT -gt 0 ]]; then
-        docker run --privileged --rm tonistiigi/binfmt --install arm64
-        docker run --privileged --rm tonistiigi/binfmt
-        docker buildx create --use
-        scripts/build/dockerBuildMdclightBase.sh
-        # fi
+        echo "Checking for current docker image" 
+        exists = scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange}
+        echo "Docker image exists ${exists}" 
+
+        # Builds docker image if it exists in the version that changed something the last time
+        if [[ exists -eq false ]]; then
+          echo "Building docker image ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange}" 
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          docker buildx build --platform linux/arm64,linux/amd64 -t ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange} -f docker/mdclight-base.Dockerfile --push .
+        fi
   - task: CmdLine@2
     displayName: Build Fanuc image layer
     inputs:
-      script: | # Only build image if dockerfile has changed
-        # CHANGE_COUNT=$(scripts/build/utils/countChangedFiles.sh "docker/mdclight-fanuc.Dockerfile")
-        # echo "$CHANGE_COUNT change(s) found."
-        # if [[ $CHANGE_COUNT -gt 0 ]]; then
-        docker run --privileged --rm tonistiigi/binfmt --install arm64,arm
-        docker buildx create --use
-        scripts/build/dockerBuildFanuc.sh
-        # fi
+      script: |
+        # Gets the version of the last change that is affecting the image that is build here
+        versionOfLastChange = scripts/build/lastFanucChange.sh
+        echo "Current fanuc version ${versionOfLastChange}" 
+
+        echo "Checking for current docker image" 
+        exists = scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange}
+        echo "Docker image exists ${exists}" 
+
+        # Builds docker image if it exists in the version that changed something the last time
+        if [[ exists -eq false ]]; then
+          echo "Building docker image ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange}"
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg BASE_VERSION=${scripts/build/lastMdclightBaseChange.sh} -t ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange} -f docker/mdclight-fanuc.Dockerfile . --push --progress plain
+        fi
   - task: CmdLine@2
     displayName: BuildMdc
     inputs:
       script: |
-        version=$(git describe --tags)
-        docker run --privileged --rm tonistiigi/binfmt --install arm64
-        docker run --privileged --rm tonistiigi/binfmt
-        docker buildx create --use
-        scripts/build/dockerBuildMdclight.sh $version
+        # Gets the version of the last change that is affecting the image that is build here
+        versionOfLastChange = scripts/build/lastMdclightChange.sh
+        echo "Current mdclight version ${versionOfLastChange}" 
+
+        echo "Checking for current docker image" 
+        exists = scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange}
+
+        # Builds docker image if it exists in the version that changed something the last time
+        if [[ exists -eq false ]]; then
+          echo "Building docker image ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange}"
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg FANUC_VERSION=${scripts/build/lastFanucChange.sh} -t ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange} -f docker/mdclight-fanuc.Dockerfile . --push --progress plain
+        fi

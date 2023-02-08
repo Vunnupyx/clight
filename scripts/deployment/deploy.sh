@@ -65,11 +65,9 @@ deviceId=$(select_edge_device)
 echo "Select iothub: "
 iotHub=$(select_datahub)
 
-# check_docker_image mdclightdev.azurecr.io/mdclight:$version 
-# check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
-# check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
-
-
+check_docker_image mdclightdev.azurecr.io/mdclight:$version 
+check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
+check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
 
 node "$script_dir"/deployment.manifest.js $version > $manifestPath
 az iot edge deployment create -d "$name" -n "$iotHub" --content "$manifestPath" --target-condition "$target" --priority 1 --verbose --layered false

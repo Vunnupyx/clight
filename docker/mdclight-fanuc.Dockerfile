@@ -5,8 +5,9 @@
 # Date:         12-04-2022
 
 ARG DOCKER_REGISTRY
+ARG BASE_VERSION
 
-FROM ${DOCKER_REGISTRY}/mdclight-base:latest
+FROM ${DOCKER_REGISTRY}/mdclight-base:${BASE_VERSION}
 
 SHELL ["/bin/bash", "-l", "-c"]
 

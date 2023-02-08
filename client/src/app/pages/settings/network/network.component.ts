@@ -103,7 +103,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     if (
       this.originalConfig.ntp.ntpEnabled === false ||
       typeof reachable === 'undefined' ||
-      !this.mainForm.submitted
+      (this.mainForm.dirty && !this.mainForm.submitted)
     ) {
       return null;
     }

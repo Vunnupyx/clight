@@ -333,6 +333,34 @@ describe('DataHubDataSink', () => {
       });
     });
 
+    it('ignores processDataPointValues after disconnection', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions
+      });
+
+      const mockedEvents = [
+        {
+          measurement: {
+            id: 'testID1',
+            name: 'testName1',
+            value: 15
+          },
+          dataSource: {
+            name: 'UTSource',
+            protocol: 'UTProtocol'
+          }
+        }
+      ];
+
+      return datasinkUUT
+        .disconnect()
+        .then(() => datasinkUUT.onMeasurements(mockedEvents))
+        .then(() => {
+          //@ts-ignore
+          expect(datasinkUUT.processDataPointValues()).toBe(undefined);
+        });
+    });
+
     it('shuts down correctly', async () => {
       datasinkUUT = new DataHubDataSink({
         ...dataHubDataSinkOptions
@@ -344,6 +372,34 @@ describe('DataHubDataSink', () => {
           expect.stringContaining('shutdown successful')
         );
       });
+    });
+
+    it('ignores processDataPointValues after shutdown', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions
+      });
+
+      const mockedEvents = [
+        {
+          measurement: {
+            id: 'testID1',
+            name: 'testName1',
+            value: 15
+          },
+          dataSource: {
+            name: 'UTSource',
+            protocol: 'UTProtocol'
+          }
+        }
+      ];
+
+      return datasinkUUT
+        .shutdown()
+        .then(() => datasinkUUT.onMeasurements(mockedEvents))
+        .then(() => {
+          //@ts-ignore
+          expect(datasinkUUT.processDataPointValues()).toBe(undefined);
+        });
     });
   });
 });

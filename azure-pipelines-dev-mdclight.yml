@@ -3,6 +3,7 @@
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
 
 trigger:
+  always: true
   batch: false
   branches:
     exclude: [main, staging]

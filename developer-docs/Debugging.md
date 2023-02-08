@@ -9,6 +9,8 @@ The best way to debug such issues is to start the mdc-web-server container, but 
 
 `docker run -it --name nginx --network host --mount type=bind,source=$(pwd)/nginx.conf,target=/etc/nginx/nginx.conf -v dmgmori-mdclight-sslkeys:/etc/mdc-light/sslkeys --entrypoint sh mdclightdev.azurecr.io/mdc-web-server:<TAG>`
 
+After that, start the debug service by using `nginx-debug -g 'daemon off;'`
+
 When doing so, you could ingest an overridden version of the nginx config to debug step by step.
 ATTENTION: Double check network configuration. The container might be inside the wrong network.
 

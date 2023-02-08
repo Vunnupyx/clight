@@ -29,11 +29,7 @@ describe('Test EventBus', () => {
   });
 
   test('multiple registration with same id is saved once', async () => {
-    type TestEvent = {
-      payload: number;
-    };
-
-    const event: TestEvent = {
+    const event = {
       payload: 123
     };
 
@@ -58,11 +54,7 @@ describe('Test EventBus', () => {
   });
 
   test('different callbacks with same id are overwritten', async () => {
-    type TestEvent = {
-      payload: number;
-    };
-
-    const event: TestEvent = {
+    const event = {
       payload: 123
     };
 

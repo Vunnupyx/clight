@@ -30,11 +30,11 @@ steps:
     inputs:
       script: |
         # Gets the version of the last change that is affecting the image that is build here
-        versionOfLastChange= scripts/build/lastMdclightBaseChange.sh
+        versionOfLastChange=$(scripts/build/lastMdclightBaseChange.sh)
         echo "Current base version ${versionOfLastChange}" 
 
         echo "Checking for current docker image" 
-        exists= scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange}
+        exists=$(scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange})
         echo "Docker image exists ${exists}" 
 
         # Builds docker image if it exists in the version that changed something the last time
@@ -50,11 +50,11 @@ steps:
     inputs:
       script: |
         # Gets the version of the last change that is affecting the image that is build here
-        versionOfLastChange= scripts/build/lastFanucChange.sh
+        versionOfLastChange=$(scripts/build/lastFanucChange.sh)
         echo "Current fanuc version ${versionOfLastChange}" 
 
         echo "Checking for current docker image" 
-        exists= scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange}
+        exists=$(scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange})
         echo "Docker image exists ${exists}" 
 
         # Builds docker image if it exists in the version that changed something the last time
@@ -70,11 +70,11 @@ steps:
     inputs:
       script: |
         # Gets the version of the last change that is affecting the image that is build here
-        versionOfLastChange= scripts/build/lastMdclightChange.sh
+        versionOfLastChange=$(scripts/build/lastMdclightChange.sh)
         echo "Current mdclight version ${versionOfLastChange}" 
 
         echo "Checking for current docker image" 
-        exists= scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange}
+        exists=$(scripts/build/checkIfImageExists.sh ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange})
 
         # Builds docker image if it exists in the version that changed something the last time
         if [[ exists -eq false ]]; then

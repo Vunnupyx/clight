@@ -95,7 +95,6 @@ export class CounterManager {
     const logPrefix = `CounterManager::reset`;
 
     winston.debug(`${logPrefix} started for id: ${counterId}`);
-    console.log(`${logPrefix} started for id: ${counterId}`);
     if (typeof this.counters[counterId] === 'undefined') {
       winston.warn(`${logPrefix} try to reset unknown id: ${counterId} .`);
       return;

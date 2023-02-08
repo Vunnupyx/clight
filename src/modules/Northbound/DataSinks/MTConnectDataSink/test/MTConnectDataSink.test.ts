@@ -331,10 +331,7 @@ describe('Test MTConnectDataSink', () => {
     expect(thirdDataItem.value).toBe('Hello World!');
   });
 
-  test.skip('should handle life cycle events', async () => {
-    //TBD To be clarified:
-    // There is no available or unavailable value of .value.
-    // onLifecycleEvent not implemented.
+  test('with initialization value is set to 0', async () => {
     const config = new ConfigManager({
       errorEventsBus: new EventBus(),
       lifecycleEventsBus: new EventBus()
@@ -358,22 +355,6 @@ describe('Test MTConnectDataSink', () => {
 
     const avail = addDataItemMock.mock.calls[0][0];
 
-    expect(avail.isUnavailable).toBeTruthy();
-
-    dataSink.onLifecycleEvent({
-      id: '',
-      level: EventLevels.DataPoint,
-      type: DataSourceLifecycleEventTypes.Connected
-    });
-
-    expect(avail.value).toBe('AVAILABLE');
-
-    dataSink.onLifecycleEvent({
-      id: '',
-      level: EventLevels.DataPoint,
-      type: DataSourceLifecycleEventTypes.Disconnected
-    });
-
-    expect(avail.isUnavailable).toBeTruthy();
+    expect(avail.value).toBe(0);
   });
 });

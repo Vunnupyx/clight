@@ -779,4 +779,38 @@ export class VirtualDataPointManager {
   public setEnergyCallback(cb: Function): void {
     this.energyMachineStatusChangeCallback = cb;
   }
+
+  /**
+   * Checks order of VDPs to determine if their order is valid according to the dependencies.
+   */
+  public isVdpOrderValid(vdpsListToCheck: IVirtualDataPointConfig[]): boolean {
+    if (!Array.isArray(vdpsListToCheck) || vdpsListToCheck?.length === 0) {
+      return false;
+    }
+    let result = true;
+    vdpsListToCheck.forEach((vdp, index) => {
+      //Check sources that are VDP, as non-VDP sources will not cause problem
+      const otherVdpSources = vdp.sources.filter((vdpId) =>
+        vdpsListToCheck.find((v) => v.id === vdpId)
+      );
+      if (otherVdpSources.length > 0) {
+        const indexesOfOtherVdpSources = otherVdpSources.map((vdpId) =>
+          vdpsListToCheck.findIndex((x) => x.id === vdpId)
+        );
+
+        /**
+         * If VDP source is not defined (this case actually won't happen as non-VDP sources are always allowed)
+         *  or VDP source is defined later, then it is not valid
+         */
+        if (
+          indexesOfOtherVdpSources.includes(-1) ||
+          indexesOfOtherVdpSources.find((i) => i >= index)
+        ) {
+          result = false;
+        }
+      }
+    });
+
+    return result;
+  }
 }

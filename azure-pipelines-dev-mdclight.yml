@@ -24,7 +24,7 @@ steps:
     displayName: Azure CLI
     inputs:
       azureSubscription: dmswsg-mdclight-dev
-      scriptType: ps
+      scriptType: bash
       scriptLocation: inlineScript
       inlineScript: |
         az --version
@@ -37,7 +37,10 @@ steps:
   - task: CmdLine@2
     displayName: BuildBase
     inputs:
-      script: |
+      azureSubscription: dmswsg-mdclight-dev
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
         # Gets the version of the last change that is affecting the image that is build here
         versionOfLastChange=$(scripts/build/lastMdclightBaseChange.sh)
         echo "Current base version ${versionOfLastChange}" 
@@ -57,7 +60,10 @@ steps:
   - task: CmdLine@2
     displayName: Build Fanuc image layer
     inputs:
-      script: |
+      azureSubscription: dmswsg-mdclight-dev
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
         # Gets the version of the last change that is affecting the image that is build here
         versionOfLastChange=$(scripts/build/lastFanucChange.sh)
         echo "Current fanuc version ${versionOfLastChange}" 
@@ -77,9 +83,11 @@ steps:
           docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg BASE_VERSION=${baseVersion} -t ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange} -f docker/mdclight-fanuc.Dockerfile . --push --progress plain
         fi
   - task: CmdLine@2
-    displayName: BuildMdc
     inputs:
-      script: |
+      azureSubscription: dmswsg-mdclight-dev
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
         # Gets the version of the last change that is affecting the image that is build here
         versionOfLastChange=$(scripts/build/lastMdclightChange.sh)
         echo "Current mdclight version ${versionOfLastChange}" 

@@ -20,6 +20,15 @@ steps:
     inputs:
       containerRegistry: 'mdc-light-acr-dev'
       command: 'login'
+  - task: AzureCLI@2
+    displayName: Azure CLI
+    inputs:
+      azureSubscription: dmswsg-mdclight-dev
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: |
+        az --version
+        az account show
   - task: CmdLine@2
     displayName: PrintVersion
     inputs:

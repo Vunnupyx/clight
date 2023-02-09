@@ -562,4 +562,97 @@ describe('Test VirtualDataPointManager', () => {
     expect(virtualEvents[3].measurement.value).toBeTruthy();
     expect(virtualEvents[4].measurement.value).toBeTruthy();
   });
+
+  describe('should check validity of VDPs correctly', () => {
+    test.each([
+      {
+        title: 'Empty array',
+        vdpsList: [],
+        expectedResult: false
+      },
+      {
+        title: 'Non-array',
+        vdpsList: '',
+        expectedResult: false
+      },
+      {
+        title: 'undefined',
+        vdpsList: undefined,
+        expectedResult: false
+      },
+      {
+        title: 'single VDP without sources',
+        vdpsList: [{ id: 'id1', sources: [] }],
+        expectedResult: true
+      },
+      {
+        title: 'single VDP with non-VDP source',
+        vdpsList: [{ id: 'id1', sources: ['non-vdp-id'] }],
+        expectedResult: true
+      },
+      {
+        title: 'two VDP with non-VDP source',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['non-vdp-id'] }
+        ],
+        expectedResult: true
+      },
+      {
+        title: 'two VDP with correct order',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] }
+        ],
+        expectedResult: true
+      },
+      {
+        title: 'two VDP with wrong order',
+        vdpsList: [
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id1', sources: ['non-vdp-id'] }
+        ],
+        expectedResult: false
+      },
+      {
+        title: 'many VDP with correct order',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id3', sources: ['non-vdp-id'] },
+          { id: 'id4', sources: ['id1', 'id2'] },
+          { id: 'id5', sources: ['id3', 'non-vdp-id'] },
+          { id: 'id6', sources: ['id3', 'non-vdp-id', 'id5'] }
+        ],
+        expectedResult: true
+      },
+      {
+        title: 'many VDP with wrong order',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id3', sources: ['non-vdp-id'] },
+          { id: 'id4', sources: ['id1', 'id2'] },
+          { id: 'id6', sources: ['id3', 'non-vdp-id', 'id5'] },
+          { id: 'id5', sources: ['id3', 'non-vdp-id'] }
+        ],
+        expectedResult: false
+      },
+      {
+        title: 'one VDP depends on itself which should not happen',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id3', sources: ['non-vdp-id'] },
+          { id: 'id4', sources: ['id1', 'id2'] },
+          { id: 'id5', sources: ['id5', 'non-vdp-id'] }
+        ],
+        expectedResult: false
+      }
+    ])('$title returns $expectedResult', ({ vdpsList, expectedResult }) => {
+      //@ts-ignore
+      const isValid = virtualDpManager.isVdpOrderValid(vdpsList);
+      expect(isValid).toEqual(expectedResult);
+    });
+  });
 });

@@ -66,6 +66,8 @@
       <ngx-datatable
         [headerHeight]="50"
         [rows]="datapointRows"
+        cdkDropList
+        (cdkDropListDropped)="onReorder($event)"
         rowHeight="auto"
         columnMode="force"
       >
@@ -83,9 +85,13 @@
           >
             <div
               *ngIf="unsavedRow?.id !== row.id"
-              class="text-ellipsis"
+              class="text-ellipsis drag"
+              cdkDrag
               [title]="value"
             >
+              <span *cdkDragPreview>
+                {{ getVirtualDataPointPrefix() }} {{ value }}
+              </span>
               {{ getVirtualDataPointPrefix() }} {{ value }}
             </div>
             <input

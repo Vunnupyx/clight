@@ -8,3 +8,8 @@
   padding-right: 3px;
   cursor: pointer;
 }
+.cdk-drag {
+  width: 100%;
+  cursor: move;
+  position: absolute;
+}

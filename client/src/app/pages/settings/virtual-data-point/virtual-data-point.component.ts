@@ -34,6 +34,7 @@ import {
   SetSchedulesModalComponent,
   SetSchedulesModalData
 } from './set-schedules-modal/set-schedules-modal.component';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -536,5 +537,14 @@ export class VirtualDataPointComponent implements OnInit {
 
   private onLiveData(x: ObjectMap<DataPointLiveData>) {
     this.liveData = x;
+  }
+
+  onReorder(event) {
+    moveItemInArray(
+      this.datapointRows,
+      event.previousIndex,
+      event.currentIndex
+    );
+    this.datapointRows = [...this.datapointRows];
   }
 }

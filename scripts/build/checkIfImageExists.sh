@@ -1,7 +1,16 @@
-docker manifest inspect $1 > /dev/null;
+registry=mdclightdev
+repository=$1
+tag=$2
 
-if [[ $? -eq "0" ]]; then
-    echo true
-else
-    echo false
-fi
+availableTags=$(az acr repository show-tags --name $registry --repository $repository -o tsv)
+
+while IFS=';' read -ra ADDR; do
+  for i in "${ADDR[@]}"; do
+    if [ "$i" == "$tag" ]; then
+        echo true
+        exit 0
+    fi
+  done
+done <<< "$availableTags"
+
+echo false

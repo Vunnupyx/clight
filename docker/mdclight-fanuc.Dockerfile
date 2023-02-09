@@ -23,4 +23,28 @@ ENV NODE_V10=${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin/
 COPY src/modules/Southbound/DataSources/Fanuc/ /app/fanuc/
 COPY scripts/build/setupFanucImage.sh /
 
-RUN ./setupFanucImage.sh && rm -rf /setupFanucImage.sh
+
+RUN dpkg --add-architecture armhf \
+    && apt-get update \
+    && apt-get install -y $FANUC_DEV_PACKAGES $FANUC_RUNTIME_LIBS \
+    && mkdir -p ${NODE_V10_PATH} \
+    && mkdir -p /app/fanuc \
+    && wget -P ${NODE_V10_PATH} https://nodejs.org/download/release/v10.24.1/$NODE_V10_FILENAME.tar.gz \
+    && cd ${NODE_V10_PATH} \
+    && tar -xzf ${NODE_V10_FILENAME}.tar.gz \
+    && rm -rf ${NODE_V10_FILENAME}.tar.gz \
+    && cd /app/fanuc \
+    && export OLD_PATH=$PATH \
+    # Change PATH to node 10.24.1 for install of gpy modules
+    && export PATH=$(echo $PATH | sed -e "s@/usr/local/nvm/versions/node/${NODE_MDC_VERSION}/bin@${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin@g") \
+    && npm config set user 0 \
+    && npm config set unsafe-perm true \
+    && CC=arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 ${NPM_V10} install \
+    && npm run build \
+    && rm -rf Documentation *.ts \
+    && ${NPM_V10} cache clean -f \
+    # Revert PATH
+    && export PATH=$OLD_PATH \
+    # Remove setup dependencies
+    && apt purge -y ${FANUC_DEV_PACKAGES} \
+    && apt autoremove -y

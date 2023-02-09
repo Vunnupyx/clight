@@ -2,6 +2,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, response, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { VirtualDataPointManager } from '../../../../../VirtualDataPointManager';
+import { IVirtualDataPointConfig } from '../../../../../ConfigManager/interfaces';
 
 let configManager: ConfigManager;
 let vdpManager: VirtualDataPointManager;
@@ -24,9 +25,14 @@ export function setVdpManager(config: VirtualDataPointManager) {
  * @param  {Response} response
  */
 function vdpsGetHandler(request: Request, response: Response): void {
-  response
-    .status(200)
-    .json({ vdps: configManager?.config?.virtualDataPoints || [] });
+  const vdpsList = configManager?.config?.virtualDataPoints || [];
+  const errorReason = vdpManager.isVdpOrderValid(vdpsList)
+    ? undefined
+    : 'wrongVdpsOrder';
+  response.status(200).json({
+    vdps: vdpsList,
+    errorReason
+  });
 }
 
 /**
@@ -67,11 +73,17 @@ async function vdpsPostBulkHandler(
   response: Response
 ): Promise<void> {
   try {
+    const isVdpOrderValid = vdpManager.isVdpOrderValid(
+      request.body as IVirtualDataPointConfig[]
+    );
+    if (!isVdpOrderValid) {
+      throw new Error('VDP order is wrong');
+    }
     await configManager.bulkChangeVirtualDataPoints(request.body || {});
     await configManager.configChangeCompleted();
 
     response.status(200).send();
-  } catch {
+  } catch (err) {
     response.status(400).json({ error: 'Cannot change VDPs. Try again!' });
   }
 }

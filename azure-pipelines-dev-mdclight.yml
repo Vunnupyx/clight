@@ -20,22 +20,13 @@ steps:
     inputs:
       containerRegistry: 'mdc-light-acr-dev'
       command: 'login'
-  - task: AzureCLI@2
-    displayName: Azure CLI
-    inputs:
-      azureSubscription: dmswsg-mdclight-dev
-      scriptType: bash
-      scriptLocation: inlineScript
-      inlineScript: |
-        az --version
-        az account show
   - task: CmdLine@2
     displayName: PrintVersion
     inputs:
       script: |
         git describe --tags
-  - task: CmdLine@2
-    displayName: BuildBase
+  - task: AzureCLI@2
+    displayName: Build base image
     inputs:
       azureSubscription: dmswsg-mdclight-dev
       scriptType: bash
@@ -57,8 +48,8 @@ steps:
           docker buildx create --use
           docker buildx build --platform linux/arm64,linux/amd64 -t ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange} -f docker/mdclight-base.Dockerfile --push .
         fi
-  - task: CmdLine@2
-    displayName: Build Fanuc image layer
+  - task: AzureCLI@2
+    displayName: Build Fanuc image
     inputs:
       azureSubscription: dmswsg-mdclight-dev
       scriptType: bash
@@ -82,7 +73,8 @@ steps:
           docker buildx create --use
           docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg BASE_VERSION=${baseVersion} -t ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange} -f docker/mdclight-fanuc.Dockerfile . --push --progress plain
         fi
-  - task: CmdLine@2
+  - task: AzureCLI@2
+    displayName: Build mdclight image
     inputs:
       azureSubscription: dmswsg-mdclight-dev
       scriptType: bash

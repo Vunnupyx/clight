@@ -261,7 +261,8 @@
     "Formula": "Formel",
     "DataPointsErrorReason": {
       "wrongVdpsOrder": "Wrong Vdps Order"
-    }
+    },
+    "WarningWrongVdp": "Update failed. VDP with wrong order"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",

@@ -35,6 +35,7 @@ import {
   SetSchedulesModalData
 } from './set-schedules-modal/set-schedules-modal.component';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -168,7 +169,8 @@ export class VirtualDataPointComponent implements OnInit {
     private virtualDataPointService: VirtualDataPointService,
     private sourceDataPointService: SourceDataPointService,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -539,12 +541,37 @@ export class VirtualDataPointComponent implements OnInit {
     this.liveData = x;
   }
 
+  public isVdpOrderValid(vdpListToCheck: VirtualDataPoint[]): boolean {
+    if (!Array.isArray(vdpListToCheck) || vdpListToCheck?.length === 0) {
+      return false;
+    }
+    let result = true;
+    vdpListToCheck.forEach((vdp, index) => {
+      const otherVdpSources = vdp.sources.filter((vdpId) =>
+        vdpListToCheck.find((v) => v.id === vdpId)
+      );
+      if (otherVdpSources.length > 0) {
+        const indexesOfOtherVdpSources = otherVdpSources.map((vdpId) =>
+          vdpListToCheck.findIndex((x) => x.id === vdpId)
+        );
+        if (
+          indexesOfOtherVdpSources.includes(-1) ||
+          indexesOfOtherVdpSources.find((i) => i >= index)
+        ) {
+          result = false;
+        }
+      }
+    });
+    return result;
+  }
+
   onReorder(event) {
-    moveItemInArray(
-      this.datapointRows,
-      event.previousIndex,
-      event.currentIndex
-    );
-    this.datapointRows = [...this.datapointRows];
+    let vdpList = [...this.datapointRows];
+    moveItemInArray(vdpList, event.previousIndex, event.currentIndex);
+    this.isVdpOrderValid(vdpList)
+      ? (this.datapointRows = [...vdpList])
+      : this.toastr.warning(
+          this.translate.instant('settings-virtual-data-point.WarningWrongVdp')
+        );
   }
 }

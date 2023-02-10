@@ -258,7 +258,10 @@
     "CurrentLiveValue": "Current Live Value",
     "ReturnValueIfTrue": "Return Value",
     "SetFormula": "Set formula",
-    "Formula": "Formula"
+    "Formula": "Formula",
+    "DataPointsErrorReason": {
+      "wrongVdpsOrder": "Wrong Vdps Order"
+    }
   },
   "virtual-data-point-operation-type": {
     "And": "And",

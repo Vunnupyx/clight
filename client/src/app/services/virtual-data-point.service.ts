@@ -102,22 +102,29 @@ export class VirtualDataPointService
 
   async resetCounter(vdp: VirtualDataPoint): Promise<boolean> {
     const payload = {
-        ...vdp,
-        reset: true
-    }
-    return this.httpService.patch(`/vdps/${vdp.id}`, payload)
+      ...vdp,
+      reset: true
+    };
+    return this.httpService
+      .patch(`/vdps/${vdp.id}`, payload)
       .then((response) => {
         this.toastr.success(
-          this.translate.instant('settings-virtual-data-point.CounterResetSuccess', {NAME: response?.changed?.name})
+          this.translate.instant(
+            'settings-virtual-data-point.CounterResetSuccess',
+            { NAME: response?.changed?.name }
+          )
         );
         return true;
-      }).catch((error) => {
+      })
+      .catch((error) => {
         this.toastr.error(
-          this.translate.instant('settings-virtual-data-point.CounterResetError', {NAME: payload?.name})
+          this.translate.instant(
+            'settings-virtual-data-point.CounterResetError',
+            { NAME: payload?.name }
+          )
         );
         return false;
-      }
-    );
+      });
   }
 
   async getDataPoints() {
@@ -210,8 +217,9 @@ export class VirtualDataPointService
   }
 
   private async _getDataPoints() {
-    const { vdps } = await this.httpService.get<{
+    const { vdps, errorReason } = await this.httpService.get<{
       vdps: api.VirtualDataPointType[];
+      errorReason: string | undefined;
     }>('/vdps');
 
     this._store.patchState((state) => {
@@ -219,6 +227,13 @@ export class VirtualDataPointService
       state.originalDataPoints = clone(state.dataPoints);
       state.status = Status.Ready;
     });
+    if (errorReason) {
+      this.toastr.warning(
+        this.translate.instant(
+          `settings-virtual-data-point.DataPointsErrorReason.${errorReason}`
+        )
+      );
+    }
   }
 
   private _parseDataPoint(obj: api.VirtualDataPointType) {

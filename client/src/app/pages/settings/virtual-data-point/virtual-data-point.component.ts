@@ -545,24 +545,23 @@ export class VirtualDataPointComponent implements OnInit {
     if (!Array.isArray(vdpListToCheck) || vdpListToCheck?.length === 0) {
       return false;
     }
-    let result = true;
-    vdpListToCheck.forEach((vdp, index) => {
-      const otherVdpSources = vdp.sources.filter((vdpId) =>
-        vdpListToCheck.find((v) => v.id === vdpId)
+
+    for (let [index, vdp] of vdpListToCheck.entries()) {
+      const otherVdpSources = vdp.sources.filter((sourceVdpId) =>
+        vdpListToCheck.find((v) => v.id === sourceVdpId)
       );
       if (otherVdpSources.length > 0) {
-        const indexesOfOtherVdpSources = otherVdpSources.map((vdpId) =>
-          vdpListToCheck.findIndex((x) => x.id === vdpId)
-        );
-        if (
-          indexesOfOtherVdpSources.includes(-1) ||
-          indexesOfOtherVdpSources.find((i) => i >= index)
-        ) {
-          result = false;
+        for (let sourceVdpId of otherVdpSources) {
+          const indexOfSourceVdp = vdpListToCheck.findIndex(
+            (x) => x.id === sourceVdpId
+          );
+          if (indexOfSourceVdp >= index) {
+            return false;
+          }
         }
       }
-    });
-    return result;
+    }
+    return true;
   }
 
   onReorder(event) {

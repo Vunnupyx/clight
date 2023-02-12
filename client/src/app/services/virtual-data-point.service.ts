@@ -5,7 +5,12 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 import { from, interval, Observable } from 'rxjs';
 
 import { Status, Store, StoreFactory } from '../shared/state';
-import { DataPointLiveData, VirtualDataPoint } from '../models';
+import {
+  DataPointLiveData,
+  VirtualDataPoint,
+  VirtualDataPointErrorReason,
+  VirtualDataPointErrorType
+} from '../models';
 import { HttpService } from '../shared';
 import * as api from '../api/models';
 import { array2map, clone, errorHandler, ObjectMap } from '../shared/utils';
@@ -88,10 +93,32 @@ export class VirtualDataPointService
       this.toastr.success(
         this.translate.instant('settings-virtual-data-point.BulkSuccess')
       );
-    } catch {
-      this.toastr.error(
-        this.translate.instant('settings-virtual-data-point.BulkError')
-      );
+    } catch (err: any) {
+      const { error, vdpIdWithError, notYetDefinedSourceVdpId } =
+        (err.error as VirtualDataPointErrorReason) || {};
+
+      if (
+        [
+          VirtualDataPointErrorType.UnexpectedError,
+          VirtualDataPointErrorType.WrongFormat
+        ].includes(error)
+      ) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.UnexpectedError`)
+        );
+      } else if (error === VirtualDataPointErrorType.WrongVdpsOrder) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.WrongVdpsOrder`, {
+            SourceId: notYetDefinedSourceVdpId,
+            ErrorId: vdpIdWithError
+          })
+        );
+      } else {
+        this.toastr.error(
+          this.translate.instant('settings-virtual-data-point.BulkError')
+        );
+      }
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -217,22 +244,35 @@ export class VirtualDataPointService
   }
 
   private async _getDataPoints() {
-    const { vdps, errorReason } = await this.httpService.get<{
-      vdps: api.VirtualDataPointType[];
-      errorReason: string | undefined;
-    }>('/vdps');
+    const { vdps, error, vdpIdWithError, notYetDefinedSourceVdpId } =
+      await this.httpService.get<
+        { vdps: api.VirtualDataPointType[] } & VirtualDataPointErrorReason
+      >('/vdps');
 
     this._store.patchState((state) => {
       state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
       state.originalDataPoints = clone(state.dataPoints);
       state.status = Status.Ready;
     });
-    if (errorReason) {
-      this.toastr.warning(
-        this.translate.instant(
-          `settings-virtual-data-point.DataPointsErrorReason.${errorReason}`
-        )
-      );
+
+    if (error) {
+      if (
+        [
+          VirtualDataPointErrorType.UnexpectedError,
+          VirtualDataPointErrorType.WrongFormat
+        ].includes(error)
+      ) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.UnexpectedError`)
+        );
+      } else if (error === VirtualDataPointErrorType.WrongVdpsOrder) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.WrongVdpsOrder`, {
+            SourceId: notYetDefinedSourceVdpId,
+            ErrorId: vdpIdWithError
+          })
+        );
+      }
     }
   }
 

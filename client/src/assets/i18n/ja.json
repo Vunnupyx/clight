@@ -259,9 +259,8 @@
     "ReturnValueIfTrue": "Return Value",
     "SetFormula": "Set formula",
     "Formula": "Formula",
-    "DataPointsErrorReason": {
-      "wrongVdpsOrder": "Wrong Vdps Order"
-    },
+    "UnexpectedError": "Changes have not been applied. Please, try again!",
+    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
     "WarningWrongVdp": "Update failed. VDP with wrong order"
   },
   "virtual-data-point-operation-type": {

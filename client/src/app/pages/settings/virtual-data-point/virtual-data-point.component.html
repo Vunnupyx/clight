@@ -87,11 +87,10 @@
               *ngIf="unsavedRow?.id !== row.id"
               class="text-ellipsis"
               cdkDrag
+              cdkDragRootElement="datatable-row-wrapper"
+              [cdkDragPreviewClass]="'ngx-datatable'"
               [title]="value"
             >
-              <span *cdkDragPreview>
-                {{ getVirtualDataPointPrefix() }} {{ value }}
-              </span>
               {{ getVirtualDataPointPrefix() }} {{ value }}
             </div>
             <input

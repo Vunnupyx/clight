@@ -4,6 +4,7 @@ export interface IChangesState<TKey, TEntity> {
   created: ObjectMap<TEntity>;
   updated: ObjectMap<TEntity>;
   deleted: TKey[];
+  list: TEntity[];
   touched: boolean;
 }
 

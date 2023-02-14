@@ -1,11 +1,7 @@
-import {
-  IChangesState,
-  ITrackable
-} from 'app/models/core/data-changes';
+import { IChangesState, ITrackable } from 'app/models/core/data-changes';
 import { Store, StoreFactory } from 'app/shared/state';
 
-export class BaseChangesService<TEntity extends ITrackable>
-{
+export class BaseChangesService<TEntity extends ITrackable> {
   protected _changes: Store<IChangesState<string, TEntity>>;
 
   get isTouched(): boolean {
@@ -21,6 +17,7 @@ export class BaseChangesService<TEntity extends ITrackable>
       created: {},
       updated: {},
       deleted: [],
+      list: [],
       touched: false
     };
   }
@@ -51,6 +48,13 @@ export class BaseChangesService<TEntity extends ITrackable>
 
         state.touched = true;
       }
+    });
+  }
+
+  updateOrder(entity: TEntity[]) {
+    this._changes.patchState((state) => {
+      state.list = entity;
+      state.touched = true;
     });
   }
 
@@ -92,6 +96,10 @@ export class BaseChangesService<TEntity extends ITrackable>
 
     if (this._changes.snapshot.deleted.length) {
       payload.deleted = this._changes.snapshot.deleted;
+    }
+
+    if (this._changes.snapshot.list.length) {
+      payload.list = this._changes.snapshot.list;
     }
 
     return payload;

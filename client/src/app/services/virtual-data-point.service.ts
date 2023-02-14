@@ -231,6 +231,14 @@ export class VirtualDataPointService
     });
   }
 
+  async updateOrderDataPoints(obj: VirtualDataPoint[]) {
+    this.updateOrder(obj);
+
+    this._store.patchState((state) => {
+      state.dataPoints = [...obj];
+    });
+  }
+
   async deleteDataPoint(id: string) {
     this.delete(id);
 

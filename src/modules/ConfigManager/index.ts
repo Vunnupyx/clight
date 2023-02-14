@@ -789,17 +789,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * bulk config VDP changes.
-   */
-  public async bulkChangeVirtualDataPoints(
-    newVdpArray: IVirtualDataPointConfig[]
-  ): Promise<void> {
-    this._config.virtualDataPoints = newVdpArray;
-
-    await this.saveConfigToFile();
-  }
-
-  /**
    * bulk config mapping changes.
    */
   public async bulkChangeMapings(changes: any): Promise<void> {

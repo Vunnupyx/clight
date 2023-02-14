@@ -85,7 +85,10 @@ async function vdpsPatchHandler(
       throw new Error();
     }
 
-    await configManager.bulkChangeVirtualDataPoints(newVdpArray);
+    configManager.config = {
+      ...configManager.config,
+      virtualDataPoints: newVdpArray
+    };
     await configManager.configChangeCompleted();
 
     response.status(200).send();

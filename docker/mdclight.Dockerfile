@@ -7,7 +7,9 @@
 ARG DOCKER_REGISTRY
 ARG FANUC_VERSION
 
-FROM ${DOCKER_REGISTRY}/mdclight-fanuc:${FANUC_VERSION}
+# TODO! Use fanuc image as soons its implemented
+# FROM ${DOCKER_REGISTRY}/mdclight-fanuc:${FANUC_VERSION}
+FROM ${DOCKER_REGISTRY}/mdclight-base:${FANUC_VERSION}
 
 ARG MDC_LIGHT_RUNTIME_VERSION
 # Install compiled MDC light runtime

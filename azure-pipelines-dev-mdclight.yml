@@ -99,7 +99,7 @@ steps:
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
           docker buildx create --use
-          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} MDC_LIGHT_RUNTIME_VERSION=${versionOfLastChange} --build-arg FANUC_VERSION=${fanucVersion} -t ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange} -f docker/mdclight.Dockerfile . --push --progress plain
+          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg MDC_LIGHT_RUNTIME_VERSION=${versionOfLastChange} --build-arg FANUC_VERSION=${fanucVersion} -t ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange} -f docker/mdclight.Dockerfile . --push --progress plain
         fi
   - task: AzureCLI@2
     displayName: Build mdclight development image

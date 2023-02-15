@@ -1830,7 +1830,7 @@
         },
         "type": {
           "type": "string",
-          "enum": ["s7", "nck", "nck-pl"]
+          "enum": ["s7", "nck", "meter", "measurement", "device", "tariff"]
         }
       }
     },

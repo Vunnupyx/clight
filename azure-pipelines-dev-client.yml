@@ -45,5 +45,5 @@ steps:
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
           docker buildx create --use
-          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg MDC_LIGHT_WEBSERVER_VERSION=${versionOfLastChange} -t ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange} -f docker/mdcwebserver_arm64.Dockerfile . --push --progress plain
+          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg MDC_LIGHT_WEBSERVER_VERSION=${versionOfLastChange} -t ${DOCKER_REGISTRY}/mdc-web-server:${versionOfLastChange} -f docker/mdcwebserver_arm64.Dockerfile . --push --progress plain
         fi

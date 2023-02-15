@@ -1,1 +1,1 @@
-echo $(git describe --tags $(git log -n 1 --pretty=format:%H -- docker/mdclight-base.Dockerfile))
+echo $(git describe --tags $(git log -n 1 --pretty=format:%H -- azure-pipelines-dev-mdclight.yml docker/mdclight-base.Dockerfile))

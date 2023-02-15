@@ -20,27 +20,28 @@ ENV NODE_V10=${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin/node
 ENV NPM_V10=${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin/npm
 # Copy fanuc process code to /app folder
 COPY Worker /app/fanuc
-RUN dpkg --add-architecture armhf \
-    && apt-get update \
-    && apt-get install -y $FANUC_DEV_PACKAGES $FANUC_RUNTIME_LIBS \
-    && mkdir -p ${NODE_V10_PATH} \
-    && mkdir -p /app/fanuc \
-    && wget -P ${NODE_V10_PATH} https://nodejs.org/download/release/v10.24.1/$NODE_V10_FILENAME.tar.gz \
-    && cd ${NODE_V10_PATH} \
-    && tar -xzf ${NODE_V10_FILENAME}.tar.gz \
-    && rm -rf ${NODE_V10_FILENAME}.tar.gz \
-    && cd /app/fanuc \
-    && export OLD_PATH=$PATH \
+RUN dpkg --add-architecture armhf 
+RUN apt-get update 
+RUN apt-get install -y $FANUC_DEV_PACKAGES $FANUC_RUNTIME_LIBS 
+RUN mkdir -p ${NODE_V10_PATH} 
+RUN mkdir -p /app/fanuc 
+RUN wget -P ${NODE_V10_PATH} https://nodejs.org/download/release/v10.24.1/$NODE_V10_FILENAME.tar.gz 
+RUN cd ${NODE_V10_PATH} 
+RUN tar -xzf ${NODE_V10_FILENAME}.tar.gz 
+RUN rm -rf ${NODE_V10_FILENAME}.tar.gz 
+RUN cd /app/fanuc 
+RUN export OLD_PATH=$PATH 
     # Change PATH to node 10.24.1 for install of gpy modules
-    && export PATH=$(echo $PATH | sed -e "s@/usr/local/nvm/versions/node/$NODE_MDC_VERSION/bin@$NODE_V10_PATH/$NODE_V10_FILENAME/bin@g") \
-    && npm config set user 0 \
-    && npm config set unsafe-perm true \
-    && CC=arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 ${NPM_V10} ci \
-    && npm run build \
-    && rm -rf Documentation *.ts \
-    && ${NPM_V10} cache clean -f \
+RUN REPLACE_STRING="s@/usr/local/nvm/versions/node/$NODE_MDC_VERSION/bin@$NODE_V10_PATH/$NODE_V10_FILENAME/bin@g"
+RUN export PATH=$(echo $PATH | sed -e $REPLACE_STRING) 
+RUN npm config set user 0 
+RUN npm config set unsafe-perm true 
+RUN CC=arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 ${NPM_V10} ci 
+RUN npm run build 
+RUN rm -rf Documentation *.ts 
+RUN ${NPM_V10} cache clean -f 
     # Revert PATH
-    && export PATH=$OLD_PATH \
+RUN export PATH=$OLD_PATH 
     # Remove setup dependencies
-    && apt purge -y ${FANUC_DEV_PACKAGES} \
-    && apt autoremove -y
+RUN apt purge -y ${FANUC_DEV_PACKAGES} 
+RUN apt autoremove -y

@@ -87,7 +87,7 @@ export class BaseChangesService<TEntity extends ITrackable> {
     });
   }
 
-  getPayload(): Partial<IChangesState<string, TEntity>> {
+  getPayload(): Partial<IChangesState<string, TEntity>> | TEntity[] {
     const payload: Partial<IChangesState<string, TEntity>> = {};
 
     if (Object.keys(this._changes.snapshot.created).length) {
@@ -103,7 +103,7 @@ export class BaseChangesService<TEntity extends ITrackable> {
     }
 
     if (this._changes.snapshot.list.length) {
-      payload.list = this._changes.snapshot.list;
+      return this._changes.snapshot.list;
     }
 
     return payload;

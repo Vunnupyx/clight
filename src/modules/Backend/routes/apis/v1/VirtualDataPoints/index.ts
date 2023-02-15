@@ -26,12 +26,13 @@ export function setVdpManager(config: VirtualDataPointManager) {
  */
 function vdpsGetHandler(request: Request, response: Response): void {
   const vdpsList = configManager?.config?.virtualDataPoints || [];
-  const errorReason = vdpManager.isVdpOrderValid(vdpsList)
-    ? undefined
-    : 'wrongVdpsOrder';
+  const vdpValidityStatus = vdpManager.getVdpValidityStatus(vdpsList);
+
   response.status(200).json({
     vdps: vdpsList,
-    errorReason
+    error: vdpValidityStatus.error,
+    vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+    notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
   });
 }
 
@@ -73,18 +74,22 @@ async function vdpsPostBulkHandler(
   response: Response
 ): Promise<void> {
   try {
-    const isVdpOrderValid = vdpManager.isVdpOrderValid(
+    const vdpValidityStatus = vdpManager.getVdpValidityStatus(
       request.body as IVirtualDataPointConfig[]
     );
-    if (!isVdpOrderValid) {
-      throw new Error('VDP order is wrong');
+    if (!vdpValidityStatus.isValid) {
+      response.status(400).json({
+        error: vdpValidityStatus.error,
+        vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+        notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
+      });
     }
     await configManager.bulkChangeVirtualDataPoints(request.body || {});
     await configManager.configChangeCompleted();
 
     response.status(200).send();
   } catch (err) {
-    response.status(400).json({ error: 'Cannot change VDPs. Try again!' });
+    response.status(400).json({ error: 'unexpectedError' });
   }
 }
 

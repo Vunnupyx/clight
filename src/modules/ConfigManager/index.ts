@@ -134,7 +134,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public set config(config: IConfig) {
-    this._config = config;
+    this._config = this.checkAndCleanupMappings(config);
     this.saveConfigToFile();
   }
 
@@ -478,9 +478,15 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * Filters mapping array depends on enabled dataSources & dataSinks.
+   * Checks mappings and removes mappings that do not have sources or targets anymore.
+   *
+   * @param configToCheck
+   * @returns updated config
    */
-  public getFilteredMapping() {
+  public checkAndCleanupMappings(configToCheck = this.config): IConfig {
+    //Makes a copy of given config
+    let updatedConfig = JSON.parse(JSON.stringify(configToCheck)) as IConfig;
+
     const dataSourceDataPoints: string[] = [];
     this.config.dataSources.forEach((dataSource) =>
       dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp.id))
@@ -490,18 +496,20 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.config.dataSinks.forEach((dataSink) =>
       dataSink.dataPoints.forEach((dp) => dataSinkDataPoints.push(dp.id))
     );
+    const vdpsIds: string[] =
+      updatedConfig.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
 
-    const vdps: string[] = this.config.virtualDataPoints.map((vdp) => vdp.id);
-
-    return this.config.mapping.filter((m) => {
-      // Remove mappings if the source or target data point doesn't exist.
-      // TODO: That shouldn't happen at all. Modify "delete" handlers of sinks and sources to remove mappings if a removed data point was mapped.
+    updatedConfig.mapping?.forEach((mapping, index) => {
       const sourceExists =
-        dataSourceDataPoints.includes(m.source) || vdps.includes(m.source);
-      const targetExists = dataSinkDataPoints.includes(m.target);
-
-      return sourceExists && targetExists;
+        dataSourceDataPoints.includes(mapping.source) ||
+        vdpsIds.includes(mapping.source);
+      const targetExists = dataSinkDataPoints.includes(mapping.target);
+      if (!sourceExists || !targetExists) {
+        updatedConfig.mapping.splice(index, 1);
+      }
     });
+
+    return updatedConfig;
   }
 
   /**

@@ -180,10 +180,12 @@ function getSingleMappingHandler(
 }
 
 export const mappingHandlers = {
-  mappingsGet: getAllMappingsHandler,
+  //Single mapping
   mapPost: postSingleMappingHandler,
-  patchMappings: patchAllMappingsHandler,
   mapPatch: patchSingleMappingHandler,
   mapDelete: deleteSingleMappingHandler,
-  mapGet: getSingleMappingHandler
+  mapGet: getSingleMappingHandler,
+  //Multiple mappings
+  mappingsGet: getAllMappingsHandler,
+  patchMappings: patchAllMappingsHandler
 };

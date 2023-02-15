@@ -232,7 +232,7 @@ export class VirtualDataPointService
   }
 
   async updateOrderDataPoints(obj: VirtualDataPoint[]) {
-    this.updateOrder(obj);
+    this.updateOrder(!this._isEqualsOriginalDataPoints(obj) ? obj : []);
 
     this._store.patchState((state) => {
       state.dataPoints = [...obj];
@@ -282,6 +282,16 @@ export class VirtualDataPointService
         );
       }
     }
+  }
+
+  private _isEqualsOriginalDataPoints(array: VirtualDataPoint[]): boolean {
+    const oldDp = this._store.snapshot.originalDataPoints;
+    return (
+      Array.isArray(array) &&
+      Array.isArray(oldDp) &&
+      array.length === oldDp.length &&
+      array.every((element, index) => element.id === oldDp[index].id)
+    );
   }
 
   private _parseDataPoint(obj: api.VirtualDataPointType) {

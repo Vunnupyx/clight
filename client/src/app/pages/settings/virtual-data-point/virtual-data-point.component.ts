@@ -565,12 +565,20 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onReorder(event) {
-    let vdpList = [...this.datapointRows];
+    let vdpList = clone(this.datapointRows);
     moveItemInArray(vdpList, event.previousIndex, event.currentIndex);
-    this.isVdpOrderValid(vdpList)
-      ? this.virtualDataPointService.updateOrderDataPoints(vdpList)
-      : this.toastr.warning(
-          this.translate.instant('settings-virtual-data-point.WarningWrongVdp')
-        );
+    if (!this.isVdpOrderValid(vdpList)) {
+      this.toastr.warning(
+        this.translate.instant('settings-virtual-data-point.WarningWrongVdp')
+      );
+      while (!this.isVdpOrderValid(vdpList)) {
+        event.previousIndex > event.currentIndex
+          ? event.currentIndex++
+          : event.currentIndex--;
+        vdpList = clone(this.datapointRows);
+        moveItemInArray(vdpList, event.previousIndex, event.currentIndex);
+      }
+    }
+    this.virtualDataPointService.updateOrderDataPoints(vdpList);
   }
 }

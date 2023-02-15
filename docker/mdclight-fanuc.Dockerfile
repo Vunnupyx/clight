@@ -16,14 +16,10 @@ ARG FANUC_RUNTIME_LIBS="libc6:armhf libgcc1:armhf libatomic1-armhf libstdc++6-ar
 ARG NODE_V10_PATH=/usr/local/node10
 ARG NODE_V10_FILENAME=node-v10.24.1-linux-armv7l
 ARG NODE_MDC_VERSION=v14.21.1
-
-ENV NODE_V10=${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin/
-
+ENV NODE_V10=${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin/node
+ENV NPM_V10=${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin/npm
 # Copy fanuc process code to /app folder
-COPY src/modules/Southbound/DataSources/Fanuc/ /app/fanuc/
-COPY scripts/build/setupFanucImage.sh /
-
-
+COPY Worker /app/fanuc
 RUN dpkg --add-architecture armhf \
     && apt-get update \
     && apt-get install -y $FANUC_DEV_PACKAGES $FANUC_RUNTIME_LIBS \
@@ -39,7 +35,7 @@ RUN dpkg --add-architecture armhf \
     && export PATH=$(echo $PATH | sed -e "s@/usr/local/nvm/versions/node/${NODE_MDC_VERSION}/bin@${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin@g") \
     && npm config set user 0 \
     && npm config set unsafe-perm true \
-    && CC=arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 ${NPM_V10} install \
+    && CC=arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 ${NPM_V10} ci \
     && npm run build \
     && rm -rf Documentation *.ts \
     && ${NPM_V10} cache clean -f \

@@ -51,10 +51,14 @@ export class BaseChangesService<TEntity extends ITrackable> {
     });
   }
 
-  updateOrder(entity: TEntity[]) {
+  updateOrder(entities: TEntity[]) {
     this._changes.patchState((state) => {
-      state.list = entity;
-      state.touched = true;
+      state.list = entities;
+      state.touched =
+        !!Object.keys(state.created).length ||
+        !!Object.keys(state.updated).length ||
+        !!state.deleted.length ||
+        !!state.list.length;
     });
   }
 

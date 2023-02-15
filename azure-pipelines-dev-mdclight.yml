@@ -55,6 +55,8 @@ steps:
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript: |
+        bash --version
+
         # Gets the version of the last change that is affecting the image that is build here
         versionOfLastChange=$(scripts/build/lastFanucChange.sh)
         echo "Current fanuc version ${versionOfLastChange}" 

@@ -32,7 +32,7 @@ RUN dpkg --add-architecture armhf \
     && cd /app/fanuc \
     && export OLD_PATH=$PATH \
     # Change PATH to node 10.24.1 for install of gpy modules
-    && export PATH=$(echo $PATH | sed -e "s@/usr/local/nvm/versions/node/${NODE_MDC_VERSION}/bin@${NODE_V10_PATH}/${NODE_V10_FILENAME}/bin@g") \
+    && export PATH=$(echo $PATH | sed -e "s@/usr/local/nvm/versions/node/$NODE_MDC_VERSION/bin@$NODE_V10_PATH/$NODE_V10_FILENAME/bin@g") \
     && npm config set user 0 \
     && npm config set unsafe-perm true \
     && CC=arm-linux-gnueabihf-gcc-8 CXX=arm-linux-gnueabihf-g++-8 ${NPM_V10} ci \

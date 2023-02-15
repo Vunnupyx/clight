@@ -568,7 +568,7 @@ export class VirtualDataPointComponent implements OnInit {
     let vdpList = [...this.datapointRows];
     moveItemInArray(vdpList, event.previousIndex, event.currentIndex);
     this.isVdpOrderValid(vdpList)
-      ? (this.datapointRows = [...vdpList])
+      ? this.virtualDataPointService.updateOrderDataPoints(vdpList)
       : this.toastr.warning(
           this.translate.instant('settings-virtual-data-point.WarningWrongVdp')
         );

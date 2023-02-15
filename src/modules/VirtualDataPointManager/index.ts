@@ -28,6 +28,13 @@ type LogSummary = {
   debug: LogEntry[];
 };
 
+type VdpValidityStatus = {
+  isValid: boolean;
+  error?: 'wrongVdpsOrder' | 'wrongFormat' | 'unexpectedError';
+  vdpIdWithError?: string;
+  notYetDefinedSourceVdpId?: string;
+};
+
 /**
  * Calculates virtual datapoints
  */
@@ -783,34 +790,53 @@ export class VirtualDataPointManager {
   /**
    * Checks order of VDPs to determine if their order is valid according to the dependencies.
    */
-  public isVdpOrderValid(vdpsListToCheck: IVirtualDataPointConfig[]): boolean {
-    if (!Array.isArray(vdpsListToCheck) || vdpsListToCheck?.length === 0) {
-      return false;
-    }
-    let result = true;
-    vdpsListToCheck.forEach((vdp, index) => {
-      //Check sources that are VDP, as non-VDP sources will not cause problem
-      const otherVdpSources = vdp.sources.filter((vdpId) =>
-        vdpsListToCheck.find((v) => v.id === vdpId)
-      );
-      if (otherVdpSources.length > 0) {
-        const indexesOfOtherVdpSources = otherVdpSources.map((vdpId) =>
-          vdpsListToCheck.findIndex((x) => x.id === vdpId)
+  public getVdpValidityStatus(
+    vdpsListToCheck: IVirtualDataPointConfig[]
+  ): VdpValidityStatus {
+    try {
+      if (!Array.isArray(vdpsListToCheck)) {
+        return {
+          isValid: false,
+          error: 'wrongFormat'
+        };
+      }
+      let result: VdpValidityStatus = {
+        isValid: true
+      };
+      for (let [index, vdp] of vdpsListToCheck.entries()) {
+        //Check sources that are VDP, as non-VDP sources will not cause problem
+        const otherVdpSources = vdp.sources.filter((sourceVdpId) =>
+          vdpsListToCheck.find((v) => v.id === sourceVdpId)
         );
+        if (otherVdpSources.length > 0) {
+          for (let sourceVdpId of otherVdpSources) {
+            const indexOfSourceVdp = vdpsListToCheck.findIndex(
+              (x) => x.id === sourceVdpId
+            );
 
-        /**
-         * If VDP source is not defined (this case actually won't happen as non-VDP sources are always allowed)
-         *  or VDP source is defined later, then it is not valid
-         */
-        if (
-          indexesOfOtherVdpSources.includes(-1) ||
-          indexesOfOtherVdpSources.find((i) => i >= index)
-        ) {
-          result = false;
+            /**
+             * If VDP source is defined later, then it is not valid
+             */
+            if (indexOfSourceVdp >= index) {
+              result.isValid = false;
+              result.error = 'wrongVdpsOrder';
+              result.vdpIdWithError = vdp.id;
+              result.notYetDefinedSourceVdpId = sourceVdpId;
+              break;
+            }
+          }
+        }
+        if (!result.isValid) {
+          break;
         }
       }
-    });
 
-    return result;
+      return result;
+    } catch (err) {
+      return {
+        isValid: false,
+        error: 'unexpectedError'
+      };
+    }
   }
 }

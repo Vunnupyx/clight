@@ -131,5 +131,5 @@ steps:
     displayName: Print current versions
     inputs:
       script: |
-        echo "mdclight ${scripts/build/lastMdclightChange.sh}"
-        echo "mdclight-development ${scripts/build/lastMdclightDevChange.sh}"
+        echo "${DOCKER_REGISTRY}/mdclight:$(scripts/build/lastMdclightChange.sh)"
+        echo "${DOCKER_REGISTRY}/mdclight-development:$(scripts/build/lastMdclightDevChange.sh})"

@@ -1,0 +1,1 @@
+echo $(git describe --tags $(git log -n 1 --pretty=format:%H -- docker/mdcwebserver_arm64.Dockerfile client ))

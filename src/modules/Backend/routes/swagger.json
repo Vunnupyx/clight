@@ -357,6 +357,7 @@
             "in": "body",
             "required": true,
             "schema": {
+              "type": "array",
               "allOf": [
                 {
                   "$ref": "#/definitions/sourcedatapoint"
@@ -634,7 +635,6 @@
           }
         }
       },
-
       "patch": {
         "tags": ["datasinks"],
         "summary": "change all datasink datapoints",
@@ -642,10 +642,11 @@
         "operationId": "dataSinksPatchDatapoint",
         "parameters": [
           {
-            "name": "changeObject",
+            "name": "newDatapointArray",
             "in": "body",
             "required": true,
             "schema": {
+              "type": "array",
               "allOf": [
                 {
                   "$ref": "#/definitions/dataPointType"
@@ -659,7 +660,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully changed datasink datapoints"
+            "description": "Successfully changed datasink data points"
           }
         }
       }

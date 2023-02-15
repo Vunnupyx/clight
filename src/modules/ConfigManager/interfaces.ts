@@ -182,6 +182,20 @@ export interface IDataSinkConfig {
   auth?: IOpcuaAuth;
   customDataPoints?: IOpcuaCustomDataPoint[];
 }
+export function isValidDataSinkDatapoint(
+  dp: any
+): dp is IDataSinkDataPointConfig {
+  return 'id' in dp && 'name' in dp && 'address' in dp;
+}
+
+export function isValidDataSink(obj: any): obj is IDataSinkConfig {
+  return (
+    'protocol' in obj &&
+    'enabled' in obj &&
+    Array.isArray(obj.dataPoints) &&
+    obj.dataPoints?.every(isValidDataSinkDatapoint)
+  );
+}
 
 export interface IDataHubConfig {
   groupDevice: boolean;

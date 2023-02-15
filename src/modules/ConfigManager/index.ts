@@ -711,45 +711,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * bulk config dataSink changes.
-   */
-  public async bulkChangeDataSinkDataPoints(
-    protocol: DataSinkProtocols,
-    changes: any
-  ): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    const dataSink = this._config.dataSinks.find(
-      (ds) => ds.protocol === protocol
-    );
-
-    if (created) {
-      dataSink.dataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      dataSink.dataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      dataSink.dataPoints = dataSink.dataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
    * Update messenger config
    */
   public async updateMessengerConfig(

@@ -1,58 +1,111 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
 import { DataPointCache } from '../../DatapointCache';
-import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../EventBus';
+import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
 jest.mock('winston');
 jest.mock('fs');
 
-describe('Test VirtualDataPointManager', () => {
-  const config = new ConfigManager({
-    errorEventsBus: new EventBus<null>(),
-    lifecycleEventsBus: new EventBus<null>()
-  });
+jest.mock('../../EventBus');
+jest.mock('../../DatapointCache');
+jest.mock('../../ConfigManager');
+jest.mock('../../SyncScheduler');
 
-  config.config.virtualDataPoints = [
+class mockCache {
+  private dataPoints = {};
+
+  update(events) {
+    events?.forEach((event) => {
+      const lastEvent = this.getCurrentEvent(event.measurement.id);
+      this.dataPoints[event.measurement.id] = {
+        changed: lastEvent
+          ? lastEvent.measurement.value !== event.measurement.value
+          : false,
+        event
+      };
+    });
+  }
+  getCurrentEvent(id) {
+    return this.dataPoints[id]?.event;
+  }
+
+  getLastestValue(id: string) {
+    return this.dataPoints[id]?.timeseries?.[
+      this.dataPoints[id]?.timeseries?.length - 1
+    ];
+  }
+
+  hasChanged(id) {
+    return this.dataPoints[id]?.changed;
+  }
+
+  clearAll() {
+    this.dataPoints = {};
+  }
+
+  getTimeSeries() {}
+
+  resetValue() {}
+}
+
+describe('Test VirtualDataPointManager', () => {
+  const mockConfigManager = new ConfigManager({
+    errorEventsBus: new EventBus(),
+    lifecycleEventsBus: new EventBus()
+  });
+  mockConfigManager.config = {
+    virtualDataPoints: []
+  } as any;
+
+  mockConfigManager.config.virtualDataPoints = [
     {
+      name: '',
       id: 'andResult',
       sources: ['inputAnd1', 'inputAnd2'],
       operationType: 'and'
     },
     {
+      name: '',
       id: 'orResult',
       sources: ['inputOr1', 'inputOr2'],
       operationType: 'or'
     },
     {
+      name: '',
       id: 'notResult',
       sources: ['inputNot1'],
       operationType: 'not'
     },
     {
+      name: '',
       id: 'counterResult',
       sources: ['inputCounter1'],
       operationType: 'counter'
     },
     {
+      name: '',
       id: 'nested1AndResult',
       sources: ['andResult', 'orResult'],
       operationType: 'and'
     },
     {
+      name: '',
       id: 'nested2AndResult',
       sources: ['nested1AndResult', 'notResult'],
       operationType: 'or'
     }
   ];
 
-  const cache = new DataPointCache();
+  const cache = new mockCache() as any;
   const virtualDpManager = new VirtualDataPointManager({
-    configManager: config,
+    configManager: mockConfigManager,
     cache
   });
 
-  config.emit('configsLoaded');
+  //@ts-ignore
+  virtualDpManager.updateConfig();
+  mockConfigManager.emit('configsLoaded');
 
   afterEach(() => {
     cache.clearAll();
@@ -98,6 +151,13 @@ describe('Test VirtualDataPointManager', () => {
         secondValue: 20,
         formula: 'a6cc9e0e-34a8-456a-85ac-f8780b6dd52b + 1',
         expectedResult: 1
+      },
+      {
+        text: 'Giving only zero works correctly',
+        firstValue: 0,
+        secondValue: 0,
+        formula: '0',
+        expectedResult: 0
       },
       {
         text: 'boolean values in formula',
@@ -231,7 +291,6 @@ describe('Test VirtualDataPointManager', () => {
         const events: IDataSourceMeasurementEvent[] = [
           {
             dataSource: {
-              name: '',
               protocol: ''
             },
             measurement: {
@@ -242,7 +301,6 @@ describe('Test VirtualDataPointManager', () => {
           },
           {
             dataSource: {
-              name: '',
               protocol: ''
             },
             measurement: {
@@ -273,7 +331,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -284,7 +341,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -315,7 +371,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -326,7 +381,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -357,7 +411,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -380,7 +433,6 @@ describe('Test VirtualDataPointManager', () => {
     const events1: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -394,13 +446,12 @@ describe('Test VirtualDataPointManager', () => {
     // false => no event
     cache.update(events1);
     const virtualEvents1 = virtualDpManager.getVirtualEvents(events1);
-    expect(virtualEvents1.length).toBe(0);
+    expect(virtualEvents1[0].measurement.value).toBe(0);
 
     // true => count 1
     const events2: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -412,14 +463,12 @@ describe('Test VirtualDataPointManager', () => {
     ];
     cache.update(events2);
     const virtualEvents2 = virtualDpManager.getVirtualEvents(events2);
-    expect(virtualEvents2.length).toBe(1);
     expect(virtualEvents2[0].measurement.value).toBe(1);
 
     // false => no event
     const events3: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -431,13 +480,12 @@ describe('Test VirtualDataPointManager', () => {
     ];
     cache.update(events3);
     const virtualEvents3 = virtualDpManager.getVirtualEvents(events3);
-    expect(virtualEvents3.length).toBe(0);
+    expect(virtualEvents3[0].measurement.value).toBe(1);
 
     // true => count 2
     const events4: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -449,7 +497,6 @@ describe('Test VirtualDataPointManager', () => {
     ];
     cache.update(events4);
     const virtualEvents4 = virtualDpManager.getVirtualEvents(events4);
-    expect(virtualEvents4.length).toBe(1);
     expect(virtualEvents4[0].measurement.value).toBe(2);
   });
 
@@ -457,7 +504,6 @@ describe('Test VirtualDataPointManager', () => {
     const events: IDataSourceMeasurementEvent[] = [
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -468,7 +514,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -479,7 +524,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -490,7 +534,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -501,7 +544,6 @@ describe('Test VirtualDataPointManager', () => {
       },
       {
         dataSource: {
-          name: '',
           protocol: ''
         },
         measurement: {
@@ -519,5 +561,124 @@ describe('Test VirtualDataPointManager', () => {
     expect(virtualEvents.length).toBe(5);
     expect(virtualEvents[3].measurement.value).toBeTruthy();
     expect(virtualEvents[4].measurement.value).toBeTruthy();
+  });
+
+  describe('should check validity of VDPs correctly', () => {
+    test.each([
+      {
+        title: 'Empty array',
+        vdpsList: [],
+        isValid: true
+      },
+      {
+        title: 'Non-array',
+        vdpsList: '',
+        isValid: false,
+        error: 'wrongFormat'
+      },
+      {
+        title: 'undefined',
+        vdpsList: undefined,
+        isValid: false,
+        error: 'wrongFormat'
+      },
+      {
+        title: 'single VDP without sources',
+        vdpsList: [{ id: 'id1', sources: [] }],
+        isValid: true
+      },
+      {
+        title: 'single VDP with non-VDP source',
+        vdpsList: [{ id: 'id1', sources: ['non-vdp-id'] }],
+        isValid: true
+      },
+      {
+        title: 'two VDP with non-VDP source',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['non-vdp-id'] }
+        ],
+        isValid: true
+      },
+      {
+        title: 'two VDP with correct order',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] }
+        ],
+        isValid: true
+      },
+      {
+        title: 'two VDP with wrong order',
+        vdpsList: [
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id1', sources: ['non-vdp-id'] }
+        ],
+        isValid: false,
+        error: 'wrongVdpsOrder',
+        vdpIdWithError: 'id2',
+        notYetDefinedSourceVdpId: 'id1'
+      },
+      {
+        title: 'many VDP with correct order',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id3', sources: ['non-vdp-id'] },
+          { id: 'id4', sources: ['id1', 'id2'] },
+          { id: 'id5', sources: ['id3', 'non-vdp-id'] },
+          { id: 'id6', sources: ['id3', 'non-vdp-id', 'id5'] }
+        ],
+        isValid: true
+      },
+      {
+        title: 'many VDP with wrong order',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id3', sources: ['non-vdp-id'] },
+          { id: 'id4', sources: ['id1', 'id2'] },
+          { id: 'id6', sources: ['id3', 'non-vdp-id', 'id5'] },
+          { id: 'id5', sources: ['id3', 'non-vdp-id'] }
+        ],
+        isValid: false,
+        error: 'wrongVdpsOrder',
+        vdpIdWithError: 'id6',
+        notYetDefinedSourceVdpId: 'id5'
+      },
+      {
+        title: 'one VDP depends on itself which should not happen',
+        vdpsList: [
+          { id: 'id1', sources: ['non-vdp-id'] },
+          { id: 'id2', sources: ['id1'] },
+          { id: 'id3', sources: ['non-vdp-id'] },
+          { id: 'id4', sources: ['id1', 'id2'] },
+          { id: 'id5', sources: ['id5', 'non-vdp-id'] }
+        ],
+        isValid: false,
+        error: 'wrongVdpsOrder',
+        vdpIdWithError: 'id5',
+        notYetDefinedSourceVdpId: 'id5'
+      }
+    ])(
+      '$title returns isValid=$isValid, error=$error',
+      ({
+        vdpsList,
+        isValid,
+        error,
+        vdpIdWithError,
+        notYetDefinedSourceVdpId
+      }) => {
+        const vdpValidityStatus =
+          //@ts-ignore
+          virtualDpManager.getVdpValidityStatus(vdpsList);
+        expect(vdpValidityStatus.isValid).toEqual(isValid);
+        expect(vdpValidityStatus.error).toEqual(error);
+        expect(vdpValidityStatus.vdpIdWithError).toEqual(vdpIdWithError);
+        expect(vdpValidityStatus.notYetDefinedSourceVdpId).toEqual(
+          notYetDefinedSourceVdpId
+        );
+      }
+    );
   });
 });

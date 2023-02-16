@@ -47,7 +47,7 @@ steps:
           docker buildx create --use
           docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg MDC_LIGHT_WEBSERVER_VERSION=${versionOfLastChange} -t ${DOCKER_REGISTRY}/mdc-web-server:${versionOfLastChange} -f docker/mdcwebserver_arm64.Dockerfile . --push --progress plain
         fi
-- task: CmdLine@2
+  - task: CmdLine@2
     displayName: Print current versions
     inputs:
       script: |

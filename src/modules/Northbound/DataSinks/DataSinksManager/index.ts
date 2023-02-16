@@ -83,13 +83,14 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Shutdown all available data sinks.
    */
-  public async shutdownDataSink(): Promise<void> {
+  public async shutdownAllDataSinks(): Promise<void> {
     const shutdownFn = [];
     this.dataSinks.forEach(async (dataSink) => {
-      shutdownFn.push(dataSink.shutdown);
+      this.disconnectDataSinkFromBus(dataSink);
+      shutdownFn.push(dataSink.shutdown());
     });
     this.dataSinks = [];
-    Promise.all(shutdownFn);
+    await Promise.all(shutdownFn);
   }
 
   private async spawnDataSinks() {

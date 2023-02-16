@@ -18,15 +18,7 @@ export interface SetFormulaModalData {
   formula: string;
 }
 
-const Operators = [
-  '*',
-  '/',
-  '%',
-  '-',
-  '+',
-  '(',
-  ')'
-];
+const Operators = ['*', '/', '%', '-', '+', '(', ')'];
 
 @Component({
   selector: 'app-set-formula-modal',
@@ -64,7 +56,7 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
         )
     );
 
-    this.formula = this.deserializeFormula(this.data.formula);
+    this.formula = this.deserializeFormula(this.data.formula ?? '');
   }
 
   onSave() {
@@ -76,7 +68,7 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
   isValid() {
     return Boolean(this.formula);
   }
-  
+
   onCancel() {
     this.dialogRef.close();
   }
@@ -93,7 +85,9 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
       this.escapeDataPointName(dataPointName),
       this.formulaInputRef.nativeElement
     );
-    this.formulaModel.control.patchValue(this.formulaInputRef.nativeElement.value);
+    this.formulaModel.control.patchValue(
+      this.formulaInputRef.nativeElement.value
+    );
   }
 
   ngOnDestroy() {
@@ -136,7 +130,10 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
   private serializeFormula(formula: string) {
     let rawFormula = formula;
     for (const dp of this.sourceOptions) {
-      rawFormula = rawFormula.replace(new RegExp(this.escapeDataPointName(dp.name), 'g'), dp.id);
+      rawFormula = rawFormula.replace(
+        new RegExp(this.escapeDataPointName(dp.name), 'g'),
+        dp.id
+      );
     }
     return rawFormula;
   }
@@ -144,9 +141,11 @@ export class SetFormulaModalComponent implements OnInit, OnDestroy {
   private deserializeFormula(rawFormula: string) {
     let formula = rawFormula;
     for (const dp of this.sourceOptions) {
-      formula = formula.replace(new RegExp(dp.id, 'g'), this.escapeDataPointName(dp.name));
+      formula = formula.replace(
+        new RegExp(dp.id, 'g'),
+        this.escapeDataPointName(dp.name)
+      );
     }
     return formula;
   }
-
 }

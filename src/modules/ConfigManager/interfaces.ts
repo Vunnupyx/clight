@@ -98,7 +98,7 @@ export interface IDataPointConfig {
   id: string;
   name: string;
   address: string;
-  readFrequency: number;
+  readFrequency?: number;
   type: 's7' | 'nck';
 }
 
@@ -107,10 +107,24 @@ export interface IDataSourceConfig {
   protocol: DataSourceProtocols;
   connection?: IS7DataSourceConnection | IEnergyDataSourceConnection;
   enabled: boolean;
-  type?:
+  type:
     | IS7DataSourceTypes
     | IIoShieldDataSourcesTypes
     | IEnergyDataSourcesTypes;
+}
+
+export function isValidDataSourceDatapoint(dp: any): dp is IDataPointConfig {
+  return 'id' in dp && 'name' in dp && 'address' in dp && 'type' in dp;
+}
+
+export function isValidDataSource(obj: any): obj is IDataSourceConfig {
+  return (
+    'protocol' in obj &&
+    'enabled' in obj &&
+    'type' in obj &&
+    Array.isArray(obj.dataPoints) &&
+    obj.dataPoints?.every(isValidDataSourceDatapoint)
+  );
 }
 
 type IMTConnectDataPointTypes = 'event' | 'condition' | 'sample';

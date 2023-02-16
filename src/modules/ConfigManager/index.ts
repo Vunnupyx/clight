@@ -672,45 +672,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * bulk config dataSource changes.
-   */
-  public async bulkChangeDataSourceDataPoints(
-    protocol: DataSourceProtocols,
-    changes: any
-  ): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    const dataSource = this._config.dataSources.find(
-      (ds) => ds.protocol === protocol
-    );
-
-    if (created) {
-      dataSource.dataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      dataSource.dataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      dataSource.dataPoints = dataSource.dataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
    * Update messenger config
    */
   public async updateMessengerConfig(

@@ -65,7 +65,7 @@ export class DataHubDataSink extends DataSink {
   protected processDataPointValues(dataPointsObj): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
 
-    if (!this.#datahubAdapter.running) {
+    if (!this.#datahubAdapter?.running) {
       return;
     }
 

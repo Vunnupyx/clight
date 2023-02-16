@@ -74,7 +74,7 @@ export class LoginComponent implements OnInit {
 
   openForgotPassword() {
     window.open(
-      `/help${this.translate.instant(
+      `http://localhost:3000/help${this.translate.instant(
         'common.LanguageDocumentationPath'
       )}/docs/FactoryReset`,
       '_blank'

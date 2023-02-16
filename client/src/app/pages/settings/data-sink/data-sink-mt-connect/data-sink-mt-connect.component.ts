@@ -14,6 +14,7 @@ import { combineLatest, Subscription } from 'rxjs';
 import {
   DataMapping,
   DataPoint,
+  DataPointLiveData,
   DataPointType,
   DataSink,
   DataSinkAuth,
@@ -28,7 +29,7 @@ import {
   DataPointService,
   DataSinkService
 } from 'app/services';
-import { arrayToMap, clone } from 'app/shared/utils';
+import { arrayToMap, clone, ObjectMap } from 'app/shared/utils';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
@@ -80,6 +81,8 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   unsavedRow?: DataPoint;
   unsavedRowIndex: number | undefined;
+
+  liveData: ObjectMap<DataPointLiveData> = {};
 
   displayedColumns = ['name', 'enabled'];
   desiredServices: Array<{ name: string; enabled: boolean }> = [];
@@ -152,6 +155,19 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.sub.add(
       this.dataSinkService.connection.subscribe((x) => this.onConnection(x))
     );
+
+    if (this.dataSink?.protocol === DataSinkProtocol.DH) {
+      //For now only DataHub supports livedata
+      this.sub.add(
+        this.dataSinkService.dataPointsLivedata.subscribe((x) =>
+          this.onDataPointsLiveData(x)
+        )
+      );
+
+      this.sub.add(
+        this.dataSinkService.setLivedataTimer(DataSinkProtocol.DH).subscribe()
+      );
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -430,5 +446,21 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
           width: '900px'
         });
       });
+  }
+  private onDataPointsLiveData(x: ObjectMap<DataPointLiveData>) {
+    this.liveData = x;
+  }
+
+  public getDatahubLivedata(rowId) {
+    let rowDataMapping = this.datapointRows?.find((r) => r.id === rowId)?.map;
+
+    let rowValue = this.liveData?.[rowId]?.value;
+
+    if (!rowDataMapping) {
+      return rowValue;
+    }
+    let index =
+      rowValue === false ? 0 : rowValue === true ? 1 : String(rowValue);
+    return `${rowValue} (${rowDataMapping[index]})`;
   }
 }

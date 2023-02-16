@@ -1056,21 +1056,29 @@
             }
           }
         }
-      }
-    },
-    "/mappings/bulk": {
-      "post": {
+      },
+      "patch": {
         "tags": ["mappings"],
         "summary": "change bulk mappings",
         "description": "",
-        "operationId": "mapPostBulk",
+        "operationId": "patchMappings",
         "parameters": [
           {
-            "name": "changeObject",
+            "name": "newMappingsArray",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/changeBulk"
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/map"
+                  },
+                  {
+                    "$ref": "#/definitions/uuid"
+                  }
+                ]
+              }
             }
           }
         ],

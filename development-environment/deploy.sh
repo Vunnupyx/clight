@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Temporary script do simplify the container deployment.
+# Deployment of dev environment to device
+# Must be executed from workspace root!
+# Always execute with `yarn deploy-dev`!
 
 #! You must be logged in with the az cli!
 # az login

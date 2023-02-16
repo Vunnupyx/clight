@@ -1,29 +1,36 @@
 #!/bin/bash
 
-# Temporary script do simplify the container deployment.
+# Script do simplify the container deployment for development purposes.
+# Must be executed from workspace root!
+# Always execute with `yarn deploy`!
 
 #! You must be logged in with the az cli!
 # az login
 # az account set --subscription "CELOS Next Datahub DEV"
 # docker login mdclightdev.azurecr.io with credentials from password manager
 
-read -p "\"git describe --tags\" output: " version
-# version="3.0.0-beta-1-133-gd55131b0"
-versionForName=$(sed 's/[.]/-/g' <<< $version) # replace all . with -
-
-target="tags.mdclight='$version'"
-name=${versionForName}-mdclight
-script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-manifestName=deployment.manifest.${version}.json
-manifestPath=$script_dir/$manifestName
-
-# check if docker image is available at registry
+# check if docker image is available at registry using the azure cli
 check_docker_image () {
-    docker manifest inspect $1 > /dev/null;
-    if [[ $? -eq "0" ]]; then
-        echo "$1 ok!"
-    else
-        echo "$1 does not exist!"
+    registry=mdclightdev
+    repository=$1
+    tag=$2
+
+    availableTags=$(az acr repository show-tags --name $registry --repository $repository -o tsv)
+
+    exists="false"
+
+    while IFS=';' read -ra ADDR; do
+        for i in "${ADDR[@]}"; do
+            if [ "$i" == "$tag" ]; then
+                echo "$registry/$repository:$tag exists!"
+                exists="true"
+            fi
+        done
+    done <<< "$availableTags"
+
+    if [ $exists == "false" ]
+    then
+        echo "$registry/$repository:$tag does not exist"
         exit 1
     fi
 }
@@ -46,7 +53,6 @@ select_edge_device() {
 
 # select iot hub to publish deployment
 select_datahub() {
-    
     iothubs=("iot-datahub-euw-devd" "iot-datahub-euw-dev" "OTHER")
     select yn in "${iothubs[@]}" ; do
     # ${devices[-1]} for bash > 4.2
@@ -60,16 +66,44 @@ select_datahub() {
     done
 }
 
-echo "Select IoT2050 device: "
+# select version. Takes script to determine a default version
+select_version () {
+    versions=($($1) "OTHER")
+    select yn in "${versions[@]}" ; do
+    # ${devices[-1]} for bash > 4.2
+    if [[ "$yn" == "${versions[${#versions[@]} - 1]}" ]]; then
+        read -p "Versions: " id
+        echo "$id"
+        break
+    fi
+    echo "$yn"
+    break
+    done
+}
+
+echo "Select mdclight version (git describe --tags):"
+mdclightVersion=$(select_version ./scripts/build/lastMdclightChange.sh)
+echo "Select web server version (git describe --tags):"
+webserverVersion=$(select_version ./scripts/build/lastWebserverChange.sh)
+echo "Select mtconnect (git describe --tags):"
+mtconnectVersion=$(select_version ./scripts/build/lastMTConnectChange.sh)
+echo "Select IoT2050 device:"
 deviceId=$(select_edge_device)
 echo "Select iothub: "
 iotHub=$(select_datahub)
 
-check_docker_image mdclightdev.azurecr.io/mdclight:$version 
-check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
-check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
+check_docker_image mdclight $mdclightVersion 
+check_docker_image mdc-web-server $webserverVersion
+check_docker_image mtconnect-agent $mtconnectVersion
 
-node "$script_dir"/deployment.manifest.js $version > $manifestPath
+versionForName=$(sed 's/[.]/-/g' <<< $mdclightVersion) # replace all . with -
+
+target="tags.mdclight='$mdclightVersion'"
+name=${versionForName}-mdclight
+manifestName=deployment.manifest.${mdclightVersion}.json
+manifestPath=scripts/deployment/$manifestName
+
+node scripts/deployment/deployment.manifest.js $mdclightVersion $webserverVersion $mtconnectVersion > $manifestPath
 az iot edge deployment create -d "$name" -n "$iotHub" --content "$manifestPath" --target-condition "$target" --priority 1 --verbose --layered false
-az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight\": \"${version}\", \"mdclight-dev\": null}"
+az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight\": \"${mdclightVersion}\", \"mdclight-dev\": null}"
 rm "$manifestPath"

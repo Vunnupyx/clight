@@ -1,6 +1,5 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { VirtualDataPointManager } from '../../../../../VirtualDataPointManager';
 import {
   isValidVdp,
@@ -27,7 +26,7 @@ export function setVdpManager(config: VirtualDataPointManager) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function vdpsGetHandler(request: Request, response: Response): void {
+function getAllVdpsHandler(request: Request, response: Response): void {
   const vdps = configManager?.config?.virtualDataPoints || [];
   response.status(200).json({ vdps });
 }
@@ -37,7 +36,7 @@ function vdpsGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpPostHandler(
+async function postSingleVdpHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -74,7 +73,7 @@ async function vdpPostHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpsPatchHandler(
+async function patchAllVdpsHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -102,7 +101,7 @@ async function vdpsPatchHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function vdpGetHandler(request: Request, response: Response): void {
+function getSingleVdpHandler(request: Request, response: Response): void {
   const vdp = configManager?.config?.virtualDataPoints?.find(
     (point) => point.id === request.params.id
   );
@@ -113,7 +112,7 @@ function vdpGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpDeleteHandler(
+async function deleteSingleVdpHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -127,11 +126,11 @@ async function vdpDeleteHandler(
   });
 }
 /**
- * Overwrites a single virtual datapoint with its id
+ * Overwrites a single virtual datapoint
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpPatchHandler(
+async function patchSingleVdpHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -165,10 +164,10 @@ async function vdpPatchHandler(
 }
 
 export const virtualDatapointHandlers = {
-  vdpsGet: vdpsGetHandler,
-  vdpsPatch: vdpsPatchHandler,
-  vdpPost: vdpPostHandler,
-  vdpGet: vdpGetHandler,
-  vdpDelete: vdpDeleteHandler,
-  vdpPatch: vdpPatchHandler
+  vdpsGet: getAllVdpsHandler,
+  vdpsPatch: patchAllVdpsHandler,
+  vdpPost: postSingleVdpHandler,
+  vdpGet: getSingleVdpHandler,
+  vdpDelete: deleteSingleVdpHandler,
+  vdpPatch: patchSingleVdpHandler
 };

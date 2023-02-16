@@ -556,38 +556,6 @@
         }
       }
     },
-    "/datasinks/{datasinkProtocol}/dataPoints/bulk": {
-      "parameters": [
-        {
-          "name": "datasinkProtocol",
-          "in": "path",
-          "description": "id of the datasink",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "post": {
-        "tags": ["datasinks"],
-        "summary": "change bulk datasink datapoints",
-        "description": "",
-        "operationId": "dataSinksPostDatapointBulk",
-        "parameters": [
-          {
-            "name": "changeObject",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/changeBulk"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully changed datasink"
-          }
-        }
-      }
-    },
     "/datasinks/{datasinkProtocol}/status": {
       "parameters": [
         {
@@ -667,6 +635,35 @@
                 }
               }
             }
+          }
+        }
+      },
+
+      "patch": {
+        "tags": ["datasinks"],
+        "summary": "change all datasink datapoints",
+        "description": "",
+        "operationId": "dataSinksPatchDatapoint",
+        "parameters": [
+          {
+            "name": "changeObject",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully changed datasink datapoints"
           }
         }
       }

@@ -19,7 +19,7 @@ import {
 } from '../../../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import path from 'path';
-import { compare } from 'bcrypt';
+import { compare } from 'bcryptjs';
 import { System } from '../../../System';
 import { create } from 'xmlbuilder2';
 

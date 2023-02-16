@@ -71,5 +71,5 @@ check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
 
 node "$script_dir"/deployment.manifest.js $version > $manifestPath
 az iot edge deployment create -d "$name" -n "$iotHub" --content "$manifestPath" --target-condition "$target" --priority 1 --verbose --layered false
-az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight\": \"${version}\"}"
+az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight\": \"${version}\", \"mdclight-dev\": null}"
 rm "$manifestPath"

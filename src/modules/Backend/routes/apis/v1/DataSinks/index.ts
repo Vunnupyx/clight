@@ -3,7 +3,7 @@ import { IDataSinkConfig } from '../../../../../ConfigManager/interfaces';
 import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
 import {

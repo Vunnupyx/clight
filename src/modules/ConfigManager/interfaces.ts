@@ -93,13 +93,18 @@ export type IS7DataSourceTypes =
   | 'custom';
 export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
 export type IEnergyDataSourcesTypes = 'PhoenixEMpro';
+export type IEnergyDatapointTypes =
+  | 'meter'
+  | 'measurement'
+  | 'device'
+  | 'tariff';
 
 export interface IDataPointConfig {
   id: string;
   name: string;
   address: string;
   readFrequency: number;
-  type: 's7' | 'nck';
+  type: 's7' | 'nck' | IEnergyDatapointTypes;
 }
 
 export interface IDataSourceConfig {

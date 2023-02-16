@@ -150,4 +150,17 @@ describe('DataSinksManager', () => {
     expect(changeHandlerSpy).toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalled();
   });
+
+  test('shutdownAllDataSinks works properly', async () => {
+    await dataSinksManager.init();
+    await dataSinksManager.shutdownAllDataSinks();
+
+    expect(mockEventBusConstructor.removeEventListener).toHaveBeenCalledTimes(
+      3
+    );
+    expect(
+      mockMeasurementEventBusConstructor.removeEventListener
+    ).toHaveBeenCalledTimes(3);
+    expect(mockSinkConstructor.shutdown).toHaveBeenCalledTimes(3);
+  });
 });

@@ -338,7 +338,7 @@
     "OPCUAAuthenticationLevel": "OPC UA Authentication Level",
     "OPCUAServerUsername": "OPC UA Server Username",
     "OPCUAServerPassword": "OPC UA Server Password",
-    "NoData": "No data",
+    "NoActiveService": "No active service",
     "LoadError": "Failed to load data sinks. Try again later",
     "OpenMTConnectStream": "Open MTConnect Stream",
     "BulkSuccess": "Changes have been applied successfully!",

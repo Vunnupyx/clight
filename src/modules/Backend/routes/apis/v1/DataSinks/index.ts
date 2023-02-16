@@ -31,8 +31,8 @@ interface IDataSinkConfigResponse extends IDataSinkConfig {
 /**
  * Checks if given protocol is a valid data sink protocol
  */
-function isValidProtocol(protocol) {
-  return ['mtconnect', 'opcua', 'datahub'].includes(protocol);
+function isValidProtocol(protocol: any): boolean {
+  return Object.values(DataSinkProtocols).includes(protocol);
 }
 
 /**
@@ -410,9 +410,9 @@ async function deleteSingleDatapointHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function getDataSinkStatusHandler(request: Request, response: Response) {
-  const proto = request.params?.datasinkProtocol;
-  if (!isValidProtocol(proto)) {
+function getSingleDataSinkStatusHandler(request: Request, response: Response) {
+  const protocol = request.params?.datasinkProtocol;
+  if (!isValidProtocol(protocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
@@ -437,14 +437,19 @@ function getDataSinkStatusHandler(request: Request, response: Response) {
 }
 
 export const dataSinksHandlers = {
-  dataSinksGet: getAllDataSinksHandler,
+  //Single data sink
   dataSinkGet: getSingleDataSinkHandler,
   dataSinkPatch: patchSingleDataSinkHandler,
-  dataSinksPatchDatapoint: patchAllDatapointsHandler,
-  dataSinksDataPointsGet: getAllDatapointsHandler,
+  //Multiple data sinks
+  dataSinksGet: getAllDataSinksHandler,
+  //Single data point
   dataSinksDataPointsPost: postSingleDatapointHandler,
   dataSinksDataPointPatch: patchSingleDataPointHandler,
   dataSinksDataPointDelete: deleteSingleDatapointHandler,
   dataSinksDataPointGet: getSingleDatapointHandler,
-  dataSinkGetStatus: getDataSinkStatusHandler
+  //Multiple data points
+  dataSinksPatchDatapoint: patchAllDatapointsHandler,
+  dataSinksDataPointsGet: getAllDatapointsHandler,
+  //Status of data sink
+  dataSinkGetStatus: getSingleDataSinkStatusHandler
 };

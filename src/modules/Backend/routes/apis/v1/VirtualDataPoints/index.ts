@@ -164,10 +164,12 @@ async function patchSingleVdpHandler(
 }
 
 export const virtualDatapointHandlers = {
-  vdpsGet: getAllVdpsHandler,
-  vdpsPatch: patchAllVdpsHandler,
+  //Single VDP
   vdpPost: postSingleVdpHandler,
   vdpGet: getSingleVdpHandler,
   vdpDelete: deleteSingleVdpHandler,
-  vdpPatch: patchSingleVdpHandler
+  vdpPatch: patchSingleVdpHandler,
+  //Multiple VDPs
+  vdpsGet: getAllVdpsHandler,
+  vdpsPatch: patchAllVdpsHandler
 };

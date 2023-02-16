@@ -435,7 +435,7 @@ export class OPCUAAdapter {
    * TODO: Write Doku.
    */
   private initCheck(logPrefix: string): AdapterError | void {
-    if (!this.server.initialized) {
+    if (!this.server?.initialized) {
       return new AdapterError(
         `${logPrefix} error due to adapter not initialized.`
       );

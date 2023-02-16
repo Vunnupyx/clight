@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { from, interval, Observable } from 'rxjs';
 
 import {
+  DataPointLiveData,
   DataSink,
   DataSinkConnection,
   DataSinkProtocol,
@@ -12,10 +13,18 @@ import {
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { clone, errorHandler, mapOrder } from 'app/shared/utils';
+import {
+  array2map,
+  clone,
+  errorHandler,
+  mapOrder,
+  ObjectMap
+} from 'app/shared/utils';
 import * as api from 'app/api/models';
 import PREDEFINED_MTCONNECT_DATA_POINTS from './constants/mtconnectDataItems';
 import PREDEFINED_OPCUA_DATA_POINTS from './constants/opcuaDataItems';
+import { filterLiveData } from 'app/shared/utils/filter-livedata';
+import { SystemInformationService } from './system-information.service';
 
 const DATA_SINKS_ORDER = [
   DataSinkProtocol.MTConnect,
@@ -27,6 +36,7 @@ export class DataSinksState {
   status!: Status;
   touched!: boolean;
   dataSinks!: DataSink[];
+  dataPointsLivedata!: ObjectMap<DataPointLiveData>;
   originalDataSinks!: DataSink[];
   connection?: DataSinkConnection;
 }
@@ -39,9 +49,16 @@ export class DataSinkService {
     storeFactory: StoreFactory<DataSinksState>,
     private httpService: HttpService,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private systemInformationService: SystemInformationService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
+  }
+
+  get dataPointsLivedata() {
+    return this._store.state
+      .pipe(filter((x) => x.status != Status.NotInitialized))
+      .pipe(map((x) => x.dataPointsLivedata));
   }
 
   get status() {
@@ -229,6 +246,55 @@ export class DataSinkService {
       });
       state.touched = true;
     });
+  }
+
+  /**
+   * Triggers every 1 second /livedata/datasink/:protocol endpoint
+   * @returns Observable
+   */
+  setLivedataTimer(
+    protocol: DataSinkProtocol,
+    timeseries = 'false'
+  ): Observable<void> {
+    return interval(1000).pipe(
+      mergeMap(() => from(this.getLiveDataForDataPoints(protocol, timeseries)))
+    );
+  }
+
+  /**
+   * Gets live data points for specific data sink protocol
+   * @param protocol
+   * @param timeseries
+   */
+  async getLiveDataForDataPoints(
+    protocol: DataSinkProtocol,
+    timeseries = 'false'
+  ) {
+    try {
+      const liveData = await this.httpService.get<DataPointLiveData[]>(
+        `/livedata/datasink/${protocol}?timeseries=${timeseries}`
+      );
+      const offset = await this.systemInformationService.getServerTimeOffset();
+      this._store.patchState((state) => {
+        state.dataPointsLivedata = array2map(
+          Object.values(liveData).filter(filterLiveData(offset)),
+          (item) => item.dataPointId
+        );
+      });
+    } catch (err) {
+      errorHandler(err);
+      const offset = await this.systemInformationService.getServerTimeOffset();
+      this._store.patchState((state) => {
+        state.dataPointsLivedata = {
+          ...array2map(
+            Object.values(state.dataPointsLivedata).filter(
+              filterLiveData(offset)
+            ),
+            (item) => item.dataPointId
+          )
+        };
+      });
+    }
   }
 
   getPredefinedMtConnectDataPoints() {

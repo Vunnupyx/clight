@@ -40,6 +40,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
   private configManager: Readonly<ConfigManager>;
   private measurementsBus: MeasurementEventBus;
+  private dataPointCache: DataPointCache;
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: Array<DataSink> = [];
   private dataSinksRestartPending = false;
@@ -51,6 +52,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     super();
 
     this.configManager = params.configManager;
+    this.dataPointCache = params.dataPointCache;
     this.configManager.once('configsLoaded', () => {
       try {
         this.init();
@@ -166,7 +168,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted
+            this.configManager.config.termsAndConditions.accepted,
+          dataPointCache: this.dataPointCache
         };
 
         return new DataHubDataSink(dataHubDataSinkOptions);
@@ -178,7 +181,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
             this.configManager.config.termsAndConditions.accepted,
-          messengerManager: this.messengerManager
+          messengerManager: this.messengerManager,
+          dataPointCache: this.dataPointCache
         };
         return new MTConnectDataSink(mtConnectDataSinkOptions);
       }
@@ -189,7 +193,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           generalConfig: this.configManager.config.general,
           runtimeConfig: this.configManager.runtimeConfig.opcua,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted
+            this.configManager.config.termsAndConditions.accepted,
+          dataPointCache: this.dataPointCache
         });
       }
 

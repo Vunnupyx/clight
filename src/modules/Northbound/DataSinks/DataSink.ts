@@ -13,6 +13,7 @@ import {
 import { DataPointMapper } from '../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { isEmpty } from 'lodash';
+import { DataPointCache } from '../../DatapointCache';
 
 export enum DataSinkStatus {
   CONNECTING = 'CONNECTING',
@@ -31,6 +32,7 @@ export interface IDataSinkOptions {
   mapping: IDataPointMapping[];
   dataSinkConfig: IDataSinkConfig;
   termsAndConditionsAccepted: boolean;
+  dataPointCache: DataPointCache;
 }
 
 export type OptionalConfigs = {
@@ -44,6 +46,7 @@ export abstract class DataSink {
   protected name = DataSink.name;
   protected config: IDataSinkConfig;
   protected dataPointMapper: DataPointMapper;
+  protected dataPointCache: DataPointCache;
   protected readonly _protocol: DataSinkProtocols;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected enabled = false;
@@ -58,6 +61,7 @@ export abstract class DataSink {
     this.dataPointMapper = new DataPointMapper(options.mapping);
     this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
     this.enabled = options.dataSinkConfig.enabled;
+    this.dataPointCache = options.dataPointCache;
   }
 
   /**
@@ -109,6 +113,8 @@ export abstract class DataSink {
       value: number | string | boolean;
     }
 
+    let mappedTargetEvents = [];
+
     // Group events by their target, to use for target data points, depending on more than one source data point
     const eventsByTarget: {
       [key: string]: IEvent[];
@@ -128,7 +134,10 @@ export abstract class DataSink {
         );
 
         if (!dp) return;
-
+        mappedTargetEvents.push({
+          ...event,
+          measurement: { ...event.measurement, id: dp.id, name: dp.name }
+        });
         eventsByTarget[targetMapping.target].push({
           mapValue: targetMapping.mapValue,
           map: dp.map,
@@ -136,6 +145,7 @@ export abstract class DataSink {
         });
       });
     });
+    this.dataPointCache.update(mappedTargetEvents);
 
     let dataPoints = {};
     Object.keys(eventsByTarget).forEach((target) => {

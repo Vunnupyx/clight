@@ -40,7 +40,7 @@
   },
   "scripts": {
     "dev": "export MDC_LIGHT_FOLDER=mdclight && export PORT=8083 && export NODE_ENV=development && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export SYS_PREFIX=mdclight && npm run setup:local:dev && export MOCK_USER_BUTTON=true && ts-node-dev --respawn --transpile-only --max-old-space-size=1024 src/index.ts",
-    "dev:debugger": "export MDC_LIGHT_FOLDER=mdclight && export NODE_ENV=development && export PORT=8083 && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export SYS_PREFIX=mdclight && npm run setup:local:dev && export MOCK_USER_BUTTON=true && ts-node-dev --respawn --inspect=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
+    "dev:debugger": "export MDC_LIGHT_FOLDER=mdclight && export NODE_ENV=development && export PORT=8083 && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export SYS_PREFIX=mdclight && npm run setup:local:dev && export MOCK_USER_BUTTON=true && ts-node-dev --respawn --inspect-brk=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
     "dev:webserver": "yarn dev:mock:configagent && cd client && yarn dev",
     "dev:webserver:iot": "cd client && yarn dev",
     "dev:webserver:mock": "yarn dev:mock:configagent && yarn dev:mock:api && cd client && yarn dev:mock",

@@ -8,7 +8,189 @@ export const factoryConfig: IConfig = {
     control: ''
   },
   dataSources: [],
-  dataSinks: [],
+  dataSinks: [
+    {
+      dataPoints: [
+        {
+          id: '0c24235c-f56d-435b-a560-6874079effb4',
+          address: 'production.activeProgram.currentExecutionState',
+          name: 'Execution State',
+          type: 'event'
+        },
+        {
+          id: '10456f7b-6d0c-4488-8d19-71de07754305',
+          address: 'auxiliaries.stacklight.colorBlue',
+          name: 'Stacklight Blue',
+          type: 'event',
+          map: {
+            '0': 'OFF',
+            '1': 'ON',
+            '2': 'BLINKING'
+          }
+        },
+        {
+          id: '7944466f-c49f-4d75-a65d-b6fe5d18b77c',
+          address: 'production.activeProgram.selectedProgramName',
+          name: 'Program Name',
+          type: 'event'
+        },
+        {
+          id: 'ecaa79f4-3b7b-487d-b9a2-2571ce2df700',
+          address: 'spindles.spindle[0].override',
+          name: 'Spindel Overwrite',
+          type: 'event'
+        },
+        {
+          id: 'e08af667-e120-48af-b8df-97973cffeddc',
+          address: 'channels.channel[0].feedOverride',
+          name: 'Feed Override',
+          type: 'event'
+        },
+        {
+          id: 'cdcb3a80-d7bf-4db2-8b91-c24568056c1d',
+          address: 'channels.channel[0].rapidFeedOverride',
+          name: 'Rapid Feed Override',
+          type: 'event'
+        },
+        {
+          id: '4b78da19-d01c-4e07-aa4e-52d17218b110',
+          address: 'channels.channel[0].activeToolID1',
+          name: 'Active Tool Id 1',
+          type: 'event'
+        },
+        {
+          id: 'cf678a0c-cfe1-4950-b967-00f18d141b2d',
+          address: 'channels.channel[0].activeToolID2',
+          name: 'Active Tool Id 2',
+          type: 'event'
+        },
+        {
+          id: 'aad10e45-402b-44b4-ba0e-4396ee7f6ef1',
+          address: 'channels.channel[0].activeToolName',
+          name: 'Active Tool Name',
+          type: 'event'
+        },
+        {
+          id: 'ad0afa42-4120-485b-a1f4-07282e731fd4',
+          address: 'auxiliaries.stacklight.colorGreen',
+          name: 'Green Stack Light',
+          type: 'event',
+          map: {
+            '0': 'OFF',
+            '1': 'ON',
+            '2': 'BLINKING'
+          }
+        },
+        {
+          id: 'e8691adc-e1ab-4271-a0b3-897b9ead0b7e',
+          address: 'auxiliaries.stacklight.colorRed',
+          name: 'Red Stack Light',
+          type: 'event',
+          map: {
+            '0': 'OFF',
+            '1': 'ON',
+            '2': 'BLINKING'
+          }
+        },
+        {
+          id: '9a972f4c-45ef-4477-840c-d4fc141c8694',
+          address: 'auxiliaries.stacklight.colorYellow',
+          name: 'Yellow Stack Light',
+          type: 'event',
+          map: {
+            '0': 'OFF',
+            '1': 'ON',
+            '2': 'BLINKING'
+          }
+        },
+        {
+          id: '218e217d-2288-4007-a8f8-2ce4c371de14',
+          address: 'channels.channel[0].controllerMode',
+          name: 'Controller Mode',
+          type: 'event',
+          map: {
+            '0': 'Automatic',
+            '1': 'MdaMdi',
+            '2': 'JogManual',
+            '3': 'Other'
+          }
+        },
+        {
+          id: '14171496-239e-406b-b300-437bfde86798',
+          address: 'production.currentJob.partsCounter',
+          name: 'Part Counter',
+          type: 'event'
+        },
+        {
+          id: '54c2a7aa-8f1c-4ed1-8d22-b8444592d032',
+          address: 'production.currentJob.partsDesired',
+          name: 'Parts Desired',
+          type: 'event'
+        },
+        {
+          id: '631f18d0-734b-44a7-aeb7-065b5c9b3c36',
+          address: 'systems.machine.operationMode',
+          name: 'Operation Mode',
+          type: 'event'
+        },
+        {
+          id: '04f941f3-dc23-42ea-a48c-fc4a4c317e1d',
+          address: 'systems.machine.partCounter',
+          name: 'Overall Part Counter',
+          type: 'event'
+        },
+        {
+          id: '2b00fe5e-add6-478a-be59-63cd0919dcca',
+          address: 'production.activeProgram.selectedProgramPath',
+          name: 'Selected Program Path',
+          type: 'event'
+        },
+        {
+          id: '3d31ed64-3e42-4d38-bde0-0c721f6915bd',
+          address: 'systems.machineDataConnector.machineConnectionEstablished',
+          name: 'Connection Etablished',
+          type: 'event'
+        },
+        {
+          id: 'd81e8146-5a79-46ef-bec2-659b1d6c3c5a',
+          address: 'systems.machine.operationTime',
+          name: 'Operation Time',
+          type: 'event'
+        },
+        {
+          id: 'ae92e7d9-3775-4b40-b3ad-58bc5a839b1e',
+          address: 'systems.machine.powerOnTime',
+          name: 'Power On Time',
+          type: 'event'
+        },
+        {
+          id: 'afe29acd-15d9-494f-bf85-a162b68f8190',
+          address: 'systems.machineController.PLCRuntime',
+          name: 'PLC Runtime',
+          type: 'event'
+        },
+        {
+          id: '40052ee5-41a8-4bca-a783-6c200ce401e6',
+          address: 'spindles.spindle[0].operationTime',
+          name: 'Spindle Operation Time',
+          type: 'event'
+        },
+        {
+          id: '40052ee5-41a8-4bca-a783-6c200ce401e7',
+          address: 'channels.channel[0].state',
+          name: 'Channel State',
+          type: 'event',
+          map: {
+            '0': 'idle',
+            '1': 'interrupted',
+            '2': 'active'
+          }
+        }
+      ],
+      enabled: true,
+      protocol: 'datahub'
+    }
+  ],
   virtualDataPoints: [],
   mapping: [],
   quickStart: {

@@ -805,7 +805,7 @@
             }
           }
         ],
-        "operationId": "vdpsPost",
+        "operationId": "vdpPost",
         "responses": {
           "200": {
             "description": "Successfully create a virtual datapoint resource",
@@ -831,27 +831,38 @@
             }
           }
         }
-      }
-    },
-    "/vdps/bulk": {
-      "post": {
+      },
+      "patch": {
         "tags": ["virtual datapoints"],
-        "summary": "change bulk vdps",
+        "summary": "replace all VDPs",
         "description": "",
-        "operationId": "vdpsPostBulk",
+        "operationId": "vdpsPatch",
         "parameters": [
           {
-            "name": "changeObject",
+            "name": "vdpArray",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/changeBulk"
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/virtualDataPointType"
+                  },
+                  {
+                    "$ref": "#/definitions/uuid"
+                  }
+                ]
+              }
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Successfully changed vdps"
+          },
+          "400": {
+            "description": "Could not change vdps"
           }
         }
       }

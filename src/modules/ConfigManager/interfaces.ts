@@ -295,6 +295,16 @@ export interface IVirtualDataPointConfig {
   name: string;
 }
 
+export function isValidVdp(input: any): input is IVirtualDataPointConfig {
+  return (
+    'id' in input &&
+    'name' in input &&
+    'operationType' in input &&
+    'sources' in input &&
+    Array.isArray(input?.sources)
+  );
+}
+
 export interface ISystemInfoItem {
   key: string;
   keyDescription: string;

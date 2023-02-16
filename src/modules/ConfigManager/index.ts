@@ -28,7 +28,8 @@ import {
   IAuthUser,
   IAuthUsersConfig,
   IDefaultTemplate,
-  IMessengerServerConfig
+  IMessengerServerConfig,
+  IVirtualDataPointConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -790,50 +791,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * bulk config VDP changes.
    */
-  public async bulkChangeVirtualDataPoints(changes: any): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    if (created) {
-      const entries = Object.values<any>(created).map((item) => {
-        let newResetSchedule = [];
-        if (
-          item.operationType === 'counter' &&
-          item.resetSchedules?.length > 0
-        ) {
-          for (const entry of item.resetSchedules) {
-            newResetSchedule.push({
-              ...entry,
-              created: Date.now(),
-              lastReset: null
-            });
-          }
-        }
-
-        return {
-          ...{
-            ...item,
-            resetSchedules: newResetSchedule
-          },
-          id: uuidv4()
-        };
-      });
-
-      this._config.virtualDataPoints.push(...entries);
-    }
-
-    if (updated) {
-      this._config.virtualDataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      this._config.virtualDataPoints = this._config.virtualDataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
+  public async bulkChangeVirtualDataPoints(
+    newVdpArray: IVirtualDataPointConfig[]
+  ): Promise<void> {
+    this._config.virtualDataPoints = newVdpArray;
 
     await this.saveConfigToFile();
   }

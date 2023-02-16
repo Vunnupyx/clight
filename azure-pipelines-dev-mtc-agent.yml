@@ -47,3 +47,8 @@ steps:
           docker buildx create --use
           docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} -t ${DOCKER_REGISTRY}/mtconnect-agent:${versionOfLastChange} -f docker/mtconnect-agent.dockerfile . --push --progress plain
         fi
+- task: CmdLine@2
+    displayName: Print current versions
+    inputs:
+      script: |
+        echo "${DOCKER_REGISTRY}/mtconnect-agent:$(scripts/build/lastMTConnectChange.sh)"

@@ -28,6 +28,13 @@ type LogSummary = {
   debug: LogEntry[];
 };
 
+type VdpValidityStatus = {
+  isValid: boolean;
+  error?: 'wrongVdpsOrder' | 'wrongFormat' | 'unexpectedError';
+  vdpIdWithError?: string;
+  notYetDefinedSourceVdpId?: string;
+};
+
 /**
  * Calculates virtual datapoints
  */
@@ -778,5 +785,58 @@ export class VirtualDataPointManager {
    */
   public setEnergyCallback(cb: Function): void {
     this.energyMachineStatusChangeCallback = cb;
+  }
+
+  /**
+   * Checks order of VDPs to determine if their order is valid according to the dependencies.
+   */
+  public getVdpValidityStatus(
+    vdpsListToCheck: IVirtualDataPointConfig[]
+  ): VdpValidityStatus {
+    try {
+      if (!Array.isArray(vdpsListToCheck)) {
+        return {
+          isValid: false,
+          error: 'wrongFormat'
+        };
+      }
+      let result: VdpValidityStatus = {
+        isValid: true
+      };
+      for (let [index, vdp] of vdpsListToCheck.entries()) {
+        //Check sources that are VDP, as non-VDP sources will not cause problem
+        const otherVdpSources = vdp.sources.filter((sourceVdpId) =>
+          vdpsListToCheck.find((v) => v.id === sourceVdpId)
+        );
+        if (otherVdpSources.length > 0) {
+          for (let sourceVdpId of otherVdpSources) {
+            const indexOfSourceVdp = vdpsListToCheck.findIndex(
+              (x) => x.id === sourceVdpId
+            );
+
+            /**
+             * If VDP source is defined later, then it is not valid
+             */
+            if (indexOfSourceVdp >= index) {
+              result.isValid = false;
+              result.error = 'wrongVdpsOrder';
+              result.vdpIdWithError = vdp.id;
+              result.notYetDefinedSourceVdpId = sourceVdpId;
+              break;
+            }
+          }
+        }
+        if (!result.isValid) {
+          break;
+        }
+      }
+
+      return result;
+    } catch (err) {
+      return {
+        isValid: false,
+        error: 'unexpectedError'
+      };
+    }
   }
 }

@@ -2,6 +2,7 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, response, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { VirtualDataPointManager } from '../../../../../VirtualDataPointManager';
+import { IVirtualDataPointConfig } from '../../../../../ConfigManager/interfaces';
 
 let configManager: ConfigManager;
 let vdpManager: VirtualDataPointManager;
@@ -24,9 +25,15 @@ export function setVdpManager(config: VirtualDataPointManager) {
  * @param  {Response} response
  */
 function vdpsGetHandler(request: Request, response: Response): void {
-  response
-    .status(200)
-    .json({ vdps: configManager?.config?.virtualDataPoints || [] });
+  const vdpsList = configManager?.config?.virtualDataPoints || [];
+  const vdpValidityStatus = vdpManager.getVdpValidityStatus(vdpsList);
+
+  response.status(200).json({
+    vdps: vdpsList,
+    error: vdpValidityStatus.error,
+    vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+    notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
+  });
 }
 
 /**
@@ -67,12 +74,22 @@ async function vdpsPostBulkHandler(
   response: Response
 ): Promise<void> {
   try {
+    const vdpValidityStatus = vdpManager.getVdpValidityStatus(
+      request.body as IVirtualDataPointConfig[]
+    );
+    if (!vdpValidityStatus.isValid) {
+      response.status(400).json({
+        error: vdpValidityStatus.error,
+        vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+        notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
+      });
+    }
     await configManager.bulkChangeVirtualDataPoints(request.body || {});
     await configManager.configChangeCompleted();
 
     response.status(200).send();
-  } catch {
-    response.status(400).json({ error: 'Cannot change VDPs. Try again!' });
+  } catch (err) {
+    response.status(400).json({ error: 'unexpectedError' });
   }
 }
 

@@ -789,38 +789,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * bulk config mapping changes.
-   */
-  public async bulkChangeMapings(changes: any): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    if (created) {
-      this._config.mapping.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      this._config.mapping.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      this._config.mapping = this._config.mapping.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
    * change the config with a given object or change it.
    */
   public changeConfig<

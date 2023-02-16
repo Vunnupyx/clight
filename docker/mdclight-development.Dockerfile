@@ -20,6 +20,6 @@ ENV LOG_LEVEL=debug
 ENV MDC_LIGHT_FOLDER=/etc/mdc-light
 ENV MDC_LIGHT_RUNTIME_VERSION=dev-$MDC_LIGHT_RUNTIME_VERSION
 
-EXPOSE 80/tcp 4840/tcp 7878/tcp
+EXPOSE 80/tcp 4840/tcp 7878/tcp 9229/tcp
 
-CMD node --max-old-space-size=1024 index.js
+CMD node --max-old-space-size=1024 --inspect=0.0.0.0:9229 index.js

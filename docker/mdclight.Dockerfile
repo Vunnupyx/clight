@@ -28,6 +28,7 @@ WORKDIR /app
 
 # Copy runtime config files
 
+COPY package.json ./
 RUN npm install --only=prod \
     && npm cache clean -f
 

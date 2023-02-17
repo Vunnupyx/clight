@@ -3,8 +3,14 @@ const dataHubAdapterMock = {
   running: true,
   getDesiredProps: jest.fn(),
   init: jest.fn().mockImplementation(() => Promise.resolve(dataHubAdapterMock)),
-  start: jest.fn(),
-  stop: jest.fn(),
+  start: jest.fn().mockImplementation(() => {
+    dataHubAdapterMock.isRunning = true;
+    dataHubAdapterMock.running = true;
+  }),
+  stop: jest.fn().mockImplementation(() => {
+    dataHubAdapterMock.isRunning = false;
+    dataHubAdapterMock.running = false;
+  }),
   sendData: jest.fn(),
   shutdown: jest.fn().mockImplementation(() => Promise.resolve()),
   setReportedProps: jest.fn()
@@ -55,7 +61,9 @@ import {
 } from '../../../../ConfigManager/interfaces';
 import { DataHubDataSink, DataHubDataSinkOptions } from '..';
 import { LifecycleEventStatus } from '../../../../../common/interfaces';
+import { DataPointCache } from '../../../../DatapointCache';
 
+jest.mock('../../../../DatapointCache');
 /**
  * GLOBAL MOCKS
  */
@@ -91,10 +99,15 @@ describe('DataHubDataSink', () => {
     mapping: [],
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
-    termsAndConditionsAccepted: true
+    termsAndConditionsAccepted: true,
+    dataPointCache: new DataPointCache()
   };
 
   describe(`instantiation successfully`, () => {
+    beforeEach(() => {
+      dataHubAdapterMock.isRunning = true;
+      dataHubAdapterMock.running = true;
+    });
     afterEach(() => {
       jest.clearAllMocks();
       configMock.dataPoints = [];
@@ -356,8 +369,10 @@ describe('DataHubDataSink', () => {
         .disconnect()
         .then(() => datasinkUUT.onMeasurements(mockedEvents))
         .then(() => {
+          expect(dataHubAdapterMock.stop).toBeCalled();
           //@ts-ignore
-          expect(datasinkUUT.processDataPointValues()).toBe(undefined);
+          expect(datasinkUUT.processDataPointValues({})).toBe(undefined);
+          expect(dataHubAdapterMock.sendData).not.toBeCalled();
         });
     });
 
@@ -398,7 +413,8 @@ describe('DataHubDataSink', () => {
         .then(() => datasinkUUT.onMeasurements(mockedEvents))
         .then(() => {
           //@ts-ignore
-          expect(datasinkUUT.processDataPointValues()).toBe(undefined);
+          expect(datasinkUUT.processDataPointValues({})).toBe(undefined);
+          expect(dataHubAdapterMock.sendData).not.toBeCalled();
         });
     });
   });

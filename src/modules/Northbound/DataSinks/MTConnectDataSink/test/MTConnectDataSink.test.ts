@@ -13,6 +13,7 @@ import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/
 import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 import { MessengerManager } from '../../../MessengerManager';
+import { DataPointCache } from '../../../../DatapointCache';
 
 jest.mock('fs');
 jest.mock('winston');
@@ -20,6 +21,7 @@ jest.mock('../../../MessengerManager');
 jest.mock('../../../Adapter/MTConnectAdapter');
 jest.mock('../../../../ConfigManager');
 jest.mock('../../../../EventBus');
+jest.mock('../../../../DatapointCache');
 
 jest.mock('../../../../SyncScheduler', () => ({
   SynchronousIntervalScheduler: {
@@ -70,7 +72,8 @@ describe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      dataPointCache: new DataPointCache()
     });
 
     dataSink.init();
@@ -124,7 +127,8 @@ describe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      dataPointCache: new DataPointCache()
     });
 
     dataSink.init();
@@ -201,7 +205,8 @@ describe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      dataPointCache: new DataPointCache()
     });
 
     dataSink.init();
@@ -293,7 +298,8 @@ describe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      dataPointCache: new DataPointCache()
     });
 
     dataSink.init();
@@ -345,7 +351,8 @@ describe('Test MTConnectDataSink', () => {
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
-      termsAndConditionsAccepted: true
+      termsAndConditionsAccepted: true,
+      dataPointCache: new DataPointCache()
     });
 
     dataSink.init();

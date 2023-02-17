@@ -256,12 +256,11 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
@@ -277,7 +276,7 @@
           </div>
 
           <input
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             type="text"
             class="w-100"
             [ngModel]="value"
@@ -300,18 +299,17 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
             {{ value }}
           </div>
-          <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
+          <ng-container *ngIf="unsavedRow?.id === row.id">
             <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
               <mat-select
                 disableOptionCentering="true"
@@ -354,11 +352,10 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
-          <span *ngIf="unsavedRowIndex !== rowIndex">
+          <span *ngIf="unsavedRow?.id !== row.id">
             <ng-container [ngSwitch]="value">
               <ng-container *ngSwitchCase="DataPointType.Event">{{
                 'settings-data-sink.Event' | translate
@@ -373,7 +370,7 @@
           </span>
           <mat-select
             disableOptionCentering="true"
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
           >
@@ -399,19 +396,18 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
             {{ value }}
           </div>
           <input
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             type="text"
             class="w-100"
             [ngModel]="value"
@@ -431,11 +427,10 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
-          <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+          <ng-container *ngIf="unsavedRow?.id !== row.id">
             <div class="text-ellipsis">
               <span *ngFor="let item of parseMap(value)"
                 >{{ item[0] }} -> {{ item[1] }}
@@ -443,7 +438,7 @@
             </div>
           </ng-container>
           <div
-            *ngIf="unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             class="d-flex align-items-center"
           >
             <div class="text-ellipsis">
@@ -480,11 +475,10 @@
         <ng-template
           ngx-datatable-cell-template
           let-rowIndex="rowIndex"
-          let-value="value"
           let-row="row"
         >
           <mat-button-toggle-group
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             #group="matButtonToggleGroup"
           >
             <mat-button-toggle
@@ -504,7 +498,7 @@
             </mat-button-toggle>
           </mat-button-toggle-group>
           <mat-button-toggle-group
-            *ngIf="unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             #group="matButtonToggleGroup"
           >
             <mat-button-toggle
@@ -565,12 +559,7 @@
         [flexGrow]="1"
         [minWidth]="120"
       >
-        <ng-template
-          ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
-          let-value="value"
-          let-row="row"
-        >
+        <ng-template ngx-datatable-cell-template let-row="row">
           <div
             class="d-flex align-items-center"
             [class.color-success]="row.enabled"

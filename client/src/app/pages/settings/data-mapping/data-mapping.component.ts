@@ -184,6 +184,7 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     const obj = {} as DataMapping;
     this.unsavedRowIndex = this.mappingRows.length;
     this.unsavedRow = obj;
+    this.ngxDatatable.sorts = [];
     this.mappingRows = this.mappingRows.concat([obj]);
   }
 

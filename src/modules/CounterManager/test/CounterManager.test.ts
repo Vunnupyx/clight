@@ -106,11 +106,6 @@ describe('Test CounterManager', () => {
             lastReset: undefined,
             created: Date.now()
           };
-          // Current 17.06.2022 17:00:00
-          console.log(`
-                  Zeitpunkt: ${currentTime.toLocaleString()};
-                  Erwartet: 15.07.2022 0:0:0
-                  `);
           //@ts-ignore
           const next = CounterManager.calcNextTrigger(input, currentTime);
           const compare = new Date(2022, 6, 15, 0, 0, 0); // 15.07.2022 0:00:00

@@ -83,13 +83,14 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Shutdown all available data sinks.
    */
-  public async shutdownDataSink(): Promise<void> {
+  public async shutdownAllDataSinks(): Promise<void> {
     const shutdownFn = [];
     this.dataSinks.forEach(async (dataSink) => {
-      shutdownFn.push(dataSink.shutdown);
+      this.disconnectDataSinkFromBus(dataSink);
+      shutdownFn.push(dataSink.shutdown());
     });
     this.dataSinks = [];
-    Promise.all(shutdownFn);
+    await Promise.all(shutdownFn);
   }
 
   private async spawnDataSinks() {
@@ -146,8 +147,14 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    * Provide events for data sinks
    */
   private connectDataSinksToBus(sink: DataSink): void {
-    this.measurementsBus.addEventListener(sink.onMeasurements.bind(sink));
-    this.lifecycleBus.addEventListener(sink.onLifecycleEvent.bind(sink));
+    this.measurementsBus.addEventListener(
+      sink.onMeasurements.bind(sink),
+      `${sink.protocol}_onMeasurements`
+    );
+    this.lifecycleBus.addEventListener(
+      sink.onLifecycleEvent.bind(sink),
+      `${sink.protocol}_onLifeCycleEvent`
+    );
   }
 
   /**
@@ -155,9 +162,9 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    */
   private disconnectDataSinkFromBus(sink: DataSink): void {
     const logPrefix = `${DataSinksManager.name}::disconnectDataSinkFromBus`;
-    winston.info(`${logPrefix} disconnecting sink from bus`);
-    this.measurementsBus.removeEventListener(sink.onMeasurements);
-    this.lifecycleBus.removeEventListener(sink.onLifecycleEvent);
+    winston.info(`${logPrefix} disconnecting ${sink.protocol} from bus`);
+    this.measurementsBus.removeEventListener(`${sink.protocol}_onMeasurements`);
+    this.lifecycleBus.removeEventListener(`${sink.protocol}_onLifeCycleEvent`);
   }
 
   private dataSourceFactory(protocol): DataSink {
@@ -230,6 +237,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
+          this.configManager.config.mapping,
           this.configManager.config.termsAndConditions.accepted
         )
       ) {

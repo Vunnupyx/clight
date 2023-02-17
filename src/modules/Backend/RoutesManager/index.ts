@@ -35,6 +35,11 @@ import {
   setDataPointCache as livedataDataSourcesSetDataPointCache
 } from '../routes/apis/v1/Livedata/DataSources';
 import {
+  livedataDataSinksHandlers,
+  setConfigManager as livedataDataSinksSetConfigManager,
+  setDataPointCache as livedataDataSinksSetDataPointCache
+} from '../routes/apis/v1/Livedata/DataSinks';
+import {
   livedataVirtualDataPointsHandlers,
   setConfigManager as livedataVirtualDataPointsSetConfigManager,
   setDataPointCache as livedataVirtualDataPointsSetDataPointCache
@@ -100,6 +105,7 @@ export class RoutesManager {
     ...virtualDatapointHandlers,
     ...deviceInfosHandlers,
     ...livedataDataSourcesHandlers,
+    ...livedataDataSinksHandlers,
     ...livedataVirtualDataPointsHandlers,
     ...mappingHandlers,
     ...systemInfoHandlers,
@@ -127,6 +133,7 @@ export class RoutesManager {
       vdpsSetConfigManager,
       deviceInfosSetConfigManager,
       livedataDataSourcesSetConfigManager,
+      livedataDataSinksSetConfigManager,
       livedataVirtualDataPointsSetConfigManager,
       mappingSetConfigManager,
       systemInfoSetConfigManager,
@@ -147,6 +154,7 @@ export class RoutesManager {
     setDataSourcesManager(options.dataSourcesManager);
     setTemplateDataSourcesManager(options.dataSourcesManager);
     livedataDataSourcesSetDataPointCache(options.dataPointCache);
+    livedataDataSinksSetDataPointCache(options.dataPointCache);
     livedataVirtualDataPointsSetDataPointCache(options.dataPointCache);
 
     this.inputValidator = OpenApiValidator.middleware({

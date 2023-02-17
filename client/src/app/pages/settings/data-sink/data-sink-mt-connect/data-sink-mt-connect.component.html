@@ -92,6 +92,62 @@
           </div>
         </div>
       </div>
+      <div class="row" *ngSwitchCase="Protocol.DH">
+        <table
+          mat-table
+          [dataSource]="desiredServices"
+          class="desired-service-table"
+        >
+          <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+          </ng-container>
+
+          <!-- Enabled Column -->
+          <ng-container matColumnDef="enabled">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'settings-data-sink.Desired.Enabled' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div
+                class="d-flex align-items-center"
+                [class.color-success]="element.enabled"
+                [class.color-danger]="!element.enabled"
+              >
+                <mat-icon
+                  class="mr-5"
+                  *ngIf="element.enabled"
+                  svgIcon="mdc:success"
+                ></mat-icon>
+                <mat-icon
+                  class="mr-5"
+                  *ngIf="!element.enabled"
+                  svgIcon="mdc:error"
+                ></mat-icon>
+                <label>{{
+                  (element.enabled
+                    ? 'settings-data-sink.Desired.Enabled'
+                    : 'settings-data-sink.Desired.Disabled'
+                  ) | translate
+                }}</label>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="2">
+              {{ 'settings-data-sink.NoActiveService' | translate }}
+            </td>
+          </tr>
+        </table>
+      </div>
     </ng-container>
   </div>
   <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">
@@ -200,12 +256,11 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
@@ -221,7 +276,7 @@
           </div>
 
           <input
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             type="text"
             class="w-100"
             [ngModel]="value"
@@ -244,18 +299,17 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
             {{ value }}
           </div>
-          <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
+          <ng-container *ngIf="unsavedRow?.id === row.id">
             <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
               <mat-select
                 disableOptionCentering="true"
@@ -298,11 +352,10 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
-          <span *ngIf="unsavedRowIndex !== rowIndex">
+          <span *ngIf="unsavedRow?.id !== row.id">
             <ng-container [ngSwitch]="value">
               <ng-container *ngSwitchCase="DataPointType.Event">{{
                 'settings-data-sink.Event' | translate
@@ -317,7 +370,7 @@
           </span>
           <mat-select
             disableOptionCentering="true"
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
           >
@@ -343,19 +396,18 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
             {{ value }}
           </div>
           <input
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             type="text"
             class="w-100"
             [ngModel]="value"
@@ -375,11 +427,10 @@
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
-          <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+          <ng-container *ngIf="unsavedRow?.id !== row.id">
             <div class="text-ellipsis">
               <span *ngFor="let item of parseMap(value)"
                 >{{ item[0] }} -> {{ item[1] }}
@@ -387,7 +438,7 @@
             </div>
           </ng-container>
           <div
-            *ngIf="unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             class="d-flex align-items-center"
           >
             <div class="text-ellipsis">
@@ -424,11 +475,10 @@
         <ng-template
           ngx-datatable-cell-template
           let-rowIndex="rowIndex"
-          let-value="value"
           let-row="row"
         >
           <mat-button-toggle-group
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             #group="matButtonToggleGroup"
           >
             <mat-button-toggle
@@ -448,7 +498,7 @@
             </mat-button-toggle>
           </mat-button-toggle-group>
           <mat-button-toggle-group
-            *ngIf="unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             #group="matButtonToggleGroup"
           >
             <mat-button-toggle
@@ -484,9 +534,10 @@
       </ngx-datatable-column>
       <ngx-datatable-column
         *ngIf="dataSink?.protocol === Protocol.DH"
-        [name]="'settings-data-sink.Desired.Enabled' | translate"
-        prop="enabled"
+        [name]="'settings-data-source.LiveData' | translate"
+        prop="liveData"
         [flexGrow]="1"
+        [sortable]="false"
         [minWidth]="120"
       >
         <ng-template
@@ -495,6 +546,20 @@
           let-value="value"
           let-row="row"
         >
+          <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
+            {{ getDatahubLivedata(row.id) }}
+          </span>
+          <ng-template #noLiveData>-</ng-template>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        *ngIf="dataSink?.protocol === Protocol.DH"
+        [name]="'settings-data-sink.Desired.Enabled' | translate"
+        prop="enabled"
+        [flexGrow]="1"
+        [minWidth]="120"
+      >
+        <ng-template ngx-datatable-cell-template let-row="row">
           <div
             class="d-flex align-items-center"
             [class.color-success]="row.enabled"

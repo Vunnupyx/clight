@@ -8,14 +8,14 @@ import { TSubscriberFn } from './interfaces';
  * Implementation of runtimes event bus
  */
 export class EventBus<TEventType> {
-  private callbacks: TSubscriberFn<TEventType>[] = [];
+  private callbacks: { [key: string]: TSubscriberFn<TEventType> } = {};
   protected logLevel: string;
 
   constructor(logLevel: LogLevel = null) {
     this.logLevel = logLevel;
 
     if (this.logLevel) {
-      this.addEventListener(this.log.bind(this));
+      this.addEventListener(this.log.bind(this), `EventBus_log`);
     }
   }
 
@@ -40,22 +40,31 @@ export class EventBus<TEventType> {
   /**
    * Adds callback to the event bus
    * @param  {TSubscriberFn<TEventType>} cb
+   * @param id id of the callback
    * @returns void
    */
-  public addEventListener(cb: TSubscriberFn<TEventType>): void {
-    if (!this.callbacks.some((_cb) => _cb === cb)) {
-      this.callbacks.push(cb);
+  public addEventListener(cb: TSubscriberFn<TEventType>, id: string): void {
+    const logPrefix = `${EventBus.name}::addEventListener`;
+    if (this.callbacks[id]) {
+      winston.warn(
+        `${logPrefix} callback with id ${id} already exists. Overwriting the event listener.`
+      );
     }
+    this.callbacks[id] = cb;
   }
 
   /**
    * Removes a call back from the event bus
-   * @param cb The callback that should be removed
+   * @param id The id of the callback that should be removed
    */
-  public removeEventListener(cb: TSubscriberFn<TEventType>): void {
-    const index = this.callbacks.findIndex((_cb) => _cb === cb);
-    if (index > -1) {
-      this.callbacks.splice(index, 1);
+  public removeEventListener(id: string): void {
+    const logPrefix = `${EventBus.name}::removeEventListener`;
+    if (this.callbacks[id]) {
+      delete this.callbacks[id];
+    } else {
+      winston.warn(
+        `${logPrefix} trying to remove event listener with id ${id} which does not exists.`
+      );
     }
   }
 
@@ -69,7 +78,7 @@ export class EventBus<TEventType> {
     // TODO These are not promises
     const logPrefix = `${EventBus.name}::push`;
 
-    const promises = this.callbacks.map((cb) => cb(event));
+    const promises = Object.values(this.callbacks).map((cb) => cb(event));
     await Promise.allSettled(promises).then((results) => {
       results.forEach((result) => {
         if (result.status === 'rejected')

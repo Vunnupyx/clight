@@ -53,7 +53,7 @@
     "format": "prettier --write .",
     "connect:cs:machine": "sudo ssh -N -L 102:192.168.214.1:102 root@192.168.185.200 -v",
     "deploy": "./scripts/deployment/deploy.sh",
-    "deploy-dev": "./development-environment/deploy.sh",
+    "deploy-dev": "scripts/deployment/deploy-dev.sh",
     "copy-dev": "eval $(cat .env | grep -v '#' | sed 's/^/export /') && yarn build && ./scripts/dev/copy.sh",
     "copy-dev-all": "eval $(cat .env | grep -v '#' | sed 's/^/export /') && yarn build && ./scripts/dev/copy.sh true",
     "log-dev": "eval $(cat .env | grep -v '#' | sed 's/^/export /') && ssh $IOT2050_HOST \"docker logs mdclight-dev -f\"",

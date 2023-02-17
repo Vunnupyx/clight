@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Deployment of dev environment to device
-# Must be executed from workspace root!
-# Always execute with `yarn deploy-dev`!
-
 #! You must be logged in with the az cli!
 # az login
 # az account set --subscription "CELOS Next Datahub DEV"
@@ -81,31 +77,4 @@ select_version () {
     done
 }
 
-echo "Select mdclight developtment version (git describe --tags)"
-mdclightDevVersion=$(select_version ./scripts/build/lastMdclightDevChange.sh)
-echo "Select web server version (git describe --tags)"
-webserverVersion=$(select_version ./scripts/build/lastWebserverChange.sh)
-echo "Select mtconnect (git describe --tags)"
-mtconnectVersion=$(select_version ./scripts/build/lastMTConnectChange.sh)
-echo "Select IoT2050 device: "
-deviceId=$(select_edge_device)
-echo "Select iothub: "
-iotHub=$(select_datahub)
-
-check_docker_image mdclight-development $mdclightDevVersion 
-check_docker_image mdc-web-server $webserverVersion
-check_docker_image mtconnect-agent $mtconnectVersion
-
-versionForName=$(sed 's/[.]/-/g' <<< $mdclightDevVersion) # replace all . with -
-
-target="tags.mdclight-dev='$mdclightDevVersion'"
-name=${versionForName}-mdclight-dev
-manifestName=deployment.manifest.${mdclightDevVersion}.json
-manifestPath=development-environment/$manifestName
-
-node development-environment/deployment.manifest.js $mdclightDevVersion $webserverVersion $mtconnectVersion > $manifestPath
-
-# TODO Only create if not exists
-az iot edge deployment create -d "$name" -n "$iotHub" --content "$manifestPath" --target-condition "$target" --priority 1 --verbose --layered false
-az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight-dev\": \"${mdclightDevVersion}\", \"mdclight\": null}"
-rm "$manifestPath"
+"$@"

@@ -22,8 +22,8 @@ If not, you could create a new key pair using:‚
 Place it inside the `authorized_keys` file:
 
 ```
-root@DM8CF319C30E6B:~# mkdir ~/.ssh
-root@DM8CF319C30E6B:~# echo "<key>" > ~/.ssh/authorized_keys
+mkdir ~/.ssh
+echo "<key>" > ~/.ssh/authorized_keys
 ```
 
 Also create an entry for the device inside your ~/.ssh/config file. If it not exists, just create it.

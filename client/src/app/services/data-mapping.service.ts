@@ -60,7 +60,27 @@ export class DataMappingService
         state.status = Status.Loading;
       });
 
-      await this.httpService.post(`/mappings/bulk`, this.getPayload());
+      if (Object.keys(this.payload.created).length) {
+        for (let dm of Object.values(this.payload.created)) {
+          await this.httpService.post(`/mappings`, dm);
+        }
+      }
+
+      if (Object.keys(this.payload.updated).length) {
+        for (let [dmId, dm] of Object.entries(this.payload.updated)) {
+          await this.httpService.patch(`/mappings/${dmId}`, dm);
+        }
+      }
+
+      if (this.payload.deleted.length) {
+        for (let dmId of this.payload.deleted) {
+          await this.httpService.delete(`/mappings/${dmId}`);
+        }
+      }
+
+      if (this.payload.replace.length) {
+        await this.httpService.patch(`/mappings`, this.payload.replace);
+      }
 
       this.resetState();
 

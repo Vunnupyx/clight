@@ -24,9 +24,9 @@ export class LayoutComponent {
   resetPasswordLayout = false;
 
   get supportHref() {
-    return `http://localhost:3000/help${this.translate.instant(
-      'common.LanguageDocumentationPath'
-    )}/docs/`;
+    return `${window.location.protocol}//${
+      window.location.hostname
+    }/help${this.translate.instant('common.LanguageDocumentationPath')}/docs/`;
   }
 
   subs = new Subscription();

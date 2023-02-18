@@ -156,7 +156,9 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   get supportHref() {
-    return `http://localhost:3000/help${this.translate.instant(
+    return `${window.location.protocol}//${
+      window.location.hostname
+    }/help${this.translate.instant(
       'common.LanguageDocumentationPath'
     )}/docs/VirtualDataPoints`;
   }

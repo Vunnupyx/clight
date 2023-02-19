@@ -51,7 +51,7 @@ export class TemplateService {
 
   async getAvailableTemplates() {
     this._store.patchState(() => ({
-      status: Status.NotInitialized
+      status: Status.Loading
     }));
 
     try {

@@ -19,7 +19,7 @@ import {
 } from '../../../ConfigManager/interfaces';
 import { AdapterError, NorthBoundError } from '../../../../common/errors';
 import path from 'path';
-import { compare } from 'bcrypt';
+import { compare } from 'bcryptjs';
 import { System } from '../../../System';
 import { create } from 'xmlbuilder2';
 
@@ -435,7 +435,7 @@ export class OPCUAAdapter {
    * TODO: Write Doku.
    */
   private initCheck(logPrefix: string): AdapterError | void {
-    if (!this.server.initialized) {
+    if (!this.server?.initialized) {
       return new AdapterError(
         `${logPrefix} error due to adapter not initialized.`
       );

@@ -12,9 +12,6 @@ yarn-error.log
 .idea
 *.tar.gz
 
-yarn.lock
-package-lock.json
-
 src/modules/Iot2050MraaDI10/sys
 src/modules/Iot2050MraaDI10/sys/*
 

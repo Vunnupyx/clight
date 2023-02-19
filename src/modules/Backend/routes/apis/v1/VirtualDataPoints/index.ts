@@ -27,8 +27,15 @@ export function setVdpManager(config: VirtualDataPointManager) {
  * @param  {Response} response
  */
 function getAllVdpsHandler(request: Request, response: Response): void {
-  const vdps = configManager?.config?.virtualDataPoints || [];
-  response.status(200).json({ vdps });
+  const vdpsList = configManager?.config?.virtualDataPoints || [];
+  const vdpValidityStatus = vdpManager.getVdpValidityStatus(vdpsList);
+
+  response.status(200).json({
+    vdps: vdpsList,
+    error: vdpValidityStatus.error,
+    vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+    notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
+  });
 }
 
 /**
@@ -80,8 +87,13 @@ async function patchAllVdpsHandler(
   try {
     const newVdpArray = request.body as IVirtualDataPointConfig[];
 
-    if (!newVdpArray.every(isValidVdp)) {
-      throw new Error();
+    const vdpValidityStatus = vdpManager.getVdpValidityStatus(newVdpArray);
+    if (!vdpValidityStatus.isValid) {
+      response.status(400).json({
+        error: vdpValidityStatus.error,
+        vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+        notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
+      });
     }
 
     configManager.config = {
@@ -91,8 +103,8 @@ async function patchAllVdpsHandler(
     await configManager.configChangeCompleted();
 
     response.status(200).send();
-  } catch {
-    response.status(400).json({ error: 'Cannot change VDPs. Try again!' });
+  } catch (err) {
+    response.status(400).json({ error: 'unexpectedError' });
   }
 }
 

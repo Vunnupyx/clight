@@ -8,6 +8,15 @@
       "request": "attach"
     },
     {
+      "name": "Attach RT Remote Dev",
+      "type": "node",
+      "port": 9229,
+      "request": "attach",
+      "address": "192.168.185.179",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app"
+    },
+    {
       "name": "Launch RT Local Dev",
       "type": "node",
       "request": "launch",

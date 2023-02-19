@@ -40,6 +40,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
   private configManager: Readonly<ConfigManager>;
   private measurementsBus: MeasurementEventBus;
+  private dataPointCache: DataPointCache;
   private lifecycleBus: EventBus<ILifecycleEvent>;
   private dataSinks: Array<DataSink> = [];
   private dataSinksRestartPending = false;
@@ -51,6 +52,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     super();
 
     this.configManager = params.configManager;
+    this.dataPointCache = params.dataPointCache;
     this.configManager.once('configsLoaded', () => {
       try {
         this.init();
@@ -81,13 +83,14 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Shutdown all available data sinks.
    */
-  public async shutdownDataSink(): Promise<void> {
+  public async shutdownAllDataSinks(): Promise<void> {
     const shutdownFn = [];
     this.dataSinks.forEach(async (dataSink) => {
-      shutdownFn.push(dataSink.shutdown);
+      this.disconnectDataSinkFromBus(dataSink);
+      shutdownFn.push(dataSink.shutdown());
     });
     this.dataSinks = [];
-    Promise.all(shutdownFn);
+    await Promise.all(shutdownFn);
   }
 
   private async spawnDataSinks() {
@@ -144,8 +147,14 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    * Provide events for data sinks
    */
   private connectDataSinksToBus(sink: DataSink): void {
-    this.measurementsBus.addEventListener(sink.onMeasurements.bind(sink));
-    this.lifecycleBus.addEventListener(sink.onLifecycleEvent.bind(sink));
+    this.measurementsBus.addEventListener(
+      sink.onMeasurements.bind(sink),
+      `${sink.protocol}_onMeasurements`
+    );
+    this.lifecycleBus.addEventListener(
+      sink.onLifecycleEvent.bind(sink),
+      `${sink.protocol}_onLifeCycleEvent`
+    );
   }
 
   /**
@@ -153,9 +162,9 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    */
   private disconnectDataSinkFromBus(sink: DataSink): void {
     const logPrefix = `${DataSinksManager.name}::disconnectDataSinkFromBus`;
-    winston.info(`${logPrefix} disconnecting sink from bus`);
-    this.measurementsBus.removeEventListener(sink.onMeasurements);
-    this.lifecycleBus.removeEventListener(sink.onLifecycleEvent);
+    winston.info(`${logPrefix} disconnecting ${sink.protocol} from bus`);
+    this.measurementsBus.removeEventListener(`${sink.protocol}_onMeasurements`);
+    this.lifecycleBus.removeEventListener(`${sink.protocol}_onLifeCycleEvent`);
   }
 
   private dataSourceFactory(protocol): DataSink {
@@ -166,7 +175,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted
+            this.configManager.config.termsAndConditions.accepted,
+          dataPointCache: this.dataPointCache
         };
 
         return new DataHubDataSink(dataHubDataSinkOptions);
@@ -178,7 +188,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
             this.configManager.config.termsAndConditions.accepted,
-          messengerManager: this.messengerManager
+          messengerManager: this.messengerManager,
+          dataPointCache: this.dataPointCache
         };
         return new MTConnectDataSink(mtConnectDataSinkOptions);
       }
@@ -189,7 +200,8 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
           generalConfig: this.configManager.config.general,
           runtimeConfig: this.configManager.runtimeConfig.opcua,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted
+            this.configManager.config.termsAndConditions.accepted,
+          dataPointCache: this.dataPointCache
         });
       }
 
@@ -225,6 +237,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
+          this.configManager.config.mapping,
           this.configManager.config.termsAndConditions.accepted
         )
       ) {

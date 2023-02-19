@@ -452,13 +452,12 @@
         >
           <ng-template
             ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
             let-value="value"
             let-row="row"
           >
             <div
               *ngIf="
-                unsavedRowIndex !== rowIndex ||
+                unsavedRow?.id !== row.id ||
                 dataSource?.protocol === Protocol.Energy
               "
               class="text-ellipsis"
@@ -468,8 +467,7 @@
             </div>
             <input
               *ngIf="
-                unsavedRow &&
-                unsavedRowIndex === rowIndex &&
+                unsavedRow?.id === row.id &&
                 dataSource?.protocol !== Protocol.Energy
               "
               type="text"
@@ -494,11 +492,10 @@
         >
           <ng-template
             ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
             let-value="value"
             let-row="row"
           >
-            <span *ngIf="unsavedRowIndex !== rowIndex">
+            <span *ngIf="unsavedRow?.id !== row.id">
               <ng-container [ngSwitch]="value">
                 <ng-container *ngSwitchCase="SourceDataPointType.PLC"
                   >PLC</ng-container
@@ -522,7 +519,7 @@
             </span>
             <mat-select
               disableOptionCentering="true"
-              *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+              *ngIf="unsavedRow?.id === row.id"
               [ngModel]="value"
               (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
             >
@@ -556,12 +553,7 @@
           [sortable]="false"
           [minWidth]="120"
         >
-          <ng-template
-            ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
-            let-value="value"
-            let-row="row"
-          >
+          <ng-template ngx-datatable-cell-template let-row="row">
             <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
@@ -597,16 +589,15 @@
         >
           <ng-template
             ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
             let-value="value"
             let-row="row"
           >
-            <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+            <ng-container *ngIf="unsavedRow?.id !== row.id">
               <div class="text-ellipsis" [title]="value">
                 {{ value }}
               </div>
             </ng-container>
-            <ng-container *ngIf="unsavedRowIndex === rowIndex">
+            <ng-container *ngIf="unsavedRow?.id === row.id">
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
                   <mat-select
@@ -693,7 +684,6 @@
         >
           <ng-template
             ngx-datatable-cell-template
-            let-rowIndex="rowIndex"
             let-value="value"
             let-row="row"
           >
@@ -712,11 +702,10 @@
           <ng-template
             ngx-datatable-cell-template
             let-rowIndex="rowIndex"
-            let-value="value"
             let-row="row"
           >
             <mat-button-toggle-group
-              *ngIf="unsavedRowIndex !== rowIndex"
+              *ngIf="unsavedRow?.id !== row.id"
               #group="matButtonToggleGroup"
             >
               <mat-button-toggle
@@ -738,7 +727,7 @@
               </mat-button-toggle>
             </mat-button-toggle-group>
             <mat-button-toggle-group
-              *ngIf="unsavedRowIndex === rowIndex"
+              *ngIf="unsavedRow?.id === row.id"
               #group="matButtonToggleGroup"
             >
               <mat-button-toggle

@@ -134,7 +134,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public set config(config: IConfig) {
-    this._config = this.checkAndCleanupMappings(config);
+    const vdpCheckedConfig = this.getConfigWithCleanedVdps(config);
+    this._config = this.getConfigWithCleanedMappings(vdpCheckedConfig);
     this.saveConfigToFile();
   }
 
@@ -478,35 +479,85 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * Checks mappings and removes mappings that do not have sources or targets anymore.
+   * Checks vdps and removes vdps that do not have sources anymore.
+   * Returns updated config and does not mutate this.config directly!
    *
    * @param configToCheck
    * @returns updated config
    */
-  public checkAndCleanupMappings(configToCheck = this.config): IConfig {
+  public getConfigWithCleanedVdps(configToCheck = this.config): IConfig {
+    let totalChangeCount = 0;
     //Makes a copy of given config
     let updatedConfig = JSON.parse(JSON.stringify(configToCheck)) as IConfig;
 
-    const dataSourceDataPoints: string[] = [];
-    this.config.dataSources.forEach((dataSource) =>
-      dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp.id))
+    const dataSourceDataPointIds: string[] = [];
+    configToCheck.dataSources.forEach((dataSource) =>
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPointIds.push(dp.id))
     );
 
-    const dataSinkDataPoints: string[] = [];
-    this.config.dataSinks.forEach((dataSink) =>
-      dataSink.dataPoints.forEach((dp) => dataSinkDataPoints.push(dp.id))
+    const vdpsIds: string[] =
+      configToCheck.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
+
+    updatedConfig.virtualDataPoints = configToCheck.virtualDataPoints?.filter(
+      (vdp) => {
+        let hasMissingSource = false;
+        vdp.sources.forEach((vdpSource) => {
+          const sourceExists =
+            dataSourceDataPointIds.includes(vdpSource) ||
+            vdpsIds.includes(vdpSource);
+
+          if (!sourceExists) {
+            hasMissingSource = true;
+          }
+        });
+        if (hasMissingSource) {
+          totalChangeCount++;
+          return false;
+        }
+        return true;
+      }
+    );
+
+    if (totalChangeCount > 0) {
+      //If there are any changes, potentially another VDP depending on this VDP might be affected, so checking again
+      return this.getConfigWithCleanedVdps(updatedConfig);
+    } else {
+      return updatedConfig;
+    }
+  }
+
+  /**
+   * Checks mappings and removes mappings that do not have sources or targets anymore.
+   * Returns updated config and does not mutate this.config directly!
+   *
+   * @param configToCheck
+   * @returns updated config
+   */
+  public getConfigWithCleanedMappings(configToCheck = this.config): IConfig {
+    //Makes a copy of given config
+    let updatedConfig = JSON.parse(JSON.stringify(configToCheck)) as IConfig;
+
+    const dataSourceDataPointIds: string[] = [];
+    configToCheck.dataSources.forEach((dataSource) =>
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPointIds.push(dp.id))
+    );
+
+    const dataSinkDataPointIds: string[] = [];
+    configToCheck.dataSinks.forEach((dataSink) =>
+      dataSink.dataPoints.forEach((dp) => dataSinkDataPointIds.push(dp.id))
     );
     const vdpsIds: string[] =
-      updatedConfig.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
+      configToCheck.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
 
-    updatedConfig.mapping?.forEach((mapping, index) => {
+    updatedConfig.mapping = configToCheck.mapping?.filter((mapping) => {
       const sourceExists =
-        dataSourceDataPoints.includes(mapping.source) ||
+        dataSourceDataPointIds.includes(mapping.source) ||
         vdpsIds.includes(mapping.source);
-      const targetExists = dataSinkDataPoints.includes(mapping.target);
+      const targetExists = dataSinkDataPointIds.includes(mapping.target);
       if (!sourceExists || !targetExists) {
-        updatedConfig.mapping.splice(index, 1);
+        return false;
       }
+      return true;
     });
 
     return updatedConfig;
@@ -781,7 +832,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         throw new Error();
       }
     }
-    this.saveConfigToFile();
+    /**
+     * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+     * This setter already includes this.saveConfigToFile();
+     */
+    this.config = this.config;
   }
 
   /**

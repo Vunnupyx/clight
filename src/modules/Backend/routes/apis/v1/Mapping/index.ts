@@ -23,7 +23,7 @@ export function setConfigManager(config: ConfigManager) {
 function getAllMappingsHandler(request: Request, response: Response): void {
   response.status(200).json({
     //should already not have orphan mappings but just in case use checkAndCleanupMappings
-    mapping: configManager.checkAndCleanupMappings(configManager.config)
+    mapping: configManager.getConfigWithCleanedMappings(configManager.config)
       ?.mapping
   });
 }

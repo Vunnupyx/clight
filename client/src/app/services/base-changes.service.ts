@@ -1,11 +1,16 @@
 import { IChangesState, ITrackable } from 'app/models/core/data-changes';
 import { Store, StoreFactory } from 'app/shared/state';
+import { v4 as uuidv4 } from 'uuid';
 
 export class BaseChangesService<TEntity extends ITrackable> {
   protected _changes: Store<IChangesState<string, TEntity>>;
 
   get isTouched(): boolean {
     return this._changes.snapshot.touched;
+  }
+
+  get payload(): IChangesState<string, TEntity> {
+    return this._changes.snapshot;
   }
 
   constructor(changesFactory: StoreFactory<IChangesState<string, TEntity>>) {
@@ -17,14 +22,13 @@ export class BaseChangesService<TEntity extends ITrackable> {
       created: {},
       updated: {},
       deleted: [],
-      list: [],
+      replace: [],
       touched: false
     };
   }
 
   create(entity: TEntity) {
-    // creates temporary ID:
-    entity.id = `unsaved:${Date.now().toString()}`;
+    entity.id = uuidv4();
 
     this._changes.patchState((state) => {
       state.created[entity.id] = entity;
@@ -53,12 +57,10 @@ export class BaseChangesService<TEntity extends ITrackable> {
 
   updateOrder(entities: TEntity[]) {
     this._changes.patchState((state) => {
-      state.list = entities;
       state.touched =
         !!Object.keys(state.created).length ||
         !!Object.keys(state.updated).length ||
         !!state.deleted.length ||
-        !!state.list.length;
     });
   }
 
@@ -85,27 +87,5 @@ export class BaseChangesService<TEntity extends ITrackable> {
 
       Object.assign(state, emptyState);
     });
-  }
-
-  getPayload(): Partial<IChangesState<string, TEntity>> | TEntity[] {
-    const payload: Partial<IChangesState<string, TEntity>> = {};
-
-    if (Object.keys(this._changes.snapshot.created).length) {
-      payload.created = this._changes.snapshot.created;
-    }
-
-    if (Object.keys(this._changes.snapshot.updated).length) {
-      payload.updated = this._changes.snapshot.updated;
-    }
-
-    if (this._changes.snapshot.deleted.length) {
-      payload.deleted = this._changes.snapshot.deleted;
-    }
-
-    if (this._changes.snapshot.list.length) {
-      return this._changes.snapshot.list;
-    }
-
-    return payload;
   }
 }

@@ -103,7 +103,7 @@ export interface IDataPointConfig {
   id: string;
   name: string;
   address: string;
-  readFrequency: number;
+  readFrequency?: number;
   type: 's7' | 'nck' | IEnergyDatapointTypes;
 }
 
@@ -112,10 +112,24 @@ export interface IDataSourceConfig {
   protocol: DataSourceProtocols;
   connection?: IS7DataSourceConnection | IEnergyDataSourceConnection;
   enabled: boolean;
-  type?:
+  type:
     | IS7DataSourceTypes
     | IIoShieldDataSourcesTypes
     | IEnergyDataSourcesTypes;
+}
+
+export function isValidDataSourceDatapoint(dp: any): dp is IDataPointConfig {
+  return 'id' in dp && 'name' in dp && 'address' in dp && 'type' in dp;
+}
+
+export function isValidDataSource(obj: any): obj is IDataSourceConfig {
+  return (
+    'protocol' in obj &&
+    'enabled' in obj &&
+    'type' in obj &&
+    Array.isArray(obj.dataPoints) &&
+    obj.dataPoints?.every(isValidDataSourceDatapoint)
+  );
 }
 
 type IMTConnectDataPointTypes = 'event' | 'condition' | 'sample';
@@ -186,6 +200,20 @@ export interface IDataSinkConfig {
   enabled: boolean;
   auth?: IOpcuaAuth;
   customDataPoints?: IOpcuaCustomDataPoint[];
+}
+export function isValidDataSinkDatapoint(
+  dp: any
+): dp is IDataSinkDataPointConfig {
+  return 'id' in dp && 'name' in dp && 'address' in dp;
+}
+
+export function isValidDataSink(obj: any): obj is IDataSinkConfig {
+  return (
+    'protocol' in obj &&
+    'enabled' in obj &&
+    Array.isArray(obj.dataPoints) &&
+    obj.dataPoints?.every(isValidDataSinkDatapoint)
+  );
 }
 
 export interface IDataHubConfig {
@@ -265,7 +293,7 @@ export interface QuickStartConfig {
 }
 
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
-  return 'source' in obj && 'target' in obj && !('id' in obj);
+  return 'source' in obj && 'target' in obj && 'id' in obj;
 }
 export interface EnumOperationEntry {
   priority: number;
@@ -298,6 +326,16 @@ export interface IVirtualDataPointConfig {
   resetSchedules?: ScheduleDescription[];
   formula?: string;
   name: string;
+}
+
+export function isValidVdp(input: any): input is IVirtualDataPointConfig {
+  return (
+    'id' in input &&
+    'name' in input &&
+    'operationType' in input &&
+    'sources' in input &&
+    Array.isArray(input?.sources)
+  );
 }
 
 export interface ISystemInfoItem {

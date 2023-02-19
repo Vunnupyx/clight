@@ -2,7 +2,10 @@ import winston from 'winston';
 import { evaluate, isNaN, number } from 'mathjs';
 
 import { ConfigManager } from '../ConfigManager';
-import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
+import {
+  isValidVdp,
+  IVirtualDataPointConfig
+} from '../ConfigManager/interfaces';
 import { CounterManager } from '../CounterManager';
 import { DataPointCache } from '../DatapointCache';
 import {
@@ -794,7 +797,10 @@ export class VirtualDataPointManager {
     vdpsListToCheck: IVirtualDataPointConfig[]
   ): VdpValidityStatus {
     try {
-      if (!Array.isArray(vdpsListToCheck)) {
+      if (
+        !Array.isArray(vdpsListToCheck) ||
+        !vdpsListToCheck.every(isValidVdp)
+      ) {
         return {
           isValid: false,
           error: 'wrongFormat'

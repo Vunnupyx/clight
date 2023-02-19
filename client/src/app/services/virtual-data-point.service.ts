@@ -80,7 +80,29 @@ export class VirtualDataPointService
         state.status = Status.Loading;
       });
 
-      await this.httpService.post(`/vdps/bulk`, this.getPayload());
+      await this.httpService.patch(`/vdps`, this._store.snapshot.dataPoints);
+      /*TBD
+      if (Object.keys(this.payload.created).length) {
+        for (let vdp of Object.values(this.payload.created)) {
+          await this.httpService.post(`/vdps`, vdp);
+        }
+      }
+
+      if (Object.keys(this.payload.updated).length) {
+        for (let [vdpId, vdp] of Object.entries(this.payload.updated)) {
+          await this.httpService.patch(`/vdps/${vdpId}`, vdp);
+        }
+      }
+
+      if (this.payload.deleted.length) {
+        for (let vdpId of this.payload.deleted) {
+          await this.httpService.delete(`/vdps/${vdpId}`);
+        }
+      }
+
+      if (this.payload.replace.length) {
+        await this.httpService.patch(`/vdps`, this.payload.replace);
+      }*/
 
       this._getDataPoints();
 

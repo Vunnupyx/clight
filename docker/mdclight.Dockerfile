@@ -5,25 +5,37 @@
 # Last Update:  12-06-2022 Reduce layer count
 
 ARG DOCKER_REGISTRY
-
-FROM ${DOCKER_REGISTRY}/mdclight-fanuc:latest
-
+ARG FANUC_VERSION
 ARG MDC_LIGHT_RUNTIME_VERSION
-# Install compiled MDC light runtime
-COPY package.json tsconfig.json /
-COPY src src
-# Copy runtime config files
-COPY _mdclight/runtime-files /etc/mdc-light/runtime-files
-RUN echo Building runtime ${MDC_LIGHT_RUNTIME_VERSION} \
-    && npm install \
-    && npm cache clean -f \
-    && mkdir -p /etc/mdc-light/{config,logs,jwtkeys,sslkeys,certs} \
-    && mkdir -p /app \
-    && npm run build \
-    && mv build/main/* /app \
-    && rm -rf /build /package.json /tsconfig.json /package-lock.json
+
+FROM node:14.21.2-alpine as builder
 
 WORKDIR /app
+
+COPY package.json tsconfig.json ./
+RUN npm install
+
+COPY src src
+RUN npm run build
+
+# TODO! Use fanuc image as soons its implemented
+# FROM ${DOCKER_REGISTRY}/mdclight-fanuc:${FANUC_VERSION}
+FROM ${DOCKER_REGISTRY}/mdclight-base:${FANUC_VERSION}
+
+WORKDIR /app
+
+# Install compiled MDC light runtime
+
+# Copy runtime config files
+
+COPY package.json ./
+RUN npm install --only=prod \
+    && npm cache clean -f
+
+COPY --from=builder /app/build/main .
+
+RUN mkdir -p /etc/mdc-light/{config,logs,jwtkeys,sslkeys,certs}
+COPY _mdclight/runtime-files /etc/mdc-light/runtime-files
 
 ENV LOG_LEVEL=debug
 ENV MDC_LIGHT_FOLDER=/etc/mdc-light

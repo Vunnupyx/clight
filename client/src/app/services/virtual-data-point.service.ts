@@ -75,6 +75,8 @@ export class VirtualDataPointService
         state.status = Status.Loading;
       });
 
+      await this.httpService.patch(`/vdps`, this._store.snapshot.dataPoints);
+      /*TBD
       if (Object.keys(this.payload.created).length) {
         for (let vdp of Object.values(this.payload.created)) {
           await this.httpService.post(`/vdps`, vdp);
@@ -95,7 +97,7 @@ export class VirtualDataPointService
 
       if (this.payload.replace.length) {
         await this.httpService.patch(`/vdps`, this.payload.replace);
-      }
+      }*/
 
       this._getDataPoints();
 

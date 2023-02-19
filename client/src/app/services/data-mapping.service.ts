@@ -60,6 +60,12 @@ export class DataMappingService
         state.status = Status.Loading;
       });
 
+      await this.httpService.patch(
+        `/mappings`,
+        this._store.snapshot.dataMappings
+      );
+
+      /*TBD
       if (Object.keys(this.payload.created).length) {
         for (let dm of Object.values(this.payload.created)) {
           await this.httpService.post(`/mappings`, dm);
@@ -80,7 +86,7 @@ export class DataMappingService
 
       if (this.payload.replace.length) {
         await this.httpService.patch(`/mappings`, this.payload.replace);
-      }
+      }*/
 
       this.resetState();
 

@@ -98,6 +98,12 @@ export class SourceDataPointService
       }
 
       if (this.isTouched) {
+        await this.httpService.patch(
+          `/datasources/${datasourceProtocol}/dataPoints`,
+          this._store.snapshot.dataPoints
+        );
+
+        /*TBD
         if (Object.keys(this.payload.created).length) {
           for (let dp of Object.values(this.payload.created)) {
             await this.httpService.post(
@@ -129,7 +135,7 @@ export class SourceDataPointService
             `/datasources/${datasourceProtocol}/dataPoints`,
             this.payload.replace
           );
-        }
+        }*/
 
         this._getDataPoints(datasourceProtocol);
 

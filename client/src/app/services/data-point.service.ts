@@ -186,6 +186,11 @@ export class DataPointService
       }
 
       if (this.isTouched) {
+        await this.httpService.patch(
+          `/datasinks/${protocol}/dataPoints`,
+          this._store.snapshot.dataPoints
+        );
+        /*TBD
         if (Object.keys(this.payload.created).length) {
           for (let dp of Object.values(this.payload.created)) {
             await this.httpService.post(
@@ -217,7 +222,7 @@ export class DataPointService
             `/datasinks/${protocol}/dataPoints`,
             this.payload.replace
           );
-        }
+        }*/
 
         this.resetState();
       }

@@ -25,12 +25,30 @@ steps:
     inputs:
       script: |
         git describe --tags
+  - task: AzureCLI@2
+    displayName: Build mtc agent
+    inputs:
+      azureSubscription: dmswsg-mdclight-dev
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        # Gets the version of the last change that is affecting the image that is build here
+        versionOfLastChange=$(scripts/build/lastMTConnectChange.sh)
+        echo "Current mtconnect version ${versionOfLastChange}" 
+
+        echo "Checking for current docker image" 
+        exists=$(scripts/build/checkIfImageExists.sh mtconnect-agent ${versionOfLastChange})
+
+        # Builds docker image if it not exists in the version that changed something the last time
+        if [ $exists == "false" ]; then
+          echo "Building docker image ${DOCKER_REGISTRY}/mtconnect-agent:${versionOfLastChange}"
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} -t ${DOCKER_REGISTRY}/mtconnect-agent:${versionOfLastChange} -f docker/mtconnect-agent.dockerfile . --push --progress plain
+        fi
   - task: CmdLine@2
-    displayName: BuildMtc
+    displayName: Print current versions
     inputs:
       script: |
-        version=$(git describe --tags)
-        docker run --privileged --rm tonistiigi/binfmt --install arm64
-        docker run --privileged --rm tonistiigi/binfmt
-        docker buildx create --use
-        scripts/build/dockerBuildMtc.sh $version
+        echo "${DOCKER_REGISTRY}/mtconnect-agent:$(scripts/build/lastMTConnectChange.sh)"

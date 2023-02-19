@@ -3,9 +3,16 @@ const dataHubAdapterMock = {
   running: true,
   getDesiredProps: jest.fn(),
   init: jest.fn().mockImplementation(() => Promise.resolve(dataHubAdapterMock)),
-  start: jest.fn(),
-  stop: jest.fn(),
+  start: jest.fn().mockImplementation(() => {
+    dataHubAdapterMock.isRunning = true;
+    dataHubAdapterMock.running = true;
+  }),
+  stop: jest.fn().mockImplementation(() => {
+    dataHubAdapterMock.isRunning = false;
+    dataHubAdapterMock.running = false;
+  }),
   sendData: jest.fn(),
+  shutdown: jest.fn().mockImplementation(() => Promise.resolve()),
   setReportedProps: jest.fn()
 };
 
@@ -19,11 +26,15 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
   };
 });
 
+function log(m) {
+  //console.log(m)
+}
+
 const winstonMock = {
   winston: jest.fn(), // Constructor
-  debug: jest.fn((msg) => {
-    console.log(msg);
-  })
+  info: jest.fn(log),
+  debug: jest.fn(log),
+  warn: jest.fn(log)
 };
 jest.doMock('winston', () => {
   return winstonMock;
@@ -49,21 +60,17 @@ import {
   IDataSinkConfig
 } from '../../../../ConfigManager/interfaces';
 import { DataHubDataSink, DataHubDataSinkOptions } from '..';
+import { LifecycleEventStatus } from '../../../../../common/interfaces';
+import { DataPointCache } from '../../../../DatapointCache';
 
+jest.mock('../../../../DatapointCache');
 /**
  * GLOBAL MOCKS
  */
 const configMock: IDataSinkConfig = {
-  name: 'UnitTestDataHubDataSink',
   protocol: 'datahub',
   enabled: true,
-  dataPoints: [],
-  datahub: {
-    regId: 'UTregId',
-    symKey: 'UTKey',
-    scopeId: 'UTScopeId',
-    provisioningHost: 'UTHost.test'
-  }
+  dataPoints: []
 };
 
 const runTimeConfigMock: IDataHubConfig = {
@@ -93,17 +100,13 @@ describe('DataHubDataSink', () => {
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
     termsAndConditionsAccepted: true,
-    proxy: {
-      ip: '',
-      port: 0,
-      type: 'http',
-      enabled: true
-    }
+    dataPointCache: new DataPointCache()
   };
 
   describe(`instantiation successfully`, () => {
-    beforeAll(() => {
-      datasinkUUT = new DataHubDataSink(dataHubDataSinkOptions);
+    beforeEach(() => {
+      dataHubAdapterMock.isRunning = true;
+      dataHubAdapterMock.running = true;
     });
     afterEach(() => {
       jest.clearAllMocks();
@@ -111,6 +114,8 @@ describe('DataHubDataSink', () => {
     });
 
     it('initializing successfully', async () => {
+      datasinkUUT = new DataHubDataSink(dataHubDataSinkOptions);
+
       return datasinkUUT.init().then(() => {
         expect(dataHubAdapterMock.init).toBeCalled();
         expect(dataHubAdapterMock.start).toBeCalled();
@@ -192,6 +197,8 @@ describe('DataHubDataSink', () => {
         }
       ];
 
+      datasinkUUT = new DataHubDataSink(dataHubDataSinkOptions);
+
       dataPointMapperMock.getTargets.mockImplementation(() => [
         {
           id: 'mappingID',
@@ -263,6 +270,151 @@ describe('DataHubDataSink', () => {
             event: [],
             telemetry: []
           });
+        });
+    });
+  });
+
+  describe(`instantiation stopped due to missing information`, () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+      configMock.dataPoints = [];
+    });
+
+    it('does not instantiate when sink is not enabled', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions,
+        dataSinkConfig: {
+          ...configMock,
+          enabled: false
+        }
+      });
+      return datasinkUUT.init().then(() => {
+        expect(winstonMock.debug).toBeCalledWith(
+          expect.stringContaining('initializing')
+        );
+        expect(dataHubAdapterMock.init).not.toBeCalled();
+        expect(winstonMock.info).toBeCalledWith(
+          expect.stringContaining('disabled')
+        );
+        expect(dataHubAdapterMock.start).not.toBeCalled();
+        expect(datasinkUUT.getCurrentStatus()).toBe(
+          LifecycleEventStatus.Disabled
+        );
+        expect(winstonMock.info).toBeCalledWith(
+          expect.stringContaining('data sink is disabled')
+        );
+      });
+    });
+
+    it('does not instantiate when terms and conditions are not accepted', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions,
+        termsAndConditionsAccepted: false
+      });
+      return datasinkUUT.init().then(() => {
+        expect(winstonMock.debug).toBeCalledWith(
+          expect.stringContaining('initializing')
+        );
+        expect(dataHubAdapterMock.init).not.toBeCalled();
+        expect(dataHubAdapterMock.start).not.toBeCalled();
+        expect(datasinkUUT.getCurrentStatus()).toBe(
+          LifecycleEventStatus.TermsAndConditionsNotAccepted
+        );
+        expect(winstonMock.warn).toBeCalledWith(
+          expect.stringContaining('not accepted terms and conditions')
+        );
+      });
+    });
+  });
+
+  describe(`shutdown and disconnection`, () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+      configMock.dataPoints = [];
+    });
+
+    it('disconnects correctly', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions
+      });
+
+      return datasinkUUT.disconnect().then(() => {
+        expect(dataHubAdapterMock.stop).toBeCalled();
+        expect(winstonMock.info).toBeCalledWith(
+          expect.stringContaining('successful')
+        );
+      });
+    });
+
+    it('ignores processDataPointValues after disconnection', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions
+      });
+
+      const mockedEvents = [
+        {
+          measurement: {
+            id: 'testID1',
+            name: 'testName1',
+            value: 15
+          },
+          dataSource: {
+            name: 'UTSource',
+            protocol: 'UTProtocol'
+          }
+        }
+      ];
+
+      return datasinkUUT
+        .disconnect()
+        .then(() => datasinkUUT.onMeasurements(mockedEvents))
+        .then(() => {
+          expect(dataHubAdapterMock.stop).toBeCalled();
+          //@ts-ignore
+          expect(datasinkUUT.processDataPointValues({})).toBe(undefined);
+          expect(dataHubAdapterMock.sendData).not.toBeCalled();
+        });
+    });
+
+    it('shuts down correctly', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions
+      });
+
+      return datasinkUUT.shutdown().then(() => {
+        expect(dataHubAdapterMock.shutdown).toBeCalled();
+        expect(winstonMock.info).toBeCalledWith(
+          expect.stringContaining('shutdown successful')
+        );
+      });
+    });
+
+    it('ignores processDataPointValues after shutdown', async () => {
+      datasinkUUT = new DataHubDataSink({
+        ...dataHubDataSinkOptions
+      });
+
+      const mockedEvents = [
+        {
+          measurement: {
+            id: 'testID1',
+            name: 'testName1',
+            value: 15
+          },
+          dataSource: {
+            name: 'UTSource',
+            protocol: 'UTProtocol'
+          }
+        }
+      ];
+
+      return datasinkUUT
+        .shutdown()
+        .then(() => datasinkUUT.onMeasurements(mockedEvents))
+        .then(() => {
+          //@ts-ignore
+          expect(datasinkUUT.processDataPointValues({})).toBe(undefined);
+          expect(dataHubAdapterMock.sendData).not.toBeCalled();
         });
     });
   });

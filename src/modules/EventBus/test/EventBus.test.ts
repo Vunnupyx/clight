@@ -3,11 +3,7 @@ jest.mock('winston');
 
 describe('Test EventBus', () => {
   test('emit should call all callbacks once with event', async () => {
-    type TestEvent = {
-      payload: number;
-    };
-
-    const event: TestEvent = {
+    const event = {
       payload: 123
     };
 

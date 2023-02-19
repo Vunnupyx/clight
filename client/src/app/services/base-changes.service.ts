@@ -55,12 +55,9 @@ export class BaseChangesService<TEntity extends ITrackable> {
     });
   }
 
-  updateOrder(entities: TEntity[]) {
+  markTouched() {
     this._changes.patchState((state) => {
-      state.touched =
-        !!Object.keys(state.created).length ||
-        !!Object.keys(state.updated).length ||
-        !!state.deleted.length ||
+      state.touched = true;
     });
   }
 

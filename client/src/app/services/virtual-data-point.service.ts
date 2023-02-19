@@ -254,7 +254,9 @@ export class VirtualDataPointService
   }
 
   async updateOrderDataPoints(obj: VirtualDataPoint[]) {
-    this.updateOrder(!this._isEqualsOriginalDataPoints(obj) ? obj : []);
+    if (!this._isEqualsOriginalDataPoints(obj)) {
+      this.markTouched();
+    }
 
     this._store.patchState((state) => {
       state.dataPoints = [...obj];

@@ -1,6 +1,6 @@
 import { EnergyDataSource } from '..';
 import fetch from 'node-fetch';
-import { TariffNumbers } from '../interfaces';
+import { IHostConnectivityState, ITariffNumbers } from '../interfaces';
 import { IDataSourceParams } from '../../interfaces';
 import { DataSourceProtocols } from '../../../../../common/interfaces';
 import { VirtualDataPointManager } from '../../../../VirtualDataPointManager';
@@ -19,15 +19,15 @@ jest.mock('../../../../SyncScheduler', () => ({
 jest.mock('../Adapter/PhoenixEmProAdapter', () => {
   return {
     PhoenixEmProAdapter: jest.fn().mockImplementation(() => ({
-      changeTariff: jest.fn((tariffNo: TariffNumbers) =>
+      changeTariff: jest.fn((tariffNo: ITariffNumbers) =>
         Promise.resolve(tariffNo)
-      )
+      ),
+      testHostConnectivity: jest.fn(),
+      hostConnectivityState: IHostConnectivityState.OK
     }))
   };
 });
 
-const { Response } = jest.requireActual('node-fetch');
-let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 let energyDataSource: EnergyDataSource;
 const mockConfig: IDataSourceParams = {
   config: {
@@ -44,13 +44,13 @@ const virtualDpManager = jest.createMockFromModule(
 let vdpEnergyCallback;
 
 describe('EnergyDataSource', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
     energyDataSource = new EnergyDataSource(mockConfig, virtualDpManager);
     virtualDpManager.setEnergyCallback = (cb) => {
       vdpEnergyCallback = cb;
     };
-    energyDataSource.init();
+    await energyDataSource.init();
   });
   describe('handleMachineStatusChange', () => {
     it.each([
@@ -65,7 +65,7 @@ describe('EnergyDataSource', () => {
     ])(
       'Machine status change to $newStatus triggers tariff update to:$expectedTariffNo',
       async ({ newStatus, expectedTariffNo }) => {
-        let result: TariffNumbers = await vdpEnergyCallback(newStatus);
+        let result: ITariffNumbers = await vdpEnergyCallback(newStatus);
         expect(result).toBe(expectedTariffNo);
       }
     );

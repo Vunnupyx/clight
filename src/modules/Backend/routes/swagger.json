@@ -1297,6 +1297,44 @@
         }
       }
     },
+    "/livedata/datasink/{datasinkProtocol}": {
+      "parameters": [
+        {
+          "name": "datasinkProtocol",
+          "in": "path",
+          "description": "id of the dataSink to get",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "timeseries",
+          "in": "query",
+          "description": "should include timeseries",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "get": {
+        "tags": ["livedata"],
+        "description": "Get livedata for dataSink dataPoints",
+        "operationId": "livedataDataSinkDataPointsGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the livedata for dataSink dataPoints",
+            "schema": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/livedataItem"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "/livedata/vdps": {
       "parameters": [
         {
@@ -1858,7 +1896,7 @@
         },
         "type": {
           "type": "string",
-          "enum": ["s7", "nck", "nck-pl"]
+          "enum": ["s7", "nck", "meter", "measurement", "device", "tariff"]
         }
       }
     },

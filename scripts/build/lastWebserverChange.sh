@@ -1,0 +1,1 @@
+echo $(git describe --tags $(git log -n 1 --pretty=format:%H -- azure-pipelines-dev-client.yml docker/mdcwebserver_arm64.Dockerfile client user-docs))

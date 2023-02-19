@@ -1,5 +1,7 @@
 import { StateMachine, StateAndTransitions } from '..';
 
+jest.spyOn(console, 'log').mockImplementation(() => {});
+
 const stateAndTransitions: StateAndTransitions = {
   INIT: {
     transition: () => 'START',

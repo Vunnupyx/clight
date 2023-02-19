@@ -1,34 +1,54 @@
 import fetch from 'node-fetch';
-
 import { MessengerManager } from '..';
+import emptyDefaultConfig from '../../../../../_mdclight/runtime-files/templates/empty.json';
 import { ConfigManager } from '../../../ConfigManager';
 import { EventBus } from '../../../EventBus';
 
+function log(m) {
+  //console.log(m);
+}
+
 jest.mock('winston', () => {
   return {
-    debug: (m) => console.log(m),
-    warn: (m) => console.log(m)
+    debug: log,
+    info: log,
+    error: log,
+    warn: log
   };
 });
+jest.mock('../../../EventBus');
+jest.mock('../../../ConfigManager');
+
+const SERIALNUMBER = '1234';
 
 jest.mock('node-fetch');
 const { Response } = jest.requireActual('node-fetch');
 let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 
-describe('MessengerManager', () => {
-  let messengerAdapter: MessengerManager;
-  let configManager = new ConfigManager({
-    errorEventsBus: new EventBus<null>() as any,
-    lifecycleEventsBus: new EventBus<null>() as any
-  });
+let messengerAdapter: MessengerManager;
+let configManager = new ConfigManager({
+  errorEventsBus: new EventBus(),
+  lifecycleEventsBus: new EventBus()
+});
 
+describe('MessengerManager', () => {
+  beforeEach(() => {
+    //@ts-ignore
+    configManager._config = {
+      ...emptyDefaultConfig,
+      general: {
+        ...emptyDefaultConfig.general,
+        //@ts-ignore
+        serialNumber: SERIALNUMBER
+      }
+    };
+    //@ts-ignore
+    configManager.config = configManager._config;
+  });
   afterEach(() => {
     messengerAdapter = null!;
+    configManager.removeAllListeners();
     jest.clearAllMocks();
-    configManager = new ConfigManager({
-      errorEventsBus: new EventBus<null>() as any,
-      lifecycleEventsBus: new EventBus<null>() as any
-    });
   });
 
   test('initialization without configuration', async () => {
@@ -39,8 +59,8 @@ describe('MessengerManager', () => {
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(undefined);
-    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
@@ -53,8 +73,8 @@ describe('MessengerManager', () => {
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual({});
-    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
@@ -79,9 +99,71 @@ describe('MessengerManager', () => {
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.server).toEqual('invalid_auth');
+    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
+  });
+
+  test('Missing serial number', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      );
+    //@ts-ignore
+    configManager._config = {
+      ...emptyDefaultConfig,
+      general: {
+        ...emptyDefaultConfig.general,
+        //@ts-ignore
+        serialNumber: undefined
+      }
+    };
+    //@ts-ignore
+    configManager.config = configManager._config;
+    const messengerConfig = {
+      hostname: 'string',
+      username: 'string',
+      password: 'string',
+      model: 103,
+      name: 'string',
+      organization: 'organizationUnit1',
+      timezone: 1
+    };
+    messengerAdapter = new MessengerManager({
+      configManager,
+      messengerConfig
+    });
+    await messengerAdapter.init();
+    //@ts-ignore
+    expect(messengerAdapter).toBeInstanceOf(MessengerManager);
+    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('error');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(
+      'missing_serial'
+    );
   });
 
   test('initialization with already set configuration', async () => {
@@ -112,7 +194,31 @@ describe('MessengerManager', () => {
         )
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+        Promise.resolve(
+          new Response(
+            JSON.stringify([
+              {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                Port: 7878
+              }
+            ])
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              msg: {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                MTConnectAgentManagementMode: 'NA',
+                Port: 7878
+              }
+            })
+          )
+        )
       );
     const messengerConfig = {
       hostname: 'string',
@@ -131,8 +237,8 @@ describe('MessengerManager', () => {
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
@@ -185,9 +291,151 @@ describe('MessengerManager', () => {
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
+  });
+
+  test('Duplicated machine: Existing serial', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify([
+              {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000055550000',
+                Port: 7878
+              }
+            ])
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              msg: {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000055550000',
+                MTConnectAgentManagementMode: 'NA',
+                Port: 7878
+              }
+            })
+          )
+        )
+      );
+    const messengerConfig = {
+      hostname: 'string',
+      username: 'string',
+      password: 'string',
+      model: 103,
+      name: 'string',
+      organization: 'organizationUnit1',
+      timezone: 2
+    };
+    messengerAdapter = new MessengerManager({
+      configManager,
+      messengerConfig
+    });
+    await messengerAdapter.init();
+
+    expect(messengerAdapter).toBeInstanceOf(MessengerManager);
+    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('error');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(
+      'duplicated'
+    );
+  });
+
+  test('Duplicated machine: Different serial but same IP exists', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        Promise.resolve(new Response(JSON.stringify({ jwt: 'exampletoken' })))
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 103 }, { Id: 104 }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: { TimeZoneId: '1' } }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(JSON.stringify({ msg: [{ Id: 'organizationUnit1' }] }))
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ msg: { '1': 'timezone1', '2': 'timezone2' } })
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify([
+              {
+                SerialNumber: '11111',
+                IpAddress: 'dm000000000000',
+                Port: 7878
+              }
+            ])
+          )
+        )
+      );
+    const messengerConfig = {
+      hostname: 'string',
+      username: 'string',
+      password: 'string',
+      model: 103,
+      name: 'string',
+      organization: 'organizationUnit1',
+      timezone: 2
+    };
+    messengerAdapter = new MessengerManager({
+      configManager,
+      messengerConfig
+    });
+    await messengerAdapter.init();
+
+    expect(messengerAdapter).toBeInstanceOf(MessengerManager);
+    expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('error');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(
+      'duplicated'
+    );
   });
 
   test('Unable to successfully register machine due to unknown error but server is available', async () => {
@@ -236,11 +484,11 @@ describe('MessengerManager', () => {
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual(
-      'not_registered'
-    );
     expect(messengerAdapter.serverStatus.server).toEqual('available');
-    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
+    expect(messengerAdapter.serverStatus.registration).toEqual('error');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(
+      'unexpected_error'
+    );
   });
 
   test('Handles config change from already registered to empty config', async () => {
@@ -271,7 +519,31 @@ describe('MessengerManager', () => {
         )
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+        Promise.resolve(
+          new Response(
+            JSON.stringify([
+              {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                Port: 7878
+              }
+            ])
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              msg: {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                MTConnectAgentManagementMode: 'NA',
+                Port: 7878
+              }
+            })
+          )
+        )
       );
 
     const messengerConfig = {
@@ -290,14 +562,16 @@ describe('MessengerManager', () => {
     await messengerAdapter.init();
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
 
-    configManager.emit('configChange');
+    //@ts-ignore
+    messengerAdapter.configManager.config.messenger = {};
+    messengerAdapter.handleConfigChange();
 
-    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
@@ -329,7 +603,31 @@ describe('MessengerManager', () => {
         )
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+        Promise.resolve(
+          new Response(
+            JSON.stringify([
+              {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                Port: 7878
+              }
+            ])
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              msg: {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                MTConnectAgentManagementMode: 'NA',
+                Port: 7878
+              }
+            })
+          )
+        )
       );
 
     const messengerConfig = {
@@ -348,15 +646,15 @@ describe('MessengerManager', () => {
     await messengerAdapter.init();
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
 
     configManager.config.messenger = messengerConfig;
-    configManager.emit('configChange');
+    messengerAdapter.handleConfigChange();
 
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
@@ -399,8 +697,8 @@ describe('MessengerManager', () => {
     await messengerAdapter.init();
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual({});
-    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
+    expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
 
     const messengerConfig = {
@@ -416,10 +714,10 @@ describe('MessengerManager', () => {
     configManager.config.messenger = messengerConfig;
     expect(configManager.config.messenger).toEqual(messengerConfig);
 
-    configManager.emit('configChange');
+    messengerAdapter.handleConfigChange();
     await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
   });
 
@@ -451,7 +749,31 @@ describe('MessengerManager', () => {
         )
       )
       .mockResolvedValueOnce(
-        Promise.resolve(new Response(JSON.stringify([{ SerialNumber: '' }])))
+        Promise.resolve(
+          new Response(
+            JSON.stringify([
+              {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                Port: 7878
+              }
+            ])
+          )
+        )
+      )
+      .mockResolvedValueOnce(
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              msg: {
+                SerialNumber: SERIALNUMBER,
+                IpAddress: 'dm000000000000',
+                MTConnectAgentManagementMode: 'NA',
+                Port: 7878
+              }
+            })
+          )
+        )
       )
       .mockResolvedValueOnce(
         Promise.resolve(
@@ -491,17 +813,18 @@ describe('MessengerManager', () => {
     await messengerAdapter.init();
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
     expect(messengerAdapter.messengerConfig).toEqual(messengerConfig);
-    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
     expect(messengerAdapter.serverStatus.server).toEqual('available');
-
+    expect(messengerAdapter.serverStatus.registration).toEqual('registered');
+    expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
     //Organization unit is removed from Messenger UI and then resubmitted with that organization unit
-    configManager.config.messenger = messengerConfig;
+    //@ts-ignore
+    messengerAdapter.configManager.config.messenger = messengerConfig;
     await messengerAdapter.init();
 
+    expect(messengerAdapter.serverStatus.server).toEqual('available');
     expect(messengerAdapter.serverStatus.registration).toEqual('error');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(
       'invalid_organization'
     );
-    expect(messengerAdapter.serverStatus.server).toEqual('available');
   });
 });

@@ -51,7 +51,7 @@ export const runtimeConfig: IRuntimeConfig = {
         'systems.machine.powerOnTime',
         'systems.machineController.PLCRuntime',
         'systems.machineDataConnector.machineConnectionEstablished',
-        'spindles.spindle[N].operationTime'
+        'spindles.spindle[0].operationTime'
       ],
       machineStatus: [
         'auxiliaries.stacklight.colorBlue',
@@ -62,9 +62,9 @@ export const runtimeConfig: IRuntimeConfig = {
       ],
       alarmMonitoring: [
         'production.activeProgram.currentExecutionState',
-        'channels.channel[N].singleStep',
-        'channels.channel[N].controllerMode',
-        'systems. machineDataConnector.machineConnectionEstablished',
+        'channels.channel[0].singleStep',
+        'channels.channel[0].controllerMode',
+        'systems.machineDataConnector.machineConnectionEstablished',
         'messaging.conditionRaised.<sourceId>_<number>',
         'messaging.conditionCleared.<sourceId>_<number>'
       ]

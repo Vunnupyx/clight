@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { hash, compare } from 'bcrypt';
-import { promises as fs } from 'fs';
+import { hash, compare } from 'bcryptjs';
 
 import { ConfigManager } from '../../ConfigManager';
 import { IAuthUser } from '../../ConfigManager/interfaces';

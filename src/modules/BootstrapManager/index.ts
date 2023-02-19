@@ -127,7 +127,6 @@ export class BootstrapManager {
         payload: JSON.stringify(error)
       });
 
-      console.log(error);
       winston.error(`Error while launching. Exiting program. `);
       winston.error(JSON.stringify(error));
 

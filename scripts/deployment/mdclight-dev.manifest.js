@@ -1,4 +1,3 @@
-const version = process.argv[2];
 const config = {
   modulesContent: {
     $edgeAgent: {
@@ -7,8 +6,8 @@ const config = {
         username: 'a592b29a-bdcc-4b35-aeee-bcd3ce63c9a5',
         password: '3Wa8Q~EITOVoQBIboDDI9Q8_v5fbWPbVvsm0dbss'
       },
-      'properties.desired.modules.mdclight': {
-        version,
+      'properties.desired.modules.mdclight-dev': {
+        version: process.argv[2],
         type: 'docker',
         status: 'running',
         restartPolicy: 'always',
@@ -17,7 +16,7 @@ const config = {
           LOG_LEVEL: { value: 'debug' }
         },
         settings: {
-          image: `mdclightdev.azurecr.io/mdclight:${version}`,
+          image: `mdclightdev.azurecr.io/mdclight-development:${process.argv[2]}`,
           createOptions: JSON.stringify({
             StopSignal: 'SIGKILL',
             Labels: {
@@ -28,8 +27,10 @@ const config = {
               Privileged: true,
               NetworkMode: 'azure-iot-edge',
               PortBindings: {
+                '80/tcp': [{ HostPort: '80' }],
                 '4840/tcp': [{ HostPort: '4840' }],
-                '7878/tcp': [{ HostPort: '7878' }]
+                '7878/tcp': [{ HostPort: '7878' }],
+                '9229/tcp': [{ HostPort: '9229' }]
               },
               Binds: [
                 'dmgmori-mdclight-config:/etc/mdc-light/config',
@@ -38,7 +39,9 @@ const config = {
                 'dmgmori-mdclight-jwtkeys:/etc/mdc-light/jwtkeys',
                 'dmgmori-mdclight-certs:/etc/mdc-light/certs',
                 '/proc:/proc',
-                '/sys:/sys'
+                '/sys:/sys',
+                '/mnt/docker/mdclightdev/app:/app',
+                '/mnt/docker/mdclightdev/runtime-files:/etc/mdc-light/runtime-files'
               ],
               LogConfig: {
                 Type: 'journald',
@@ -57,13 +60,13 @@ const config = {
         }
       },
       'properties.desired.modules.mtconnect-agent': {
-        version,
+        version: process.argv[4],
         type: 'docker',
         status: 'running',
         restartPolicy: 'always',
         startupOrder: 11,
         settings: {
-          image: `mdclightdev.azurecr.io/mtconnect-agent:${version}`,
+          image: `mdclightdev.azurecr.io/mtconnect-agent:${process.argv[4]}`,
           createOptions: JSON.stringify({
             StopSignal: 'SIGKILL',
             Labels: {
@@ -93,13 +96,13 @@ const config = {
         }
       },
       'properties.desired.modules.mdc-web-server': {
-        version,
+        version: process.argv[3],
         type: 'docker',
         status: 'running',
         restartPolicy: 'on-failure',
         startupOrder: 12,
         settings: {
-          image: `mdclightdev.azurecr.io/mdc-web-server:${version}`,
+          image: `mdclightdev.azurecr.io/mdc-web-server:${process.argv[3]}`,
           createOptions: JSON.stringify({
             StopSignal: 'SIGKILL',
             Labels: {

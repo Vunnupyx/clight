@@ -69,16 +69,16 @@ describe('PhoenixEmProAdapter', () => {
       expect(mockedFetch).toHaveBeenNthCalledWith(
         1,
         `${connection.ipAddr}${'/api/v1/measurements'}`,
-        {
+        expect.objectContaining({
           method: 'GET'
-        }
+        })
       );
       expect(mockedFetch).toHaveBeenNthCalledWith(
         2,
         `${connection.ipAddr}${'/api/v1/meters'}`,
-        {
+        expect.objectContaining({
           method: 'GET'
-        }
+        })
       );
       expect(result).toStrictEqual([...mockMeasurements, ...mockMeters]);
     });
@@ -173,7 +173,9 @@ describe('PhoenixEmProAdapter', () => {
           '?',
           ''
         )}`,
-        { method: 'GET' }
+        expect.objectContaining({
+          method: 'GET'
+        })
       );
       expect(result).toStrictEqual(mockMeasurement);
     });
@@ -186,7 +188,9 @@ describe('PhoenixEmProAdapter', () => {
       } catch (e) {
         expect(mockedFetch).toHaveBeenCalledWith(
           `${connection.ipAddr}${'/api/v1/measurements/p3'}`,
-          { method: 'GET' }
+          expect.objectContaining({
+            method: 'GET'
+          })
         );
         expect(e.message).toBe('reason');
       }
@@ -218,7 +222,9 @@ describe('PhoenixEmProAdapter', () => {
           '?',
           ''
         )}`,
-        { method: 'GET' }
+        expect.objectContaining({
+          method: 'GET'
+        })
       );
       expect(result).toStrictEqual(String(mockTariffResponse.value));
     });
@@ -248,7 +254,9 @@ describe('PhoenixEmProAdapter', () => {
           '?',
           ''
         )}`,
-        { method: 'GET' }
+        expect.objectContaining({
+          method: 'GET'
+        })
       );
       expect(result).toMatchObject(mockTariffResponse);
     });
@@ -276,7 +284,9 @@ describe('PhoenixEmProAdapter', () => {
           '?',
           ''
         )}`,
-        { method: 'GET' }
+        expect.objectContaining({
+          method: 'GET'
+        })
       );
       expect(result).toStrictEqual('0');
     });
@@ -291,7 +301,9 @@ describe('PhoenixEmProAdapter', () => {
           `${
             connection.ipAddr
           }${'/api/v1/measurement-system-control/tariff-number'}`,
-          { method: 'GET' }
+          expect.objectContaining({
+            method: 'GET'
+          })
         );
         expect(e.message).toBe('reason');
       }
@@ -312,7 +324,9 @@ describe('PhoenixEmProAdapter', () => {
       let result: boolean = await emProClient.changeTariff(3);
       expect(mockedFetch).toHaveBeenCalledWith(
         `${connection.ipAddr}${mockedResponse.context}`,
-        { method: 'PUT' }
+        expect.objectContaining({
+          method: 'PUT'
+        })
       );
       expect(result).toBeTruthy();
     });
@@ -348,7 +362,9 @@ describe('PhoenixEmProAdapter', () => {
       } catch (e) {
         expect(mockedFetch).toHaveBeenCalledWith(
           `${connection.ipAddr}${mockedResponse.context}`,
-          { method: 'PUT' }
+          expect.objectContaining({
+            method: 'PUT'
+          })
         );
         expect(e.message).toBe('errMessage');
       }
@@ -364,7 +380,9 @@ describe('PhoenixEmProAdapter', () => {
           `${
             connection.ipAddr
           }${'/api/v1/measurement-system-control/tariff-number?value=4'}`,
-          { method: 'PUT' }
+          expect.objectContaining({
+            method: 'PUT'
+          })
         );
         expect(e.message).toBe('reason');
       }

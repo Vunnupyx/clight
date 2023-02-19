@@ -341,7 +341,7 @@
     "OPCUAAuthenticationLevel": "OPC UA認証レベル",
     "OPCUAServerUsername": "OPC UAサーバユーザ名",
     "OPCUAServerPassword": "OPC UAサーバパスワード",
-    "NoData": "No data",
+    "NoActiveService": "No active service",
     "LoadError": "データシンクの読み込みに失敗しました。時間をおいて再試行してください。",
     "OpenMTConnectStream": "MTConnectストリームを開く",
     "BulkSuccess": "変更が適用されました。",

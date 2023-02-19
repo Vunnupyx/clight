@@ -3,7 +3,7 @@ import { IDataSinkConfig } from '../../../../../ConfigManager/interfaces';
 import { Response, Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
 import {
@@ -200,12 +200,37 @@ async function dataSinksPostDatapointBulkHandler(
  * @param  {Response} response
  */
 function dataPointsGetHandler(request: Request, response: Response) {
-  const sink = configManager?.config?.dataSinks.find(
+  const sinkConfig = configManager?.config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
-  response
-    .status(sink ? 200 : 404)
-    .json(sink ? { dataPoints: sink.dataPoints } : null);
+  if (!sinkConfig) {
+    return response.status(404).json();
+  }
+  const allSignalGroups = configManager.runtimeConfig?.datahub?.signalGroups;
+  let dpSignalGroupArray: { [key: string]: string[] } = {};
+  for (let service in allSignalGroups) {
+    for (let dpAddress of allSignalGroups[service]) {
+      if (!dpSignalGroupArray[dpAddress]) {
+        dpSignalGroupArray[dpAddress] = [service];
+      } else {
+        dpSignalGroupArray[dpAddress].push(service);
+      }
+    }
+  }
+  const dataSink = dataSinksManager.getDataSinkByProto(
+    DataSinkProtocols.DATAHUB
+  ) as DataHubDataSink;
+  const desiredServices = dataSink?.getDesiredPropertiesServices();
+  return response.status(200).json({
+    dataPoints: sinkConfig.dataPoints.map((dp) => ({
+      ...dp,
+      enabled: dpSignalGroupArray[dp.address]?.find(
+        (service) => desiredServices.services?.[service]?.enabled
+      )
+        ? true
+        : false
+    }))
+  });
 }
 
 /**

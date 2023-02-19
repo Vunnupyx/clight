@@ -65,7 +65,7 @@ export class DataHubDataSink extends DataSink {
   protected processDataPointValues(dataPointsObj): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
 
-    if (!this.#datahubAdapter.running) {
+    if (!this.#datahubAdapter?.running) {
       return;
     }
 
@@ -169,20 +169,6 @@ export class DataHubDataSink extends DataSink {
           return this;
         }
       });
-  }
-
-  /**
-   * Compares given config with the current data sink config to determine if data source should be restarted or not
-   */
-  configEqual(
-    config: IDataSinkConfig,
-    termsAndConditions: boolean,
-    optionalConfigs?: OptionalConfigs
-  ) {
-    return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
-      this.termsAndConditionsAccepted === termsAndConditions
-    );
   }
 
   /**

@@ -1,6 +1,9 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Response, Request } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  IDataPointMapping,
+  isDataPointMapping
+} from '../../../../../ConfigManager/interfaces';
 
 let configManager: ConfigManager;
 
@@ -17,95 +20,123 @@ export function setConfigManager(config: ConfigManager) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function mappingGetHandler(request: Request, response: Response): void {
+function getAllMappingsHandler(request: Request, response: Response): void {
   response.status(200).json({
-    mapping: configManager.getFilteredMapping()
+    //should already not have orphan mappings but just in case use checkAndCleanupMappings
+    mapping: configManager.getConfigWithCleanedMappings(configManager.config)
+      ?.mapping
   });
 }
 
 /**
- * Creates mapping
+ * Creates single mapping
  * @param  {Request} request
  * @param  {Response} response
  */
-async function mapPostHandler(
-  request: Request,
-  response: Response
-): Promise<void> {
-  const config = configManager.config;
-  const mapping = config.mapping;
-
-  const map = { ...request.body, ...{ id: uuidv4() } };
-  mapping.push(map);
-
-  configManager.config = config;
-  await configManager.configChangeCompleted();
-
-  response.status(200).json(map);
-}
-
-/**
- * Bulk changes mapping
- * @param  {Request} request
- * @param  {Response} response
- */
-async function mapPostBulkHandler(
+async function postSingleMappingHandler(
   request: Request,
   response: Response
 ): Promise<void> {
   try {
-    await configManager.bulkChangeMapings(request.body || {});
+    const newMapping = request.body as IDataPointMapping;
+
+    if (!isDataPointMapping(newMapping)) {
+      throw new Error();
+    }
+
+    configManager.config = {
+      ...configManager.config,
+      mapping: [...configManager.config.mapping, newMapping]
+    };
+    await configManager.configChangeCompleted();
+
+    response.status(200).json(newMapping);
+  } catch {
+    response
+      .status(400)
+      .json({ error: 'Cannot create new mapping. Try again!' });
+  }
+}
+
+/**
+ * Replaces all mappings
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function patchAllMappingsHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  try {
+    const newMappings = request.body as IDataPointMapping[];
+
+    if (!newMappings.every(isDataPointMapping)) {
+      throw new Error();
+    }
+
+    configManager.config = {
+      ...configManager.config,
+      mapping: newMappings
+    };
     await configManager.configChangeCompleted();
 
     response.status(200).send();
+  } catch {
+    response.status(400).json({ error: 'Cannot change mappings. Try again!' });
+  }
+}
+
+/**
+ * Updates single mapping
+ * @param  {Request} request
+ * @param  {Response} response
+ */
+async function patchSingleMappingHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  try {
+    const mapping = configManager.config.mapping.find(
+      (x) => x.id === request.params.mapId
+    );
+
+    if (!mapping) {
+      response.status(404).json(null);
+      return;
+    }
+    const newMapping = request.body as IDataPointMapping;
+
+    if (!isDataPointMapping(newMapping)) {
+      throw new Error();
+    }
+    const updatedMapping = {
+      ...mapping,
+      ...newMapping,
+      id: request.params.mapId
+    };
+
+    configManager.changeConfig(
+      'update',
+      'mapping',
+      updatedMapping,
+      (item) => item.id
+    );
+    await configManager.configChangeCompleted();
+
+    response.status(200).json({
+      changed: mapping
+    });
   } catch {
     response.status(400).json({ error: 'Cannot change mapping. Try again!' });
   }
 }
 
 /**
- * Updates mapping
+ * Deletes single mapping
  * @param  {Request} request
  * @param  {Response} response
  */
-async function mapPatchHandler(
-  request: Request,
-  response: Response
-): Promise<void> {
-  const mapping = configManager.config.mapping.find(
-    (x) => x.id === request.params.mapId
-  );
-
-  if (!mapping) {
-    response.status(404).json(null);
-    return;
-  }
-
-  const newMapping = {
-    ...mapping,
-    ...request.body,
-    id: request.params.mapId
-  };
-
-  configManager.changeConfig(
-    'update',
-    'mapping',
-    newMapping,
-    (item) => item.id
-  );
-  await configManager.configChangeCompleted();
-
-  response.status(200).json({
-    changed: mapping
-  });
-}
-
-/**
- * Deletes mapping
- * @param  {Request} request
- * @param  {Response} response
- */
-async function mapDeleteHandler(
+async function deleteSingleMappingHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -134,29 +165,29 @@ async function mapDeleteHandler(
 }
 
 /**
- * Returns specific mapping
+ * Returns single mapping
  * @param  {Request} request
  * @param  {Response} response
  */
-function mapGetHandler(request: Request, response: Response): void {
+function getSingleMappingHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const map = configManager.config.mapping.find(
     (map) => map.id === request.params.mapId
   );
+  response.status(map ? 200 : 404).json(map);
 
-  if (map) {
-    response.status(200).json(map);
-
-    return;
-  }
-
-  response.status(404).json(null);
+  return;
 }
 
 export const mappingHandlers = {
-  mappingsGet: mappingGetHandler,
-  mapPost: mapPostHandler,
-  mapPostBulk: mapPostBulkHandler,
-  mapPatch: mapPatchHandler,
-  mapDelete: mapDeleteHandler,
-  mapGet: mapGetHandler
+  //Single mapping
+  mapPost: postSingleMappingHandler,
+  mapPatch: patchSingleMappingHandler,
+  mapDelete: deleteSingleMappingHandler,
+  mapGet: getSingleMappingHandler,
+  //Multiple mappings
+  mappingsGet: getAllMappingsHandler,
+  patchMappings: patchAllMappingsHandler
 };

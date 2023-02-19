@@ -29,6 +29,18 @@ export class VirtualDataPoint {
   resetSchedules?: VirtualDataPointSchedule[];
 }
 
+export enum VirtualDataPointErrorType {
+  WrongVdpsOrder = 'wrongVdpsOrder',
+  WrongFormat = 'wrongFormat',
+  UnexpectedError = 'unexpectedError'
+}
+
+export interface VirtualDataPointErrorReason {
+  error?: VirtualDataPointErrorType;
+  vdpIdWithError?: string;
+  notYetDefinedSourceVdpId?: string;
+}
+
 export interface VirtualDataPointEnumeration {
   defaultValue?: string;
   items: VirtualDataPointEnumerationItem[];

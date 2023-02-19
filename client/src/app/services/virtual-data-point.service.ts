@@ -5,7 +5,12 @@ import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 import { from, interval, Observable } from 'rxjs';
 
 import { Status, Store, StoreFactory } from '../shared/state';
-import { DataPointLiveData, VirtualDataPoint } from '../models';
+import {
+  DataPointLiveData,
+  VirtualDataPoint,
+  VirtualDataPointErrorReason,
+  VirtualDataPointErrorType
+} from '../models';
 import { HttpService } from '../shared';
 import * as api from '../api/models';
 import { array2map, clone, errorHandler, ObjectMap } from '../shared/utils';
@@ -75,7 +80,29 @@ export class VirtualDataPointService
         state.status = Status.Loading;
       });
 
-      await this.httpService.post(`/vdps/bulk`, this.getPayload());
+      await this.httpService.patch(`/vdps`, this._store.snapshot.dataPoints);
+      /*TBD
+      if (Object.keys(this.payload.created).length) {
+        for (let vdp of Object.values(this.payload.created)) {
+          await this.httpService.post(`/vdps`, vdp);
+        }
+      }
+
+      if (Object.keys(this.payload.updated).length) {
+        for (let [vdpId, vdp] of Object.entries(this.payload.updated)) {
+          await this.httpService.patch(`/vdps/${vdpId}`, vdp);
+        }
+      }
+
+      if (this.payload.deleted.length) {
+        for (let vdpId of this.payload.deleted) {
+          await this.httpService.delete(`/vdps/${vdpId}`);
+        }
+      }
+
+      if (this.payload.replace.length) {
+        await this.httpService.patch(`/vdps`, this.payload.replace);
+      }*/
 
       this._getDataPoints();
 
@@ -88,10 +115,32 @@ export class VirtualDataPointService
       this.toastr.success(
         this.translate.instant('settings-virtual-data-point.BulkSuccess')
       );
-    } catch {
-      this.toastr.error(
-        this.translate.instant('settings-virtual-data-point.BulkError')
-      );
+    } catch (err: any) {
+      const { error, vdpIdWithError, notYetDefinedSourceVdpId } =
+        (err.error as VirtualDataPointErrorReason) || {};
+
+      if (
+        [
+          VirtualDataPointErrorType.UnexpectedError,
+          VirtualDataPointErrorType.WrongFormat
+        ].includes(error)
+      ) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.UnexpectedError`)
+        );
+      } else if (error === VirtualDataPointErrorType.WrongVdpsOrder) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.WrongVdpsOrder`, {
+            SourceId: notYetDefinedSourceVdpId,
+            ErrorId: vdpIdWithError
+          })
+        );
+      } else {
+        this.toastr.error(
+          this.translate.instant('settings-virtual-data-point.BulkError')
+        );
+      }
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -102,22 +151,29 @@ export class VirtualDataPointService
 
   async resetCounter(vdp: VirtualDataPoint): Promise<boolean> {
     const payload = {
-        ...vdp,
-        reset: true
-    }
-    return this.httpService.patch(`/vdps/${vdp.id}`, payload)
+      ...vdp,
+      reset: true
+    };
+    return this.httpService
+      .patch(`/vdps/${vdp.id}`, payload)
       .then((response) => {
         this.toastr.success(
-          this.translate.instant('settings-virtual-data-point.CounterResetSuccess', {NAME: response?.changed?.name})
+          this.translate.instant(
+            'settings-virtual-data-point.CounterResetSuccess',
+            { NAME: response?.changed?.name }
+          )
         );
         return true;
-      }).catch((error) => {
+      })
+      .catch((error) => {
         this.toastr.error(
-          this.translate.instant('settings-virtual-data-point.CounterResetError', {NAME: payload?.name})
+          this.translate.instant(
+            'settings-virtual-data-point.CounterResetError',
+            { NAME: payload?.name }
+          )
         );
         return false;
-      }
-    );
+      });
   }
 
   async getDataPoints() {
@@ -197,6 +253,16 @@ export class VirtualDataPointService
     });
   }
 
+  async updateOrderDataPoints(obj: VirtualDataPoint[]) {
+    if (!this._isEqualsOriginalDataPoints(obj)) {
+      this.markTouched();
+    }
+
+    this._store.patchState((state) => {
+      state.dataPoints = [...obj];
+    });
+  }
+
   async deleteDataPoint(id: string) {
     this.delete(id);
 
@@ -210,15 +276,46 @@ export class VirtualDataPointService
   }
 
   private async _getDataPoints() {
-    const { vdps } = await this.httpService.get<{
-      vdps: api.VirtualDataPointType[];
-    }>('/vdps');
+    const { vdps, error, vdpIdWithError, notYetDefinedSourceVdpId } =
+      await this.httpService.get<
+        { vdps: api.VirtualDataPointType[] } & VirtualDataPointErrorReason
+      >('/vdps');
 
     this._store.patchState((state) => {
       state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
       state.originalDataPoints = clone(state.dataPoints);
       state.status = Status.Ready;
     });
+
+    if (error) {
+      if (
+        [
+          VirtualDataPointErrorType.UnexpectedError,
+          VirtualDataPointErrorType.WrongFormat
+        ].includes(error)
+      ) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.UnexpectedError`)
+        );
+      } else if (error === VirtualDataPointErrorType.WrongVdpsOrder) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.WrongVdpsOrder`, {
+            SourceId: notYetDefinedSourceVdpId,
+            ErrorId: vdpIdWithError
+          })
+        );
+      }
+    }
+  }
+
+  private _isEqualsOriginalDataPoints(array: VirtualDataPoint[]): boolean {
+    const oldDp = this._store.snapshot.originalDataPoints;
+    return (
+      Array.isArray(array) &&
+      Array.isArray(oldDp) &&
+      array.length === oldDp.length &&
+      array.every((element, index) => element.id === oldDp[index].id)
+    );
   }
 
   private _parseDataPoint(obj: api.VirtualDataPointType) {

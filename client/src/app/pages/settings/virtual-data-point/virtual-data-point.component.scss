@@ -1,3 +1,14 @@
+:host ::ng-deep {
+  .datatable-row-wrapper {
+    cursor: move;
+  }
+
+  .cdk-drag-placeholder {
+    background: rgba(0, 0, 0, 0.05);
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
 .doc-btn {
   font-size: 11px;
   height: 12px;

@@ -4,6 +4,28 @@ title: Changelog
 
 # Changelog
 
+## [3.0.7]
+
+## Fixed
+
+- [DIGMDCLGHT-325](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-325) Fixes responsiveness of the UI when window size is changed
+- [DIGMDCLGHT-330](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-330) Fixes the hostname validity check in Proxy field
+- [DIGMDCLGHT-336](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-336) Fixes Variable3 data type in OPCUA
+- [DIGMDCLGHT-337](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-337) Fixes /netservice endpoint
+- [DIGMDCLGHT-338](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-338) Fixes CELOS Xchange interface data points and display of desired services
+- [DIGMDCLGHT-339](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-339) Fixes display of whether NTP service is reachable at first page load
+- [DIGMDCLGHT-340](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-340) Fixes cases where removing a mapping does not stop editing application interface values
+- [DIGMDCLGHT-358](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-358) Fixes wrong order after sorting data point tables in edit mode
+
+### Changed
+
+- [DIGMDCLGHT-344](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-344) Updates /bulk endpoints in API
+
+## Added
+
+- [DIGMDCLGHT-335](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-335) Redirects to quick start page when terms and conditions are not accepted
+- [DIGMDCLGHT-341](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-341) Adds drag&drop feature for virtual data points
+
 ## [3.0.6]
 
 ## Fixed

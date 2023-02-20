@@ -33,6 +33,7 @@ const mockConfig: IDataSourceParams = {
   config: {
     protocol: DataSourceProtocols.ENERGY,
     dataPoints: [],
+    type: 'PhoenixEMpro',
     enabled: true
   },
   termsAndConditionsAccepted: true

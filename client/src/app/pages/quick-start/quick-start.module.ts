@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
 import { QuickStartComponent } from './quick-start.component';
-import { SharedModule } from '../../shared/shared.module';
-import { AuthGuard } from "../../shared/guards/auth.guard";
+import { SharedModule } from 'app/shared/shared.module';
+import { AuthGuard } from 'app/shared/guards';
 
 const routes: Routes = [
   {
     path: 'quick-start',
     component: QuickStartComponent,
     data: { noLayout: true },
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard]
   }
 ];
 
@@ -19,11 +19,7 @@ const COMPONENTS = [QuickStartComponent];
 
 @NgModule({
   declarations: [...COMPONENTS],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    SharedModule,
-  ],
-  exports: [...COMPONENTS],
+  imports: [CommonModule, RouterModule.forChild(routes), SharedModule],
+  exports: [...COMPONENTS]
 })
-export class QuickStartModule { }
+export class QuickStartModule {}

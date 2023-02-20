@@ -210,38 +210,6 @@
         }
       }
     },
-    "/datasources/{datasourceProtocol}/dataPoints/bulk": {
-      "parameters": [
-        {
-          "name": "datasourceProtocol",
-          "in": "path",
-          "description": "id of the datasource",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "post": {
-        "tags": ["datasource"],
-        "summary": "change bulk datasource datapoints",
-        "description": "",
-        "operationId": "dataSourcesPostDatapointBulk",
-        "parameters": [
-          {
-            "name": "changeObject",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/changeBulk"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully changed datasource"
-          }
-        }
-      }
-    },
     "/datasources/{datasourceProtocol}/status": {
       "parameters": [
         {
@@ -375,6 +343,35 @@
                 }
               }
             }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["datasource"],
+        "summary": "change bulk datasource datapoints",
+        "description": "",
+        "operationId": "dataSourcesPatchAllDatapoints",
+        "parameters": [
+          {
+            "name": "newDatapointArray",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/sourcedatapoint"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully changed datasource data points"
           }
         }
       }
@@ -556,38 +553,6 @@
         }
       }
     },
-    "/datasinks/{datasinkProtocol}/dataPoints/bulk": {
-      "parameters": [
-        {
-          "name": "datasinkProtocol",
-          "in": "path",
-          "description": "id of the datasink",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "post": {
-        "tags": ["datasinks"],
-        "summary": "change bulk datasink datapoints",
-        "description": "",
-        "operationId": "dataSinksPostDatapointBulk",
-        "parameters": [
-          {
-            "name": "changeObject",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/changeBulk"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully changed datasink"
-          }
-        }
-      }
-    },
     "/datasinks/{datasinkProtocol}/status": {
       "parameters": [
         {
@@ -667,6 +632,35 @@
                 }
               }
             }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["datasinks"],
+        "summary": "change all datasink datapoints",
+        "description": "",
+        "operationId": "dataSinksPatchDatapoint",
+        "parameters": [
+          {
+            "name": "newDatapointArray",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully changed datasink data points"
           }
         }
       }
@@ -815,7 +809,7 @@
             }
           }
         ],
-        "operationId": "vdpsPost",
+        "operationId": "vdpPost",
         "responses": {
           "200": {
             "description": "Successfully create a virtual datapoint resource",
@@ -841,21 +835,29 @@
             }
           }
         }
-      }
-    },
-    "/vdps/bulk": {
-      "post": {
+      },
+      "patch": {
         "tags": ["virtual datapoints"],
-        "summary": "change bulk vdps",
+        "summary": "replace all VDPs",
         "description": "",
-        "operationId": "vdpsPostBulk",
+        "operationId": "vdpsPatch",
         "parameters": [
           {
-            "name": "changeObject",
+            "name": "vdpArray",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/changeBulk"
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/virtualDataPointType"
+                  },
+                  {
+                    "$ref": "#/definitions/uuid"
+                  }
+                ]
+              }
             }
           }
         ],
@@ -1073,21 +1075,29 @@
             }
           }
         }
-      }
-    },
-    "/mappings/bulk": {
-      "post": {
+      },
+      "patch": {
         "tags": ["mappings"],
         "summary": "change bulk mappings",
         "description": "",
-        "operationId": "mapPostBulk",
+        "operationId": "patchMappings",
         "parameters": [
           {
-            "name": "changeObject",
+            "name": "newMappingsArray",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/changeBulk"
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/map"
+                  },
+                  {
+                    "$ref": "#/definitions/uuid"
+                  }
+                ]
+              }
             }
           }
         ],
@@ -1879,7 +1889,7 @@
     },
     "sourcedatapoint": {
       "type": "object",
-      "required": ["name", "address", "readFrequency", "type"],
+      "required": ["name", "address", "type"],
       "properties": {
         "name": {
           "type": "string"
@@ -2436,40 +2446,6 @@
             ]
           }
         }
-      }
-    },
-    "changeBulk": {
-      "type": "object",
-      "properties": {
-        "created": {
-          "type": "object"
-        },
-        "updated": {
-          "type": "object"
-        },
-        "deleted": {
-          "type": "array",
-          "items": {
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ]
-          }
-        }
-      },
-      "example": {
-        "created": {
-          "entityId": {
-            "entityProp": "entityValue"
-          }
-        },
-        "updated": {
-          "entityId": {
-            "entityProp": "entityValue"
-          }
-        },
-        "deleted": ["entityId"]
       }
     },
     "messengerServerConfiguration": {

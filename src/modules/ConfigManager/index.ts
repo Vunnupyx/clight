@@ -28,7 +28,8 @@ import {
   IAuthUser,
   IAuthUsersConfig,
   IDefaultTemplate,
-  IMessengerServerConfig
+  IMessengerServerConfig,
+  IVirtualDataPointConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -133,7 +134,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public set config(config: IConfig) {
-    this._config = config;
+    const vdpCheckedConfig = this.getConfigWithCleanedVdps(config);
+    this._config = this.getConfigWithCleanedMappings(vdpCheckedConfig);
     this.saveConfigToFile();
   }
 
@@ -477,30 +479,88 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * Filters mapping array depends on enabled dataSources & dataSinks.
+   * Checks vdps and removes vdps that do not have sources anymore.
+   * Returns updated config and does not mutate this.config directly!
+   *
+   * @param configToCheck
+   * @returns updated config
    */
-  public getFilteredMapping() {
-    const dataSourceDataPoints: string[] = [];
-    this.config.dataSources.forEach((dataSource) =>
-      dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp.id))
+  public getConfigWithCleanedVdps(configToCheck = this.config): IConfig {
+    let totalChangeCount = 0;
+    //Makes a copy of given config
+    let updatedConfig = JSON.parse(JSON.stringify(configToCheck)) as IConfig;
+
+    const dataSourceDataPointIds: string[] = [];
+    configToCheck.dataSources.forEach((dataSource) =>
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPointIds.push(dp.id))
     );
 
-    const dataSinkDataPoints: string[] = [];
-    this.config.dataSinks.forEach((dataSink) =>
-      dataSink.dataPoints.forEach((dp) => dataSinkDataPoints.push(dp.id))
+    const vdpsIds: string[] =
+      configToCheck.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
+
+    updatedConfig.virtualDataPoints = configToCheck.virtualDataPoints?.filter(
+      (vdp) => {
+        let hasMissingSource = false;
+        vdp.sources.forEach((vdpSource) => {
+          const sourceExists =
+            dataSourceDataPointIds.includes(vdpSource) ||
+            vdpsIds.includes(vdpSource);
+
+          if (!sourceExists) {
+            hasMissingSource = true;
+          }
+        });
+        if (hasMissingSource) {
+          totalChangeCount++;
+          return false;
+        }
+        return true;
+      }
     );
 
-    const vdps: string[] = this.config.virtualDataPoints.map((vdp) => vdp.id);
+    if (totalChangeCount > 0) {
+      //If there are any changes, potentially another VDP depending on this VDP might be affected, so checking again
+      return this.getConfigWithCleanedVdps(updatedConfig);
+    } else {
+      return updatedConfig;
+    }
+  }
 
-    return this.config.mapping.filter((m) => {
-      // Remove mappings if the source or target data point doesn't exist.
-      // TODO: That shouldn't happen at all. Modify "delete" handlers of sinks and sources to remove mappings if a removed data point was mapped.
+  /**
+   * Checks mappings and removes mappings that do not have sources or targets anymore.
+   * Returns updated config and does not mutate this.config directly!
+   *
+   * @param configToCheck
+   * @returns updated config
+   */
+  public getConfigWithCleanedMappings(configToCheck = this.config): IConfig {
+    //Makes a copy of given config
+    let updatedConfig = JSON.parse(JSON.stringify(configToCheck)) as IConfig;
+
+    const dataSourceDataPointIds: string[] = [];
+    configToCheck.dataSources.forEach((dataSource) =>
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPointIds.push(dp.id))
+    );
+
+    const dataSinkDataPointIds: string[] = [];
+    configToCheck.dataSinks.forEach((dataSink) =>
+      dataSink.dataPoints.forEach((dp) => dataSinkDataPointIds.push(dp.id))
+    );
+    const vdpsIds: string[] =
+      configToCheck.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
+
+    updatedConfig.mapping = configToCheck.mapping?.filter((mapping) => {
       const sourceExists =
-        dataSourceDataPoints.includes(m.source) || vdps.includes(m.source);
-      const targetExists = dataSinkDataPoints.includes(m.target);
-
-      return sourceExists && targetExists;
+        dataSourceDataPointIds.includes(mapping.source) ||
+        vdpsIds.includes(mapping.source);
+      const targetExists = dataSinkDataPointIds.includes(mapping.target);
+      if (!sourceExists || !targetExists) {
+        return false;
+      }
+      return true;
     });
+
+    return updatedConfig;
   }
 
   /**
@@ -671,84 +731,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * bulk config dataSource changes.
-   */
-  public async bulkChangeDataSourceDataPoints(
-    protocol: DataSourceProtocols,
-    changes: any
-  ): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    const dataSource = this._config.dataSources.find(
-      (ds) => ds.protocol === protocol
-    );
-
-    if (created) {
-      dataSource.dataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      dataSource.dataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      dataSource.dataPoints = dataSource.dataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
-   * bulk config dataSink changes.
-   */
-  public async bulkChangeDataSinkDataPoints(
-    protocol: DataSinkProtocols,
-    changes: any
-  ): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    const dataSink = this._config.dataSinks.find(
-      (ds) => ds.protocol === protocol
-    );
-
-    if (created) {
-      dataSink.dataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      dataSink.dataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      dataSink.dataPoints = dataSink.dataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
    * Update messenger config
    */
   public async updateMessengerConfig(
@@ -785,89 +767,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     config.messenger = newMessengerConfig;
     await this.saveConfigToFile();
     await this.configChangeCompleted();
-  }
-
-  /**
-   * bulk config VDP changes.
-   */
-  public async bulkChangeVirtualDataPoints(changes: any): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    if (created) {
-      const entries = Object.values<any>(created).map((item) => {
-        let newResetSchedule = [];
-        if (
-          item.operationType === 'counter' &&
-          item.resetSchedules?.length > 0
-        ) {
-          for (const entry of item.resetSchedules) {
-            newResetSchedule.push({
-              ...entry,
-              created: Date.now(),
-              lastReset: null
-            });
-          }
-        }
-
-        return {
-          ...{
-            ...item,
-            resetSchedules: newResetSchedule
-          },
-          id: uuidv4()
-        };
-      });
-
-      this._config.virtualDataPoints.push(...entries);
-    }
-
-    if (updated) {
-      this._config.virtualDataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      this._config.virtualDataPoints = this._config.virtualDataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
-   * bulk config mapping changes.
-   */
-  public async bulkChangeMapings(changes: any): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    if (created) {
-      this._config.mapping.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      this._config.mapping.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      this._config.mapping = this._config.mapping.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
   }
 
   /**
@@ -933,7 +832,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         throw new Error();
       }
     }
-    this.saveConfigToFile();
+    /**
+     * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+     * This setter already includes this.saveConfigToFile();
+     */
+    this.config = this.config;
   }
 
   /**

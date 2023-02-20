@@ -25,12 +25,30 @@ steps:
     inputs:
       script: |
         git describe --tags
+  - task: AzureCLI@2
+    displayName: Build web server
+    inputs:
+      azureSubscription: dmswsg-mdclight-dev
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        # Gets the version of the last change that is affecting the image that is build here
+        versionOfLastChange=$(scripts/build/lastWebserverChange.sh)
+        echo "Current web server version ${versionOfLastChange}" 
+
+        echo "Checking for current docker image" 
+        exists=$(scripts/build/checkIfImageExists.sh mdc-web-server ${versionOfLastChange})
+
+        # Builds docker image if it not exists in the version that changed something the last time
+        if [ $exists == "false" ]; then
+          echo "Building docker image ${DOCKER_REGISTRY}/mdc-web-server:${versionOfLastChange}"
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg MDC_LIGHT_WEBSERVER_VERSION=${versionOfLastChange} -t ${DOCKER_REGISTRY}/mdc-web-server:${versionOfLastChange} -f docker/mdcwebserver_arm64.Dockerfile . --push --progress plain
+        fi
   - task: CmdLine@2
-    displayName: BuildWebserver
+    displayName: Print current versions
     inputs:
       script: |
-        version=$(git describe --tags)
-        docker run --privileged --rm tonistiigi/binfmt --install arm64
-        docker run --privileged --rm tonistiigi/binfmt
-        docker buildx create --use
-        scripts/build/dockerBuildWebserver.sh $version
+        echo "${DOCKER_REGISTRY}/mdc-web-server:$(scripts/build/lastWebserverChange.sh)"

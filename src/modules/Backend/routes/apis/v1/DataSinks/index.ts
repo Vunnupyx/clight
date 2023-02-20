@@ -263,7 +263,7 @@ function getAllDatapointsHandler(request: Request, response: Response) {
     dataPoints: sinkConfig.dataPoints.map((dp) => ({
       ...dp,
       enabled: dpSignalGroupArray[dp.address]?.find(
-        (service) => desiredServices.services?.[service]?.enabled
+        (service) => desiredServices?.services?.[service]?.enabled
       )
         ? true
         : false

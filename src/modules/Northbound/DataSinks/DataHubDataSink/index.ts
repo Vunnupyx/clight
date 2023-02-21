@@ -201,6 +201,6 @@ export class DataHubDataSink extends DataSink {
    */
   public getDesiredPropertiesServices(): IDesiredProps {
     if (!this.#datahubAdapter) return { services: {} };
-    return this.#datahubAdapter.getDesiredProps();
+    return this.#datahubAdapter.getDesiredProps() ?? { services: {} };
   }
 }

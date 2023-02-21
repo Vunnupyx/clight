@@ -16,6 +16,9 @@ title: Changelog
 - [DIGMDCLGHT-339](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-339) Fixes display of whether NTP service is reachable at first page load
 - [DIGMDCLGHT-340](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-340) Fixes cases where removing a mapping does not stop editing application interface values
 - [DIGMDCLGHT-358](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-358) Fixes wrong order after sorting data point tables in edit mode
+- [DIGMDCLGHT-366](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-366) Fixes reconnect mechanism after unexpected NC disconnection
+- [DIGSRVWRLD-89](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-89) Fixes spelling mistake in application interface
+- [DIGSRVWRLD-90](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-90) Fixes order in execution state
 
 ### Changed
 

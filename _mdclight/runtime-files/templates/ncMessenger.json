@@ -426,7 +426,7 @@
           "initialValue": "ARMED",
           "type": "event",
           "map": {
-            "0": "TRIGGERT",
+            "0": "TRIGGERED",
             "1": "ARMED"
           },
           "id": "0e739177-8709-45c4-83d0-82197b345bba",

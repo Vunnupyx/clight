@@ -7,7 +7,7 @@ export default [
     initialValue: 'ARMED',
     type: 'event',
     map: {
-      '0': 'TRIGGERT',
+      '0': 'TRIGGERED',
       '1': 'ARMED'
     },
     mandatory: true

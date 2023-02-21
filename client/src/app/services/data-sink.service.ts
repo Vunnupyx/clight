@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { from, interval, Observable } from 'rxjs';
 
 import {
-  DataPoint,
   DataSink,
   DataSinkConnection,
   DataSinkProtocol,
@@ -14,7 +13,6 @@ import {
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { clone, errorHandler, mapOrder } from 'app/shared/utils';
-import * as api from 'app/api/models';
 import PREDEFINED_MTCONNECT_DATA_POINTS from './constants/mtconnectDataItems';
 import PREDEFINED_OPCUA_DATA_POINTS from './constants/opcuaDataItems';
 
@@ -137,13 +135,11 @@ export class DataSinkService {
 
     try {
       const { dataSinks } = await this.httpService.get<{
-        dataSinks: api.DataSinkType[];
+        dataSinks: DataSink[];
       }>(`/datasinks`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSinks = this._orderByProtocol(
-          dataSinks.map((x) => this._parseDataSink(x))
-        );
+        state.dataSinks = this._orderByProtocol(dataSinks);
         state.originalDataSinks = clone(state.dataSinks);
       });
     } catch (err) {
@@ -248,10 +244,6 @@ export class DataSinkService {
 
   private _orderByProtocol(objs: DataSink[]) {
     return mapOrder<DataSink>(objs, DATA_SINKS_ORDER, 'protocol');
-  }
-
-  private _parseDataSink(obj: api.DataSinkType) {
-    return obj as any as DataSink;
   }
 
   private _emptyState() {

@@ -14,7 +14,6 @@ import {
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { clone, errorHandler, mapOrder } from 'app/shared/utils';
-import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
 
 export class DataSourcesState {
@@ -68,14 +67,12 @@ export class DataSourceService {
     }));
 
     try {
-      const { dataSources } = await this.httpService.get<api.DataSourceList>(
-        `/datasources`
-      );
+      const { dataSources } = await this.httpService.get<{
+        dataSources: DataSource[];
+      }>(`/datasources`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSources = this._orderByProtocol(
-          dataSources.map((x) => this._parseDataSource(x))
-        );
+        state.dataSources = this._orderByProtocol(dataSources);
         state.originalDataSources = clone(state.dataSources);
       });
     } catch (err) {
@@ -182,10 +179,6 @@ export class DataSourceService {
 
   private _orderByProtocol(objs: DataSource[]): DataSource[] {
     return mapOrder<DataSource>(objs, DATA_SOURCES_ORDER, 'protocol');
-  }
-
-  private _parseDataSource(obj: api.DataSourceType) {
-    return obj as DataSource;
   }
 
   private _emptyState() {

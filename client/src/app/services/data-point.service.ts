@@ -1,16 +1,10 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
-import { DataPoint, DataSinkProtocol } from 'app/models';
+import { DataPoint, DataSink, DataSinkProtocol } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import {
-  array2map,
-  clone,
-  errorHandler,
-  ObjectMap
-} from 'app/shared/utils';
-import * as api from 'app/api/models';
+import { array2map, clone, errorHandler, ObjectMap } from 'app/shared/utils';
 import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
 import { BaseChangesService } from './base-changes.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -65,11 +59,11 @@ export class DataPointService
     }));
 
     try {
-      const { dataPoints } = await this.httpService.get<api.DataPointList>(
-        `/datasinks/${protocol}/dataPoints`
-      );
+      const { dataPoints } = await this.httpService.get<{
+        dataPoints: DataPoint[];
+      }>(`/datasinks/${protocol}/dataPoints`);
       this._store.patchState((state) => {
-        state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
+        state.dataPoints = dataPoints;
         state.status = Status.Ready;
         state.originalDataPoints = clone(state.dataPoints);
         state.dataPointsSinkMap = array2map(
@@ -95,7 +89,7 @@ export class DataPointService
 
     try {
       const { dataSinks } = await this.httpService.get<{
-        dataSinks: api.DataSinkType[];
+        dataSinks: DataSink[];
       }>(`/datasinks`);
 
       let dataPoints: DataPoint[] = [];
@@ -114,7 +108,7 @@ export class DataPointService
         };
 
         dataPoints = dataPoints.concat(
-          ...dataSink.dataPoints.map(x => this._parseDataPoint(x, dataSink))
+          ...dataSink.dataPoints.map((x) => this._parseDataPoint(x, dataSink))
         );
       }
 
@@ -239,8 +233,7 @@ export class DataPointService
     }
   }
 
-  private _parseDataPoint(obj: api.DataPointType, parentSink?: api.DataSinkType) {
-    const dataPoint = obj as any as DataPoint;
+  private _parseDataPoint(dataPoint: DataPoint, parentSink: DataSink) {
     if (parentSink) {
       dataPoint.enabled = Boolean(parentSink.enabled);
     }

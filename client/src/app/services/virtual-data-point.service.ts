@@ -7,7 +7,6 @@ import { from, interval, Observable } from 'rxjs';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { DataPointLiveData, VirtualDataPoint } from '../models';
 import { HttpService } from '../shared';
-import * as api from '../api/models';
 import { array2map, clone, errorHandler, ObjectMap } from '../shared/utils';
 import { BaseChangesService } from './base-changes.service';
 import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
@@ -102,22 +101,29 @@ export class VirtualDataPointService
 
   async resetCounter(vdp: VirtualDataPoint): Promise<boolean> {
     const payload = {
-        ...vdp,
-        reset: true
-    }
-    return this.httpService.patch(`/vdps/${vdp.id}`, payload)
+      ...vdp,
+      reset: true
+    };
+    return this.httpService
+      .patch(`/vdps/${vdp.id}`, payload)
       .then((response) => {
         this.toastr.success(
-          this.translate.instant('settings-virtual-data-point.CounterResetSuccess', {NAME: response?.changed?.name})
+          this.translate.instant(
+            'settings-virtual-data-point.CounterResetSuccess',
+            { NAME: response?.changed?.name }
+          )
         );
         return true;
-      }).catch((error) => {
+      })
+      .catch((error) => {
         this.toastr.error(
-          this.translate.instant('settings-virtual-data-point.CounterResetError', {NAME: payload?.name})
+          this.translate.instant(
+            'settings-virtual-data-point.CounterResetError',
+            { NAME: payload?.name }
+          )
         );
         return false;
-      }
-    );
+      });
   }
 
   async getDataPoints() {
@@ -211,18 +217,14 @@ export class VirtualDataPointService
 
   private async _getDataPoints() {
     const { vdps } = await this.httpService.get<{
-      vdps: api.VirtualDataPointType[];
+      vdps: VirtualDataPoint[];
     }>('/vdps');
 
     this._store.patchState((state) => {
-      state.dataPoints = vdps.map((x) => this._parseDataPoint(x));
+      state.dataPoints = vdps;
       state.originalDataPoints = clone(state.dataPoints);
       state.status = Status.Ready;
     });
-  }
-
-  private _parseDataPoint(obj: api.VirtualDataPointType) {
-    return obj as VirtualDataPoint;
   }
 
   private _emptyState() {

@@ -223,7 +223,7 @@ export class S7DataSource extends DataSource {
    * @param  {any} value
    * @returns boolean
    */
-  private checkError(s7error: boolean, value: any): boolean {
+  private checkS7Error(s7error: boolean, value: any): boolean {
     if (typeof value === 'undefined') return true;
     if (!s7error) return false;
     const valueToCheck = value.toString();
@@ -313,8 +313,8 @@ export class S7DataSource extends DataSource {
         this.readNckData(nckDataPointsToRead)
       ]);
 
-      let allDpError =
-        [...nckDataPointsToRead, ...this.getPlcAddresses()].length > 0;
+      let allS7DpError = nckDataPointsToRead?.length > 0;
+      let allNCKDpError = this.getPlcAddresses()?.length > 0;
 
       const measurements: IMeasurement[] = [];
       for (const dp of this.config.dataPoints) {
@@ -333,12 +333,16 @@ export class S7DataSource extends DataSource {
           error = null;
         if (dp.type === 's7') {
           value = plcResults.datapoints[dp.address];
-          error = this.checkError(plcResults.error, value);
+          error = this.checkS7Error(plcResults.error, value);
+
+          if (!error) allS7DpError = false;
         } else if (dp.type === 'nck') {
           const index = nckDataPointsToRead.indexOf(dp.address);
           const result = nckResults[index];
           value = result.value;
           error = result.error;
+
+          if (!error) allNCKDpError = false;
         }
 
         const measurement: IMeasurement = {
@@ -348,7 +352,6 @@ export class S7DataSource extends DataSource {
         };
 
         if (!error) {
-          allDpError = false;
           measurements.push(measurement);
           this.onDataPointLifecycle({
             id: dp.id,
@@ -368,10 +371,16 @@ export class S7DataSource extends DataSource {
         }
       }
 
-      if (allDpError) {
-        winston.warn(
-          `Failed to read all datapoints for datasource. Disconnecting datasource.`
-        );
+      if (allNCKDpError || allS7DpError) {
+        if (allNCKDpError)
+          winston.warn(
+            `Failed to read all nck datapoints. Disconnecting datasource.`
+          );
+        if (allS7DpError)
+          winston.warn(
+            `Failed to read all s7 datapoints. Disconnecting datasource.`
+          );
+
         await this.disconnect();
         this.init();
       }

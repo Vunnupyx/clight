@@ -25,7 +25,7 @@ import {
   PromptDialogComponent,
   PromptDialogModel
 } from 'app/shared/components/prompt-dialog/prompt-dialog.component';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 import {
   SetFormulaModalComponent,
   SetFormulaModalData
@@ -34,6 +34,8 @@ import {
   SetSchedulesModalComponent,
   SetSchedulesModalData
 } from './set-schedules-modal/set-schedules-modal.component';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -167,7 +169,8 @@ export class VirtualDataPointComponent implements OnInit {
     private virtualDataPointService: VirtualDataPointService,
     private sourceDataPointService: SourceDataPointService,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit() {
@@ -194,10 +197,6 @@ export class VirtualDataPointComponent implements OnInit {
     this.virtualDataPointService.getDataPoints();
     this.virtualDataPointService.getLiveDataForDataPoints();
     this.sourceDataPointService.getSourceDataPointsAll();
-  }
-
-  ngAfterViewInit() {
-    this.ngxDatatable.columnMode = ColumnMode.force;
   }
 
   onDiscard() {
@@ -540,5 +539,46 @@ export class VirtualDataPointComponent implements OnInit {
 
   private onLiveData(x: ObjectMap<DataPointLiveData>) {
     this.liveData = x;
+  }
+
+  public isVdpOrderValid(vdpListToCheck: VirtualDataPoint[]): boolean {
+    if (!Array.isArray(vdpListToCheck) || vdpListToCheck?.length === 0) {
+      return false;
+    }
+
+    for (let [index, vdp] of vdpListToCheck.entries()) {
+      const otherVdpSources = vdp.sources.filter((sourceVdpId) =>
+        vdpListToCheck.find((v) => v.id === sourceVdpId)
+      );
+      if (otherVdpSources.length > 0) {
+        for (let sourceVdpId of otherVdpSources) {
+          const indexOfSourceVdp = vdpListToCheck.findIndex(
+            (x) => x.id === sourceVdpId
+          );
+          if (indexOfSourceVdp >= index) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  onReorder(event) {
+    let vdpList = clone(this.datapointRows);
+    moveItemInArray(vdpList, event.previousIndex, event.currentIndex);
+    if (!this.isVdpOrderValid(vdpList)) {
+      this.toastr.warning(
+        this.translate.instant('settings-virtual-data-point.WarningWrongVdp')
+      );
+      while (!this.isVdpOrderValid(vdpList)) {
+        event.previousIndex > event.currentIndex
+          ? event.currentIndex++
+          : event.currentIndex--;
+        vdpList = clone(this.datapointRows);
+        moveItemInArray(vdpList, event.previousIndex, event.currentIndex);
+      }
+    }
+    this.virtualDataPointService.updateOrderDataPoints(vdpList);
   }
 }

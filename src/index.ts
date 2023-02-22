@@ -5,12 +5,20 @@ import { System } from './modules/System';
 
 Logger.init();
 
+/**
+ * Reads CELOS version asynchronously to avoid blocking runtime
+ */
+async function readCosVersion() {
+  const osVersion = await new System().readOsVersion();
+  winston.error(`COS version: ${osVersion}`);
+}
+
 async function main() {
   winston.error('MDC Flex starting...');
   winston.error(
     `MDC Flex runtime version: ${process.env.MDC_LIGHT_RUNTIME_VERSION}`
   );
-  winston.error(`COS version: ${await new System().readOsVersion()}`);
+  readCosVersion();
 
   const bootstrapManager = new BootstrapManager();
   bootstrapManager.start();

@@ -87,16 +87,20 @@
         "10diIoShieldMessenger": "Input board to DMG MORI Messenger",
         "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
         "empty": "Empty Template",
+        "energyAll": "EEM Kit",
         "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       },
       "description": {
         "10diIoShieldMessenger": "10 digital input board to DMG MORI Messenger",
         "ai2ioShieldMessenger": "Current sensors + 5 digital input board to DMG MORI Messenger",
         "empty": "Template does not include any data source, virtual data points, mappings and application interface",
+        "energyAll": "Includes all data points readable from EEM Kit",
         "gm": "GM 16-6 or GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger, OPC UA and CELOS Xchange",
+        "fanucAll": "Includes data points for Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
       }
     }
@@ -166,8 +170,10 @@
     "DataPoints": "データポイント",
     "SelectAVariable": "変数を選択",
     "ControllerType": "Type",
+    "CurrentTariff": "Current Tariff",
     "Name": "名前",
     "Type": "型",
+    "Description": "Description",
     "Address": "アドレス",
     "LiveData": "ライブデータ",
     "Actions": "動作",
@@ -176,7 +182,8 @@
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再度試してください。",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "デジタル入力"
+      "ioshield": "デジタル入力",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
@@ -190,7 +197,17 @@
     "TestConnection": "テスト接続",
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
-    "SelectVariable": "Select Variable"
+    "SelectVariable": "Select Variable",
+    "ActivePower": "Active Power",
+    "TotalEnergy": "Total Energy",
+    "TariffStatus": {
+      "0": "No tariff counter active",
+      "1": "Running",
+      "2": "Idle",
+      "3": "Waiting",
+      "4": "Alarm",
+      "Unknown": "Unknown"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "仮想データポイント",
@@ -235,12 +252,16 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Set enumeration",
+    "AddEnumeration": "Add enumeration",
     "DefaultValue": "Default Value",
     "SelectInput": "Select Input",
     "CurrentLiveValue": "Current Live Value",
     "ReturnValueIfTrue": "Return Value",
     "SetFormula": "Set formula",
-    "Formula": "Formula"
+    "Formula": "Formula",
+    "UnexpectedError": "Changes have not been applied. Please, try again!",
+    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
+    "WarningWrongVdp": "Update failed. VDP with wrong order"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -299,6 +320,7 @@
     "Close": "Close",
     "Event": "イベント",
     "Condition": "条件",
+    "Sample": "Sample",
     "SelectAVariable": "変数を選択",
     "CreateDataPoint": "データアイテムを作成",
     "SelectVariable": "選択変数",
@@ -306,10 +328,6 @@
     "From": "から",
     "To": "へ",
     "AddMapping": "マッピングを追加",
-    "ProvisioningHost": "プロビジョニングホスト",
-    "ScopeId": "スコープID",
-    "RegId": "Reg Id",
-    "SymKey": "Symキー",
     "AlreadyExistDataPoint": "このアイテムは既に登録されています。",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
@@ -323,7 +341,7 @@
     "OPCUAAuthenticationLevel": "OPC UA認証レベル",
     "OPCUAServerUsername": "OPC UAサーバユーザ名",
     "OPCUAServerPassword": "OPC UAサーバパスワード",
-    "NoData": "No data",
+    "NoActiveService": "No active service",
     "LoadError": "データシンクの読み込みに失敗しました。時間をおいて再試行してください。",
     "OpenMTConnectStream": "MTConnectストリームを開く",
     "BulkSuccess": "変更が適用されました。",
@@ -431,8 +449,12 @@
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time (UTC)",
     "ChooseTimeZone": "Choose Time Zone",
-    "nptUnreachable": "NTPサーバーに到達できない",
-    "nptUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。"
+    "ntpUnreachable": "NTPサーバーに到達できない",
+    "ntpUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。",
+    "UpdateNtpSuccess": "Updated NTP Server successfully",
+    "UpdateProxySuccess": "Updated proxy successfully",
+    "UpdateAdapterSuccess": "Updated network adapter successfully",
+    "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
   "system-information": {
     "SystemInformation": "システム情報",
@@ -441,18 +463,29 @@
     "YourSystemUpToDate": "Your system is up to date",
     "YourSystemUpdateSuccess": "Updated successfully",
     "YourSystemUpdateSuccessDescr": "Your system updated successfully. Reload the page to complete the update.",
-    "CheckUpdate": "Checking for updates",
-    "CheckUpdateDescr": "This will take a few minutes. Please don't reload the page.",
-    "InstallingUpdate": "Installing update",
-    "InstallingUpdateDescr": "This will take a few minutes. Please don't reload the page.",
+    "InstallingUpdateDescr": "This can take up to 30 minutes. Please don't reload the page.",
+    "UpdateStatus-INIT": "Starting to check for updates",
+    "UpdateStatus-GET_UPDATES": "Checking for available new versions",
+    "UpdateStatus-CHECK_INSTALLED_COS_VERSION": "Checking installed version",
+    "UpdateStatus-CHECK_COS_UPDATES": "Checking whether update is already ready to install",
+    "UpdateStatus-START_DOWNLOAD_COS_UPDATES": "Starting to download the update",
+    "UpdateStatus-VALIDATE_COS_DOWNLOAD": "Download is in progress",
+    "UpdateStatus-VALIDATE_COS_DOWNLOAD-RETRYING": "Download was interrupted. Retrying to download",
+    "UpdateStatus-APPLY_COS_UPDATES": "Installing the software update",
+    "UpdateStatus-WAITING_FOR_SYSTEM_RESTART": "Waiting for system to restart",
+    "UpdateStatus-APPLY_MODULE_UPDATES": "Installing module updates",
+    "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Waiting for modules to finish installing",
+    "UpdateStatus-NO_CONNECTION": "Update failed. Please check the network configuration of the device.",
+    "UpdateStatus-UNEXPECTED_ERROR": "Update failed due to an unexpected error. Please try again later.",
     "UpdateFailed": "Update Failed",
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
-    "UpdateFailedCheckNetworkConfig": "Update failed. Please check your network configuration.",
+    "UpdateFailed-CheckNetworkConfig": "Update failed. Please check your network configuration.",
     "UpdateInstallFailed": "Failed to install updates. Please contact support.",
     "MaterialThemeVersion": "CELOS X material theme",
     "SoftwareComponent": "Software component",
     "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。",
     "FactoryReset": "Factory Reset",
+    "FactoryResetDescription": "Performing factory reset. It can take up to 5 minutes. Please do not reload the page.",
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",

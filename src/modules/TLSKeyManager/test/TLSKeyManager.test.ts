@@ -4,6 +4,7 @@ import { TLSKeyManager } from '..';
 
 jest.mock('child_process');
 jest.mock('fs');
+jest.mock('path');
 
 function log(m) {
   //console.log(m);
@@ -32,6 +33,20 @@ describe('TLS Key Manager', () => {
 
   test('returns when the key already exists', async () => {
     jest.spyOn(fs, 'existsSync').mockReturnValueOnce(true);
+
+    jest
+      .spyOn(child_process, 'spawn')
+      .mockImplementationOnce((command, callback) => ({
+        on: (type, cb) => (type === 'close' ? cb(0) : {}),
+        //@ts-ignore
+        stdout: {
+          on: jest.fn()
+        },
+        //@ts-ignore
+        stderr: {
+          on: jest.fn()
+        }
+      }));
 
     const response = await tlsKeyManager.generateKeys();
     expect(response).toBe(undefined);

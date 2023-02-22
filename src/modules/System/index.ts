@@ -1,7 +1,10 @@
-import { promises as fs, readFileSync, existsSync } from 'fs';
+import { promises as fs } from 'fs';
 import fetch from 'node-fetch';
 import { promisify } from 'util';
 import winston from 'winston';
+import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
+import { ICosSystemVersions } from '../ConfigurationAgentManager/interfaces';
+
 const child_process = require('child_process');
 const exec = promisify(child_process.exec);
 
@@ -67,32 +70,10 @@ export class System {
    */
   public async readOsVersion() {
     try {
-      const PROXY_HOST =
-        process.env.NODE_ENV === 'development'
-          ? 'http://localhost'
-          : 'http://172.17.0.1';
-      const PROXY_PORT = 1884;
-      const PATH_PREFIX = '/api/v1';
-
-      let response = await fetch(
-        `${PROXY_HOST}:${PROXY_PORT}${PATH_PREFIX}/system/versions`,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      if (response.ok) {
-        const versions = await response?.json();
-        const osVersion = versions?.find((v) => v.Name === 'COS')?.Version;
-        return osVersion || 'unknown';
-      } else {
-        winston.error('OS Version reading response is not OK');
-        winston.error(JSON.stringify(response));
-        return 'unknown';
-      }
+      const versions =
+        (await ConfigurationAgentManager.getSystemVersions()) as ICosSystemVersions;
+      const osVersion = versions?.find((v) => v.Name === 'COS')?.Version;
+      return osVersion || 'unknown';
     } catch (e) {
       winston.error('Error reading OS version!');
       winston.error(e.message);

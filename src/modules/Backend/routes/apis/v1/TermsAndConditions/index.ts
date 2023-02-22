@@ -38,7 +38,7 @@ async function termsAndConditionsPostHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  configManager.saveConfig({
+  await configManager.saveConfig({
     termsAndConditions: { accepted: request.body.accepted }
   });
 

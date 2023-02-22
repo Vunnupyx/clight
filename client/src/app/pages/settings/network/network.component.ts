@@ -1,22 +1,17 @@
-import * as moment from 'moment';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { NetworkService } from '../../../services/network.service';
-import { clone } from '../../../shared/utils';
-import {
-  NetworkConfig,
-  NetworkNtpReachable,
-  NetworkType
-} from '../../../models';
+import { NetworkService } from 'app/services';
+import { clone } from 'app/shared/utils';
+import { NetworkConfig, NetworkNtpReachable, NetworkType } from 'app/models';
 import {
   HOST_REGEX,
   IP_REGEX,
   NETMASK_REGEX,
   PORT_REGEX
-} from '../../../shared/utils/regex';
+} from 'app/shared/utils/regex';
 import { Status } from 'app/shared/state';
 
 @Component({
@@ -35,6 +30,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   portRegex = PORT_REGEX;
   ipRegex = IP_REGEX;
   netmaskRegex = NETMASK_REGEX;
+  ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
 
   get showLoading() {
     return (
@@ -96,10 +92,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.ntpReachable = x;
   }
 
-  getNtpReachableByAddress(address: string): boolean {
-    return this.ntpReachable.find(
+  getNtpReachableStatusByAddress(address: string): 'success' | 'error' | null {
+    const reachable = this.ntpReachable.find(
       (obj: NetworkNtpReachable) => obj.address === address
     )?.reachable;
+    if (
+      this.originalConfig.ntp.ntpEnabled === false ||
+      typeof reachable === 'undefined' ||
+      (this.mainForm.dirty && !this.mainForm.submitted)
+    ) {
+      return null;
+    }
+    return reachable ? 'success' : 'error';
   }
 
   onSelectTab(tab: string) {

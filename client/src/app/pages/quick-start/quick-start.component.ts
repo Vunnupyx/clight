@@ -1,21 +1,24 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
-import { DataSourceService, TemplateService } from '../../services';
-import { LocalStorageService } from '../../shared';
+import { TermsAndConditionsService, TemplateService } from 'app/services';
+import { LocalStorageService } from 'app/shared';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
-} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { DataSinkProtocol, DataSourceProtocol } from 'app/models';
 import { ITemplate } from 'app/models/template';
 import { array2map, ObjectMap } from 'app/shared/utils';
-import { distinctUntilChanged, filter, take } from 'rxjs/operators';
-import { TermsAndConditionsService } from 'app/services/terms-and-conditions.service';
+import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-quick-start',
@@ -104,7 +107,9 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     );
 
     this.templateService.getAvailableTemplates();
-    const accepted = await this.termsService.getTermsAndConditions(this.currentLang);
+    const accepted = await this.termsService.getTermsAndConditions(
+      this.currentLang
+    );
     this.termsAccepted = accepted;
     this.shouldOpenTerms = !accepted;
   }

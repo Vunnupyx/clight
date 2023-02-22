@@ -51,6 +51,8 @@ interface NCKObjectLevel {
  */
 export default class SinumerikNCKProtocolDriver {
   private timeout: number = 60000;
+  private RECONNECT_DELAY = 10000;
+  private lastReconnectAttemptTime = 0;
   private tcpClient: any;
 
   private connectionState = ConnectionState.NOT_CONNECTED;
@@ -128,14 +130,18 @@ export default class SinumerikNCKProtocolDriver {
     rack: number = 0,
     slot: number = 4
   ): Promise<void> {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::connect`;
+
     winston.info(
-      `Try to connect to nc using host: ${host}:${port} (rack: ${rack}, slot: ${slot})`
+      `${logPrefix} Try to connect to nc using host: ${host}:${port} (rack: ${rack}, slot: ${slot})`
     );
     try {
       this.tcpClient = new net.Socket();
       this.tcpClient.setTimeout(this.timeout);
       this.tcpClient.once('close', () => {
-        winston.info('NC: Unexpected close event on socket!');
+        winston.warn('NC: Unexpected close event on socket!');
+        this.connectionState = ConnectionState.NOT_CONNECTED;
+        this.reconnect(host, port, rack, slot);
       });
       this.connectionState = ConnectionState.NOT_CONNECTED;
       await this.connectTCP(host, port);
@@ -157,17 +163,40 @@ export default class SinumerikNCKProtocolDriver {
   }
 
   /**
+   * Reconnects to NCK with a time delay to avoid too many retries
+   */
+  private reconnect(host, port, rack, slot) {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::reconnect`;
+    if (Date.now() - this.lastReconnectAttemptTime > this.RECONNECT_DELAY) {
+      winston.info(
+        `${logPrefix} reconnecting to nc using host: ${host}:${port} (rack: ${rack}, slot: ${slot})`
+      );
+      this.lastReconnectAttemptTime = Date.now();
+      this.connect(host, port, rack, slot);
+    } else {
+      setTimeout(
+        () => this.reconnect(host, port, rack, slot),
+        this.RECONNECT_DELAY
+      );
+    }
+  }
+
+  /**
    * Establish a TCP connection to the communication partner
    * @param host ip address of the communication partner
    * @param port tcp port of the communication partner
    */
   private async connectTCP(host: string, port: number): Promise<void> {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::connectTCP`;
+
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         try {
           if (this.tcpClient) this.tcpClient.removeAllListeners('connect');
         } catch (e) {
-          winston.error(`Could not remove listeners from TCP client: ${e}`);
+          winston.error(
+            `${logPrefix} Could not remove listeners from TCP client: ${e}`
+          );
         }
         reject(
           new Error(
@@ -184,7 +213,7 @@ export default class SinumerikNCKProtocolDriver {
       });
       this.tcpClient.on('connect', () => {
         clearTimeout(timeout);
-        winston.debug('TCP connected successfully!');
+        winston.debug(`${logPrefix} TCP connected successfully!`);
         resolve();
         return;
       });
@@ -198,11 +227,16 @@ export default class SinumerikNCKProtocolDriver {
    * @param slot slot of the target module (For NCK access always 4)
    */
   private async connectISO(rack: number = 0, slot: number = 4): Promise<void> {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::connectISO`;
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         try {
           this.tcpClient.removeAllListeners('data');
-        } catch {}
+        } catch (e) {
+          winston.error(
+            `${logPrefix} Could not remove listeners from ISO client: ${e}`
+          );
+        }
 
         reject(
           new Error(
@@ -225,7 +259,7 @@ export default class SinumerikNCKProtocolDriver {
           clearTimeout(timeout);
           this.tcpClient.removeAllListeners('data');
           if (this.checkConnectISOResponseOk(data)) {
-            winston.debug('ISO connected successfully!');
+            winston.debug(`${logPrefix} ISO connected successfully!`);
             resolve();
             return;
           } else {
@@ -243,6 +277,8 @@ export default class SinumerikNCKProtocolDriver {
    * the communication partner
    */
   private async negotiatePDU(): Promise<void> {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::negotiatePDU`;
+
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         this.tcpClient.removeAllListeners('data');
@@ -300,7 +336,7 @@ export default class SinumerikNCKProtocolDriver {
             }
 
             winston.debug(
-              `Received PDU Response - max PDU size: ${maxPDU}, max parallel connections: ${maxParallel}`
+              `${logPrefix} Received PDU Response - max PDU size: ${maxPDU}, max parallel connections: ${maxParallel}`
             );
             this.tcpClient.on(
               'data',
@@ -309,21 +345,21 @@ export default class SinumerikNCKProtocolDriver {
               }).bind(this)
             );
           } else {
-            winston.error('INVALID Telegram received');
+            winston.error(`${logPrefix} INVALID Telegram received`);
             winston.error(
-              `Byte 0 (header): ${data[0]} - should be 0x03, Byte 5 (header): ${data[5]} - should be 0x0F`
+              `${logPrefix} Byte 0 (header): ${data[0]} - should be 0x03, Byte 5 (header): ${data[5]} - should be 0x0F`
             );
             winston.error(
-              'INVALID PDU RESPONSE or CONNECTION REFUSED - DISCONNECTING'
+              `${logPrefix} INVALID PDU RESPONSE or CONNECTION REFUSED - DISCONNECTING`
             );
             winston.error(
-              `TPKT length from header is ${data.readInt16BE(
+              `${logPrefix} TPKT length from header is ${data.readInt16BE(
                 2
               )}, buffer length: ${data.length}, COTP length: ${data.readUInt8(
                 4
               )}, data[6]: ${data[6]}`
             );
-            winston.error(`Packet: ${data.toString('hex')}`);
+            winston.error(`${logPrefix} Packet: ${data.toString('hex')}`);
             reject();
           }
           resolve();
@@ -421,6 +457,8 @@ export default class SinumerikNCKProtocolDriver {
    * @returns the status of the ISO connection
    */
   private checkConnectISOResponseOk(data: Buffer): boolean {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::checkConnectISOResponseOk`;
+
     // Expected length is from packet sniffing - some applications may be different.
     if (
       data.readInt16BE(2) !== data.length ||
@@ -428,12 +466,14 @@ export default class SinumerikNCKProtocolDriver {
       data[5] !== 0xd0 ||
       data[4] !== data.length - 5
     ) {
-      winston.error(`Invalid response packet for ISO connect:`);
+      winston.error(`${logPrefix} Invalid response packet for ISO connect:`);
       winston.error(data);
       winston.error(
-        `TPKT Length From Header: ${data.readInt16BE(2)}, RCV buffer length: ${
-          data.length
-        }, COTP length: ${data.readUInt8(4)}, data[5]: ${data[5]}`
+        `${logPrefix} TPKT Length From Header: ${data.readInt16BE(
+          2
+        )}, RCV buffer length: ${data.length}, COTP length: ${data.readUInt8(
+          4
+        )}, data[5]: ${data[5]}`
       );
       return false;
     } else {
@@ -565,6 +605,8 @@ export default class SinumerikNCKProtocolDriver {
    * @param ncVariableBuffer The NC object to decode
    */
   private processS7ReadItem(ncVariableBuffer: NCItem) {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::processS7ReadItem`;
+
     switch (ncVariableBuffer.ncVar.dataType) {
       case NCVarDataType.DOUBLE:
         ncVariableBuffer.value = ncVariableBuffer.byteBuffer.readDoubleLE(0);
@@ -592,7 +634,7 @@ export default class SinumerikNCKProtocolDriver {
         break;
       default:
         winston.warn(
-          `Could not decode response data, unknown data type: ${ncVariableBuffer.ncVar.dataType}`
+          `${logPrefix} Could not decode response data, unknown data type: ${ncVariableBuffer.ncVar.dataType}`
         );
     }
   }
@@ -601,6 +643,8 @@ export default class SinumerikNCKProtocolDriver {
    * Disconnect from the NCK (TCP level disconnect)
    */
   public async disconnect(): Promise<void> {
+    const logPrefix = `${SinumerikNCKProtocolDriver.name}::disconnect`;
+
     return new Promise((resolve, reject) => {
       let shutdownTimeoutId;
 
@@ -611,10 +655,12 @@ export default class SinumerikNCKProtocolDriver {
       this.tcpClient.removeAllListeners('close');
       this.tcpClient.once('close', () => {
         if (this.tcpClient) {
-          winston.debug('NCK Driver: Successfully closed socket on disconnect');
+          winston.debug(
+            `${logPrefix} NCK Driver: Successfully closed socket on disconnect`
+          );
           this.tcpClient.destroy();
           winston.debug(
-            'NCK Driver: Successfully destroyed socket on disconnect'
+            `${logPrefix} NCK Driver: Successfully destroyed socket on disconnect`
           );
           delete this.tcpClient;
           clearTimeout(shutdownTimeoutId);
@@ -625,14 +671,14 @@ export default class SinumerikNCKProtocolDriver {
 
       this.tcpClient.end();
 
-      winston.debug('NCK Driver: Waiting for destroy of socket');
+      winston.debug(`${logPrefix} NCK Driver: Waiting for destroy of socket`);
       this.connectionState = ConnectionState.NOT_CONNECTED;
 
       shutdownTimeoutId = setTimeout(() => {
         if (this.tcpClient) {
           this.tcpClient.destroy();
           winston.debug(
-            'NCK Driver: Timeout while waiting for socket disconnect.'
+            `${logPrefix} NCK Driver: Timeout while waiting for socket disconnect.`
           );
           delete this.tcpClient;
         }

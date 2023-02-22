@@ -17,6 +17,7 @@ import { RestApiManager } from '../Backend/RESTAPIManager';
 import IoT2050HardwareEvents from '../IoT2050HardwareEvents';
 import { TLSKeyManager } from '../TLSKeyManager';
 import { LedStatusService } from '../LedStatusService';
+import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
 
 /**
  * Launches agent and handles module life cycles
@@ -103,13 +104,7 @@ export class BootstrapManager {
         try {
           await this.configManager.factoryResetConfiguration();
           await this.ledManager.turnOffLeds();
-          const confAgentAddress =
-            process.env.NODE_ENV === 'development'
-              ? 'http://localhost:1884'
-              : 'http://172.17.0.1:1884';
-          await fetch(`${confAgentAddress}/system/restart`, {
-            method: 'POST'
-          });
+          await ConfigurationAgentManager.systemRestart();
         } catch (e) {
           winston.error(`Device factory reset error: ${e?.message}`);
         }
@@ -132,7 +127,6 @@ export class BootstrapManager {
         payload: JSON.stringify(error)
       });
 
-      console.log(error);
       winston.error(`Error while launching. Exiting program. `);
       winston.error(JSON.stringify(error));
 

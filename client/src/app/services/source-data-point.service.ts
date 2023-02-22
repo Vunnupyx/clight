@@ -97,11 +97,45 @@ export class SourceDataPointService
         await this.dataSourceService.apply(datasourceProtocol);
       }
 
-      if (this._changes.snapshot.touched) {
-        await this.httpService.post(
-          `/datasources/${datasourceProtocol}/dataPoints/bulk`,
-          this.getPayload()
+      if (this.isTouched) {
+        await this.httpService.patch(
+          `/datasources/${datasourceProtocol}/dataPoints`,
+          this._store.snapshot.dataPoints
         );
+
+        /*TBD
+        if (Object.keys(this.payload.created).length) {
+          for (let dp of Object.values(this.payload.created)) {
+            await this.httpService.post(
+              `/datasources/${datasourceProtocol}/dataPoints`,
+              dp
+            );
+          }
+        }
+
+        if (Object.keys(this.payload.updated).length) {
+          for (let [dpId, dp] of Object.entries(this.payload.updated)) {
+            await this.httpService.patch(
+              `/datasources/${datasourceProtocol}/dataPoints/${dpId}`,
+              dp
+            );
+          }
+        }
+
+        if (this.payload.deleted.length) {
+          for (let dpId of this.payload.deleted) {
+            await this.httpService.delete(
+              `/datasources/${datasourceProtocol}/dataPoints/${dpId}`
+            );
+          }
+        }
+
+        if (this.payload.replace.length) {
+          await this.httpService.patch(
+            `/datasources/${datasourceProtocol}/dataPoints`,
+            this.payload.replace
+          );
+        }*/
 
         this._getDataPoints(datasourceProtocol);
 
@@ -133,7 +167,6 @@ export class SourceDataPointService
    * @returns
    */
   async ping(protocol: DataSourceProtocol | undefined): Promise<string> {
-    // Info: currently only s7 supports ping!
     if (protocol === undefined) protocol = DataSourceProtocol.S7;
     const errorHandler = () => {
       this.toastr.error(
@@ -143,9 +176,7 @@ export class SourceDataPointService
         this.translate.instant('settings-data-source-point.HostUnreachable')
       );
     };
-    if (protocol !== DataSourceProtocol.S7) {
-      return errorHandler();
-    }
+
     return this.httpService
       .get(`/datasources/${protocol}/ping`)
       .then((res) => {
@@ -341,6 +372,8 @@ export class SourceDataPointService
         }
 
         return `[DI]`;
+      case DataSourceProtocol.Energy:
+        return `[Energy]`;
       default:
         return '';
     }
@@ -352,7 +385,7 @@ export class SourceDataPointService
     }>(`/datasources/${datasourceProtocol}/datapoints`);
 
     this._store.patchState((state) => {
-      state.dataPoints = dataPoints;
+      state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
       state.originalDataPoints = clone(state.dataPoints);
       state.dataPointsSourceMap = array2map(
         state.dataPoints,

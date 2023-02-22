@@ -92,178 +92,69 @@
           </div>
         </div>
       </div>
+      <div class="row" *ngSwitchCase="Protocol.DH">
+        <table
+          mat-table
+          [dataSource]="desiredServices"
+          class="desired-service-table"
+        >
+          <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
 
-      <div *ngSwitchCase="Protocol.DH">
-        <form #form="ngForm" class="mt-25">
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.ProvisioningHost' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="provisioningHost"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.provisioningHost"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+          </ng-container>
 
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.ScopeId' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="scopeId"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.scopeId"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
+          <!-- Enabled Column -->
+          <ng-container matColumnDef="enabled">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'settings-data-sink.Desired.Enabled' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div
+                class="d-flex align-items-center"
+                [class.color-success]="element.enabled"
+                [class.color-danger]="!element.enabled"
+              >
+                <mat-icon
+                  class="mr-5"
+                  *ngIf="element.enabled"
+                  svgIcon="mdc:success"
+                ></mat-icon>
+                <mat-icon
+                  class="mr-5"
+                  *ngIf="!element.enabled"
+                  svgIcon="mdc:error"
+                ></mat-icon>
+                <label>{{
+                  (element.enabled
+                    ? 'settings-data-sink.Desired.Enabled'
+                    : 'settings-data-sink.Desired.Disabled'
+                  ) | translate
+                }}</label>
+              </div>
+            </td>
+          </ng-container>
 
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.RegId' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="regId"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.regId"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-          <div class="row d-flex align-items-center">
-            <div class="col-12 col-md-5">
-              <label>
-                {{ 'settings-data-sink.SymKey' | translate }}
-              </label>
-            </div>
-            <div class="col-12 col-md-7">
-              <mat-form-field>
-                <input
-                  matInput
-                  name="symKey"
-                  autocomplete="off"
-                  [ngModel]="dataSink?.datahub?.symKey"
-                  (ngModelChange)="saveDatahubConfig(form)"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-        </form>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="2">
+              {{ 'settings-data-sink.NoActiveService' | translate }}
+            </td>
+          </tr>
+        </table>
       </div>
     </ng-container>
   </div>
-
-  <div
-    *ngIf="dataSink?.protocol === Protocol.DH"
-    class="col-12 col-md-6 col-lg-7 offset-lg-1"
-  >
-    <div class="d-flex align-items-center justify-content-end">
-      <button
-        mat-button
-        type="button"
-        class="btn-sm mr-10"
-        *ngIf="isTouchedTable && !isLoading"
-        (click)="onDiscard()"
-      >
-        {{ 'settings-data-sink.DiscardChanges' | translate }}
-      </button>
-
-      <mat-spinner diameter="20" *ngIf="isLoading" class="mr-10"></mat-spinner>
-
-      <button
-        mat-button
-        color="primary"
-        type="button"
-        class="btn-sm"
-        [disabled]="!isTouchedTable || isLoading || !dsFormValid"
-        (click)="onApply()"
-      >
-        {{ 'settings-data-sink.ApplyChanges' | translate }}
-      </button>
-    </div>
-    <div>
-      <ng-container *ngTemplateOutlet="connectionBlock"></ng-container>
-    </div>
-
-    <table mat-table [dataSource]="desiredServices" class="mt-15">
-      <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-      </ng-container>
-
-      <!-- Enabled Column -->
-      <ng-container matColumnDef="enabled">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ 'settings-data-sink.Desired.Enabled' | translate }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <div
-            class="d-flex align-items-center"
-            [class.color-success]="element.enabled"
-            [class.color-danger]="!element.enabled"
-          >
-            <mat-icon
-              class="mr-5"
-              *ngIf="element.enabled"
-              svgIcon="mdc:success"
-            ></mat-icon>
-            <mat-icon
-              class="mr-5"
-              *ngIf="!element.enabled"
-              svgIcon="mdc:error"
-            ></mat-icon>
-            <label>{{
-              (element.enabled
-                ? 'settings-data-sink.Desired.Enabled'
-                : 'settings-data-sink.Desired.Disabled'
-              ) | translate
-            }}</label>
-          </div>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="2">
-          {{ 'settings-data-sink.NoData' | translate }}
-        </td>
-      </tr>
-    </table>
-  </div>
-
-  <div
-    class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4"
-    *ngIf="dataSink?.protocol !== Protocol.DH"
-  >
-    <div class="d-flex align-items-center justify-content-end">
+  <div class="col-12 col-sm-4 offset-sm-4 col-lg-4 offset-lg-4">
+    <div
+      class="d-flex align-items-center justify-content-end"
+      *ngIf="dataSink?.protocol !== Protocol.DH"
+    >
       <button
         mat-button
         type="button"
@@ -306,7 +197,6 @@
         </button>
       </div>
     </div>
-
     <div class="mt-10" *ngIf="dataSink?.protocol === Protocol.MTConnect">
       <div style="display: flex; width: 100%">
         <button
@@ -322,13 +212,17 @@
         </button>
       </div>
     </div>
+    <div
+      *ngIf="dataSink?.protocol === Protocol.DH"
+      class="spacing-bottom-xl"
+    ></div>
   </div>
 </div>
 
-<div class="row" *ngIf="dataSink?.protocol !== Protocol.DH">
+<div class="row">
   <div class="col-12">
     <div class="row">
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6" *ngIf="dataSink?.protocol !== Protocol.DH">
         <div class="d-flex align-items-center">
           <h3>{{ 'settings-data-sink.DataPoints' | translate }}</h3>
           <button
@@ -358,15 +252,15 @@
         prop="name"
         [flexGrow]="1"
         cellClass="input-cell"
+        [minWidth]="120"
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
@@ -382,7 +276,7 @@
           </div>
 
           <input
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             type="text"
             class="w-100"
             [ngModel]="value"
@@ -392,29 +286,30 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="
-          (dataSink?.protocol !== Protocol.OPC
+          (dataSink?.protocol === Protocol.MTConnect
             ? 'settings-data-sink.DataItem'
             : 'settings-data-sink.Address'
           ) | translate
         "
         prop="address"
         [flexGrow]="1"
+        [minWidth]="120"
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
             {{ value }}
           </div>
-          <ng-container *ngIf="unsavedRow && unsavedRowIndex === rowIndex">
+          <ng-container *ngIf="unsavedRow?.id === row.id">
             <ng-container *ngIf="!isNonDefinedAddress(unsavedRow)">
               <mat-select
                 disableOptionCentering="true"
@@ -446,18 +341,21 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
-        *ngIf="dataSink?.protocol !== Protocol.OPC"
+        *ngIf="
+          dataSink?.protocol !== Protocol.OPC &&
+          dataSink?.protocol !== Protocol.DH
+        "
         [name]="'settings-data-sink.Type' | translate"
         prop="type"
         [flexGrow]="1"
+        [minWidth]="120"
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
-          <span *ngIf="unsavedRowIndex !== rowIndex">
+          <span *ngIf="unsavedRow?.id !== row.id">
             <ng-container [ngSwitch]="value">
               <ng-container *ngSwitchCase="DataPointType.Event">{{
                 'settings-data-sink.Event' | translate
@@ -465,11 +363,14 @@
               <ng-container *ngSwitchCase="DataPointType.Condition">{{
                 'settings-data-sink.Condition' | translate
               }}</ng-container>
+              <ng-container *ngSwitchCase="DataPointType.Sample">{{
+                'settings-data-sink.Sample' | translate
+              }}</ng-container>
             </ng-container>
           </span>
           <mat-select
             disableOptionCentering="true"
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             [ngModel]="value"
             (ngModelChange)="unsavedRow && (unsavedRow.type = $event)"
           >
@@ -479,30 +380,34 @@
             <mat-option [value]="DataPointType.Condition">{{
               'settings-data-sink.Condition' | translate
             }}</mat-option>
+            <mat-option [value]="DataPointType.Sample">{{
+              'settings-data-sink.Sample' | translate
+            }}</mat-option>
           </mat-select>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="'settings-data-sink.InitialValue' | translate"
         prop="initialValue"
         [flexGrow]="1"
         cellClass="input-cell"
+        [minWidth]="120"
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
           <div
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             class="text-ellipsis"
             [title]="value"
           >
             {{ value }}
           </div>
           <input
-            *ngIf="unsavedRow && unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             type="text"
             class="w-100"
             [ngModel]="value"
@@ -512,19 +417,20 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="'settings-data-sink.Map' | translate"
         prop="map"
         [flexGrow]="1.5"
         [sortable]="false"
         cellClass="input-cell button-cell"
+        [minWidth]="120"
       >
         <ng-template
           ngx-datatable-cell-template
-          let-rowIndex="rowIndex"
           let-value="value"
           let-row="row"
         >
-          <ng-container *ngIf="unsavedRowIndex !== rowIndex">
+          <ng-container *ngIf="unsavedRow?.id !== row.id">
             <div class="text-ellipsis">
               <span *ngFor="let item of parseMap(value)"
                 >{{ item[0] }} -> {{ item[1] }}
@@ -532,7 +438,7 @@
             </div>
           </ng-container>
           <div
-            *ngIf="unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             class="d-flex align-items-center"
           >
             <div class="text-ellipsis">
@@ -559,19 +465,20 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="'settings-data-sink.Actions' | translate"
         [flexGrow]="1"
         cellClass="button-cell"
         [sortable]="false"
+        [minWidth]="120"
       >
         <ng-template
           ngx-datatable-cell-template
           let-rowIndex="rowIndex"
-          let-value="value"
           let-row="row"
         >
           <mat-button-toggle-group
-            *ngIf="unsavedRowIndex !== rowIndex"
+            *ngIf="unsavedRow?.id !== row.id"
             #group="matButtonToggleGroup"
           >
             <mat-button-toggle
@@ -591,7 +498,7 @@
             </mat-button-toggle>
           </mat-button-toggle-group>
           <mat-button-toggle-group
-            *ngIf="unsavedRowIndex === rowIndex"
+            *ngIf="unsavedRow?.id === row.id"
             #group="matButtonToggleGroup"
           >
             <mat-button-toggle
@@ -623,6 +530,58 @@
               <mat-icon class="color-error" svgIcon="mdc:close"></mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        *ngIf="dataSink?.protocol === Protocol.DH"
+        [name]="'settings-data-source.LiveData' | translate"
+        prop="liveData"
+        [flexGrow]="1"
+        [sortable]="false"
+        [minWidth]="120"
+      >
+        <ng-template
+          ngx-datatable-cell-template
+          let-rowIndex="rowIndex"
+          let-value="value"
+          let-row="row"
+        >
+          <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
+            {{ getDatahubLivedata(row.id) }}
+          </span>
+          <ng-template #noLiveData>-</ng-template>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
+        *ngIf="dataSink?.protocol === Protocol.DH"
+        [name]="'settings-data-sink.Desired.Enabled' | translate"
+        prop="enabled"
+        [flexGrow]="1"
+        [minWidth]="120"
+      >
+        <ng-template ngx-datatable-cell-template let-row="row">
+          <div
+            class="d-flex align-items-center"
+            [class.color-success]="row.enabled"
+            [class.color-danger]="!row.enabled"
+          >
+            <mat-icon
+              class="mr-5"
+              *ngIf="row.enabled"
+              svgIcon="mdc:success"
+            ></mat-icon>
+            <mat-icon
+              class="mr-5"
+              *ngIf="!row.enabled"
+              svgIcon="mdc:error"
+            ></mat-icon>
+            <label>{{
+              (row.enabled
+                ? 'settings-data-sink.Desired.Enabled'
+                : 'settings-data-sink.Desired.Disabled'
+              ) | translate
+            }}</label>
+          </div>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

@@ -210,38 +210,6 @@
         }
       }
     },
-    "/datasources/{datasourceProtocol}/dataPoints/bulk": {
-      "parameters": [
-        {
-          "name": "datasourceProtocol",
-          "in": "path",
-          "description": "id of the datasource",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "post": {
-        "tags": ["datasource"],
-        "summary": "change bulk datasource datapoints",
-        "description": "",
-        "operationId": "dataSourcesPostDatapointBulk",
-        "parameters": [
-          {
-            "name": "changeObject",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/changeBulk"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully changed datasource"
-          }
-        }
-      }
-    },
     "/datasources/{datasourceProtocol}/status": {
       "parameters": [
         {
@@ -375,6 +343,35 @@
                 }
               }
             }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["datasource"],
+        "summary": "change bulk datasource datapoints",
+        "description": "",
+        "operationId": "dataSourcesPatchAllDatapoints",
+        "parameters": [
+          {
+            "name": "newDatapointArray",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/sourcedatapoint"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully changed datasource data points"
           }
         }
       }
@@ -556,38 +553,6 @@
         }
       }
     },
-    "/datasinks/{datasinkProtocol}/dataPoints/bulk": {
-      "parameters": [
-        {
-          "name": "datasinkProtocol",
-          "in": "path",
-          "description": "id of the datasink",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "post": {
-        "tags": ["datasinks"],
-        "summary": "change bulk datasink datapoints",
-        "description": "",
-        "operationId": "dataSinksPostDatapointBulk",
-        "parameters": [
-          {
-            "name": "changeObject",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/changeBulk"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully changed datasink"
-          }
-        }
-      }
-    },
     "/datasinks/{datasinkProtocol}/status": {
       "parameters": [
         {
@@ -667,6 +632,35 @@
                 }
               }
             }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["datasinks"],
+        "summary": "change all datasink datapoints",
+        "description": "",
+        "operationId": "dataSinksPatchDatapoint",
+        "parameters": [
+          {
+            "name": "newDatapointArray",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/dataPointType"
+                },
+                {
+                  "$ref": "#/definitions/uuid"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully changed datasink data points"
           }
         }
       }
@@ -785,6 +779,16 @@
                       }
                     ]
                   }
+                },
+                "error": {
+                  "type": "string",
+                  "enum": ["wrongVdpsOrder", "wrongFormat", "unexpectedError"]
+                },
+                "vdpIdWithError": {
+                  "type": "string"
+                },
+                "notYetDefinedSourceVdpId": {
+                  "type": "string"
                 }
               }
             }
@@ -805,7 +809,7 @@
             }
           }
         ],
-        "operationId": "vdpsPost",
+        "operationId": "vdpPost",
         "responses": {
           "200": {
             "description": "Successfully create a virtual datapoint resource",
@@ -831,27 +835,53 @@
             }
           }
         }
-      }
-    },
-    "/vdps/bulk": {
-      "post": {
+      },
+      "patch": {
         "tags": ["virtual datapoints"],
-        "summary": "change bulk vdps",
+        "summary": "replace all VDPs",
         "description": "",
-        "operationId": "vdpsPostBulk",
+        "operationId": "vdpsPatch",
         "parameters": [
           {
-            "name": "changeObject",
+            "name": "vdpArray",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/changeBulk"
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/virtualDataPointType"
+                  },
+                  {
+                    "$ref": "#/definitions/uuid"
+                  }
+                ]
+              }
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Successfully changed vdps"
+          },
+          "400": {
+            "description": "Error reason and invalid VDPs.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["wrongVdpsOrder", "wrongFormat", "unexpectedError"]
+                },
+                "vdpIdWithError": {
+                  "type": "string"
+                },
+                "notYetDefinedSourceVdpId": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -1045,21 +1075,29 @@
             }
           }
         }
-      }
-    },
-    "/mappings/bulk": {
-      "post": {
+      },
+      "patch": {
         "tags": ["mappings"],
         "summary": "change bulk mappings",
         "description": "",
-        "operationId": "mapPostBulk",
+        "operationId": "patchMappings",
         "parameters": [
           {
-            "name": "changeObject",
+            "name": "newMappingsArray",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/changeBulk"
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/map"
+                  },
+                  {
+                    "$ref": "#/definitions/uuid"
+                  }
+                ]
+              }
             }
           }
         ],
@@ -1269,6 +1307,44 @@
         }
       }
     },
+    "/livedata/datasink/{datasinkProtocol}": {
+      "parameters": [
+        {
+          "name": "datasinkProtocol",
+          "in": "path",
+          "description": "id of the dataSink to get",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "timeseries",
+          "in": "query",
+          "description": "should include timeseries",
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "get": {
+        "tags": ["livedata"],
+        "description": "Get livedata for dataSink dataPoints",
+        "operationId": "livedataDataSinkDataPointsGet",
+        "responses": {
+          "200": {
+            "description": "Returns all information about the livedata for dataSink dataPoints",
+            "schema": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/livedataItem"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "/livedata/vdps": {
       "parameters": [
         {
@@ -1368,23 +1444,147 @@
     "/systemInfo/update": {
       "get": {
         "tags": ["systemInfo"],
-        "description": "Update all containers if possible",
-        "operationId": "updateContainerGet",
+        "description": "Trigger azure function 'get-mdclight-updates' and return all available updates.",
+        "operationId": "updateGet",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Update Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "enum": ["List of available MDCL updates."]
+                },
+                "updates": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "release": {
+                        "type": "string"
+                      },
+                      "BaseLayerVersion": {
+                        "type": "string"
+                      },
+                      "releaseNotes": {
+                        "type": "string"
+                      },
+                      "OSVersion": {
+                        "type": "string"
+                      },
+                      "releaseNotesMissingReason": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "204": {
-            "description": "Request successfully but no updates available"
+            "description": "Request successfully but no updates available",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "enum": ["No updates available."]
+                }
+              }
+            }
           },
-          "400": {
+          "503": {
             "description": "Update failed. Possibly no network connection.",
             "schema": {
               "type": "object",
               "properties": {
                 "error": {
                   "type": "string",
-                  "example": "No update possible. Please check your network configuration."
+                  "enum": ["Unable to get update information."]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["systemInfo"],
+        "description": "Trigger azure function 'update-mdclight-version'.",
+        "operationId": "updateMDCL",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "versions",
+            "required": true,
+            "description": "mdcl version string to update to and ",
+            "schema": {
+              "type": "object",
+              "required": ["release", "baseLayerVersion"],
+              "properties": {
+                "release": {
+                  "type": "string"
+                },
+                "baseLayerVersion": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "release": "3.0.0",
+                "baseLayerVersion": "1.4.3-linux-arm64v8"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Update started",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "enum": ["Update started."]
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version number the endpoint was called with."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No version information attached.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["No version information in request found."]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Version to update not found.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["Version not found."]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Update failed. Possibly no network connection.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["No update possible. Please try again later"]
                 }
               }
             }
@@ -1689,7 +1889,7 @@
     },
     "sourcedatapoint": {
       "type": "object",
-      "required": ["name", "address", "readFrequency", "type"],
+      "required": ["name", "address", "type"],
       "properties": {
         "name": {
           "type": "string"
@@ -1706,7 +1906,7 @@
         },
         "type": {
           "type": "string",
-          "enum": ["s7", "nck", "nck-pl"]
+          "enum": ["s7", "nck", "meter", "measurement", "device", "tariff"]
         }
       }
     },
@@ -2030,6 +2230,10 @@
         "status": {
           "type": "string",
           "enum": ["connected", "disconnected"]
+        },
+        "emProTariffNumber": {
+          "type": "string",
+          "enum": ["0", "1", "2", "3", "4"]
         }
       }
     },
@@ -2195,6 +2399,12 @@
                   },
                   "value": {
                     "type": "string"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
                   }
                 }
               }
@@ -2236,40 +2446,6 @@
             ]
           }
         }
-      }
-    },
-    "changeBulk": {
-      "type": "object",
-      "properties": {
-        "created": {
-          "type": "object"
-        },
-        "updated": {
-          "type": "object"
-        },
-        "deleted": {
-          "type": "array",
-          "items": {
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ]
-          }
-        }
-      },
-      "example": {
-        "created": {
-          "entityId": {
-            "entityProp": "entityValue"
-          }
-        },
-        "updated": {
-          "entityId": {
-            "entityProp": "entityValue"
-          }
-        },
-        "deleted": ["entityId"]
       }
     },
     "messengerServerConfiguration": {

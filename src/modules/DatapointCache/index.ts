@@ -2,6 +2,8 @@ import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interface
 
 type TimeSeriesValue = {
   ts: string;
+  unit?: string;
+  description?: string;
   value: boolean | number | string;
 };
 
@@ -45,6 +47,8 @@ export class DataPointCache {
           ...(this.dataPoints[event.measurement.id]?.timeseries || []),
           {
             ts: new Date().toISOString(),
+            unit: event.measurement.unit,
+            description: event.measurement.description,
             value: event.measurement.value
           }
         ].filter((time) => {

@@ -47,6 +47,14 @@ export class DataHubDataSink extends DataSink {
     );
   }
 
+  /**
+   * Returns datahub adapter
+   * @returns
+   */
+  public getAdapter(): DataHubAdapter {
+    return this.#datahubAdapter;
+  }
+
   private handleAdapterStateChange(newState: LifecycleEventStatus) {
     this.updateCurrentStatus(newState);
   }
@@ -57,7 +65,7 @@ export class DataHubDataSink extends DataSink {
   protected processDataPointValues(dataPointsObj): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
 
-    if (!this.#datahubAdapter.running) {
+    if (!this.#datahubAdapter?.running) {
       return;
     }
 
@@ -131,7 +139,7 @@ export class DataHubDataSink extends DataSink {
 
     if (!this.enabled) {
       winston.info(
-        `${logPrefix} datahub data sink is disabled. Skipping initialization.`
+        `${logPrefix} datahub data sink is disabled. Continue initialization for update mechanism.`
       );
       this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return this;
@@ -164,20 +172,6 @@ export class DataHubDataSink extends DataSink {
   }
 
   /**
-   * Compares given config with the current data sink config to determine if data source should be restarted or not
-   */
-  configEqual(
-    config: IDataSinkConfig,
-    termsAndConditions: boolean,
-    optionalConfigs?: OptionalConfigs
-  ) {
-    return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
-      this.termsAndConditionsAccepted === termsAndConditions
-    );
-  }
-
-  /**
    * Shutdown datasink
    */
   public shutdown(): Promise<void> {
@@ -207,6 +201,6 @@ export class DataHubDataSink extends DataSink {
    */
   public getDesiredPropertiesServices(): IDesiredProps {
     if (!this.#datahubAdapter) return { services: {} };
-    return this.#datahubAdapter.getDesiredProps();
+    return this.#datahubAdapter.getDesiredProps() ?? { services: {} };
   }
 }

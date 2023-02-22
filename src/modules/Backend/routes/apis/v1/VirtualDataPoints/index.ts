@@ -1,7 +1,10 @@
 import { ConfigManager } from '../../../../../ConfigManager';
-import { Request, response, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { Request, Response } from 'express';
 import { VirtualDataPointManager } from '../../../../../VirtualDataPointManager';
+import {
+  isValidVdp,
+  IVirtualDataPointConfig
+} from '../../../../../ConfigManager/interfaces';
 
 let configManager: ConfigManager;
 let vdpManager: VirtualDataPointManager;
@@ -23,10 +26,16 @@ export function setVdpManager(config: VirtualDataPointManager) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function vdpsGetHandler(request: Request, response: Response): void {
-  response
-    .status(200)
-    .json({ vdps: configManager?.config?.virtualDataPoints || [] });
+function getAllVdpsHandler(request: Request, response: Response): void {
+  const vdpsList = configManager?.config?.virtualDataPoints || [];
+  const vdpValidityStatus = vdpManager.getVdpValidityStatus(vdpsList);
+
+  response.status(200).json({
+    vdps: vdpsList,
+    error: vdpValidityStatus.error,
+    vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+    notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
+  });
 }
 
 /**
@@ -34,27 +43,36 @@ function vdpsGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpsPostHandler(
+async function postSingleVdpHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  //TODO: Input validation
-  const newData = { ...request.body, ...{ id: uuidv4() } };
-  if (
-    newData.operationType === 'counter' &&
-    newData.resetSchedules?.length > 0
-  ) {
-    for (const [index, resetEntry] of newData.resetSchedules.entries()) {
-      newData.resetSchedules[index].created = Date.now();
-      newData.resetSchedules[index].lastReset = undefined;
+  try {
+    const newVdp = request.body as IVirtualDataPointConfig;
+
+    if (!isValidVdp(newVdp)) {
+      throw new Error();
     }
+    if (
+      newVdp.operationType === 'counter' &&
+      newVdp.resetSchedules?.length > 0
+    ) {
+      for (const [index, resetEntry] of newVdp.resetSchedules.entries()) {
+        newVdp.resetSchedules[index].created = Date.now();
+        newVdp.resetSchedules[index].lastReset = undefined;
+      }
+    }
+    configManager.changeConfig('insert', 'virtualDataPoints', newVdp);
+    await configManager.configChangeCompleted();
+    response.status(200).json({
+      created: newVdp,
+      href: `/vdps/${newVdp.id}`
+    });
+  } catch {
+    response.status(400).json({
+      error: 'Could not create VDP. Please check your input and try again!'
+    });
   }
-  configManager.changeConfig('insert', 'virtualDataPoints', newData);
-  await configManager.configChangeCompleted();
-  response.status(200).json({
-    created: newData,
-    href: `/vdps/${newData.id}`
-  });
 }
 
 /**
@@ -62,17 +80,31 @@ async function vdpsPostHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpsPostBulkHandler(
+async function patchAllVdpsHandler(
   request: Request,
   response: Response
 ): Promise<void> {
   try {
-    await configManager.bulkChangeVirtualDataPoints(request.body || {});
+    const newVdpArray = request.body as IVirtualDataPointConfig[];
+
+    const vdpValidityStatus = vdpManager.getVdpValidityStatus(newVdpArray);
+    if (!vdpValidityStatus.isValid) {
+      response.status(400).json({
+        error: vdpValidityStatus.error,
+        vdpIdWithError: vdpValidityStatus.vdpIdWithError,
+        notYetDefinedSourceVdpId: vdpValidityStatus.notYetDefinedSourceVdpId
+      });
+    }
+
+    configManager.config = {
+      ...configManager.config,
+      virtualDataPoints: newVdpArray
+    };
     await configManager.configChangeCompleted();
 
     response.status(200).send();
-  } catch {
-    response.status(400).json({ error: 'Cannot change VDPs. Try again!' });
+  } catch (err) {
+    response.status(400).json({ error: 'unexpectedError' });
   }
 }
 
@@ -81,8 +113,8 @@ async function vdpsPostBulkHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function vdpGetHandler(request: Request, response: Response): void {
-  const vdp = configManager?.config?.virtualDataPoints.find(
+function getSingleVdpHandler(request: Request, response: Response): void {
+  const vdp = configManager?.config?.virtualDataPoints?.find(
     (point) => point.id === request.params.id
   );
   response.status(vdp ? 200 : 404).json(vdp);
@@ -92,11 +124,11 @@ function vdpGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpDeleteHandler(
+async function deleteSingleVdpHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const vdp = configManager?.config?.virtualDataPoints.find(
+  const vdp = configManager?.config?.virtualDataPoints?.find(
     (point) => point.id === request.params.id
   );
   configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
@@ -106,39 +138,50 @@ async function vdpDeleteHandler(
   });
 }
 /**
- * Overwrites a virtual datapoint
+ * Overwrites a single virtual datapoint
  * @param  {Request} request
  * @param  {Response} response
  */
-async function vdpPatchHandler(
+async function patchSingleVdpHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  if (request.body.reset && request.params.id) {
-    vdpManager.resetCounter(request.params.id);
-    delete request.body.reset;
-  } else {
-    configManager.changeConfig(
-      'update',
-      'virtualDataPoints',
-      request.body,
-      (vdp) => {
-        return (vdp.id = request.body.id);
+  try {
+    if (request.body.reset && request.params.id) {
+      vdpManager.resetCounter(request.params.id);
+      delete request.body.reset;
+    } else {
+      const newVdp = request.body as IVirtualDataPointConfig;
+
+      if (!isValidVdp(newVdp)) {
+        throw new Error();
       }
-    );
-    await configManager.configChangeCompleted();
+      configManager.changeConfig(
+        'update',
+        'virtualDataPoints',
+        newVdp,
+        (vdp) => {
+          return (vdp.id = newVdp.id);
+        }
+      );
+      await configManager.configChangeCompleted();
+    }
+    response.status(200).json({
+      changed: request.body,
+      href: `/vdps/${request.body.id}`
+    });
+  } catch {
+    response.status(400).json({ error: 'Cannot change VDP. Try again!' });
   }
-  response.status(200).json({
-    changed: request.body,
-    href: `/vdps/${request.body.id}`
-  });
 }
 
 export const virtualDatapointHandlers = {
-  vdpsGet: vdpsGetHandler,
-  vdpsPost: vdpsPostHandler,
-  vdpsPostBulk: vdpsPostBulkHandler,
-  vdpGet: vdpGetHandler,
-  vdpDelete: vdpDeleteHandler,
-  vdpPatch: vdpPatchHandler
+  //Single VDP
+  vdpPost: postSingleVdpHandler,
+  vdpGet: getSingleVdpHandler,
+  vdpDelete: deleteSingleVdpHandler,
+  vdpPatch: patchSingleVdpHandler,
+  //Multiple VDPs
+  vdpsGet: getAllVdpsHandler,
+  vdpsPatch: patchAllVdpsHandler
 };

@@ -2,7 +2,10 @@ import winston from 'winston';
 import { evaluate, isNaN, number } from 'mathjs';
 
 import { ConfigManager } from '../ConfigManager';
-import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
+import {
+  isValidVdp,
+  IVirtualDataPointConfig
+} from '../ConfigManager/interfaces';
 import { CounterManager } from '../CounterManager';
 import { DataPointCache } from '../DatapointCache';
 import {
@@ -28,6 +31,13 @@ type LogSummary = {
   debug: LogEntry[];
 };
 
+type VdpValidityStatus = {
+  isValid: boolean;
+  error?: 'wrongVdpsOrder' | 'wrongFormat' | 'unexpectedError';
+  vdpIdWithError?: string;
+  notYetDefinedSourceVdpId?: string;
+};
+
 /**
  * Calculates virtual datapoints
  */
@@ -44,6 +54,7 @@ export class VirtualDataPointManager {
     info: [],
     debug: []
   };
+  private energyMachineStatusChangeCallback: Function;
 
   private static className: string = VirtualDataPointManager.name;
 
@@ -741,6 +752,21 @@ export class VirtualDataPointManager {
 
       _events.push(newEvent);
       virtualEvents.push(newEvent);
+
+      if (
+        process.env.ALLOW_EEM_AUTO_TARIFF_UPDATE &&
+        newEvent.dataSource.protocol === 'virtual' &&
+        vdpConfig.name === 'EEM - Machine Status'
+      ) {
+        const currentValue = this.cache.getLastestValue(
+          newEvent.measurement.id
+        )?.value;
+        const newValue = newEvent.measurement.value;
+
+        if (newValue !== currentValue) {
+          this.energyMachineStatusChangeCallback(newValue);
+        }
+      }
     }
 
     this.cache.update(virtualEvents);
@@ -755,5 +781,68 @@ export class VirtualDataPointManager {
   public resetCounter(id: string): void {
     winston.info(`${this.constructor.name}::resetCounter `);
     this.counters.reset(id);
+  }
+
+  /**
+   * Sets the callback function for Energy use case, where machine status change triggers EEM tariff change
+   */
+  public setEnergyCallback(cb: Function): void {
+    this.energyMachineStatusChangeCallback = cb;
+  }
+
+  /**
+   * Checks order of VDPs to determine if their order is valid according to the dependencies.
+   */
+  public getVdpValidityStatus(
+    vdpsListToCheck: IVirtualDataPointConfig[]
+  ): VdpValidityStatus {
+    try {
+      if (
+        !Array.isArray(vdpsListToCheck) ||
+        !vdpsListToCheck.every(isValidVdp)
+      ) {
+        return {
+          isValid: false,
+          error: 'wrongFormat'
+        };
+      }
+      let result: VdpValidityStatus = {
+        isValid: true
+      };
+      for (let [index, vdp] of vdpsListToCheck.entries()) {
+        //Check sources that are VDP, as non-VDP sources will not cause problem
+        const otherVdpSources = vdp.sources.filter((sourceVdpId) =>
+          vdpsListToCheck.find((v) => v.id === sourceVdpId)
+        );
+        if (otherVdpSources.length > 0) {
+          for (let sourceVdpId of otherVdpSources) {
+            const indexOfSourceVdp = vdpsListToCheck.findIndex(
+              (x) => x.id === sourceVdpId
+            );
+
+            /**
+             * If VDP source is defined later, then it is not valid
+             */
+            if (indexOfSourceVdp >= index) {
+              result.isValid = false;
+              result.error = 'wrongVdpsOrder';
+              result.vdpIdWithError = vdp.id;
+              result.notYetDefinedSourceVdpId = sourceVdpId;
+              break;
+            }
+          }
+        }
+        if (!result.isValid) {
+          break;
+        }
+      }
+
+      return result;
+    } catch (err) {
+      return {
+        isValid: false,
+        error: 'unexpectedError'
+      };
+    }
   }
 }

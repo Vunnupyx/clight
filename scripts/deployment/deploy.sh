@@ -1,37 +1,40 @@
 #!/bin/bash
 
-# Temporary script do simplyfi the container deployment
+# Script do simplify the container deployment for development purposes.
+# Must be executed from workspace root!
+# Always execute with `yarn deploy`!
 
 #! You must be logged in with the az cli!
 # az login
 # az account set --subscription "CELOS Next Datahub DEV"
+# docker login mdclightdev.azurecr.io with credentials from password manager
 
-version="3.0.0-beta-1-133-gd55131b0"
-versionForName=$(sed 's/[.]/-/g' <<< $version)
+# Sourcing common functions
+. ./scripts/deployment/common.sh
 
-target="tags.mdclight='iotflex-$version'"
-name=iotflex-${versionForName}-mdclight
-fileName=./deployment.manifest.${version}.json
+echo "Select mdclight version (git describe --tags):"
+mdclightVersion=$(select_version ./scripts/build/lastMdclightChange.sh)
+echo "Select web server version (git describe --tags):"
+webserverVersion=$(select_version ./scripts/build/lastWebserverChange.sh)
+echo "Select mtconnect (git describe --tags):"
+mtconnectVersion=$(select_version ./scripts/build/lastMTConnectChange.sh)
+echo "Select IoT2050 device:"
+deviceId=$(select_edge_device)
+echo "Select iothub: "
+iotHub=$(select_datahub)
 
-iotHub=iot-datahub-euw-devd
-deviceId=IoTEdge-8C-F3-19-6A-E6-B5
+check_docker_image mdclight $mdclightVersion 
+check_docker_image mdc-web-server $webserverVersion
+check_docker_image mtconnect-agent $mtconnectVersion
 
-check_docker_image () {
-    docker manifest inspect $1 > /dev/null;
-    if [[ $? -eq "0" ]]; then
-        echo "$1 ok!"
-    else
-        echo "$1 does not exist!"
-        exit 1
-    fi
-}
+currentGitHash=$(git rev-parse --short HEAD)
 
-check_docker_image mdclightdev.azurecr.io/mdclight:$version 
-check_docker_image mdclightdev.azurecr.io/mtconnect-agent:$version
-check_docker_image mdclightdev.azurecr.io/mdc-web-server:$version
+target="tags.mdclight='$currentGitHash'"
+name=${currentGitHash}-mdclight
+manifestName=mdclight.manifest.${currentGitHash}.json
+manifestPath=scripts/deployment/$manifestName
 
-node deployment.manifest.js $version > $fileName
-
-az iot edge deployment create -d $name -n iot-datahub-euw-devd --content $fileName --target-condition "$target" --priority 0 --verbose --layered false
-
-az iot hub device-twin update -n $iotHub -d $deviceId --tags "{\"mdclight\": \"iotflex-${version}\"}"
+node scripts/deployment/mdclight.manifest.js $mdclightVersion $webserverVersion $mtconnectVersion > $manifestPath
+az iot edge deployment create -d "$name" -n "$iotHub" --content "$manifestPath" --target-condition "$target" --priority 1 --verbose --layered false
+az iot hub device-twin update -n "$iotHub" -d "$deviceId" --tags "{\"mdclight\": \"${currentGitHash}\", \"mdclight-dev\": null}"
+rm "$manifestPath"

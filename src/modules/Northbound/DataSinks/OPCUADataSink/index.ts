@@ -7,7 +7,7 @@ import {
 } from '../../../../common/interfaces';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
-import { Variant, UAVariable } from 'node-opcua';
+import { Variant, UAVariable, LocalizedText, DataType } from 'node-opcua';
 import {
   IGeneralConfig,
   IOPCUAConfig
@@ -140,12 +140,15 @@ export class OPCUADataSink extends DataSink {
     const logPrefix = `${this.name}::setNodeValue`;
     try {
       if (node) {
-        //@ts-ignore
         node.setValueFromSource(
           new Variant({
-            value,
-            //@ts-ignore
-            dataType: node.dataType.value
+            value:
+              node.dataType.value === DataType.LocalizedText
+                ? new LocalizedText({ locale: 'en', text: value })
+                : node.dataType.value === DataType.Boolean
+                ? Boolean(value)
+                : value,
+            dataType: node.dataTypeObj.basicDataType
           })
         );
       }

@@ -8,7 +8,6 @@
   "license": "",
   "private": true,
   "dependencies": {
-    "@types/bcrypt": "^5.0.0",
     "azure-iot-device": "^1.17.6",
     "azure-iot-device-mqtt": "^1.15.6",
     "azure-iot-provisioning-device": "^1.8.10",
@@ -16,7 +15,7 @@
     "azure-iot-provisioning-device-http": "^1.8.10",
     "azure-iot-provisioning-device-mqtt": "^1.7.10",
     "azure-iot-security-symmetric-key": "^1.7.10",
-    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "date-fns": "2.22.1",
     "express": "^4.17.1",
@@ -41,8 +40,9 @@
   },
   "scripts": {
     "dev": "export MDC_LIGHT_FOLDER=mdclight && export PORT=8083 && export NODE_ENV=development && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export SYS_PREFIX=mdclight && npm run setup:local:dev && export MOCK_USER_BUTTON=true && ts-node-dev --respawn --transpile-only --max-old-space-size=1024 src/index.ts",
-    "dev:debugger": "export MDC_LIGHT_FOLDER=mdclight && export NODE_ENV=development && export PORT=8083 && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export SYS_PREFIX=mdclight && npm run setup:local:dev && export MOCK_USER_BUTTON=true && ts-node-dev --respawn --inspect=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
+    "dev:debugger": "export MDC_LIGHT_FOLDER=mdclight && export NODE_ENV=development && export PORT=8083 && export LOG_LEVEL=debug && export MDC_LIGHT_RUNTIME_VERSION=$(git describe --tags) && export SYS_PREFIX=mdclight && npm run setup:local:dev && export MOCK_USER_BUTTON=true && ts-node-dev --respawn --inspect-brk=0.0.0.0:9229 --transpile-only --max-old-space-size=1024 src/index.ts",
     "dev:webserver": "yarn dev:mock:configagent && cd client && yarn dev",
+    "dev:webserver:iot": "cd client && yarn dev",
     "dev:webserver:mock": "yarn dev:mock:configagent && yarn dev:mock:api && cd client && yarn dev:mock",
     "dev:mock:configagent": "(docker rm -f configagentmock || echo 'Container will be created now') && docker run --name configagentmock --mount type=bind,source=$PWD/configuration-agent/swagger.yaml,target=/data,readonly -p 1884:1884 -d mockoon/cli:latest -d data",
     "dev:mock:api": "docker run --mount type=bind,source=$PWD/src/modules/Backend/routes/swagger.json,target=/data,readonly -p 1885:1884 -d mockoon/cli:latest",
@@ -51,7 +51,13 @@
     "build:webserver": "cd client && npm install && npm run build && cd .. && cd user-docs && npm install && npm run build && cd .. && mv user-docs/build client/dist/mdc-light-client/help",
     "test": "jest",
     "format": "prettier --write .",
-    "connect:cs:machine": "sudo ssh -N -L 102:192.168.214.1:102 root@192.168.185.200 -v"
+    "connect:cs:machine": "sudo ssh -N -L 102:192.168.214.1:102 root@192.168.185.200 -v",
+    "deploy": "./scripts/deployment/deploy.sh",
+    "deploy-dev": "scripts/deployment/deploy-dev.sh",
+    "copy-dev": "eval $(cat .env | grep -v '#' | sed 's/^/export /') && yarn build && ./scripts/dev/copy.sh",
+    "copy-dev-all": "eval $(cat .env | grep -v '#' | sed 's/^/export /') && yarn build && ./scripts/dev/copy.sh true",
+    "log-dev": "eval $(cat .env | grep -v '#' | sed 's/^/export /') && ssh $IOT2050_HOST \"docker logs mdclight-dev -f\"",
+    "expose-api": "eval $(cat .env | grep -v '#' | sed 's/^/export /') && ssh -L localhost:8083:$IOT2050_IP:80 $IOT2050_HOST"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

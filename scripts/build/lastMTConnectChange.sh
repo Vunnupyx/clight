@@ -1,0 +1,1 @@
+echo $(git describe --tags $(git log -n 1 --pretty=format:%H -- azure-pipelines-dev-mtc-agent.yml docker/mtconnect-agent.dockerfile _mdclight/mtc-config/prod ))

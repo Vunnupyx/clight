@@ -19,15 +19,6 @@ export class SystemInformationState {
   serverOffset!: number;
 }
 
-export enum UpdateStatus {
-  UpToDate,
-  NeedsUpdate,
-  CheckFailed,
-  Dismissed,
-  UpdateSuccessful,
-  UnexpectedError
-}
-
 export interface HealthcheckResponse {
   startUpTime: string;
 }
@@ -80,21 +71,6 @@ export class SystemInformationService {
     }
   }
 
-  async getUpdateStatus(): Promise<UpdateStatus> {
-    const response = await this.httpService.get<HttpResponse<void>>(
-      `/systemInfo/update`,
-      {
-        observe: 'response',
-        responseType: 'raw'
-      } as RequestOptionsArgs
-    );
-    return this._getUpdateStatus(response.status);
-  }
-
-  async healthcheck(): Promise<HealthcheckResponse> {
-    return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
-  }
-
   async getServerTime(): Promise<string> {
     const response = await this.configurationAgentHttpService.get<{
       Timestamp: string;
@@ -140,19 +116,7 @@ export class SystemInformationService {
 
   private _emptyState() {
     return <SystemInformationState>{
-      status: Status.NotInitialized,
-      serverOffset: 0 // TODO: remove it when backend is ready
+      status: Status.NotInitialized
     };
-  }
-
-  private _getUpdateStatus(httpCode: number) {
-    switch (httpCode) {
-      case 204:
-        return UpdateStatus.UpToDate;
-      case 200:
-        return UpdateStatus.NeedsUpdate;
-      default:
-        return UpdateStatus.CheckFailed;
-    }
   }
 }

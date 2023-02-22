@@ -252,34 +252,6 @@ $datatable-summary-row-background-hover: #ddd !default;
       border-top: solid 1px $datatable-group-header-border-top-color;
     }
 
-    .datatable-body-row {
-      .datatable-body-cell {
-        text-align: left;
-        padding: 0.9rem 1.2rem;
-        vertical-align: top;
-        border-top: 0;
-        color: $datatable-body-cell-color;
-        transition: width 0.3s ease;
-        font-size: 14px;
-        font-weight: 400;
-
-        // cell active class
-        // &.active {
-        //  background: #0829e0
-        // }
-      }
-      .datatable-body-group-cell {
-        text-align: left;
-        padding: 0.9rem 1.2rem;
-        vertical-align: top;
-        border-top: 0;
-        color: $datatable-body-cell-color;
-        transition: width 0.3s ease;
-        font-size: 14px;
-        font-weight: 400;
-      }
-    }
-
     .progress-linear {
       display: block;
       position: sticky;
@@ -317,6 +289,34 @@ $datatable-summary-row-background-hover: #ddd !default;
           height: 5px;
         }
       }
+    }
+  }
+
+  .datatable-body-row {
+    .datatable-body-cell {
+      text-align: left;
+      padding: 0.9rem 1.2rem;
+      vertical-align: top;
+      border-top: 0;
+      color: $datatable-body-cell-color;
+      transition: width 0.3s ease;
+      font-size: 14px;
+      font-weight: 400;
+
+      // cell active class
+      // &.active {
+      //  background: #0829e0
+      // }
+    }
+    .datatable-body-group-cell {
+      text-align: left;
+      padding: 0.9rem 1.2rem;
+      vertical-align: top;
+      border-top: 0;
+      color: $datatable-body-cell-color;
+      transition: width 0.3s ease;
+      font-size: 14px;
+      font-weight: 400;
     }
   }
 
@@ -509,6 +509,7 @@ $datatable-summary-row-background-hover: #ddd !default;
     }
   }
   .datatable-body-cell {
+    transition: none !important;
     .mat-select {
       margin: -6px 0;
       border: 1px solid rgba(102, 102, 102, 0.38);

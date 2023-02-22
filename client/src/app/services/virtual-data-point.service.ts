@@ -13,27 +13,28 @@ import {
 } from '../models';
 import { HttpService } from '../shared';
 import { array2map, clone, errorHandler, ObjectMap } from '../shared/utils';
-import { BaseChangesService } from './base-changes.service';
-import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
 import { SystemInformationService } from './system-information.service';
+import { v4 as uuidv4 } from 'uuid';
 
 export class VirtualDataPointsState {
   status!: Status;
+  touched!: boolean;
   dataPoints!: VirtualDataPoint[];
   originalDataPoints!: VirtualDataPoint[];
   dataPointsLivedata!: ObjectMap<DataPointLiveData>;
 }
 
 @Injectable()
-export class VirtualDataPointService
-  extends BaseChangesService<VirtualDataPoint>
-  implements IChangesAppliable
-{
+export class VirtualDataPointService {
   private _store: Store<VirtualDataPointsState>;
 
   get status() {
     return this._store.snapshot.status;
+  }
+
+  get isTouched() {
+    return this._store.snapshot.touched;
   }
 
   get dataPoints() {
@@ -52,23 +53,19 @@ export class VirtualDataPointService
 
   constructor(
     storeFactory: StoreFactory<VirtualDataPointsState>,
-    changesFactory: StoreFactory<IChangesState<string, VirtualDataPoint>>,
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService,
     private systemInformationService: SystemInformationService
   ) {
-    super(changesFactory);
-
     this._store = storeFactory.startFrom(this._emptyState());
   }
 
   async revert(): Promise<boolean> {
     this._store.patchState((state) => {
       state.dataPoints = clone(state.originalDataPoints);
+      state.touched = false;
     });
-
-    this.resetState();
 
     return Promise.resolve(true);
   }
@@ -80,35 +77,12 @@ export class VirtualDataPointService
       });
 
       await this.httpService.patch(`/vdps`, this._store.snapshot.dataPoints);
-      /*TBD
-      if (Object.keys(this.payload.created).length) {
-        for (let vdp of Object.values(this.payload.created)) {
-          await this.httpService.post(`/vdps`, vdp);
-        }
-      }
-
-      if (Object.keys(this.payload.updated).length) {
-        for (let [vdpId, vdp] of Object.entries(this.payload.updated)) {
-          await this.httpService.patch(`/vdps/${vdpId}`, vdp);
-        }
-      }
-
-      if (this.payload.deleted.length) {
-        for (let vdpId of this.payload.deleted) {
-          await this.httpService.delete(`/vdps/${vdpId}`);
-        }
-      }
-
-      if (this.payload.replace.length) {
-        await this.httpService.patch(`/vdps`, this.payload.replace);
-      }*/
 
       this._getDataPoints();
 
-      this.resetState();
-
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.touched = false;
       });
 
       this.toastr.success(
@@ -233,10 +207,10 @@ export class VirtualDataPointService
   }
 
   async addDataPoint(obj: VirtualDataPoint) {
-    this.create(obj);
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataPoints = [...state.dataPoints, obj];
+      state.dataPoints = [...state.dataPoints, { ...obj, id: uuidv4() }];
+      state.touched = true;
     });
   }
 
@@ -245,28 +219,23 @@ export class VirtualDataPointService
 
     const newDp = { ...oldDp, ...obj } as VirtualDataPoint;
 
-    this.update(id, newDp);
-
     this._store.patchState((state) => {
       state.dataPoints = state.dataPoints.map((x) => (x.id != id ? x : newDp));
+      state.touched = true;
     });
   }
 
   async updateOrderDataPoints(obj: VirtualDataPoint[]) {
-    if (!this._isEqualsOriginalDataPoints(obj)) {
-      this.markTouched();
-    }
-
     this._store.patchState((state) => {
       state.dataPoints = [...obj];
+      state.touched = !this._isEqualsOriginalDataPoints(state.dataPoints);
     });
   }
 
   async deleteDataPoint(id: string) {
-    this.delete(id);
-
     this._store.patchState((state) => {
       state.dataPoints = state.dataPoints.filter((x) => x.id != id);
+      state.touched = true;
     });
   }
 
@@ -319,7 +288,8 @@ export class VirtualDataPointService
 
   private _emptyState() {
     return <VirtualDataPointsState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      touched: false
     };
   }
 }

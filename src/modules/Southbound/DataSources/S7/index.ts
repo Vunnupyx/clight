@@ -313,8 +313,8 @@ export class S7DataSource extends DataSource {
         this.readNckData(nckDataPointsToRead)
       ]);
 
-      let allS7DpError = nckDataPointsToRead?.length > 0;
-      let allNCKDpError = this.getPlcAddresses()?.length > 0;
+      let allNCKDpError = nckDataPointsToRead?.length > 0;
+      let allS7DpError = this.getPlcAddresses()?.length > 0;
 
       const measurements: IMeasurement[] = [];
       for (const dp of this.config.dataPoints) {

@@ -8,6 +8,7 @@ title: Changelog
 
 ## Fixed
 
+- [DIGMDCLGHT-67](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-67) Fixes max size of columns to avoid disappearing of columns
 - [DIGMDCLGHT-325](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-325) Fixes responsiveness of the UI when window size is changed
 - [DIGMDCLGHT-330](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-330) Fixes the hostname validity check in Proxy field
 - [DIGMDCLGHT-336](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-336) Fixes Variable3 data type in OPCUA

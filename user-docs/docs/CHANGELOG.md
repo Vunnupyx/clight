@@ -23,6 +23,7 @@ title: Changelog
 ### Changed
 
 - [DIGMDCLGHT-344](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-344) Updates /bulk endpoints in API
+- [DIGMDCLGHT-367](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-367) Updates version check logic for software update mechanism
 
 ## Added
 

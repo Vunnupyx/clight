@@ -7,7 +7,7 @@ export default [
     initialValue: 'ARMED',
     type: 'event',
     map: {
-      '0': 'TRIGGERT',
+      '0': 'TRIGGERED',
       '1': 'ARMED'
     },
     mandatory: true
@@ -167,11 +167,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,
@@ -238,11 +238,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,
@@ -314,11 +314,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,
@@ -390,11 +390,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,

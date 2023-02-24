@@ -1,6 +1,6 @@
 import { StateMachine, StateAndTransitions } from './state-machine';
 import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
-import { sleep, compareVersionSemver } from 'app/shared/utils';
+import { sleep, compareSemanticVersion } from 'app/shared/utils';
 import { HealthcheckResponse } from 'app/services';
 
 interface CosInstalledVersion {
@@ -197,7 +197,7 @@ export class UpdateManager {
       const installedOsVersion = response?.find(
         (x) => x.Name === 'COS'
       )?.Version;
-      const resultOfVersionComparison = compareVersionSemver(
+      const resultOfVersionComparison = compareSemanticVersion(
         installedOsVersion,
         this.newOsVersionToInstall
       );
@@ -483,7 +483,7 @@ export class UpdateManager {
     availableVersions: CosAvailableUpdates['updates']
   ): CosAvailableUpdateFormat {
     const sortedVersions = availableVersions.sort((first, second) =>
-      compareVersionSemver(first.release, second.release)
+      compareSemanticVersion(first.release, second.release)
     );
 
     return sortedVersions[0];

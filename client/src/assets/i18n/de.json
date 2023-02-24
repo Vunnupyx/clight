@@ -467,6 +467,7 @@
     "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Wird auf den Abschluss der Installation gewartet",
     "UpdateStatus-NO_CONNECTION": "Update fehlgeschlagen. Bitte überprüfen Sie die Netzwerkkonfiguration des Geräts.",
     "UpdateStatus-UNEXPECTED_ERROR": "Die Aktualisierung ist aufgrund eines unerwarteten Fehlers fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+    "UpdateStatus-ERROR_TIMEOUT": "Zeitüberschreitung bei der Aktualisierung. Bitte versuchen Sie es später erneut.",
     "UpdateFailed": "Update fehlgeschlagen",
     "UpdateFailed-error_no_network": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "UpdateFailed-CheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",

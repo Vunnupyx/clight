@@ -25,6 +25,7 @@ title: Changelog
 
 - [DIGMDCLGHT-344](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-344) Updates /bulk endpoints in API
 - [DIGMDCLGHT-352](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-352) Updates japanese translations for user documentation
+- [DIGMDCLGHT-356](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-356) Updates japanese translations for user interface
 - [DIGMDCLGHT-367](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-367) Updates version check logic for software update mechanism
 
 ## Added

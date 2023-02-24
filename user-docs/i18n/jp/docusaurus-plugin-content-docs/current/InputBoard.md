@@ -1,49 +1,49 @@
 ---
-title: 'Data source: Input Board'
+title: 'データソース: 入力ボード'
 ---
 
-## Introduction
+## はじめに
 
-With this data source you can connect electrical signals to your IoTconnector flex device. The signals can either be digital (Sink or Source, 0V/24V) or analog inputs (0-10V or 0-20mA). This is especially useful if you want to connect older equipment without a digital control or a machine where access to the control is not possible.
+このデータソースを使って、IoTconnector flexデバイスに電気信号を接続することができます。信号は、デジタル(シンクまたはソース、0V/24V)またはアナログ入力(0-10Vまたは0-20mA)のいずれかを使用できます。デジタル制御装置のない古い機器や、制御装置にアクセスできない機械の接続に有効です。
 
-On the top of the page you find the main settings for the data source: Enabling and selecting the type.
+ページの上部には、データソースの主な設定項目があります: 有効化およびタイプの選択。
 
-## Changing the type of the Input Board
+## 入力ボードの種類を変更する
 
-You can use the Type dropdown menu on the top of the page to select which type of Input Board you are using.
+ページ上部の「種類」ドロップダウンメニューで、使用する入力ボードの種類を選択できます。
 
-![Input Board Types](/img/datasource/inputboard_types.png)
+![入力ボードの種類](/img/datasource/inputboard_types.png)
 
-## Default Configuration
+## デフォルトの設定
 
-By default the Data Source is configured the following way:
+デフォルトでは、データソースは以下のように設定されています:
 
-- DI0 - Emergency Stop
-- DI1 - Stack Light: Red
-- DI2 - Stack Light: Yellow
-- DI3 - Stack Light: Green
-- DI4 - Stack Light: Blue
-- AI0 - Current Sensor
-- AI1 - Not used
+- DI0 - 非常停止
+- DI1 - 赤色スタックライト
+- DI2 - 黄色スタックライト
+- DI3 - 緑色スタックライト
+- DI4 - 青色スタックライト
+- AI0 - 電流センサー
+- AI1 - 未使用
 
-## Analog Inputs
+## アナログ入力
 
-With analog inputs, you must select the correct configuration of 100A or 150A sensors so that the scaling is done correctly to the value.
+値を正しく読み取るため、アナログ入力に接続されたセンサーに一致するよう100Aまたは150Aを選択してください。
 
-#### Jumper Settings for Analog Inputs
+#### アナログ入力のジャンパー設定
 
-On SIEMENS SIMATIC IOT2050, you need to set the jumper correctly to enable the analog inputs. Please check the user manual of SIEMENS SIMATIC IOT2050 for the details.
+IoTconnector flexのアナログ入力を有効にするために、ジャンパを正しく設定する必要があります。詳細は、SIEMENS SIMATIC IOT2050のユーザーマニュアルをご確認ください。
 
-## Adding Data Points
+## データポイントの追加
 
-![Input Board Add Data Point](/img/datasource/inputboard_add.png)
+![入力ボードのデータポイントの追加](/img/datasource/inputboard_add.png)
 
-To add a data point, click on the blue `Add Data Point` button ![Add data point button](/img/datasource/addbutton.png).
+データポイントを追加するには、青い `データポイント追加` ボタンをクリックします ![データポイント追加ボタン](/img/datasource/addbutton.png).
 
-Newly added data points are shown at the bottom of the table.You need to give a name and select the address of the data point (see photo below). Once you are done click green check icon to save your changes. After all changes please click `Apply Changes` on the top right of the page.
+新たに追加されたデータポイントはテーブルの下部に表示されます。データポイントに名前を付け、アドレスを選択する必要があります(下の写真参照)。変更が完了したら、緑のチェックマークをクリックして変更を保存します。すべての変更が終わったら、ページの右上にある`変更を適用`をクリックしてください。
 
-![Input Board New Data Point](/img/datasource/inputboard_newdatapoint.png)
+![入力ボードの新しいデータポイント](/img/datasource/inputboard_newdatapoint.png)
 
-## Blinking state of digital inputs
+## デジタル入力への点滅状態の入力
 
-Digitals inputs have a special blinking state (value=2) when their input changes from 0 to 1 (rising flags) three times within 10 seconds. This status is seen as value = 2 (in comparison to 0=false and 1=true). This status is reset if rising flags happen less than 3 times within 10 seconds.
+10秒以内に3回以上、デジタル入力が0から1(立ち上がりフラグ)に変化すると、特別な点滅状態(値=2)となります。この状態は、(0 = 偽、1 = 真と比較して)値 = 2として認識されます。この状態は、デジタル入力の立ち上がりが10秒間に3回未満になるとリセットされます。

@@ -7,7 +7,6 @@
   "layout": {
     "Settings": "Settings",
     "General": "General",
-    "UpdateManager": "Update Manager",
     "DataSource": "Data Source",
     "VirtualDataPoints": "Virtual Data Points",
     "DataMapping": "Data Mapping",
@@ -107,7 +106,6 @@
   },
   "settings-general": {
     "General": "General",
-    "UnknownError": "An unexpected error ocurred. Please try again later.",
     "DeviceInfo": "Device Info",
     "Language": "Language",
     "CELOSLanguage": "CELOS Language",
@@ -198,8 +196,6 @@
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
-    "ActivePower": "Active Power",
-    "TotalEnergy": "Total Energy",
     "TariffStatus": {
       "0": "No tariff counter active",
       "1": "Running",
@@ -321,7 +317,6 @@
     "Event": "Event",
     "Condition": "Condition",
     "Sample": "Sample",
-    "SelectAVariable": "Select a variable",
     "CreateDataPoint": "Create data item",
     "SelectVariable": "Select Variable",
     "Mapping": "Mapping",
@@ -357,7 +352,6 @@
     "TimeZone": "Time zone",
     "Organization": "Organization",
     "Model": "Model",
-    "License": "License",
     "ServerConfiguration": "Server configuration",
     "Messenger": "DMG MORI Messenger",
     "ConnectMessengerButton": "Connect DMG MORI Messenger",
@@ -404,8 +398,6 @@
     "Mappings": "Mappings",
     "Source": "Source",
     "Target": "Target",
-    "Value": "Value Assignment",
-    "ValueTooltip": "This value will be assigned in any truthy case for further use",
     "Actions": "Actions",
     "Edit": "Edit",
     "Delete": "Delete",
@@ -448,9 +440,7 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time (UTC)",
-    "ChooseTimeZone": "Choose Time Zone",
     "ntpUnreachable": "NTP Server unreachable",
-    "ntpUnreachableLong": "NTP Server unreachable. Please add a reachable server and click apply.",
     "UpdateNtpSuccess": "Updated NTP Server successfully",
     "UpdateProxySuccess": "Updated proxy successfully",
     "UpdateAdapterSuccess": "Updated network adapter successfully",
@@ -480,8 +470,6 @@
     "UpdateFailed": "Update Failed",
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
     "UpdateFailed-CheckNetworkConfig": "Update failed. Please check your network configuration.",
-    "UpdateInstallFailed": "Failed to install updates. Please contact support.",
-    "MaterialThemeVersion": "CELOS X material theme",
     "SoftwareComponent": "Software component",
     "LoadError": "Failed to load system information. Try again later",
     "FactoryReset": "Factory Reset",
@@ -489,8 +477,7 @@
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",
-    "FactoryResetSuccess": "Factory reset performed successfully!",
-    "FactoryResetError": "Error occurred while performing factory reset. Please try again later."
+    "FactoryResetSuccess": "Factory reset performed successfully!"
   },
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"

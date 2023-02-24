@@ -7,7 +7,6 @@
   "layout": {
     "Settings": "Einstellungen",
     "General": "Allgemein",
-    "UpdateManager": "Update Manager",
     "DataSource": "Datenquelle",
     "VirtualDataPoints": "Virtuelle Datenpunkte",
     "DataMapping": "Mapping",
@@ -107,7 +106,6 @@
   },
   "settings-general": {
     "General": "Allgemein",
-    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut oder kontaktiere den Support.",
     "DeviceInfo": "Geräte Informationen",
     "Language": "Sprache",
     "CELOSLanguage": "CELOS Sprache",
@@ -198,8 +196,6 @@
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
-    "ActivePower": "Active Power",
-    "TotalEnergy": "Total Energy",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
       "1": "Läuft",
@@ -321,7 +317,6 @@
     "Event": "Event",
     "Condition": "Condition",
     "Sample": "Sample",
-    "SelectAVariable": "Datenpunktauswahl",
     "CreateDataPoint": "Datenpunkt erstellen",
     "SelectVariable": "Variable auswählen",
     "Mapping": "Zuordnung",
@@ -357,7 +352,6 @@
     "TimeZone": "Zeitzone",
     "Organization": "Organisation",
     "Model": "Modell",
-    "License": "",
     "ServerConfiguration": "Server Konfiguration",
     "Messenger": "Messenger",
     "ConnectMessengerButton": "DMG MORI Messenger Verbinden",
@@ -404,8 +398,6 @@
     "Mappings": "Mappings",
     "Source": "Quelle",
     "Target": "Ziel",
-    "Value": "Zuweisung",
-    "ValueTooltip": "Zuweisung",
     "Actions": "Aktionen",
     "Edit": "Editieren",
     "Delete": "Löschen",
@@ -448,9 +440,7 @@
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
     "SetCurrentTime": "Systemzeit setzen (UTC)",
-    "ChooseTimeZone": "Zeitzone",
     "ntpUnreachable": "NTP Server nicht erreichbar",
-    "ntpUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern.",
     "UpdateNtpSuccess": "NTP wurde erfolgreich aktualisiert",
     "UpdateProxySuccess": "Proxy wurde erfolgreich aktualisiert",
     "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
@@ -480,8 +470,6 @@
     "UpdateFailed": "Update fehlgeschlagen",
     "UpdateFailed-error_no_network": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "UpdateFailed-CheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
-    "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
-    "MaterialThemeVersion": "CELOS X Material Themaversion",
     "SoftwareComponent": "Software Komponent",
     "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut",
     "FactoryReset": "Zurücksetzen auf Werkseinstellungen",
@@ -489,8 +477,7 @@
     "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
     "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
     "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
-    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
-    "FactoryResetError": "Beim Zurücksetzen auf die Werkseinstellungen ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal."
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"

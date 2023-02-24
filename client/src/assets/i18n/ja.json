@@ -7,7 +7,6 @@
   "layout": {
     "Settings": "設定",
     "General": "一般",
-    "UpdateManager": "アップデートマネージャ",
     "DataSource": "データソース",
     "VirtualDataPoints": "仮想データポイント",
     "DataMapping": "データマッピング",
@@ -107,7 +106,6 @@
   },
   "settings-general": {
     "General": "一般",
-    "UnknownError": "An unexpected error ocurred. Please try again later.",
     "DeviceInfo": "デバイス情報",
     "Language": "言語 (Language)",
     "CELOSLanguage": "CELOSの言語",
@@ -198,8 +196,6 @@
     "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
-    "ActivePower": "Active Power",
-    "TotalEnergy": "Total Energy",
     "TariffStatus": {
       "0": "No tariff counter active",
       "1": "Running",
@@ -321,7 +317,6 @@
     "Event": "イベント",
     "Condition": "条件",
     "Sample": "Sample",
-    "SelectAVariable": "変数を選択",
     "CreateDataPoint": "データアイテムを作成",
     "SelectVariable": "選択変数",
     "Mapping": "マッピング",
@@ -357,7 +352,6 @@
     "TimeZone": "Time zone",
     "Organization": "Organization",
     "Model": "Model",
-    "License": "",
     "ServerConfiguration": "Server configuration",
     "Messenger": "DMG MORI Messenger",
     "ConnectMessengerButton": "Connect DMG MORI Messenger",
@@ -404,8 +398,6 @@
     "Mappings": "マッピング",
     "Source": "ソース",
     "Target": "ターゲット",
-    "Value": "値",
-    "ValueTooltip": "This value will be assigned in any truthy case for further use",
     "Actions": "動作",
     "Edit": "編集",
     "Delete": "削除",
@@ -448,9 +440,7 @@
     "UseNTPServer": "Use NTP Server",
     "SetNTPServer": "Set NTP Server",
     "SetCurrentTime": "Set Current Time (UTC)",
-    "ChooseTimeZone": "Choose Time Zone",
     "ntpUnreachable": "NTPサーバーに到達できない",
-    "ntpUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。",
     "UpdateNtpSuccess": "Updated NTP Server successfully",
     "UpdateProxySuccess": "Updated proxy successfully",
     "UpdateAdapterSuccess": "Updated network adapter successfully",
@@ -480,8 +470,6 @@
     "UpdateFailed": "Update Failed",
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
     "UpdateFailed-CheckNetworkConfig": "Update failed. Please check your network configuration.",
-    "UpdateInstallFailed": "Failed to install updates. Please contact support.",
-    "MaterialThemeVersion": "CELOS X material theme",
     "SoftwareComponent": "Software component",
     "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。",
     "FactoryReset": "Factory Reset",
@@ -489,8 +477,7 @@
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",
-    "FactoryResetSuccess": "Factory reset performed successfully",
-    "FactoryResetError": "Error occurred while performing factory reset. Please try again later."
+    "FactoryResetSuccess": "Factory reset performed successfully"
   },
   "prompt": {
     "warningText": "保存されていない変更があります。このまま続けますか？"

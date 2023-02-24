@@ -7,7 +7,6 @@
   "layout": {
     "Settings": "設定",
     "General": "一般",
-    "UpdateManager": "アップデートマネージャ",
     "DataSource": "データソース",
     "VirtualDataPoints": "仮想データポイント",
     "DataMapping": "データマッピング",
@@ -107,7 +106,6 @@
   },
   "settings-general": {
     "General": "一般",
-    "UnknownError": "予期しないエラーが発生しました。時間をおいて再試行してください。",
     "DeviceInfo": "デバイス情報",
     "Language": "言語 (Language)",
     "CELOSLanguage": "CELOSの言語",
@@ -198,8 +196,6 @@
     "DuplicatedName": "名前が重複しています",
     "DuplicatedAddress": "アドレスが重複しています",
     "SelectVariable": "変数選択",
-    "ActivePower": "有効電力",
-    "TotalEnergy": "全電力量",
     "TariffStatus": {
       "0": "通信量カウンタが全て無効です",
       "1": "実行中",
@@ -258,7 +254,10 @@
     "CurrentLiveValue": "現在値",
     "ReturnValueIfTrue": "戻り値",
     "SetFormula": "式設定",
-    "Formula": "式"
+    "Formula": "式",
+    "UnexpectedError": "Changes have not been applied. Please, try again!",
+    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
+    "WarningWrongVdp": "Update failed. VDP with wrong order"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -318,7 +317,6 @@
     "Event": "イベント",
     "Condition": "条件",
     "Sample": "サンプル",
-    "SelectAVariable": "変数を選択",
     "CreateDataPoint": "データアイテムを作成",
     "SelectVariable": "選択変数",
     "Mapping": "マッピング",
@@ -354,7 +352,6 @@
     "TimeZone": "タイムゾーン",
     "Organization": "組織名",
     "Model": "モデル",
-    "License": "",
     "ServerConfiguration": "サーバ設定",
     "Messenger": "DMG MORI Messenger",
     "ConnectMessengerButton": "DMG MORI Messengerにつなぐ",
@@ -401,8 +398,6 @@
     "Mappings": "マッピング",
     "Source": "ソース",
     "Target": "ターゲット",
-    "Value": "値",
-    "ValueTooltip": "この値は常に真ととして扱われます",
     "Actions": "動作",
     "Edit": "編集",
     "Delete": "削除",
@@ -445,9 +440,7 @@
     "UseNTPServer": "NTPサーバを使う",
     "SetNTPServer": "NTPサーバ設定",
     "SetCurrentTime": "現在時刻設定 (UTC)",
-    "ChooseTimeZone": "タイムゾーン選択",
     "ntpUnreachable": "NTPサーバーに到達できない",
-    "ntpUnreachableLong": "NTPサーバーに到達できません。到達可能なサーバーを追加して、適用をクリックしてください。",
     "UpdateNtpSuccess": "NTPサーバ設定を更新しました",
     "UpdateProxySuccess": "プロキシ設定を更新しました",
     "UpdateAdapterSuccess": "ネットワーク設定を更新しました",
@@ -477,8 +470,6 @@
     "UpdateFailed": "更新失敗",
     "UpdateFailed-error_no_network": "更新できません。ネットワーク設定を確認してください",
     "UpdateFailed-CheckNetworkConfig": "更新できません。ネットワーク設定を確認してください",
-    "UpdateInstallFailed": "更新のインストールに失敗しました。サポートに連絡してください",
-    "MaterialThemeVersion": "CELOS Xマテリアルテーマ",
     "SoftwareComponent": "ソフトウェアコンポーネント",
     "LoadError": "システム情報の読み込みに失敗しました。時間をおいて再試行してください。",
     "FactoryReset": "工場初期化",
@@ -486,8 +477,7 @@
     "FactoryResetNow": "デバイスの設定を工場出荷状態にリセットします",
     "FactoryResetDeviceTitle": "工場初期化実行",
     "FactoryResetDeviceText": "処理を続けますか？ネットワーク設定も初期化されますので、現在のネットワーク環境では接続ができなくなる可能性があります",
-    "FactoryResetSuccess": "工場初期化が完了しました",
-    "FactoryResetError": "工場初期化に失敗しました。再試行してください"
+    "FactoryResetSuccess": "工場初期化が完了しました"
   },
   "prompt": {
     "warningText": "保存されていない変更があります。このまま続けますか？"

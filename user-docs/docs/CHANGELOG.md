@@ -4,6 +4,35 @@ title: Changelog
 
 # Changelog
 
+## [3.0.7]
+
+## Fixed
+
+- [DIGMDCLGHT-67](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-67) Fixes max size of columns to avoid disappearing of columns
+- [DIGMDCLGHT-325](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-325) Fixes responsiveness of the UI when window size is changed
+- [DIGMDCLGHT-330](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-330) Fixes the hostname validity check in Proxy field
+- [DIGMDCLGHT-336](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-336) Fixes Variable3 data type in OPCUA
+- [DIGMDCLGHT-337](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-337) Fixes /netservice endpoint
+- [DIGMDCLGHT-338](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-338) Fixes CELOS Xchange interface data points and display of desired services
+- [DIGMDCLGHT-339](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-339) Fixes display of whether NTP service is reachable at first page load
+- [DIGMDCLGHT-340](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-340) Fixes cases where removing a mapping does not stop editing application interface values
+- [DIGMDCLGHT-358](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-358) Fixes wrong order after sorting data point tables in edit mode
+- [DIGMDCLGHT-366](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-366) Fixes reconnect mechanism after unexpected NC disconnection
+- [DIGSRVWRLD-89](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-89) Fixes spelling mistake in application interface
+- [DIGSRVWRLD-90](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-90) Fixes order in execution state
+
+### Changed
+
+- [DIGMDCLGHT-344](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-344) Updates /bulk endpoints in API
+- [DIGMDCLGHT-352](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-352) Updates japanese translations for user documentation
+- [DIGMDCLGHT-356](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-356) Updates japanese translations for user interface
+- [DIGMDCLGHT-367](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-367) Updates version check logic for software update mechanism
+
+## Added
+
+- [DIGMDCLGHT-335](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-335) Redirects to quick start page when terms and conditions are not accepted
+- [DIGMDCLGHT-341](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-341) Adds drag&drop feature for virtual data points
+
 ## [3.0.6]
 
 ## Fixed

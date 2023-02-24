@@ -1,35 +1,35 @@
 ---
-title: Mapping
+title: マッピング
 ---
 
-# Mapping
+# マッピング
 
-## Introduction
+## はじめに
 
-Mapping describe the relation between source data points (`NC`/`DI`/`AI`/`VDP`) and the destination data points (`MTConnect`/`OPC UA`). It is necessary to forward the source data value to the destination data points for different [`Application Interfaces`](ApplicationInterface.md).
+マッピングは、送信元データポイント(`NC`/`DI`/`AI`/`VDP`)と送信先データポイント(`MTConnect`/`OPC UA`)の関係を記述するものです。[`アプリケーションインターフェース`](ApplicationInterface.md)が異なる場合、送信元のデータ値を送信先のデータポイントに転送する必要があります。
 
-**Note:** The target data points in [`Application Interfaces`](ApplicationInterface.md) must be defined before you can create a mapping, because you need to choose that target data point while creating the VDP.
+**注意:** [`アプリケーションインタフェース`](ApplicationInterface.md) のターゲットデータポイントは、VDPの作成時に選択する必要があるため、マッピングを作成する前に定義しておく必要があります。
 
-### Add a mapping
+### マッピングの追加
 
-![Mapping adding new data mapping](/img/mapping/adding.png)
+![新しいデータマッピングを追加するマッピング](/img/mapping/adding.png)
 
-1. Click the blue button with the white plus icon ![Mapping add new button](/img/mapping/mapping_addbutton.png)
-2. The new row is added to the end of the table.
-3. Select the desired source point from the dropdown menu on the Source column.
-4. Select the desired target data point (for the desired [`Application Interface`](ApplicationInterface.md)) on Target column.
-5. Click the green check button to save or click the red cross to discard your entry.
-6. Click the `Apply Changes` button to send your new data point to the device.
+1. 白いプラスアイコンの青いボタンをクリックします ![マッピングの新規追加ボタン](/img/mapping/mapping_addbutton.png)
+2. 新しい行がテーブルの末尾に追加されます。
+3. ソース列のドロップダウンメニューから、必要なソースポイントを選択します。
+4. ターゲット欄で目的のデータポイント(目的の[`アプリケーションインタフェース`](ApplicationInterface.md)用)を選択します。
+5. 緑色のチェックボタンをクリックすると保存され、赤色の十字をクリックすると入力が破棄されます。
+6. `変更の適用`ボタンをクリックすると、新しいデータポイントがデバイスに反映されます。
 
-### Delete a mapping
+### マッピングの削除
 
-1. For the mapping you want to delete, click on the garbage icon on the right side in `Actions` column
-2. Select Yes in the dialog with the question: "Are you sure you want to delete data point?"
-3. Click the `Apply Changes` button to send the change to the backend
+1. 削除したいマッピングについて、`操作`欄の右側にあるゴミ箱のアイコンをクリックします。
+2. 「データポイントを削除しますか？」という質問のダイアログでYesを選択します。
+3. `変更を適用`ボタンをクリックして、変更を反映します。
 
-### Edit a mapping
+### マッピングの編集
 
-1. Click on right side of the entry you want to delete in `Actions` section the pencil icon
-2. The list entry is now editable like a new generated data point (see [`Add a mapping`](Mapping.md#add-a-mapping) section above, start from Step 3 and continue further).
-3. After your changes, click the green check button to save or click the red cross to discard your entry
-4. Click the `Apply Changes` button to send your new data point to the device.
+1. `操作`セクションの削除したいエントリーの右側にある鉛筆のアイコンをクリックします。
+2. リスト内の項目が、新しく生成されたデータポイントのように編集可能になります(上記の [`データマッピングの追加`](Mapping.md#add-a-mapping) の項のステップ3以降を参照)。
+3. 変更後、緑のチェックボタンをクリックして保存するか、赤い十字をクリックしてエントリを破棄します。
+4. `変更を適用`ボタンをクリックすると、新しいデータポイントが反映されます。

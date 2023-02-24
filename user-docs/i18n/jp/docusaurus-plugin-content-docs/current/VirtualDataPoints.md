@@ -1,205 +1,217 @@
 ---
-title: Virtual Data Points
+title: 仮想データポイント
 ---
 
 import Player from 'react-player/file';
 import video from '../../../../static/video/vdp_calculation.mp4';
 
-# Virtual Data Points (VDPs)
+# 仮想データポイント(VDP)
 
-## Introduction
+## はじめに
 
-Virtual Data Point (VDP) is a feature to create a calculated data point from one or more real data points or previously defined virtual data point. There are many operations available for calculating the final value.
+仮想データポイント（VDP）は、1つまたは複数の実データポイント、または以前に定義した仮想データポイントから、計算されたデータポイントを作成する機能です。最終的な値を計算するために、多くの演算が可能です。
 
-**Important:** If a VDP is defined as source of another VDP, the source VDP must be defined before it is used and it should appear above in the list of VDPs! Otherwise you see them as grayed out in the dropdown menu in `Sources`.
+**重要:** VDPが他のVDPのソースとして定義されている場合、ソースVDPは使用前に定義されていなければならず、VDPのリストで上に表示されなければなりません。そうでない場合は、`ソース`のドロップダウンメニューはグレーアウトされます。
 
-#### Automatic Conversion of Non-Boolean values to Boolean values
+#### 非ブール値のブール値への自動変換
 
-If your source is not a boolean value and you use logical, comparison or Enumeration operation, the source is converted to boolean while evaluating for the VDP:
+ソースがブール値でない場合、論理演算、比較演算、列挙演算を使用すると、VDPの評価中にソースがブール値に変換されます。
 
-- If the source value is a number: Any value above 0 is interpreted as `true` and 0 is interpreted as `false`
-- If the source value is not number but a text: Any text length above 0 characters is interpreted as `true` whereas empty text ("") becomes `false`
+- ソース値が数値の場合: 1 以上の値は `真` 、0 は `偽` と解釈されます。
+- ソース値が数値ではなく、テキストの場合: 1文字以上のテキストは `真` 、空文字列 ("") は `偽` と解釈されます。
 
-### Available Operators
+### 利用可能な演算子
 
-Note: If you need a combination of operations please read the `Combine Operations` section.
+注意: もし、いくつかの演算を組み合わせる必要がある場合は、`演算の組み合わせ`セクションを参照してください。
 
-#### Overview of Operators:
+#### 演算子の概要:
 
-| Name             | Type         | Number of Sources | Result      |
+| 名称 | タイプ | ソースの数 | 結果
 | ---------------- | ------------ | ----------------- | ----------- |
-| AND              | Logical      | Multiple          | Boolean     |
-| OR               | Logical      | Multiple          | Boolean     |
-| NOT              | Logical      | Single            | Boolean     |
-| Counter          | Counter      | Single            | Number      |
-| Thresholds       | Threshold    | Single            | Text/Number |
-| Greater          | Comparison   | Single            | Boolean     |
-| Greater or Equal | Comparison   | Single            | Boolean     |
-| Smaller          | Comparison   | Single            | Boolean     |
-| Smaller or Equal | Comparison   | Single            | Boolean     |
-| Equal            | Comparison   | Single            | Boolean     |
-| Unequal          | Comparison   | Single            | Boolean     |
-| Enumeration      | Enumeration  | Multiple          | Text/Number |
-| Calculation      | Mathematical | Multiple          | Number      |
+| AND              | 論理      | 複数          | ブール値     |
+| OR               | 論理      | 複数          | ブール値     |
+| NOT              | 論理      | 単独            | ブール値     |
+| Counter          | カウンター      | 単独            | 数値      |
+| Thresholds       | 閾値    | 単独            | Text/数値 |
+| Greater          | 比較   | 単独            | ブール値     |
+| Greater or Equal | 比較   | 単独            | ブール値     |
+| Smaller          | 比較   | 単独            | ブール値     |
+| Smaller or Equal | 比較   | 単独            | ブール値     |
+| Equal            | 比較   | 単独            | ブール値     |
+| Unequal          | 比較   | 単独            | ブール値     |
+| Enumeration      | 列挙  | 複数          | 文字列/数値 |
+| Calculation      | 算術 | 複数          | 数値      |
+| AND              | 論理      | 複数          | ブール値     |
+| OR               | 論理      | 複数          | ブール値     |
+| NOT              | 論理      | 単独            | ブール値     |
+| Counter          | カウンター      | 単独            | 数値      |
+| Thresholds       | 閾値    | 単独            | 文字列/数値 |
+| Greater          | 比較   | 単独            | ブール値     |
+| Greater or Equal | 比較   | 単独            | ブール値     |
+| Smaller          | 比較   | 単独            | ブール値     |
+| Smaller or Equal | 比較   | 単独            | ブール値     |
+| Equal            | 比較   | 単独            | ブール値     |
+| Unequal          | 比較   | 単独            | ブール値     |
+| Enumeration      | 列挙  | 複数          | 文字列/数値 |
+| Calculation      | 算術 | 複数          | 数値      |
 
-#### Operators:
+#### 演算子:
 
 ##### AND
 
-Type: Logical | Number of Sources: Multiple | Result: Boolean
+タイプ: 論理 | ソースの数: 複数 | 結果: ブール値
 
-Returns true if all selected source data point values are true
+選択されたすべてのソースデータポイントの値が真である場合、真を返します。
 
 ##### OR
 
-Type: Logical | Number of Sources: Multiple | Result: Boolean
+タイプ: 論理 | ソースの数: 複数 | 結果: ブール値
 
-Returns true if at least one selected source data point value is true
+少なくとも1つの選択されたソースデータポイント値が真の場合、真を返します。
 
 ##### NOT
 
-Type: Logical | Number of Sources: Single | Result: Boolean
+タイプ: 論理 | ソースの数: 単独 | 結果: ブール値
 
-Returns false if the source data point value is true and vice versa
+ソースデータポイントの値が真の場合は偽を、偽の場合は真を返します。
 
 ##### COUNTER
 
-Type: Counter | Number of Sources: Single | Result: Number
+タイプ: カウンタ | ソースの数: 単独 | 結果: 数値
 
-Counts every state change of a data point (rising flag of the source, i.e. from 0 to 1 or increase of value) and shows total count of changes as a number.
+データポイントのすべての状態変化(ソースの立ち上がりフラグ、すなわち0から1または値の増加)をカウントし、変化の総数を数値として示します。
 
-Counters are persistent across reboots. Counters can be reset in two ways:
+カウンターは、再起動後も保持されます。カウンターは、2つの方法でリセットすることができます。
 
-- **Manual Reset:** You can reset a counter manually through the UI with the reset button
+- **手動リセット:** UIからリセットボタンでカウンターを手動でリセットすることができます。
 
-![Counter Manual Reset Button](/img/vdp/counter_manual_reset.png)
+![カウンターの手動リセットボタン](/img/vdp/counter_manual_reset.png)
 
-- **Scheduled Reset:** You can reset a counter by setting up a scheduled reset time. You may enter multiple schedules and while adding you can choose the month, day or time as specific or as `Every`. The counter count will be reset to 0 when the set scheduled times are reached.
+- **スケジュールリセット:** リセットをスケジュール設定することによって、カウンターをリセットすることができます。複数のスケジュールを入力することができ、特定の月、日、時刻、または「毎」として選択することができます。設定された時刻になると、カウンターのカウントは0にリセットされます。
 
-![Counter Schedule Reset Button](/img/vdp/counter_schedule_reset.png)
+![カウンタリセットスケジュールボタン](/img/vdp/counter_schedule_reset.png)
 
-Example of scheduled reset:
-![Counter Schedule Example](/img/vdp/counter_scheduled_reset_example.png)
+スケジュールリセットの例:
+![カウンタスケジュール例](/img/vdp/counter_scheduled_reset_example.png)
 
 ##### THRESHOLDS
 
-Type: Threshold | Number of Sources: Single | Result: Text/Number
+タイプ: 閾値 | ソースの数: 単独 | 結果: 文字列/数値
 
-Returns defined value if threshold is exceeded, multiple thresholds are possible for one data point.
+1つのデータポイントに対して複数の閾値を設定することができます。
 
-To set the desired thresholds, choose Set Threshold button on the right to open the dialog window:
-![Setting thresholds](/img/vdp/set_threshold.png)
-Enter desired thresholds and corresponding `Value` which will be the value of the VDP if given threshold is exceeded. Thresholds are sorted in ascending order to check which threshold is passed by the source value and its corresponding `Value` will be the result of the VDP.
+閾値を設定するには、右の閾値設定ボタンをクリックしてダイアログウィンドウを開いてください:
+![閾値の設定](/img/vdp/set_threshold.png)
+希望する閾値と、その閾値を超えた場合のVDPの値をそれぞれ `値` に入力します。閾値は昇順にソートされ、どの閾値を超えたら、その閾値に対応する `値` がVDPの結果となるかを確認することができます。
 
-**Example**: In the example below, the virtual data point called `Tank Status` is connected to `[AI] Tank Level` data source which has currently value 13.54 (thick black line on the graph). There are 3 thresholds given: 5-LOW, 10-NORMAL, 20-HIGH. As the current value is 13.54, the last threshold passed is 3-NORMAL, and therefore the VDP value will be `NORMAL`.
-![Adding threshold](/img/vdp/add_threshold.png)
+**例**: 以下の例では、`タンクの状態`という仮想データポイントが`[AI] タンクレベル`データソースに接続されており、現在の値は13.54(グラフの太い黒線)です。5-低、10-通常、20-高の3つの閾値が与えられています。現在値は13.54未満の閾値は3-通常のため、VDP値は`通常`となります。
+![閾値の追加](/img/vdp/add_threshold.png)
 
 ##### GREATER
 
-Type: Comparison | Number of Sources: Single | Result: Boolean
+タイプ: 比較 | ソースの数: 単独 | 結果: ブール値
 
-Returns true if the data point value is greater than the comparative value.
+データポイント値が比較値より大きい場合に真を返します。
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+比較値を設定するには、その行の `アクション` カラムにある `比較値設定` ボタンを使用します。
 
 ##### GREATER EQUAL
 
-Type: Comparison | Number of Sources: Single | Result: Boolean
+タイプ: 比較 | ソースの数: 単独 | 結果: ブール値
 
-Returns true if the data point value is greater than or equal to the comparative value.
+データポイント値が比較値以上の場合に真を返します。
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+比較値を設定するには、その行の `アクション` カラムにある `比較値設定` ボタンを使用します。
 
 ##### SMALLER
 
-Type: Comparison | Number of Sources: Single | Result: Boolean
+タイプ: 比較 | ソースの数: 単独 | 結果: ブール値
 
-Returns true if the data point value is smaller than the comparative value.
+データポイント値が比較値未満の場合に真を返します。
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+比較値を設定するには、その行の `アクション` カラムにある `比較値設定` ボタンを使用します。
 
 ##### SMALLER EQUAL
+タイプ: 比較 | ソースの数: 単独 | 結果: ブール値
 
-Type: Comparison | Number of Sources: Single | Result: Boolean
+データポイント値が比較値以下の場合に真を返します。
 
-Returns true if the data point value is less than or equal to the comparative value.
-
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+比較値を設定するには、その行の `アクション` カラムにある `比較値設定` ボタンを使用します。
 
 ##### EQUAL
 
-Type: Comparison | Number of Sources: Single | Result: Boolean
+タイプ: 比較 | ソースの数: 単独 | 結果: ブール値
 
-Returns true if the data point value is equal to the comparative value.
+データポイント値が比較値と一致する場合に真を返します。
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+比較値を設定するには、その行の `アクション` カラムにある `比較値設定` ボタンを使用します。
 
 ##### UNEQUAL
 
-Type: Comparison | Number of Sources: Single | Result: Boolean
+タイプ: 比較 | ソースの数: 単独 | 結果: ブール値
 
-Returns true if the data point value is _not_ equal to the comparative value.
+データポイント値が比較値と異なる場合に真を返します。
 
-To provide the compared value, use the `Set Comparative Value` button on the `Action`column of the row.
+比較値を設定するには、その行の `アクション` カラムにある `比較値設定` ボタンを使用します。
 
 ##### ENUMERATION
 
-Type: Enumeration | Number of Sources: Multiple | Result: Text/Number
+タイプ: 列挙 | ソースの数: 複数 | 結果: 文字列/数値
 
-Returns a text that is matching to the value of the source. These are provided via the `Set Enumeration` button on `Action` column as seen below.
-![Set enum button](/img/vdp/vdp_set_enum_button.png)
+ソースの値に対応する文字列を返します。これらは、以下のように `アクション` カラムの `列挙子設定` ボタンを使って設定します。
+![列挙子設定ボタン](/img/vdp/vdp_set_enum_button.png)
 
-In Set Enumeration view, you can give a default value, which will be showed if none of the defined conditions are met.
+列挙子設定ビューでは、デフォルト値を設定することができ、定義された条件のいずれにも当てはまらない場合に、その値が返されます。
 
-![Add enum modal](/img/vdp/set_enum_default.png)
+![列挙子選択条件追加](/img/vdp/set_enum_default.png)
 
-By clicking blue plus sign, you can add new conditions. For each such conditions, you need to choose a variable to be observed and the text to be shown if the source value becomes `true` by typing it under "Value if left side is true" column. If the chosen observed variable is not a boolean value, then it will be converted to boolean, as explained in [`Automatic Conversion of Non-Boolean values to Boolean values`](VirtualDataPoints.md#automatic-conversion-of-non-boolean-values-to-boolean-values).
-![Adding enumerations](/img/vdp/set_enum_row.png)
+青いプラス記号をクリックすると、新しい条件を追加することができます。それぞれの条件では、対象の変数と、その変数が`真`になったときに出力する文字列を、"左辺が真である場合の値"欄に入力します。対象の変数がブール値でなければ[`非ブール値のブール値への自動変換`](VirtualDataPoints.md#automatic-conversion-of-non-boolean-values-to-boolean-values) で説明したようにブール値に変換されます。
+![列挙子の追加](/img/vdp/set_enum_row.png)
 
-Note: You may also change the order of enumeration by dragging and dropping the enumerations. This affects which value is true first, and therefore which enumeration would be the result of the VDP.
+注：列挙の順序は、ドラッグ＆ドロップで変更できます。これは、どの値が最初に真になるか、どの列挙子がVDPの結果となるかに影響します。
 
-**Example:** An example with certain values can be seen in the following photo. If Digital Input representing Yellow Light is `true`, then the enumeration result will be `WARNING`. If Digital Input representing Green Light is `true`, then the enumeration result will be `GOOD`. In other cases the default result will be `NO INFO`.
-![Example of adding enumerations](/img/vdp/set_enum_example.png)
+**例:** 以下の写真にあるような値がある場合の例を示します。黄ランプのデジタル入力が`真`であれば、結果は`警告`になります。緑ランプのデジタル入力が`真`であれば、結果は`良`になります。その他の場合、デフォルトの結果は `情報なし` になります。
+![列挙の追加例](/img/vdp/set_enum_example.png)
 
 ##### CALCULATION
 
-Type: Mathematical | Number of Sources: Multiple | Result: Number
+タイプ: 算術 | ソースの数: 複数 | 結果: 数値
 
-Custom mathematical expression using variable names and manually typing the mathematical equations. It is useful when several data points need to be combined and in more complex mathematical operations.
+変数名を使用し、数式を手動で入力するカスタム数式です。複数のデータポイントを結合する場合や、より複雑な数学的操作に便利です。
 
-**Important**: If you choose a boolean source, then its value is interpreted as 1 if true and 0 if false.
+**重要**: ブール値ソースを選択した場合、その値が真なら1、偽なら0と扱われます。
 
-**Example Video:**
+**サンプル動画:**
 <Player controls url={video}/>
 
-### How to Add a Virtual Data Point
+### 仮想データポイントの追加
 
-![Adding new virtual data points](/img/vdp/add_vdp.png)
+![新しい仮想データポイントの追加](/img/vdp/add_vdp.png)
 
-1. Click the blue button with the white plus icon. A new line is added to the list of VDPs.
-2. Enter a name for your new generated VDP
-3. Select an operator
-4. Select one or multiple sources. To see which operator allows single or multiple sources, please see the table above.
-   ![Choosing sources](/img/vdp/choose_source.png)
-5. For operator specific details and settings see relevant operator's description above. For some operators you must provide extra information after you save.
-6. Click the green check button on the right in `Actions` column to save and stop editing or click the red cross to discard your entry.
-7. Click the `Apply Changes` button on top right of the page to send your new data point the the device.
+1. 青いボタンと白いプラスアイコンをクリックします。VDPのリストに新しい行が追加されます。
+2. 新しく生成するVDPの名前を入力します。
+3. 演算子を選択します。
+4. 1つまたは複数のソースを選択します。どの演算子が単独または複数のソースを取るかについては、上の表を参照してください。
+   ![ソースの選択](/img/vdp/choose_source.png)
+5. 演算子固有の詳細と設定については、上記の演算子の説明を参照してください。いくつかの演算子では、保存後に追加の情報を設定する必要があります。
+6. 右の `アクション` 欄にある緑色のチェックボタンをクリックして保存し、編集を中止するか、赤色の十字をクリックしてエントリーを破棄してください。
+7. ページ右上の`変更を適用`ボタンをクリックすると、新しいデータポイントが反映されます。
 
-### Combined Operations
+### 複合操作
 
-There are two ways to create combined operations depending on the type of result you want:
+複合操作の作成方法は、求める結果の種類によって2通りあります。
 
-- Using `Calculation`: If you want a numerical result with mathematical operation, you can use `Calculation` to combine multiple data sources. Please refer the explanation above.
+- `計算`を使用する場合: 演算を伴う数値結果を得たい場合は、 `数値演算` を用いて複数のデータソースを組み合わせることができます。上記の説明を参照してください。
 
-- Creating new VDPs and combining these: If you want a boolean result from multiple sources you can combine them step by step through several VDPs. For example, to create result of _DataPoint1 & DataPoint2 & !DataPoint3_ => follow the following 4 steps:
+- 新しい VDP を作成し、それらを結合する場合: 複数のデータソースから論理演算の結果を得たい場合、複数のVDPを作成し、段階的に組み合わせることになります。例えば、_DataPoint1 & DataPoint2 & !DataPoint3_ => の結果を作成するには、以下の4つのステップを踏んでください:
 
-1. Create a first VDP1 with DP1 and DP2, AND operation
-2. Create a second VDP2 with DP3, NOT operation
-3. Create a third final VDP3 with VDP1, VDP2, AND operation
-4. The result will be equal to the VDP3 value
+1. DP1とDP2を含む最初のVDP1を作成し、AND演算を行う。
+2. DP3 で 2 番目の VDP2 を作成し、NOT 演算を行う。
+3. VDP1とVDP2のAND演算で3番目の最終VDP3を作成する。
+4. VDP3を結果として出力する。
 
-### How to Delete a Virtual Data Point
+### 仮想データポイントの削除
 
-1. For the VDP you want to delete, click the garbage icon on right side under `Actions` column
-2. Select Yes in the overlay dialog with the question: "Are you sure you want to delete data point?"
-3. Click the `Apply Changes` button to send the change to the backend
+1. 削除したいVDPの右側、`アクション`カラムの下にあるゴミ箱アイコンをクリックします。
+2. "データポイントを削除しますか？" という質問のオーバーレイダイアログでYesを選択します。
+3. `変更を適用`ボタンをクリックして、変更を反映します。

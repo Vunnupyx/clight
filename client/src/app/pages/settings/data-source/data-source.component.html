@@ -449,6 +449,7 @@
           [flexGrow]="1"
           cellClass="input-cell"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -489,6 +490,7 @@
           [flexGrow]="1"
           cellClass="input-cell"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -546,6 +548,7 @@
           [flexGrow]="1"
           [sortable]="false"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template ngx-datatable-cell-template let-row="row">
             <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
@@ -580,6 +583,7 @@
           [flexGrow]="3"
           cellClass="input-cell address-cell"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -675,6 +679,7 @@
           [width]="300"
           [sortable]="false"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -692,6 +697,7 @@
           cellClass="button-cell"
           [sortable]="false"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template

@@ -14,7 +14,8 @@ export enum ErrorTypes {
 
 export enum DataSourceProtocols {
   S7 = 's7',
-  IOSHIELD = 'ioshield'
+  IOSHIELD = 'ioshield',
+  ENERGY = 'energy'
 }
 
 export enum DataSinkProtocols {
@@ -53,8 +54,6 @@ export enum DataPointLifecycleEventTypes {
 export enum LifecycleEventStatus {
   Disabled = 'disabled',
   NotConfigured = 'notconfigured',
-  Provisioning = 'provisioning',
-  ProvisioningFailed = 'provisioningfailed',
   TimeError = 'clienttimedeviation',
   NoNetwork = 'nonetwork',
   Connecting = 'connecting',
@@ -63,8 +62,7 @@ export enum LifecycleEventStatus {
   Reconnecting = 'reconnecting',
   ConnectionError = 'failedtoconnect',
   Unavailable = 'unavailable',
-  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted',
-  NoLicense = 'nolicense'
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
 }
 
 export interface IBaseAppEvent {

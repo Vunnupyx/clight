@@ -1,6 +1,7 @@
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import winston from 'winston';
 import fileUpload from 'express-fileupload';
+import proxy from 'express-http-proxy';
 import { ConfigManager } from '../../ConfigManager';
 import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
 import { RoutesManager } from '../RoutesManager';
@@ -10,13 +11,14 @@ import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
+import { ConfigurationAgentManager } from '../../ConfigurationAgentManager';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager;
   dataSourcesManager: DataSourcesManager;
   dataSinksManager: DataSinksManager;
   dataPointCache: DataPointCache;
-  vdpManager: VirtualDataPointManager
+  vdpManager: VirtualDataPointManager;
 }
 
 /**
@@ -50,10 +52,14 @@ export class RestApiManager {
     winston.info(`${logPrefix} Initializing rest api`);
 
     this.config = this.options.configManager.runtimeConfig.restApi;
-    this.port = this.config.port || Number.parseInt(process.env.PORT) || 5000;
+    this.port = Number.parseInt(process.env.PORT) || this.config.port || 5000;
 
     const authManager = new AuthManager(this.options.configManager);
 
+    this.expressApp.use(
+      '/configuration-agent/v1',
+      this.getProxySettings(authManager)
+    );
     this.expressApp.use(
       jsonParser({
         limit: this.config.maxFileSizeByte,
@@ -71,10 +77,48 @@ export class RestApiManager {
       dataSinksManager: this.options.dataSinksManager,
       dataPointCache: this.options.dataPointCache,
       vdpManager: this.options.vdpManager,
-      authManager,
+      authManager
     });
 
     this.start();
+  }
+
+  private getProxySettings(authManager: AuthManager) {
+    const logPrefix = `${RestApiManager.className}::getProxySettings`;
+
+    return proxy(
+      `${ConfigurationAgentManager.hostname}:${ConfigurationAgentManager.port}`,
+      {
+        filter: (req: Request, res: Response) => {
+          const isAuthenticated = authManager.verifyJWTAuth({
+            withPasswordChangeDetection: true,
+            withBooleanResponse: true
+          })(req, res);
+
+          if (!isAuthenticated) {
+            winston.warn(
+              `${logPrefix} Unauthorized attempt to access Configuration Agent proxy, requested URL: ${req.url}`
+            );
+          }
+          return isAuthenticated;
+        },
+        proxyReqOptDecorator: (proxyReqOpts) => {
+          // Update headers
+          delete proxyReqOpts.headers['Authorization'];
+          delete proxyReqOpts.headers['authorization'];
+          return proxyReqOpts;
+        },
+        proxyReqPathResolver: (req) => {
+          return `${ConfigurationAgentManager.pathPrefix}${req.url}`;
+        },
+        proxyErrorHandler: function (err, res, next) {
+          winston.error(
+            `${logPrefix} Error at Configuration Agent proxy:${err?.code}`
+          );
+          next(err);
+        }
+      }
+    );
   }
 
   /**
@@ -86,9 +130,7 @@ export class RestApiManager {
 
     winston.info(`${logPrefix} Starting backend server`);
     this.expressApp.listen(this.port, () =>
-      winston.info(
-        `${logPrefix} Backend server listening on port ${this.config.port}`
-      )
+      winston.info(`${logPrefix} Backend server listening on port ${this.port}`)
     );
     return this;
   }

@@ -1,0 +1,54 @@
+# Azure pipelines for the mdclight
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines
+
+trigger:
+  batch: true
+  branches:
+    exclude: [main, staging]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  DOCKER_REGISTRY: mdclightdev.azurecr.io
+  BRANCH_NAME: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-')]
+
+steps:
+  - task: Docker@2
+    displayName: Login
+    inputs:
+      containerRegistry: 'mdc-light-acr-dev'
+      command: 'login'
+  - task: CmdLine@2
+    displayName: PrintVersion
+    inputs:
+      script: |
+        git describe --tags
+  - task: AzureCLI@2
+    displayName: Build mtc agent
+    inputs:
+      azureSubscription: dmswsg-mdclight-dev
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        # Gets the version of the last change that is affecting the image that is build here
+        versionOfLastChange=$(scripts/build/lastMTConnectChange.sh)
+        echo "Current mtconnect version ${versionOfLastChange}" 
+
+        echo "Checking for current docker image" 
+        exists=$(scripts/build/checkIfImageExists.sh mtconnect-agent ${versionOfLastChange})
+
+        # Builds docker image if it not exists in the version that changed something the last time
+        if [ $exists == "false" ]; then
+          echo "Building docker image ${DOCKER_REGISTRY}/mtconnect-agent:${versionOfLastChange}"
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker run --privileged --rm tonistiigi/binfmt
+          docker buildx create --use
+          docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} -t ${DOCKER_REGISTRY}/mtconnect-agent:${versionOfLastChange} -f docker/mtconnect-agent.dockerfile . --push --progress plain
+        fi
+  - task: CmdLine@2
+    displayName: Print current versions
+    inputs:
+      script: |
+        echo "${DOCKER_REGISTRY}/mtconnect-agent:$(scripts/build/lastMTConnectChange.sh)"

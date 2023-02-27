@@ -5,7 +5,7 @@ import {
 } from '../../common/interfaces';
 import { EventBus } from '../EventBus';
 import { OPCUAServerOptions } from 'node-opcua';
-import { ScheduleDescription } from '../CounterManager';
+import { ScheduleDescription } from '../CounterManager/interfaces';
 
 export interface IAuthConfig {
   secret: string;
@@ -75,11 +75,15 @@ export interface IOPCUAConfig extends OPCUAServerOptions {
   nodesetDir: string;
 }
 
+export type IEnergyDataSourceConnection = {
+  ipAddr: string;
+};
+
 export type IS7DataSourceConnection = {
   ipAddr: string;
-  port: number;
-  rack: number;
-  slot: number;
+  port?: number;
+  rack?: number;
+  slot?: number;
 };
 export type IS7DataSourceTypes =
   | 's7-300/400'
@@ -88,22 +92,40 @@ export type IS7DataSourceTypes =
   | 'nck-pl'
   | 'custom';
 export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
+export type IEnergyDataSourcesTypes = 'PhoenixEMpro';
+export type IEnergyDatapointTypes = 'meter' | 'measurement' | 'device';
 
 export interface IDataPointConfig {
   id: string;
   name: string;
   address: string;
-  readFrequency: number;
-  type: 's7' | 'nck';
+  readFrequency?: number;
+  type: 's7' | 'nck' | IEnergyDatapointTypes;
 }
 
 export interface IDataSourceConfig {
-  name: string;
   dataPoints: IDataPointConfig[];
   protocol: DataSourceProtocols;
-  connection?: IS7DataSourceConnection;
+  connection?: IS7DataSourceConnection | IEnergyDataSourceConnection;
   enabled: boolean;
-  type?: IS7DataSourceTypes | IIoShieldDataSourcesTypes;
+  type:
+    | IS7DataSourceTypes
+    | IIoShieldDataSourcesTypes
+    | IEnergyDataSourcesTypes;
+}
+
+export function isValidDataSourceDatapoint(dp: any): dp is IDataPointConfig {
+  return 'id' in dp && 'name' in dp && 'address' in dp && 'type' in dp;
+}
+
+export function isValidDataSource(obj: any): obj is IDataSourceConfig {
+  return (
+    'protocol' in obj &&
+    'enabled' in obj &&
+    'type' in obj &&
+    Array.isArray(obj.dataPoints) &&
+    obj.dataPoints?.every(isValidDataSourceDatapoint)
+  );
 }
 
 type IMTConnectDataPointTypes = 'event' | 'condition' | 'sample';
@@ -117,21 +139,15 @@ export interface IDataSinkDataPointConfig {
   id: string;
   address: string;
   name: string;
-  type: IMTConnectDataPointTypes | TDataHubDataPointType;
+  type?: IMTConnectDataPointTypes | TDataHubDataPointType;
   map?: ITargetDataMap;
   initialValue?: string | number;
+  mandatory?: true; //only used inside frontend
 }
 export interface IOpcuaAuth {
   type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
-}
-
-export interface IDataHubSettings {
-  provisioningHost: string;
-  scopeId: string;
-  regId: string;
-  symKey: string;
+  userName?: string;
+  password?: string;
 }
 
 export interface IMessengerServerConfig {
@@ -175,25 +191,25 @@ export interface IMessengerMetadata {
 }
 
 export interface IDataSinkConfig {
-  name: string; //TBD: this seems to be obsolete?
   dataPoints: IDataSinkDataPointConfig[];
   protocol: string;
   enabled: boolean;
   auth?: IOpcuaAuth;
-  datahub?: IDataHubSettings;
   customDataPoints?: IOpcuaCustomDataPoint[];
 }
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
+export function isValidDataSinkDatapoint(
+  dp: any
+): dp is IDataSinkDataPointConfig {
+  return 'id' in dp && 'name' in dp && 'address' in dp;
 }
 
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
+export function isValidDataSink(obj: any): obj is IDataSinkConfig {
+  return (
+    'protocol' in obj &&
+    'enabled' in obj &&
+    Array.isArray(obj.dataPoints) &&
+    obj.dataPoints?.every(isValidDataSinkDatapoint)
+  );
 }
 
 export interface IDataHubConfig {
@@ -220,12 +236,6 @@ export interface IProxyConfig {
   username?: string;
   password?: string;
   enabled: boolean;
-}
-
-export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
-  userName: string;
-  password: string;
 }
 
 interface IDataHubDataPointTypesData {
@@ -258,28 +268,6 @@ export interface IDataPointMapping {
   priority?: number;
 }
 
-export interface NetworkConfigItem {
-  useDhcp?: boolean;
-  ipAddr?: string;
-  netmask?: string;
-  defaultGateway?: string;
-  dnsServer?: string;
-  useProxy?: boolean;
-  port?: number;
-  username?: string;
-  password?: string;
-  configurationState?: boolean;
-  serviceState?: boolean;
-}
-
-export type NetworkConfig = {
-  [key in 'x1' | 'x2']: NetworkConfigItem;
-} & {
-  proxy?: IProxyConfig;
-} & {
-  time?: ITimeConfig;
-};
-
 export interface IDefaultTemplate {
   id?: string;
   name: string;
@@ -301,7 +289,7 @@ export interface QuickStartConfig {
 }
 
 export function isDataPointMapping(obj: any): obj is IDataPointMapping {
-  return 'source' in obj && 'target' in obj && !('id' in obj);
+  return 'source' in obj && 'target' in obj && 'id' in obj;
 }
 export interface EnumOperationEntry {
   priority: number;
@@ -333,6 +321,17 @@ export interface IVirtualDataPointConfig {
   comparativeValue?: string | number;
   resetSchedules?: ScheduleDescription[];
   formula?: string;
+  name: string;
+}
+
+export function isValidVdp(input: any): input is IVirtualDataPointConfig {
+  return (
+    'id' in input &&
+    'name' in input &&
+    'operationType' in input &&
+    'sources' in input &&
+    Array.isArray(input?.sources)
+  );
 }
 
 export interface ISystemInfoItem {
@@ -352,14 +351,6 @@ export interface TermsAndConditionsConfig {
   accepted: boolean;
 }
 
-type env = {
-  [component in TSoftwareComponents]: {
-    tag: string;
-  };
-} & {
-  selected: 'prod' | 'dev' | 'stag';
-};
-
 export interface IConfig {
   dataSources: IDataSourceConfig[];
   dataSinks: Array<IDataSinkConfig>;
@@ -367,10 +358,8 @@ export interface IConfig {
   messenger: IMessengerServerConfig;
   mapping: IDataPointMapping[];
   general: IGeneralConfig;
-  networkConfig: NetworkConfig;
   quickStart: QuickStartConfig;
   termsAndConditions: TermsAndConditionsConfig;
-  env: env;
 }
 
 export interface IConfigManagerParams {

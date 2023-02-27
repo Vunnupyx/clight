@@ -14,6 +14,8 @@
       [name]="'settings-data-source.Name' | translate"
       prop="name"
       [canAutoResize]="false"
+      [minWidth]="120"
+      [maxWidth]="300"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -23,7 +25,7 @@
       >
         <div
           class="text-ellipsis"
-          [class.color-disabled]="isExisting(row)"
+          [class.color-disabled]="isExisting(row) || isUnsupported(row)"
           [title]="value"
         >
           {{ value }}
@@ -34,6 +36,7 @@
       [name]="'settings-data-source.BTSSString' | translate"
       prop="address"
       [minWidth]="350"
+      [maxWidth]="600"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -43,7 +46,7 @@
       >
         <div
           class="text-ellipsis"
-          [class.color-disabled]="isExisting(row)"
+          [class.color-disabled]="isExisting(row) || isUnsupported(row)"
           [title]="value"
         >
           {{ value }}
@@ -57,6 +60,7 @@
       headerClass="text-center"
       [sortable]="false"
       [minWidth]="80"
+      [maxWidth]="300"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -66,14 +70,19 @@
       >
         <mat-button-toggle-group #group="matButtonToggleGroup">
           <mat-button-toggle
-            (click)="!isExisting(row) && onSelect(row); group.value = null"
+            (click)="
+              !isExisting(row) && !isUnsupported(row) && onSelect(row);
+              group.value = null
+            "
             [matTooltip]="
-              isExisting(row)
+              isUnsupported(row)
+                ? ('settings-data-source.UnsupportedAddress' | translate)
+                : isExisting(row)
                 ? ('settings-data-source.DuplicatedAddress' | translate)
                 : ('settings-data-source.SelectVariable' | translate)
             "
             matTooltipPosition="above"
-            [disabled]="isExisting(row)"
+            [disabled]="isExisting(row) || isUnsupported(row)"
             ><mat-icon svgIcon="mdc:order-move-down"></mat-icon
           ></mat-button-toggle>
         </mat-button-toggle-group>

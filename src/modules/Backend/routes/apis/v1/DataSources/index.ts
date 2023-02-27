@@ -5,13 +5,19 @@
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
-import { v4 as uuidv4 } from 'uuid';
-import {exec} from 'child_process';
+import { exec } from 'child_process';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import {
   DataSourceProtocols,
   LifecycleEventStatus
 } from '../../../../../../common/interfaces';
+import { isValidIpOrHostname } from '../../../../../Utilities';
+import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
+import {
+  IDataPointConfig,
+  isValidDataSource,
+  isValidDataSourceDatapoint
+} from '../../../../../ConfigManager/interfaces';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -33,12 +39,19 @@ export function setDataSourcesManager(manager: DataSourcesManager) {
 }
 
 /**
+ * Checks if given protocol is a valid data source protocol
+ */
+function isValidProtocol(protocol: any): boolean {
+  return Object.values(DataSourceProtocols).includes(protocol);
+}
+
+/**
  * Handle all requests for the list of datasources.
  * @param  {Request} request
  * @param  {Response} response
  *
  */
-function dataSourcesGetHandler(request: Request, response: Response): void {
+function getAllDataSourcesHandler(request: Request, response: Response): void {
   response
     .status(200)
     .json({ dataSources: configManager?.config?.dataSources || [] });
@@ -49,8 +62,15 @@ function dataSourcesGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourceGetHandler(request: Request, response: Response): void {
-  const dataSource = configManager.config.dataSources.find(
+function getSingleDataSourceHandler(
+  request: Request,
+  response: Response
+): void {
+  if (!isValidProtocol(request.params.datasourceProtocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
+    return;
+  }
+  const dataSource = configManager.config?.dataSources?.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   response.status(dataSource ? 200 : 404).json(dataSource);
@@ -62,21 +82,30 @@ function dataSourceGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataSourcePatchHandler(
+async function patchSingleDataSourceHandler(
   request: Request,
   response: Response
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
+  const updatedDataSource = request.body;
 
-  const dataSource = configManager.config.dataSources.find(
-    (source) => source.protocol === request.params.datasourceProtocol
+  if (!isValidProtocol(protocol) || isValidDataSource(updatedDataSource)) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
+
+  const dataSource = configManager.config?.dataSources?.find(
+    (source) => source.protocol === protocol
   );
   if (!dataSource) {
-    winston.warn(``); // TODO: Define warning;
+    winston.warn(
+      `patchSingleDataSourceHandler:: data source is not defined for protocol ${protocol}`
+    );
     response.status(404).send();
+    return Promise.resolve();
   }
-  Object.keys(request.body).forEach((entry) => {
+  Object.keys(updatedDataSource).forEach((entry) => {
     if (!allowed.includes(entry)) {
       winston.warn(
         `dataSourcePatchHandler tried to change property: ${entry}. Not allowed`
@@ -87,7 +116,7 @@ async function dataSourcePatchHandler(
     }
   });
 
-  let changedDatasource = { ...dataSource, ...request.body };
+  let changedDatasource = { ...dataSource, ...updatedDataSource };
 
   const config = configManager.config;
   config.dataSources = [
@@ -106,15 +135,16 @@ async function dataSourcePatchHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourcesGetDatapointsHandler(
-  request: Request,
-  response: Response
-): void {
-  const dataSource = configManager.config.dataSources.find(
+function getAllDatapointsHandler(request: Request, response: Response): void {
+  if (!isValidProtocol(request.params.datasourceProtocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
+    return;
+  }
+  const dataSource = configManager.config?.dataSources?.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   response.status(dataSource ? 200 : 404).json({
-    dataPoints: dataSource.dataPoints
+    dataPoints: dataSource?.dataPoints
   });
 }
 
@@ -124,29 +154,43 @@ function dataSourcesGetDatapointsHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataSourcesPostDatapointBulkHandler(
+async function patchAllDatapointsHandler(
   request: Request,
   response: Response
 ): Promise<void> {
   try {
-    if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
-      response.status(404).json({ error: 'Protocol not valid' });
-      winston.error(
-        `dataSourcesPostDatapointBulkHandler error due to no valid protocol!`
-      );
-      return;
+    const protocol = request.params.datasourceProtocol;
+    const newDataPointsArray = request.body as IDataPointConfig[];
+
+    if (
+      !isValidProtocol(protocol) ||
+      !newDataPointsArray.every(isValidDataSourceDatapoint)
+    ) {
+      response.status(400).json({ error: 'Input not valid.' });
+      return Promise.resolve();
     }
 
-    await configManager.bulkChangeDataSourceDataPoints(
-      request.params.datasourceProtocol as DataSourceProtocols,
-      request.body || {}
+    let dataSource = configManager.config?.dataSources?.find(
+      (source) => source.protocol === request.params.datasourceProtocol
+    );
+    if (!dataSource) {
+      winston.warn(
+        `patchAllDatapointsHandler:: data source is not defined for protocol ${protocol}`
+      );
+      response.status(404).send();
+      return Promise.resolve();
+    }
+    dataSource = { ...dataSource, dataPoints: newDataPointsArray };
+    configManager.changeConfig(
+      'update',
+      'dataSources',
+      dataSource,
+      (item) => item.protocol
     );
     await configManager.configChangeCompleted();
     response.status(200).send();
-  } catch {
-    winston.warn(
-      `dataSourcesPostDatapointBulkHandler tried to change bulk dataSource.dataPoints`
-    );
+  } catch (err) {
+    winston.warn(`patchAllDatapointsHandler:: error due to ${err}`);
     response
       .status(400)
       .json({ error: 'Cannot change datapoints. Try again!' });
@@ -158,23 +202,35 @@ async function dataSourcesPostDatapointBulkHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataSourcesPostDatapointHandler(
+async function postSingleDatapointHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  //TODO: Inputvaidlation
+  const protocol = request.params.datasourceProtocol;
+  const newDataPoint = request.body as IDataPointConfig;
+
+  if (!isValidProtocol(protocol) || !isValidDataSourceDatapoint(newDataPoint)) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
 
   const config = configManager.config;
-  const dataSource = config.dataSources.find(
-    (source) => source.protocol === request.params.datasourceProtocol
+  const dataSource = config?.dataSources?.find(
+    (source) => source.protocol === protocol
   );
-  const newData = { ...request.body, ...{ id: uuidv4() } };
-  dataSource.dataPoints.push({ ...newData, readFrequency: 1000 });
+  if (!dataSource) {
+    winston.warn(
+      `postSingleDatapointHandler:: data source is not defined for protocol ${protocol}`
+    );
+    response.status(404).send();
+    return Promise.resolve();
+  }
+  dataSource.dataPoints.push({ ...newDataPoint, readFrequency: 1000 });
   configManager.config = config;
   await configManager.configChangeCompleted();
   response.status(200).json({
-    created: newData,
-    href: `${request.originalUrl}/${newData.id}`
+    created: newDataPoint,
+    href: `${request.originalUrl}/${newDataPoint.id}`
   });
 }
 
@@ -183,10 +239,11 @@ async function dataSourcesPostDatapointHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourcesGetDatapointHandler(
-  request: Request,
-  response: Response
-): void {
+function getSingleDatapointHandler(request: Request, response: Response): void {
+  if (!isValidProtocol(request.params.datasourceProtocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
+    return;
+  }
   const dataSource = configManager.config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
@@ -201,23 +258,39 @@ function dataSourcesGetDatapointHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataSourcesDeleteDatapointHandler(
+async function deleteSingleDatapointHandler(
   request: Request,
   response: Response
 ): Promise<void> {
+  const protocol = request.params.datasourceProtocol;
+  if (
+    !isValidProtocol(protocol) ||
+    typeof request.params.dataPointId !== 'string'
+  ) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
   const config = configManager.config;
-  const dataSource = config.dataSources.find(
-    (source) => source.protocol === request.params.datasourceProtocol
+  const dataSource = config?.dataSources?.find(
+    (source) => source.protocol === protocol
   );
+  if (!dataSource) {
+    winston.warn(
+      `postSingleDatapointHandler:: data source is not defined for protocol ${protocol}`
+    );
+    response.status(404).send();
+    return Promise.resolve();
+  }
   const index = dataSource?.dataPoints?.findIndex(
     (point) => point.id === request.params.datapointId
   );
   const point = dataSource?.dataPoints[index];
   if (index >= 0) {
     dataSource.dataPoints.splice(index, 1);
+    configManager.config = config;
+    await configManager.configChangeCompleted();
   }
-  configManager.config = config;
-  await configManager.configChangeCompleted();
+
   response
     .status(dataSource && point ? 200 : 404)
     .json(dataSource && index >= 0 ? { deleted: point } : null);
@@ -228,11 +301,21 @@ async function dataSourcesDeleteDatapointHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataSourcesPatchDatapointHandler(
+async function patchSingleDatapointHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  //TODO: Input validation
+  const protocol = request.params.datasourceProtocol;
+  const updatedDatapoint = request.body as IDataPointConfig;
+
+  if (
+    !isValidProtocol(protocol) ||
+    !isValidDataSourceDatapoint(updatedDatapoint) ||
+    typeof request.params.dataPointId !== 'string'
+  ) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
   const config = configManager.config;
   const dataSource = config.dataSources.find(
     (source) => source.protocol === request.params.datasourceProtocol
@@ -247,7 +330,7 @@ async function dataSourcesPatchDatapointHandler(
       (point) => point.id === request.params.datapointId
     );
 
-    const newData = { ...request.body, dataPoint };
+    const newData = { ...dataPoint, ...updatedDatapoint };
     dataSource.dataPoints.push(newData);
     configManager.config = config;
     await configManager.configChangeCompleted();
@@ -255,6 +338,7 @@ async function dataSourcesPatchDatapointHandler(
       changed: newData,
       href: `/api/v1/datasources/${request.params.datasourceId}/dataPoints/${newData.id}`
     });
+    return;
   }
   response.status(404).send();
 }
@@ -264,11 +348,12 @@ async function dataSourcesPatchDatapointHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSourceGetStatusHandler(request: Request, response: Response) {
-  //TODO: Make more generic
-  if (!['ioshield', 's7'].includes(request.params.datasourceProtocol)) {
-    response.status(404).json({ error: 'Protocol not valid' });
-    winston.error(`dataSourceGetStatusHandler error due to no valid protocol!`);
+function getSingleDataSourceStatusHandler(
+  request: Request,
+  response: Response
+) {
+  if (!isValidProtocol(request.params.datasourceProtocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
   if (!dataSourcesManager) {
@@ -279,52 +364,94 @@ function dataSourceGetStatusHandler(request: Request, response: Response) {
     return;
   }
 
-  let status;
+  let status, emProTariffNumber;
 
   try {
     status = dataSourcesManager
       .getDataSourceByProto(request.params.datasourceProtocol)
       .getCurrentStatus();
+    if (request.params.datasourceProtocol === 'energy') {
+      const energyDataSource = dataSourcesManager.getDataSourceByProto(
+        request.params.datasourceProtocol
+      ) as EnergyDataSource;
+      emProTariffNumber = energyDataSource.getCurrentTariffNumber();
+    }
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;
   }
 
-  response.status(200).json({ status });
+  response.status(200).json({ status, emProTariffNumber });
 }
 
 /**
  * Send ICMP ping to sps. Send back response with avg of ping
- * 
- * @param request 
- * @param response 
+ *
+ * @param request
+ * @param response
  */
-function pingNC(request: Request, response: Response) {
-  const logPrefix = `Backend::DataSources::pingNC`;
-  winston.debug(`${logPrefix} called.`)
-  if(request.params.datasourceProtocol !== 's7') {
-    winston.debug(`${logPrefix} selected protocol is invalid: ${request.params.datasourceProtocol}`);
-    response.json({
-      error: {
-        msg: `Not possible for ${request.params.datasourceProtocol} source`
-      }
-    }).status(404);
+function pingDataSourceHandler(request: Request, response: Response) {
+  const logPrefix = `Backend::DataSources::pingDataSource`;
+  let datasourceProtocol = request.params
+    .datasourceProtocol as DataSourceProtocols;
+
+  if (!isValidProtocol(datasourceProtocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
-  const {connection: {ipAddr: ip}} = configManager.config.dataSources.find((src) => {
-    return src.protocol === request.params.datasourceProtocol
-  })
+  winston.debug(`${logPrefix} called.`);
+  if (datasourceProtocol === DataSourceProtocols.IOSHIELD) {
+    winston.debug(
+      `${logPrefix} selected protocol is invalid for pinging: ${datasourceProtocol}`
+    );
+    response
+      .json({
+        error: {
+          msg: `Not possible for ${datasourceProtocol} source`
+        }
+      })
+      .status(404);
+    return;
+  }
+
+  const dataSource = configManager.config?.dataSources?.find((src) => {
+    return src.protocol === datasourceProtocol;
+  });
+
+  if (!dataSource) {
+    winston.warn(
+      `${logPrefix} data source is not defined for protocol ${datasourceProtocol}`
+    );
+    response.status(404).send();
+    return Promise.resolve();
+  }
+
+  const {
+    connection: { ipAddr: ip }
+  } = dataSource;
+
   winston.debug(`${logPrefix} get ip: ${ip}`);
   if (!ip) {
-    response.json({
-      error: {
-        msg: `No ip for s7 found.`
-      }
-    }).status(404);
+    response
+      .json({
+        error: {
+          msg: `No ip for ${datasourceProtocol} found.`
+        }
+      })
+      .status(404);
+    return;
+  } else if (!isValidIpOrHostname(ip)) {
+    response
+      .json({
+        error: {
+          msg: `Incorrect input.`
+        }
+      })
+      .status(400);
     return;
   }
   const cmd = `ping -w 1 -i 0.3 ${ip}`;
   exec(cmd, (error, stdout, stderr) => {
-    if (error || stderr !== '' || stdout === ''){
+    if (error || stderr !== '' || stdout === '') {
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
         error: {
@@ -333,8 +460,10 @@ function pingNC(request: Request, response: Response) {
       });
       return;
     }
-    let filtered = stdout.match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g).join();
-    const [min, avg , max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
+    let filtered = stdout
+      .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
+      .join();
+    const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
     if (!avg) {
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);
       response.status(500).json({
@@ -348,22 +477,24 @@ function pingNC(request: Request, response: Response) {
     response.status(200).json({
       delay: avg
     });
-  })
+  });
 }
 
 export const dataSourceHandlers = {
   // Single DataSource
-  dataSourceGet: dataSourceGetHandler,
-  dataSourceGetStatus: dataSourceGetStatusHandler,
-  dataSourcePatch: dataSourcePatchHandler,
-  dataSourcesGet: dataSourcesGetHandler,
+  dataSourceGet: getSingleDataSourceHandler,
+  dataSourceGetStatus: getSingleDataSourceStatusHandler,
+  dataSourcePatch: patchSingleDataSourceHandler,
   // Multiple DataSources
-  dataSourcesPostDatapointBulk: dataSourcesPostDatapointBulkHandler,
-  dataSourcesGetDatapoints: dataSourcesGetDatapointsHandler,
-  dataSourcesPostDatapoint: dataSourcesPostDatapointHandler,
-  dataSourcesGetDatapoint: dataSourcesGetDatapointHandler,
-  dataSourcesDeleteDatapoint: dataSourcesDeleteDatapointHandler,
-  dataSourcesPatchDatapoint: dataSourcesPatchDatapointHandler,
-  // ping to s7
-  dataSourceGetPing: pingNC
+  dataSourcesGet: getAllDataSourcesHandler,
+  // Single data point
+  dataSourcesPostDatapoint: postSingleDatapointHandler,
+  dataSourcesGetDatapoint: getSingleDatapointHandler,
+  dataSourcesDeleteDatapoint: deleteSingleDatapointHandler,
+  dataSourcesPatchDatapoint: patchSingleDatapointHandler,
+  // Multiple data points
+  dataSourcesPatchAllDatapoints: patchAllDatapointsHandler,
+  dataSourcesGetDatapoints: getAllDatapointsHandler,
+  // ping to data source
+  dataSourceGetPing: pingDataSourceHandler
 };

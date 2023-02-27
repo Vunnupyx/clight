@@ -1,4 +1,4 @@
-import { PreDefinedDataPoint } from "app/models";
+import { PreDefinedDataPoint } from 'app/models';
 
 export default [
   {
@@ -7,7 +7,7 @@ export default [
     initialValue: 'ARMED',
     type: 'event',
     map: {
-      '0': 'TRIGGERT',
+      '0': 'TRIGGERED',
       '1': 'ARMED'
     },
     mandatory: true
@@ -167,11 +167,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,
@@ -238,11 +238,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,
@@ -314,11 +314,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,
@@ -390,11 +390,11 @@ export default [
     type: 'event',
     initialValue: 'ACTIVE',
     map: {
-      '0': 'READY',
-      '1': 'ACTIVE',
-      '2': 'INTERRUPTED',
-      '3': 'FEED_HOLD',
-      '4': 'STOPPED'
+      '1': 'INTERRUPTED',
+      '2': 'STOPPED',
+      '3': 'IN_PROGRESS',
+      '4': 'WAITING',
+      '5': 'ABORTED'
     },
     mandatory: true
   } as PreDefinedDataPoint,
@@ -437,5 +437,35 @@ export default [
     address: 'part_count_overall4',
     type: 'event',
     name: 'Overall Part Count 4'
+  } as PreDefinedDataPoint,
+  {
+    name: 'VoltAmpere (S)',
+    address: 'VoltAmpere',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'VoltAmpereReactive (Q)',
+    address: 'VoltAmpereReactive',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'Wattage (P)',
+    address: 'Wattage',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'ElectricalEnergy (Ea+)',
+    address: 'ElectricalEnergy',
+    type: 'sample'
+    //TBD mandatory: true,
+  } as PreDefinedDataPoint,
+  {
+    name: 'PowerFactor (PF)',
+    address: 'PowerFactor',
+    type: 'sample'
+    //TBD mandatory: true,
   } as PreDefinedDataPoint
 ];

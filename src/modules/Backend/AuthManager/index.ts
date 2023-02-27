@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { hash, compare } from 'bcrypt';
-import { promises as fs } from 'fs';
+import { hash, compare } from 'bcryptjs';
 
 import { ConfigManager } from '../../ConfigManager';
 import { IAuthUser } from '../../ConfigManager/interfaces';
@@ -91,17 +90,19 @@ export class AuthManager {
   }
 
   /**
-   * @param  {{withPasswordChangeDetection:boolean}} options
+   * @param  {{withPasswordChangeDetection:boolean,withBooleanResponse:(boolean|undefined)}} options
    * @returns {Function} callback
    */
   verifyJWTAuth({
-    withPasswordChangeDetection
+    withPasswordChangeDetection,
+    withBooleanResponse
   }: {
     withPasswordChangeDetection: boolean;
+    withBooleanResponse?: boolean;
   }) {
     const logPrefix = `${AuthManager.className}::verifyJWTAuth`;
 
-    return (request: Request, response: Response, next: NextFunction) => {
+    return (request: Request, response: Response, next?: NextFunction) => {
       const header = request.headers['authorization'];
 
       if (!header) {
@@ -130,13 +131,19 @@ export class AuthManager {
         }
 
         request.user = user;
-
-        next();
+        if (withBooleanResponse) {
+          return true;
+        } else {
+          next();
+        }
       } catch (err) {
         winston.error(
           `${logPrefix} jwt vaidation failed. ${JSON.stringify(err)}`
         );
         response.status(401).json({ message: 'Unauthorized!' });
+        if (withBooleanResponse) {
+          return false;
+        }
       }
     };
   }

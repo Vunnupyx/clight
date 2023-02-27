@@ -4,12 +4,112 @@ title: Changelog
 
 # Changelog
 
-## [3.0.0]
+## [3.0.7]
 
 ## Fixed
 
-- [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixed missing value for NCK data point basicLengthUnit
-- [DIGMDCLGHT-70](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-70) Fixed the case where Add new data point button might remain disabled after deleting a data point
+- [DIGMDCLGHT-67](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-67) Fixes max size of columns to avoid disappearing of columns
+- [DIGMDCLGHT-325](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-325) Fixes responsiveness of the UI when window size is changed
+- [DIGMDCLGHT-330](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-330) Fixes the hostname validity check in Proxy field
+- [DIGMDCLGHT-336](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-336) Fixes Variable3 data type in OPCUA
+- [DIGMDCLGHT-337](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-337) Fixes /netservice endpoint
+- [DIGMDCLGHT-338](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-338) Fixes CELOS Xchange interface data points and display of desired services
+- [DIGMDCLGHT-339](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-339) Fixes display of whether NTP service is reachable at first page load
+- [DIGMDCLGHT-340](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-340) Fixes cases where removing a mapping does not stop editing application interface values
+- [DIGMDCLGHT-358](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-358) Fixes wrong order after sorting data point tables in edit mode
+- [DIGMDCLGHT-366](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-366) Fixes reconnect mechanism after unexpected NC disconnection
+- [DIGSRVWRLD-89](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-89) Fixes spelling mistake in application interface
+- [DIGSRVWRLD-90](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-90) Fixes order in execution state
+
+### Changed
+
+- [DIGMDCLGHT-344](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-344) Updates /bulk endpoints in API
+- [DIGMDCLGHT-352](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-352) Updates japanese translations for user documentation
+- [DIGMDCLGHT-356](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-356) Updates japanese translations for user interface
+- [DIGMDCLGHT-367](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-367) Updates version check logic for software update mechanism
+
+## Added
+
+- [DIGMDCLGHT-335](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-335) Redirects to quick start page when terms and conditions are not accepted
+- [DIGMDCLGHT-341](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-341) Adds drag&drop feature for virtual data points
+
+## [3.0.6]
+
+## Fixed
+
+- [DIGMDCLGHT-312](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-312) Fixes error on factory reset API endpoint
+- [DIGMDCLGHT-328](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-328) Fixes OPCUA data points missing values for custom data types
+
+### Changed
+
+- [DIGMDCLGHT-326](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-326) Configuration wizard closes only after accepting terms and conditions
+
+## [3.0.5]
+
+## Fixed
+
+- [DIGMDCLGHT-67](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-67) Fixes column resizing to prevent disappearing columns
+- [DIGMDCLGHT-139](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-328) Fixes OPCUA for localized text data types
+- [DIGMDCLGHT-316](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-316) Fixes VDP tooltip display
+- [DIGMDCLGHT-324](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-324) Fixes NTP server reachability check
+- [DIGMDCLGHT-327](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-327) Fixes live data display errors
+
+## [3.0.3]
+
+## Fixed
+
+- [DIGMDCLGHT-314](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-314) Fixes popup menu prompt while saving template in configuration wizard
+- [DIGMDCLGHT-321](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-321) Fixes notification in case log exporting has an error
+- [DIGMDCLGHT-322](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-322) Fixes Add New Datapoint button remaining disabled
+
+### Changed
+
+- [DIGMDCLGHT-320](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-320) Updates text displayed for factory reset popup menu
+
+## [3.0.2]
+
+## Added
+
+- [DIGMDCLGHT-92](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-92) Adds translation to templates
+- [DIGMDCLGHT-293](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-293) Adds support for Energy data source
+
+## Fixed
+
+- [DIGMDCLGHT-59](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-59) Fixes dropdown menus overlapping
+- [DIGMDCLGHT-70](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-70) Fixes the case where Add new data point button might remain disabled after deleting a data point
+- [DIGMDCLGHT-141](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-141) Fixes missing value for NCK data point basicLengthUnit
+- [DIGMDCLGHT-207](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-207) Fixes Threshold type VDP graph double displaying of data point
+- [DIGMDCLGHT-213](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-213) Fixes sorting table while adding new data point
+- [DIGMDCLGHT-253](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-253) Fixes saving data points without name
+- [DIGMDCLGHT-254](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-254) Fixes issue with searching VDP by name using search bar
+- [DIGMDCLGHT-258](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-258) Fixes list of sources of a VDP not being reset after operator type change
+- [DIGMDCLGHT-276](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-276) Fixes network settings not loading correctly in some cases
+- [DIGMDCLGHT-278](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-278) Fixes MAC address display on System information page
+- [DIGMDCLGHT-300](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-300) Fixes NC to not reconnect in certain cases
+- [DIGMDCLGHT-305](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-305) Fixes validation of hostname and ip addresses
+- [DIGMDCLGHT-306](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-306) Fixes logs being deleted after downloading
+- [DIGMDCLGHT-308](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-308) Fixes button text of Enumeration VDP
+- [DIGMDCLGHT-311](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-311) Fixes display of success/error notifications for network setting changes
+- [DIGMDCLGHT-313](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-313) Fixes digital input addresses mixing up after changing input board type
+- [DIGMDCLGHT-315](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-315) Fixes navigation before configuration wizard is completed
+- [DIGMDCLGHT-329](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-329) Fixes configuration wizard selection display
+
+### Changed
+
+- [DIGMDCLGHT-145](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-145) Updated network, time and proxy endpoints to CELOS configuration agent
+- [DIGMDCLGHT-164](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-261) Updated factory reset mechanism according to CELOS migration
+- [DIGMDCLGHT-203](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-203) User Documentation opens with the language of the UI
+- [DIGMDCLGHT-244](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-244) Update mechanism for CELOS implemented
+- [DIGMDCLGHT-246](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-246) SSH communications are removed with usage of DMG MORI CELOS
+- [DIGMDCLGHT-250](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-250) The runtime now works with an empty file system that hasn't the application file installed. Also the folder structure where application data are stored has changed.
+- [DIGMDCLGHT-260](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-260) The MAC address license check has been removed.
+- [DIGMDCLGHT-261](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-261) Pipelines do now created versioned containers
+- [DIGMDCLGHT-264](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-264) Updated NTP server reachability after CELOS migration
+- [DIGMDCLGHT-272](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-272) Updates CELOS Xchange application interface UI
+- [DIGMDCLGHT-280](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-280) Updates text message for factory reset popup window
+- [DIGMDCLGHT-281](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-281) Removes the clock from the UI
+- [DIGMDCLGHT-282](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-282) Updates time configuration settings to use UTC time
+- [DIGMDCLGHT-302](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-302) Adds progress bar to log exporting
 
 ## [2.4.0]
 

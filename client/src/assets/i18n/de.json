@@ -7,7 +7,6 @@
   "layout": {
     "Settings": "Einstellungen",
     "General": "Allgemein",
-    "UpdateManager": "Update Manager",
     "DataSource": "Datenquelle",
     "VirtualDataPoints": "Virtuelle Datenpunkte",
     "DataMapping": "Mapping",
@@ -87,23 +86,26 @@
         "10diIoShieldMessenger": "Eingangsmodul zu DMG MORI Messenger",
         "ai2ioShieldMessenger": "Eingangsmodul zu DMG MORI Messenger",
         "empty": "Leere Vorlage",
+        "energyAll": "EEM Kit",
         "gm": "GM Reihe",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
+        "fanucAll": "Fanuc Geräte",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
       },
       "description": {
         "10diIoShieldMessenger": "Eingangsmodul mit 10 digitalen Eingängen zu DMG MORI Messenger",
         "ai2ioShieldMessenger": "Eingangsmodul mit Stromsensoren + 5 digitalen Eingängen zu DMG MORI Messenger",
         "empty": "Die Vorlage enthält keine Datenquelle, keine virtuellen Datenpunkte, keine Mappings und keine Anwendungsschnittstelle",
+        "energyAll": "Enthält alle unterstützte Datenpunkte von EEM Kit",
         "gm": "GM 16-6 oder GM 20-6",
         "ncAll": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger, OPC UA und CELOS Xchange",
+        "fanucAll": "Beinhaltet Datenpunkte für Fanuc Geräte",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
       }
     }
   },
   "settings-general": {
     "General": "Allgemein",
-    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut oder kontaktiere den Support.",
     "DeviceInfo": "Geräte Informationen",
     "Language": "Sprache",
     "CELOSLanguage": "CELOS Sprache",
@@ -158,7 +160,6 @@
     "NoNetwork": "Kein Netzwerk",
     "Connecting": "Verbindung wird aufgebaut",
     "Reconnecting": "Neu verbinden",
-    "NoLicense": "Nicht lizenziert",
     "ConnectionError": "Verbindung fehlgeschlagen",
     "Disabled": "Deaktiviert",
     "Unavailable": "Nicht verfügbar",
@@ -167,8 +168,10 @@
     "DataPoints": "Datenpunkte",
     "SelectAVariable": "Wählen Sie einen Datenpunkt",
     "ControllerType": "Typ",
+    "CurrentTariff": "Current Tariff",
     "Name": "Name",
     "Type": "Typ",
+    "Description": "Description",
     "Address": "Adressse",
     "LiveData": "Aktualwert",
     "Actions": "Aktionen",
@@ -177,7 +180,8 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
-      "ioshield": "Input Modul"
+      "ioshield": "Input Modul",
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
@@ -191,7 +195,15 @@
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
-    "SelectVariable": "Wählen Sie eine Variable"
+    "SelectVariable": "Wählen Sie eine Variable",
+    "TariffStatus": {
+      "0": "Keine Tariffzähler aktiv",
+      "1": "Läuft",
+      "2": "Leerlauf",
+      "3": "Warten",
+      "4": "Alarm",
+      "Unknown": "Unbekannt"
+    }
   },
   "settings-virtual-data-point": {
     "DataPoints": "Virtuelle Datenpunkte",
@@ -236,12 +248,16 @@
     "Day": "Day",
     "DayOfMonth": "Day of the month",
     "SetEnumeration": "Enumeration speichern",
+    "AddEnumeration": "Enumeration hinzufügen",
     "DefaultValue": "Standardwert",
     "SelectInput": "Input auswählen",
     "CurrentLiveValue": "Aktualwert",
     "ReturnValueIfTrue": "Rückgabewert",
     "SetFormula": "Formel festlegen",
-    "Formula": "Formel"
+    "Formula": "Formel",
+    "UnexpectedError": "Changes have not been applied. Please, try again!",
+    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
+    "WarningWrongVdp": "Update failed. VDP with wrong order"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -278,7 +294,6 @@
     "NoNetwork": "Kein Netzwerk",
     "Connecting": "Verbindung wird aufgebaut",
     "Reconnecting": "Neu verbinden",
-    "NoLicense": "Nicht lizenziert",
     "ConnectionError": "Verbindung fehlgeschlagen",
     "Disabled": "Deaktiviert",
     "Unavailable": "Nicht verfügbar",
@@ -301,17 +316,13 @@
     "Close": "Schließen",
     "Event": "Event",
     "Condition": "Condition",
-    "SelectAVariable": "Datenpunktauswahl",
+    "Sample": "Sample",
     "CreateDataPoint": "Datenpunkt erstellen",
     "SelectVariable": "Variable auswählen",
     "Mapping": "Zuordnung",
     "From": "Von",
     "To": "Zu",
     "AddMapping": "Mapping hinzufügen",
-    "ProvisioningHost": "Provisionierungs Host",
-    "ScopeId": "Scope ID",
-    "RegId": "Registration ID",
-    "SymKey": "Symetrischer Schlüssel",
     "AlreadyExistDataPoint": "Der Datenpunkt ist bereits vorhanden.",
     "AuthenticationLevels": {
       "anonymous": "Anonym",
@@ -325,7 +336,7 @@
     "OPCUAAuthenticationLevel": "OPC UA Authentifizierungsgrad",
     "OPCUAServerUsername": "OPC UA Server Benutzername",
     "OPCUAServerPassword": "OPC UA Server Passwort",
-    "NoData": "Kein Data",
+    "NoActiveService": "Keine aktive Dienste",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "OpenMTConnectStream": "MTConnect Stream öffnen",
     "BulkSuccess": "Die Änderungen wurden erfolgreich gespeichert!",
@@ -341,7 +352,6 @@
     "TimeZone": "Zeitzone",
     "Organization": "Organisation",
     "Model": "Modell",
-    "License": "",
     "ServerConfiguration": "Server Konfiguration",
     "Messenger": "Messenger",
     "ConnectMessengerButton": "DMG MORI Messenger Verbinden",
@@ -388,8 +398,6 @@
     "Mappings": "Mappings",
     "Source": "Quelle",
     "Target": "Ziel",
-    "Value": "Zuweisung",
-    "ValueTooltip": "Zuweisung",
     "Actions": "Aktionen",
     "Edit": "Editieren",
     "Delete": "Löschen",
@@ -415,7 +423,6 @@
     "DefaultGateway": "Standardgateway",
     "DNSServer": "DNS Server",
     "UseProxy": "Proxy verwenden",
-    "ProxyType": "Type",
     "Host": "Host",
     "Port": "Port",
     "Username": "Username",
@@ -427,15 +434,17 @@
       "x1": "Ethernet X1 P1",
       "x2": "Ethernet X1 P2",
       "proxy": "Proxy",
-      "time": "Systemzeit"
+      "ntp": "Systemzeit"
     },
     "TimeSettings": "Systemzeit",
     "UseNTPServer": "NTP Server verwenden",
     "SetNTPServer": "NTP Server setzen",
-    "SetCurrentTime": "Systemzeit setzen",
-    "ChooseTimeZone": "Zeitzone",
-    "nptUnreachable": "NTP Server nicht erreichbar",
-    "nptUnreachableLong": "NTP Server nicht erreichbar. Bitte tragen Sie einen erreichbaren Server ein and klicken Speichern."
+    "SetCurrentTime": "Systemzeit setzen (UTC)",
+    "ntpUnreachable": "NTP Server nicht erreichbar",
+    "UpdateNtpSuccess": "NTP wurde erfolgreich aktualisiert",
+    "UpdateProxySuccess": "Proxy wurde erfolgreich aktualisiert",
+    "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
+    "UpdateTimestampSuccess": "Zeiteinstellung wurde erfolgreich aktualisiert"
   },
   "system-information": {
     "SystemInformation": "System Informationen",
@@ -444,23 +453,37 @@
     "YourSystemUpToDate": "Dein System ist auf dem neusten Stand",
     "YourSystemUpdateSuccess": "Das Update war erfolgreich",
     "YourSystemUpdateSuccessDescr": "Dein System wurde erfolgreich upgedatet.",
-    "CheckUpdate": "Suche nach Updates",
-    "CheckUpdateDescr": "Der Vorgang dauert wenige Minuten. Bitte laden Sie die Seite nicht neu.",
-    "InstallingUpdate": "Update wird installiert",
-    "InstallingUpdateDescr": "Der Vorgang dauert wenige Minuten. Bitte laden Sie die Seite nicht neu.",
+    "InstallingUpdateDescr": "Der Vorgang dauert bis zu 30 Minuten. Bitte laden Sie die Seite nicht neu.",
+    "UpdateStatus-INIT": "Suche nach Updates beginnt",
+    "UpdateStatus-GET_UPDATES": "Es wird nach verfügbaren neuen Versionen gesucht",
+    "UpdateStatus-CHECK_INSTALLED_COS_VERSION": "Installierte Version wird geprüft",
+    "UpdateStatus-CHECK_COS_UPDATES": "Wird geprüft, ob Update bereits zur Installation bereit ist",
+    "UpdateStatus-START_DOWNLOAD_COS_UPDATES": "Beginn des Herunterladens des Updates",
+    "UpdateStatus-VALIDATE_COS_DOWNLOAD": "Download läuft",
+    "UpdateStatus-VALIDATE_COS_DOWNLOAD-RETRYING": "Download wurde unterbrochen. Erneuter Downloadversuch",
+    "UpdateStatus-APPLY_COS_UPDATES": " Software wird installiert",
+    "UpdateStatus-WAITING_FOR_SYSTEM_RESTART": "Warten auf den Neustart des Systems",
+    "UpdateStatus-APPLY_MODULE_UPDATES": "Modul-Updates werden installiert",
+    "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Wird auf den Abschluss der Installation gewartet",
+    "UpdateStatus-NO_CONNECTION": "Update fehlgeschlagen. Bitte überprüfen Sie die Netzwerkkonfiguration des Geräts.",
+    "UpdateStatus-UNEXPECTED_ERROR": "Die Aktualisierung ist aufgrund eines unerwarteten Fehlers fehlgeschlagen. Bitte versuchen Sie es später erneut.",
     "UpdateFailed": "Update fehlgeschlagen",
     "UpdateFailed-error_no_network": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
-    "UpdateFailedCheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
-    "UpdateInstallFailed": "Das Update konnte nicht installiert werden. Bitte kontaktiere den Support.",
-    "MaterialThemeVersion": "CELOS X Material Themaversion",
+    "UpdateFailed-CheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "SoftwareComponent": "Software Komponent",
-    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut"
+    "LoadError": "System Informationen konnten nicht geladen werden. Veruschen Sie es später erneut",
+    "FactoryReset": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetDescription": "Das Zurücksetzen auf die Werkseinstellungen wird durchgeführt. Dies kann bis zu 5 Minuten dauern. Bitte laden Sie die Seite nicht neu.",
+    "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
+    "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
+    "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"
   },
   "clock": {
-    "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen."
+    "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen. Klicken Sie auf diese Warnung, um zur Einstellungsseite zu gelangen, und wählen Sie die Registerkarte Zeit, um die Zeiteinstellungen anzupassen."
   },
   "data-type": {
     "String": "String",

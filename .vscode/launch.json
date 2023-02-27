@@ -2,7 +2,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch RT",
+      "name": "Attach RT Local Dev",
+      "type": "node",
+      "port": 9229,
+      "request": "attach"
+    },
+    {
+      "name": "Attach RT Remote Dev",
+      "type": "node",
+      "port": 9229,
+      "request": "attach",
+      "address": "192.168.185.179",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app"
+    },
+    {
+      "name": "Launch RT Local Dev",
       "type": "node",
       "request": "launch",
       "protocol": "inspector",
@@ -14,10 +29,7 @@
       "env": {
         "LOG_LEVEL": "debug"
       },
-      "skipFiles": [
-        "<node_internals>/**",
-        "node_modules/**/*.js"
-      ]
+      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js"]
     }
   ]
 }

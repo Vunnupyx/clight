@@ -7,7 +7,7 @@ import {
 } from '../../../../common/interfaces';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
-import { Variant, UAVariable } from 'node-opcua';
+import { Variant, UAVariable, LocalizedText, DataType } from 'node-opcua';
 import {
   IGeneralConfig,
   IOPCUAConfig
@@ -45,12 +45,6 @@ export class OPCUADataSink extends DataSink {
   public async init(): Promise<OPCUADataSink> {
     const logPrefix = `${this.name}::init`;
     winston.info(`${logPrefix} initializing.`);
-
-    if (!this.isLicensed) {
-      winston.warn(`${logPrefix} no valid license found. Stop initializing.`);
-      this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
-      return this;
-    }
 
     if (!this.enabled) {
       winston.info(
@@ -146,12 +140,15 @@ export class OPCUADataSink extends DataSink {
     const logPrefix = `${this.name}::setNodeValue`;
     try {
       if (node) {
-        //@ts-ignore
         node.setValueFromSource(
           new Variant({
-            value,
-            //@ts-ignore
-            dataType: node.dataType.value
+            value:
+              node.dataType.value === DataType.LocalizedText
+                ? new LocalizedText({ locale: 'en', text: value })
+                : node.dataType.value === DataType.Boolean
+                ? Boolean(value)
+                : value,
+            dataType: node.dataTypeObj.basicDataType
           })
         );
       }

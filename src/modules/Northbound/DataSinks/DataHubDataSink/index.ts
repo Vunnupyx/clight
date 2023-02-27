@@ -9,14 +9,13 @@ import winston from 'winston';
 import {
   IDataHubConfig,
   IDataSinkConfig,
-  IProxyConfig,
   ISignalGroups,
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
+import { NorthBoundError } from '../../../../common/errors';
 
 export interface DataHubDataSinkOptions extends IDataSinkOptions {
   runTimeConfig: IDataHubConfig;
-  proxy: IProxyConfig;
 }
 
 export type TGroupedMeasurements = Record<
@@ -37,19 +36,23 @@ export class DataHubDataSink extends DataSink {
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
   options: DataHubDataSinkOptions;
-  proxy: IProxyConfig;
 
   public constructor(options: DataHubDataSinkOptions) {
     super(options);
     this.options = options;
-    this.proxy = JSON.parse(JSON.stringify(options.proxy));
     this.#signalGroups = options.runTimeConfig.signalGroups;
     this.#datahubAdapter = new DataHubAdapter(
       options.runTimeConfig,
-      options.dataSinkConfig.datahub,
-      options.proxy,
       this.handleAdapterStateChange.bind(this)
     );
+  }
+
+  /**
+   * Returns datahub adapter
+   * @returns
+   */
+  public getAdapter(): DataHubAdapter {
+    return this.#datahubAdapter;
   }
 
   private handleAdapterStateChange(newState: LifecycleEventStatus) {
@@ -62,7 +65,7 @@ export class DataHubDataSink extends DataSink {
   protected processDataPointValues(dataPointsObj): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
 
-    if (!this.#datahubAdapter.running) {
+    if (!this.#datahubAdapter?.running) {
       return;
     }
 
@@ -134,15 +137,9 @@ export class DataHubDataSink extends DataSink {
     const logPrefix = `${this.name}::init`;
     winston.debug(`${logPrefix} initializing.`);
 
-    if (!this.isLicensed) {
-      winston.warn(`${logPrefix} no valid license found. Stop initializing.`);
-      this.updateCurrentStatus(LifecycleEventStatus.NoLicense);
-      return this;
-    }
-
     if (!this.enabled) {
       winston.info(
-        `${logPrefix} datahub data sink is disabled. Skipping initialization.`
+        `${logPrefix} datahub data sink is disabled. Continue initialization for update mechanism.`
       );
       this.updateCurrentStatus(LifecycleEventStatus.Disabled);
       return this;
@@ -158,41 +155,20 @@ export class DataHubDataSink extends DataSink {
       return this;
     }
 
-    if (
-      !this.options.dataSinkConfig.datahub ||
-      !this.options.dataSinkConfig.datahub.provisioningHost ||
-      !this.options.dataSinkConfig.datahub.regId ||
-      !this.options.dataSinkConfig.datahub.scopeId ||
-      !this.options.dataSinkConfig.datahub.symKey
-    ) {
-      winston.warn(
-        `${logPrefix} aborting data hub adapter initializing due to missing configuration.`
-      );
-      this.updateCurrentStatus(LifecycleEventStatus.NotConfigured);
-      return null;
-    }
     return this.#datahubAdapter
       .init()
       .then((adapter) => adapter.start())
       .then(() => {
         winston.debug(`${logPrefix} initialized`);
         return this;
+      })
+      .catch((error) => {
+        if (error instanceof NorthBoundError) {
+          this.enabled = false;
+          this.updateCurrentStatus(LifecycleEventStatus.Unavailable);
+          return this;
+        }
       });
-  }
-
-  /**
-   * Compares given config with the current data sink config to determine if data source should be restarted or not
-   */
-  configEqual(
-    config: IDataSinkConfig,
-    termsAndConditions: boolean,
-    optionalConfigs?: OptionalConfigs
-  ) {
-    return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
-      this.termsAndConditionsAccepted === termsAndConditions &&
-      JSON.stringify(optionalConfigs.proxy) === JSON.stringify(this.proxy)
-    );
   }
 
   /**
@@ -225,6 +201,6 @@ export class DataHubDataSink extends DataSink {
    */
   public getDesiredPropertiesServices(): IDesiredProps {
     if (!this.#datahubAdapter) return { services: {} };
-    return this.#datahubAdapter.getDesiredProps();
+    return this.#datahubAdapter.getDesiredProps() ?? { services: {} };
   }
 }

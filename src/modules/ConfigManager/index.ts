@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import { promisify } from 'util';
 import { generateKeyPair } from 'crypto';
+import fetch from 'node-fetch';
 
 import {
   DataSinkProtocols,
@@ -27,7 +28,8 @@ import {
   IAuthUser,
   IAuthUsersConfig,
   IDefaultTemplate,
-  IMessengerServerConfig
+  IMessengerServerConfig,
+  IVirtualDataPointConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -35,6 +37,8 @@ import { System } from '../System';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { areObjectsEqual } from '../Utilities';
+import { factoryConfig } from './factoryConfig';
+import { runtimeConfig } from './runtimeConfig';
 
 const promisifiedGenerateKeyPair = promisify(generateKeyPair);
 
@@ -47,7 +51,6 @@ interface IConfigManagerEvents {
 type ChangeOperation = 'insert' | 'update' | 'delete';
 
 const defaultS7DataSource: IDataSourceConfig = {
-  name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.S7,
   enabled: false,
@@ -60,84 +63,36 @@ const defaultS7DataSource: IDataSourceConfig = {
   }
 };
 const defaultIoShieldDataSource: IDataSourceConfig = {
-  name: '',
   dataPoints: [],
   protocol: DataSourceProtocols.IOSHIELD,
   enabled: false,
   type: 'ai-100+5di'
 };
+const defaultEnergyDataSource: IDataSourceConfig = {
+  dataPoints: [],
+  protocol: DataSourceProtocols.ENERGY,
+  enabled: false,
+  type: 'PhoenixEMpro',
+  connection: {
+    ipAddr: ''
+  }
+};
 const defaultOpcuaDataSink: IDataSinkConfig = {
-  name: '',
   dataPoints: [],
   enabled: false,
   protocol: DataSinkProtocols.OPCUA
 };
 
 const defaultDataHubDataSink: IDataSinkConfig = {
-  name: '',
   dataPoints: [],
   enabled: false,
-  protocol: DataSinkProtocols.DATAHUB,
-  datahub: {
-    provisioningHost: '',
-    scopeId: '',
-    regId: '',
-    symKey: ''
-  }
+  protocol: DataSinkProtocols.DATAHUB
 };
 
 const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
-  name: '',
   dataPoints: [],
   enabled: false,
   protocol: DataSinkProtocols.MTCONNECT
-};
-
-export const emptyDefaultConfig: IConfig = {
-  general: {
-    manufacturer: '',
-    serialNumber: '',
-    model: '',
-    control: ''
-  },
-  networkConfig: {
-    x1: {},
-    x2: {},
-    time: {}
-  },
-  messenger: {
-    hostname: null,
-    username: null,
-    password: null,
-    model: null,
-    name: null,
-    organization: null,
-    timezone: null
-  },
-  dataSources: [],
-  dataSinks: [],
-  virtualDataPoints: [],
-  mapping: [],
-  quickStart: {
-    currentTemplate: null,
-    currentTemplateName: null,
-    completed: false
-  },
-  termsAndConditions: {
-    accepted: false
-  },
-  env: {
-    selected: 'prod',
-    mdc: {
-      tag: 'main'
-    },
-    mtc: {
-      tag: 'latest'
-    },
-    web: {
-      tag: 'main'
-    }
-  }
 };
 
 /**
@@ -145,16 +100,15 @@ export const emptyDefaultConfig: IConfig = {
  */
 export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
   public id: string | null = null;
-  private configFolder = path.join(
-    process.env.MDC_LIGHT_FOLDER || process.cwd(),
-    'mdclight/config'
-  );
-  private runtimeFolder = '/runTimeFiles';
-  private keyFolder = path.join(this.configFolder, 'keys');
+
+  private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
+  private configFolder = path.join(this.mdcFolder, '/config');
+  private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
+  private sslFolder = path.join(this.mdcFolder, 'sslkeys');
+  private runtimeFolder = path.join(this.mdcFolder, 'runtime-files');
+  private certificateFolder = path.join(this.mdcFolder, 'certs');
 
   private configName = 'config.json';
-  private factoryConfigName = 'config.factory.json';
-  private runtimeConfigName = 'runtime.json';
   private authUsersConfigName = 'auth.json';
   private privateKeyName = 'jwtRS256.key';
   private publicKeyName = 'jwtRS256.key.pub';
@@ -180,7 +134,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public set config(config: IConfig) {
-    this._config = config;
+    const vdpCheckedConfig = this.getConfigWithCleanedVdps(config);
+    this._config = this.getConfigWithCleanedMappings(vdpCheckedConfig);
     this.saveConfigToFile();
   }
 
@@ -218,81 +173,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.lifecycleEventsBus = lifecycleEventsBus;
 
     // Initial values
-    this._runtimeConfig = {
-      users: [],
-      systemInfo: [],
-      mtconnect: {
-        listenerPort: 7878
-      },
-      opcua: {
-        port: 4840,
-        nodesetDir: ''
-      },
-      restApi: {
-        port: 5000,
-        maxFileSizeByte: 20000000
-      },
-      auth: {
-        expiresIn: 60 * 60
-      },
-      datahub: {
-        groupDevice: false,
-        signalGroups: undefined,
-        dataPointTypesData: {
-          probe: {
-            intervalHours: undefined
-          },
-          telemetry: {
-            intervalHours: undefined
-          }
-        }
-      },
-      registries: {
-        dev: {
-          url: '',
-          mdc: {
-            tag: 'develop'
-          },
-          mtc: {
-            tag: 'latest'
-          },
-          web: {
-            tag: 'develop'
-          }
-        },
-        prod: {
-          url: '',
-          mdc: {
-            tag: 'main'
-          },
-          mtc: {
-            tag: 'latest'
-          },
-          web: {
-            tag: 'main'
-          }
-        },
-        stag: {
-          url: '',
-          mdc: {
-            tag: 'staging'
-          },
-          mtc: {
-            tag: 'latest'
-          },
-          web: {
-            tag: 'staging'
-          }
-        }
-      }
-    };
+    this._runtimeConfig = runtimeConfig;
 
     this._authConfig = {
       secret: null,
       public: null
     };
-
-    this._config = emptyDefaultConfig;
 
     this._authUsers = {
       users: []
@@ -301,26 +187,32 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   /**
    * Initializes and parses config items
+   * @param factoryReset True would indicate initialization after factory reset, default false
    */
-  public init(): Promise<void> {
+  public async init(factoryReset = false): Promise<void> {
     const logPrefix = `${ConfigManager.className}::init`;
     winston.info(`${logPrefix} initializing.`);
+    if (!factoryReset) {
+      this._dataSinksManager.on(
+        'dataSinksRestarted',
+        this.onDataSinksRestarted.bind(this)
+      );
+      this._dataSourcesManager.on(
+        'dataSourcesRestarted',
+        this.onDataSourcesRestarted.bind(this)
+      );
+    } else {
+      winston.warn(`${logPrefix} Factory reset requested`);
 
-    this._dataSinksManager.on(
-      'dataSinksRestarted',
-      this.onDataSinksRestarted.bind(this)
-    );
-    this._dataSourcesManager.on(
-      'dataSourcesRestarted',
-      this.onDataSourcesRestarted.bind(this)
-    );
+      // Remove saved auth users after factory reset
+      this._authUsers = {
+        users: []
+      };
+    }
+    await this.checkConfigFolder();
 
-    return Promise.all([
-      this.loadConfig<IRuntimeConfig>(
-        this.runtimeConfigName,
-        this.runtimeConfig
-      ),
-      this.loadConfig<IConfig>(this.configName, this.config),
+    return Promise.allSettled([
+      this.loadConfig<IConfig>(this.configName, factoryConfig),
       this.loadConfig<IAuthUsersConfig>(
         this.authUsersConfigName,
         this._authUsers
@@ -330,16 +222,17 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     ])
       .then(
         ([
-          runTime,
-          config,
-          authUsers,
+          configResult,
+          authUsersResult,
           loadTemplatesResult,
           checkJwtKeyPairResult
         ]) => {
-          this._runtimeConfig = runTime;
-          this._config = config;
-
-          this._authUsers = authUsers;
+          if (!(configResult.status === 'rejected')) {
+            this._config = configResult.value;
+          }
+          if (!(authUsersResult.status === 'rejected')) {
+            this._authUsers = authUsersResult.value;
+          }
 
           return this.loadJwtKeyPair();
         }
@@ -374,10 +267,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
+   * Creates config folder if not existing
+   */
+  async checkConfigFolder() {
+    if (!fs.existsSync(this.configFolder)) {
+      fs.mkdirSync(this.configFolder);
+    }
+  }
+
+  /**
    * Adds missing data sources on startup
    */
   public setupDefaultDataSources() {
-    const sources = [defaultS7DataSource, defaultIoShieldDataSource];
+    const sources = [
+      defaultS7DataSource,
+      defaultIoShieldDataSource,
+      defaultEnergyDataSource
+    ];
 
     this._config = {
       ...this._config,
@@ -418,46 +324,147 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * Factory reset
+   * Factory reset. Possible errors are handled by the caller, in BootstrapManager.start()
    */
   public async factoryResetConfiguration() {
-    const configPath = path.join(this.configFolder, this.configName);
-    const factoryConfig = path.join(this.configFolder, this.factoryConfigName);
     const authConfig = path.join(this.configFolder, this.authUsersConfigName);
 
-    await promisefs.copyFile(factoryConfig, configPath);
-    await promisefs.unlink(authConfig);
-    if (fs.existsSync(`${this.configFolder}/certs`)) {
-      await promisefs.rmdir(`${this.configFolder}/certs`, {
-        recursive: true
-      });
+    const confAgentAddress =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:1884'
+        : 'http://172.17.0.1:1884';
+
+    const factoryProxy = {
+      enabled: false,
+      host: '',
+      port: 0,
+      username: '',
+      password: '',
+      whitelist: ['']
+    };
+    await fetch(`${confAgentAddress}/network/proxy`, {
+      method: 'PUT',
+      body: JSON.stringify(factoryProxy)
+    });
+
+    const factoryNtp = [''];
+    await fetch(`${confAgentAddress}/network/ntp`, {
+      method: 'PUT',
+      body: JSON.stringify(factoryNtp)
+    });
+
+    const factoryNetworkAdapters = [
+      {
+        id: 'enoX1',
+        displayName: '',
+        enabled: true,
+        ipv4Settings: {
+          enabled: true,
+          dhcp: true,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        ipv6Settings: {
+          enabled: false,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        macAddress: '',
+        ssid: ''
+      },
+      {
+        id: 'enoX2',
+        displayName: '',
+        enabled: true,
+        ipv4Settings: {
+          enabled: true,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '192.168.214.230',
+              Netmask: '24'
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        ipv6Settings: {
+          enabled: false,
+          dhcp: false,
+          ipAddresses: [
+            {
+              Address: '',
+              Netmask: ''
+            }
+          ],
+          defaultGateway: '',
+          dnsserver: ['']
+        },
+        macAddress: '',
+        ssid: ''
+      }
+    ];
+
+    await Promise.all(
+      factoryNetworkAdapters.map((adapterSettings) =>
+        fetch(`${confAgentAddress}/network/adapters/${adapterSettings.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(adapterSettings)
+        })
+      )
+    );
+
+    await promisefs.rm(authConfig, { force: true });
+    await promisefs.rm(path.join(this.keyFolder, this.privateKeyName), {
+      force: true
+    });
+    await promisefs.rm(path.join(this.keyFolder, this.publicKeyName), {
+      force: true
+    });
+    await promisefs.rm(path.join(this.sslFolder, 'ssl.crt'), { force: true });
+    await promisefs.rm(path.join(this.sslFolder, 'ssl_private.key'), {
+      force: true
+    });
+
+    if (fs.existsSync(this.certificateFolder)) {
+      let certFiles = await promisefs.readdir(this.certificateFolder);
+      await Promise.all(
+        certFiles.map((fileOrFolderName) =>
+          promisefs.rm(path.join(this.certificateFolder, fileOrFolderName), {
+            recursive: true,
+            force: true
+          })
+        )
+      );
     }
+    await this.saveConfig(factoryConfig, true);
+    await this.init(true);
   }
 
   /**
    * Applies template settings.
    */
-  public applyTemplate(
-    templateFileName: string,
-    dataSources: string[],
-    dataSinks: string[]
-  ) {
+  public applyTemplate(templateFileName: string) {
     const template = this._defaultTemplates.templates.find(
       (x) => x.id === templateFileName
-    );
-    const sources = template.dataSources.filter((x) =>
-      dataSources.includes(x.protocol)
-    );
-    const sinks = template.dataSinks.filter((x) =>
-      dataSinks.includes(x.protocol)
     );
 
     this._config = {
       ...this._config,
-      dataSources: sources,
-      dataSinks: sinks,
-      virtualDataPoints: template.virtualDataPoints,
-      mapping: template.mapping,
+      ...template,
       quickStart: {
         completed: true,
         currentTemplate: templateFileName,
@@ -472,30 +479,88 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * Filters mapping array depends on enabled dataSources & dataSinks.
+   * Checks vdps and removes vdps that do not have sources anymore.
+   * Returns updated config and does not mutate this.config directly!
+   *
+   * @param configToCheck
+   * @returns updated config
    */
-  public getFilteredMapping() {
-    const dataSourceDataPoints: string[] = [];
-    this.config.dataSources.forEach((dataSource) =>
-      dataSource.dataPoints.forEach((dp) => dataSourceDataPoints.push(dp.id))
+  public getConfigWithCleanedVdps(configToCheck = this.config): IConfig {
+    let totalChangeCount = 0;
+    //Makes a copy of given config
+    let updatedConfig = JSON.parse(JSON.stringify(configToCheck)) as IConfig;
+
+    const dataSourceDataPointIds: string[] = [];
+    configToCheck.dataSources.forEach((dataSource) =>
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPointIds.push(dp.id))
     );
 
-    const dataSinkDataPoints: string[] = [];
-    this.config.dataSinks.forEach((dataSink) =>
-      dataSink.dataPoints.forEach((dp) => dataSinkDataPoints.push(dp.id))
+    const vdpsIds: string[] =
+      configToCheck.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
+
+    updatedConfig.virtualDataPoints = configToCheck.virtualDataPoints?.filter(
+      (vdp) => {
+        let hasMissingSource = false;
+        vdp.sources.forEach((vdpSource) => {
+          const sourceExists =
+            dataSourceDataPointIds.includes(vdpSource) ||
+            vdpsIds.includes(vdpSource);
+
+          if (!sourceExists) {
+            hasMissingSource = true;
+          }
+        });
+        if (hasMissingSource) {
+          totalChangeCount++;
+          return false;
+        }
+        return true;
+      }
     );
 
-    const vdps: string[] = this.config.virtualDataPoints.map((vdp) => vdp.id);
+    if (totalChangeCount > 0) {
+      //If there are any changes, potentially another VDP depending on this VDP might be affected, so checking again
+      return this.getConfigWithCleanedVdps(updatedConfig);
+    } else {
+      return updatedConfig;
+    }
+  }
 
-    return this.config.mapping.filter((m) => {
-      // Remove mappings if the source or target data point doesn't exist.
-      // TODO: That shouldn't happen at all. Modify "delete" handlers of sinks and sources to remove mappings if a removed data point was mapped.
+  /**
+   * Checks mappings and removes mappings that do not have sources or targets anymore.
+   * Returns updated config and does not mutate this.config directly!
+   *
+   * @param configToCheck
+   * @returns updated config
+   */
+  public getConfigWithCleanedMappings(configToCheck = this.config): IConfig {
+    //Makes a copy of given config
+    let updatedConfig = JSON.parse(JSON.stringify(configToCheck)) as IConfig;
+
+    const dataSourceDataPointIds: string[] = [];
+    configToCheck.dataSources.forEach((dataSource) =>
+      dataSource.dataPoints.forEach((dp) => dataSourceDataPointIds.push(dp.id))
+    );
+
+    const dataSinkDataPointIds: string[] = [];
+    configToCheck.dataSinks.forEach((dataSink) =>
+      dataSink.dataPoints.forEach((dp) => dataSinkDataPointIds.push(dp.id))
+    );
+    const vdpsIds: string[] =
+      configToCheck.virtualDataPoints?.map((vdp) => vdp.id) ?? [];
+
+    updatedConfig.mapping = configToCheck.mapping?.filter((mapping) => {
       const sourceExists =
-        dataSourceDataPoints.includes(m.source) || vdps.includes(m.source);
-      const targetExists = dataSinkDataPoints.includes(m.target);
-
-      return sourceExists && targetExists;
+        dataSourceDataPointIds.includes(mapping.source) ||
+        vdpsIds.includes(mapping.source);
+      const targetExists = dataSinkDataPointIds.includes(mapping.target);
+      if (!sourceExists || !targetExists) {
+        return false;
+      }
+      return true;
     });
+
+    return updatedConfig;
   }
 
   /**
@@ -522,14 +587,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     defaultConfig: any
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
-    const configPath = path.join(
-      configName === this.runtimeConfigName
-        ? this.runtimeFolder
-        : this.configFolder,
-      configName
-    );
+    const configPath = path.join(this.configFolder, configName);
 
-    return Promise.all([promisefs.readFile(configPath, { encoding: 'utf-8' })])
+    winston.debug(`${logPrefix} loading config ${configPath}`);
+
+    return promisefs
+      .readFile(configPath, { encoding: 'utf-8' })
       .catch(() => {
         this.lifecycleEventsBus.push({
           id: 'device',
@@ -543,15 +606,22 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
           )
         );
       })
-      .then(([file]) => {
+      .then((file) => {
         return JSON.parse(file);
       })
       .catch((error) => {
-        winston.error(`${logPrefix} Invalid json file ${configPath}`);
-        return Promise.reject(error);
+        winston.error(
+          `${logPrefix} Invalid json file ${configPath}. Using default config`
+        );
+        return defaultConfig;
       })
       .then((parsedFile) => {
-        return this.mergeDeep(defaultConfig, parsedFile);
+        // Make a copy of the defaultConfig to avoid overwriting it
+        const mergedFile = this.mergeDeep(
+          JSON.parse(JSON.stringify(defaultConfig)),
+          parsedFile
+        );
+        return mergedFile;
       })
       .catch((error) => {
         this.lifecycleEventsBus.push({
@@ -592,7 +662,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplate(templateName) {
     try {
       const configPath = path.join(
-        this.configFolder,
+        this.runtimeFolder,
         'templates',
         templateName
       );
@@ -607,7 +677,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private async loadTemplates() {
     try {
       const templateNames = await promisefs.readdir(
-        path.join(this.configFolder, 'templates'),
+        path.join(this.runtimeFolder, 'templates'),
         { encoding: 'utf-8' }
       );
 
@@ -661,84 +731,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   /**
-   * bulk config dataSource changes.
-   */
-  public async bulkChangeDataSourceDataPoints(
-    protocol: DataSourceProtocols,
-    changes: any
-  ): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    const dataSource = this._config.dataSources.find(
-      (ds) => ds.protocol === protocol
-    );
-
-    if (created) {
-      dataSource.dataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      dataSource.dataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      dataSource.dataPoints = dataSource.dataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
-   * bulk config dataSink changes.
-   */
-  public async bulkChangeDataSinkDataPoints(
-    protocol: DataSinkProtocols,
-    changes: any
-  ): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    const dataSink = this._config.dataSinks.find(
-      (ds) => ds.protocol === protocol
-    );
-
-    if (created) {
-      dataSink.dataPoints.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      dataSink.dataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      dataSink.dataPoints = dataSink.dataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
    * Update messenger config
    */
   public async updateMessengerConfig(
@@ -775,89 +767,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     config.messenger = newMessengerConfig;
     await this.saveConfigToFile();
     await this.configChangeCompleted();
-  }
-
-  /**
-   * bulk config VDP changes.
-   */
-  public async bulkChangeVirtualDataPoints(changes: any): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    if (created) {
-      const entries = Object.values<any>(created).map((item) => {
-        let newResetSchedule = [];
-        if (
-          item.operationType === 'counter' &&
-          item.resetSchedules?.length > 0
-        ) {
-          for (const entry of item.resetSchedules) {
-            newResetSchedule.push({
-              ...entry,
-              created: Date.now(),
-              lastReset: null
-            });
-          }
-        }
-
-        return {
-          ...{
-            ...item,
-            resetSchedules: newResetSchedule
-          },
-          id: uuidv4()
-        };
-      });
-
-      this._config.virtualDataPoints.push(...entries);
-    }
-
-    if (updated) {
-      this._config.virtualDataPoints.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      this._config.virtualDataPoints = this._config.virtualDataPoints.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
-  }
-
-  /**
-   * bulk config mapping changes.
-   */
-  public async bulkChangeMapings(changes: any): Promise<void> {
-    const { created, updated, deleted } = changes;
-
-    if (created) {
-      this._config.mapping.push(
-        ...Object.values<any>(created).map((item) => ({
-          ...item,
-          id: uuidv4()
-        }))
-      );
-    }
-
-    if (updated) {
-      this._config.mapping.forEach((dp) => {
-        if (updated[dp.id]) {
-          Object.assign(dp, updated[dp.id]);
-        }
-      });
-    }
-
-    if (deleted) {
-      this._config.mapping = this._config.mapping.filter(
-        (dp) => !deleted.includes(dp.id)
-      );
-    }
-
-    await this.saveConfigToFile();
   }
 
   /**
@@ -923,7 +832,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         throw new Error();
       }
     }
-    this.saveConfigToFile();
+    /**
+     * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+     * This setter already includes this.saveConfigToFile();
+     */
+    this.config = this.config;
   }
 
   /**
@@ -956,24 +869,33 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   /**
    * Save the current data from config property into a JSON config file on hard drive
+   * @param obj full or partial config object to use for saving
+   * @param replace True would replace existing config with given obj. Default is false and it merges obj and existing config
    */
-  public saveConfig(obj: Partial<IConfig> = null): void {
+  public saveConfig(
+    obj: Partial<IConfig> = null,
+    replace = false
+  ): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfig`;
 
     if (obj) {
-      this._config = this.mergeDeep(this._config, obj);
+      if (replace) {
+        this._config = obj as IConfig;
+      } else {
+        this._config = this.mergeDeep(this._config, obj);
+      }
     }
 
     winston.debug(`${logPrefix}`);
 
-    this.saveConfigToFile();
+    return this.saveConfigToFile();
   }
 
   // reads terms and conditions
   async getTermsAndConditions(lang: string) {
     const terms = await promisefs
       .readFile(
-        path.join(this.configFolder, 'terms', 'eula', `eula_${lang}.txt`),
+        path.join(this.runtimeFolder, 'terms', 'eula', `eula_${lang}.txt`),
         { encoding: 'utf-8' }
       )
       .then((data) => data)
@@ -1018,6 +940,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   public async getSystemInformation() {
     const system = new System();
+    const osVersion = await system.readOsVersion();
     return [
       {
         title: 'General system information',
@@ -1032,13 +955,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             key: 'Mac address X1',
             keyDescription: '',
             value: await system.readMacAddress('eth0'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           },
           {
             key: 'Mac address X2',
             keyDescription: '',
             value: await system.readMacAddress('eth1'),
-            valueDescription: 'Mac adress'
+            valueDescription: 'Mac address'
           }
         ]
       },
@@ -1058,9 +981,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
             valueDescription: null
           },
           {
-            key: 'IoT connector flex OS version',
+            key: 'CELOS version',
             keyDescription: 'Operating System',
-            value: system.readOsVersion(),
+            value: osVersion,
             valueDescription: null
           },
           {
@@ -1192,6 +1115,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   async checkJwtKeyPair() {
     const logPrefix = `${ConfigManager.className}::checkJwtKeyPair`;
 
+    winston.debug(`${logPrefix} checking JWT keys.`);
     if (fs.existsSync(this.keyFolder)) {
       const files = (await fs.readdirSync(this.keyFolder)) as string[];
       if (

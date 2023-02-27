@@ -1,9 +1,13 @@
 import { ConfigManager } from '../../../../../ConfigManager';
-import { IDataSinkConfig } from '../../../../../ConfigManager/interfaces';
+import {
+  IDataSinkConfig,
+  IDataSinkDataPointConfig,
+  isValidDataSink,
+  isValidDataSinkDatapoint
+} from '../../../../../ConfigManager/interfaces';
 import { Response, Request } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import winston from 'winston';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
 import {
@@ -22,6 +26,13 @@ interface IDataSinkConfigResponse extends IDataSinkConfig {
       };
     };
   };
+}
+
+/**
+ * Checks if given protocol is a valid data sink protocol
+ */
+function isValidProtocol(protocol: any): boolean {
+  return Object.values(DataSinkProtocols).includes(protocol);
 }
 
 /**
@@ -45,7 +56,7 @@ export function setDataSinksManager(manager: DataSinksManager) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSinksGetHandler(request: Request, response: Response): void {
+function getAllDataSinksHandler(request: Request, response: Response): void {
   const dataSinks: IDataSinkConfigResponse[] = configManager.config.dataSinks;
 
   dataSinks.forEach((dataSink) => {
@@ -67,10 +78,15 @@ function dataSinksGetHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSinkGetHandler(request, response): void {
-  const dataSink: IDataSinkConfigResponse = configManager.config.dataSinks.find(
-    (sink) => sink.protocol === request.params.datasinkProtocol
-  );
+function getSingleDataSinkHandler(request, response): void {
+  if (!isValidProtocol(request.params.datasinkProtocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
+    return;
+  }
+  const dataSink: IDataSinkConfigResponse =
+    configManager.config?.dataSinks?.find(
+      (sink) => sink.protocol === request.params.datasinkProtocol
+    );
 
   if (dataSink.protocol === DataSinkProtocols.DATAHUB) {
     const sink = dataSinksManager.getDataSinkByProto(
@@ -84,16 +100,22 @@ function dataSinkGetHandler(request, response): void {
 
 /**
  * Handle all patch requests for modifying a specific datasource.
- * Only enabling and disabling is allowed.
+ * Only certain changes within "allowed" variable are allowed.
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataSinkPatchHandler(
+async function patchSingleDataSinkHandler(
   request: Request,
   response: Response
 ): Promise<void> {
   let allowed = ['enabled', 'auth', 'customDataPoints'];
   const protocol = request.params.datasinkProtocol;
+  const updatedDataSink = request.body;
+
+  if (!isValidProtocol(protocol) || isValidDataSink(updatedDataSink)) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
 
   const config = configManager.config;
   let dataSink = config.dataSinks.find(
@@ -108,15 +130,15 @@ async function dataSinkPatchHandler(
 
   if (!dataSink) {
     winston.warn(
-      `dataSinkPatchHandler error due to datasink with protocol ${protocol} not found.`
+      `patchSingleDataSinkHandler error due to datasink with protocol ${protocol} not found.`
     );
     response.status(404).send();
     return Promise.resolve();
   }
-  for (const entry of Object.keys(request.body)) {
+  for (const entry of Object.keys(updatedDataSink)) {
     if (!allowed.includes(entry)) {
       winston.warn(
-        `dataSinkPatchHandler tried to change property: ${entry}. Not allowed`
+        `patchSingleDataSinkHandler tried to change property: ${entry}. Not allowed`
       );
       response.status(403).json({
         error: `Not allowed to change ${entry}`
@@ -127,27 +149,30 @@ async function dataSinkPatchHandler(
 
   if (
     protocol === 'opcua' &&
-    request.body.auth &&
-    request.body.auth.type === 'anonymous'
+    updatedDataSink.auth &&
+    updatedDataSink.auth.type === 'anonymous'
   ) {
-    delete request.body.auth.userName;
-    delete request.body.auth.password;
+    delete updatedDataSink.auth.userName;
+    delete updatedDataSink.auth.password;
   }
 
   if (
-    request.body.auth &&
-    'type' in request.body.auth &&
-    'userName' in request.body.auth &&
-    'password' in request.body.auth
+    updatedDataSink.auth &&
+    'type' in updatedDataSink.auth &&
+    'userName' in updatedDataSink.auth &&
+    'password' in updatedDataSink.auth
   ) {
-    request.body.auth.password = await hash(request.body.auth.password, 10);
+    updatedDataSink.auth.password = await hash(
+      updatedDataSink.auth.password,
+      10
+    );
   } else {
     winston.warn(
       `dataSinkPatchHandler tried to change property: auth .Infos missing.`
     );
   }
 
-  dataSink = { ...dataSink, ...request.body };
+  dataSink = { ...dataSink, ...updatedDataSink };
   configManager.changeConfig(
     'update',
     'dataSinks',
@@ -164,30 +189,43 @@ async function dataSinkPatchHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataSinksPostDatapointBulkHandler(
+async function patchAllDatapointsHandler(
   request: Request,
   response: Response
 ): Promise<void> {
   try {
-    const proto = request.params?.datasinkProtocol;
-    if (!proto || !['mtconnect', 'opcua', 'datahub'].includes(proto)) {
-      response.status(404).json({ error: 'Protocol not valid.' });
-      winston.warn(
-        'dataSinksPostDatapointBulkHandler error due to no valid protocol!'
-      );
-      return;
+    const protocol = request.params.datasinkProtocol;
+    const newDataPointsArray = request.body as IDataSinkDataPointConfig[];
+
+    if (
+      !isValidProtocol(protocol) ||
+      !newDataPointsArray.every(isValidDataSinkDatapoint)
+    ) {
+      response.status(400).json({ error: 'Input not valid.' });
+      return Promise.resolve();
     }
 
-    await configManager.bulkChangeDataSinkDataPoints(
-      proto as DataSinkProtocols,
-      request.body || {}
+    let dataSink = configManager.config?.dataSinks?.find(
+      (sink) => sink.protocol === protocol
+    );
+    if (!dataSink) {
+      winston.warn(
+        `patchAllDatapointsHandler error due to datasink with protocol ${protocol} not found.`
+      );
+      response.status(404).send();
+      return Promise.resolve();
+    }
+    dataSink = { ...dataSink, dataPoints: newDataPointsArray };
+    configManager.changeConfig(
+      'update',
+      'dataSinks',
+      dataSink,
+      (item) => item.protocol
     );
     await configManager.configChangeCompleted();
     response.status(200).send();
   } catch (err) {
-    winston.warn(
-      `dataSinksPostDatapointBulkHandler tried to change bulk dataSink.dataPoints`
-    );
+    winston.warn(`patchAllDatapointsHandler error due to: ${err}`);
     response
       .status(400)
       .json({ error: 'Cannot change datapoints. Try again!' });
@@ -199,14 +237,38 @@ async function dataSinksPostDatapointBulkHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointsGetHandler(request: Request, response: Response) {
-  // @ts-ignore // TODO
-  const sink = configManager?.config?.dataSinks.find(
+function getAllDatapointsHandler(request: Request, response: Response) {
+  const sinkConfig = configManager?.config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
-  response
-    .status(sink ? 200 : 404)
-    .json(sink ? { dataPoints: sink.dataPoints } : null);
+  if (!sinkConfig) {
+    return response.status(404).json();
+  }
+  const allSignalGroups = configManager.runtimeConfig?.datahub?.signalGroups;
+  let dpSignalGroupArray: { [key: string]: string[] } = {};
+  for (let service in allSignalGroups) {
+    for (let dpAddress of allSignalGroups[service]) {
+      if (!dpSignalGroupArray[dpAddress]) {
+        dpSignalGroupArray[dpAddress] = [service];
+      } else {
+        dpSignalGroupArray[dpAddress].push(service);
+      }
+    }
+  }
+  const dataSink = dataSinksManager.getDataSinkByProto(
+    DataSinkProtocols.DATAHUB
+  ) as DataHubDataSink;
+  const desiredServices = dataSink?.getDesiredPropertiesServices();
+  return response.status(200).json({
+    dataPoints: sinkConfig.dataPoints.map((dp) => ({
+      ...dp,
+      enabled: dpSignalGroupArray[dp.address]?.find(
+        (service) => desiredServices?.services?.[service]?.enabled
+      )
+        ? true
+        : false
+    }))
+  });
 }
 
 /**
@@ -214,11 +276,11 @@ function dataPointsGetHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataPointGetHandler(request: Request, response: Response) {
+function getSingleDatapointHandler(request: Request, response: Response) {
   const sink = configManager?.config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
-  const point = sink.dataPoints.find(
+  const point = sink?.dataPoints?.find(
     (datapoint) => datapoint.id === request.params.dataPointId
   );
   response.status(point && sink ? 200 : 404).json(point);
@@ -229,11 +291,21 @@ function dataPointGetHandler(request: Request, response: Response) {
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataPointsPostHandler(
+async function postSingleDatapointHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  // TODO: Input validation, maybe id is already taken
+  const newDatapoint = request.body as IDataSinkDataPointConfig;
+
+  if (
+    !isValidProtocol(request.params.datasinkProtocol) ||
+    !isValidDataSinkDatapoint(newDatapoint) ||
+    typeof request.params.dataPointId !== 'string'
+  ) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
+
   const config = configManager.config;
   const changedSinkObject = config.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
@@ -241,22 +313,23 @@ async function dataPointsPostHandler(
 
   if (
     changedSinkObject.dataPoints.some(
-      (dp) => dp.address === request.body.address
+      (dp) => dp.address === newDatapoint.address || dp.id === newDatapoint.id
     )
   ) {
-    winston.warn(`dataPointsPostHandler error due to existance of dataPoint`);
+    winston.warn(
+      `Can't create new data point because address or id already exists. Given data point:${newDatapoint}`
+    );
 
     response.status(400).send();
     return Promise.resolve();
   }
 
-  const newData = { ...request.body, ...{ id: uuidv4() } };
-  changedSinkObject.dataPoints.push(newData);
+  changedSinkObject.dataPoints.push(newDatapoint);
   configManager.config = config;
   await configManager.configChangeCompleted();
   response.status(200).json({
-    created: newData,
-    href: `${request.originalUrl}/datapoints/${newData.id}`
+    created: newDatapoint,
+    href: `${request.originalUrl}/datapoints/${newDatapoint.id}`
   });
 }
 
@@ -265,11 +338,21 @@ async function dataPointsPostHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataPointPatchHandler(
+async function patchSingleDataPointHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  //TODO: INPUT VALIDATION
+  const updatedDatapoint = request.body as IDataSinkDataPointConfig;
+
+  if (
+    !isValidProtocol(request.params.datasinkProtocol) ||
+    !isValidDataSinkDatapoint(updatedDatapoint) ||
+    typeof request.params.dataPointId !== 'string'
+  ) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
+
   const config = configManager.config;
   const sink = config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
@@ -277,16 +360,21 @@ async function dataPointPatchHandler(
   const dataPoint = sink?.dataPoints?.find(
     (point) => point.id === request.params.dataPointId
   );
-
-  const hasOtherDataPointChangedAddress = sink.dataPoints.some(
+  if (!dataPoint) {
+    response.status(404).json({ error: 'Datapoint not found' });
+    return Promise.resolve();
+  }
+  const isAddressAlreadyUsedByAnotherDatapoint = sink.dataPoints.some(
     (point) =>
-      request.body.address &&
+      updatedDatapoint.address &&
       point.id !== request.params.dataPointId &&
-      point.address === request.body.address
+      point.address === updatedDatapoint.address
   );
 
-  if (hasOtherDataPointChangedAddress) {
-    winston.warn(`dataPointsPostHandler error due to existance of dataPoint`);
+  if (isAddressAlreadyUsedByAnotherDatapoint) {
+    winston.warn(
+      `Can't patch data sink data point as same address exists with another data point! Address:${request.body.address}`
+    );
 
     response.status(400).send();
     return Promise.resolve();
@@ -295,7 +383,7 @@ async function dataPointPatchHandler(
   sink.dataPoints = sink?.dataPoints.filter(
     (point) => point.id !== request.params.dataPointId
   );
-  const newData = { ...dataPoint, ...request.body };
+  const newData = { ...dataPoint, ...updatedDatapoint };
   sink.dataPoints.push(newData);
   configManager.config = config;
   await configManager.configChangeCompleted();
@@ -306,15 +394,22 @@ async function dataPointPatchHandler(
 }
 
 /**
- * Delete a datapoint inside of a datasink selected by datasinkProtocol and datapointid
+ * Delete a datapoint inside of a datasink selected by datasinkProtocol and datapoint id
  * @param  {Request} request
  * @param  {Response} response
  */
-async function dataPointDeleteHandler(
+async function deleteSingleDatapointHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  // TODO: INPUT VALIDATION
+  if (
+    !isValidProtocol(request.params.datasinkProtocol) ||
+    typeof request.params.dataPointId !== 'string'
+  ) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
+
   const config = configManager?.config;
   const sink = config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
@@ -322,6 +417,10 @@ async function dataPointDeleteHandler(
   const index = sink.dataPoints.findIndex(
     (point) => point.id === request.params.dataPointId
   );
+  if (index === -1) {
+    response.status(404).json({ error: 'Datapoint not found' });
+    return Promise.resolve();
+  }
   const point = sink.dataPoints[index];
   sink.dataPoints.splice(index, 1);
   configManager.config = config;
@@ -336,16 +435,17 @@ async function dataPointDeleteHandler(
  * @param  {Request} request
  * @param  {Response} response
  */
-function dataSinkGetStatusHandler(request: Request, response: Response) {
-  const proto = request.params?.datasinkProtocol;
-  if (!proto || !['mtconnect', 'opcua', 'datahub'].includes(proto)) {
-    response.status(404).json({ error: 'Protocol not valid.' });
-    winston.warn('dataSinkGetStatusHandler error due to no valid protocol!');
+function getSingleDataSinkStatusHandler(request: Request, response: Response) {
+  const protocol = request.params?.datasinkProtocol;
+  if (!isValidProtocol(protocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
   if (!dataSinksManager) {
     response.status(500).send();
-    winston.error('dataSinkGetStatusHandler error no dataSinksManager set.');
+    winston.error(
+      'Cannot get data sink status because dataSinksManager is not available.'
+    );
     return;
   }
 
@@ -362,14 +462,19 @@ function dataSinkGetStatusHandler(request: Request, response: Response) {
 }
 
 export const dataSinksHandlers = {
-  dataSinksGet: dataSinksGetHandler,
-  dataSinkGet: dataSinkGetHandler,
-  dataSinkPatch: dataSinkPatchHandler,
-  dataSinksPostDatapointBulk: dataSinksPostDatapointBulkHandler,
-  dataSinksDataPointsGet: dataPointsGetHandler,
-  dataSinksDataPointsPost: dataPointsPostHandler,
-  dataSinksDataPointPatch: dataPointPatchHandler,
-  dataSinksDataPointDelete: dataPointDeleteHandler,
-  dataSinksDataPointGet: dataPointGetHandler,
-  dataSinkGetStatus: dataSinkGetStatusHandler
+  //Single data sink
+  dataSinkGet: getSingleDataSinkHandler,
+  dataSinkPatch: patchSingleDataSinkHandler,
+  //Multiple data sinks
+  dataSinksGet: getAllDataSinksHandler,
+  //Single data point
+  dataSinksDataPointsPost: postSingleDatapointHandler,
+  dataSinksDataPointPatch: patchSingleDataPointHandler,
+  dataSinksDataPointDelete: deleteSingleDatapointHandler,
+  dataSinksDataPointGet: getSingleDatapointHandler,
+  //Multiple data points
+  dataSinksPatchDatapoint: patchAllDatapointsHandler,
+  dataSinksDataPointsGet: getAllDatapointsHandler,
+  //Status of data sink
+  dataSinkGetStatus: getSingleDataSinkStatusHandler
 };

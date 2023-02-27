@@ -1,4 +1,4 @@
-export * from './backup.service';
+export * from './general.service';
 export * from './data-mapping.service';
 export * from './data-point.service';
 export * from './data-sink.service';
@@ -9,3 +9,4 @@ export * from './template.service';
 export * from './virtual-data-point.service';
 export * from './network.service';
 export * from './system-information.service';
+export * from './terms-and-conditions.service';

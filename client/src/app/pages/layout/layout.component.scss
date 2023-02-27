@@ -42,9 +42,6 @@
   background-color: #282b31;
   align-items: normal;
   height: 70px;
-  .clock-wrapper {
-    margin-top: 14px;
-  }
   .help-wrapper {
     margin-top: 11px;
     margin-right: 5px;
@@ -53,4 +50,7 @@
 
 .mat-drawer-content.mat-sidenav-content {
   background: #fff;
+}
+.mat-drawer-transition .mat-drawer-content {
+  transition: none;
 }

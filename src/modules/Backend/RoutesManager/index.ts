@@ -24,6 +24,7 @@ import {
   backupHandlers,
   setConfigManager as backupSetConfigManager
 } from '../routes/apis/v1/Backup';
+import { ntpCheckHandlers } from '../routes/apis/v1/ntp-check';
 import {
   deviceInfosHandlers,
   setConfigManager as deviceInfosSetConfigManager
@@ -34,6 +35,11 @@ import {
   setDataPointCache as livedataDataSourcesSetDataPointCache
 } from '../routes/apis/v1/Livedata/DataSources';
 import {
+  livedataDataSinksHandlers,
+  setConfigManager as livedataDataSinksSetConfigManager,
+  setDataPointCache as livedataDataSinksSetDataPointCache
+} from '../routes/apis/v1/Livedata/DataSinks';
+import {
   livedataVirtualDataPointsHandlers,
   setConfigManager as livedataVirtualDataPointsSetConfigManager,
   setDataPointCache as livedataVirtualDataPointsSetDataPointCache
@@ -43,12 +49,9 @@ import {
   setConfigManager as mappingSetConfigManager
 } from '../routes/apis/v1/Mapping';
 import {
-  networkConfigHandlers,
-  setConfigManager as networkConfigSetConfigManager
-} from '../routes/apis/v1/NetworkConfig';
-import {
   systemInfoHandlers,
-  setConfigManager as systemInfoSetConfigManager
+  setConfigManager as systemInfoSetConfigManager,
+  setDatahubAdapter
 } from '../routes/apis/v1/SystemInfo';
 import {
   templatesHandlers,
@@ -74,6 +77,8 @@ import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
 import swaggerFile from '../routes/swagger.json';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
+import { DataSinkProtocols } from '../../../common/interfaces';
+import { DataHubDataSink } from '../../Northbound/DataSinks/DataHubDataSink';
 
 interface RoutesManagerOptions {
   app: Application;
@@ -96,12 +101,13 @@ export class RoutesManager {
     ...dataSourceHandlers,
     ...dataSinksHandlers,
     ...backupHandlers,
+    ...ntpCheckHandlers,
     ...virtualDatapointHandlers,
     ...deviceInfosHandlers,
     ...livedataDataSourcesHandlers,
+    ...livedataDataSinksHandlers,
     ...livedataVirtualDataPointsHandlers,
     ...mappingHandlers,
-    ...networkConfigHandlers,
     ...systemInfoHandlers,
     ...templatesHandlers,
     ...messengerHandlers,
@@ -127,14 +133,19 @@ export class RoutesManager {
       vdpsSetConfigManager,
       deviceInfosSetConfigManager,
       livedataDataSourcesSetConfigManager,
+      livedataDataSinksSetConfigManager,
       livedataVirtualDataPointsSetConfigManager,
       mappingSetConfigManager,
-      networkConfigSetConfigManager,
       systemInfoSetConfigManager,
       templatesConfigSetConfigManager,
       messengerConfigSetConfigManager,
       termsAndConditionsSetConfigManager
     ].forEach((func) => func(options.configManager));
+    const datahubSink = options.dataSinksManager.getDataSinkByProto(
+      DataSinkProtocols.DATAHUB
+    ) as DataHubDataSink;
+
+    setDatahubAdapter(datahubSink.getAdapter());
     authSetAuthManager(options.authManager);
     setDataSinksDataSinksManager(options.dataSinksManager);
     setMessengerDataSinksManager(options.dataSinksManager);
@@ -143,11 +154,11 @@ export class RoutesManager {
     setDataSourcesManager(options.dataSourcesManager);
     setTemplateDataSourcesManager(options.dataSourcesManager);
     livedataDataSourcesSetDataPointCache(options.dataPointCache);
+    livedataDataSinksSetDataPointCache(options.dataPointCache);
     livedataVirtualDataPointsSetDataPointCache(options.dataPointCache);
 
     this.inputValidator = OpenApiValidator.middleware({
-      // @ts-ignore
-      apiSpec: swaggerFile,
+      apiSpec: swaggerFile as any,
       validateRequests: false,
       validateResponses: false
     });

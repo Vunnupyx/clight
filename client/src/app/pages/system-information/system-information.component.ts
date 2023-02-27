@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
-import { SystemInformationService, UpdateStatus } from '../../services';
+import { SystemInformationService } from '../../services';
 import { SystemInformationSection } from '../../models';
 import { environment } from '../../../environments/environment';
 import { MaterialThemeVersion } from 'app/app.component';
@@ -16,6 +17,12 @@ import {
 } from 'app/shared/components/alert-dialog/alert-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel
+} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import { LoadingDialogComponent } from '../../shared/components/loading-dialog/loading-dialog.component';
+import { AuthService, LocalStorageService } from 'app/shared';
 
 @Component({
   selector: 'app-system-information',
@@ -32,7 +39,10 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
   constructor(
     private systemInformationService: SystemInformationService,
     private translate: TranslateService,
-    private dialog: MatDialog
+    private auth: AuthService,
+    private localStorageService: LocalStorageService,
+    private dialog: MatDialog,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -54,70 +64,81 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(async (result: UpdateDialogResult) => {
-      if (result.status === UpdateStatus.Dismissed) {
+      let title, type, content;
+      switch (result.status) {
+        case 'UP_TO_DATE':
+          type = 'success';
+          title = this.translate.instant(
+            'system-information.YourSystemUpToDate'
+          );
+          break;
+        case 'SUCCESS':
+          type = 'success';
+          title = this.translate.instant(
+            'system-information.YourSystemUpdateSuccess'
+          );
+          content = this.translate.instant(
+            result.error || 'system-information.YourSystemUpdateSuccessDescr'
+          );
+          break;
+        case 'ERROR':
+          type = 'error';
+          title = this.translate.instant('system-information.UpdateFailed');
+          content = result.error;
+
+          break;
+        default:
+          break;
+      }
+
+      const alertRef = this.dialog.open(AlertDialogComponent, {
+        disableClose: true,
+        width: '650px',
+        data: {
+          type,
+          title,
+          content,
+          confirmText: this.translate.instant('common.OK'),
+          hideCancelButton: true
+        } as AlertDialogModel
+      });
+    });
+  }
+
+  async factoryReset() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: new ConfirmDialogModel(
+        this.translate.instant('system-information.FactoryResetDeviceTitle'),
+        this.translate.instant('system-information.FactoryResetDeviceText')
+      )
+    });
+
+    dialogRef.afterClosed().subscribe(async (dialogResult) => {
+      if (!dialogResult) {
         return;
       }
-      if (result.status === UpdateStatus.UpToDate) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'success',
-            title: this.translate.instant(
-              'system-information.YourSystemUpToDate'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
-      if (result.status === UpdateStatus.UpdateSuccessful) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'success',
-            title: this.translate.instant(
-              'system-information.YourSystemUpdateSuccess'
-            ),
-            content: this.translate.instant(
-              result.error || 'system-information.YourSystemUpdateSuccessDescr'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
-      if (result.status === UpdateStatus.CheckFailed) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'error',
-            title: this.translate.instant('system-information.UpdateFailed'),
-            content: this.translate.instant(
-              result.error || 'settings-general.UpdateFailedCheckNetworkConfig'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
-      if (result.status === UpdateStatus.UnexpectedError) {
-        const alertRef = this.dialog.open(AlertDialogComponent, {
-          disableClose: true,
-          width: '650px',
-          data: {
-            type: 'error',
-            title: this.translate.instant('system-information.UpdateFailed'),
-            content: this.translate.instant(
-              result.error || 'settings-general.UnknownError'
-            ),
-            confirmText: this.translate.instant('common.OK'),
-            hideCancelButton: true
-          } as AlertDialogModel
-        });
-      }
+
+      const dialogRefLoad = this.dialog.open(LoadingDialogComponent, {
+        data: new ConfirmDialogModel(
+          this.translate.instant('system-information.FactoryReset'),
+          this.translate.instant('system-information.FactoryResetDescription')
+        ),
+        disableClose: true
+      });
+
+      this.systemInformationService.factoryReset(); // without await, as connection will be lost and it will keep waiting for a response
+
+      setTimeout(() => {
+        this.toastr.success(
+          this.translate.instant('system-information.FactoryResetSuccess')
+        );
+
+        dialogRefLoad.close();
+        const languageAfterFactoryReset = 'en';
+        this.translate.use(languageAfterFactoryReset);
+        this.localStorageService.set('ui-lang', languageAfterFactoryReset);
+        this.auth.logout();
+      }, 5 * 60 * 1000); //Show loading indicator for 5 minute
     });
   }
 

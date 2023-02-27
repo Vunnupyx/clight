@@ -5,10 +5,8 @@
     mat-mini-fab
     color="primary"
     class="wh-32 border-round mat-elevation-z0 mt-0 ml-5"
-    style="margin-top: 15px;"
-    [matTooltip]="
-      'settings-data-sink.AddOpcUaVariable' | translate
-    "
+    style="margin-top: 15px"
+    [matTooltip]="'settings-data-sink.AddOpcUaVariable' | translate"
     matTooltipPosition="above"
     (click)="customOpcUaVariables.onAdd()"
   >
@@ -35,6 +33,8 @@
     <ngx-datatable-column
       [name]="'settings-data-sink.Name' | translate"
       prop="name"
+      [minWidth]="80"
+      [maxWidth]="300"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -54,6 +54,8 @@
     <ngx-datatable-column
       [name]="'settings-data-sink.Address' | translate"
       prop="address"
+      [minWidth]="80"
+      [maxWidth]="300"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -73,6 +75,8 @@
     <ngx-datatable-column
       [name]="'settings-data-sink.InitialValue' | translate"
       prop="initialValue"
+      [minWidth]="80"
+      [maxWidth]="300"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -93,6 +97,8 @@
       [name]="'settings-data-sink.Actions' | translate"
       cellClass="button-cell"
       [sortable]="false"
+      [minWidth]="80"
+      [maxWidth]="300"
     >
       <ng-template
         ngx-datatable-cell-template

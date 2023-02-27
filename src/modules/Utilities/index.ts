@@ -1,3 +1,5 @@
+import nodeNet from 'node:net';
+
 /**
  * Returns a promise that is rejected after the specified number of milliseconds
  * (Intended for use with Promise.race())
@@ -43,6 +45,9 @@ export function areObjectsEqual(
   object2: object,
   ignoreKeys: string[] = []
 ): boolean {
+  if (Object.keys(object1).length !== Object.keys(object2).length) {
+    return false;
+  }
   let hasChange = false;
   for (const key in object1) {
     if (!ignoreKeys.includes(key) && object2[key] !== object1[key]) {
@@ -50,4 +55,34 @@ export function areObjectsEqual(
     }
   }
   return !hasChange;
+}
+
+/**
+ * Validates the input to be valid ip or hostname
+ *
+ * @see https://www.rfc-editor.org/rfc/rfc1123
+ * "The DNS defines domain name syntax very generally
+ * -- a string of labels each containing up to 63 8-bit octets,
+ * separated by dots, and with a maximum total of 255
+ * octets." See the link for remainder of the specification
+ * @see https://www.rfc-editor.org/rfc/rfc952
+ * "A "name" (Net, Host, Gateway, or Domain name) is a text string up
+ * to 24 characters drawn from the alphabet (A-Z), digits (0-9), minus
+ * sign (-), and period (.)" See the link for remainder of the specification
+ * @see https://stackoverflow.com/a/3824105
+ * The link for Regex, which conforms above specifications.
+ * Regex used below is an extended version of this to also allow
+ * http:// or https:// in the beginning of hostname,
+ * as user can paste the hostname together with http
+ */
+export function isValidIpOrHostname(textInput: string): boolean {
+  if (!textInput || typeof textInput !== 'string') {
+    return false;
+  }
+  const isValidIP = nodeNet.isIP(textInput) > 0; // returns 4 for IPv4 or 6 for IPv6, otherwise 0
+  const validHostnameRegex =
+    /^(http([s]){0,1}:\/\/){0,1}([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$/;
+
+  const isValidHostname = validHostnameRegex.test(textInput);
+  return isValidIP || isValidHostname;
 }

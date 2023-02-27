@@ -1,47 +1,47 @@
 ---
-title: Status LEDs
+title: ステータスLED
 ---
 
-# Status LEDs
+# ステータスLED
 
-## Introduction
+## はじめに
 
-The current runtime status of IoTconnector flex is also directly visible on the `SIEMENS SIMATIC IOT2050` device and displayed by different LEDs and with different colors.
+IoTconnector flexの現在の実行状況は、IoTconnector flexデバイスLEDの点灯状態で確認できます。
 
-There are two different LEDs on the `SIEMENS SIMATIC IOT2050` device:
+`IoTconnector flex`デバイスには、2つのLEDがあります:
 
 - USER 1
 - USER 2
 
-![SIEMENS SIMATIC IOT2050 LEDs](/img/IoT2050Leds.png)
+![IoTconnector flexのLED](/img/IoT2050Leds.png)
 
-and three different colors for each LED:
+各LEDの点灯色は3種類あります:
 
-- Green
-- Red
-- Orange
+- 緑
+- 赤
+- オレンジ
 
-### States of USER 1 LED
+### USER 1 LEDの状態
 
-USER 1 LED displays the current configuration state:
+USER 1 の LED は、現在のコンフィギュレーション状態を表示します:
 
-- orange blinking (No Configuration/Not accepted Terms and Conditions)
-- orange ([`configured`](LedStatusDisplay.md#what-does-configured-mean) but not connected to NC)
-- green ([`configured`](LedStatusDisplay.md#what-does-configured-mean) and successfully connected to NC)
+- オレンジの点滅 (設定されていない/利用規約に同意していない)
+- オレンジ ([`設定済み`](LedStatusDisplay.md#what-does-configured-mean) だが、NCに接続されていない)
+- 緑 ([`設定済み`](LedStatusDisplay.md#what-does-configured-mean) かつ、NCに正常に接続されている)
 
-### States of USER 2 LED
+### USER 2 LEDの状態
 
-USER 2 LED has only 2 states:
+USER 2 LEDは2つの状態しかありません:
 
-- Off (IoTconnector flex is not running)
-- Green (IoTconnector flex is running)
-- Red blinking (License is missing)
+- 消灯 (IoTconnector flexは動作していません)
+- 緑 (IoTconnector flexは動作しています)
+- 赤点滅 (ライセンスがありません)
 
-### What does `configured` mean?
+### コンフィギュレーションとは何ですか？
 
-The status `configured` is defined as:
+ステータス `設定済み` は次のように定義されます:
 
-- One enabled data source
-- Minimum one active data point at this active source
-- One enabled Application Interface with minimum one data point
-- One active mapping between the enabled connected data source data point and the enabled Application Interface data point
+- 有効なデータソースが1つある
+- この有効なソースに対して最低1つの有効なデータポイント
+- 最低1つのデータポイントを持つ1つの有効なアプリケーションインターフェイス
+- 有効な接続データソースデータポイントと有効なアプリケーションインターフェイスデータポイントの間の1つの有効ななマッピング

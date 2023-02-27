@@ -1,7 +1,10 @@
-import { promises as fs, readFileSync, existsSync } from 'fs';
+import { promises as fs } from 'fs';
+import fetch from 'node-fetch';
 import { promisify } from 'util';
 import winston from 'winston';
-import SshService from '../SshService';
+import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
+import { ICosSystemVersions } from '../ConfigurationAgentManager/interfaces';
+
 const child_process = require('child_process');
 const exec = promisify(child_process.exec);
 
@@ -18,8 +21,8 @@ export class System {
   ): Promise<string | null> {
     let address;
     enum interfaceMapping {
-      'eth0' = 'eno1',
-      'eth1' = 'eno2'
+      'eth0' = 'enoX1',
+      'eth1' = 'enoX2'
     }
     try {
       address = await fs.readFile(
@@ -57,45 +60,24 @@ export class System {
    * @async
    * @returns {Promise<string>}
    */
-  public async getHostname() {
-    const macAddress = (await this.readMacAddress('eth0')) || '000000000000';
-    const formattedMacAddress = macAddress.split(':').join('').toUpperCase();
-    return `DM${formattedMacAddress}`;
+  public async getHostname(): Promise<string> {
+    const defaultHostname = 'dm000000000000';
+    return process.env.IOTEDGE_GATEWAYHOSTNAME || defaultHostname;
   }
 
   /**
-   * Restarts device
+   * Reads CELOS version
    */
-  public async restartDevice() {
-    const logPrefix = `${System.className}::restartDevice`;
+  public async readOsVersion() {
     try {
-      winston.info(`${logPrefix} restarting device`);
-      await SshService.sendCommand('reboot', true);
-    } catch (err) {}
-
-    process.exit(0);
-  }
-
-  /**
-   * Reads mdc flex OS version. Located
-   */
-  public readOsVersion() {
-    try {
-      if (existsSync('/etc/mdcflex-os-release')) {
-        const fileContent = readFileSync(
-          '/etc/mdcflex-os-release',
-          'utf-8'
-        ).trim();
-        const versionLine =
-          fileContent.split('\n').find((line) => line.startsWith('VERSION=')) ||
-          'unknown';
-        return versionLine.replace('VERSION=', '');
-      }
+      const versions =
+        (await ConfigurationAgentManager.getSystemVersions()) as ICosSystemVersions;
+      const osVersion = versions?.find((v) => v.Name === 'COS')?.Version;
+      return osVersion || 'unknown';
     } catch (e) {
-      console.log('Error reading OS version!');
-      console.log(e);
+      winston.error('Error reading OS version!');
+      winston.error(e.message);
+      return 'unknown';
     }
-
-    return 'unknown';
   }
 }

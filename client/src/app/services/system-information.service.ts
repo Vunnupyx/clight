@@ -3,7 +3,11 @@ import { HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { HttpService, RequestOptionsArgs } from '../shared';
+import {
+  ConfigurationAgentHttpService,
+  HttpService,
+  RequestOptionsArgs
+} from '../shared';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { SystemInformationSection } from '../models';
 import { errorHandler } from '../shared/utils';
@@ -13,15 +17,6 @@ export class SystemInformationState {
   status!: Status;
   sections!: SystemInformationSection[];
   serverOffset!: number;
-}
-
-export enum UpdateStatus {
-  UpToDate,
-  NeedsUpdate,
-  CheckFailed,
-  Dismissed,
-  UpdateSuccessful,
-  UnexpectedError
 }
 
 export interface HealthcheckResponse {
@@ -35,6 +30,7 @@ export class SystemInformationService {
   constructor(
     storeFactory: StoreFactory<SystemInformationState>,
     private httpService: HttpService,
+    private configurationAgentHttpService: ConfigurationAgentHttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -75,32 +71,17 @@ export class SystemInformationService {
     }
   }
 
-  async getUpdateStatus(): Promise<UpdateStatus> {
-    const response = await this.httpService.get<HttpResponse<void>>(
-      `/systemInfo/update`,
-      {
-        observe: 'response',
-        responseType: 'raw'
-      } as RequestOptionsArgs
-    );
-    return this._getUpdateStatus(response.status);
-  }
+  async getServerTime(): Promise<string> {
+    const response = await this.configurationAgentHttpService.get<{
+      Timestamp: string;
+    }>(`/system/time`);
 
-  async healthcheck(): Promise<HealthcheckResponse> {
-    return await this.httpService.get<HealthcheckResponse>(`/healthcheck`);
-  }
-
-  async getServerTime(): Promise<number> {
-    const response = await this.httpService.get<{ timestamp: number }>(
-      `/systemInfo/time`
-    );
-
-    return response.timestamp;
+    return response.Timestamp;
   }
 
   async restartDevice(): Promise<boolean> {
     try {
-      await this.httpService.post(`/systemInfo/restart`, null);
+      await this.configurationAgentHttpService.post(`/system/restart`, null);
 
       return true;
     } catch (e) {
@@ -108,11 +89,20 @@ export class SystemInformationService {
     }
   }
 
+  async factoryReset(): Promise<boolean> {
+    try {
+      await this.httpService.post(`/systemInfo/factoryreset`, null);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async getServerTimeOffset(force = false): Promise<number> {
     if (force || this._store.snapshot.serverOffset === undefined) {
-      const time = await this.getServerTime();
-
-      const offset = Math.round(Date.now() / 1000) - time;
+      const time = new Date(await this.getServerTime());
+      const offset = Math.round(Date.now() - time.getTime()) / 1000;
 
       this._store.patchState((state) => {
         state.serverOffset = offset;
@@ -126,19 +116,7 @@ export class SystemInformationService {
 
   private _emptyState() {
     return <SystemInformationState>{
-      status: Status.NotInitialized,
-      serverOffset: 0 // TODO: remove it when backend is ready
+      status: Status.NotInitialized
     };
-  }
-
-  private _getUpdateStatus(httpCode: number) {
-    switch (httpCode) {
-      case 204:
-        return UpdateStatus.UpToDate;
-      case 200:
-        return UpdateStatus.NeedsUpdate;
-      default:
-        return UpdateStatus.CheckFailed;
-    }
   }
 }

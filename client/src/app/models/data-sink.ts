@@ -30,19 +30,11 @@ export enum DataSinkConnectionStatus {
   Reconnecting = 'reconnecting',
   ConnectionError = 'failedtoconnect',
   Unavailable = 'unavailable', // in case of status can't be loaded,
-  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted',
-  NoLicense = 'nolicense'
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
 }
 
 export class DataSinkConnection {
   status!: DataSinkConnectionStatus;
-}
-
-export class DataHubConfig {
-  provisioningHost!: string;
-  scopeId!: string;
-  regId!: string;
-  symKey!: string;
 }
 
 export class DataSink {
@@ -52,7 +44,6 @@ export class DataSink {
   enabled!: boolean;
   protocol!: DataSinkProtocol;
   auth?: DataSinkAuth;
-  datahub?: DataHubConfig;
   desired?: {
     services?: {
       [key: string]: {

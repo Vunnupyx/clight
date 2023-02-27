@@ -16,7 +16,7 @@ import winston from 'winston';
 import { ConfigManager } from '../../../ConfigManager';
 import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
-import { LicenseChecker } from '../../../LicenseChecker';
+import { EnergyDataSource } from '../Energy';
 
 interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
@@ -35,7 +35,6 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private virtualDataPointManager: VirtualDataPointManager;
   private dataAddedDuringRestart = false;
   private dataSinksRestartPending = false;
-  private licenseChecker: LicenseChecker;
 
   constructor(params: IDataSourcesManagerParams) {
     super();
@@ -53,7 +52,6 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     this.measurementsBus = params.measurementsBus;
     this.dataPointCache = params.dataPointCache;
     this.virtualDataPointManager = params.virtualDataPointManager;
-    this.licenseChecker = params.licenseChecker;
   }
 
   private async init(): Promise<void> {
@@ -91,7 +89,11 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
       )}`
     );
 
-    const initFunc = [DataSourceProtocols.S7, DataSourceProtocols.IOSHIELD]
+    const initFunc = [
+      DataSourceProtocols.S7,
+      DataSourceProtocols.IOSHIELD,
+      DataSourceProtocols.ENERGY
+    ]
       .filter(
         (protocol) =>
           !this.dataSources.some(
@@ -110,8 +112,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     const params: IDataSourceParams = {
       config: this.findDataSourceConfig(protocol),
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted,
-      isLicensed: this.licenseChecker.isLicensed
+        this.configManager.config.termsAndConditions.accepted
     };
 
     const dataSource = this.dataSourceFactory(params);
@@ -138,6 +139,8 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
         return new S7DataSource(params);
       case DataSourceProtocols.IOSHIELD:
         return new IoshieldDataSource(params);
+      case DataSourceProtocols.ENERGY:
+        return new EnergyDataSource(params, this.virtualDataPointManager);
       default:
         throw new Error('Invalid data source!');
     }
@@ -171,7 +174,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   /**
    * Returns the datasource object by its protocol
    */
-  public getDataSourceByProto(protocol: string) {
+  public getDataSourceByProto(protocol: DataSourceProtocols | string) {
     return this.dataSources.find((src) => src.protocol === protocol);
   }
 

@@ -13,6 +13,7 @@ pool:
 variables:
   DOCKER_REGISTRY: mdclightdev.azurecr.io
   BRANCH_NAME: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-')]
+  IS_TAG: $[startsWith(variables['Build.SourceBranch'],'refs/tags/')]
 
 steps:
   - task: Docker@2
@@ -52,3 +53,8 @@ steps:
     inputs:
       script: |
         echo "${DOCKER_REGISTRY}/mdc-web-server:$(scripts/build/lastWebserverChange.sh)"
+  - task: CmdLine@2
+    displayName: Print IS TAG
+    inputs:
+      script: |
+        echo $IS_TAG

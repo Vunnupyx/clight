@@ -12,6 +12,12 @@
  * sign (-), and period (.)" See the link for remainder of the specification
  * @see https://stackoverflow.com/a/3824105
  * The link for Regex, which conforms above specifications.
+ *
+ * Notes for NETMASK_REGEX:
+ *
+ * @see https://www.rfc-editor.org/rfc/rfc1878
+ * @see https://stackoverflow.com/a/5362024
+ *
  */
 export const HOST_REGEX =
   '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])(.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]))*$';
@@ -21,4 +27,4 @@ export const EMAIL_REGEX = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$';
 export const IP_REGEX =
   '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$';
 export const NETMASK_REGEX =
-  '^((25[0-5]|2[0-4][0-9]|1[3-9][0-9]|1[2-9][8-9]|0).){3}(25[0-5]|2[0-4][0-9]|1[3-9][0-9]|1[2-9][8-9]|0)$';
+  '^(((255.){3}(255|254|252|248|240|224|192|128|0+))|((255.){2}(255|254|252|248|240|224|192|128|0+).0)|((255.)(255|254|252|248|240|224|192|128|0+)(.0+){2})|((255|254|252|248|240|224|192|128|0+)(.0+){3}))$';

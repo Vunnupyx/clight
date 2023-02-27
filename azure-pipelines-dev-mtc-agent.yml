@@ -45,7 +45,7 @@ steps:
         exists=$(scripts/build/checkIfImageExists.sh mtconnect-agent ${versionOfLastChange})
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ] || [ "$IS_TAG" = "true" ]; then 
+        if [ $exists == "false" ] || [ "$IS_TAG" = "True" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mtconnect-agent:${versionOfLastChange}"
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt

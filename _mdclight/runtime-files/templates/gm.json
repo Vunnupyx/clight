@@ -115,6 +115,126 @@
           "address": "DB201,X1.6",
           "id": "e85d2ede-5554-46c8-8ba1-b2613dce0a51",
           "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte0",
+          "address": "DB101,BYTE0",
+          "id": "caf673b0-f3a3-447f-a5c3-c52c9d969805"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte1",
+          "address": "DB101,BYTE1",
+          "id": "07b2a3d2-97b4-459a-bafd-4420406477fd"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte2",
+          "address": "DB101,BYTE2",
+          "id": "b3a03110-c796-4736-bf92-df655d8598f0"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte3",
+          "address": "DB101,BYTE3",
+          "id": "a0a12f28-4047-4f7a-ad55-a1b25f954c04"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte4",
+          "address": "DB101,BYTE4",
+          "id": "f661f7b8-9aa2-4945-a6d4-15f1581a08ed"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte5",
+          "address": "DB101,BYTE5",
+          "id": "36b33b9d-c2e8-41df-ab2a-1f5fce1d5499"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte6",
+          "address": "DB101,BYTE6",
+          "id": "dd50d54f-a60f-4157-b742-6882300b6cb9"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte7",
+          "address": "DB101,BYTE7",
+          "id": "b894677d-35f2-4eb6-88e9-dda4d2b521c4"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte8",
+          "address": "DB101,BYTE8",
+          "id": "7fef7a1a-581e-4b76-b37f-946738c27cd5"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte9",
+          "address": "DB101,BYTE9",
+          "id": "f4825de3-4e8a-43e0-8bfc-1f5436853b57"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte10",
+          "address": "DB101,BYTE10",
+          "id": "66aeb305-353d-4bf6-ba3d-1021aef36369"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte11",
+          "address": "DB101,BYTE11",
+          "id": "4b66f93f-11d6-46b6-b290-89ad7df9ea4b"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte12",
+          "address": "DB101,BYTE12",
+          "id": "06b9035e-e111-4ed0-97af-b9821f55dc84"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte13",
+          "address": "DB101,BYTE13",
+          "id": "e7908b1e-349e-458b-923b-6c587e1e1275"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte14",
+          "address": "DB101,BYTE14",
+          "id": "c6e95fa4-63e0-4bdb-b571-edeb7dc06b32"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte15",
+          "address": "DB101,BYTE15",
+          "id": "3392e390-6b67-4fc6-8b55-f43643a20977"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte16",
+          "address": "DB101,BYTE16",
+          "id": "a85d3e21-2ee9-4bc0-b269-020332aa6b02"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte17",
+          "address": "DB101,BYTE17",
+          "id": "75ada2e8-ce5d-44ce-beb1-cf2e8510adfe"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte18",
+          "address": "DB101,BYTE18",
+          "id": "ad3f33ee-5d48-4e0f-8dc9-20f3bb6d7607"
+        },
+        {
+          "type": "s7",
+          "name": "Alarm Byte19",
+          "address": "DB101,BYTE19",
+          "id": "7c5486cf-b38b-4a75-b215-9c90096af799"
         }
       ],
       "protocol": "s7",
@@ -442,14 +562,87 @@
           "address": "jogoverride1",
           "type": "event",
           "id": "4d3aacc2-f8cd-421b-a96f-5ff4b29b9b9c"
+        },
+        {
+          "address": "system",
+          "type": "condition",
+          "name": "System",
+          "enabled": true,
+          "map": {
+            "ALARM": "One or more alarms are active",
+            "undefined": "false"
+          },
+          "id": "c6e02ada-de44-4e24-8bef-25cee31af898"
         }
       ],
       "protocol": "mtconnect",
       "enabled": true
     }
   ],
-  "virtualDataPoints": [],
-  "mapping": [],
+  "virtualDataPoints": [
+    {
+      "id": "7636402b-4eb2-4576-a8c0-477eb7eec990",
+      "sources": [
+        "caf673b0-f3a3-447f-a5c3-c52c9d969805",
+        "07b2a3d2-97b4-459a-bafd-4420406477fd",
+        "b3a03110-c796-4736-bf92-df655d8598f0",
+        "a0a12f28-4047-4f7a-ad55-a1b25f954c04",
+        "f661f7b8-9aa2-4945-a6d4-15f1581a08ed",
+        "36b33b9d-c2e8-41df-ab2a-1f5fce1d5499",
+        "dd50d54f-a60f-4157-b742-6882300b6cb9",
+        "b894677d-35f2-4eb6-88e9-dda4d2b521c4",
+        "7fef7a1a-581e-4b76-b37f-946738c27cd5",
+        "f4825de3-4e8a-43e0-8bfc-1f5436853b57",
+        "66aeb305-353d-4bf6-ba3d-1021aef36369",
+        "4b66f93f-11d6-46b6-b290-89ad7df9ea4b",
+        "06b9035e-e111-4ed0-97af-b9821f55dc84",
+        "e7908b1e-349e-458b-923b-6c587e1e1275",
+        "c6e95fa4-63e0-4bdb-b571-edeb7dc06b32",
+        "3392e390-6b67-4fc6-8b55-f43643a20977",
+        "a85d3e21-2ee9-4bc0-b269-020332aa6b02",
+        "75ada2e8-ce5d-44ce-beb1-cf2e8510adfe",
+        "ad3f33ee-5d48-4e0f-8dc9-20f3bb6d7607",
+        "7c5486cf-b38b-4a75-b215-9c90096af799"
+      ],
+      "operationType": "or",
+      "name": "GM Alarm Active"
+    },
+    {
+      "id": "e83304ff-3bbc-44a3-9aca-6a01fd99e411",
+      "sources": ["7636402b-4eb2-4576-a8c0-477eb7eec990"],
+      "operationType": "not",
+      "name": "GM Alarm Not Active"
+    },
+    {
+      "id": "e0d04d80-93d7-42ed-bfbc-d56abf37cac6",
+      "sources": [
+        "7636402b-4eb2-4576-a8c0-477eb7eec990",
+        "e83304ff-3bbc-44a3-9aca-6a01fd99e411"
+      ],
+      "operationType": "enumeration",
+      "name": "GM Alarm Text",
+      "enumeration": {
+        "items": [
+          {
+            "source": "7636402b-4eb2-4576-a8c0-477eb7eec990",
+            "returnValueIfTrue": "ALARM",
+            "priority": 0
+          },
+          {
+            "source": "e83304ff-3bbc-44a3-9aca-6a01fd99e411",
+            "priority": 1
+          }
+        ]
+      }
+    }
+  ],
+  "mapping": [
+    {
+      "source": "e0d04d80-93d7-42ed-bfbc-d56abf37cac6",
+      "target": "c6e02ada-de44-4e24-8bef-25cee31af898",
+      "id": "a32d850d-1d1e-4eb8-9e64-4706d248b1af"
+    }
+  ],
   "quickStart": {
     "completed": true
   },

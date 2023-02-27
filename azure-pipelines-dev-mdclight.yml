@@ -156,5 +156,13 @@ steps:
     displayName: Print current versions
     inputs:
       script: |
-        echo "${DOCKER_REGISTRY}/mdclight:$(scripts/build/lastMdclightChange.sh)"
-        echo "${DOCKER_REGISTRY}/mdclight-development:$(scripts/build/lastMdclightDevChange.sh)"
+        if [ "$IS_TAG" = "True" ]; then
+          version=$(git describe --tags)
+          versionDev=$(git describe --tags)
+        else
+          version=$(scripts/build/lastMdclightChange.sh)
+          versionDev=$(scripts/build/lastMdclightDevChange.sh)
+        fi
+
+        echo "${DOCKER_REGISTRY}/mdclight:${version}"
+        echo "${DOCKER_REGISTRY}/mdclight-development:${versionDev}"

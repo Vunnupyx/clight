@@ -41,6 +41,11 @@ steps:
         versionOfLastChange=$(scripts/build/lastMTConnectChange.sh)
         echo "Current mtconnect version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mtconnect-agent ${versionOfLastChange})
 
@@ -56,4 +61,10 @@ steps:
     displayName: Print current versions
     inputs:
       script: |
-        echo "${DOCKER_REGISTRY}/mtconnect-agent:$(scripts/build/lastMTConnectChange.sh)"
+        if [ "$IS_TAG" = "True" ]; then
+          version=$(git describe --tags)
+        else
+          version=$(scripts/build/lastMTConnectChange.sh)
+        fi
+
+        echo "${DOCKER_REGISTRY}/mtconnect-agent:${version}"

@@ -60,4 +60,10 @@ steps:
     displayName: Print current versions
     inputs:
       script: |
-        echo "${DOCKER_REGISTRY}/mdc-web-server:$(scripts/build/lastWebserverChange.sh)"
+        if [ "$IS_TAG" = "True" ]; then
+          version=$(git describe --tags)
+        else
+          version=$(scripts/build/lastWebserverChange.sh)
+        fi
+
+        echo "${DOCKER_REGISTRY}/mdc-web-server:${version}"

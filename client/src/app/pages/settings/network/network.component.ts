@@ -124,15 +124,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   onSaveNtp() {
-    if (this.config[NetworkType.NTP].ntpEnabled)
-      this.networkService
-        .updateNetworkNtp(this.config[NetworkType.NTP].host)
-        .then(() => (this.originalConfig = clone(this.config)));
-    else
-      this.networkService
-        .updateNetworkTimestamp(this.config[NetworkType.NTP].timestamp)
-        .then(() => this.networkService.updateNetworkNtp(['']))
-        .then(() => (this.originalConfig = clone(this.config)));
+    this.networkService
+      .updateNetworkNtp(this.config[NetworkType.NTP])
+      .then(() => (this.originalConfig = clone(this.config)));
   }
 
   ngOnDestroy() {

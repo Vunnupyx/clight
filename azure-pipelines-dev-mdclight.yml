@@ -5,7 +5,11 @@
 trigger:
   batch: true
   branches:
-    exclude: [main, staging]
+    include:
+      - '*'
+  tags:
+    include:
+      - '*'
 
 pool:
   vmImage: ubuntu-latest

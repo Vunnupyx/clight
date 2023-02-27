@@ -5,7 +5,11 @@
 trigger:
   batch: true
   branches:
-    exclude: [main, staging]
+    include:
+      - '*'
+  tags:
+    include:
+      - '*'
 
 pool:
   vmImage: ubuntu-latest
@@ -52,3 +56,8 @@ steps:
     inputs:
       script: |
         echo "${DOCKER_REGISTRY}/mtconnect-agent:$(scripts/build/lastMTConnectChange.sh)"
+  - task: CmdLine@2
+    displayName: Print IS TAG
+    inputs:
+      script: |
+        echo $IS_TAG

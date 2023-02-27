@@ -40,11 +40,16 @@ steps:
         versionOfLastChange=$(scripts/build/lastWebserverChange.sh)
         echo "Current web server version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mdc-web-server ${versionOfLastChange})
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ] || [ "$IS_TAG" = "True" ]; then 
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mdc-web-server:${versionOfLastChange}"
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
@@ -56,8 +61,3 @@ steps:
     inputs:
       script: |
         echo "${DOCKER_REGISTRY}/mdc-web-server:$(scripts/build/lastWebserverChange.sh)"
-  - task: CmdLine@2
-    displayName: Print IS TAG
-    inputs:
-      script: |
-        echo $IS_TAG

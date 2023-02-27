@@ -41,12 +41,17 @@ steps:
         versionOfLastChange=$(scripts/build/lastMdclightBaseChange.sh)
         echo "Current base version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mdclight-base ${versionOfLastChange})
         echo "Docker image exists ${exists}" 
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ] || [ "$IS_TAG" = "True" ]; then 
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange}" 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
@@ -66,12 +71,17 @@ steps:
   #       versionOfLastChange=$(scripts/build/lastFanucChange.sh)
   #       echo "Current fanuc version ${versionOfLastChange}"
 
+  #       if [ "$IS_TAG" = "True" ]; then
+  #         versionOfLastChange=$(git describe --tags)
+  #         echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+  #       fi
+
   #       echo "Checking for current docker image"
   #       exists=$(scripts/build/checkIfImageExists.sh mdclight-fanuc ${versionOfLastChange})
   #       echo "Docker image exists ${exists}"
 
   #       # Builds docker image if it not exists in the version that changed something the last time
-  #       if [ $exists == "false" ] || [ "$IS_TAG" = "True" ]; then
+  #       if [ $exists == "false" ]; then
   #         echo "Building docker image ${DOCKER_REGISTRY}/mdclight-fanuc:${versionOfLastChange}"
   #         baseVersion=$(scripts/build/lastMdclightBaseChange.sh)
   #         echo "Using base version ${baseVersion}"
@@ -91,11 +101,16 @@ steps:
         versionOfLastChange=$(scripts/build/lastMdclightChange.sh)
         echo "Current mdclight version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mdclight ${versionOfLastChange})
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ] || [ "$IS_TAG" = "True" ]; then 
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange}"
           # fanucVersion=$(scripts/build/lastFanucChange.sh)
           # TODO! Use fanuc image when fanuc is implemented
@@ -117,11 +132,16 @@ steps:
         versionOfLastChange=$(scripts/build/lastMdclightDevChange.sh)
         echo "Current mdclight development version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mdclight-development ${versionOfLastChange})
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ] || [ "$IS_TAG" = "True" ]; then 
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mdclight-development:${versionOfLastChange}"
           # fanucVersion=$(scripts/build/lastFanucChange.sh)
           # TODO! Use fanuc image when fanuc is implemented

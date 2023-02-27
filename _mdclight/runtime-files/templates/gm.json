@@ -115,6 +115,1105 @@
           "address": "DB201,X1.6",
           "id": "e85d2ede-5554-46c8-8ba1-b2613dce0a51",
           "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.0",
+          "id": "c532619c-8d09-414a-b986-d01c9993d3d3",
+          "name": "ALARM RESET MACHINE ON",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.1",
+          "id": "fbcceaee-9c31-480f-8bf1-739eeb0b0466",
+          "name": "1-",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.2",
+          "id": "719f7e42-5784-4ad6-8248-5899902905c1",
+          "name": "2-FEED STOP FROM BAR LOADER",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.3",
+          "id": "36d9b468-69b0-4535-85be-cc91f8e00812",
+          "name": "3- BAR END",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.4",
+          "id": "4fdcab62-4123-4baa-855f-4c276c065c9c",
+          "name": "4-GILDEMEISTER BAR END BYPASS",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.5",
+          "id": "1698ae8e-d2d7-4908-aea0-8162bd9f9f5e",
+          "name": "5-ALARM FROM CONDITIONER",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.6",
+          "id": "4400630d-ce08-4dc8-83a3-3476fcbf31ce",
+          "name": "6-MAHLE FILTER CLEANING",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.7",
+          "id": "47e128e1-fdc7-4909-b927-b59e8f53b93a",
+          "name": "7-SPINDLE REVS LESS THAN PROGRAMMED REVS",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.0",
+          "id": "23770169-98b9-4e7d-8008-934db16cfa2f",
+          "name": "8- REAR RIGHT POST GATE OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.1",
+          "id": "f7945ae2-5725-4897-b5f7-6904c01c3b9d",
+          "name": "9-FRONT RIGHT POST GATE OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.2",
+          "id": "e0bdfb86-96c9-4e2c-ac8a-68c52a3aee25",
+          "name": "10-FRONT LEFT POST GATE OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.3",
+          "id": "8814e622-7c64-429a-8add-58f632ba4a17",
+          "name": "11-BAR LOADER NOT READY",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.4",
+          "id": "4c80b6c2-14ce-4bb0-bd1b-4fd9e7fcb8c8",
+          "name": "12-TOOL WEAR",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.5",
+          "id": "0bef3f8b-7067-4030-8053-2eb964be5c04",
+          "name": "13-PRODUCTION REACHED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.6",
+          "id": "dab09a21-178e-4344-a09a-f8858b0a719b",
+          "name": "14-ADDED PUMP CLOGGED CLOTHS MIN.OIL LEVEL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X0.7",
+          "id": "c1200ecd-fac9-4101-8216-d406bbc0fe1f",
+          "name": "15-CONVERTER OVERTEMPERATURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.0",
+          "id": "3be6259f-68b8-4a8f-9ea2-b9d615362277",
+          "name": "16-HYDR.OIL FILTER CLOGGING",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.1",
+          "id": "2b455950-25f9-4e1a-a266-e97672f17175",
+          "name": "17-MAXIMUM MACHINE TANK OIL LEVEL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.2",
+          "id": "eca46d57-1e02-4881-925b-aacbe5dea6db",
+          "name": "18-MINIMUM MACHINE TANK OIL LEVEL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.3",
+          "id": "90a51c09-9a84-413b-81bb-d0ca2a4909de",
+          "name": "19-MACHINE ENCODER FAILED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.4",
+          "id": "f1fc1f98-3596-4d0d-8fca-53d7a463de66",
+          "name": "20-MANUAL CYCLE BAR LOADER",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.5",
+          "id": "cf872541-66e0-487b-9d24-18bc0fbcf07b",
+          "name": "21-UNLOADING CHUTE NOT FORWARD POS.6",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.6",
+          "id": "a79e84da-e40c-47bf-9b28-2cc34b24126a",
+          "name": "22-UNLOADING CHUTE NOT BACK POS.6",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X3.7",
+          "id": "76e1af4f-c33e-472c-81d1-dd4067a0fb28",
+          "name": "23-OVERHEATED FEED MOTOR",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.0",
+          "id": "508e8091-e6e2-4245-bd01-198dbc1ba50c",
+          "name": "24-STOP AT CYCLE END THERMAL BREAKER",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.1",
+          "id": "07525a66-c0bc-4f90-81df-7c85c4aa10c4",
+          "name": "25- REAR LEFT POST GATE OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.2",
+          "id": "d073cf47-7f7b-4cae-8520-00487430924e",
+          "name": "26-OILMIST FILTER FAULT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.3",
+          "id": "39473b65-f9d5-4423-a1e3-1505de18ed3d",
+          "name": "27-NO DRUM CONSENT FROM BAR LOADER",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.4",
+          "id": "c763e1dc-5753-4870-9422-6ea7904818d8",
+          "name": "28-MAHLE FILTER FAULT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.5",
+          "id": "c26ff9a7-21ea-41bb-a2e9-54ca9dde1c91",
+          "name": "29-ELECTR.CABINET OVERTEMPERATURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.6",
+          "id": "7efc5324-e960-4140-92af-9e3d7bd18176",
+          "name": "30-RECIRC.LUBE OIL LEVEL LOW",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X2.7",
+          "id": "2828f5c6-3702-41c1-ba49-9a3421ed9d3c",
+          "name": "31-TOTAL LUBE OIL LEVEL LEAK",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.0",
+          "id": "bdb942fe-ff66-4fe2-9267-a3c34550e68e",
+          "name": "32-SCHEDULET MACHINE STOP ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.1",
+          "id": "7c68f24b-85ae-4ea0-801b-ab6ba342d295",
+          "name": "33-MOTORS AREA GATE OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.2",
+          "id": "a623f47e-5e26-4a05-8b11-8ad2d4dc11c8",
+          "name": "34-SPINDLE COLLET SELECTOR POS.6  ON? -DRILL SPINDLE SELECTOR ON?",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.3",
+          "id": "9b49febb-4fff-445d-9cb5-18fa8e0131c8",
+          "name": "35- FRONT CUTTER 2 OVERLOAD CONTROL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.4",
+          "id": "46f57f38-55ce-45cb-857b-3255a4e851b0",
+          "name": "36- FRONT CUTTER 1 OVERLOAD CONTROL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.5",
+          "id": "7e5ce5b3-f3de-44fa-8b7b-5823c4112a0f",
+          "name": "37-MAHLE FILTER FAULT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.6",
+          "id": "47b674eb-b90c-46b9-9ee4-35ee05328789",
+          "name": "38-CLOGGED CLOTHS MIN.OIL LEVEL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X5.7",
+          "id": "372230f4-c581-4d66-80a8-58abbc1e4ef0",
+          "name": "39-MACHINE IN MANUAL MODE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.0",
+          "id": "cfaf945e-6f8e-4fb5-b48d-d2ea451d9495",
+          "name": "40-THREADING SPINDLE NOT BACK I^",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.1",
+          "id": "272f890d-1a2e-40d1-899c-fdaaa2c53311",
+          "name": "41-MAHLE FILTER ON-ADDED PUMP OFF",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.2",
+          "id": "83bd9ac2-64f5-42bb-8f2c-aa07cd7a18e2",
+          "name": "42-MAHLE FILTER OFF-ADDED PUMP ON",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.3",
+          "id": "7f52d8aa-8732-40b3-8902-cd50a9af7b60",
+          "name": "43-INSUFFICIENT RECIRC.LUBE OIL LEVEL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.4",
+          "id": "7a864bee-02dd-4aa6-b087-3f2d11bddec9",
+          "name": "44",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.5",
+          "id": "d185ab9e-fcb2-4dd2-860f-2339d68cab26",
+          "name": "45-THREADING FAULT II^",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.6",
+          "id": "b6df8f0b-0c93-4144-8dc4-09c7a11678a1",
+          "name": "46-THREADING SPINDLE NOT BACK II^",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X4.7",
+          "id": "ee38040d-827c-46f1-8c49-1fbaadd7d473",
+          "name": "47-THREADING FAULT I^",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.0",
+          "id": "d2539364-eb97-4b10-893e-3be87c65f6d7",
+          "name": "48-MACHINE TOTAL LOSS LUBRICATION FAULT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.1",
+          "id": "9c29c1d1-b41c-4c8a-acdb-e6cafe19de83",
+          "name": "49-CONTROL UNIT TOTAL LOSS LUBRICATION FAULT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.2",
+          "id": "c58bd3e3-c17b-4ecf-8bf8-1a888a10579b",
+          "name": "50-INSUFFICIENT AIR PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.3",
+          "id": "1b869abe-7d12-40bb-988c-a61df98c5156",
+          "name": "51-BAR FEED MICRO CTRL INCL.POS.1",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.4",
+          "id": "d8602240-23fd-4044-b472-785e3b54985e",
+          "name": "52-BAR FEED MICRO CTRL EXCL.POS.1",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.5",
+          "id": "07ea5fda-baa3-4691-b814-54a7c0225519",
+          "name": "53-CHIP CONVEYOR OVERLOAD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.6",
+          "id": "e13377e3-9d0d-43fb-94bc-e14d0b91e2e8",
+          "name": "54-STOCK CARRIER GATE OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X7.7",
+          "id": "5e691918-9d43-4ffd-b8a1-9ee3d0606a0a",
+          "name": "55-SLIDE POS.3 NOT BACK",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.0",
+          "id": "7f83ad8d-ab59-4017-9d3d-1cbfa84853c2",
+          "name": "56-SLIDE POS.4 NOT BACK",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.1",
+          "id": "53128996-6006-4e9d-8668-a3f658f3de0a",
+          "name": "57-RANGE SPINDLE SPEED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.2",
+          "id": "f65af57e-9996-47db-ad2f-241d25d98992",
+          "name": "58-INCOP.ENABLE ALARM",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.3",
+          "id": "56182ff9-96d8-43de-839a-5052c4fd2bd2",
+          "name": "59",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.4",
+          "id": "de186597-37b3-4ec6-951b-26801bdc2c79",
+          "name": "60-POSITIONING UNIT POS.4 NOT BACK",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.5",
+          "id": "6454bf26-3e72-4e72-ab16-660ef072399b",
+          "name": "61-POSITIONING UNIT POS.3 NOT BACK",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.6",
+          "id": "780147ad-cb91-4119-810c-b4524b6d8048",
+          "name": "62-NOT POSITIONED POS.4",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X6.7",
+          "id": "27a08439-6d75-4a1a-847d-1c062f60599b",
+          "name": "63-NOT POSITIONED POS.3",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.0",
+          "id": "93289e17-7838-4adb-b37e-a8837ee7d77b",
+          "name": "64-HYDRAULIC OIL PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.1",
+          "id": "e62211a0-99d8-4c36-a110-aea6139e6393",
+          "name": "65",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.2",
+          "id": "125fdd0b-646b-4117-a8d6-5206991291cd",
+          "name": "66-ALARM:SPINDLE SPEED CONTROL WITH CUTTER ON",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.3",
+          "id": "a755247f-31b4-4112-a418-01f2ee0a8a6e",
+          "name": "67-SPLASH-GUARD RELEASED REAR SIDE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.4",
+          "id": "a6d55844-e724-4843-8f5a-ff603feb7891",
+          "name": "68-SPLASH-GUARD RELEASED FRONT SIDE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.5",
+          "id": "4888e285-1932-4210-9012-240a2b75acba",
+          "name": "69-SPLASH-GUARD OPEN REAR SIDE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.6",
+          "id": "5556312b-9d28-44b1-a981-7c8faf42c65c",
+          "name": "70-SPLASH-GUARD OPEN FRONT SIDE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X9.7",
+          "id": "875fb30b-d397-49ac-bf4f-3b398a0905c5",
+          "name": "71-LENGTH CHECK DETECTOR  I^FAULT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.0",
+          "id": "c7dc7740-0664-4293-a0eb-d10ad5bd28c6",
+          "name": "72-PIECES NOT CONF. DETECTOR I^ ALARM",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.1",
+          "id": "1596cd35-fad8-417a-b579-a56cb8cb3093",
+          "name": "73-DETECTOR 1  DRILL BROKEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.2",
+          "id": "2c6b428a-81d7-477f-a95d-6b0805e6c196",
+          "name": "74-DETECTOR 2  DRILL BROKEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.3",
+          "id": "9bc78f9f-0149-49d2-a6a1-3a07fb6110d8",
+          "name": "75-MIDDEX BAR NOT PRESENT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.4",
+          "id": "ea4fbad3-0ead-4a00-9a39-66b2d44e6d8f",
+          "name": "76-MIDDEX FAULT-NEEDLE OVERSTROKE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.5",
+          "id": "2049a679-bbc7-494e-8c7d-ddfecae71af0",
+          "name": "77-FEED CONVERTER NOT READY",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.6",
+          "id": "d5b3b6ca-7604-40e2-a09e-223958d0dda5",
+          "name": "78-SPINDLE CONVERTER NOT READY",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X8.7",
+          "id": "4589e0a1-3f47-4aac-8e58-4a33d041fa96",
+          "name": "79-SPDL COLLET POS.6 ON-HYDRAULIC UNIT OFF",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.0",
+          "id": "3023924f-d6ad-468b-b4b5-7f2c44f22ea7",
+          "name": "80- SPDL.DIFF.ROT.SELECT.ON RIGHT THREAD MUST BE INSERTED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.1",
+          "id": "ebcc8149-d587-4927-8813-190e65ef2b66",
+          "name": "81- SPDL.DIFF.ROT.SELECT.ON THREADING SELECTOR MUST BE EXCLUDED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.2",
+          "id": "5eda5470-11e6-4f11-a4db-1375488be0eb",
+          "name": "82-BAR STOP OUT OF POSITION",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.3",
+          "id": "5ff3141c-c48e-4e15-8b89-782a17bca085",
+          "name": "83-PIECES SEPARATOR POS.6 NOT CLOSE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.4",
+          "id": "f7780ec4-437a-41ac-9ebc-747d6125fff2",
+          "name": "84-PIECES SEPARATOR POS.6 NOT OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.5",
+          "id": "12732248-a10a-47bb-b1e3-e4be8a62375e",
+          "name": "85-SLIDE POS.2 NOT BACK",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.6",
+          "id": "d2da38f9-2e0f-4e71-af95-47f1b25e32f6",
+          "name": "86-SLIDE POS.5 NOT BACK",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X11.7",
+          "id": "2f49a882-b9c3-4273-9093-9c570a646849",
+          "name": "87-CONVERTER POWER SUPPLY NOT READY",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.0",
+          "id": "6d6f8ee2-4aab-4b09-bb84-b902049e294d",
+          "name": "88-MIDDEX A DRILL BROKEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.1",
+          "id": "b4dd7edb-1c41-4148-92b2-9be7804d86c5",
+          "name": "89-MIDDEX A FAULT NEEDLE OVERSTROKE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.2",
+          "id": "e6230b29-985a-4585-a358-e6a5aeb2ad86",
+          "name": "90-MIDDEX B DRILL BROKEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.3",
+          "id": "6553da67-a324-49b6-9f75-94dd42e0d7be",
+          "name": "91-MIDDEX B FAULT NEEDLE OVERSTROKE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.4",
+          "id": "a47dba34-ccf1-4f81-aa46-2fe22510e1fb",
+          "name": "92-MIDDEX C DRILL BROKEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.5",
+          "id": "30bd43b2-57ac-4616-849e-2c424fb018de",
+          "name": "93-MIDDEX C FAULT NEEDLE OVERSTROKE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.6",
+          "id": "17a3217e-7433-4668-ba01-5c70149e16e0",
+          "name": "94-MECH.SLIDE NOT BACK POS.6",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X10.7",
+          "id": "9742c8a2-3dd0-4b2f-a7e0-4f0dca4a4d40",
+          "name": "95-HIGH PRESSURE NOT READY",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.0",
+          "id": "423fb9da-5449-4c43-b741-12330ef31555",
+          "name": "96-INSUFF.OIL FLOW-HIGH PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.1",
+          "id": "c60e433f-249c-4a76-b353-6df7618e96af",
+          "name": "97-INSUFF.OIL PRESSURE-HIGH PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.2",
+          "id": "3c4ce4a7-ed62-402f-9b43-7451654eeb5b",
+          "name": "98-PRIORITY 3 HIGH PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.3",
+          "id": "172d74fb-d57e-4a0d-875e-0661a1031979",
+          "name": "99-PRIORITY 2 HIGH PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.4",
+          "id": "48ceaac9-1e67-4c2a-bb64-b8e9791c2f1b",
+          "name": "100-PRIORITY 1- HIGH PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.5",
+          "id": "0c9b50de-3d67-491b-9727-3030df2c4046",
+          "name": "101-HYDRAULIC SLIDE POS.6 NOT FORWARD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.6",
+          "id": "6a0c7f4b-e6f3-43d6-bfeb-1d799d32b276",
+          "name": "102-HYDRAULIC SLIDE POS.6 NOT BACKWARD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X13.7",
+          "id": "1ab634c0-6378-4030-a560-cf40c9d0254c",
+          "name": "103- PUMP HIGH PRESSURE NOT INCLUDED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.0",
+          "id": "bf4255a4-e30b-4f60-91f7-a2628c0a7d3c",
+          "name": "104-PRESSURE CONTROL HIGH PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.1",
+          "id": "abaa447e-f020-4660-9392-3c3af5b692b6",
+          "name": "105-COOLANT OIL FLOW INSUFF.HIGH PRESSURE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.2",
+          "id": "cc5724b4-c2c2-476d-a690-8d97809d8130",
+          "name": "106-SPINDLE SAFETY SPEED VIOLATION",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.3",
+          "id": "8fb47ef6-9d4e-43a6-9822-1fdc3a4f7c26",
+          "name": "107-FEED SAFETY SPEED VIOLATION",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.4",
+          "id": "1d2518df-cdc2-4808-a094-1871a1ed0668",
+          "name": "108-COOLANT OIL FLOW - CHECK DEVICE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.5",
+          "id": "199b1da1-4941-427e-b684-d7622aecf946",
+          "name": "109-INSUFFICIENT COOLANT OIL FLOW",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.6",
+          "id": "f4e561fc-ddad-4a63-b3be-d9f90ace53a5",
+          "name": "110-TIME CONTROL/HIGH PRESSURE MOTOR",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X12.7",
+          "id": "91ab7671-b890-4899-abe3-828dcd4f747a",
+          "name": "111-WORK-ZONE OVERLOAD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.0",
+          "id": "a93a64af-da60-4ac2-89d5-ee0b720f864f",
+          "name": "112-OVERHEATED SPINDLE MOTOR",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.1",
+          "id": "27ef2ec4-d644-4e68-b306-ef5e854be8fb",
+          "name": "113-MACHINE DATA?",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.2",
+          "id": "5e86c4d8-365c-44af-8441-b0752ffb5ff1",
+          "name": "114-LEFT CAMSHAFT OVERLOAD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.3",
+          "id": "a785c255-1e13-4c4b-8eb5-53051b33b665",
+          "name": "115-RIGHT CAMSHAFT OVERLOAD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.4",
+          "id": "4e7b46bd-e04b-44ee-934b-da52463b8378",
+          "name": "116-MAIN SPINDLES STOP-STOP CAM BUT NOT RESTART CAM",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.5",
+          "id": "07c37fa2-aa09-4e24-b3b9-e258d2b6e345",
+          "name": "117-MAIN SPINDLES STOP-NOT STOP CAM  WITH POSITIONING UNIT ON",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.6",
+          "id": "263a7f2d-4afd-4d76-b5ce-6dea8ab9c632",
+          "name": "118-BACK FRONTAL SPINDLE REAR SIDE NOT RETURNED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X15.7",
+          "id": "7291b8cb-86b1-4589-8740-5f9878cebcea",
+          "name": "119-BACK FRONTAL SPINDLE FRONT SIDE NOT RETURNED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.0",
+          "id": "c53577b9-c9bf-43fb-870c-477d08c9a326",
+          "name": "120-PUSHBT PANEL POSIT.LIMIT SWITCH CONTROL",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.1",
+          "id": "b01fd1a5-afe6-4ff5-9939-34449391e47f",
+          "name": "121-SPINDLE NSK REVS LESS THAN PROGRAMMED REVS",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.2",
+          "id": "8df016df-a9d2-4577-8d61-f3c1acc20c86",
+          "name": "122-NSK NOT DISABLED -DOOR OPENING NOT ALLOWED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.3",
+          "id": "5ee35b6b-d0c7-40c0-94e7-8b5beaed2f6f",
+          "name": "123-BAR LOADER BAR FEED NOT DISABLED -DOOR OPENING NOT ALLOWED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.4",
+          "id": "1c9f99fb-985f-465d-8d76-cb4a53ee3515",
+          "name": "124-MOTOR THERM.BRK IMMEDIATE ALARM",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.5",
+          "id": "3c6ae17a-57d1-4506-871a-0b2dd6882def",
+          "name": "125-HIRTH NOT CLOSED",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.6",
+          "id": "529f8f08-86c1-4d00-83d6-b215d4544678",
+          "name": "126-HIRTH NOT OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X14.7",
+          "id": "014272db-6893-4231-acac-c614616eafda",
+          "name": "127-THERMAL BREAKER EMERGENCY KEY",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.0",
+          "id": "c42ef3c6-64e5-41ac-a441-15ddc2ec7a07",
+          "name": "128-CAMSHAFT OVERLOAD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.1",
+          "id": "ef7f98ce-5367-4eff-9bb9-2a6349627c28",
+          "name": "129-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.2",
+          "id": "ab467dc5-adb0-40fd-b4f3-9dfa9a63b6a3",
+          "name": "130-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.3",
+          "id": "e31bda62-1aba-4c24-9d61-a780786fa638",
+          "name": "131-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.4",
+          "id": "69d818b5-e765-4e60-8cb1-a83b4bf50d12",
+          "name": "132-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.5",
+          "id": "e9b7a82f-1965-43fe-b222-f66fc681733e",
+          "name": "133-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.6",
+          "id": "037c0118-6716-4355-996f-3e082ed4deb1",
+          "name": "134-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X17.7",
+          "id": "c83d340a-73ef-44a5-b9d9-8739a49d35d3",
+          "name": "135-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.0",
+          "id": "e2d898e6-28d8-45ac-957b-89d188b559c6",
+          "name": "136-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.1",
+          "id": "f6dd2a8e-97cd-46bc-b646-8f984efc4112",
+          "name": "137-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.2",
+          "id": "4127c1fa-9f2a-497a-a0c2-e84f9bdff74b",
+          "name": "138-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.3",
+          "id": "afa05219-0e48-4bf4-8596-6954c22aefe8",
+          "name": "139-   ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.4",
+          "id": "eaee7e33-54dc-460f-a0af-411881b9b240",
+          "name": "140-FIRE FIGHTING SYSTEM CONTROL GATE CLOSE ",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.5",
+          "id": "5729de80-b824-4638-9cb4-30bcf36c436a",
+          "name": "141-FIRE FIGHTING SYSTEM CONTROL GATE OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.6",
+          "id": "7701b071-2745-4221-8d12-b3448333c199",
+          "name": "142-FIRE FIGHTING SYSTEM FAST STOP",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X16.7",
+          "id": "a95abd8f-183e-44e5-824d-2e58dd2e4e85",
+          "name": "143-FIRE FIGHTING SYSTEM CYCLE END",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.0",
+          "id": "75213a7a-6ab1-4d8f-8c8f-abece1a7f9e6",
+          "name": "144-UNLOADING CHUTE NOT BACK POS.3",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.1",
+          "id": "69e28c2e-15b2-4bbd-9d9d-d29808ed3f9a",
+          "name": "145-UNLOADING CHUTE NOT FORWARD POS.3",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.2",
+          "id": "6d57a3dd-6df4-474d-a95f-0ca99f2be637",
+          "name": "146-HYDRAULIC SLIDE POS.3 NOT BACKWARD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.3",
+          "id": "12d2eea3-9f2e-45aa-842f-d9ce5c643118",
+          "name": "147-HYDRAULIC SLIDE POS.3 NOT FORWARD",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.4",
+          "id": "1bce9e5e-3200-43f9-a9fe-4a086e79276b",
+          "name": "148-PIECES SEPARATOR POS.3 NOT CLOSE",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.5",
+          "id": "78464d3e-fb8a-4934-af61-3c18ef055eea",
+          "name": "149-PIECES SEPARATOR POS.3 NOT OPEN",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.6",
+          "id": "ed60ca78-bcec-463c-9a16-441aaab6f0f3",
+          "name": "150-CUSTOMER IMMEDIATE ALARM 1",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X19.7",
+          "id": "9bb3d93e-e937-4921-9f47-a26d7be85468",
+          "name": "151-CUSTOMER IMMEDIATE ALARM 2",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X18.0",
+          "id": "73ea8f7c-420a-45aa-86d9-2a2cdbd15e59",
+          "name": "152-CUSTUMER END CYCLE ALARM 1",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X18.1",
+          "id": "15ebc1a9-1367-4a19-a61d-5f77bcaadb22",
+          "name": "153-CUSTUMER END CYCLE ALARM 2",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X18.2",
+          "id": "6d4abc3f-a012-41f9-9dd4-ac4e3e32e6e5",
+          "name": "154-MECH.SLIDE NOT BACK POS.3",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X18.3",
+          "id": "f3b550e5-aacf-4971-b81a-c1a56cda5dba",
+          "name": "155-LENGTH CHECK DETECTOR  II^FAULT",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X18.4",
+          "id": "f289f153-5fad-4ba3-af06-c9d5741c2fc9",
+          "name": "156-PIECES NOT CONF. DETECTOR II^ ALARM",
+          "readFrequency": 1000
         }
       ],
       "protocol": "s7",
@@ -442,6 +1541,948 @@
           "address": "jogoverride1",
           "type": "event",
           "id": "4d3aacc2-f8cd-421b-a96f-5ff4b29b9b9c"
+        },
+        {
+          "type": "event",
+          "address": "alarm_ALARM RESET MACHINE ON",
+          "id": "b2728b9d-3b3d-4225-9e1f-be37a9fe24b7",
+          "name": "ALARM RESET MACHINE ON"
+        },
+        {
+          "type": "event",
+          "address": "alarm_1",
+          "id": "a3f429d1-9778-4baf-be93-64029e21521c",
+          "name": "1-"
+        },
+        {
+          "type": "event",
+          "address": "alarm_2",
+          "id": "bd9d5103-ac23-4d6d-837b-cb8875676e9c",
+          "name": "2-FEED STOP FROM BAR LOADER"
+        },
+        {
+          "type": "event",
+          "address": "alarm_3",
+          "id": "90984907-fa66-41f1-9a1d-078cedc52002",
+          "name": "3- BAR END"
+        },
+        {
+          "type": "event",
+          "address": "alarm_4",
+          "id": "a58a7b07-21d7-4abc-9cc3-b9330ffa8d83",
+          "name": "4-GILDEMEISTER BAR END BYPASS"
+        },
+        {
+          "type": "event",
+          "address": "alarm_5",
+          "id": "365824a0-f510-4ecd-858e-394174ffe94f",
+          "name": "5-ALARM FROM CONDITIONER"
+        },
+        {
+          "type": "event",
+          "address": "alarm_6",
+          "id": "238919c2-8e74-4be9-8d9e-04d8cff7a0c9",
+          "name": "6-MAHLE FILTER CLEANING"
+        },
+        {
+          "type": "event",
+          "address": "alarm_7",
+          "id": "5945a53f-ad08-42d2-9e8e-421be2fb9a87",
+          "name": "7-SPINDLE REVS LESS THAN PROGRAMMED REVS"
+        },
+        {
+          "type": "event",
+          "address": "alarm_8",
+          "id": "48f72651-cfcf-4e4d-ad51-6964c061b421",
+          "name": "8- REAR RIGHT POST GATE OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_9",
+          "id": "df1cc2f8-45f5-42a6-b39c-2c0d45e81f23",
+          "name": "9-FRONT RIGHT POST GATE OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_10",
+          "id": "21f79471-a21a-4d05-ab6f-26641cdbf20b",
+          "name": "10-FRONT LEFT POST GATE OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_11",
+          "id": "107c3b2e-1f42-4a02-bca8-e262a24ae5dc",
+          "name": "11-BAR LOADER NOT READY"
+        },
+        {
+          "type": "event",
+          "address": "alarm_12",
+          "id": "40241c78-7a2e-44c9-a5d6-a7b4bfe4463e",
+          "name": "12-TOOL WEAR"
+        },
+        {
+          "type": "event",
+          "address": "alarm_13",
+          "id": "748ef884-359f-4c9a-9acd-93b3c6cac019",
+          "name": "13-PRODUCTION REACHED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_14",
+          "id": "e655b1bc-597d-4f22-8d03-a787f6e15b4b",
+          "name": "14-ADDED PUMP CLOGGED CLOTHS MIN.OIL LEVEL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_15",
+          "id": "fed39888-64e4-4002-b060-3a80f34af534",
+          "name": "15-CONVERTER OVERTEMPERATURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_16",
+          "id": "6bc64b6d-a4bb-48c0-a519-f114e03a93e1",
+          "name": "16-HYDR.OIL FILTER CLOGGING"
+        },
+        {
+          "type": "event",
+          "address": "alarm_17",
+          "id": "ec101d49-433e-433b-9b01-89def42b2b88",
+          "name": "17-MAXIMUM MACHINE TANK OIL LEVEL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_18",
+          "id": "8cb76fe6-14c0-4d50-815a-ba3d38f7691a",
+          "name": "18-MINIMUM MACHINE TANK OIL LEVEL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_19",
+          "id": "8627a287-a7cd-41d4-9772-348dccea00a8",
+          "name": "19-MACHINE ENCODER FAILED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_20",
+          "id": "904348b5-118a-4431-93fc-c3846c1e630f",
+          "name": "20-MANUAL CYCLE BAR LOADER"
+        },
+        {
+          "type": "event",
+          "address": "alarm_21",
+          "id": "5a0ead8a-4f08-4942-af4e-aabb63c0a27a",
+          "name": "21-UNLOADING CHUTE NOT FORWARD POS.6"
+        },
+        {
+          "type": "event",
+          "address": "alarm_22",
+          "id": "8a3cbac2-ec49-44ab-b138-379c782ac6e4",
+          "name": "22-UNLOADING CHUTE NOT BACK POS.6"
+        },
+        {
+          "type": "event",
+          "address": "alarm_23",
+          "id": "bc9e6beb-89a2-4534-9449-323bedd5992c",
+          "name": "23-OVERHEATED FEED MOTOR"
+        },
+        {
+          "type": "event",
+          "address": "alarm_24",
+          "id": "71a602fe-f91d-4439-b0cb-d6eb3157a013",
+          "name": "24-STOP AT CYCLE END THERMAL BREAKER"
+        },
+        {
+          "type": "event",
+          "address": "alarm_25",
+          "id": "3177748e-ca54-4d5b-b08d-7521aae1fa32",
+          "name": "25- REAR LEFT POST GATE OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_26",
+          "id": "faa2c2d8-f42c-40e6-90a2-b705e5f55f01",
+          "name": "26-OILMIST FILTER FAULT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_27",
+          "id": "a66913d2-31ff-4fe5-a99a-c0939f3b1c61",
+          "name": "27-NO DRUM CONSENT FROM BAR LOADER"
+        },
+        {
+          "type": "event",
+          "address": "alarm_28",
+          "id": "80ac1b05-88f9-43fc-a22f-57f14b30f4cc",
+          "name": "28-MAHLE FILTER FAULT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_29",
+          "id": "ed8c048e-56ca-4d35-85fc-afcadaa21e82",
+          "name": "29-ELECTR.CABINET OVERTEMPERATURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_30",
+          "id": "e68d239d-72a3-4a38-bf63-d69c6507cc22",
+          "name": "30-RECIRC.LUBE OIL LEVEL LOW"
+        },
+        {
+          "type": "event",
+          "address": "alarm_31",
+          "id": "fcf0a2f3-45b6-4e73-b649-ff885cf691fb",
+          "name": "31-TOTAL LUBE OIL LEVEL LEAK"
+        },
+        {
+          "type": "event",
+          "address": "alarm_32",
+          "id": "6e9a9d7b-89ac-4f3e-b6a1-0e4aa0b7279e",
+          "name": "32-SCHEDULET MACHINE STOP "
+        },
+        {
+          "type": "event",
+          "address": "alarm_33",
+          "id": "37857dfa-652f-428e-8b0f-4e9faab27026",
+          "name": "33-MOTORS AREA GATE OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_34",
+          "id": "cf40758a-94ad-4e74-8459-512be33a9e5a",
+          "name": "34-SPINDLE COLLET SELECTOR POS.6  ON? -DRILL SPINDLE SELECTOR ON?"
+        },
+        {
+          "type": "event",
+          "address": "alarm_35",
+          "id": "c61f8a3e-7fdc-4093-ad79-67bf8770503f",
+          "name": "35- FRONT CUTTER 2 OVERLOAD CONTROL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_36",
+          "id": "d8a5d5ef-3410-4e92-8d9a-b36c39c59940",
+          "name": "36- FRONT CUTTER 1 OVERLOAD CONTROL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_37",
+          "id": "0091120e-fe7b-4c76-9e24-5f96c5f4184f",
+          "name": "37-MAHLE FILTER FAULT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_38",
+          "id": "aab9c8b2-0ea7-4961-b276-ed59120476dd",
+          "name": "38-CLOGGED CLOTHS MIN.OIL LEVEL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_39",
+          "id": "ae59787e-0837-4c89-a0ba-45ec637a73c4",
+          "name": "39-MACHINE IN MANUAL MODE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_40",
+          "id": "32e7b638-0333-43e6-83cc-508be7d302f0",
+          "name": "40-THREADING SPINDLE NOT BACK I^"
+        },
+        {
+          "type": "event",
+          "address": "alarm_41",
+          "id": "d9b470d5-d057-4fc9-a6c9-8c693e45af06",
+          "name": "41-MAHLE FILTER ON-ADDED PUMP OFF"
+        },
+        {
+          "type": "event",
+          "address": "alarm_42",
+          "id": "5d7fd10b-23c3-4c39-89be-58d1838cb869",
+          "name": "42-MAHLE FILTER OFF-ADDED PUMP ON"
+        },
+        {
+          "type": "event",
+          "address": "alarm_43",
+          "id": "a8e34b10-c32b-4014-aa32-60a59c430632",
+          "name": "43-INSUFFICIENT RECIRC.LUBE OIL LEVEL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_44",
+          "id": "5940903e-4d56-49ce-a190-c008795142d6",
+          "name": "44"
+        },
+        {
+          "type": "event",
+          "address": "alarm_45",
+          "id": "c7cf8e3f-980d-45e0-981f-87605d27ab81",
+          "name": "45-THREADING FAULT II^"
+        },
+        {
+          "type": "event",
+          "address": "alarm_46",
+          "id": "5fab937c-ee45-4d8f-9d2d-5501ed6da7cd",
+          "name": "46-THREADING SPINDLE NOT BACK II^"
+        },
+        {
+          "type": "event",
+          "address": "alarm_47",
+          "id": "a39142f5-5751-4556-8a01-ca83e12c35b7",
+          "name": "47-THREADING FAULT I^"
+        },
+        {
+          "type": "event",
+          "address": "alarm_48",
+          "id": "6d2947b1-cb5e-4058-9e22-f6ab35ad2c8e",
+          "name": "48-MACHINE TOTAL LOSS LUBRICATION FAULT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_49",
+          "id": "3d8ee378-5ff7-4b5a-8bdb-8810753274e0",
+          "name": "49-CONTROL UNIT TOTAL LOSS LUBRICATION FAULT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_50",
+          "id": "e575fcb2-acb3-4ffb-b9c0-8be37c9813b4",
+          "name": "50-INSUFFICIENT AIR PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_51",
+          "id": "d44414b2-599b-4d13-97a6-80e2f8edd68e",
+          "name": "51-BAR FEED MICRO CTRL INCL.POS.1"
+        },
+        {
+          "type": "event",
+          "address": "alarm_52",
+          "id": "a3392368-9d12-4635-9409-e1d2080206b5",
+          "name": "52-BAR FEED MICRO CTRL EXCL.POS.1"
+        },
+        {
+          "type": "event",
+          "address": "alarm_53",
+          "id": "5e950ef8-1c0f-465d-b3b0-5422aff60a90",
+          "name": "53-CHIP CONVEYOR OVERLOAD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_54",
+          "id": "cfdcc01f-68cd-4462-9c8d-0559ab4cf483",
+          "name": "54-STOCK CARRIER GATE OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_55",
+          "id": "0e5c3b2c-51ca-4b3e-955d-172839fea2db",
+          "name": "55-SLIDE POS.3 NOT BACK"
+        },
+        {
+          "type": "event",
+          "address": "alarm_56",
+          "id": "85d6117d-0c17-4c3a-aa63-5fa54f0caff1",
+          "name": "56-SLIDE POS.4 NOT BACK"
+        },
+        {
+          "type": "event",
+          "address": "alarm_57",
+          "id": "17019ec5-f678-49d4-927f-8e0d6c0982fb",
+          "name": "57-RANGE SPINDLE SPEED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_58",
+          "id": "50737340-2935-47c7-8ee4-d1a73619f408",
+          "name": "58-INCOP.ENABLE ALARM"
+        },
+        {
+          "type": "event",
+          "address": "alarm_59",
+          "id": "8723cc34-a47e-4f46-b285-3a4d57c38ce2",
+          "name": "59"
+        },
+        {
+          "type": "event",
+          "address": "alarm_60",
+          "id": "035908b3-6319-46b3-97e1-3207f7dca35d",
+          "name": "60-POSITIONING UNIT POS.4 NOT BACK"
+        },
+        {
+          "type": "event",
+          "address": "alarm_61",
+          "id": "76bc0e1e-c4c4-4fac-91da-b9db52301d88",
+          "name": "61-POSITIONING UNIT POS.3 NOT BACK"
+        },
+        {
+          "type": "event",
+          "address": "alarm_62",
+          "id": "043e6f6f-370c-4643-8874-1e5037c7659e",
+          "name": "62-NOT POSITIONED POS.4"
+        },
+        {
+          "type": "event",
+          "address": "alarm_63",
+          "id": "c9cdeb6b-9248-4efe-bbd5-d361f4ef9d97",
+          "name": "63-NOT POSITIONED POS.3"
+        },
+        {
+          "type": "event",
+          "address": "alarm_64",
+          "id": "0380f2b9-ea81-4fb1-bf0a-89c2b9619122",
+          "name": "64-HYDRAULIC OIL PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_65",
+          "id": "2b941e19-faa5-43f6-84cc-ed05d0215e30",
+          "name": "65"
+        },
+        {
+          "type": "event",
+          "address": "alarm_66",
+          "id": "d98a2cbb-9bab-41d2-974f-a9517eaf31dd",
+          "name": "66-ALARM:SPINDLE SPEED CONTROL WITH CUTTER ON"
+        },
+        {
+          "type": "event",
+          "address": "alarm_67",
+          "id": "225fb9db-8a2e-45ad-b058-b3c7031160ad",
+          "name": "67-SPLASH-GUARD RELEASED REAR SIDE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_68",
+          "id": "d01fa888-d619-412c-bd91-3d05466c66c9",
+          "name": "68-SPLASH-GUARD RELEASED FRONT SIDE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_69",
+          "id": "9f7bacf4-efd9-43d6-b7f8-9b3f610fb873",
+          "name": "69-SPLASH-GUARD OPEN REAR SIDE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_70",
+          "id": "aad55e50-2254-465c-b30f-7a7e4fefde36",
+          "name": "70-SPLASH-GUARD OPEN FRONT SIDE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_71",
+          "id": "61cff687-d287-47d8-8b9a-920065100abb",
+          "name": "71-LENGTH CHECK DETECTOR  I^FAULT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_72",
+          "id": "b1eb14a8-82c2-4204-8622-f9967aa4e2f9",
+          "name": "72-PIECES NOT CONF. DETECTOR I^ ALARM"
+        },
+        {
+          "type": "event",
+          "address": "alarm_73",
+          "id": "d18b697d-ae8d-4171-b2fa-a4c7b1fd78f7",
+          "name": "73-DETECTOR 1  DRILL BROKEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_74",
+          "id": "4d5dc9d9-7e7f-4f35-8e9c-2b912bfa165e",
+          "name": "74-DETECTOR 2  DRILL BROKEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_75",
+          "id": "22ce45bc-7b4d-4316-9077-995bd0b7fe14",
+          "name": "75-MIDDEX BAR NOT PRESENT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_76",
+          "id": "78fa3e43-4735-407b-8985-af7bdeddac44",
+          "name": "76-MIDDEX FAULT-NEEDLE OVERSTROKE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_77",
+          "id": "7c888ba9-c474-4f45-acf4-39a3f1ba8c09",
+          "name": "77-FEED CONVERTER NOT READY"
+        },
+        {
+          "type": "event",
+          "address": "alarm_78",
+          "id": "a8c38bd2-dbe2-4185-98f7-57ba8f390a02",
+          "name": "78-SPINDLE CONVERTER NOT READY"
+        },
+        {
+          "type": "event",
+          "address": "alarm_79",
+          "id": "3766fc04-ea2f-417f-8992-d36c89145964",
+          "name": "79-SPDL COLLET POS.6 ON-HYDRAULIC UNIT OFF"
+        },
+        {
+          "type": "event",
+          "address": "alarm_80",
+          "id": "da8900fb-2797-4394-9787-2903053f269b",
+          "name": "80- SPDL.DIFF.ROT.SELECT.ON RIGHT THREAD MUST BE INSERTED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_81",
+          "id": "67b038d9-685f-4ffd-9924-46ebddfc77b1",
+          "name": "81- SPDL.DIFF.ROT.SELECT.ON THREADING SELECTOR MUST BE EXCLUDED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_82",
+          "id": "b20dd849-4d98-4f70-bd7e-80eab10a0082",
+          "name": "82-BAR STOP OUT OF POSITION"
+        },
+        {
+          "type": "event",
+          "address": "alarm_83",
+          "id": "f4413a53-0b0f-4b52-8291-2012a8b862e1",
+          "name": "83-PIECES SEPARATOR POS.6 NOT CLOSE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_84",
+          "id": "da8b44be-d3fb-4484-a17f-0b6a4f7ef466",
+          "name": "84-PIECES SEPARATOR POS.6 NOT OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_85",
+          "id": "53d80c31-9bce-41ad-a953-0028fe5f0a37",
+          "name": "85-SLIDE POS.2 NOT BACK"
+        },
+        {
+          "type": "event",
+          "address": "alarm_86",
+          "id": "28b157ec-38b0-49a0-bfe7-6757ab403a0f",
+          "name": "86-SLIDE POS.5 NOT BACK"
+        },
+        {
+          "type": "event",
+          "address": "alarm_87",
+          "id": "9fe3a6e8-739d-4cca-8f81-a42dc36e1081",
+          "name": "87-CONVERTER POWER SUPPLY NOT READY"
+        },
+        {
+          "type": "event",
+          "address": "alarm_88",
+          "id": "c505efc4-1dd6-43b3-b705-33dcb619698a",
+          "name": "88-MIDDEX A DRILL BROKEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_89",
+          "id": "e7203583-ec7f-4705-9a2f-43abc1881d01",
+          "name": "89-MIDDEX A FAULT NEEDLE OVERSTROKE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_90",
+          "id": "979542f1-a452-4884-b851-a2f00fa07ff7",
+          "name": "90-MIDDEX B DRILL BROKEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_91",
+          "id": "4cac8a28-bf8b-4898-b046-67f888de6db6",
+          "name": "91-MIDDEX B FAULT NEEDLE OVERSTROKE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_92",
+          "id": "2ccd36a2-e65e-478c-a50d-cd5feffb12f8",
+          "name": "92-MIDDEX C DRILL BROKEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_93",
+          "id": "2c680122-85a0-461e-9191-5ddff6f819bf",
+          "name": "93-MIDDEX C FAULT NEEDLE OVERSTROKE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_94",
+          "id": "d211df47-7aae-4324-ba0c-5c948c2d48b4",
+          "name": "94-MECH.SLIDE NOT BACK POS.6"
+        },
+        {
+          "type": "event",
+          "address": "alarm_95",
+          "id": "bf4bfe62-c109-410b-b0d7-677a89c7ad6d",
+          "name": "95-HIGH PRESSURE NOT READY"
+        },
+        {
+          "type": "event",
+          "address": "alarm_96",
+          "id": "944c7943-0352-4122-9fa2-fc4954b5c09a",
+          "name": "96-INSUFF.OIL FLOW-HIGH PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_97",
+          "id": "cdbac058-1b4f-4452-b475-de6d5f99cdde",
+          "name": "97-INSUFF.OIL PRESSURE-HIGH PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_98",
+          "id": "f235160a-d8e2-4d68-9624-af6b7565210f",
+          "name": "98-PRIORITY 3 HIGH PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_99",
+          "id": "db8abc62-57bc-4d82-a2b4-f223da74ba46",
+          "name": "99-PRIORITY 2 HIGH PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_100",
+          "id": "d272881a-9774-4763-aa61-38ac35d01bef",
+          "name": "100-PRIORITY 1- HIGH PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_101",
+          "id": "7f0c5f95-9b09-466f-b6e1-8f44c0b313b5",
+          "name": "101-HYDRAULIC SLIDE POS.6 NOT FORWARD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_102",
+          "id": "ea2b267a-3fc1-4e1d-9edf-95c537b78be0",
+          "name": "102-HYDRAULIC SLIDE POS.6 NOT BACKWARD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_103",
+          "id": "9fc042cd-68f5-4843-a6f3-85dc23d39759",
+          "name": "103- PUMP HIGH PRESSURE NOT INCLUDED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_104",
+          "id": "d306bf35-c5a6-42ae-8537-29f96132dbcb",
+          "name": "104-PRESSURE CONTROL HIGH PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_105",
+          "id": "c2921401-4520-47ce-ae1a-09b214e9da8b",
+          "name": "105-COOLANT OIL FLOW INSUFF.HIGH PRESSURE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_106",
+          "id": "91969637-e41c-4d94-865e-bc1f15c890f7",
+          "name": "106-SPINDLE SAFETY SPEED VIOLATION"
+        },
+        {
+          "type": "event",
+          "address": "alarm_107",
+          "id": "66f8036d-a34d-432e-b81a-18a79a22561c",
+          "name": "107-FEED SAFETY SPEED VIOLATION"
+        },
+        {
+          "type": "event",
+          "address": "alarm_108",
+          "id": "b53298f5-8b75-4972-aafb-c7204afe936a",
+          "name": "108-COOLANT OIL FLOW - CHECK DEVICE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_109",
+          "id": "67b7814e-ef5e-4ed6-aa0d-262cfa4c7613",
+          "name": "109-INSUFFICIENT COOLANT OIL FLOW"
+        },
+        {
+          "type": "event",
+          "address": "alarm_110",
+          "id": "10d70f04-030d-4eda-9dba-492c21d6690a",
+          "name": "110-TIME CONTROL/HIGH PRESSURE MOTOR"
+        },
+        {
+          "type": "event",
+          "address": "alarm_111",
+          "id": "853823f9-3d79-4d4f-a58f-0bca0d35659a",
+          "name": "111-WORK-ZONE OVERLOAD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_112",
+          "id": "8f9d7d0b-88dc-4a5a-9193-42c4833397ec",
+          "name": "112-OVERHEATED SPINDLE MOTOR"
+        },
+        {
+          "type": "event",
+          "address": "alarm_113",
+          "id": "91a8af1f-fe58-47e4-ad22-212c6377b37c",
+          "name": "113-MACHINE DATA?"
+        },
+        {
+          "type": "event",
+          "address": "alarm_114",
+          "id": "cab6712e-5e96-453e-ae7a-b3b025975855",
+          "name": "114-LEFT CAMSHAFT OVERLOAD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_115",
+          "id": "0a2a5dfe-7135-41b6-bb3b-cb3ce22c8c33",
+          "name": "115-RIGHT CAMSHAFT OVERLOAD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_116",
+          "id": "f1e450e4-9ccc-4e73-8daa-294d8f327f32",
+          "name": "116-MAIN SPINDLES STOP-STOP CAM BUT NOT RESTART CAM"
+        },
+        {
+          "type": "event",
+          "address": "alarm_117",
+          "id": "aaef13f2-85f9-40c2-9a3d-1250ac545c18",
+          "name": "117-MAIN SPINDLES STOP-NOT STOP CAM  WITH POSITIONING UNIT ON"
+        },
+        {
+          "type": "event",
+          "address": "alarm_118",
+          "id": "67a8c212-bd84-4579-ad2e-8f4075d77d3b",
+          "name": "118-BACK FRONTAL SPINDLE REAR SIDE NOT RETURNED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_119",
+          "id": "304d4b6b-df55-4759-990b-4bdd6aa54738",
+          "name": "119-BACK FRONTAL SPINDLE FRONT SIDE NOT RETURNED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_120",
+          "id": "bb6d8a3b-1ceb-476a-aae6-24d9b4075334",
+          "name": "120-PUSHBT PANEL POSIT.LIMIT SWITCH CONTROL"
+        },
+        {
+          "type": "event",
+          "address": "alarm_121",
+          "id": "cb0d56e4-1bd4-492c-a56e-33acd50050be",
+          "name": "121-SPINDLE NSK REVS LESS THAN PROGRAMMED REVS"
+        },
+        {
+          "type": "event",
+          "address": "alarm_122",
+          "id": "af76c322-86f3-4425-8191-8745e97ab3d6",
+          "name": "122-NSK NOT DISABLED -DOOR OPENING NOT ALLOWED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_123",
+          "id": "a8c3441f-1b90-4a9e-83dc-bfa58a19a07c",
+          "name": "123-BAR LOADER BAR FEED NOT DISABLED -DOOR OPENING NOT ALLOWED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_124",
+          "id": "5ac4d566-57c2-4eb4-b2f3-3a519df9a962",
+          "name": "124-MOTOR THERM.BRK IMMEDIATE ALARM"
+        },
+        {
+          "type": "event",
+          "address": "alarm_125",
+          "id": "c747f37c-7f9b-475f-8c63-24a3db82c25e",
+          "name": "125-HIRTH NOT CLOSED"
+        },
+        {
+          "type": "event",
+          "address": "alarm_126",
+          "id": "148e7136-2595-4e48-9c5f-46412bd18b8a",
+          "name": "126-HIRTH NOT OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_127",
+          "id": "5f9356bf-9a4c-436e-a35b-d9afcd9141bc",
+          "name": "127-THERMAL BREAKER EMERGENCY KEY"
+        },
+        {
+          "type": "event",
+          "address": "alarm_128",
+          "id": "f567cb18-819b-4210-bcba-9f8c43038b88",
+          "name": "128-CAMSHAFT OVERLOAD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_129",
+          "id": "137b4a17-f0f2-4b5e-ae2b-03aac031734c",
+          "name": "129-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_130",
+          "id": "7f2ec9f9-a6a0-4ca0-b483-d4834cce43f9",
+          "name": "130-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_131",
+          "id": "af4335aa-22d5-4f70-b551-dc22a92de341",
+          "name": "131-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_132",
+          "id": "6ece7360-78c6-468c-a4e3-b631be5c6910",
+          "name": "132-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_133",
+          "id": "d94cb3b5-b903-4424-b167-ab72f98e41aa",
+          "name": "133-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_134",
+          "id": "6f7c23f1-53b1-41d1-bfcb-7755cb2c5239",
+          "name": "134-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_135",
+          "id": "0788dfd7-43a5-40fd-bfd9-2b5432ff15c9",
+          "name": "135-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_136",
+          "id": "ad930f1d-61fb-48e2-9667-502987f6a238",
+          "name": "136-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_137",
+          "id": "44ada2a5-285e-431c-9fa0-c33806bcef90",
+          "name": "137-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_138",
+          "id": "df4e21eb-20cf-4dc4-a38d-0e2b4783675a",
+          "name": "138-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_139",
+          "id": "0564289b-a75c-4953-94b7-32ed6a1538c1",
+          "name": "139-   "
+        },
+        {
+          "type": "event",
+          "address": "alarm_140",
+          "id": "1a0a242e-a475-4e28-84c7-7636ff80b2a5",
+          "name": "140-FIRE FIGHTING SYSTEM CONTROL GATE CLOSE "
+        },
+        {
+          "type": "event",
+          "address": "alarm_141",
+          "id": "7baf30ae-4e61-4b86-ad95-378b19ca2495",
+          "name": "141-FIRE FIGHTING SYSTEM CONTROL GATE OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_142",
+          "id": "3a69079e-65c1-4d5b-821f-538eb7d34196",
+          "name": "142-FIRE FIGHTING SYSTEM FAST STOP"
+        },
+        {
+          "type": "event",
+          "address": "alarm_143",
+          "id": "b2f69c92-8324-4b8a-bc48-4b15fac2c4a9",
+          "name": "143-FIRE FIGHTING SYSTEM CYCLE END"
+        },
+        {
+          "type": "event",
+          "address": "alarm_144",
+          "id": "b037da8b-54f8-4a5b-bbdc-b281032deb1c",
+          "name": "144-UNLOADING CHUTE NOT BACK POS.3"
+        },
+        {
+          "type": "event",
+          "address": "alarm_145",
+          "id": "960200c1-a181-4f20-a4d0-a55243834819",
+          "name": "145-UNLOADING CHUTE NOT FORWARD POS.3"
+        },
+        {
+          "type": "event",
+          "address": "alarm_146",
+          "id": "f6ad1ccc-c063-4698-a74c-690b34f24b4b",
+          "name": "146-HYDRAULIC SLIDE POS.3 NOT BACKWARD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_147",
+          "id": "ad479863-9c58-4a6c-a628-a46685025456",
+          "name": "147-HYDRAULIC SLIDE POS.3 NOT FORWARD"
+        },
+        {
+          "type": "event",
+          "address": "alarm_148",
+          "id": "746ac2be-db40-4351-90f3-77f470b1bc53",
+          "name": "148-PIECES SEPARATOR POS.3 NOT CLOSE"
+        },
+        {
+          "type": "event",
+          "address": "alarm_149",
+          "id": "e4d38a68-3ccf-4c3f-9a61-f2e3f7040324",
+          "name": "149-PIECES SEPARATOR POS.3 NOT OPEN"
+        },
+        {
+          "type": "event",
+          "address": "alarm_150",
+          "id": "5d5aa531-5bd1-4a68-93c5-dd5133781042",
+          "name": "150-CUSTOMER IMMEDIATE ALARM 1"
+        },
+        {
+          "type": "event",
+          "address": "alarm_151",
+          "id": "ec64b8ee-0a09-48ee-a1d1-d0b24e0ad994",
+          "name": "151-CUSTOMER IMMEDIATE ALARM 2"
+        },
+        {
+          "type": "event",
+          "address": "alarm_152",
+          "id": "36e71336-7554-457b-bf7c-4d7fa18322fb",
+          "name": "152-CUSTUMER END CYCLE ALARM 1"
+        },
+        {
+          "type": "event",
+          "address": "alarm_153",
+          "id": "0f3a4625-6adb-4f3f-a91f-a645465e419a",
+          "name": "153-CUSTUMER END CYCLE ALARM 2"
+        },
+        {
+          "type": "event",
+          "address": "alarm_154",
+          "id": "4fbf0278-2772-4875-a74a-25064d516831",
+          "name": "154-MECH.SLIDE NOT BACK POS.3"
+        },
+        {
+          "type": "event",
+          "address": "alarm_155",
+          "id": "56060ea2-3c6f-4ba9-82f4-469f1e42037f",
+          "name": "155-LENGTH CHECK DETECTOR  II^FAULT"
+        },
+        {
+          "type": "event",
+          "address": "alarm_156",
+          "id": "fcca7008-186e-4536-90da-c57864603fac",
+          "name": "156-PIECES NOT CONF. DETECTOR II^ ALARM"
         }
       ],
       "protocol": "mtconnect",
@@ -449,7 +2490,793 @@
     }
   ],
   "virtualDataPoints": [],
-  "mapping": [],
+  "mapping": [
+    {
+      "id": "f3491b7e-39be-4f3c-8ce3-946fe33b44e8",
+      "source": "c532619c-8d09-414a-b986-d01c9993d3d3",
+      "target": "b2728b9d-3b3d-4225-9e1f-be37a9fe24b7"
+    },
+    {
+      "id": "1258838c-1611-4da3-968e-ddbfed800e4e",
+      "source": "fbcceaee-9c31-480f-8bf1-739eeb0b0466",
+      "target": "a3f429d1-9778-4baf-be93-64029e21521c"
+    },
+    {
+      "id": "b48aca3f-9f04-40ef-93bd-757327aa4b44",
+      "source": "719f7e42-5784-4ad6-8248-5899902905c1",
+      "target": "bd9d5103-ac23-4d6d-837b-cb8875676e9c"
+    },
+    {
+      "id": "44235f07-f570-4c61-bf08-4ea2cc40de79",
+      "source": "36d9b468-69b0-4535-85be-cc91f8e00812",
+      "target": "90984907-fa66-41f1-9a1d-078cedc52002"
+    },
+    {
+      "id": "1012c5c2-3b86-4a6c-9c6e-6d27a05ef0df",
+      "source": "4fdcab62-4123-4baa-855f-4c276c065c9c",
+      "target": "a58a7b07-21d7-4abc-9cc3-b9330ffa8d83"
+    },
+    {
+      "id": "f5d64fd0-3c37-4730-850c-18bf9341eb37",
+      "source": "1698ae8e-d2d7-4908-aea0-8162bd9f9f5e",
+      "target": "365824a0-f510-4ecd-858e-394174ffe94f"
+    },
+    {
+      "id": "ac8b00ca-606d-451b-bc9c-67f0fd51270e",
+      "source": "4400630d-ce08-4dc8-83a3-3476fcbf31ce",
+      "target": "238919c2-8e74-4be9-8d9e-04d8cff7a0c9"
+    },
+    {
+      "id": "9be590cf-899b-4b1e-aaba-6a87b0dee1e1",
+      "source": "47e128e1-fdc7-4909-b927-b59e8f53b93a",
+      "target": "5945a53f-ad08-42d2-9e8e-421be2fb9a87"
+    },
+    {
+      "id": "04990ddd-d3e1-4890-9683-5628381eb64d",
+      "source": "23770169-98b9-4e7d-8008-934db16cfa2f",
+      "target": "48f72651-cfcf-4e4d-ad51-6964c061b421"
+    },
+    {
+      "id": "428186ae-7224-4f89-ace4-df38afbc95ed",
+      "source": "f7945ae2-5725-4897-b5f7-6904c01c3b9d",
+      "target": "df1cc2f8-45f5-42a6-b39c-2c0d45e81f23"
+    },
+    {
+      "id": "0a5993d7-468f-4835-975c-bdbf3787c7b7",
+      "source": "e0bdfb86-96c9-4e2c-ac8a-68c52a3aee25",
+      "target": "21f79471-a21a-4d05-ab6f-26641cdbf20b"
+    },
+    {
+      "id": "c4f90ebc-222e-4969-b599-a81bb0a177f9",
+      "source": "8814e622-7c64-429a-8add-58f632ba4a17",
+      "target": "107c3b2e-1f42-4a02-bca8-e262a24ae5dc"
+    },
+    {
+      "id": "4a2d76cd-0234-4cee-9dbf-2613aba66611",
+      "source": "4c80b6c2-14ce-4bb0-bd1b-4fd9e7fcb8c8",
+      "target": "40241c78-7a2e-44c9-a5d6-a7b4bfe4463e"
+    },
+    {
+      "id": "3485b29f-d8c0-4fe8-958f-bd961819bd7e",
+      "source": "0bef3f8b-7067-4030-8053-2eb964be5c04",
+      "target": "748ef884-359f-4c9a-9acd-93b3c6cac019"
+    },
+    {
+      "id": "338aa022-5be7-4783-b7b3-7c462bf8895b",
+      "source": "dab09a21-178e-4344-a09a-f8858b0a719b",
+      "target": "e655b1bc-597d-4f22-8d03-a787f6e15b4b"
+    },
+    {
+      "id": "01cd527c-b572-4c83-8a1e-afd17e13c23f",
+      "source": "c1200ecd-fac9-4101-8216-d406bbc0fe1f",
+      "target": "fed39888-64e4-4002-b060-3a80f34af534"
+    },
+    {
+      "id": "97f84a57-6cdc-402d-b614-de13a414a856",
+      "source": "3be6259f-68b8-4a8f-9ea2-b9d615362277",
+      "target": "6bc64b6d-a4bb-48c0-a519-f114e03a93e1"
+    },
+    {
+      "id": "8a262984-3078-4ce5-ae6f-67ae26535347",
+      "source": "2b455950-25f9-4e1a-a266-e97672f17175",
+      "target": "ec101d49-433e-433b-9b01-89def42b2b88"
+    },
+    {
+      "id": "4ebf9cb3-24b4-42da-9014-90f0529ec81c",
+      "source": "eca46d57-1e02-4881-925b-aacbe5dea6db",
+      "target": "8cb76fe6-14c0-4d50-815a-ba3d38f7691a"
+    },
+    {
+      "id": "b37206d6-09cd-48b2-8bb2-008a9d45f505",
+      "source": "90a51c09-9a84-413b-81bb-d0ca2a4909de",
+      "target": "8627a287-a7cd-41d4-9772-348dccea00a8"
+    },
+    {
+      "id": "7b9e3c5e-994e-4598-9743-c4cab7779705",
+      "source": "f1fc1f98-3596-4d0d-8fca-53d7a463de66",
+      "target": "904348b5-118a-4431-93fc-c3846c1e630f"
+    },
+    {
+      "id": "8ce172eb-9f27-4a48-8a12-85c38facbf45",
+      "source": "cf872541-66e0-487b-9d24-18bc0fbcf07b",
+      "target": "5a0ead8a-4f08-4942-af4e-aabb63c0a27a"
+    },
+    {
+      "id": "e35bb678-6b82-416d-9130-a2f23b92d203",
+      "source": "a79e84da-e40c-47bf-9b28-2cc34b24126a",
+      "target": "8a3cbac2-ec49-44ab-b138-379c782ac6e4"
+    },
+    {
+      "id": "0cef9fa2-1a5c-4650-8ad6-d557e2b2b062",
+      "source": "76e1af4f-c33e-472c-81d1-dd4067a0fb28",
+      "target": "bc9e6beb-89a2-4534-9449-323bedd5992c"
+    },
+    {
+      "id": "0f0ac05a-f471-43e4-ac67-576af2693296",
+      "source": "508e8091-e6e2-4245-bd01-198dbc1ba50c",
+      "target": "71a602fe-f91d-4439-b0cb-d6eb3157a013"
+    },
+    {
+      "id": "0aa03b6f-66a0-445a-be71-5cc6dce029b5",
+      "source": "07525a66-c0bc-4f90-81df-7c85c4aa10c4",
+      "target": "3177748e-ca54-4d5b-b08d-7521aae1fa32"
+    },
+    {
+      "id": "ec8fbc34-ab38-49e8-baac-2ec1a959e0e1",
+      "source": "d073cf47-7f7b-4cae-8520-00487430924e",
+      "target": "faa2c2d8-f42c-40e6-90a2-b705e5f55f01"
+    },
+    {
+      "id": "0af449f6-3276-4c38-8b77-6dc8e3d6401e",
+      "source": "39473b65-f9d5-4423-a1e3-1505de18ed3d",
+      "target": "a66913d2-31ff-4fe5-a99a-c0939f3b1c61"
+    },
+    {
+      "id": "289fb670-fb54-4c8f-b59e-0e63c8e3d67d",
+      "source": "c763e1dc-5753-4870-9422-6ea7904818d8",
+      "target": "80ac1b05-88f9-43fc-a22f-57f14b30f4cc"
+    },
+    {
+      "id": "ce4cfcf2-d9a3-4bcd-b427-43bcee97fd01",
+      "source": "c26ff9a7-21ea-41bb-a2e9-54ca9dde1c91",
+      "target": "ed8c048e-56ca-4d35-85fc-afcadaa21e82"
+    },
+    {
+      "id": "fdf21366-914c-4a9b-9f6d-e9fad30c87d0",
+      "source": "7efc5324-e960-4140-92af-9e3d7bd18176",
+      "target": "e68d239d-72a3-4a38-bf63-d69c6507cc22"
+    },
+    {
+      "id": "2d1bf64b-c667-47e2-ae43-2261db365233",
+      "source": "2828f5c6-3702-41c1-ba49-9a3421ed9d3c",
+      "target": "fcf0a2f3-45b6-4e73-b649-ff885cf691fb"
+    },
+    {
+      "id": "449582d1-8385-4bbf-8db4-8124413c07b9",
+      "source": "bdb942fe-ff66-4fe2-9267-a3c34550e68e",
+      "target": "6e9a9d7b-89ac-4f3e-b6a1-0e4aa0b7279e"
+    },
+    {
+      "id": "361c7d82-a244-4cd5-b148-16ea77fe92bc",
+      "source": "7c68f24b-85ae-4ea0-801b-ab6ba342d295",
+      "target": "37857dfa-652f-428e-8b0f-4e9faab27026"
+    },
+    {
+      "id": "63375587-d725-4aa1-a5ad-e2329ce3b42f",
+      "source": "a623f47e-5e26-4a05-8b11-8ad2d4dc11c8",
+      "target": "cf40758a-94ad-4e74-8459-512be33a9e5a"
+    },
+    {
+      "id": "a85b7fd7-c6a7-44c4-86a5-f0ae563308c0",
+      "source": "9b49febb-4fff-445d-9cb5-18fa8e0131c8",
+      "target": "c61f8a3e-7fdc-4093-ad79-67bf8770503f"
+    },
+    {
+      "id": "57bf6474-753f-4e2f-983f-e02a386ca8f6",
+      "source": "46f57f38-55ce-45cb-857b-3255a4e851b0",
+      "target": "d8a5d5ef-3410-4e92-8d9a-b36c39c59940"
+    },
+    {
+      "id": "3a89aac9-4f60-4e75-b8d5-26229a8e7bc8",
+      "source": "7e5ce5b3-f3de-44fa-8b7b-5823c4112a0f",
+      "target": "0091120e-fe7b-4c76-9e24-5f96c5f4184f"
+    },
+    {
+      "id": "a9d614e2-4ad2-4bd6-b863-85e6be59d877",
+      "source": "47b674eb-b90c-46b9-9ee4-35ee05328789",
+      "target": "aab9c8b2-0ea7-4961-b276-ed59120476dd"
+    },
+    {
+      "id": "e8686601-169f-4e27-b9f9-f93f043c9d50",
+      "source": "372230f4-c581-4d66-80a8-58abbc1e4ef0",
+      "target": "ae59787e-0837-4c89-a0ba-45ec637a73c4"
+    },
+    {
+      "id": "7d129565-d2bc-451f-a8ae-d5b51506a267",
+      "source": "cfaf945e-6f8e-4fb5-b48d-d2ea451d9495",
+      "target": "32e7b638-0333-43e6-83cc-508be7d302f0"
+    },
+    {
+      "id": "4452f855-4e93-4a12-96be-5550a37d0392",
+      "source": "272f890d-1a2e-40d1-899c-fdaaa2c53311",
+      "target": "d9b470d5-d057-4fc9-a6c9-8c693e45af06"
+    },
+    {
+      "id": "3668c556-5b8e-4c21-8c7e-2e2c389b430a",
+      "source": "83bd9ac2-64f5-42bb-8f2c-aa07cd7a18e2",
+      "target": "5d7fd10b-23c3-4c39-89be-58d1838cb869"
+    },
+    {
+      "id": "4129e6a5-3b81-4ef6-90b8-fa472daf6758",
+      "source": "7f52d8aa-8732-40b3-8902-cd50a9af7b60",
+      "target": "a8e34b10-c32b-4014-aa32-60a59c430632"
+    },
+    {
+      "id": "7968d665-d730-4b3e-9831-1a8cfbc64d8e",
+      "source": "7a864bee-02dd-4aa6-b087-3f2d11bddec9",
+      "target": "5940903e-4d56-49ce-a190-c008795142d6"
+    },
+    {
+      "id": "8c434f48-4e8c-4a8d-b674-e14bf55af304",
+      "source": "d185ab9e-fcb2-4dd2-860f-2339d68cab26",
+      "target": "c7cf8e3f-980d-45e0-981f-87605d27ab81"
+    },
+    {
+      "id": "76b61df4-3caf-439e-ac3c-9b4df33ea3bf",
+      "source": "b6df8f0b-0c93-4144-8dc4-09c7a11678a1",
+      "target": "5fab937c-ee45-4d8f-9d2d-5501ed6da7cd"
+    },
+    {
+      "id": "6b656413-b1ac-4116-b782-18c82f97ce02",
+      "source": "ee38040d-827c-46f1-8c49-1fbaadd7d473",
+      "target": "a39142f5-5751-4556-8a01-ca83e12c35b7"
+    },
+    {
+      "id": "f43f1606-1f9c-45d7-b8e3-fa35fa054c80",
+      "source": "d2539364-eb97-4b10-893e-3be87c65f6d7",
+      "target": "6d2947b1-cb5e-4058-9e22-f6ab35ad2c8e"
+    },
+    {
+      "id": "895414fb-cd91-4529-b4a8-a35899f0c897",
+      "source": "9c29c1d1-b41c-4c8a-acdb-e6cafe19de83",
+      "target": "3d8ee378-5ff7-4b5a-8bdb-8810753274e0"
+    },
+    {
+      "id": "2cd6be3c-dc90-4ff9-a38b-98440d9fbf0f",
+      "source": "c58bd3e3-c17b-4ecf-8bf8-1a888a10579b",
+      "target": "e575fcb2-acb3-4ffb-b9c0-8be37c9813b4"
+    },
+    {
+      "id": "28df2f23-182f-4d31-ae42-4a777ccabeef",
+      "source": "1b869abe-7d12-40bb-988c-a61df98c5156",
+      "target": "d44414b2-599b-4d13-97a6-80e2f8edd68e"
+    },
+    {
+      "id": "b52e91b1-5ae6-4dc9-9e5c-e3733cc83acf",
+      "source": "d8602240-23fd-4044-b472-785e3b54985e",
+      "target": "a3392368-9d12-4635-9409-e1d2080206b5"
+    },
+    {
+      "id": "0159ef0b-fad2-4922-9cae-4afadaaf5f35",
+      "source": "07ea5fda-baa3-4691-b814-54a7c0225519",
+      "target": "5e950ef8-1c0f-465d-b3b0-5422aff60a90"
+    },
+    {
+      "id": "bfbbb478-f6fc-4386-9403-dfa92b2952b7",
+      "source": "e13377e3-9d0d-43fb-94bc-e14d0b91e2e8",
+      "target": "cfdcc01f-68cd-4462-9c8d-0559ab4cf483"
+    },
+    {
+      "id": "6dd39a19-4775-4c14-9cdf-3d25b9ee4b85",
+      "source": "5e691918-9d43-4ffd-b8a1-9ee3d0606a0a",
+      "target": "0e5c3b2c-51ca-4b3e-955d-172839fea2db"
+    },
+    {
+      "id": "643ffda1-e069-4e88-97d3-9014b29cf281",
+      "source": "7f83ad8d-ab59-4017-9d3d-1cbfa84853c2",
+      "target": "85d6117d-0c17-4c3a-aa63-5fa54f0caff1"
+    },
+    {
+      "id": "c6f19381-70a8-4796-b6c6-e29356710914",
+      "source": "53128996-6006-4e9d-8668-a3f658f3de0a",
+      "target": "17019ec5-f678-49d4-927f-8e0d6c0982fb"
+    },
+    {
+      "id": "dfdb5085-3f21-4410-9a2a-c45fe725c0d3",
+      "source": "f65af57e-9996-47db-ad2f-241d25d98992",
+      "target": "50737340-2935-47c7-8ee4-d1a73619f408"
+    },
+    {
+      "id": "3f058286-04fe-46ca-b925-7bf377975862",
+      "source": "56182ff9-96d8-43de-839a-5052c4fd2bd2",
+      "target": "8723cc34-a47e-4f46-b285-3a4d57c38ce2"
+    },
+    {
+      "id": "335b30b2-700f-4dac-9ee0-fb68b7e85e2c",
+      "source": "de186597-37b3-4ec6-951b-26801bdc2c79",
+      "target": "035908b3-6319-46b3-97e1-3207f7dca35d"
+    },
+    {
+      "id": "8ab31cdf-4b94-47e3-b01a-a737e9f111cc",
+      "source": "6454bf26-3e72-4e72-ab16-660ef072399b",
+      "target": "76bc0e1e-c4c4-4fac-91da-b9db52301d88"
+    },
+    {
+      "id": "2ce9c40d-cd62-4dc1-8e52-93714962fe84",
+      "source": "780147ad-cb91-4119-810c-b4524b6d8048",
+      "target": "043e6f6f-370c-4643-8874-1e5037c7659e"
+    },
+    {
+      "id": "88b0c460-f1de-43e6-8964-9f4601e7041f",
+      "source": "27a08439-6d75-4a1a-847d-1c062f60599b",
+      "target": "c9cdeb6b-9248-4efe-bbd5-d361f4ef9d97"
+    },
+    {
+      "id": "9de99310-cc8d-4020-a3da-1e7b80828f08",
+      "source": "93289e17-7838-4adb-b37e-a8837ee7d77b",
+      "target": "0380f2b9-ea81-4fb1-bf0a-89c2b9619122"
+    },
+    {
+      "id": "10b2873f-4fd5-4a3c-8ed6-be54a7d2c4dc",
+      "source": "e62211a0-99d8-4c36-a110-aea6139e6393",
+      "target": "2b941e19-faa5-43f6-84cc-ed05d0215e30"
+    },
+    {
+      "id": "8b452796-211b-4250-ae38-694f0735af78",
+      "source": "125fdd0b-646b-4117-a8d6-5206991291cd",
+      "target": "d98a2cbb-9bab-41d2-974f-a9517eaf31dd"
+    },
+    {
+      "id": "0346010f-9b5d-42ea-be33-8526e0bd7c25",
+      "source": "a755247f-31b4-4112-a418-01f2ee0a8a6e",
+      "target": "225fb9db-8a2e-45ad-b058-b3c7031160ad"
+    },
+    {
+      "id": "511db84a-26f6-4671-a263-41d3aad27102",
+      "source": "a6d55844-e724-4843-8f5a-ff603feb7891",
+      "target": "d01fa888-d619-412c-bd91-3d05466c66c9"
+    },
+    {
+      "id": "b8632171-72fd-4960-80f8-941c983259b4",
+      "source": "4888e285-1932-4210-9012-240a2b75acba",
+      "target": "9f7bacf4-efd9-43d6-b7f8-9b3f610fb873"
+    },
+    {
+      "id": "89350229-0645-4244-a469-9aed7aa14f95",
+      "source": "5556312b-9d28-44b1-a981-7c8faf42c65c",
+      "target": "aad55e50-2254-465c-b30f-7a7e4fefde36"
+    },
+    {
+      "id": "fabb2629-6d18-4397-ad92-35ddcd0d23ca",
+      "source": "875fb30b-d397-49ac-bf4f-3b398a0905c5",
+      "target": "61cff687-d287-47d8-8b9a-920065100abb"
+    },
+    {
+      "id": "5db6731e-c13b-4261-8cc8-4c769460efd0",
+      "source": "c7dc7740-0664-4293-a0eb-d10ad5bd28c6",
+      "target": "b1eb14a8-82c2-4204-8622-f9967aa4e2f9"
+    },
+    {
+      "id": "8959dcf7-0685-4705-bdab-0add4984ba6b",
+      "source": "1596cd35-fad8-417a-b579-a56cb8cb3093",
+      "target": "d18b697d-ae8d-4171-b2fa-a4c7b1fd78f7"
+    },
+    {
+      "id": "f588f2f4-a626-4cc4-b64a-baff124b6cc7",
+      "source": "2c6b428a-81d7-477f-a95d-6b0805e6c196",
+      "target": "4d5dc9d9-7e7f-4f35-8e9c-2b912bfa165e"
+    },
+    {
+      "id": "d5b65cdb-f82f-4ca4-9b41-9c2c7a5788a3",
+      "source": "9bc78f9f-0149-49d2-a6a1-3a07fb6110d8",
+      "target": "22ce45bc-7b4d-4316-9077-995bd0b7fe14"
+    },
+    {
+      "id": "90f62a9f-90bc-4468-985e-49f5b2f73d3a",
+      "source": "ea4fbad3-0ead-4a00-9a39-66b2d44e6d8f",
+      "target": "78fa3e43-4735-407b-8985-af7bdeddac44"
+    },
+    {
+      "id": "3790d744-4700-4366-8229-3ad4d34547a5",
+      "source": "2049a679-bbc7-494e-8c7d-ddfecae71af0",
+      "target": "7c888ba9-c474-4f45-acf4-39a3f1ba8c09"
+    },
+    {
+      "id": "1507d4c1-1c6c-46c7-b8e1-122ac615a711",
+      "source": "d5b3b6ca-7604-40e2-a09e-223958d0dda5",
+      "target": "a8c38bd2-dbe2-4185-98f7-57ba8f390a02"
+    },
+    {
+      "id": "118b223e-6048-44eb-aec6-f1df80118971",
+      "source": "4589e0a1-3f47-4aac-8e58-4a33d041fa96",
+      "target": "3766fc04-ea2f-417f-8992-d36c89145964"
+    },
+    {
+      "id": "d46147c9-aef1-4959-a580-ce82db2a3dd5",
+      "source": "3023924f-d6ad-468b-b4b5-7f2c44f22ea7",
+      "target": "da8900fb-2797-4394-9787-2903053f269b"
+    },
+    {
+      "id": "0715cdd3-96ba-494e-be55-011ea457b49d",
+      "source": "ebcc8149-d587-4927-8813-190e65ef2b66",
+      "target": "67b038d9-685f-4ffd-9924-46ebddfc77b1"
+    },
+    {
+      "id": "c61330d9-1577-43b3-a1fe-9bf8633bbdc4",
+      "source": "5eda5470-11e6-4f11-a4db-1375488be0eb",
+      "target": "b20dd849-4d98-4f70-bd7e-80eab10a0082"
+    },
+    {
+      "id": "44051f8b-09da-4681-a24a-76600db13784",
+      "source": "5ff3141c-c48e-4e15-8b89-782a17bca085",
+      "target": "f4413a53-0b0f-4b52-8291-2012a8b862e1"
+    },
+    {
+      "id": "b8a9a310-390d-4d15-af4d-cb85723ab6cf",
+      "source": "f7780ec4-437a-41ac-9ebc-747d6125fff2",
+      "target": "da8b44be-d3fb-4484-a17f-0b6a4f7ef466"
+    },
+    {
+      "id": "61ceecf7-474d-45c7-bc40-b0e2299b7a0a",
+      "source": "12732248-a10a-47bb-b1e3-e4be8a62375e",
+      "target": "53d80c31-9bce-41ad-a953-0028fe5f0a37"
+    },
+    {
+      "id": "b31b3201-4f9a-4d18-8a3f-de038ff922d6",
+      "source": "d2da38f9-2e0f-4e71-af95-47f1b25e32f6",
+      "target": "28b157ec-38b0-49a0-bfe7-6757ab403a0f"
+    },
+    {
+      "id": "a782a9cb-285a-4b37-92e6-cd82b27fb5b9",
+      "source": "2f49a882-b9c3-4273-9093-9c570a646849",
+      "target": "9fe3a6e8-739d-4cca-8f81-a42dc36e1081"
+    },
+    {
+      "id": "aecde22e-84e0-46ce-8e3f-96026423443a",
+      "source": "6d6f8ee2-4aab-4b09-bb84-b902049e294d",
+      "target": "c505efc4-1dd6-43b3-b705-33dcb619698a"
+    },
+    {
+      "id": "8e9c9b03-1145-4579-8ab3-637c0c52bb7e",
+      "source": "b4dd7edb-1c41-4148-92b2-9be7804d86c5",
+      "target": "e7203583-ec7f-4705-9a2f-43abc1881d01"
+    },
+    {
+      "id": "df5e5b38-f004-4fa8-8790-e9430113de49",
+      "source": "e6230b29-985a-4585-a358-e6a5aeb2ad86",
+      "target": "979542f1-a452-4884-b851-a2f00fa07ff7"
+    },
+    {
+      "id": "7cecfae4-6168-4909-8c60-31277577c511",
+      "source": "6553da67-a324-49b6-9f75-94dd42e0d7be",
+      "target": "4cac8a28-bf8b-4898-b046-67f888de6db6"
+    },
+    {
+      "id": "1e04c77d-7e30-450c-9b74-277fbcd8af9e",
+      "source": "a47dba34-ccf1-4f81-aa46-2fe22510e1fb",
+      "target": "2ccd36a2-e65e-478c-a50d-cd5feffb12f8"
+    },
+    {
+      "id": "e6b4d40c-f47b-4541-a008-d2b093010c60",
+      "source": "30bd43b2-57ac-4616-849e-2c424fb018de",
+      "target": "2c680122-85a0-461e-9191-5ddff6f819bf"
+    },
+    {
+      "id": "9f4e0970-c87e-47aa-b6b2-ddabbbdaa35f",
+      "source": "17a3217e-7433-4668-ba01-5c70149e16e0",
+      "target": "d211df47-7aae-4324-ba0c-5c948c2d48b4"
+    },
+    {
+      "id": "73517cd7-6fbc-4178-afb5-4e6a13456166",
+      "source": "9742c8a2-3dd0-4b2f-a7e0-4f0dca4a4d40",
+      "target": "bf4bfe62-c109-410b-b0d7-677a89c7ad6d"
+    },
+    {
+      "id": "e2b70288-b03e-42f1-994c-521aa472e130",
+      "source": "423fb9da-5449-4c43-b741-12330ef31555",
+      "target": "944c7943-0352-4122-9fa2-fc4954b5c09a"
+    },
+    {
+      "id": "a222615e-cc26-415a-9e77-1a07b98e282b",
+      "source": "c60e433f-249c-4a76-b353-6df7618e96af",
+      "target": "cdbac058-1b4f-4452-b475-de6d5f99cdde"
+    },
+    {
+      "id": "2b91273b-14fb-4329-9ede-63a12c23f3e5",
+      "source": "3c4ce4a7-ed62-402f-9b43-7451654eeb5b",
+      "target": "f235160a-d8e2-4d68-9624-af6b7565210f"
+    },
+    {
+      "id": "407c549b-8f64-4cce-bed3-1b1bba69f835",
+      "source": "172d74fb-d57e-4a0d-875e-0661a1031979",
+      "target": "db8abc62-57bc-4d82-a2b4-f223da74ba46"
+    },
+    {
+      "id": "51294ded-46e0-438c-b7d5-3c333290440d",
+      "source": "48ceaac9-1e67-4c2a-bb64-b8e9791c2f1b",
+      "target": "d272881a-9774-4763-aa61-38ac35d01bef"
+    },
+    {
+      "id": "6d5ebfb6-e8f2-45f2-9c4c-9d74d4393208",
+      "source": "0c9b50de-3d67-491b-9727-3030df2c4046",
+      "target": "7f0c5f95-9b09-466f-b6e1-8f44c0b313b5"
+    },
+    {
+      "id": "10f800a7-ab67-42d9-805f-fd0e3517397a",
+      "source": "6a0c7f4b-e6f3-43d6-bfeb-1d799d32b276",
+      "target": "ea2b267a-3fc1-4e1d-9edf-95c537b78be0"
+    },
+    {
+      "id": "e51611f7-a5c7-4d22-9572-2fc2e1387719",
+      "source": "1ab634c0-6378-4030-a560-cf40c9d0254c",
+      "target": "9fc042cd-68f5-4843-a6f3-85dc23d39759"
+    },
+    {
+      "id": "0ca1d270-19c3-49a6-af38-880161dfe9c9",
+      "source": "bf4255a4-e30b-4f60-91f7-a2628c0a7d3c",
+      "target": "d306bf35-c5a6-42ae-8537-29f96132dbcb"
+    },
+    {
+      "id": "d0587abd-407b-43c0-b324-d45b9003e136",
+      "source": "abaa447e-f020-4660-9392-3c3af5b692b6",
+      "target": "c2921401-4520-47ce-ae1a-09b214e9da8b"
+    },
+    {
+      "id": "6bb87e47-50c2-4356-9af1-ba06ae1e1a25",
+      "source": "cc5724b4-c2c2-476d-a690-8d97809d8130",
+      "target": "91969637-e41c-4d94-865e-bc1f15c890f7"
+    },
+    {
+      "id": "f1965ec5-19bd-4d29-937e-5a9c2e114502",
+      "source": "8fb47ef6-9d4e-43a6-9822-1fdc3a4f7c26",
+      "target": "66f8036d-a34d-432e-b81a-18a79a22561c"
+    },
+    {
+      "id": "44fedac4-f50f-4430-aded-732913aacdda",
+      "source": "1d2518df-cdc2-4808-a094-1871a1ed0668",
+      "target": "b53298f5-8b75-4972-aafb-c7204afe936a"
+    },
+    {
+      "id": "51598ebe-a857-4ae1-835f-8e26d8ee33e7",
+      "source": "199b1da1-4941-427e-b684-d7622aecf946",
+      "target": "67b7814e-ef5e-4ed6-aa0d-262cfa4c7613"
+    },
+    {
+      "id": "a8200363-714e-4a5d-b267-9dfa39b19d37",
+      "source": "f4e561fc-ddad-4a63-b3be-d9f90ace53a5",
+      "target": "10d70f04-030d-4eda-9dba-492c21d6690a"
+    },
+    {
+      "id": "dd03482b-fa2a-424e-ad72-937076cda167",
+      "source": "91ab7671-b890-4899-abe3-828dcd4f747a",
+      "target": "853823f9-3d79-4d4f-a58f-0bca0d35659a"
+    },
+    {
+      "id": "4b7d7712-4d20-4dd0-92c5-9fe9e6992802",
+      "source": "a93a64af-da60-4ac2-89d5-ee0b720f864f",
+      "target": "8f9d7d0b-88dc-4a5a-9193-42c4833397ec"
+    },
+    {
+      "id": "6cdc3878-5577-4d16-b947-e2349fa086c7",
+      "source": "27ef2ec4-d644-4e68-b306-ef5e854be8fb",
+      "target": "91a8af1f-fe58-47e4-ad22-212c6377b37c"
+    },
+    {
+      "id": "a3a9fd12-fb9d-4db5-ad61-491a85927d66",
+      "source": "5e86c4d8-365c-44af-8441-b0752ffb5ff1",
+      "target": "cab6712e-5e96-453e-ae7a-b3b025975855"
+    },
+    {
+      "id": "f4241c0c-de1c-42be-b911-ffb16c3b578a",
+      "source": "a785c255-1e13-4c4b-8eb5-53051b33b665",
+      "target": "0a2a5dfe-7135-41b6-bb3b-cb3ce22c8c33"
+    },
+    {
+      "id": "46451754-f366-4559-8958-ccf2ffeeee7b",
+      "source": "4e7b46bd-e04b-44ee-934b-da52463b8378",
+      "target": "f1e450e4-9ccc-4e73-8daa-294d8f327f32"
+    },
+    {
+      "id": "ccc20554-308d-4d58-9a96-970035c9677f",
+      "source": "07c37fa2-aa09-4e24-b3b9-e258d2b6e345",
+      "target": "aaef13f2-85f9-40c2-9a3d-1250ac545c18"
+    },
+    {
+      "id": "e2fdf2e5-1834-4286-a4e5-d347db973262",
+      "source": "263a7f2d-4afd-4d76-b5ce-6dea8ab9c632",
+      "target": "67a8c212-bd84-4579-ad2e-8f4075d77d3b"
+    },
+    {
+      "id": "84cd230b-2fcb-4165-b44b-ff42c934c568",
+      "source": "7291b8cb-86b1-4589-8740-5f9878cebcea",
+      "target": "304d4b6b-df55-4759-990b-4bdd6aa54738"
+    },
+    {
+      "id": "a91da70d-62a0-4ac4-bcff-87e259ac852c",
+      "source": "c53577b9-c9bf-43fb-870c-477d08c9a326",
+      "target": "bb6d8a3b-1ceb-476a-aae6-24d9b4075334"
+    },
+    {
+      "id": "78a04885-ab1c-478f-9124-38a8b55e0cc5",
+      "source": "b01fd1a5-afe6-4ff5-9939-34449391e47f",
+      "target": "cb0d56e4-1bd4-492c-a56e-33acd50050be"
+    },
+    {
+      "id": "0241978e-cc24-4ed7-b0c9-c08b06152587",
+      "source": "8df016df-a9d2-4577-8d61-f3c1acc20c86",
+      "target": "af76c322-86f3-4425-8191-8745e97ab3d6"
+    },
+    {
+      "id": "4afbabc3-7cf5-456a-b22d-8d76d49eff0b",
+      "source": "5ee35b6b-d0c7-40c0-94e7-8b5beaed2f6f",
+      "target": "a8c3441f-1b90-4a9e-83dc-bfa58a19a07c"
+    },
+    {
+      "id": "6955bbf0-1f63-4d02-93db-7b6f7626cc88",
+      "source": "1c9f99fb-985f-465d-8d76-cb4a53ee3515",
+      "target": "5ac4d566-57c2-4eb4-b2f3-3a519df9a962"
+    },
+    {
+      "id": "d36a1188-2013-48d7-bff2-1dff63753bd4",
+      "source": "3c6ae17a-57d1-4506-871a-0b2dd6882def",
+      "target": "c747f37c-7f9b-475f-8c63-24a3db82c25e"
+    },
+    {
+      "id": "7bde4ba2-129e-4af9-9a59-176419a0316f",
+      "source": "529f8f08-86c1-4d00-83d6-b215d4544678",
+      "target": "148e7136-2595-4e48-9c5f-46412bd18b8a"
+    },
+    {
+      "id": "048c0d8a-b946-4e8e-b497-2f3efca2fc97",
+      "source": "014272db-6893-4231-acac-c614616eafda",
+      "target": "5f9356bf-9a4c-436e-a35b-d9afcd9141bc"
+    },
+    {
+      "id": "3818c49e-bc7b-4044-aab2-0ed223960af4",
+      "source": "c42ef3c6-64e5-41ac-a441-15ddc2ec7a07",
+      "target": "f567cb18-819b-4210-bcba-9f8c43038b88"
+    },
+    {
+      "id": "5df59dab-0e3a-4faa-8d87-0128dcc77b2d",
+      "source": "ef7f98ce-5367-4eff-9bb9-2a6349627c28",
+      "target": "137b4a17-f0f2-4b5e-ae2b-03aac031734c"
+    },
+    {
+      "id": "31ac45d9-1d64-480e-98f1-b971760c8261",
+      "source": "ab467dc5-adb0-40fd-b4f3-9dfa9a63b6a3",
+      "target": "7f2ec9f9-a6a0-4ca0-b483-d4834cce43f9"
+    },
+    {
+      "id": "ef44aa5b-8a95-4697-8a88-17a71587291f",
+      "source": "e31bda62-1aba-4c24-9d61-a780786fa638",
+      "target": "af4335aa-22d5-4f70-b551-dc22a92de341"
+    },
+    {
+      "id": "b24b3132-f4f9-4b17-90bb-8cc4b6db50bd",
+      "source": "69d818b5-e765-4e60-8cb1-a83b4bf50d12",
+      "target": "6ece7360-78c6-468c-a4e3-b631be5c6910"
+    },
+    {
+      "id": "62424eb2-b01a-4e6b-8e12-96191c72b1e8",
+      "source": "e9b7a82f-1965-43fe-b222-f66fc681733e",
+      "target": "d94cb3b5-b903-4424-b167-ab72f98e41aa"
+    },
+    {
+      "id": "d8cb5e4e-abc0-4743-a0e8-041737d1102b",
+      "source": "037c0118-6716-4355-996f-3e082ed4deb1",
+      "target": "6f7c23f1-53b1-41d1-bfcb-7755cb2c5239"
+    },
+    {
+      "id": "b725d46b-64a8-465d-9243-6cc7d37ca167",
+      "source": "c83d340a-73ef-44a5-b9d9-8739a49d35d3",
+      "target": "0788dfd7-43a5-40fd-bfd9-2b5432ff15c9"
+    },
+    {
+      "id": "0f07d8f1-af1d-4120-ab4c-28f299fc7af2",
+      "source": "e2d898e6-28d8-45ac-957b-89d188b559c6",
+      "target": "ad930f1d-61fb-48e2-9667-502987f6a238"
+    },
+    {
+      "id": "925f3775-035d-491e-b76a-984223c09cdd",
+      "source": "f6dd2a8e-97cd-46bc-b646-8f984efc4112",
+      "target": "44ada2a5-285e-431c-9fa0-c33806bcef90"
+    },
+    {
+      "id": "85a05d60-c5cd-4369-a25b-09c587956e60",
+      "source": "4127c1fa-9f2a-497a-a0c2-e84f9bdff74b",
+      "target": "df4e21eb-20cf-4dc4-a38d-0e2b4783675a"
+    },
+    {
+      "id": "b633900c-d5bb-44cb-8978-0f2af8392e17",
+      "source": "afa05219-0e48-4bf4-8596-6954c22aefe8",
+      "target": "0564289b-a75c-4953-94b7-32ed6a1538c1"
+    },
+    {
+      "id": "bc3ea4ae-36f3-41f4-9cdf-52360f0f8391",
+      "source": "eaee7e33-54dc-460f-a0af-411881b9b240",
+      "target": "1a0a242e-a475-4e28-84c7-7636ff80b2a5"
+    },
+    {
+      "id": "97e3e041-e694-465a-812f-00e3eb33a3b7",
+      "source": "5729de80-b824-4638-9cb4-30bcf36c436a",
+      "target": "7baf30ae-4e61-4b86-ad95-378b19ca2495"
+    },
+    {
+      "id": "ea652a10-e72c-42fd-9c09-ecd234037978",
+      "source": "7701b071-2745-4221-8d12-b3448333c199",
+      "target": "3a69079e-65c1-4d5b-821f-538eb7d34196"
+    },
+    {
+      "id": "a3301a21-b126-49ee-b1c7-db12416395df",
+      "source": "a95abd8f-183e-44e5-824d-2e58dd2e4e85",
+      "target": "b2f69c92-8324-4b8a-bc48-4b15fac2c4a9"
+    },
+    {
+      "id": "d836df9c-c32f-459d-b515-8ade6789a47e",
+      "source": "75213a7a-6ab1-4d8f-8c8f-abece1a7f9e6",
+      "target": "b037da8b-54f8-4a5b-bbdc-b281032deb1c"
+    },
+    {
+      "id": "88efcffe-4ccf-431f-82bb-498b7a28c1f7",
+      "source": "69e28c2e-15b2-4bbd-9d9d-d29808ed3f9a",
+      "target": "960200c1-a181-4f20-a4d0-a55243834819"
+    },
+    {
+      "id": "ac215356-17ae-4fb2-aa83-64372311db7e",
+      "source": "6d57a3dd-6df4-474d-a95f-0ca99f2be637",
+      "target": "f6ad1ccc-c063-4698-a74c-690b34f24b4b"
+    },
+    {
+      "id": "6c371894-02c5-4b0e-b0f4-daba7f3afcce",
+      "source": "12d2eea3-9f2e-45aa-842f-d9ce5c643118",
+      "target": "ad479863-9c58-4a6c-a628-a46685025456"
+    },
+    {
+      "id": "10ba0ea5-35c4-48c8-badc-4ccee145fc3b",
+      "source": "1bce9e5e-3200-43f9-a9fe-4a086e79276b",
+      "target": "746ac2be-db40-4351-90f3-77f470b1bc53"
+    },
+    {
+      "id": "f8cc193e-871e-47d1-b50c-c41f38361bbd",
+      "source": "78464d3e-fb8a-4934-af61-3c18ef055eea",
+      "target": "e4d38a68-3ccf-4c3f-9a61-f2e3f7040324"
+    },
+    {
+      "id": "856217be-b93f-4618-bf8c-855014f88552",
+      "source": "ed60ca78-bcec-463c-9a16-441aaab6f0f3",
+      "target": "5d5aa531-5bd1-4a68-93c5-dd5133781042"
+    },
+    {
+      "id": "c74f03c2-8981-422a-9680-ee56a58d0e57",
+      "source": "9bb3d93e-e937-4921-9f47-a26d7be85468",
+      "target": "ec64b8ee-0a09-48ee-a1d1-d0b24e0ad994"
+    },
+    {
+      "id": "5c63b0c1-6a35-4730-a6b9-104833de5c7a",
+      "source": "73ea8f7c-420a-45aa-86d9-2a2cdbd15e59",
+      "target": "36e71336-7554-457b-bf7c-4d7fa18322fb"
+    },
+    {
+      "id": "359e3233-92fc-4301-b3ec-22bfdc7cfe02",
+      "source": "15ebc1a9-1367-4a19-a61d-5f77bcaadb22",
+      "target": "0f3a4625-6adb-4f3f-a91f-a645465e419a"
+    },
+    {
+      "id": "5d355dd3-8807-4152-8ad6-1a01013ba8c5",
+      "source": "6d4abc3f-a012-41f9-9dd4-ac4e3e32e6e5",
+      "target": "4fbf0278-2772-4875-a74a-25064d516831"
+    },
+    {
+      "id": "cd23819b-6ea9-4867-9745-90090ad5d25c",
+      "source": "f3b550e5-aacf-4971-b81a-c1a56cda5dba",
+      "target": "56060ea2-3c6f-4ba9-82f4-469f1e42037f"
+    },
+    {
+      "id": "c3e8d692-0aec-4465-8fdc-9bd7c59b3f48",
+      "source": "f289f153-5fad-4ba3-af06-c9d5741c2fc9",
+      "target": "fcca7008-186e-4536-90da-c57864603fac"
+    }
+  ],
   "quickStart": {
     "completed": true
   },

@@ -17,13 +17,20 @@
         },
         {
           "type": "s7",
-          "name": "Power On Time Drives",
+          "name": "Machine Type",
+          "address": "DB1210,X1.0",
+          "id": "25bef6a8-0806-4f56-b0f7-f1c4f3f7b4eb",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Power On Time Overall (with enabled drives)",
           "address": "DB25,DWORD0",
           "id": "34dd12f0-3dd6-4d07-b610-f7457857b9e5"
         },
         {
           "type": "s7",
-          "name": "Power On Time Overall",
+          "name": "Overall Power On Time",
           "address": "DB25,DWORD4",
           "id": "b2c4e28b-4c75-4a26-9638-8ba7b95b6571",
           "readFrequency": 1000
@@ -37,7 +44,7 @@
         },
         {
           "type": "s7",
-          "name": "Software Version",
+          "name": "Software Versions",
           "address": "DB125,S14.11",
           "id": "ead624a5-3666-48c8-8619-d004be96fe60",
           "readFrequency": 1000
@@ -72,7 +79,21 @@
         },
         {
           "type": "s7",
-          "name": "Alarm active",
+          "name": "Emergency Stop Ch1",
+          "address": "Q360.0",
+          "id": "9670d5e2-626c-4494-bf71-d40652396369",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Emergency Stop Ch2",
+          "address": "Q360.1",
+          "id": "d623f53a-459b-49ab-a4cf-3498cbaf1c61",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Number of active alarms",
           "address": "M65.4",
           "id": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
           "readFrequency": 1000
@@ -85,14 +106,21 @@
         },
         {
           "type": "s7",
-          "name": "Controller Mode",
-          "address": "DB340,BYTE60",
+          "name": "Controller Mode Auto",
+          "address": "M128.4",
           "id": "bc226243-3473-4924-8fa7-e603ac37234c",
           "readFrequency": 1000
         },
         {
           "type": "s7",
-          "name": "Main NC Progam",
+          "name": "Controller Mode Manual",
+          "address": "M128.3",
+          "id": "597bad86-30d2-4f4d-ab2c-7fa767889136",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Main NC Program",
           "address": "DB340,S0.18",
           "id": "6f20efdc-fcbe-402c-bc07-fa51739705d4"
         },
@@ -111,9 +139,37 @@
         },
         {
           "type": "s7",
-          "name": "Least one axis moving",
+          "name": "Least one axis moving (spindle)",
           "address": "DB201,X1.6",
           "id": "e85d2ede-5554-46c8-8ba1-b2613dce0a51",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Least one axis moving (feed axe)",
+          "address": "DB200,X1.6",
+          "id": "7869144c-4792-41f5-990d-95972657f1de",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Desired parts Ch.1",
+          "address": "DB80,DWORD138",
+          "id": "8cc45be9-a215-43c4-93e1-8100b22ea4cd",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Desired parts Ch.2",
+          "address": "DB340,DWORD44",
+          "id": "5b1abbcb-f288-4c4e-9984-2ebe351eed2c",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.0",
+          "id": "c532619c-8d09-414a-b986-d01c9993d3d3",
+          "name": "ALARM RESET MACHINE ON",
           "readFrequency": 1000
         },
         {
@@ -430,6 +486,12 @@
             "1": "interrupted",
             "2": "active"
           }
+        },
+        {
+          "id": "1229aa93-667d-4c95-b2b6-d7c8156f7458",
+          "address": "machineSN",
+          "name": "Serial Number",
+          "type": "event"
         }
       ],
       "enabled": true,
@@ -581,6 +643,15 @@
   ],
   "virtualDataPoints": [
     {
+      "id": "c6fc6b89-d641-401f-be1d-3f600ff94d72",
+      "sources": [
+        "9670d5e2-626c-4494-bf71-d40652396369",
+        "d623f53a-459b-49ab-a4cf-3498cbaf1c61"
+      ],
+      "operationType": "or",
+      "name": "GM Emergency Stop"
+    },
+    {
       "id": "7636402b-4eb2-4576-a8c0-477eb7eec990",
       "sources": [
         "caf673b0-f3a3-447f-a5c3-c52c9d969805",
@@ -612,6 +683,29 @@
       "sources": ["7636402b-4eb2-4576-a8c0-477eb7eec990"],
       "operationType": "not",
       "name": "GM Alarm Not Active"
+    },
+    {
+      "id": "345f2352-f4d5-4aea-9d33-8983df965110",
+      "sources": [
+        "bc226243-3473-4924-8fa7-e603ac37234c",
+        "597bad86-30d2-4f4d-ab2c-7fa767889136"
+      ],
+      "operationType": "enumeration",
+      "name": "GM Controller Mode",
+      "enumeration": {
+        "items": [
+          {
+            "source": "bc226243-3473-4924-8fa7-e603ac37234c",
+            "returnValueIfTrue": "Automatic",
+            "priority": 0
+          },
+          {
+            "source": "597bad86-30d2-4f4d-ab2c-7fa767889136",
+            "returnValueIfTrue": "JogManual",
+            "priority": 1
+          }
+        ]
+      }
     },
     {
       "id": "e0d04d80-93d7-42ed-bfbc-d56abf37cac6",

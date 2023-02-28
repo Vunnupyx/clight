@@ -696,12 +696,12 @@
         "items": [
           {
             "source": "bc226243-3473-4924-8fa7-e603ac37234c",
-            "returnValueIfTrue": "Automatic",
+            "returnValueIfTrue": "2",
             "priority": 0
           },
           {
             "source": "597bad86-30d2-4f4d-ab2c-7fa767889136",
-            "returnValueIfTrue": "JogManual",
+            "returnValueIfTrue": "0",
             "priority": 1
           }
         ]

@@ -194,6 +194,7 @@
     "ApplyChanges": "Apply Changes",
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
+    "UnsupportedAddress": "The data point does not correspond to the selected type",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
     "TariffStatus": {

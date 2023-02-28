@@ -29,6 +29,7 @@ describe('Test DataPointMapper', () => {
     const dataSource: IDataSourceConfig = {
       protocol: DataSourceProtocols.S7,
       enabled: true,
+      type: 'nck',
       dataPoints: [
         {
           id: 'source1',

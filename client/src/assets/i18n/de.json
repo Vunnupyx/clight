@@ -194,7 +194,7 @@
     "ApplyChanges": "Ändeurngen speichern",
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
-    "UnsupportedAddress": "You are not allowed to unsupported address",
+    "UnsupportedAddress": "Der Datenpunkt entspricht nicht dem ausgewählten Datentyp.",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
     "TariffStatus": {

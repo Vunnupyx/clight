@@ -194,6 +194,7 @@
     "ApplyChanges": "変更を適用",
     "TestConnection": "テスト接続",
     "DuplicatedName": "名前が重複しています",
+    "UnsupportedAddress": "The data point does not correspond to the selected type",
     "DuplicatedAddress": "アドレスが重複しています",
     "SelectVariable": "変数選択",
     "TariffStatus": {

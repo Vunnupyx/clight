@@ -194,6 +194,7 @@
     "ApplyChanges": "変更を適用",
     "TestConnection": "テスト接続",
     "DuplicatedName": "名前が重複しています",
+    "UnsupportedAddress": "You are not allowed to unsupported address",
     "DuplicatedAddress": "アドレスが重複しています",
     "SelectVariable": "変数選択",
     "TariffStatus": {

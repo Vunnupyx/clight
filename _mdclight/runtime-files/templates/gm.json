@@ -7,6 +7,11 @@
   },
   "dataSources": [
     {
+      "dataPoints": [],
+      "protocol": "ioshield",
+      "enabled": false
+    },
+    {
       "dataPoints": [
         {
           "type": "s7",
@@ -18,7 +23,7 @@
         {
           "type": "s7",
           "name": "Machine Type",
-          "address": "DB1210,X1.0",
+          "address": "DB210,X1.0",
           "id": "25bef6a8-0806-4f56-b0f7-f1c4f3f7b4eb",
           "readFrequency": 1000
         },
@@ -171,142 +176,17 @@
           "id": "c532619c-8d09-414a-b986-d01c9993d3d3",
           "name": "ALARM RESET MACHINE ON",
           "readFrequency": 1000
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte0",
-          "address": "DB101,BYTE0",
-          "id": "caf673b0-f3a3-447f-a5c3-c52c9d969805"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte1",
-          "address": "DB101,BYTE1",
-          "id": "07b2a3d2-97b4-459a-bafd-4420406477fd"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte2",
-          "address": "DB101,BYTE2",
-          "id": "b3a03110-c796-4736-bf92-df655d8598f0"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte3",
-          "address": "DB101,BYTE3",
-          "id": "a0a12f28-4047-4f7a-ad55-a1b25f954c04"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte4",
-          "address": "DB101,BYTE4",
-          "id": "f661f7b8-9aa2-4945-a6d4-15f1581a08ed"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte5",
-          "address": "DB101,BYTE5",
-          "id": "36b33b9d-c2e8-41df-ab2a-1f5fce1d5499"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte6",
-          "address": "DB101,BYTE6",
-          "id": "dd50d54f-a60f-4157-b742-6882300b6cb9"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte7",
-          "address": "DB101,BYTE7",
-          "id": "b894677d-35f2-4eb6-88e9-dda4d2b521c4"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte8",
-          "address": "DB101,BYTE8",
-          "id": "7fef7a1a-581e-4b76-b37f-946738c27cd5"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte9",
-          "address": "DB101,BYTE9",
-          "id": "f4825de3-4e8a-43e0-8bfc-1f5436853b57"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte10",
-          "address": "DB101,BYTE10",
-          "id": "66aeb305-353d-4bf6-ba3d-1021aef36369"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte11",
-          "address": "DB101,BYTE11",
-          "id": "4b66f93f-11d6-46b6-b290-89ad7df9ea4b"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte12",
-          "address": "DB101,BYTE12",
-          "id": "06b9035e-e111-4ed0-97af-b9821f55dc84"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte13",
-          "address": "DB101,BYTE13",
-          "id": "e7908b1e-349e-458b-923b-6c587e1e1275"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte14",
-          "address": "DB101,BYTE14",
-          "id": "c6e95fa4-63e0-4bdb-b571-edeb7dc06b32"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte15",
-          "address": "DB101,BYTE15",
-          "id": "3392e390-6b67-4fc6-8b55-f43643a20977"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte16",
-          "address": "DB101,BYTE16",
-          "id": "a85d3e21-2ee9-4bc0-b269-020332aa6b02"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte17",
-          "address": "DB101,BYTE17",
-          "id": "75ada2e8-ce5d-44ce-beb1-cf2e8510adfe"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte18",
-          "address": "DB101,BYTE18",
-          "id": "ad3f33ee-5d48-4e0f-8dc9-20f3bb6d7607"
-        },
-        {
-          "type": "s7",
-          "name": "Alarm Byte19",
-          "address": "DB101,BYTE19",
-          "id": "7c5486cf-b38b-4a75-b215-9c90096af799"
         }
       ],
       "protocol": "s7",
       "connection": {
-        "ipAddr": "192.168.214.1",
+        "ipAddr": "192.168.214.231",
         "port": 102,
         "rack": 0,
         "slot": 2
       },
       "enabled": true,
-      "type": "nck"
-    },
-    {
-      "dataPoints": [],
-      "protocol": "ioshield",
-      "enabled": false
+      "type": "s7-1200/1500"
     }
   ],
   "dataSinks": [
@@ -524,10 +404,7 @@
           "address": "avail",
           "initialValue": "AVAILABLE",
           "type": "event",
-          "map": {
-            "0": "UNAVAILABLE",
-            "1": "AVAILABLE"
-          },
+          "map": {},
           "id": "1d894a54-ff1e-427b-bffd-8449718e7f80",
           "mandatory": true
         },
@@ -539,10 +416,14 @@
           "initialValue": "AUTOMATIC",
           "map": {
             "0": "MANUAL",
-            "1": "MANUAL_DATA_INPUT",
             "2": "AUTOMATIC"
           },
-          "mandatory": true
+          "mandatory": true,
+          "dataMapping": {
+            "source": "345f2352-f4d5-4aea-9d33-8983df965110",
+            "target": "ab72a983-0dbb-45bd-9cb0-b99288823004",
+            "id": "720fdc27-f866-40e2-a22b-4bd35978dfa9"
+          }
         },
         {
           "name": "Execution 1",
@@ -551,13 +432,15 @@
           "id": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
           "initialValue": "ACTIVE",
           "map": {
-            "1": "INTERRUPTED",
-            "2": "STOPPED",
-            "3": "IN_PROGRESS",
-            "4": "WAITING",
-            "5": "ABORTED"
+            "true": "STOPPED",
+            "false": "IN_PROGRESS"
           },
-          "mandatory": true
+          "mandatory": true,
+          "dataMapping": {
+            "source": "8c75703b-6aac-42cf-be8b-2fcc0ff68486",
+            "target": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+            "id": "74bd648f-fc6d-4abe-b6f6-654668a5a57d"
+          }
         },
         {
           "name": "Operation Time",
@@ -626,15 +509,26 @@
           "id": "4d3aacc2-f8cd-421b-a96f-5ff4b29b9b9c"
         },
         {
-          "address": "system",
+          "address": "logic1",
           "type": "condition",
-          "name": "System",
+          "name": "Logic Program 1",
           "enabled": true,
-          "map": {
-            "ALARM": "One or more alarms are active",
-            "undefined": "false"
+          "id": "26a78260-901f-4677-a12d-8e4a7164bd5f",
+          "dataMapping": {
+            "source": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
+            "target": "26a78260-901f-4677-a12d-8e4a7164bd5f",
+            "id": "ddd9f600-cdbc-4f17-b393-efb2ed844035"
           },
-          "id": "c6e02ada-de44-4e24-8bef-25cee31af898"
+          "map": {
+            "true": "One or more alarms are active"
+          }
+        },
+        {
+          "address": "part_count_desired2",
+          "type": "event",
+          "name": "Desired Part Count 2",
+          "enabled": true,
+          "id": "7ee341a1-2ac7-459f-be1d-bb93035fa265"
         }
       ],
       "protocol": "mtconnect",
@@ -650,39 +544,6 @@
       ],
       "operationType": "or",
       "name": "GM Emergency Stop"
-    },
-    {
-      "id": "7636402b-4eb2-4576-a8c0-477eb7eec990",
-      "sources": [
-        "caf673b0-f3a3-447f-a5c3-c52c9d969805",
-        "07b2a3d2-97b4-459a-bafd-4420406477fd",
-        "b3a03110-c796-4736-bf92-df655d8598f0",
-        "a0a12f28-4047-4f7a-ad55-a1b25f954c04",
-        "f661f7b8-9aa2-4945-a6d4-15f1581a08ed",
-        "36b33b9d-c2e8-41df-ab2a-1f5fce1d5499",
-        "dd50d54f-a60f-4157-b742-6882300b6cb9",
-        "b894677d-35f2-4eb6-88e9-dda4d2b521c4",
-        "7fef7a1a-581e-4b76-b37f-946738c27cd5",
-        "f4825de3-4e8a-43e0-8bfc-1f5436853b57",
-        "66aeb305-353d-4bf6-ba3d-1021aef36369",
-        "4b66f93f-11d6-46b6-b290-89ad7df9ea4b",
-        "06b9035e-e111-4ed0-97af-b9821f55dc84",
-        "e7908b1e-349e-458b-923b-6c587e1e1275",
-        "c6e95fa4-63e0-4bdb-b571-edeb7dc06b32",
-        "3392e390-6b67-4fc6-8b55-f43643a20977",
-        "a85d3e21-2ee9-4bc0-b269-020332aa6b02",
-        "75ada2e8-ce5d-44ce-beb1-cf2e8510adfe",
-        "ad3f33ee-5d48-4e0f-8dc9-20f3bb6d7607",
-        "7c5486cf-b38b-4a75-b215-9c90096af799"
-      ],
-      "operationType": "or",
-      "name": "GM Alarm Active"
-    },
-    {
-      "id": "e83304ff-3bbc-44a3-9aca-6a01fd99e411",
-      "sources": ["7636402b-4eb2-4576-a8c0-477eb7eec990"],
-      "operationType": "not",
-      "name": "GM Alarm Not Active"
     },
     {
       "id": "345f2352-f4d5-4aea-9d33-8983df965110",
@@ -706,28 +567,6 @@
           }
         ]
       }
-    },
-    {
-      "id": "e0d04d80-93d7-42ed-bfbc-d56abf37cac6",
-      "sources": [
-        "7636402b-4eb2-4576-a8c0-477eb7eec990",
-        "e83304ff-3bbc-44a3-9aca-6a01fd99e411"
-      ],
-      "operationType": "enumeration",
-      "name": "GM Alarm Text",
-      "enumeration": {
-        "items": [
-          {
-            "source": "7636402b-4eb2-4576-a8c0-477eb7eec990",
-            "returnValueIfTrue": "ALARM",
-            "priority": 0
-          },
-          {
-            "source": "e83304ff-3bbc-44a3-9aca-6a01fd99e411",
-            "priority": 1
-          }
-        ]
-      }
     }
   ],
   "mapping": [
@@ -735,6 +574,61 @@
       "source": "e0d04d80-93d7-42ed-bfbc-d56abf37cac6",
       "target": "c6e02ada-de44-4e24-8bef-25cee31af898",
       "id": "a32d850d-1d1e-4eb8-9e64-4706d248b1af"
+    },
+    {
+      "source": "c6fc6b89-d641-401f-be1d-3f600ff94d72",
+      "target": "0e739177-8709-45c4-83d0-82197b345bbd",
+      "id": "bac6f41e-3d8c-4e92-aa3a-d150f217bc76"
+    },
+    {
+      "source": "345f2352-f4d5-4aea-9d33-8983df965110",
+      "target": "ab72a983-0dbb-45bd-9cb0-b99288823004",
+      "id": "720fdc27-f866-40e2-a22b-4bd35978dfa9"
+    },
+    {
+      "source": "8c75703b-6aac-42cf-be8b-2fcc0ff68486",
+      "target": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+      "id": "74bd648f-fc6d-4abe-b6f6-654668a5a57d"
+    },
+    {
+      "source": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
+      "target": "8e9f5af9-0cb8-4168-ac15-42bf8271d4aa",
+      "id": "69df0265-1394-4a44-a801-385d93288885"
+    },
+    {
+      "source": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
+      "target": "26a78260-901f-4677-a12d-8e4a7164bd5f",
+      "id": "ddd9f600-cdbc-4f17-b393-efb2ed844035"
+    },
+    {
+      "source": "34dd12f0-3dd6-4d07-b610-f7457857b9e5",
+      "target": "8cf5bcf4-dc7d-426d-982f-508a0905e888",
+      "id": "75b883ea-0d2e-44e6-9071-a392f6b87f81"
+    },
+    {
+      "source": "4a2ccdca-a0f4-49b9-be43-75993ffa78d9",
+      "target": "48116416-af2c-42d4-b699-7b18f1565278",
+      "id": "47209087-39b2-4e4f-ab13-d80254c82bea"
+    },
+    {
+      "source": "6f20efdc-fcbe-402c-bc07-fa51739705d4",
+      "target": "e4314c9d-7268-43b0-a906-151c07c48c85",
+      "id": "f3dbd05d-8f63-4040-aeab-bcb7ef08a5f6"
+    },
+    {
+      "source": "e578a5ec-e2e2-4ca8-b19b-1d256c5a3dec",
+      "target": "a94d30cc-a5fe-4021-be86-d719049561a0",
+      "id": "6ce6d879-a78f-4b4e-a35f-063e91bfb03c"
+    },
+    {
+      "source": "8cc45be9-a215-43c4-93e1-8100b22ea4cd",
+      "target": "30c15e3d-ec08-47d4-a108-fdbb8c7d7983",
+      "id": "d36b1053-cfbb-4dcf-8d9d-cc6d4c1d1347"
+    },
+    {
+      "source": "5b1abbcb-f288-4c4e-9984-2ebe351eed2c",
+      "target": "7ee341a1-2ac7-459f-be1d-bb93035fa265",
+      "id": "ee987e52-fc6e-4c5c-8303-256ede097be0"
     }
   ],
   "quickStart": {

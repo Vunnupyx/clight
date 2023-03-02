@@ -173,7 +173,7 @@
       ],
       "protocol": "ioshield",
       "enabled": true,
-      "type": "di10"
+      "type": "10di"
     }
   ],
   "dataSinks": [

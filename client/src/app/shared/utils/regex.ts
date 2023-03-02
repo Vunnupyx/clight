@@ -13,6 +13,10 @@
  * @see https://stackoverflow.com/a/3824105
  * The link for Regex, which conforms above specifications.
  *
+ * Notes for IP_REGEX:
+ *
+ * @see https://stackoverflow.com/a/36760050
+ *
  * Notes for NETMASK_REGEX:
  *
  * @see https://www.rfc-editor.org/rfc/rfc1878
@@ -25,6 +29,6 @@ export const PORT_REGEX =
   '^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$';
 export const EMAIL_REGEX = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$';
 export const IP_REGEX =
-  '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$';
+  '^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(.(?!$)|$)){4}$';
 export const NETMASK_REGEX =
   '^(((255.){3}(255|254|252|248|240|224|192|128|0+))|((255.){2}(255|254|252|248|240|224|192|128|0+).0)|((255.)(255|254|252|248|240|224|192|128|0+)(.0+){2})|((255|254|252|248|240|224|192|128|0+)(.0+){3}))$';

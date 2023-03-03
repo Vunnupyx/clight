@@ -5,7 +5,11 @@
 trigger:
   batch: true
   branches:
-    exclude: [main, staging]
+    include:
+      - '*'
+  tags:
+    include:
+      - '*'
 
 pool:
   vmImage: ubuntu-latest
@@ -13,6 +17,7 @@ pool:
 variables:
   DOCKER_REGISTRY: mdclightdev.azurecr.io
   BRANCH_NAME: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-')]
+  IS_TAG: $[startsWith(variables['Build.SourceBranch'],'refs/tags/')]
 
 steps:
   - task: Docker@2
@@ -36,11 +41,16 @@ steps:
         versionOfLastChange=$(scripts/build/lastMTConnectChange.sh)
         echo "Current mtconnect version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mtconnect-agent ${versionOfLastChange})
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ]; then
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mtconnect-agent:${versionOfLastChange}"
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
@@ -51,4 +61,10 @@ steps:
     displayName: Print current versions
     inputs:
       script: |
-        echo "${DOCKER_REGISTRY}/mtconnect-agent:$(scripts/build/lastMTConnectChange.sh)"
+        if [ "$IS_TAG" = "True" ]; then
+          version=$(git describe --tags)
+        else
+          version=$(scripts/build/lastMTConnectChange.sh)
+        fi
+
+        echo "${DOCKER_REGISTRY}/mtconnect-agent:${version}"

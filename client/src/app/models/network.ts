@@ -9,11 +9,7 @@ export interface NetworkConfig {
   x1: NetworkAdapter;
   x2: NetworkAdapter;
   proxy: NetworkProxy;
-  ntp: {
-    host: string[];
-    timestamp: NetworkDateTime;
-    ntpEnabled: boolean;
-  };
+  ntp: NetworkNtp;
 }
 
 export interface NetworkAdapter {
@@ -46,6 +42,12 @@ export interface NetworkProxy {
   username: string;
   password: string;
   whitelist: string[];
+}
+
+export interface NetworkNtp {
+  host: string[];
+  timestamp: NetworkDateTime;
+  ntpEnabled: boolean;
 }
 
 export interface NetworkDateTime {

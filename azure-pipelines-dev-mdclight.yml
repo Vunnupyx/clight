@@ -5,7 +5,11 @@
 trigger:
   batch: true
   branches:
-    exclude: [main, staging]
+    include:
+      - '*'
+  tags:
+    include:
+      - '*'
 
 pool:
   vmImage: ubuntu-latest
@@ -13,6 +17,7 @@ pool:
 variables:
   DOCKER_REGISTRY: mdclightdev.azurecr.io
   BRANCH_NAME: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-')]
+  IS_TAG: $[startsWith(variables['Build.SourceBranch'],'refs/tags/')]
 
 steps:
   - task: Docker@2
@@ -36,12 +41,17 @@ steps:
         versionOfLastChange=$(scripts/build/lastMdclightBaseChange.sh)
         echo "Current base version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mdclight-base ${versionOfLastChange})
         echo "Docker image exists ${exists}" 
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ]; then
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mdclight-base:${versionOfLastChange}" 
           docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker run --privileged --rm tonistiigi/binfmt
@@ -60,6 +70,11 @@ steps:
   #       # Gets the version of the last change that is affecting the image that is build here
   #       versionOfLastChange=$(scripts/build/lastFanucChange.sh)
   #       echo "Current fanuc version ${versionOfLastChange}"
+
+  #       if [ "$IS_TAG" = "True" ]; then
+  #         versionOfLastChange=$(git describe --tags)
+  #         echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+  #       fi
 
   #       echo "Checking for current docker image"
   #       exists=$(scripts/build/checkIfImageExists.sh mdclight-fanuc ${versionOfLastChange})
@@ -86,11 +101,16 @@ steps:
         versionOfLastChange=$(scripts/build/lastMdclightChange.sh)
         echo "Current mdclight version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mdclight ${versionOfLastChange})
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ]; then
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mdclight:${versionOfLastChange}"
           # fanucVersion=$(scripts/build/lastFanucChange.sh)
           # TODO! Use fanuc image when fanuc is implemented
@@ -112,11 +132,16 @@ steps:
         versionOfLastChange=$(scripts/build/lastMdclightDevChange.sh)
         echo "Current mdclight development version ${versionOfLastChange}" 
 
+        if [ "$IS_TAG" = "True" ]; then
+          versionOfLastChange=$(git describe --tags)
+          echo "Overriding version of last change because it's a tag (${versionOfLastChange})"
+        fi
+
         echo "Checking for current docker image" 
         exists=$(scripts/build/checkIfImageExists.sh mdclight-development ${versionOfLastChange})
 
         # Builds docker image if it not exists in the version that changed something the last time
-        if [ $exists == "false" ]; then
+        if [ $exists == "false" ]; then 
           echo "Building docker image ${DOCKER_REGISTRY}/mdclight-development:${versionOfLastChange}"
           # fanucVersion=$(scripts/build/lastFanucChange.sh)
           # TODO! Use fanuc image when fanuc is implemented
@@ -131,5 +156,13 @@ steps:
     displayName: Print current versions
     inputs:
       script: |
-        echo "${DOCKER_REGISTRY}/mdclight:$(scripts/build/lastMdclightChange.sh)"
-        echo "${DOCKER_REGISTRY}/mdclight-development:$(scripts/build/lastMdclightDevChange.sh)"
+        if [ "$IS_TAG" = "True" ]; then
+          version=$(git describe --tags)
+          versionDev=$(git describe --tags)
+        else
+          version=$(scripts/build/lastMdclightChange.sh)
+          versionDev=$(scripts/build/lastMdclightDevChange.sh)
+        fi
+
+        echo "${DOCKER_REGISTRY}/mdclight:${version}"
+        echo "${DOCKER_REGISTRY}/mdclight-development:${versionDev}"

@@ -95,18 +95,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return this.sourceDataPointService.status === Status.Loading;
   }
 
-  private mapIOShieldsAIAddresses = {
-    DI8: 'DI0',
-    DI7: 'DI1',
-    DI6: 'DI2',
-    DI5: 'DI3',
-    DI0: 'DI4',
-    AI0: 'AI0',
-    AI1: 'AI1'
-  };
-
-  private mapIOShieldsKeys = Object.keys(this.mapIOShieldsAIAddresses);
-
   constructor(
     private sourceDataPointService: SourceDataPointService,
     private dataSourceService: DataSourceService,
@@ -165,7 +153,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       }
       case IOShieldTypes.AI_100_5di:
       case IOShieldTypes.AI_150_5di: {
-        return this.mapIOShieldsKeys.includes(address);
+        return !['DI5', 'DI6', 'DI7', 'DI8', 'DI9'].includes(address);
       }
       default: {
         return true;

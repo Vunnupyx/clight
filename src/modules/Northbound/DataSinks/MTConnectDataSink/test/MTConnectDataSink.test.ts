@@ -98,6 +98,7 @@ describe('Test MTConnectDataSink', () => {
     const dataSourceConfig: IDataSourceConfig = {
       protocol: DataSourceProtocols.S7,
       enabled: true,
+      type: 'nck',
       dataPoints: [
         { id: 'source', name: '', address: '', readFrequency: 1000, type: 's7' }
       ]
@@ -160,6 +161,7 @@ describe('Test MTConnectDataSink', () => {
     const dataSourceConfig: IDataSourceConfig = {
       protocol: DataSourceProtocols.S7,
       enabled: true,
+      type: 'nck',
       dataPoints: [
         {
           id: 'source1',
@@ -248,6 +250,7 @@ describe('Test MTConnectDataSink', () => {
     const dataSourceConfig: IDataSourceConfig = {
       protocol: DataSourceProtocols.S7,
       enabled: true,
+      type: 'nck',
       dataPoints: [
         {
           id: 'source1',

@@ -1,40 +1,40 @@
 ---
-title: Connecting DMG MORI Messenger
+title: DMG MORIメッセンジャーを接続する
 ---
 
-You can connect and register your machine to DMG MORI Messenger for monitoring by using either Automatic or Manual method.
+DMG MORI Messengerに機械を登録するには、AutomaticまたはManualのいずれかの方法を使用します。
 
-Note: In both methods, you need a DMG MORI Messenger license for your machines.
+注：いずれの場合も対象の機械ごとにDMG MORI Messengerのライセンスが必要です。
 
-## Automatic Registration
+## 自動登録
 
-Prerequisites for Automatic Registration:
+自動登録のための前提条件:
 
-- You must have the Serial number of the machine filled out under `Device Info` in `General` page of the IoTconnector flex.
-- On DMG MORI Messenger have your Organization Unit and Machine Model configured.
+- IoTconnector flexの`一般`ページの`デバイス情報`に機械のシリアル番号が記入されている必要があります。
+- DMG MORI Messengerに組織情報と機械モデルが設定されていること。
 
-**Step 1:** Click on `Connect Messenger` button to open the dialog for automatic registration
-![DMG MORI Messenger button](/img/applicationinterface/messenger_button.png)
+**ステップ1:** `Connect Messenger`ボタンをクリックすると、自動登録のためのダイアログが表示されます。
+![DMG MORI Messengerボタン](/img/applicationinterface/messenger_button.png)
 
-**Step 2:** In the opened dialog, fill out the information with your DMG MORI Messenger server hostname (or IP address), username and the password. Then click on `Save Server Configuration` button. Afterwards DMG MORI Messenger will be connected and the `Server Status` should display `Server is available`. See example photo below.
+**ステップ2:** 開いたダイアログで、DMG MORI Messengerサーバーのホスト名(またはIPアドレス)、ユーザー名、パスワードの情報を入力します。そして、`サーバー設定を保存する`ボタンをクリックします。DMG MORI Messengerが接続され、`サーバ状態`に`サーバ有効`と表示されるはずです。下の写真を参照してください。
 
-![DMG MORI Messenger Server Configuration](/img/applicationinterface/messenger_server_configuration.png)
+![DMG MORI Messengerサーバ設定](/img/applicationinterface/messenger_server_configuration.png)
 
-**Step 3:** Once the server is available, click on the `Register` button. It will open the dialog to fill out registration information. Give a name to your machine, which will be the visible name in DMG MORI Messenger. Then choose your machine model, organization unit and the timezone. Once you click Save, the automatic registration will be performed and you will be able to see your machine in DMG MORI Messenger.
-![DMG MORI Messenger Server Registration](/img/applicationinterface/messenger_server_registration.png)
+**ステップ3:** サーバが利用可能になったら、`登録`ボタンをクリックします。登録情報を記入するためのダイアログが開きます。DMG MORI Messengerでの表示名となる機械名称を決めます。次に、機械モデル、組織情報、タイムゾーンを選択します。保存をクリックすると、自動登録が行われ、DMG MORI Messengerに機械状態が表示されます。
+![DMG MORI Messenger Server登録](/img/applicationinterface/messenger_server_registration.png)
 
-## Manual Registration
+## 手動登録
 
-**Step 1:** In IoTconnector flex `Application Interface` page, make sure that `Enabled` switch is turned on under MTConnect:
+**Step 1:** IoTconnector flex の `アプリケーションインタフェース` ページで、MTConnect の下にある `有効` スイッチが ON になっていることを確認します:
 
 ![MTConnect](/img/applicationinterface/mtconnect_enable_stream.png)
 
-You can click on the `Open MTConnect Stream` to verify that the stream is working.
+`MTConnect出力を表示する` をクリックすると、MTConnectの動作を確認できます。
 
-**Step 2:** Inside DMG MORI Messenger, go to Settings -> Machines and click the "Add" button. Now enter the your machine's details as needed.
+**ステップ2: ** DMG MORI Messengerの「設定」→「機械」を選択し、「追加」ボタンをクリックします。必要に応じて機械の詳細情報を入力します。
 
-For `MTConnect Agent` select `MTConnect Agent 1.3.0 (Standard)` and for `MTConnect Stream URL` enter `http://<iot-connector-device-ip>:15404`, for example `http://192.168.178.150:15404`. To find out your IP Address you can go to the [`Network`](Network.md) page on the IoTConnector flex UI.
+`MTConnect Agent`は`MTConnect Agent 1.3.0 (Standard)`を、`MTConnect Stream URL`には`http://<iot-connector-device-ip>:15404`（例: http://192.168.178.150:15404）をそれぞれ入力します。IP アドレスは IoTConnector flexの UI の [`ネットワーク`](Network.md) ページで確認できます。
 
 ![DMG MORI Messenger](/img/DMGMessenger.png)
 
-After you configured the machine, data should be displayed on the Messenger dashboard after a few minutes.
+設定数分後にMessengerのダッシュボードにデータが表示されます。

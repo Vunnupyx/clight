@@ -70,6 +70,9 @@ export class DeviceInfoService {
         state.status = Status.Ready;
         state.deviceInfo = obj;
       });
+      this.toastr.success(
+        this.translate.instant('settings-device-info.SaveSuccess')
+      );
     } catch (err) {
       this.toastr.error(
         this.translate.instant('settings-device-info.UpdateError')

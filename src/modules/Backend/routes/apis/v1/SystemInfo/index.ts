@@ -2,10 +2,12 @@ import { Request, Response } from 'express';
 
 import { ConfigManager } from '../../../../../ConfigManager';
 import winston from 'winston';
-import { DataHubAdapter } from '../../../../../Northbound/Adapter/DataHubAdapter';
+import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
+import { DataSinkProtocols } from '../../../../../../common/interfaces';
+import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
 
 let configManager: ConfigManager;
-let datahubAdapter: DataHubAdapter;
+let dataSinksManager: DataSinksManager;
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -19,8 +21,8 @@ export function setConfigManager(configMng: ConfigManager): void {
  * Set datahub module client to use in routes
  * @param client
  */
-export function setDatahubAdapter(client: DataHubAdapter): void {
-  datahubAdapter = client;
+export function setDataSinksManager(client: DataSinksManager): void {
+  dataSinksManager = client;
 }
 
 /**
@@ -62,12 +64,24 @@ async function getMDCLUpdates(request: Request, response: Response) {
 
   if (isDevEnvironment(response, logPrefix)) return;
 
-  if (!datahubAdapter) {
+  if (!dataSinksManager) {
     winston.warn(`${logPrefix} called but no module client is available.`);
     return response.status(500).json({
       msg: `No CelosXChange connection available.`
     });
   }
+  // find datahub
+  const datahubSink = dataSinksManager.getDataSinkByProto(
+    DataSinkProtocols.DATAHUB
+  );
+  if (!(datahubSink instanceof DataHubDataSink)) {
+    winston.warn(`${logPrefix} called but no module client is available.`);
+    return response.status(500).json({
+      msg: `No CelosXChange connection available.`
+    });
+  }
+  const datahubAdapter = datahubSink.getAdapter();
+
   await datahubAdapter.getUpdate(response);
   return;
 }
@@ -94,6 +108,24 @@ async function updateMdcl(request: Request, response: Response) {
       .status(400)
       .json({ error: 'No version information in request found.' });
   }
+
+  if (!dataSinksManager) {
+    winston.warn(`${logPrefix} called but no module client is available.`);
+    return response.status(500).json({
+      msg: `No CelosXChange connection available.`
+    });
+  }
+  // find datahub
+  const datahubSink = dataSinksManager.getDataSinkByProto(
+    DataSinkProtocols.DATAHUB
+  );
+  if (!(datahubSink instanceof DataHubDataSink)) {
+    winston.warn(`${logPrefix} called but no module client is available.`);
+    return response.status(500).json({
+      msg: `No CelosXChange connection available.`
+    });
+  }
+  const datahubAdapter = datahubSink.getAdapter();
 
   return datahubAdapter.setUpdate(response, request.body);
 }

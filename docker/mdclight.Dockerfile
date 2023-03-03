@@ -6,7 +6,6 @@
 
 ARG DOCKER_REGISTRY
 ARG FANUC_VERSION
-ARG MDC_LIGHT_RUNTIME_VERSION
 
 FROM node:14.21.2-alpine as builder
 
@@ -21,6 +20,8 @@ RUN npm run build
 # TODO! Use fanuc image as soons its implemented
 # FROM ${DOCKER_REGISTRY}/mdclight-fanuc:${FANUC_VERSION}
 FROM ${DOCKER_REGISTRY}/mdclight-base:${FANUC_VERSION}
+
+ARG MDC_LIGHT_RUNTIME_VERSION
 
 WORKDIR /app
 

@@ -13,15 +13,15 @@ import {
   NetworkDateTime,
   NetworkProxy,
   NetworkTimestamp,
-  NetworkNtpReachable
-} from '../models';
+  NetworkNtpReachable,
+  NetworkNtp
+} from 'app/models';
 import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
 export interface NetworkState {
   status: Status;
   adapters: NetworkAdapter[];
   proxy: NetworkProxy;
-  ntp: string[];
-  timestamp: NetworkDateTime;
+  ntp: NetworkNtp;
   ntpReachable: NetworkNtpReachable[];
 }
 
@@ -60,12 +60,8 @@ export class NetworkService {
           x2: x.adapters?.[1],
           proxy: x.proxy,
           ntp:
-            x.ntp && x.timestamp
-              ? {
-                  host: x.ntp,
-                  timestamp: x.timestamp,
-                  ntpEnabled: !!x.ntp[0]
-                }
+            x.ntp?.host && x.ntp?.timestamp
+              ? { ...x.ntp, ntpEnabled: !!x.ntp[0] }
               : undefined
         })
       ),
@@ -192,7 +188,7 @@ export class NetworkService {
       );
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.ntp = response;
+        state.ntp = { ...state.ntp, host: response };
       });
       !!response?.[0] && this.getNtpReachable(response);
     } catch (err) {
@@ -203,8 +199,7 @@ export class NetworkService {
       }));
     }
   }
-
-  async updateNetworkNtp(obj: string[]) {
+  async updateNetworkNtp(ntp: NetworkNtp) {
     this._store.patchState((state) => {
       state.status = Status.Loading;
       state.ntpReachable = [{ address: '', reachable: false, valid: false }];
@@ -213,16 +208,27 @@ export class NetworkService {
     try {
       await this.configurationAgentHttpService.put<string[]>(
         `/network/ntp`,
-        obj
+        ntp.host
       );
+      if (ntp.ntpEnabled) {
+        this.toastr.success(
+          this.translate.instant('settings-network.UpdateNtpSuccess')
+        );
+      } else {
+        const verifiedObj = this._deserializeNetworkTimestamp(ntp.timestamp);
+        await this.configurationAgentHttpService.put<NetworkTimestamp>(
+          `/system/time`,
+          verifiedObj
+        );
+        this.toastr.success(
+          this.translate.instant('settings-network.UpdateTimestampSuccess')
+        );
+      }
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.ntp = obj;
+        state.ntp = ntp;
       });
-      this.toastr.success(
-        this.translate.instant('settings-network.UpdateNtpSuccess')
-      );
-      !!obj?.[0] && this.getNtpReachable(obj);
+      !!ntp.host?.[0] && this.getNtpReachable(ntp.host);
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.UpdateError'));
       errorHandler(err);
@@ -262,38 +268,10 @@ export class NetworkService {
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.timestamp = verifiedObj;
+        state.ntp = { ...state.ntp, timestamp: verifiedObj };
       });
     } catch (err) {
       this.toastr.error(this.translate.instant('settings-network.LoadError'));
-      errorHandler(err);
-      this._store.patchState(() => ({
-        status: Status.Failed
-      }));
-    }
-  }
-
-  async updateNetworkTimestamp(obj: NetworkDateTime) {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-    });
-
-    const verifiedObj = this._deserializeNetworkTimestamp(obj);
-
-    try {
-      await this.configurationAgentHttpService.put<NetworkTimestamp>(
-        `/system/time`,
-        verifiedObj
-      );
-      this._store.patchState((state) => {
-        state.status = Status.Ready;
-        state.timestamp = obj;
-      });
-      this.toastr.success(
-        this.translate.instant('settings-network.UpdateTimestampSuccess')
-      );
-    } catch (err) {
-      this.toastr.error(this.translate.instant('settings-network.UpdateError'));
       errorHandler(err);
       this._store.patchState(() => ({
         status: Status.Failed

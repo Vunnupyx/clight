@@ -1,11 +1,11 @@
 ---
-title: Connecting MTConnect
+title: MTConnect の接続
 ---
 
-- The MTConnect endpoint is exposed on port `15404` on both network interfaces
-- Checkout the [Network page](Network.md) to see which IP addresses are configured for your device
-- You can see the connection status on the top right of the page (see photo below)
-- You can use the `Open MTConnect Stream` button (see photo below) to see the current values in MTConnect data stream in a new browser tab.
-- You can enable or disable MTConnect interface using the `Enabled` switch (see photo below)
+- MTConnect のエンドポイントは、両方のネットワークインターフェイスのポート `15404` に割り当てられています。
+- [ネットワークページ](Network.md) で、設定されている IP アドレスを確認します。
+- ページの右上に接続状況が表示されます(下の写真参照)。
+- `MTConnect出力を表示する`ボタン(下写真)を押すと、MTConnectの現在の値を新しいブラウザタブで見ることができます。
+- MTConnectインターフェースは、`有効`スイッチで有効/無効を切り替えることができます(下の写真参照)。
 
 ![MTConnect](/img/applicationinterface/mtconnect_enable_stream.png)

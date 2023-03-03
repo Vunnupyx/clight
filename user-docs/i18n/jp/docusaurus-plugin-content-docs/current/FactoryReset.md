@@ -1,18 +1,18 @@
 ---
-title: Factory Reset
+title: 工場出荷状態への初期化
 ---
 
-To reset the IoTconnector flex to factory, settings you can press and hold the "USER" button for 5 seconds.
+IoTconnector flexを工場出荷状態の設定に戻すには、「USER」ボタンを5秒間以上長押ししてください。
 
-![SIMATIC IOT2050 User Button](/img/IoT2050UserButton.png)
+![IoTconnector flexユーザーボタン](/img/IoT2050UserButton.png)
 
-The factory settings resets:
+工場出荷状態にリセットされる項目:
 
-- The login password you set
-- All other device settings
+- ログインパスワード
+- その他すべての機器設定
 
-The factory reset does not reset:
+工場出荷状態にリセットされない項目:
 
-- Log files
+- ログファイル
 
-After the reset, you can login using the default password (See: [`Login`](GettingStarted.md#login)) and you will be asked to set a new password and complete the configuration wizard again.
+リセット後、初期パスワードでログインすると (参照: [`Login`](GettingStarted.md#login)) 新しいパスワードの設定と設定ウィザードの再実行が要求されます。

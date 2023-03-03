@@ -13,9 +13,11 @@
     columnMode="force"
   >
     <ngx-datatable-column
-        [name]="'settings-virtual-data-point.Name' | translate"
-        prop="name" [minWidth]="80"
-      >
+      [name]="'settings-virtual-data-point.Name' | translate"
+      prop="name"
+      [minWidth]="80"
+      [maxWidth]="300"
+    >
       <ng-template
         ngx-datatable-cell-template
         let-rowIndex="rowIndex"
@@ -26,28 +28,36 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-        [name]="'settings-virtual-data-point.DayDate' | translate"
-        prop="day" [minWidth]="80"
-      >
+      [name]="'settings-virtual-data-point.DayDate' | translate"
+      prop="day"
+      [minWidth]="80"
+      [maxWidth]="300"
+    >
       <ng-template
         ngx-datatable-cell-template
         let-rowIndex="rowIndex"
         let-value="value"
         let-row="row"
       >
-        <div *ngIf="row.date" class="text-ellipsis" [title]="value">{{ row.date }}th</div>
+        <div *ngIf="row.date" class="text-ellipsis" [title]="value">
+          {{ row.date }}th
+        </div>
         <div *ngIf="row.day" class="text-ellipsis" [title]="value">
           <ng-container [ngSwitch]="value">
-            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchCase="ScheduleEvery">{{
+              'settings-virtual-data-point.ScheduleEvery' | translate
+            }}</ng-container>
             <ng-container *ngSwitchDefault>{{ row.day }}</ng-container>
           </ng-container>
         </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-        [name]="'settings-virtual-data-point.Month' | translate"
-        prop="month" [minWidth]="80"
-      >
+      [name]="'settings-virtual-data-point.Month' | translate"
+      prop="month"
+      [minWidth]="80"
+      [maxWidth]="300"
+    >
       <ng-template
         ngx-datatable-cell-template
         let-rowIndex="rowIndex"
@@ -55,26 +65,54 @@
         let-row="row"
       >
         <div [ngSwitch]="value">
-          <ng-container *ngSwitchCase="ScheduleMonth.JAN">{{ 'month.Jan' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.FEB">{{ 'month.Feb' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.MAR">{{ 'month.Mar' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.APR">{{ 'month.Apr' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.MAY">{{ 'month.May' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.JUN">{{ 'month.Jun' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.JUL">{{ 'month.Jul' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.AUG">{{ 'month.Aug' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.SEP">{{ 'month.Sep' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.OCT">{{ 'month.Oct' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.NOV">{{ 'month.Nov' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleMonth.DEC">{{ 'month.Dec' | translate }}</ng-container>
-          <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.JAN">{{
+            'month.Jan' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.FEB">{{
+            'month.Feb' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.MAR">{{
+            'month.Mar' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.APR">{{
+            'month.Apr' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.MAY">{{
+            'month.May' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.JUN">{{
+            'month.Jun' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.JUL">{{
+            'month.Jul' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.AUG">{{
+            'month.Aug' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.SEP">{{
+            'month.Sep' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.OCT">{{
+            'month.Oct' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.NOV">{{
+            'month.Nov' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleMonth.DEC">{{
+            'month.Dec' | translate
+          }}</ng-container>
+          <ng-container *ngSwitchCase="ScheduleEvery">{{
+            'settings-virtual-data-point.ScheduleEvery' | translate
+          }}</ng-container>
         </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-        [name]="'settings-virtual-data-point.Hour' | translate"
-        prop="hours" [minWidth]="80"
-      >
+      [name]="'settings-virtual-data-point.Hour' | translate"
+      prop="hours"
+      [minWidth]="80"
+      [maxWidth]="300"
+    >
       <ng-template
         ngx-datatable-cell-template
         let-rowIndex="rowIndex"
@@ -83,16 +121,20 @@
       >
         <div class="text-ellipsis" [title]="value">
           <ng-container [ngSwitch]="value">
-            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchCase="ScheduleEvery">{{
+              'settings-virtual-data-point.ScheduleEvery' | translate
+            }}</ng-container>
             <ng-container *ngSwitchDefault>{{ value }}</ng-container>
           </ng-container>
         </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-        [name]="'settings-virtual-data-point.Minutes' | translate"
-        prop="minutes" [minWidth]="80"
-      >
+      [name]="'settings-virtual-data-point.Minutes' | translate"
+      prop="minutes"
+      [minWidth]="80"
+      [maxWidth]="300"
+    >
       <ng-template
         ngx-datatable-cell-template
         let-rowIndex="rowIndex"
@@ -101,16 +143,20 @@
       >
         <div class="text-ellipsis" [title]="value">
           <ng-container [ngSwitch]="value">
-            <ng-container *ngSwitchCase="ScheduleEvery">{{ 'settings-virtual-data-point.ScheduleEvery' | translate }}</ng-container>
+            <ng-container *ngSwitchCase="ScheduleEvery">{{
+              'settings-virtual-data-point.ScheduleEvery' | translate
+            }}</ng-container>
             <ng-container *ngSwitchDefault>{{ value }}</ng-container>
           </ng-container>
         </div>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-        [name]="'settings-virtual-data-point.Seconds' | translate"
-        prop="seconds" [minWidth]="80"
-      >
+      [name]="'settings-virtual-data-point.Seconds' | translate"
+      prop="seconds"
+      [minWidth]="80"
+      [maxWidth]="300"
+    >
       <ng-template
         ngx-datatable-cell-template
         let-rowIndex="rowIndex"
@@ -121,10 +167,12 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-        [name]="'settings-virtual-data-point.Actions' | translate"
-        cellClass="button-cell"
-        [sortable]="false" [minWidth]="80"
-      >
+      [name]="'settings-virtual-data-point.Actions' | translate"
+      cellClass="button-cell"
+      [sortable]="false"
+      [minWidth]="80"
+      [maxWidth]="300"
+    >
       <ng-template
         ngx-datatable-cell-template
         let-rowIndex="rowIndex"
@@ -136,7 +184,7 @@
             [matTooltip]="'settings-virtual-data-point.Delete' | translate"
             matTooltipPosition="above"
             (click)="onDelete(rowIndex); $event.stopPropagation()"
-            ><mat-icon  svgIcon="mdc:delete"></mat-icon>
+            ><mat-icon svgIcon="mdc:delete"></mat-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>
       </ng-template>
@@ -148,9 +196,7 @@
     color="primary"
     class="wh-32 border-round mat-elevation-z0"
     (click)="onAdd()"
-    [matTooltip]="
-      'settings-virtual-data-point.AddSchedule' | translate
-    "
+    [matTooltip]="'settings-virtual-data-point.AddSchedule' | translate"
     matTooltipPosition="above"
     [disabled]="!canAdd()"
   >

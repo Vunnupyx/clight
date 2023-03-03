@@ -1,59 +1,61 @@
 ---
-title: Network
+title: ネットワーク
 ---
 
-Network page has 4 different sections (tabs) to configure: `Ethernet X1 P1`, `Ethernet X1 P2`, `Proxy` and `Time`
+ネットワークページには4つ設定タブがあります: `ネットワークインタフェース X1 P1`、`ネットワークインタフェース X1 P2`、`プロキシ`、`時刻`
 
-![Network Page](/img/network_page.png)
+![ネットワークページ](/img/network_page.png)
 
-## Ethernet X1 P1 & Ethernet X1 P2
+## ネットワークインタフェース X1 P1、ネットワークインタフェース X1 P2
 
-On the `Ethernet X1 P1` & `Ethernet X1 P2` tabs you can configure the corresponding ethernet interfaces. In general X1 P1 should be used for the company network and X1 P2 should be used for the Machine network. If the input board is the only data source, X1 P2 can be unused.
+`ネットワークインタフェース X1 P1`と`ネットワークインタフェース X1 P2`で対応するネットワークインタフェースを設定します。
+通常、X1 P1は社内ネットワーク、X1 P2は機内ネットワークに接続します。
+データソースとして入力ボードのみを使う場合はX1 P2は使用しません。
 
-In the `Adapter Settings` section you can use the `Assign IP address manually (do not use DHCP)` switch to enable manual configuration of this particular network interface. If the switch is enabled you must give details of the network configuration in the given fields.
+`アダプタの設定`の`アドレス手動割り当て(DHCPを使わない)`によりネットワークインタフェースを手動設定することができます、このスイッチを有効に設定すると、追加の設定が必要になります。
 
-After you have configured a network interface, use the `Apply` button to apply the changes to the device.
+ネットワークインタフェースを設定した後、`適用`ボタンで変更を反映します。
 
-#### Automatic Mode:
+#### 自動モード:
 
-![Network Page](/img/network_auto.png)
-If the switch is set to off, the device will use the DHCP for the network configuration, if a DHCP server is available. As soon as the DHCP server provides a network configuration, it will be displayed in the corresponding fields (`IP address`, `Netmask`, `Default Gateway` & `DNS Server`).
+![ネットワークページ](/img/network_auto.png)
+このスイッチがオフに設定されている場合、デバイスはネットワーク設定に DHCP を使用します。DHCPサーバーから指定されたネットワークは対応するフィールド(`IPアドレス`、`ネットマスク`、`デフォルトゲートウェイ`、`DNSサーバー`)に表示されます。
 
-#### Manual Mode:
+#### 手動モード:
 
-![Network Page](/img/network_manual.png)
-If the switch is set to on, you can enter the following fields:
+![ネットワークページ](/img/network_manual.png)
+スイッチをオンにすると、以下の項目を入力できるようになります。
 
-- **IP address** - IP address of the machine
-- **Netmask** - Netmask of the machine
-- **Default Gateway** - (optional) Default gateway to be used
-- **DNS Server** - (optional) DNS server
+- **IPアドレス** - 機械のIPアドレス
+- **Netmask** - 機械のネットマスク
+- **Default Gateway** - (オプション) デフォルトゲートウェイ
+- **DNS Server** - (オプション) DNSサーバー
 
-## Proxy
+## プロキシ
 
-If your company's network requires a proxy for internet access you can configure it on the `Proxy` tab.
+インターネットアクセスにプロキシが必要な場合、 `Proxy` タブでそれを設定することができます。
 
-Using the `Use Proxy` switch you can switch the proxy settings on and off - if it is set to on you can configure the proxy server using the given fields
+`Use Proxy` スイッチを使ってプロキシ設定のオン/オフを切り替えることができます。
 
-- **Type** - Select the type of proxy your company is using. You can choose between `http` and `socks5`
-- **Host** - Enter the IP address or hostname of your proxy server
-- **Port** - Enter the port of your proxy server
-- **Username** - (optional) Enter a username for authentication with the proxy server
-- **Password** - (optional) Enter a password for authentication with the proxy server
+- **Type** - プロキシの種類を選択します。`http`とsocks5`のどちらかを選択します。
+- **ホスト** - プロキシサーバーのIPアドレスまたはホスト名を入力します。
+- **Port** - プロキシサーバーのポートを入力します。
+- **Username** - (オプション) プロキシサーバーで認証するためのユーザー名を入力します。
+- **Password** - (オプション) プロキシサーバーで認証するためのパスワードを入力します。
 
-## Time (NTP)
+## 時間 (NTP)
 
-On the `Time` tab you can configure the server for time synchronization. It is required that time synchronization always working correctly, so that all services of the IoTconnector flex are working properly.
+`時刻`タブで時刻同期のサーバを設定することができます。IoTconnector flexのすべてのサービスが正常に動作するためには、時刻が正しく設定されていなければなりません。
 
-With the `Use NTP Server` switch you can enable or disable NTP synchronization.
+`NTPサーバを使う`スイッチで、NTPによる時刻同期の有効/無効を切り替えることができます。
 
-#### Using NTP Server
+#### NTPサーバを使う
 
-If the switch is set to active you can specify an NTP server. Enter the IP address or hostname of your NTP server.
+このスイッチは有効な場合、NTPサーバを設定します。
 
-![Using NTP Server](/img/time_ntpserver.png)
+![NTPサーバを使う](/img/time_ntpserver.png)
 
-#### Setting Time Manually
+#### 時刻の手動設定
 
-Alternatively you can set the time manually.
-![Setting time manually](/img/time_manual.png)
+もしくは、時刻を手動で設定することができます。
+![時刻の手動で設定](/img/time_manual.png)

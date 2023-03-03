@@ -3,7 +3,6 @@ export enum SourceDataPointType {
   NCK = 'nck',
   Measurement = 'measurement',
   Meter = 'meter',
-  Tariff = 'tariff',
   Device = 'device'
 }
 

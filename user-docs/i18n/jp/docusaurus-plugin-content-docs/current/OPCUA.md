@@ -1,51 +1,51 @@
 ---
-title: Connecting OPC UA
+title: OPC UA の接続
 ---
 
-- The OPC UA Server endpoint is exposed on port `4840` on both network interfaces
-- Checkout the [`Network`](Network.md) page to see which IP addresses are configured for your device
-- You can use the the free software [`uaExpert`](https://www.unified-automation.com/products/development-tools/uaexpert.html) to check the values on the OPC UA server
+- OPC UAサーバーのエンドポイントは、両方のネットワークインターフェースのポート `4840` に割り当てられています
+- IPアドレスの設定は、[`ネットワーク`](Network.md)のページで確認できます。
+- フリーソフトの[`uaExpert`](https://www.unified-automation.com/products/development-tools/uaexpert.html)を使用して、OPC UAサーバーの動作確認ができます。
 
-You can enable or disable the OPC UA server with the `Enabled` switch.
-![OPC UA Overview](/img/applicationinterface/opcua_overview.png)
+OPC UAサーバーの有効/無効は、`有効`スイッチで設定できます。
+![OPC UA概要](/img/applicationinterface/opcua_overview.png)
 
-## Authentication
+## 認証
 
-The OPC UA interface has a drop down menu to select the desired authentication setting. User can choose:
+OPC UAインターフェースでは、ドロップダウンメニューにより、任意の認証設定を選択することができます。ユーザーが選択できるのは:
 
-- Anonymous (No authentication required)
-- User/Password (Only the entered user name and password allow access to the OPC UA server)
-  ![OPC UA Auth Options](/img/applicationinterface/opcua_auth.png)
+- Anonymous (認証不要)
+- ユーザー/パスワード（入力されたユーザー名とパスワードで、OPC UAサーバーにアクセスします）
+  ![OPC UA認証オプション](/img/applicationinterface/opcua_auth.png)
 
-## Encryption
+## 暗号化
 
-OPC UA server also supports various security policies and modes. OPC UA Client can choose to use these policies and modes to access OPC UA data points.
+OPC UAサーバーは様々なセキュリティポリシーとモードもサポートしています。OPC UAクライアントは、これらのポリシーやモードを選択して、OPC UAデータポイントにアクセスすることができます。
 
-Security Policies:
+セキュリティポリシー:
 
-- None
+- None(なし)
 - Basic128Rsa15
 - Basic256
 - Basic256Sha256
 
-Security Modes:
+セキュリティモード:
 
-- None
-- Sign
-- Sign & Encrypt
+- None(なし)
+- 署名
+- 署名と暗号化
 
-## Custom OPC UA Variables
+## カスタム OPC UA 変数
 
-OPC UA interface also allows custom OPC UA Variables. Follow these steps to add custom OPC UA Variable:
+OPC UAインターフェースでは、カスタムOPC UA変数を使用することも可能です。以下の手順でカスタムOPC UA変数を追加してください:
 
-- When you open the dialog for OPC UA Variables, click the blue `Add your own OPC UA Variables` button as seen in the photo below.
-  ![OPC UA Custom Variables](/img/applicationinterface/opcua_custom.png)
+- OPC UA変数のダイアログを開いたら、下図の青い`独自OPC UA変数の追加`ボタンをクリックします。
+  ![OPC UAカスタム変数](/img/applicationinterface/opcua_custom.png)
 
-- Enter a `Name` for the OPC UA Variable, a `Node ID` and choose the `Data Type` and click `Save`.
-  ![OPC UA Custom Variable Dialog](/img/applicationinterface/add_opcua_custom.png)
+- OPC UA変数の`名前`、`ノードID`、`データタイプ`を入力し、`保存`をクリックします。
+  ![OPC UAカスタム変数ダイアログ](/img/applicationinterface/add_opcua_custom.png)
 
-- You will see the saved variable on the top, similar to the example below.
-  ![OPC UA Added Custom Variable](/img/applicationinterface/added_new_opcua_variable.png)
+- 以下の例のように、上部に保存された変数が表示されます。
+  ![OPC UAカスタム変数の追加](/img/applicationinterface/added_new_opcua_variable.png)
 
-- You can then click to `Select Variable` button at the right end of the variable to add it to the table.
-- To map a value to this variable, follow the normal mapping instructions as explained in [`Application Interface` page](ApplicationInterface.md) and [`Mapping`](Mapping.md) page.
+- そして、変数の右端にある`変数の選択`ボタンをクリックすると、その変数がテーブルに追加されます。
+- この変数に値をマッピングするには、[`アプリケーションインタフェース` ページ](ApplicationInterface.md) および [`マッピング`](Mapping.md) ページで説明されている通常のマッピングの手順に従います。

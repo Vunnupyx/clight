@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 
 jest.mock('node-opcua-pki');
-jest.mock('bcrypt', () => ({
+jest.mock('bcryptjs', () => ({
   compare: jest.fn()
 }));
 

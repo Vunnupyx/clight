@@ -16,6 +16,7 @@ title: Changelog
 
 ## Fixed
 
+- [DIGMDCLGHT-357](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-357) Fixes ability to map multiple sources to single application interface data point
 - [DIGMDCLGHT-361](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-361) Fixes notification display when setting invalid time settings
 - [DIGMDCLGHT-368](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-368) Fixes proxy port number being sent to backend as string
 - [DIGMDCLGHT-371](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-371) Fixes text for data source select a variable tooltip
@@ -24,7 +25,9 @@ title: Changelog
 - [DIGMDCLGHT-376](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-376) Fixes notification for any changes while UI is logged out in background
 - [DIGMDCLGHT-377](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-377) Fixes changing of width for data mapping columns
 - [DIGMDCLGHT-378](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-378) Fixes update process at first startup
+- [DIGMDCLGHT-382](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-382) Fixes overlapping cancel icon on VDP source search dropdown menu
 - [DIGMDCLGHT-383](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-383) Fixes wrong success notification if invalid configuration is uploaded
+- [DIGMDCLGHT-387](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-387) Fixes showing delete function for custom OPC UA variables if it is in use
 - [DIGMDCLGHT-391](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-391) Fixes persistance of counters between restarts
 
 ## [3.0.7]

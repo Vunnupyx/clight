@@ -1588,7 +1588,7 @@
                 }
               }
             }
-          }
+          },
           "404": {
             "description": "Version to update not found.",
             "schema": {

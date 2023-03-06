@@ -70,8 +70,9 @@
         <ngx-datatable-column
           [name]="'settings-data-mapping.Source' | translate"
           prop="source"
-          [flexGrow]="1.5"
+          [flexGrow]="1"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -125,8 +126,9 @@
         <ngx-datatable-column
           [name]="'settings-data-mapping.Target' | translate"
           prop="target"
-          [flexGrow]="1.5"
+          [flexGrow]="1"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -183,6 +185,7 @@
           cellClass="button-cell"
           [sortable]="false"
           [minWidth]="120"
+          [maxWidth]="400"
         >
           <ng-template
             ngx-datatable-cell-template

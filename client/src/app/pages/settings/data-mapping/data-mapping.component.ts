@@ -222,22 +222,14 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     await this.dataMappingService.getDataMappingsAll();
   }
 
-  isDuplicatingMapping() {
+  isTargetAlreadyMapped() {
     if (!this.mappingRows || !this.unsavedRow) {
       return false;
     }
 
-    if (
-      this.unsavedRow.source === undefined ||
-      this.unsavedRow.target === undefined
-    ) {
+    if (this.unsavedRow.target === undefined) {
       return false;
     }
-
-    // check whether other DPs do not have such name
-    const newFieldValueSource = (this.unsavedRow.source as string)
-      .toLowerCase()
-      .trim();
 
     const newFieldValueTarget = (this.unsavedRow.target as string)
       .toLowerCase()
@@ -246,11 +238,9 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     const editableId = this.unsavedRow?.id;
 
     return this.mappingRows.some((dp) => {
-      return (
-        dp.source.toLowerCase().trim() === newFieldValueSource &&
-        dp.target.toLowerCase().trim() === newFieldValueTarget &&
-        dp.id !== editableId
-      );
+      const targetAlreadyMapped =
+        dp.target.toLowerCase().trim() === newFieldValueTarget;
+      return targetAlreadyMapped && dp.id !== editableId;
     });
   }
 

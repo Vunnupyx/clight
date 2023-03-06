@@ -349,7 +349,7 @@
       "Enabled": "Enabled",
       "Disabled": "Disabled"
     },
-    "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "DuplicatedKeys": "This value is already in use",
     "TimeZone": "Time zone",
     "Organization": "Organization",
     "Model": "Model",

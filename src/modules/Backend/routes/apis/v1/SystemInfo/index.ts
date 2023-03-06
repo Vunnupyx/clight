@@ -81,9 +81,12 @@ async function getMDCLUpdates(request: Request, response: Response) {
     });
   }
   const datahubAdapter = datahubSink.getAdapter();
-
+  if (!datahubAdapter) {
+    return response.status(403).json({
+      error: 'Terms and conditions not accepted.'
+    });
+  }
   await datahubAdapter.getUpdate(response);
-  return;
 }
 
 /**
@@ -126,6 +129,11 @@ async function updateMdcl(request: Request, response: Response) {
     });
   }
   const datahubAdapter = datahubSink.getAdapter();
+  if (!datahubAdapter) {
+    return response.status(403).json({
+      error: 'Terms and conditions not accepted.'
+    });
+  }
 
   return datahubAdapter.setUpdate(response, request.body);
 }

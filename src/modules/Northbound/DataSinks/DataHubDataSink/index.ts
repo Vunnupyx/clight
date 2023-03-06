@@ -142,7 +142,6 @@ export class DataHubDataSink extends DataSink {
         `${logPrefix} datahub data sink is disabled. Continue initialization for update mechanism.`
       );
       this.updateCurrentStatus(LifecycleEventStatus.Disabled);
-      return this;
     }
 
     if (!this.termsAndConditionsAccepted) {

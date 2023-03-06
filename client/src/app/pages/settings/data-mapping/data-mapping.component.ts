@@ -223,24 +223,24 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   isTargetAlreadyMapped() {
-    if (!this.mappingRows || !this.unsavedRow) {
+    if (
+      !this.mappingRows ||
+      !this.unsavedRow ||
+      this.unsavedRow.target === undefined
+    ) {
       return false;
     }
 
-    if (this.unsavedRow.target === undefined) {
-      return false;
-    }
-
-    const newFieldValueTarget = (this.unsavedRow.target as string)
+    const newMappingId = this.unsavedRow?.id;
+    const newMappingTarget = (this.unsavedRow.target as string)
       .toLowerCase()
       .trim();
 
-    const editableId = this.unsavedRow?.id;
-
     return this.mappingRows.some((dp) => {
-      const targetAlreadyMapped =
-        dp.target.toLowerCase().trim() === newFieldValueTarget;
-      return targetAlreadyMapped && dp.id !== editableId;
+      return (
+        dp.target.toLowerCase().trim() === newMappingTarget &&
+        dp.id !== newMappingId
+      );
     });
   }
 

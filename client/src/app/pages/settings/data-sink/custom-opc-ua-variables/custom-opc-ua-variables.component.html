@@ -125,8 +125,9 @@
         </mat-button-toggle>
         <mat-button-toggle
           [matTooltip]="'settings-data-sink.Delete' | translate"
+          [disabled]="isExisting(row.address)"
           matTooltipPosition="above"
-          (click)="onDelete(row)"
+          (click)="!isExisting(row.address) && onDelete(row)"
           ><mat-icon svgIcon="mdc:delete"></mat-icon>
         </mat-button-toggle>
         <mat-button-toggle

@@ -30,6 +30,7 @@ title: Changelog
 - [DIGMDCLGHT-387](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-387) Fixes showing delete function for custom OPC UA variables if it is in use
 - [DIGMDCLGHT-391](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-391) Fixes persistance of counters between restarts
 - [DIGMDCLGHT-397](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-391) Fixes possibility to assign multiple sources within an Enum VDP
+- [DIGMDCLGHT-399](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-399) Fixes column name for Energy add variable popup window
 
 ## [3.0.7]
 

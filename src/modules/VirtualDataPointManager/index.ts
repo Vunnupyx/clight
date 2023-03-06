@@ -404,6 +404,11 @@ export class VirtualDataPointManager {
     }
     const value = sourceEvents[0].measurement.value;
     const compare = config.comparativeValue;
+
+    if (!compare) {
+      return null;
+    }
+
     switch (typeof value) {
       case 'number': {
         // Correct method to compare
@@ -458,6 +463,11 @@ export class VirtualDataPointManager {
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
   ): boolean | null {
+    const compare = config?.comparativeValue;
+
+    if (!compare) {
+      return null;
+    }
     return !this.equal(sourceEvents, config);
   }
 

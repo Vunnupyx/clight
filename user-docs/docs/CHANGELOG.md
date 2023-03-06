@@ -21,6 +21,7 @@ title: Changelog
 - [DIGMDCLGHT-368](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-368) Fixes proxy port number being sent to backend as string
 - [DIGMDCLGHT-371](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-371) Fixes text for data source select a variable tooltip
 - [DIGMDCLGHT-372](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-372) Fixes text for update fail notification in case of time out
+- [DIGMDCLGHT-373](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-373) Fixes validation of IP, netmask inputs
 - [DIGMDCLGHT-375](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-375) Fixes the order of Digital Inputs while adding new data point
 - [DIGMDCLGHT-376](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-376) Fixes notification for any changes while UI is logged out in background
 - [DIGMDCLGHT-377](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-377) Fixes changing of width for data mapping columns

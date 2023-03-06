@@ -175,4 +175,8 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
       ...obj
     };
   }
+
+  isSourceOptionAlreadyUsed(sourceOptionId: string): boolean {
+    return !!this.rows.find((row) => row.source === sourceOptionId);
+  }
 }

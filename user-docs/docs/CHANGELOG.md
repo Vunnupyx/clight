@@ -24,6 +24,7 @@ title: Changelog
 - [DIGMDCLGHT-376](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-376) Fixes notification for any changes while UI is logged out in background
 - [DIGMDCLGHT-377](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-377) Fixes changing of width for data mapping columns
 - [DIGMDCLGHT-378](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-378) Fixes update process at first startup
+- [DIGMDCLGHT-383](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-383) Fixes wrong success notification if invalid configuration is uploaded
 - [DIGMDCLGHT-391](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-391) Fixes persistance of counters between restarts
 
 ## [3.0.7]

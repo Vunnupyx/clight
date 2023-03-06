@@ -33,7 +33,12 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-      [name]="'settings-data-source.BTSSString' | translate"
+      [name]="
+        (isEnergySource()
+          ? 'settings-data-source.Address'
+          : 'settings-data-source.BTSSString'
+        ) | translate
+      "
       prop="address"
       [minWidth]="350"
       [maxWidth]="600"

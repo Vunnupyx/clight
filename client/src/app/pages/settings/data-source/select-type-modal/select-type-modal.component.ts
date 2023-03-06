@@ -53,6 +53,10 @@ export class SelectTypeModalComponent implements OnInit {
     return false;
   }
 
+  isEnergySource() {
+    return this.data.protocol === DataSourceProtocol.Energy;
+  }
+
   onClose() {
     this.dialogRef.close();
   }

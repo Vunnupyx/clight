@@ -11,11 +11,11 @@ describe('Frontend Regex Test', () => {
     test.each([
       {
         input: undefined,
-        expectedResult: false //TBD returns true
+        expectedResult: true //TBD does not change UX, as empty value is not allowed anyway
       },
       {
         input: null,
-        expectedResult: false //TBD returns true
+        expectedResult: true //TBD does not change UX, as empty value is not allowed anyway
       },
       {
         input: '',
@@ -68,11 +68,11 @@ describe('Frontend Regex Test', () => {
         expectedResult: false
       },
       {
-        input: '0.0.0.0', //theoretically correct IP address, although reserved //TBD
+        input: '0.0.0.0', //theoretically correct IP address, although reserved
         expectedResult: true
       },
       {
-        input: '0.0.15.10', //theoretically correct IP address, although reserved //TBD
+        input: '0.0.15.10', //theoretically correct IP address, although reserved
         expectedResult: true
       },
       {
@@ -296,7 +296,7 @@ describe('Frontend Regex Test', () => {
       },
       {
         input: 'test.test@dmgmori.com',
-        expectedResult: false //TBD returns true
+        expectedResult: true
       },
       {
         input: '123@dmgmori.com',

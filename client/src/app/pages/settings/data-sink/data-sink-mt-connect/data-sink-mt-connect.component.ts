@@ -140,10 +140,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.MTConnectItems =
       this.dataSinkService.getPredefinedMtConnectDataPoints();
-    this.OPCUAAddresses = [
-      ...this.dataSinkService.getPredefinedOPCDataPoints(),
-      ...(this.dataSink.customDataPoints || [])
-    ];
     this.sub.add(
       combineLatest([
         this.dataPointService.dataPoints,
@@ -173,6 +169,11 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     const dataSink = changes.dataSink?.currentValue;
     if (!dataSink) return;
+
+    this.OPCUAAddresses = [
+      ...this.dataSinkService.getPredefinedOPCDataPoints(),
+      ...(this.dataSink.customDataPoints || [])
+    ];
 
     if (
       !changes.dataSink?.previousValue ||

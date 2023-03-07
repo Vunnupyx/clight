@@ -16,6 +16,7 @@ title: Changelog
 
 ## Fixed
 
+- [DIGMDCLGHT-139](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-139) Fixes setting value for OPCUA string and localized text data types
 - [DIGMDCLGHT-357](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-357) Fixes ability to map multiple sources to single application interface data point
 - [DIGMDCLGHT-361](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-361) Fixes notification display when setting invalid time settings
 - [DIGMDCLGHT-368](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-368) Fixes proxy port number being sent to backend as string

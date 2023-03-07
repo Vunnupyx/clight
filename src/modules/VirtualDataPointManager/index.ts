@@ -404,6 +404,11 @@ export class VirtualDataPointManager {
     }
     const value = sourceEvents[0].measurement.value;
     const compare = config.comparativeValue;
+
+    if (!compare) {
+      return null;
+    }
+
     switch (typeof value) {
       case 'number': {
         // Correct method to compare
@@ -458,6 +463,11 @@ export class VirtualDataPointManager {
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
   ): boolean | null {
+    const compare = config?.comparativeValue;
+
+    if (!compare) {
+      return null;
+    }
     return !this.equal(sourceEvents, config);
   }
 
@@ -792,6 +802,9 @@ export class VirtualDataPointManager {
 
   /**
    * Checks order of VDPs to determine if their order is valid according to the dependencies.
+   *
+   * @see client/src/app/pages/settings/virtual-data-point/virtual-data-point.component.ts for usage of same logic in frontend!
+   * Update there as well if any logic changes here
    */
   public getVdpValidityStatus(
     vdpsListToCheck: IVirtualDataPointConfig[]

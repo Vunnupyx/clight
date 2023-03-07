@@ -280,7 +280,7 @@ describe('DataHubDataSink', () => {
       configMock.dataPoints = [];
     });
 
-    it('does not instantiate when sink is not enabled', async () => {
+    it('does instantiate even when sink is disabled.', async () => {
       datasinkUUT = new DataHubDataSink({
         ...dataHubDataSinkOptions,
         dataSinkConfig: {
@@ -292,16 +292,13 @@ describe('DataHubDataSink', () => {
         expect(winstonMock.debug).toBeCalledWith(
           expect.stringContaining('initializing')
         );
-        expect(dataHubAdapterMock.init).not.toBeCalled();
         expect(winstonMock.info).toBeCalledWith(
-          expect.stringContaining('disabled')
+          expect.stringContaining(
+            'datahub data sink is disabled. Continue initialization for update mechanism'
+          )
         );
-        expect(dataHubAdapterMock.start).not.toBeCalled();
         expect(datasinkUUT.getCurrentStatus()).toBe(
           LifecycleEventStatus.Disabled
-        );
-        expect(winstonMock.info).toBeCalledWith(
-          expect.stringContaining('data sink is disabled')
         );
       });
     });

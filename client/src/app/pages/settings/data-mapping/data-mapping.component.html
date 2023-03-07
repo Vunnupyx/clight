@@ -96,10 +96,6 @@
               [ngModel]="value"
               disableOptionCentering="true"
               (ngModelChange)="unsavedRow && (unsavedRow.source = $event)"
-              [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
-              matTooltipPosition="above"
-              [matTooltipDisabled]="!isDuplicatingMapping()"
-              [class.border-danger]="isDuplicatingMapping()"
             >
               <mat-option>
                 <ngx-mat-select-search
@@ -152,8 +148,8 @@
               (ngModelChange)="unsavedRow && (unsavedRow.target = $event)"
               [matTooltip]="'settings-data-sink.DuplicatedKeys' | translate"
               matTooltipPosition="above"
-              [matTooltipDisabled]="!isDuplicatingMapping()"
-              [class.border-danger]="isDuplicatingMapping()"
+              [matTooltipDisabled]="!isTargetAlreadyMapped()"
+              [class.border-danger]="isTargetAlreadyMapped()"
             >
               <mat-option>
                 <ngx-mat-select-search
@@ -212,14 +208,14 @@
             >
               <mat-button-toggle
                 (click)="
-                  !isDuplicatingMapping() &&
+                  !isTargetAlreadyMapped() &&
                     unsavedRow.source?.length > 0 &&
                     unsavedRow.target?.length > 0 &&
                     onEditEnd();
                   group.value = null
                 "
                 [disabled]="
-                  isDuplicatingMapping() ||
+                  isTargetAlreadyMapped() ||
                   unsavedRow.source?.length === 0 ||
                   !unsavedRow.source ||
                   unsavedRow.target?.length === 0 ||

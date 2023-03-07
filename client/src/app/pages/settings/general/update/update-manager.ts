@@ -241,7 +241,12 @@ export class UpdateManager {
     try {
       const response: { Version: string } = await this.configAgentEndpoint.post(
         `/system/update/${this.newOsVersionToInstall}/download`,
-        this.newOsVersionToInstall
+        null,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
 
       const isDownloadStarted =

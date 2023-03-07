@@ -33,7 +33,7 @@ export interface RequestOptionsArgs {
   headers?: RequestHttpHeaders;
   params?: RequestHttpParams;
   withCredentials?: boolean;
-  responseType: string;
+  responseType?: string;
   observe?: string;
   reportProgress?: boolean;
 }

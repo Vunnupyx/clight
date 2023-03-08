@@ -13,6 +13,11 @@
         <DataItem type="AVAILABILITY" category="EVENT" id="DMG_MORI_IoTconnector-flex_2" name="avail" />
         <DataItem type="RUN_TIME" category="EVENT" id="DMG_MORI_IoTconnector-flex_091" name="runTime" />
         <DataItem type="SYSTEM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_084" name="system" />
+        <DataItem type="VOLT_AMPERE" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_100" name="VoltAmpere" />
+        <DataItem type="VOLT_AMPERE_REACTIVE" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_101" name="VoltAmpereReactive" />
+        <DataItem type="WATTAGE" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_102" name="Wattage" />
+        <DataItem type="ELECTRICAL_ENERGY" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_103" name="ElectricalEnergy" />
+        <DataItem type="POWER_FACTOR" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_104" name="PowerFactor" />
       </DataItems>
       <Components>
         <Axes name="Path Feedrate" id="DMG_MORI_IoTconnector-flex_3">

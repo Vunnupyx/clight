@@ -275,6 +275,9 @@ export class UpdateManager {
       if (downloadStatus === 'success') {
         //! GET https://<ip>/configuration-agent/v1/system/update is required! If not executed, applying the update does not work!
 
+        // Wait here is needed, otherwise /system/update returns 204!
+        await sleep(10000);
+
         const response: { Version: string } =
           await this.configAgentEndpoint.get(`/system/update`, {
             headers: {

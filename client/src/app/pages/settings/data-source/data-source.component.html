@@ -220,7 +220,7 @@
           color="primary"
           type="button"
           class="btn-sm"
-          [disabled]="!isTouchedTable || isLoading || !dsFormValid"
+          [disabled]="!isTouchedTable || isLoading || !dsFormValid || isEditing"
           (click)="onApply()"
         >
           {{ 'settings-data-source.ApplyChanges' | translate }}

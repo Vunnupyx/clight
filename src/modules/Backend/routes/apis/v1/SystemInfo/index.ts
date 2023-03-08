@@ -5,6 +5,7 @@ import winston from 'winston';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 import { DataSinkProtocols } from '../../../../../../common/interfaces';
 import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
+import { sleep } from '../../../../../Utilities';
 
 let configManager: ConfigManager;
 let dataSinksManager: DataSinksManager;
@@ -80,12 +81,29 @@ async function getMDCLUpdates(request: Request, response: Response) {
       msg: `No CelosXChange connection available.`
     });
   }
-  const datahubAdapter = datahubSink.getAdapter();
-  if (!datahubAdapter) {
+  let datahubAdapter = datahubSink.getAdapter();
+  if (!datahubAdapter && !configManager?.config?.termsAndConditions?.accepted) {
     return response.status(403).json({
       error: 'Terms and conditions not accepted.'
     });
+  } else if (!datahubAdapter) {
+    // TODO Make event driven, don't use polling
+    // Wait until data hub client gets initialized to not brick the update process
+    let retries = 24;
+    while (!datahubAdapter && retries > 0) {
+      datahubAdapter = datahubSink.getAdapter();
+      retries = retries - 1;
+
+      await sleep(5000);
+    }
+
+    if (!datahubAdapter) {
+      return response.status(403).json({
+        error: 'Could not connect to azure iot hub.'
+      });
+    }
   }
+
   await datahubAdapter.getUpdate(response);
 }
 

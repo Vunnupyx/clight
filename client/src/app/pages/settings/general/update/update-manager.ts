@@ -271,8 +271,22 @@ export class UpdateManager {
         this.checkCosDownloadStatus.bind(this),
         DOWNLOAD_STATUS_POLLING_INTERVAL_MS
       );
+
       if (downloadStatus === 'success') {
-        return 'COS_DOWNLOADED';
+        //! GET https://<ip>/configuration-agent/v1/system/update is required! If not executed, applying the update does not work!
+
+        const response: { Version: string } =
+          await this.configAgentEndpoint.get(`/system/update`, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+        if (response.Version === this.newOsVersionToInstall) {
+          return 'COS_DOWNLOADED';
+        } else {
+          return 'UNEXPECTED_ERROR';
+        }
       } else if (downloadStatus === 'fail') {
         if (this.retryCount === 3) {
           return 'UNEXPECTED_ERROR';

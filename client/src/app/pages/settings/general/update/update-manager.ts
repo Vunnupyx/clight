@@ -44,6 +44,7 @@ interface CosAvailableUpdates {
 }
 
 const DOWNLOAD_STATUS_POLLING_INTERVAL_MS = 5_000;
+const CHECK_DOWNLOADED_POLLING_INTERVAL_MS = 5_000;
 const RESTART_STATUS_POLLING_INTERVAL_MS = 5_000;
 const CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS = 5_000;
 
@@ -264,6 +265,24 @@ export class UpdateManager {
   /**
    * Validates downloaded CELOS Version
    */
+  private async checkCosDownloaded() {
+    const response: { Version: string } | null =
+      await this.configAgentEndpoint.get(`/system/update`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+    if (response && response.Version === this.newOsVersionToInstall) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Validates downloaded CELOS Version
+   */
   private async validateCosDownload() {
     const logPrefix = `${UpdateManager.name}::validateCosDownload`;
     try {
@@ -274,18 +293,13 @@ export class UpdateManager {
 
       if (downloadStatus === 'success') {
         //! GET https://<ip>/configuration-agent/v1/system/update is required! If not executed, applying the update does not work!
+        const cosDownloaded: checkDownloadStatus = await this.checkContinuously(
+          this.checkCosDownloaded.bind(this),
+          CHECK_DOWNLOADED_POLLING_INTERVAL_MS,
+          24
+        );
 
-        // Wait here is needed, otherwise /system/update returns 204!
-        await sleep(10000);
-
-        const response: { Version: string } =
-          await this.configAgentEndpoint.get(`/system/update`, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-
-        if (response.Version === this.newOsVersionToInstall) {
+        if (cosDownloaded) {
           return 'COS_DOWNLOADED';
         } else {
           return 'UNEXPECTED_ERROR';
@@ -430,20 +444,26 @@ export class UpdateManager {
    *
    * @param fn function that returns a Promise to check periodically
    * @param msDelayBetweenCalls delay between checks
+   * @param maxRetryCount max retries until the function returns the last result
    * @returns
    */
   private async checkContinuously(
     fn: () => Promise<any>,
-    msDelayBetweenCalls: number
+    msDelayBetweenCalls: number,
+    maxRetryCount: number = null
   ) {
     const logPrefix = `${UpdateManager.name}::checkContinuously`;
     return fn()
       .then(async (result) => {
-        if (result) {
+        if (result || (maxRetryCount !== null && maxRetryCount <= 0)) {
           return result;
         } else {
           await sleep(msDelayBetweenCalls);
-          return this.checkContinuously(fn, msDelayBetweenCalls);
+          return this.checkContinuously(
+            fn,
+            msDelayBetweenCalls,
+            maxRetryCount !== null ? maxRetryCount - 1 : null
+          );
         }
       })
       .catch((err) => {

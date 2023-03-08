@@ -395,7 +395,7 @@ export class VirtualDataPointComponent implements OnInit {
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
       data: {
-        enumeration: { ...virtualPoint.enumeration },
+        enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
         protocol
       },

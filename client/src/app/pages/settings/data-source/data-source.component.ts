@@ -253,7 +253,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onDataPoints(arr: SourceDataPoint[]) {
     this.datapointRows = arr;
-    this.clearUnsavedRow();
     this.tabs?.realignInkBar();
   }
 

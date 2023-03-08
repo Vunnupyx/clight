@@ -4,6 +4,16 @@ title: Changelog
 
 # Changelog
 
+## [3.0.9]
+
+## Fixed
+
+- [DIGMDCLGHT-296](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-296) Adds Energy data points to MTConnect stream
+- [DIGMDCLGHT-394](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-394) Fixes Enumeration VDP editing issue where Cancel button still saves the changes
+- [DIGMDCLGHT-396](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-396) Fixes showing Apply Changes button wrongly in VDP editing.
+- [DIGMDCLGHT-398](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-398) Fixes showing Apply Changes button wrongly in OPCUA editing.
+- [DIGMDCLGHT-404](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-404) Fixes CELOS update mechanism
+
 ## [3.0.8]
 
 ## Added

@@ -348,20 +348,46 @@ export class UpdateManager {
   }
 
   /**
+   * Checks if the system has been shut down
+   */
+  private async checkSystemShutdown() {
+    try {
+      await this.configAgentEndpoint.get(`/system/versions`);
+      return false;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  /**
+   * Checks if the system has been restarted
+   */
+  private async checkSystemRestart() {
+    try {
+      await this.configAgentEndpoint.get(`/system/versions`);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
    * Waits for system restart to detect that CELOS update successfully applied
    */
   private async waitForSystemRestart() {
     const logPrefix = `${UpdateManager.name}::waitForSystemRestart`;
     try {
-      const result = await this.checkContinuously(
-        this.checkSystemVersions.bind(this),
+      await this.checkContinuously(
+        this.checkSystemShutdown.bind(this),
         RESTART_STATUS_POLLING_INTERVAL_MS
       );
-      if (result === 'ERROR') {
-        return 'UNEXPECTED_ERROR';
-      } else if (result) {
-        return 'SYSTEM_RESTARTED';
-      }
+
+      await this.checkContinuously(
+        this.checkSystemRestart.bind(this),
+        RESTART_STATUS_POLLING_INTERVAL_MS
+      );
+
+      return 'SYSTEM_RESTARTED';
     } catch (err) {
       console.log(logPrefix, err);
       return 'UNEXPECTED_ERROR';

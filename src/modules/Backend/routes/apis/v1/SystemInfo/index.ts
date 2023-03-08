@@ -83,10 +83,13 @@ async function getMDCLUpdates(request: Request, response: Response) {
   }
   let datahubAdapter = datahubSink.getAdapter();
   if (!datahubAdapter && !configManager?.config?.termsAndConditions?.accepted) {
+    winston.warn(`${logPrefix} called but no terms and conditions accepted`);
     return response.status(403).json({
       error: 'Terms and conditions not accepted.'
     });
   } else if (!datahubAdapter) {
+    winston.warn(`${logPrefix} called but no module client available`);
+
     // TODO Make event driven, don't use polling
     // Wait until data hub client gets initialized to not brick the update process
     let retries = 24;
@@ -98,6 +101,9 @@ async function getMDCLUpdates(request: Request, response: Response) {
     }
 
     if (!datahubAdapter) {
+      winston.warn(
+        `${logPrefix} failed to connect to azure iot hub after 2 minutes`
+      );
       return response.status(403).json({
         error: 'Could not connect to azure iot hub.'
       });
@@ -146,11 +152,33 @@ async function updateMdcl(request: Request, response: Response) {
       msg: `No CelosXChange connection available.`
     });
   }
-  const datahubAdapter = datahubSink.getAdapter();
-  if (!datahubAdapter) {
+
+  let datahubAdapter = datahubSink.getAdapter();
+  if (!datahubAdapter && !configManager?.config?.termsAndConditions?.accepted) {
+    winston.warn(`${logPrefix} called but no terms and conditions accepted`);
     return response.status(403).json({
       error: 'Terms and conditions not accepted.'
     });
+  } else if (!datahubAdapter) {
+    winston.warn(`${logPrefix} called but no module client available`);
+    // TODO Make event driven, don't use polling
+    // Wait until data hub client gets initialized to not brick the update process
+    let retries = 24;
+    while (!datahubAdapter && retries > 0) {
+      datahubAdapter = datahubSink.getAdapter();
+      retries = retries - 1;
+
+      await sleep(5000);
+    }
+
+    if (!datahubAdapter) {
+      winston.warn(
+        `${logPrefix} failed to connect to azure iot hub after 2 minutes`
+      );
+      return response.status(403).json({
+        error: 'Could not connect to azure iot hub.'
+      });
+    }
   }
 
   return datahubAdapter.setUpdate(response, request.body);

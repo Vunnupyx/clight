@@ -6,7 +6,10 @@ import {
 } from '../../../../common/interfaces';
 import { IDataPointConfig } from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
-import { Iot2050MraaDI10 } from '../../../Iot2050MraaDI10/Iot2050mraa';
+import {
+  Iot2050MraaDI10,
+  Iot2050MraaDI2AI5
+} from '../../../Iot2050MraaDI10/Iot2050mraa';
 
 /**
  * Implementation of io shield data source
@@ -14,7 +17,7 @@ import { Iot2050MraaDI10 } from '../../../Iot2050MraaDI10/Iot2050mraa';
 export class IoshieldDataSource extends DataSource {
   protected name = IoshieldDataSource.name;
 
-  mraaClient: Iot2050MraaDI10;
+  mraaClient: Iot2050MraaDI10 | Iot2050MraaDI2AI5;
 
   /**
    * Initializes ioshield data source, sets up driver and validates configuration
@@ -44,7 +47,17 @@ export class IoshieldDataSource extends DataSource {
       return;
     }
 
-    this.mraaClient = new Iot2050MraaDI10();
+    switch (this.config.type) {
+      case '10di':
+        this.mraaClient = new Iot2050MraaDI10();
+        break;
+      case 'ai-100+5di':
+      case 'ai-150+5di':
+      default: // TODO Error handling if wrong type
+        this.mraaClient = new Iot2050MraaDI2AI5();
+        break;
+    }
+
     this.mraaClient.init();
 
     this.validateDataPointConfiguration();

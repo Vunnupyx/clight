@@ -28,6 +28,8 @@ export class SourceDataPointsState {
   dataPointsSourceMap!: ObjectMap<DataSourceProtocol>;
 }
 
+const ENERGY_ADDRESS_REQUIRED = 'tariff-number';
+
 @Injectable()
 export class SourceDataPointService
   extends BaseChangesService<SourceDataPoint>
@@ -97,7 +99,7 @@ export class SourceDataPointService
         await this.dataSourceService.apply(datasourceProtocol);
       }
 
-      if (this.isTouched) {
+      if (this.isTouched && this._isDataPointsValid(datasourceProtocol)) {
         await this.httpService.patch(
           `/datasources/${datasourceProtocol}/dataPoints`,
           this._store.snapshot.dataPoints
@@ -140,15 +142,21 @@ export class SourceDataPointService
         this._getDataPoints(datasourceProtocol);
 
         this.resetState();
+
+        this.toastr.success(
+          this.translate.instant('settings-data-source-point.BulkSuccess')
+        );
+      } else {
+        this.toastr.error(
+          this.translate.instant(
+            'settings-data-source-point.UnsupportedDataPoints'
+          )
+        );
       }
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
-
-      this.toastr.success(
-        this.translate.instant('settings-data-source-point.BulkSuccess')
-      );
     } catch {
       this.toastr.error(
         this.translate.instant('settings-data-source-point.BulkError')
@@ -379,6 +387,12 @@ export class SourceDataPointService
     }
   }
 
+  isDataPointRequired(type: SourceDataPointType, address: string): boolean {
+    return (
+      type === SourceDataPointType.Device && address === ENERGY_ADDRESS_REQUIRED
+    );
+  }
+
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
     const { dataPoints } = await this.httpService.get<{
       dataPoints: api.Sourcedatapoint[];
@@ -405,6 +419,21 @@ export class SourceDataPointService
       dataPoint.enabled = Boolean(parentSource.enabled);
     }
     return dataPoint;
+  }
+
+  private _isDataPointsValid(datasourceProtocol: DataSourceProtocol): boolean {
+    if (datasourceProtocol === DataSourceProtocol.Energy) {
+      const sourceDataPoints = this.dataSourceService.getEnergyAddresses();
+      for (const { name, type, address } of this._emptyState().dataPoints) {
+        const isDataPointOfSource = sourceDataPoints.some(
+          (v) => v.type === type && v.address === address && v.name === name
+        );
+        if (!isDataPointOfSource && !this.isDataPointRequired(type, address)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private _emptyState() {

@@ -279,6 +279,7 @@
     "BulkSuccess": "変更が適用されました。",
     "BulkError": "変更下適用できません。再試行してください。",
     "LoadError": "ソースデータポンとが読み込めません。再試行してください。",
+    "UnsupportedDataPoints": "The data point does not correspond to the selected type",
     "ConnectionAvailableWithDelay": "の応答時間で接続可能。 ",
     "HostUnreachable": "ホストに到達できません。IP設定を確認してください。"
   },

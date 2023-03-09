@@ -279,6 +279,7 @@
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
     "LoadError": "Failed to load source data points. Try again later",
+    "UnsupportedDataPoints": "The data point does not correspond to the selected type",
     "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
     "HostUnreachable": "Host unreachable please check IP configuration"
   },

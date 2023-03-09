@@ -29,8 +29,6 @@ import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 
-const ENERGY_ADDRESS_REQUIRED = 'tariff-number';
-
 @Component({
   selector: 'app-data-source',
   templateUrl: './data-source.component.html',
@@ -430,16 +428,16 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return [SourceDataPointType.NCK].includes(type);
   }
 
-  isDataPointRequired(obj: SourceDataPoint): boolean {
-    return (
-      obj.type === SourceDataPointType.Device &&
-      obj.address === ENERGY_ADDRESS_REQUIRED
+  isRequired(obj: SourceDataPoint): boolean {
+    return this.sourceDataPointService.isDataPointRequired(
+      obj.type,
+      obj.address
     );
   }
 
   getTariffText() {
     const deviceDatapoint = this.datapointRows.find((dp) =>
-      this.isDataPointRequired(dp)
+      this.isRequired(dp)
     );
     const translationKey = `settings-data-source.TariffStatus.${
       this.liveData?.[deviceDatapoint?.address]?.value

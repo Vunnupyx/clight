@@ -279,6 +279,7 @@
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuchen Sie es bitte später erneut!",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es bitte später erneut!",
+    "UnsupportedDataPoints": "The data point does not correspond to the selected type",
     "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
     "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
   },

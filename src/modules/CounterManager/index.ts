@@ -27,7 +27,7 @@ export class CounterManager {
     private cache: DataPointCache
   ) {
     const logPrefix = `${this.constructor.name}::constructor`;
-    if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
+    if (!fs.existsSync(this.configFolder)) {
       winston.warn(
         `${logPrefix} Configuration folder for storing counter values not found! The counts are not persisted!`
       );
@@ -35,10 +35,7 @@ export class CounterManager {
       return;
     }
 
-    this.counterStoragePath = path.join(
-      __dirname,
-      `${this.configFolder}/counters.json`
-    );
+    this.counterStoragePath = path.join(this.configFolder, `counters.json`);
 
     if (fs.existsSync(this.counterStoragePath)) {
       // TODO: Update Cache at startup
@@ -349,9 +346,9 @@ export class CounterManager {
           : scheduleData.month - 1,
       date:
         //@ts-ignore
-        scheduleData.date
+        scheduleData.day !== 'Every'
           ? //@ts-ignore
-            scheduleData.date
+            scheduleData.day
           : currentDate.getDate(),
       hours:
         scheduleData.hours === 'Every'
@@ -405,7 +402,14 @@ export class CounterManager {
         // increase every entries with one and check if new date is in future
         for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
           // Ignore non 'Every' entries
-          if (scheduleData[entry] !== 'Every' && entry !== 'year') continue;
+          if (
+            ((entry !== 'date' && scheduleData[entry] !== 'Every') ||
+              //@ts-ignore
+              (entry === 'date' && scheduleData.day !== 'Every')) &&
+            entry !== 'year'
+          ) {
+            continue;
+          }
           timeData[entry] += 1;
           dateFromScheduling = new Date(
             timeData.year,

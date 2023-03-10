@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
+import * as date from 'date-fns';
 import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
@@ -366,15 +367,17 @@ export class CounterManager {
       dateFromScheduling = new Date(
         timeData.year,
         timeData.month,
-        currentDate.getDate() +
-          // @ts-ignore
-          ((7 - currentDate.getDay() + Day[scheduleData.day]) % 7 || 0),
+        currentDate.getDate(),
         timeData.hours,
         timeData.minutes,
         timeData.sec
       );
-      // @ts-ignore
-      const diff = currentDate - dateFromScheduling;
+
+      dateFromScheduling =
+        // @ts-ignore
+        date[`next${scheduleData?.day}`]?.(dateFromScheduling);
+
+      const diff = currentDate.getTime() - dateFromScheduling.getTime();
       if (!(diff < 0)) {
         dateFromScheduling = new Date(
           timeData.year,

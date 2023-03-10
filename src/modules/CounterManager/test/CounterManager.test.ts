@@ -1,10 +1,5 @@
 import { CounterManager } from '..';
-import {
-  ScheduleDescription,
-  DateType,
-  DayType,
-  MonthType
-} from '../interfaces';
+import { ScheduleDescription, DateType, DayType } from '../interfaces';
 import * as date from 'date-fns';
 
 jest.mock('winston');
@@ -198,8 +193,6 @@ describe('Test CounterManager', () => {
               created: Date.now()
             };
             let scheduleDate = date[`next${day}`](currentTime);
-            console.log('current:', currentTime.toISOString());
-            console.log('next:', scheduleDate.toISOString());
             if (date.isBefore(scheduleDate, currentTime)) {
               scheduleDate = date.addMonths(scheduleDate, 1);
             }

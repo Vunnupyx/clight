@@ -180,7 +180,11 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   onDataSourceIndexChange(idx: number) {
-    if (!this.dataSourceList || !this.dataSourceList[idx]) {
+    if (
+      this.dataSourceIndex === idx ||
+      !this.dataSourceList ||
+      !this.dataSourceList[idx]
+    ) {
       return;
     }
     this.switchDataSource(this.dataSourceList[idx]);
@@ -192,6 +196,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
         await this.promptService.warn();
         await this.sourceDataPointService.revert();
       } catch {
+        this.tabs.selectedIndex = this.dataSourceIndex;
         return;
       }
     }

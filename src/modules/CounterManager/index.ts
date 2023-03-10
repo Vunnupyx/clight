@@ -324,6 +324,14 @@ export class CounterManager {
 
         diff = currentDate.getTime() - dateFromScheduling.getTime();
         if (diff < 0) {
+          if (
+            ['date', 'month', 'year'].includes(entry) &&
+            scheduleData.hours === 'Every'
+          ) {
+            // If day, month or year is increased, and hour is "Every", then next scheduled hour is 00
+            dateFromScheduling = date.setHours(dateFromScheduling, 0);
+          }
+
           // New date is in future, break out for loop
           return dateFromScheduling;
         }

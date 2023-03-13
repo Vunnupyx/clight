@@ -227,6 +227,7 @@
     "DeleteMessage": "Are you sure you want to delete data point?",
     "SetThresholds": "Set Thresholds",
     "SetComparativeValue": "Set Comparative Value",
+    "UpdateComparativeValueError": "Update Comparative Value error",
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",

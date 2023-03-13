@@ -473,6 +473,12 @@ export class VirtualDataPointComponent implements OnInit {
           ...virtualPoint,
           comparativeValue: result
         });
+      } else if (typeof result != 'boolean') {
+        this.toastr.warning(
+          this.translate.instant(
+            'settings-virtual-data-point.UpdateComparativeValueError'
+          )
+        );
       }
     });
   }

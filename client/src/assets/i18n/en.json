@@ -21,7 +21,8 @@
     "Password": "Password",
     "SignIn": "Sign in",
     "ForgotPassword": "Forgot your password?",
-    "WhereToFindPassword": "Where do I find my login password?"
+    "WhereToFindPassword": "Where do I find my login password?",
+    "AuthError": "User with these credentials could not be found!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",

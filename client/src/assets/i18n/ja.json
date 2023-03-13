@@ -21,7 +21,8 @@
     "Password": "パスワード",
     "SignIn": "サインイン",
     "ForgotPassword": "パスワードを忘れた場合",
-    "WhereToFindPassword": "パスワードを回復するには"
+    "WhereToFindPassword": "パスワードを回復するには",
+    "AuthError": "User with these credentials could not be found!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "パスワード変更",

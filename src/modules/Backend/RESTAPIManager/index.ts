@@ -90,6 +90,24 @@ export class RestApiManager {
       `${ConfigurationAgentManager.hostname}:${ConfigurationAgentManager.port}`,
       {
         filter: (req: Request, res: Response) => {
+          // If device is not commissioned allowed these endpoints so that commissioning can be performed
+          if (
+            !this.options.configManager.isDeviceCommissioned &&
+            ([
+              '/system/commissioning',
+              'network/adapters/enoX1',
+              '/network/adapters/enoX1/status',
+              '/datahub/dps',
+              '/system/commissioning/finish'
+            ].includes(req.url) ||
+              req.url.startsWith('/datahub/status/'))
+          ) {
+            winston.info(
+              `${logPrefix}requested URL: ${req.url}, allowed for commissioning`
+            );
+            return true;
+          }
+
           const isAuthenticated = authManager.verifyJWTAuth({
             withPasswordChangeDetection: true,
             withBooleanResponse: true
@@ -113,7 +131,7 @@ export class RestApiManager {
         },
         proxyErrorHandler: function (err, res, next) {
           winston.error(
-            `${logPrefix} Error at Configuration Agent proxy:${err?.code}`
+            `${logPrefix} Error at Configuration Agent proxy:${err}`
           );
           next(err);
         }

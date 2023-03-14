@@ -103,8 +103,19 @@ export class RestApiManager {
               req.url.startsWith('/datahub/status/'))
           ) {
             winston.info(
-              `${logPrefix}requested URL: ${req.url}, allowed for commissioning`
+              `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
             );
+
+            if (
+              req.url === '/system/commissioning/finish' &&
+              req.method === 'POST'
+            ) {
+              winston.info(
+                `${logPrefix} Device commissioning finished, setting internal status to commissioned`
+              );
+              this.options.configManager.isDeviceCommissioned = true;
+            }
+
             return true;
           }
 

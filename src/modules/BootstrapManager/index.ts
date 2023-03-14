@@ -35,7 +35,6 @@ export class BootstrapManager {
   private hwEvents: IoT2050HardwareEvents;
   private ledManager: LedStatusService;
   private tlsKeyManager: TLSKeyManager;
-  private isCommissioned = false;
 
   constructor() {
     this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
@@ -100,8 +99,6 @@ export class BootstrapManager {
       this.setupKillEvents();
 
       await this.tlsKeyManager.generateKeys();
-      this.isCommissioned =
-        await ConfigurationAgentManager.getCommissioningStatus();
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {

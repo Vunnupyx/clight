@@ -7,15 +7,15 @@
     [headerHeight]="50"
     rowHeight="auto"
     [rows]="rows"
-    columnMode="flex"
     class="overflow-auto select-type-table"
   >
     <ngx-datatable-column
       [name]="'settings-data-source.Name' | translate"
       prop="name"
       [canAutoResize]="false"
-      [flexGrow]="1"
+      [width]="175"
       [minWidth]="120"
+      [maxWidth]="175"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -40,8 +40,9 @@
         ) | translate
       "
       prop="address"
-      [flexGrow]="2"
+      [width]="276"
       [minWidth]="120"
+      [maxWidth]="276"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -58,14 +59,14 @@
         </div>
       </ng-template>
     </ngx-datatable-column>
-
     <ngx-datatable-column
       [name]="'settings-data-source.Actions' | translate"
       cellClass="button-cell justify-content-center"
       headerClass="text-center"
       [sortable]="false"
-      [flexGrow]="1"
+      [width]="175"
       [minWidth]="120"
+      [maxWidth]="175"
     >
       <ng-template
         ngx-datatable-cell-template

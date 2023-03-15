@@ -350,7 +350,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   onAddressSelect(obj: SourceDataPoint) {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
       width: '650px',
-      enterAnimationDuration: '0ms',
       data: {
         selection: obj.address,
         type: obj.type,

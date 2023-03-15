@@ -91,15 +91,12 @@ export class RestApiManager {
       `${ConfigurationAgentManager.hostname}:${ConfigurationAgentManager.port}`,
       {
         filter: (req: Request, res: Response) => {
-          // Always allow /system/commissioning endpoint for checking commissioning status.
-          if (req.url === '/system/commissioning' && req.method === 'GET') {
-            return true;
-          }
           // If device is not commissioned allowed these endpoints so that commissioning can be performed
           if (
             !this.options.configManager.isDeviceCommissioned &&
             ([
               '/machine/info',
+              '/system/commissioning',
               '/network/adapters/enoX1',
               '/network/adapters/enoX1/status',
               '/datahub/dps',

@@ -164,22 +164,10 @@ export class RoutesManager {
     //TODO: Make code async ?
     connectorFactory(this.routeHandlers, swaggerFile, {
       security: {
-        jwt: (req, res, next) => {
-          // If device is not commissioned allowed this endpoint so that commissioning can be performed
-          if (
-            !options.configManager.isDeviceCommissioned &&
-            req.url === '/api/v1/deviceInfos'
-          ) {
-            winston.info(
-              `RoutesManager::connectorFactory requested URL: ${req.url}, allowed for commissioning`
-            );
-            next();
-          } else {
-            return options.authManager.verifyJWTAuth({
-              withPasswordChangeDetection: true
-            })(req as Request, res, next);
-          }
-        },
+        jwt: (req, res, next) =>
+          options.authManager.verifyJWTAuth({
+            withPasswordChangeDetection: true
+          })(req as Request, res, next),
         jwtNoPasswordChangeDetection: (req, res, next) =>
           options.authManager.verifyJWTAuth({
             withPasswordChangeDetection: false

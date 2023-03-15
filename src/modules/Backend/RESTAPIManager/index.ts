@@ -12,6 +12,7 @@ import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
 import { ConfigurationAgentManager } from '../../ConfigurationAgentManager';
+import { ICosSystemCommissioningStatus } from '../../ConfigurationAgentManager/interfaces';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager;
@@ -94,8 +95,9 @@ export class RestApiManager {
           if (
             !this.options.configManager.isDeviceCommissioned &&
             ([
+              '/machine/info',
               '/system/commissioning',
-              'network/adapters/enoX1',
+              '/network/adapters/enoX1',
               '/network/adapters/enoX1/status',
               '/datahub/dps',
               '/system/commissioning/finish'
@@ -105,17 +107,6 @@ export class RestApiManager {
             winston.info(
               `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
             );
-
-            if (
-              req.url === '/system/commissioning/finish' &&
-              req.method === 'POST'
-            ) {
-              winston.info(
-                `${logPrefix} Device commissioning finished, setting internal status to commissioned`
-              );
-              this.options.configManager.isDeviceCommissioned = true;
-            }
-
             return true;
           }
 
@@ -130,6 +121,29 @@ export class RestApiManager {
             );
           }
           return isAuthenticated;
+        },
+        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+          if (
+            userReq.url === '/system/commissioning/finish' &&
+            userReq.method === 'POST'
+          ) {
+            const responseData: ICosSystemCommissioningStatus = JSON.parse(
+              proxyResData.toString('utf8')
+            );
+            if (proxyRes.statusCode === 201 && responseData.Finished === true) {
+              winston.info(
+                `${logPrefix} Device commissioning finished, setting internal status to commissioned`
+              );
+              this.options.configManager.isDeviceCommissioned = true;
+            } else {
+              winston.warn(
+                `${logPrefix} Device commissioning response is not successful! Response code: ${
+                  proxyRes.statusCode
+                }, response: ${JSON.stringify(responseData)}`
+              );
+            }
+          }
+          return proxyResData;
         },
         proxyReqOptDecorator: (proxyReqOpts) => {
           // Update headers

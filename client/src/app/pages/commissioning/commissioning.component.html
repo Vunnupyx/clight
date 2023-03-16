@@ -1,0 +1,128 @@
+<div class="container">
+  <div class="d-flex align-items-center justify-content-between pt-20">
+    <p style="font-size: 32px">
+      <span style="font-weight: 800">IoT</span>
+      <span style="font-style: italic">connector flex</span>
+    </p>
+    <img alt="logotype" class="brand" src="/assets/images/logo-login.png" />
+  </div>
+  <div class="layout-header">
+    <h2 class="layout-header__title mb-0 mt-0">
+      {{ 'commissioning.Welcome' | translate }}
+    </h2>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="mt-60">
+    <div class="commissioning-group">
+      <div class="commissioning-item">
+        <h3 class="mt-0 mb-0">
+          {{ 'commissioning.MachineInformation' | translate }}
+        </h3>
+        <div class="row">
+          <div class="col-12 col-md-5">
+            <p>
+              {{ 'commissioning.Serial' | translate }}:
+              {{ deviceInfo.serialNumber }}
+            </p>
+            <p>
+              {{ 'commissioning.ControlManufacturer' | translate }}:
+              {{ deviceInfo.manufacturer }}
+            </p>
+          </div>
+          <div class="col-12 col-md-5">
+            <p>
+              {{ 'commissioning.ControlType' | translate }}:
+              {{ deviceInfo.control }}
+            </p>
+            <p>
+              {{ 'commissioning.Model' | translate }}: {{ deviceInfo.model }}
+            </p>
+          </div>
+          <div class="col-12 col-md-2 text-center align-self-center">
+            <mat-icon
+              class="color-success"
+              *ngIf="isEmpty(deviceInfo)"
+              svgIcon="mdc:success"
+            ></mat-icon>
+            <mat-icon
+              class="color-danger"
+              *ngIf="!isEmpty(deviceInfo)"
+              svgIcon="mdc:error"
+            ></mat-icon>
+          </div>
+        </div>
+      </div>
+      <div class="commissioning-item">
+        <h3 class="mt-0 mb-0">
+          {{ 'commissioning.Ethernet' | translate }}
+        </h3>
+        <div class="row">
+          <div class="col-12 col-md-5">
+            <p>{{ 'commissioning.State' | translate }}:</p>
+            <p>{{ 'commissioning.Mac' | translate }}:</p>
+          </div>
+          <div class="col-12 col-md-5">
+            <p>{{ 'commissioning.IP' | translate }}:</p>
+          </div>
+          <div class="col-12 col-md-2 text-center align-self-center">
+            <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
+          </div>
+        </div>
+      </div>
+      <div class="commissioning-item">
+        <h3 class="mt-0 mb-0">
+          {{ 'commissioning.CELOSXchange' | translate }}
+        </h3>
+        <div class="row">
+          <div class="col-12 col-md-10">
+            <p>
+              {{ 'commissioning.State' | translate }}:
+              {{
+                (registration
+                  ? 'commissioning.RegisteredSuccess'
+                  : 'commissioning.RegisteredError'
+                ) | translate
+              }}
+            </p>
+          </div>
+          <div class="col-12 col-md-2 text-center align-self-center">
+            <mat-icon
+              class="color-success"
+              *ngIf="registration"
+              svgIcon="mdc:success"
+            ></mat-icon>
+            <mat-icon
+              class="color-danger"
+              *ngIf="!registration"
+              svgIcon="mdc:error"
+            ></mat-icon>
+          </div>
+        </div>
+      </div>
+      <div class="commissioning-item">
+        <h3 class="mt-0 mb-0">
+          {{ 'commissioning.SoftwareComponents' | translate }}
+        </h3>
+        <div class="row">
+          <div class="col-12 col-md-5">
+            <p>mdclight:</p>
+            <p>mdclight:</p>
+            <p>mdclight:</p>
+          </div>
+          <div class="col-12 col-md-5">
+            <p>mdclight:</p>
+            <p>mdclight:</p>
+          </div>
+          <div class="col-12 col-md-2 text-center align-self-center">
+            <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button mat-button color="primary" [disabled]="false" (click)="onApply()">
+      {{ 'commissioning.FinishCommissioning' | translate }}
+    </button>
+  </div>
+</div>

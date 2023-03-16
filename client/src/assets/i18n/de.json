@@ -22,7 +22,7 @@
     "SignIn": "Einloggen",
     "ForgotPassword": "Passwort vergessen?",
     "WhereToFindPassword": "Wo finde ich mein Passwort?",
-    "AuthError": "User with these credentials could not be found!"
+    "AuthError": "Benutzer mit diesen Anmeldeinformationen konnte nicht gefunden werden!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Passwort Änderung",

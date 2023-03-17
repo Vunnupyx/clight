@@ -2,20 +2,37 @@ import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
+import { ConfigurationAgentHttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
-import { errorHandler } from 'app/shared/utils';
+import { errorHandler, ObjectMap } from 'app/shared/utils';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import {
+  Adapter,
+  AdapterConnection,
+  CommissioningInformation,
+  DataHubModule
+} from 'app/models/commissioning';
 
 export class CommissioningState {
   status!: Status;
   finished!: boolean;
+  adapter!: Adapter;
+  adapterConnection!: AdapterConnection;
+  dataHubsModules!: ObjectMap<DataHubModule>;
   registration!: boolean;
 }
 
 @Injectable()
 export class CommissioningService {
   private _store: Store<CommissioningState>;
+
+  get finished() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.finished),
+      distinctUntilChanged()
+    );
+  }
 
   get registration() {
     return this._store.state.pipe(
@@ -25,9 +42,31 @@ export class CommissioningService {
     );
   }
 
+  get adapter() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.adapter),
+      distinctUntilChanged()
+    );
+  }
+
+  get adapterConnection() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.adapterConnection),
+      distinctUntilChanged()
+    );
+  }
+
+  get dataHubsModules() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.dataHubsModules)
+    );
+  }
+
   constructor(
     storeFactory: StoreFactory<CommissioningState>,
-    private httpService: HttpService,
     private configurationAgentHttpService: ConfigurationAgentHttpService,
     private translate: TranslateService,
     private toastr: ToastrService
@@ -56,7 +95,74 @@ export class CommissioningService {
     return true;
   }
 
-  async getRegistrationStatus() {
+  async getAdapter() {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+    try {
+      const response = await this.configurationAgentHttpService.get<Adapter>(
+        `/network/adapters/enoX1`
+      );
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.adapter = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('commissioning.LoadError'));
+      errorHandler(err);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
+  async getAdapterConnection() {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+    try {
+      const response =
+        await this.configurationAgentHttpService.get<AdapterConnection>(
+          `/network/adapters/enoX1/status`
+        );
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.adapterConnection = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('commissioning.LoadError'));
+      errorHandler(err);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
+  async getDataHubModule(name: string) {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+    try {
+      const response =
+        await this.configurationAgentHttpService.get<DataHubModule>(
+          `/datahub/status/${name}`
+        );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.dataHubsModules[name] = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('commissioning.LoadError'));
+      errorHandler(err);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
+  async getRegistration() {
     try {
       const response = await this.configurationAgentHttpService.get<{
         Registered: boolean;
@@ -75,16 +181,13 @@ export class CommissioningService {
     }
   }
 
-  async isFinished() {
-    this._store.patchState((state) => {
-      state.finished = false;
-    });
+  async isFinished(): Promise<boolean> {
     try {
       if (this._store.snapshot.finished === undefined) {
-        const response = await this.configurationAgentHttpService.get<{
-          Timestamp: string;
-          Finished: boolean;
-        }>(`/system/commissioning`);
+        const response =
+          await this.configurationAgentHttpService.get<CommissioningInformation>(
+            `/system/commissioning`
+          );
 
         this._store.patchState((state) => {
           state.finished = response.Finished;
@@ -101,7 +204,8 @@ export class CommissioningService {
 
   private _emptyState() {
     return <CommissioningState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      dataHubsModules: {}
     };
   }
 }

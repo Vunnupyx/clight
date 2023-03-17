@@ -41,12 +41,12 @@
           <div class="col-12 col-md-2 text-center align-self-center">
             <mat-icon
               class="color-success"
-              *ngIf="isEmpty(deviceInfo)"
+              *ngIf="!isEmpty(deviceInfo)"
               svgIcon="mdc:success"
             ></mat-icon>
             <mat-icon
               class="color-danger"
-              *ngIf="!isEmpty(deviceInfo)"
+              *ngIf="isEmpty(deviceInfo)"
               svgIcon="mdc:error"
             ></mat-icon>
           </div>
@@ -58,14 +58,33 @@
         </h3>
         <div class="row">
           <div class="col-12 col-md-5">
-            <p>{{ 'commissioning.State' | translate }}:</p>
-            <p>{{ 'commissioning.Mac' | translate }}:</p>
+            <p>
+              {{ 'commissioning.State' | translate }}:
+              {{
+                (isConnected()
+                  ? 'commissioning.Connected'
+                  : 'commissioning.Disconnected'
+                ) | translate
+              }}
+            </p>
+            <p>
+              {{ 'commissioning.Mac' | translate }}: {{ adapter.macAddress }}
+            </p>
           </div>
           <div class="col-12 col-md-5">
-            <p>{{ 'commissioning.IP' | translate }}:</p>
+            <p>{{ 'commissioning.IP' | translate }}: {{ adapter.ipAddress }}</p>
           </div>
           <div class="col-12 col-md-2 text-center align-self-center">
-            <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
+            <mat-icon
+              class="color-success"
+              *ngIf="!isEmpty(adapter) && isConnected()"
+              svgIcon="mdc:success"
+            ></mat-icon>
+            <mat-icon
+              class="color-danger"
+              *ngIf="isEmpty(adapter) || !isConnected()"
+              svgIcon="mdc:error"
+            ></mat-icon>
           </div>
         </div>
       </div>
@@ -105,23 +124,57 @@
         </h3>
         <div class="row">
           <div class="col-12 col-md-5">
-            <p>mdclight:</p>
-            <p>mdclight:</p>
-            <p>mdclight:</p>
+            <p>
+              {{ DataHubModuleName.MdcWebServer }}
+              {{ dataHubsModules[DataHubModuleName.MdcWebServer]?.Version }}:
+              {{ dataHubsModules[DataHubModuleName.MdcWebServer]?.Status }}
+            </p>
+            <p>
+              {{ DataHubModuleName.MtconnectAgent }}
+              {{ dataHubsModules[DataHubModuleName.MtconnectAgent]?.Version }}:
+              {{ dataHubsModules[DataHubModuleName.MtconnectAgent]?.Status }}
+            </p>
+            <p>
+              {{ DataHubModuleName.Mdclight }}
+              {{ dataHubsModules[DataHubModuleName.Mdclight]?.Version }}:
+              {{ dataHubsModules[DataHubModuleName.Mdclight]?.Status }}
+            </p>
           </div>
           <div class="col-12 col-md-5">
-            <p>mdclight:</p>
-            <p>mdclight:</p>
+            <p>
+              {{ DataHubModuleName.EdgeHub }}
+              {{ dataHubsModules[DataHubModuleName.EdgeHub]?.Version }}:
+              {{ dataHubsModules[DataHubModuleName.EdgeHub]?.Status }}
+            </p>
+            <p>
+              {{ DataHubModuleName.EdgeAgent }}
+              {{ dataHubsModules[DataHubModuleName.EdgeAgent]?.Version }}:
+              {{ dataHubsModules[DataHubModuleName.EdgeAgent]?.Status }}
+            </p>
           </div>
           <div class="col-12 col-md-2 text-center align-self-center">
-            <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
+            <mat-icon
+              class="color-success"
+              *ngIf="isModulesRunning"
+              svgIcon="mdc:success"
+            ></mat-icon>
+            <mat-icon
+              class="color-danger"
+              *ngIf="!isModulesRunning"
+              svgIcon="mdc:error"
+            ></mat-icon>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="d-flex justify-content-end">
-    <button mat-button color="primary" [disabled]="false" (click)="onApply()">
+    <button
+      mat-button
+      color="primary"
+      [disabled]="!finished"
+      (click)="onApply()"
+    >
       {{ 'commissioning.FinishCommissioning' | translate }}
     </button>
   </div>

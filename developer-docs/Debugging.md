@@ -14,7 +14,7 @@ Or on remote device: curl https://172.17.0.1:44301/ccw/index.html -k
 Sometime, Nginx does respond with 404 Not Found error and doesn't tell us why.
 The best way to debug such issues is to start the mdc-web-server container, but override the entrypoint, to start the service in debug mode.
 
-`docker run -p 443:443 --network=azure-iot-edge --mount type=bind,source=/home/root/nginx.conf,target=/etc/nginx/nginx.conf -v dmgmori-mdclight-sslkeys:/etc/mdc-light/sslkeys --entrypoint sh -it mdclightdev.azurecr.io/mdc-web-server:3.0.5-16-ga65224be`
+`docker run -p 443:443 --network=azure-iot-edge --mount type=bind,source=/home/root/nginx.conf,target=/etc/nginx/nginx.conf -v dmgmori-mdclight-sslkeys:/etc/mdc-light/sslkeys --entrypoint sh -it mdclightdev.azurecr.io/mdc-web-server:3.0.9`
 
 After that, start the debug service by using `nginx-debug -g 'daemon off;'`
 
@@ -33,3 +33,31 @@ ATTENTION: Double check network configuration. The container might be inside the
 
 As "^.+\..+$" is the most complex expression it is used always for .html requests, no matter if previous matches were valid.
 To provide this use "^~" to forward matches. E.g. location ^~ /netservice
+
+## Starting contaienrs independtly
+
+```
+docker run \
+    --mount type=volume,source=dmgmori-mdclight-config,target=/etc/mdclight/config \
+    --mount type=volume,source=dmgmori-mdclight-logs,target=/etc/mdc-light/logs \
+    --mount type=bind,source=/var/log,target=/host/log/system \
+    --mount type=bind,source=/proc,target=/proc \
+    --mount type=bind,source=/sys,target=/sys \
+    -p 4840:4840 \
+    -p 7878:7878 \
+    -p 80:80 \
+    --network azure-iot-edge \
+    --network-alias=mdclight \
+    -d \
+    mdclightdev.azurecr.io/mdclight:3.0.5-197-g11456c38
+```
+
+```
+docker run \
+    --mount type=volume,source=dmgmori-mdclight-sslkeys,target=/etc/mdc-light/sslkeys \
+    -p 443:443 \
+    --network azure-iot-edge \
+    --network-alias=mdc-web-server \
+    -d \
+    mdclightdev.azurecr.io/mdc-web-server:3.0.5-197-g11456c38
+```

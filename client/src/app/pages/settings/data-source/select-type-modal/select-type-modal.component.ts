@@ -40,13 +40,6 @@ export class SelectTypeModalComponent implements OnInit {
     return this.data.existingAddresses.includes(address);
   }
 
-  isUnsupported({ type }) {
-    if (this.data.protocol === DataSourceProtocol.Energy) {
-      return this.data.type !== type;
-    }
-    return false;
-  }
-
   isEnergySource() {
     return this.data.protocol === DataSourceProtocol.Energy;
   }

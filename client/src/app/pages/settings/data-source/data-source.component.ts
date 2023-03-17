@@ -372,6 +372,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       } else {
         this.unsavedRow!.name = result.name;
         this.unsavedRow!.address = result.address;
+        if (this.dataSource?.protocol === DataSourceProtocol.Energy) {
+          this.unsavedRow!.type = result.type;
+        }
       }
     });
   }

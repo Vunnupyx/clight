@@ -1,6 +1,7 @@
 {
-  "name": "pod-lens-github-io",
-  "version": "0.0.0",
+  "name": "mdc-light-user-docs",
+  "version": "3.0.10",
+  "author": "codestryke <info@codestryke.com>",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",

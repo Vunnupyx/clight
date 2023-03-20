@@ -503,22 +503,22 @@
         "items": [
           {
             "source": "8cbe9aaa-d420-41d0-bc9f-5e8773c61037",
-            "returnValueIfTrue": "standby",
+            "returnValueIfTrue": "STANDBY",
             "priority": 0
           },
           {
             "source": "e0be9b18-5ebf-499c-83f3-9439364a8454",
-            "returnValueIfTrue": "readyForProcessing",
+            "returnValueIfTrue": "READY_FOR_PROCESSING",
             "priority": 1
           },
           {
             "source": "8429dd77-7b31-49aa-954b-d5c2426a851e",
-            "returnValueIfTrue": "warmUp",
+            "returnValueIfTrue": "WARM_UP",
             "priority": 2
           },
           {
             "source": "6b196ab8-670e-4d1e-a279-7250a03e0e3c",
-            "returnValueIfTrue": "processing",
+            "returnValueIfTrue": "PROCESSING",
             "priority": 3
           }
         ]

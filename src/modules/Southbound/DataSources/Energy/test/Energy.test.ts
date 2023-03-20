@@ -55,10 +55,10 @@ describe('EnergyDataSource', () => {
   });
   describe('handleMachineStatusChange', () => {
     it.each([
-      { newStatus: 'standby', expectedTariffNo: '1' },
-      { newStatus: 'readyForProcessing', expectedTariffNo: '2' },
-      { newStatus: 'warmUp', expectedTariffNo: '3' },
-      { newStatus: 'processing', expectedTariffNo: '4' },
+      { newStatus: 'STANDBY', expectedTariffNo: '1' },
+      { newStatus: 'READY_FOR_PROCESSING', expectedTariffNo: '2' },
+      { newStatus: 'WARM_UP', expectedTariffNo: '3' },
+      { newStatus: 'PROCESSING', expectedTariffNo: '4' },
       { newStatus: 'unknown', expectedTariffNo: '0' },
       { newStatus: '', expectedTariffNo: '0' },
       { newStatus: 'wrong', expectedTariffNo: '0' },

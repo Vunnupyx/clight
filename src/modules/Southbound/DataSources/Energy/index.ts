@@ -156,10 +156,10 @@ export class EnergyDataSource extends DataSource {
 
     const tariffStatusMapping = {
       unknown: '0',
-      standby: '1',
-      readyForProcessing: '2',
-      warmUp: '3',
-      processing: '4'
+      STANDBY: '1',
+      READY_FOR_PROCESSING: '2',
+      WARM_UP: '3',
+      PROCESSING: '4'
     };
     let newTariffNo: ITariffNumbers = tariffStatusMapping[newStatus];
 

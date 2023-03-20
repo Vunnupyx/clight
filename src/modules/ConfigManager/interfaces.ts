@@ -322,6 +322,7 @@ export interface IVirtualDataPointConfig {
   resetSchedules?: ScheduleDescription[];
   formula?: string;
   name: string;
+  mandatory?: boolean;
 }
 
 export function isValidVdp(input: any): input is IVirtualDataPointConfig {

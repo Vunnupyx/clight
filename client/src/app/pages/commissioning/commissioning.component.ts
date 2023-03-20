@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommissioningService, DeviceInfoService } from 'app/services';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { CommissioningService } from 'app/services';
 import { Subscription } from 'rxjs';
-import { DeviceInfo } from 'app/models/device-info';
 import { Router } from '@angular/router';
 import {
   Adapter,
@@ -11,7 +9,8 @@ import {
   DataHubModule,
   DataHubModuleName,
   DataHubModuleStatus,
-  LinkStatus
+  LinkStatus,
+  MachineInformation
 } from 'app/models/commissioning';
 import { ObjectMap } from 'app/shared/utils';
 
@@ -23,7 +22,7 @@ import { ObjectMap } from 'app/shared/utils';
 export class CommissioningComponent implements OnInit {
   DataHubModuleName = DataHubModuleName;
   sub = new Subscription();
-  deviceInfo: DeviceInfo;
+  machineInformation: MachineInformation;
   finished: boolean;
   adapter: Adapter;
   adapterConnection: AdapterConnection;
@@ -31,7 +30,6 @@ export class CommissioningComponent implements OnInit {
   registration: boolean;
 
   constructor(
-    private deviceInfoService: DeviceInfoService,
     private commissioningService: CommissioningService,
     private router: Router
   ) {}
@@ -41,9 +39,9 @@ export class CommissioningComponent implements OnInit {
       this.commissioningService.finished.subscribe((x) => (this.finished = x))
     );
     this.sub.add(
-      this.deviceInfoService.deviceInfo
-        .pipe(distinctUntilChanged())
-        .subscribe((x) => this.onDeviceInfo(x))
+      this.commissioningService.machineInformation.subscribe((x) =>
+        this.onMachineInformation(x)
+      )
     );
     this.sub.add(
       this.commissioningService.registration.subscribe(
@@ -64,7 +62,7 @@ export class CommissioningComponent implements OnInit {
       )
     );
 
-    this.deviceInfoService.getDeviceInfo();
+    this.commissioningService.getMachineInformation();
     this.commissioningService.getRegistration();
     this.commissioningService.getAdapter();
     this.commissioningService.getAdapterConnection();
@@ -87,22 +85,22 @@ export class CommissioningComponent implements OnInit {
 
   isConnected() {
     return (
-      this.adapterConnection.linkStatus === LinkStatus.Enabled &&
+      this.adapterConnection.linkStatus === LinkStatus.Connected &&
       this.adapterConnection.configurationStatus ===
         ConfigurationStatus.Configured
     );
   }
 
   isModulesRunning() {
-    if (!this.dataHubsModules) return false;
+    if (this.isEmpty(this.dataHubsModules)) return false;
 
     return Object.values(this.dataHubsModules).every(
       (x) => x?.Version !== '' && x?.Status === DataHubModuleStatus.Running
     );
   }
 
-  private onDeviceInfo(x: DeviceInfo) {
-    this.deviceInfo = { ...x };
+  private onMachineInformation(x: MachineInformation) {
+    this.machineInformation = { ...x };
   }
 
   private onAdapter(x: Adapter) {
@@ -115,5 +113,9 @@ export class CommissioningComponent implements OnInit {
 
   private onDataHubsModules(x: ObjectMap<DataHubModule>) {
     this.dataHubsModules = { ...x };
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 }

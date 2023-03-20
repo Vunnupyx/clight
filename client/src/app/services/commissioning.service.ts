@@ -10,12 +10,14 @@ import {
   Adapter,
   AdapterConnection,
   CommissioningInformation,
-  DataHubModule
+  DataHubModule,
+  MachineInformation
 } from 'app/models/commissioning';
 
 export class CommissioningState {
   status!: Status;
   finished!: boolean;
+  machineInformation!: MachineInformation;
   adapter!: Adapter;
   adapterConnection!: AdapterConnection;
   dataHubsModules!: ObjectMap<DataHubModule>;
@@ -34,10 +36,10 @@ export class CommissioningService {
     );
   }
 
-  get registration() {
+  get machineInformation() {
     return this._store.state.pipe(
       filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.registration),
+      map((x) => x.machineInformation),
       distinctUntilChanged()
     );
   }
@@ -62,6 +64,14 @@ export class CommissioningService {
     return this._store.state.pipe(
       filter((x) => x.status != Status.NotInitialized),
       map((x) => x.dataHubsModules)
+    );
+  }
+
+  get registration() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.registration),
+      distinctUntilChanged()
     );
   }
 
@@ -95,6 +105,28 @@ export class CommissioningService {
     return true;
   }
 
+  async getMachineInformation() {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+    try {
+      const response =
+        await this.configurationAgentHttpService.get<MachineInformation>(
+          '/machine/info'
+        );
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.machineInformation = response;
+      });
+    } catch (err) {
+      this.toastr.error(this.translate.instant('commissioning.LoadError'));
+      errorHandler(err);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
   async getAdapter() {
     this._store.patchState((state) => {
       state.status = Status.Loading;
@@ -183,7 +215,7 @@ export class CommissioningService {
 
   async isFinished(): Promise<boolean> {
     try {
-      if (this._store.snapshot.finished === undefined) {
+      if (!this._store.snapshot.finished) {
         const response =
           await this.configurationAgentHttpService.get<CommissioningInformation>(
             `/system/commissioning`
@@ -198,6 +230,9 @@ export class CommissioningService {
 
       return this._store.snapshot.finished;
     } catch (err) {
+      this._store.patchState((state) => {
+        state.finished = true;
+      });
       return false;
     }
   }

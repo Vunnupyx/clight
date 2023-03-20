@@ -233,7 +233,7 @@ export class CommissioningService {
       this._store.patchState((state) => {
         state.finished = true;
       });
-      return false;
+      return true;
     }
   }
 

@@ -458,7 +458,78 @@
       "protocol": "datahub"
     }
   ],
-  "virtualDataPoints": [],
+  "virtualDataPoints": [
+    {
+      "id": "8cbe9aaa-d420-41d0-bc9f-5e8773c61037",
+      "sources": [],
+      "operationType": "equal",
+      "name": "EEM - Machine Standby",
+      "mandatory": true,
+      "resetSchedules": []
+    },
+    {
+      "id": "e0be9b18-5ebf-499c-83f3-9439364a8454",
+      "sources": [],
+      "operationType": "equal",
+      "name": "EEM - Machine Ready for Processing",
+      "mandatory": true,
+      "resetSchedules": []
+    },
+    {
+      "id": "8429dd77-7b31-49aa-954b-d5c2426a851e",
+      "sources": [],
+      "operationType": "equal",
+      "name": "EEM - Machine Warm Up",
+      "mandatory": true,
+      "resetSchedules": []
+    },
+    {
+      "id": "6b196ab8-670e-4d1e-a279-7250a03e0e3c",
+      "sources": [],
+      "operationType": "equal",
+      "name": "EEM - Machine Processing",
+      "mandatory": true,
+      "resetSchedules": []
+    },
+    {
+      "id": "022bc5b5-ed5e-4604-9997-a61efdb2943f",
+      "sources": [
+        "8cbe9aaa-d420-41d0-bc9f-5e8773c61037",
+        "e0be9b18-5ebf-499c-83f3-9439364a8454",
+        "8429dd77-7b31-49aa-954b-d5c2426a851e",
+        "6b196ab8-670e-4d1e-a279-7250a03e0e3c"
+      ],
+      "operationType": "enumeration",
+      "name": "EEM - Machine Status",
+      "mandatory": true,
+      "enumeration": {
+        "defaultValue": "unknown",
+        "items": [
+          {
+            "source": "8cbe9aaa-d420-41d0-bc9f-5e8773c61037",
+            "returnValueIfTrue": "standby",
+            "priority": 0
+          },
+          {
+            "source": "e0be9b18-5ebf-499c-83f3-9439364a8454",
+            "returnValueIfTrue": "readyForProcessing",
+            "priority": 1
+          },
+          {
+            "source": "8429dd77-7b31-49aa-954b-d5c2426a851e",
+            "returnValueIfTrue": "warmUp",
+            "priority": 2
+          },
+          {
+            "source": "6b196ab8-670e-4d1e-a279-7250a03e0e3c",
+            "returnValueIfTrue": "processing",
+            "priority": 3
+          }
+        ]
+      },
+      "resetSchedules": []
+    }
+  ],
   "mapping": [],
   "systemInfo": [],
   "templates": {

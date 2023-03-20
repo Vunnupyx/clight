@@ -22,31 +22,32 @@
           <div class="col-12 col-md-5">
             <p>
               {{ 'commissioning.Serial' | translate }}:
-              {{ deviceInfo.serialNumber }}
+              {{ machineInformation.Serial }}
             </p>
             <p>
               {{ 'commissioning.ControlManufacturer' | translate }}:
-              {{ deviceInfo.manufacturer }}
+              {{ machineInformation.ControlManufacturer }}
             </p>
           </div>
           <div class="col-12 col-md-5">
             <p>
               {{ 'commissioning.ControlType' | translate }}:
-              {{ deviceInfo.control }}
+              {{ machineInformation.ControlType }}
             </p>
             <p>
-              {{ 'commissioning.Model' | translate }}: {{ deviceInfo.model }}
+              {{ 'commissioning.Model' | translate }}:
+              {{ machineInformation.Model }}
             </p>
           </div>
           <div class="col-12 col-md-2 text-center align-self-center">
             <mat-icon
               class="color-success"
-              *ngIf="!isEmpty(deviceInfo)"
+              *ngIf="!isEmpty(machineInformation)"
               svgIcon="mdc:success"
             ></mat-icon>
             <mat-icon
               class="color-danger"
-              *ngIf="isEmpty(deviceInfo)"
+              *ngIf="isEmpty(machineInformation)"
               svgIcon="mdc:error"
             ></mat-icon>
           </div>
@@ -155,12 +156,12 @@
           <div class="col-12 col-md-2 text-center align-self-center">
             <mat-icon
               class="color-success"
-              *ngIf="isModulesRunning"
+              *ngIf="isModulesRunning()"
               svgIcon="mdc:success"
             ></mat-icon>
             <mat-icon
               class="color-danger"
-              *ngIf="!isModulesRunning"
+              *ngIf="!isModulesRunning()"
               svgIcon="mdc:error"
             ></mat-icon>
           </div>

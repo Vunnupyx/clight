@@ -1,3 +1,12 @@
+export interface MachineInformation {
+  Serial: string;
+  Model: string;
+  ControlType: string;
+  ControlManufacturer: string;
+  Source: string;
+  Timestamp: string;
+}
+
 export interface CommissioningInformation {
   Timestamp: string;
   Finished: boolean;
@@ -10,12 +19,20 @@ export interface Adapter {
 }
 
 export enum LinkStatus {
+  Connected = 'connected',
   Disabled = 'disabled',
-  Enabled = 'enabled'
+  Disconnected = 'disconnected',
+  Unknown = 'unknown'
 }
 
 export enum ConfigurationStatus {
-  Configured = 'configured'
+  Configured = 'configured',
+  Configuring = 'configuring',
+  Unmanaged = 'unmanaged',
+  Failed = 'failed',
+  Pending = 'pending',
+  Linger = 'linger',
+  Unknown = 'unknown'
 }
 
 export interface AdapterConnection {

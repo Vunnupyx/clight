@@ -227,7 +227,7 @@
     "DeleteMessage": "本当にデータポイントを削除しますか？",
     "SetThresholds": "閾値設定",
     "SetComparativeValue": "基準値設定",
-    "UpdateComparativeValueError": "Update Comparative Value error",
+    "MissingComparativeValue": "Comparative value is empty",
     "Set": "設定",
     "Value": "値",
     "Threshold": "閾値",

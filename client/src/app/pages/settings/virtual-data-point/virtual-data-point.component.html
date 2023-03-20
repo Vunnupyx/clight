@@ -322,6 +322,21 @@
               {{ liveData[row.id]?.value }}
             </span>
             <ng-template #noLiveData>-</ng-template>
+            <span
+              *ngIf="
+                canSetComparativeValue(row?.operationType) &&
+                !row?.comparativeValue
+              "
+              style="position: absolute"
+              class="ml-10 color-danger"
+              [matTooltip]="
+                'settings-virtual-data-point.MissingComparativeValue'
+                  | translate
+              "
+              matTooltipPosition="above"
+            >
+              <mat-icon svgIcon="mdc:info"></mat-icon>
+            </span>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column

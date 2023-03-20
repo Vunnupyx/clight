@@ -51,7 +51,7 @@ import {
 import {
   systemInfoHandlers,
   setConfigManager as systemInfoSetConfigManager,
-  setDatahubAdapter
+  setDataSinksManager
 } from '../routes/apis/v1/SystemInfo';
 import {
   templatesHandlers,
@@ -141,11 +141,8 @@ export class RoutesManager {
       messengerConfigSetConfigManager,
       termsAndConditionsSetConfigManager
     ].forEach((func) => func(options.configManager));
-    const datahubSink = options.dataSinksManager.getDataSinkByProto(
-      DataSinkProtocols.DATAHUB
-    ) as DataHubDataSink;
 
-    setDatahubAdapter(datahubSink.getAdapter());
+    setDataSinksManager(options.dataSinksManager);
     authSetAuthManager(options.authManager);
     setDataSinksDataSinksManager(options.dataSinksManager);
     setMessengerDataSinksManager(options.dataSinksManager);

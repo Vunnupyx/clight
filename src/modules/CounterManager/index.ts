@@ -12,7 +12,8 @@ import { CounterDict, Day, ScheduleDescription, timerDict } from './interfaces';
 export class CounterManager {
   private persist = true;
   private counters: CounterDict = {};
-  private configFolder = '../../../mdclight/config';
+  private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
+  private configFolder = path.join(this.mdcFolder, '/config');
   private counterStoragePath = '';
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
@@ -25,9 +26,10 @@ export class CounterManager {
     private configManager: ConfigManager,
     private cache: DataPointCache
   ) {
+    const logPrefix = `${this.constructor.name}::constructor`;
     if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
       winston.warn(
-        'Configuration folder for storing counter values not found! The counts are not persisted!'
+        `${logPrefix} Configuration folder for storing counter values not found! The counts are not persisted!`
       );
       this.persist = false;
       return;

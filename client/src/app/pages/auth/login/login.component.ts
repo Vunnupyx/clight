@@ -56,7 +56,9 @@ export class LoginComponent implements OnInit {
         this.timeSyncCheckService.checkTimeDifference();
         return this.router.navigate(['/']);
       })
-      .catch((error) => this.toastr.error(error.error.message));
+      .catch(() =>
+        this.toastr.error(this.translate.instant('auth-login.AuthError'))
+      );
   }
 
   onForgotPasswordSubmit(form: NgForm) {

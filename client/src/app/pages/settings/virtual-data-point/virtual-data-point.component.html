@@ -55,7 +55,7 @@
               color="primary"
               type="button"
               class="btn-sm"
-              [disabled]="!isTouchedTable || isLoading"
+              [disabled]="!isTouchedTable || isLoading || isEditing"
               (click)="onApply()"
             >
               {{ 'settings-virtual-data-point.ApplyChanges' | translate }}

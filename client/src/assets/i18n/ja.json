@@ -21,7 +21,8 @@
     "Password": "パスワード",
     "SignIn": "サインイン",
     "ForgotPassword": "パスワードを忘れた場合",
-    "WhereToFindPassword": "パスワードを回復するには"
+    "WhereToFindPassword": "パスワードを回復するには",
+    "AuthError": "User with these credentials could not be found!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "パスワード変更",
@@ -87,7 +88,7 @@
         "ai2ioShieldMessenger": "デジタル・アナログ入力ボードでDMG MORI Messengerにつなぐ",
         "empty": "空のテンプレート",
         "energyAll": "電力測定キット",
-        "gm": "GMシリーズ",
+        "gm": "DMG MORI GMシリーズ",
         "ncAll": "シーメンスSINUMERIK 840D sl",
         "fanucAll": "ファナックNC",
         "ncMessenger": "シーメンスSINUMERIK 840D slをDMG MORI Messengerにつなぐ"
@@ -468,6 +469,7 @@
     "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "モジュールの更新のインストール完了を待っています",
     "UpdateStatus-NO_CONNECTION": "更新失敗。ネットワーク設定が正しいことを確認してください",
     "UpdateStatus-UNEXPECTED_ERROR": "予期しないエラーにより更新が失敗しました。再試行してください",
+    "UpdateStatus-ERROR_TIMEOUT": "Update has timed out. Please try again later.",
     "UpdateFailed": "更新失敗",
     "UpdateFailed-error_no_network": "更新できません。ネットワーク設定を確認してください",
     "UpdateFailed-CheckNetworkConfig": "更新できません。ネットワーク設定を確認してください",

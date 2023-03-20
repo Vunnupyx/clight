@@ -395,7 +395,7 @@ export class VirtualDataPointComponent implements OnInit {
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
       data: {
-        enumeration: { ...virtualPoint.enumeration },
+        enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
         protocol
       },
@@ -541,27 +541,36 @@ export class VirtualDataPointComponent implements OnInit {
     this.liveData = x;
   }
 
+  /**
+   *
+   * @see src/modules/VirtualDataPointManager/index.ts for usage of same logic in backend!
+   * Update there as well if any logic changes here
+   */
   public isVdpOrderValid(vdpListToCheck: VirtualDataPoint[]): boolean {
     if (!Array.isArray(vdpListToCheck) || vdpListToCheck?.length === 0) {
       return false;
     }
 
-    for (let [index, vdp] of vdpListToCheck.entries()) {
-      const otherVdpSources = vdp.sources.filter((sourceVdpId) =>
-        vdpListToCheck.find((v) => v.id === sourceVdpId)
-      );
-      if (otherVdpSources.length > 0) {
-        for (let sourceVdpId of otherVdpSources) {
-          const indexOfSourceVdp = vdpListToCheck.findIndex(
-            (x) => x.id === sourceVdpId
-          );
-          if (indexOfSourceVdp >= index) {
-            return false;
+    try {
+      for (let [index, vdp] of vdpListToCheck.entries()) {
+        const otherVdpSources = vdp.sources.filter((sourceVdpId) =>
+          vdpListToCheck.find((v) => v.id === sourceVdpId)
+        );
+        if (otherVdpSources.length > 0) {
+          for (let sourceVdpId of otherVdpSources) {
+            const indexOfSourceVdp = vdpListToCheck.findIndex(
+              (x) => x.id === sourceVdpId
+            );
+            if (indexOfSourceVdp >= index) {
+              return false;
+            }
           }
         }
       }
+      return true;
+    } catch {
+      return false;
     }
-    return true;
   }
 
   onReorder(event) {

@@ -21,7 +21,8 @@
     "Password": "Password",
     "SignIn": "Sign in",
     "ForgotPassword": "Forgot your password?",
-    "WhereToFindPassword": "Where do I find my login password?"
+    "WhereToFindPassword": "Where do I find my login password?",
+    "AuthError": "User with these credentials could not be found!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",
@@ -87,7 +88,7 @@
         "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
         "empty": "Empty Template",
         "energyAll": "EEM Kit",
-        "gm": "GM Series",
+        "gm": "DMG MORI GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
         "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
@@ -349,7 +350,7 @@
       "Enabled": "Enabled",
       "Disabled": "Disabled"
     },
-    "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "DuplicatedKeys": "This value is already in use",
     "TimeZone": "Time zone",
     "Organization": "Organization",
     "Model": "Model",
@@ -468,6 +469,7 @@
     "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Waiting for modules to finish installing",
     "UpdateStatus-NO_CONNECTION": "Update failed. Please check the network configuration of the device.",
     "UpdateStatus-UNEXPECTED_ERROR": "Update failed due to an unexpected error. Please try again later.",
+    "UpdateStatus-ERROR_TIMEOUT": "Update has timed out. Please try again later.",
     "UpdateFailed": "Update Failed",
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
     "UpdateFailed-CheckNetworkConfig": "Update failed. Please check your network configuration.",

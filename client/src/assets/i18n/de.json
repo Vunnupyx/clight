@@ -21,7 +21,8 @@
     "Password": "Passwort",
     "SignIn": "Einloggen",
     "ForgotPassword": "Passwort vergessen?",
-    "WhereToFindPassword": "Wo finde ich mein Passwort?"
+    "WhereToFindPassword": "Wo finde ich mein Passwort?",
+    "AuthError": "Benutzer mit diesen Anmeldeinformationen konnte nicht gefunden werden!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Passwort Änderung",
@@ -87,7 +88,7 @@
         "ai2ioShieldMessenger": "Eingangsmodul zu DMG MORI Messenger",
         "empty": "Leere Vorlage",
         "energyAll": "EEM Kit",
-        "gm": "GM Reihe",
+        "gm": "DMG MORI GM Serie",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
         "fanucAll": "Fanuc Geräte",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl zu DMG MORI Messenger"
@@ -468,6 +469,7 @@
     "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Wird auf den Abschluss der Installation gewartet",
     "UpdateStatus-NO_CONNECTION": "Update fehlgeschlagen. Bitte überprüfen Sie die Netzwerkkonfiguration des Geräts.",
     "UpdateStatus-UNEXPECTED_ERROR": "Die Aktualisierung ist aufgrund eines unerwarteten Fehlers fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+    "UpdateStatus-ERROR_TIMEOUT": "Zeitüberschreitung bei der Aktualisierung. Bitte versuchen Sie es später erneut.",
     "UpdateFailed": "Update fehlgeschlagen",
     "UpdateFailed-error_no_network": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",
     "UpdateFailed-CheckNetworkConfig": "Bitte überprüfen Sie ihr Netzwerkverbindung und versuchen Sie es erneut.",

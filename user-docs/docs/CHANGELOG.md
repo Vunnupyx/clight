@@ -4,6 +4,47 @@ title: Changelog
 
 # Changelog
 
+## [3.0.9]
+
+## Fixed
+
+- [DIGMDCLGHT-296](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-296) Adds Energy data points to MTConnect stream
+- [DIGMDCLGHT-394](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-394) Fixes Enumeration VDP editing issue where Cancel button still saves the changes
+- [DIGMDCLGHT-396](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-396) Fixes showing Apply Changes button wrongly in VDP editing.
+- [DIGMDCLGHT-398](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-398) Fixes showing Apply Changes button wrongly in OPCUA editing.
+- [DIGMDCLGHT-404](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-404) Fixes CELOS update mechanism
+
+## [3.0.8]
+
+## Added
+
+- [DIGMDCLGHT-379](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-379) Adds four new Device data points to Energy data source
+
+## Changed
+
+- [DIGMDCLGHT-362](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-362) Updates and expands template for DMG MORI GM series
+
+## Fixed
+
+- [DIGMDCLGHT-139](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-139) Fixes setting value for OPCUA string and localized text data types
+- [DIGMDCLGHT-357](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-357) Fixes ability to map multiple sources to single application interface data point
+- [DIGMDCLGHT-361](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-361) Fixes notification display when setting invalid time settings
+- [DIGMDCLGHT-368](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-368) Fixes proxy port number being sent to backend as string
+- [DIGMDCLGHT-371](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-371) Fixes text for data source select a variable tooltip
+- [DIGMDCLGHT-372](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-372) Fixes text for update fail notification in case of time out
+- [DIGMDCLGHT-373](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-373) Fixes validation of IP, netmask inputs
+- [DIGMDCLGHT-375](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-375) Fixes the order of Digital Inputs while adding new data point
+- [DIGMDCLGHT-376](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-376) Fixes notification for any changes while UI is logged out in background
+- [DIGMDCLGHT-377](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-377) Fixes changing of width for data mapping columns
+- [DIGMDCLGHT-378](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-378) Fixes update process at first startup
+- [DIGMDCLGHT-382](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-382) Fixes overlapping cancel icon on VDP source search dropdown menu
+- [DIGMDCLGHT-383](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-383) Fixes wrong success notification if invalid configuration is uploaded
+- [DIGMDCLGHT-387](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-387) Fixes showing delete function for custom OPC UA variables if it is in use
+- [DIGMDCLGHT-391](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-391) Fixes persistance of counters between restarts
+- [DIGMDCLGHT-392](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-392) Fixes return value of VDPs if there is no comparative value given
+- [DIGMDCLGHT-397](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-391) Fixes possibility to assign multiple sources within an Enum VDP
+- [DIGMDCLGHT-399](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-399) Fixes column name for Energy add variable popup window
+
 ## [3.0.7]
 
 ## Fixed

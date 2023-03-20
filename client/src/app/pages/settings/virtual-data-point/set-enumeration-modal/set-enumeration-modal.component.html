@@ -34,6 +34,7 @@
               <mat-option
                 *ngFor="let sourceOption of sourceOptions"
                 [value]="sourceOption.id"
+                [disabled]="isSourceOptionAlreadyUsed(sourceOption.id)"
                 required
                 >{{ getSourcePrefix(sourceOption) }}
                 {{ sourceOption.name }}</mat-option

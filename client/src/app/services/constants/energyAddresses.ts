@@ -36,5 +36,9 @@ export default [
   { name: 'T4 Es', type: 'meter', address: 't4-es' },
   { name: 'T4 Er', type: 'meter', address: 't4-er' },
   { name: 'T4 Runtime', type: 'meter', address: 't4-runtime' },
-  { name: 'Firmware Version', type: 'device', address: 'fw' }
+  { name: 'Firmware Version', type: 'device', address: 'fw' },
+  { name: 'Hardware Version', type: 'device', address: 'hw' },
+  { name: 'Serial Number', type: 'device', address: 'serial-number' },
+  { name: 'MAC Address', type: 'device', address: 'mac' },
+  { name: 'Article Number', type: 'device', address: 'article-number' }
 ];

@@ -34,7 +34,7 @@ ATTENTION: Double check network configuration. The container might be inside the
 As "^.+\..+$" is the most complex expression it is used always for .html requests, no matter if previous matches were valid.
 To provide this use "^~" to forward matches. E.g. location ^~ /netservice
 
-## Starting contaienrs independtly
+## Run runtime manually
 
 ```
 docker run \

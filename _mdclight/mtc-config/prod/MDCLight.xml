@@ -20,48 +20,6 @@
         <DataItem type="POWER_FACTOR" category="SAMPLE" id="DMG_MORI_IoTconnector-flex_104" name="PowerFactor" />
       </DataItems>
       <Components>
-        <Path id="DMG_MORI_IoTconnector-flex__96" name="Path_1">
-          <DataItems>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__97" name="reset1" type="ms:RESET"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__98" name="part_count1" subType="ALL" type="PART_COUNT"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__99" name="axes1" type="ACTIVE_AXES"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__100" name="mode1" type="CONTROLLER_MODE"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__101" name="execution1" type="EXECUTION"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__102" name="program1" type="PROGRAM"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__103" name="line1" subType="MINIMUM" type="LINE"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__104" name="block1" type="BLOCK"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__105" name="path_feedrate1" nativeUnits="MILLIMETER/SECOND" subType="ACTUAL" type="PATH_FEEDRATE" units="MILLIMETER/SECOND"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__106" name="toolnumber1" type="TOOL_NUMBER"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__107" name="optionalstop1" type="ms:OPTIONAL_STOP"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__108" name="blockdelete1" type="ms:BLOCK_DELETE"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__109" name="dryrun1" type="ms:DRY_RUN"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__110" name="cutting1" type="ms:CUTTING"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__111" name="operationmode1" type="ms:OPERATION_MODE"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__112" name="jogoverride1" subType="JOG" type="PATH_FEEDRATE_OVERRIDE"/>
-            <DataItem category="EVENT" id="DMG_MORI_IoTconnector-flex__113" name="rapidoverride1" subType="RAPID" type="PATH_FEEDRATE_OVERRIDE"/>
-            <DataItem category="CONDITION" id="DMG_MORI_IoTconnector-flex__114" name="logic1" type="LOGIC_PROGRAM"/>
-            <DataItem category="CONDITION" id="DMG_MORI_IoTconnector-flex__115" name="motion1" type="MOTION_PROGRAM"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__116" name="MacroSample_Head1_Macro101" subType="1" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__117" name="MacroSample_Head1_Macro102" subType="2" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__118" name="MacroSample_Head1_Macro103" subType="3" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__119" name="MacroSample_Head1_Macro104" subType="4" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__120" name="MacroSample_Head1_Macro105" subType="5" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__121" name="MacroSample_Head1_Macro106" subType="6" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__122" name="MacroSample_Head1_Macro107" subType="7" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__123" name="MacroSample_Head1_Macro108" subType="8" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__124" name="MacroSample_Head1_Macro109" subType="9" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__125" name="MacroSample_Head1_Macro110" subType="10" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__126" name="MacroSample_Head1_Macro111" subType="11" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__127" name="MacroSample_Head1_Macro112" subType="12" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__128" name="MacroSample_Head1_Macro113" subType="13" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__129" name="MacroSample_Head1_Macro114" subType="14" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__130" name="MacroSample_Head1_Macro115" subType="15" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__131" name="MacroSample_Head1_Macro116" subType="16" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__132" name="MacroSample_Head1_Macro117" subType="17" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__133" name="MacroSample_Head1_Macro118" subType="18" type="ms:MACRO_VARIABLE"/>
-            <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex__134" name="MacroSample_Head1_Macro100" subType="19" type="ms:MACRO_VARIABLE"/>
-          </DataItems>
-        </Path>
         <Axes name="Path Feedrate" id="DMG_MORI_IoTconnector-flex_3">
           <Components>
             <Rotary name="C5" id="DMG_MORI_IoTconnector-flex_31">
@@ -114,6 +72,25 @@
                 <DataItem type="LOGIC_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_014" name="logic1" />
                 <DataItem type="MOTION_PROGRAM" category="CONDITION" id="DMG_MORI_IoTconnector-flex_015" name="motion1" />
                 <DataItem type="PART_COUNT" subType="ALL" category="EVENT" id="DMG_MORI_IoTconnector-flex_079" name="part_count_overall1" />
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_116" name="MacroSample_Head1_Macro101" subType="1" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_117" name="MacroSample_Head1_Macro102" subType="2" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_118" name="MacroSample_Head1_Macro103" subType="3" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_119" name="MacroSample_Head1_Macro104" subType="4" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_120" name="MacroSample_Head1_Macro105" subType="5" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_121" name="MacroSample_Head1_Macro106" subType="6" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_122" name="MacroSample_Head1_Macro107" subType="7" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_123" name="MacroSample_Head1_Macro108" subType="8" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_124" name="MacroSample_Head1_Macro109" subType="9" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_125" name="MacroSample_Head1_Macro110" subType="10" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_126" name="MacroSample_Head1_Macro111" subType="11" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_127" name="MacroSample_Head1_Macro112" subType="12" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_128" name="MacroSample_Head1_Macro113" subType="13" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_129" name="MacroSample_Head1_Macro114" subType="14" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_130" name="MacroSample_Head1_Macro115" subType="15" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_131" name="MacroSample_Head1_Macro116" subType="16" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_132" name="MacroSample_Head1_Macro117" subType="17" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_133" name="MacroSample_Head1_Macro118" subType="18" type="ms:MACRO_VARIABLE"/>
+                <DataItem category="SAMPLE" id="DMG_MORI_IoTconnector-flex_134" name="MacroSample_Head1_Macro100" subType="19" type="ms:MACRO_VARIABLE"/>
               </DataItems>
             </Path>
             <Path name="Path_2" id="DMG_MORI_IoTconnector-flex_016">

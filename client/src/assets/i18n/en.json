@@ -200,10 +200,10 @@
     "SelectVariable": "Select Variable",
     "TariffStatus": {
       "0": "No tariff counter active",
-      "1": "Running",
-      "2": "Idle",
-      "3": "Waiting",
-      "4": "Alarm",
+      "1": "Standby",
+      "2": "Ready for Processing",
+      "3": "Warm Up",
+      "4": "Processing",
       "Unknown": "Unknown"
     }
   },

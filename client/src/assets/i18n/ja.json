@@ -200,10 +200,10 @@
     "SelectVariable": "変数選択",
     "TariffStatus": {
       "0": "通信量カウンタが全て無効です",
-      "1": "実行中",
-      "2": "アイドル",
-      "3": "待機中",
-      "4": "アラーム",
+      "1": "Standby",
+      "2": "Ready for Processing",
+      "3": "Warm Up",
+      "4": "Processing",
       "Unknown": "不定"
     }
   },

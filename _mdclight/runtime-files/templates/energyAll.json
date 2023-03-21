@@ -14,7 +14,7 @@
           "address": "tariff-number",
           "type": "device",
           "mandatory": true,
-          "id": "7155b7d3-3663-4ced-a718-e39d7fa0a4e3",
+          "id": "tariff-number",
           "name": "Tariff"
         },
         {

@@ -563,7 +563,10 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): string | null {
     const logPrefix = `${this.constructor.name}::enumeration`;
-    if (config.operationType !== 'enumeration') {
+    if (
+      config.operationType !== 'enumeration' &&
+      config.operationType !== 'setTariff'
+    ) {
       this.addSummaryLog(
         'error',
         `${logPrefix} receive invalid operation type: ${config.operationType}`
@@ -617,7 +620,7 @@ export class VirtualDataPointManager {
 
     const cacheValue = this.cache.getLastestValue(config.id)?.value;
 
-    if (value !== cacheValue) {
+    if (!!value && value !== cacheValue) {
       this.energyMachineStatusChangeCallback(value);
     }
 

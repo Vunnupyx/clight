@@ -13,7 +13,8 @@ export enum VirtualDataPointOperationType {
   SMALLER_EQUAL = 'smallerEqual',
   EQUAL = 'equal',
   UNEQUAL = 'unequal',
-  CALCULATION = 'calculation'
+  CALCULATION = 'calculation',
+  SET_TARIFF = 'setTariff'
 }
 
 export class VirtualDataPoint {

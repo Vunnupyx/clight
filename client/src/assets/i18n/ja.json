@@ -259,7 +259,8 @@
     "Formula": "式",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
     "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
-    "WarningWrongVdp": "Update failed. VDP with wrong order"
+    "WarningWrongVdp": "Update failed. VDP with wrong order",
+    "SetTariffEnum": "Set Machine Status Mapping"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -274,7 +275,8 @@
     "Equal": "等しい",
     "Unequal": "異なる",
     "Enumeration": "列挙",
-    "Calculation": "計算"
+    "Calculation": "計算",
+    "SetTariff": "Set Energy Tariff"
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",

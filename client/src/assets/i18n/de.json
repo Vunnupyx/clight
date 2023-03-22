@@ -200,10 +200,10 @@
     "SelectVariable": "Wählen Sie eine Variable",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
-      "1": "Standby",
-      "2": "Ready for Processing",
-      "3": "Warm Up",
-      "4": "Processing",
+      "1": "Bereit",
+      "2": "Bereit zur Verarbeitung",
+      "3": "Warmlauf",
+      "4": "Verarbeitung",
       "Unknown": "Unbekannt"
     }
   },

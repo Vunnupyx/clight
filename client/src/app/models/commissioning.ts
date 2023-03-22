@@ -12,12 +12,6 @@ export interface CommissioningInformation {
   Finished: boolean;
 }
 
-export interface Adapter {
-  macAddress: string;
-  ipAddress: string;
-  netmask: string;
-}
-
 export enum LinkStatus {
   Connected = 'connected',
   Disabled = 'disabled',

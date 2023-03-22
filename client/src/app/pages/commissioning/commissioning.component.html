@@ -42,12 +42,12 @@
           <div class="col-12 col-md-2 text-center align-self-center">
             <mat-icon
               class="color-success"
-              *ngIf="!isEmpty(machineInformation)"
+              *ngIf="!isEmptyMachineInformation()"
               svgIcon="mdc:success"
             ></mat-icon>
             <mat-icon
               class="color-danger"
-              *ngIf="isEmpty(machineInformation)"
+              *ngIf="isEmptyMachineInformation()"
               svgIcon="mdc:error"
             ></mat-icon>
           </div>
@@ -73,17 +73,24 @@
             </p>
           </div>
           <div class="col-12 col-md-5">
-            <p>{{ 'commissioning.IP' | translate }}: {{ adapter.ipAddress }}</p>
+            <p>
+              {{ 'commissioning.IP' | translate }}:
+              {{ adapter.ipv4Settings?.ipAddresses[0].Address }}
+            </p>
+            <p>
+              {{ 'commissioning.Netmask' | translate }}:
+              {{ adapter.ipv4Settings?.ipAddresses[0].Netmask }}
+            </p>
           </div>
           <div class="col-12 col-md-2 text-center align-self-center">
             <mat-icon
               class="color-success"
-              *ngIf="!isEmpty(adapter) && isConnected()"
+              *ngIf="!isEmptyAdapter() && isConnected()"
               svgIcon="mdc:success"
             ></mat-icon>
             <mat-icon
               class="color-danger"
-              *ngIf="isEmpty(adapter) || !isConnected()"
+              *ngIf="isEmptyAdapter() || !isConnected()"
               svgIcon="mdc:error"
             ></mat-icon>
           </div>
@@ -173,7 +180,13 @@
     <button
       mat-button
       color="primary"
-      [disabled]="!finished"
+      [disabled]="
+        isEmptyMachineInformation() &&
+        isEmptyAdapter() &&
+        !isConnected() &&
+        !registration &&
+        !isModulesRunning()
+      "
       (click)="onApply()"
     >
       {{ 'commissioning.FinishCommissioning' | translate }}

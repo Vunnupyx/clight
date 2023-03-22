@@ -25,6 +25,9 @@ export class CommissioningGuard implements CanActivate {
     const isFinished = await this.commissioningService.isFinished();
 
     if (isFinished) {
+      if (route.routeConfig?.path === 'commissioning')
+        return this.router.navigate(['/settings/general']);
+
       return true;
     }
 

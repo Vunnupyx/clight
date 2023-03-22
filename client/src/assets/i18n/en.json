@@ -200,10 +200,10 @@
     "SelectVariable": "Select Variable",
     "TariffStatus": {
       "0": "No tariff counter active",
-      "1": "Running",
-      "2": "Idle",
-      "3": "Waiting",
-      "4": "Alarm",
+      "1": "Standby",
+      "2": "Ready for Processing",
+      "3": "Warm Up",
+      "4": "Processing",
       "Unknown": "Unknown"
     }
   },
@@ -260,7 +260,8 @@
     "Formula": "Formula",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
     "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
-    "WarningWrongVdp": "Update failed. VDP with wrong order"
+    "WarningWrongVdp": "Update failed. VDP with wrong order",
+    "SetTariffEnum": "Set Machine Status Mapping"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -275,7 +276,8 @@
     "Equal": "Equal",
     "Unequal": "Unequal",
     "Enumeration": "Enumeration",
-    "Calculation": "Calculation"
+    "Calculation": "Calculation",
+    "SetTariff": "Set Energy Tariff"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",

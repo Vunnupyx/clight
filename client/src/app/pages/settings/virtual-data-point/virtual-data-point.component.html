@@ -325,7 +325,8 @@
             <span
               *ngIf="
                 canSetComparativeValue(row?.operationType) &&
-                !row?.comparativeValue
+                !row?.comparativeValue &&
+                !isEditing
               "
               style="position: absolute"
               class="ml-10 color-danger"

@@ -228,6 +228,7 @@
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
     "SetComparativeValue": "Vergleichswert setzen",
+    "MissingComparativeValue": "Vergleichswert fehlt",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",

@@ -93,8 +93,7 @@ export class RestApiManager {
         filter: (req: Request, res: Response) => {
           // If device is not commissioned allowed these endpoints so that commissioning can be performed
           if (
-            !this.options.configManager.isDeviceCommissioned &&
-            ([
+            [
               '/machine/info',
               '/system/commissioning',
               '/network/adapters/enoX1',
@@ -102,12 +101,19 @@ export class RestApiManager {
               '/datahub/dps',
               '/system/commissioning/finish'
             ].includes(req.url) ||
-              req.url.startsWith('/datahub/status/'))
+            req.url.startsWith('/datahub/status/')
           ) {
-            winston.info(
-              `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
-            );
-            return true;
+            if (!this.options.configManager.isDeviceCommissioned) {
+              winston.info(
+                `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
+              );
+              return true;
+            } else {
+              winston.info(
+                `${logPrefix} Commissioning is already completed, requested URL: ${req.url}, is not allowed.`
+              );
+              return false;
+            }
           }
 
           const isAuthenticated = authManager.verifyJWTAuth({

@@ -3,15 +3,15 @@ import { CommissioningService } from 'app/services';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import {
-  Adapter,
   AdapterConnection,
   ConfigurationStatus,
   DataHubModule,
   DataHubModuleName,
   DataHubModuleStatus,
   LinkStatus,
-  MachineInformation
-} from 'app/models/commissioning';
+  MachineInformation,
+  NetworkAdapter
+} from 'app/models';
 import { ObjectMap } from 'app/shared/utils';
 
 @Component({
@@ -23,8 +23,7 @@ export class CommissioningComponent implements OnInit {
   DataHubModuleName = DataHubModuleName;
   sub = new Subscription();
   machineInformation: MachineInformation;
-  finished: boolean;
-  adapter: Adapter;
+  adapter: NetworkAdapter;
   adapterConnection: AdapterConnection;
   dataHubsModules: ObjectMap<DataHubModule>;
   registration: boolean;
@@ -35,9 +34,6 @@ export class CommissioningComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sub.add(
-      this.commissioningService.finished.subscribe((x) => (this.finished = x))
-    );
     this.sub.add(
       this.commissioningService.machineInformation.subscribe((x) =>
         this.onMachineInformation(x)
@@ -77,10 +73,28 @@ export class CommissioningComponent implements OnInit {
       .then(() => this.router.navigate(['/']));
   }
 
-  isEmpty(obj: Record<string, any>): boolean {
-    if (!obj || Object.keys(obj).length === 0) return true;
+  isEmptyMachineInformation(): boolean {
+    if (
+      !this.machineInformation ||
+      Object.keys(this.machineInformation).length === 0
+    )
+      return true;
 
-    return Object.values(obj).some((x) => x === '');
+    return (
+      !this.machineInformation.Serial ||
+      !this.machineInformation.ControlManufacturer ||
+      !this.machineInformation.ControlType ||
+      !this.machineInformation.Model
+    );
+  }
+
+  isEmptyAdapter(): boolean {
+    if (!this.adapter || Object.keys(this.adapter).length === 0) return true;
+
+    return (
+      !this.adapter.ipv4Settings?.ipAddresses[0]?.Address ||
+      !this.adapter.ipv4Settings?.ipAddresses[0]?.Netmask
+    );
   }
 
   isConnected() {
@@ -92,7 +106,8 @@ export class CommissioningComponent implements OnInit {
   }
 
   isModulesRunning() {
-    if (this.isEmpty(this.dataHubsModules)) return false;
+    if (!this.dataHubsModules || Object.keys(this.dataHubsModules).length === 0)
+      return false;
 
     return Object.values(this.dataHubsModules).every(
       (x) => x?.Version !== '' && x?.Status === DataHubModuleStatus.Running
@@ -103,7 +118,7 @@ export class CommissioningComponent implements OnInit {
     this.machineInformation = { ...x };
   }
 
-  private onAdapter(x: Adapter) {
+  private onAdapter(x: NetworkAdapter) {
     this.adapter = { ...x };
   }
 

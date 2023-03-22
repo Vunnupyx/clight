@@ -7,18 +7,18 @@ import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler, ObjectMap } from 'app/shared/utils';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import {
-  Adapter,
+  NetworkAdapter,
   AdapterConnection,
   CommissioningInformation,
   DataHubModule,
   MachineInformation
-} from 'app/models/commissioning';
+} from 'app/models';
 
 export class CommissioningState {
   status!: Status;
   finished!: boolean;
   machineInformation!: MachineInformation;
-  adapter!: Adapter;
+  adapter!: NetworkAdapter;
   adapterConnection!: AdapterConnection;
   dataHubsModules!: ObjectMap<DataHubModule>;
   registration!: boolean;
@@ -132,9 +132,10 @@ export class CommissioningService {
       state.status = Status.Loading;
     });
     try {
-      const response = await this.configurationAgentHttpService.get<Adapter>(
-        `/network/adapters/enoX1`
-      );
+      const response =
+        await this.configurationAgentHttpService.get<NetworkAdapter>(
+          `/network/adapters/enoX1`
+        );
 
       this._store.patchState((state) => {
         state.status = Status.Ready;

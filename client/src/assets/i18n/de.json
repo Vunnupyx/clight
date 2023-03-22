@@ -15,6 +15,7 @@
     "State": "State",
     "Mac": "Mac",
     "IP": "IP",
+    "Netmask": "Netmask",
     "Connected": "Connected",
     "Disconnected": "Disconnected",
     "CELOSXchange": "CELOS Xchange",

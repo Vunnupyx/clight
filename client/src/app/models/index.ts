@@ -7,3 +7,4 @@ export * from './livedata';
 export * from './network';
 export * from './virtual-data-point';
 export * from './system-information';
+export * from './commissioning';

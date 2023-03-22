@@ -602,6 +602,29 @@ export class VirtualDataPointManager {
   }
 
   /**
+   * Special version of enumeration for setting EEM tariff
+   * @see enumeration
+   *
+   * @param sourceEvents
+   * @param config
+   * @returns string
+   */
+  private setTariff(
+    sourceEvents: IDataSourceMeasurementEvent[],
+    config: IVirtualDataPointConfig
+  ): string | null {
+    const value = this.enumeration(sourceEvents, config);
+
+    const cacheValue = this.cache.getLastestValue(config.id)?.value;
+
+    if (value !== cacheValue) {
+      this.energyMachineStatusChangeCallback(value);
+    }
+
+    return value;
+  }
+
+  /**
    * Calculates virtual data points from type thresholds
    *
    * @param  {IDataSourceMeasurementEvent[]} sourceEvents
@@ -683,6 +706,8 @@ export class VirtualDataPointManager {
         return this.unequal(sourceEvents, config);
       case 'calculation':
         return this.calculation(sourceEvents, config);
+      case 'setTariff':
+        return this.setTariff(sourceEvents, config);
       default:
         // TODO Only print this once at startup or config change, if invalid
         // this.addSummaryLog("warn",
@@ -762,20 +787,6 @@ export class VirtualDataPointManager {
 
       _events.push(newEvent);
       virtualEvents.push(newEvent);
-
-      if (
-        newEvent.dataSource.protocol === 'virtual' &&
-        vdpConfig.name === 'EEM - Machine Status'
-      ) {
-        const currentValue = this.cache.getLastestValue(
-          newEvent.measurement.id
-        )?.value;
-        const newValue = newEvent.measurement.value;
-
-        if (newValue !== currentValue) {
-          this.energyMachineStatusChangeCallback(newValue);
-        }
-      }
     }
 
     this.cache.update(virtualEvents);

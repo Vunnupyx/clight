@@ -312,7 +312,8 @@ export interface IVirtualDataPointConfig {
     | 'smallerEqual'
     | 'equal'
     | 'unequal'
-    | 'calculation';
+    | 'calculation'
+    | 'setTariff';
   thresholds?: ITargetDataMap;
   enumeration?: {
     defaultValue?: string;

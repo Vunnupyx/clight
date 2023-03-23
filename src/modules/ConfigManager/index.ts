@@ -39,7 +39,6 @@ import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager
 import { areObjectsEqual } from '../Utilities';
 import { factoryConfig } from './factoryConfig';
 import { runtimeConfig } from './runtimeConfig';
-import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
 
 const promisifiedGenerateKeyPair = promisify(generateKeyPair);
 
@@ -101,8 +100,6 @@ const defaultMtconnectDataSink: Omit<IDataSinkConfig, 'auth'> = {
  */
 export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConfigManagerEvents>) {
   public id: string | null = null;
-
-  public isDeviceCommissioned = false;
 
   private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
   private configFolder = path.join(this.mdcFolder, '/config');
@@ -195,8 +192,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   public async init(factoryReset = false): Promise<void> {
     const logPrefix = `${ConfigManager.className}::init`;
     winston.info(`${logPrefix} initializing.`);
-    this.isDeviceCommissioned =
-      await ConfigurationAgentManager.getCommissioningStatus();
     if (!factoryReset) {
       this._dataSinksManager.on(
         'dataSinksRestarted',
@@ -505,10 +500,6 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     updatedConfig.virtualDataPoints = configToCheck.virtualDataPoints?.filter(
       (vdp) => {
-        // Skip mandatory VDPs so that they are not deleted
-        if (vdp.mandatory) {
-          return true;
-        }
         let hasMissingSource = false;
         vdp.sources.forEach((vdpSource) => {
           const sourceExists =

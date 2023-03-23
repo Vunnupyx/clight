@@ -14,7 +14,7 @@ Or on remote device: curl https://172.17.0.1:44301/ccw/index.html -k
 Sometime, Nginx does respond with 404 Not Found error and doesn't tell us why.
 The best way to debug such issues is to start the mdc-web-server container, but override the entrypoint, to start the service in debug mode.
 
-`docker run -p 443:443 --network=azure-iot-edge --mount type=bind,source=/home/root/nginx.conf,target=/etc/nginx/nginx.conf -v dmgmori-mdclight-sslkeys:/etc/mdc-light/sslkeys --entrypoint sh -it mdclightdev.azurecr.io/mdc-web-server:3.0.9`
+`docker run -p 443:443 --network=azure-iot-edge --mount type=bind,source=/home/root/nginx.conf,target=/etc/nginx/nginx.conf -v dmgmori-mdclight-sslkeys:/etc/mdc-light/sslkeys --entrypoint sh -it mdclightdev.azurecr.io/mdc-web-server:3.0.8`
 
 After that, start the debug service by using `nginx-debug -g 'daemon off;'`
 
@@ -49,15 +49,5 @@ docker run \
     --network azure-iot-edge \
     --network-alias=mdclight \
     -d \
-    mdclightdev.azurecr.io/mdclight:3.0.5-197-g11456c38
-```
-
-```
-docker run \
-    --mount type=volume,source=dmgmori-mdclight-sslkeys,target=/etc/mdc-light/sslkeys \
-    -p 443:443 \
-    --network azure-iot-edge \
-    --network-alias=mdc-web-server \
-    -d \
-    mdclightdev.azurecr.io/mdc-web-server:3.0.5-197-g11456c38
+    mdclightdev.azurecr.io/mdclight:3.0.8
 ```

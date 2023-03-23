@@ -14,7 +14,7 @@
           "address": "tariff-number",
           "type": "device",
           "mandatory": true,
-          "id": "tariff-number",
+          "id": "7155b7d3-3663-4ced-a718-e39d7fa0a4e3",
           "name": "Tariff"
         },
         {
@@ -458,39 +458,7 @@
       "protocol": "datahub"
     }
   ],
-  "virtualDataPoints": [
-    {
-      "id": "022bc5b5-ed5e-4604-9997-a61efdb2943f",
-      "sources": [],
-      "operationType": "setTariff",
-      "name": "Machine Status for EEM Tariff",
-      "enumeration": {
-        "defaultValue": "unknown",
-        "items": [
-          {
-            "source": "",
-            "returnValueIfTrue": "STANDBY",
-            "priority": 0
-          },
-          {
-            "source": "",
-            "returnValueIfTrue": "READY_FOR_PROCESSING",
-            "priority": 1
-          },
-          {
-            "source": "",
-            "returnValueIfTrue": "WARM_UP",
-            "priority": 2
-          },
-          {
-            "source": "",
-            "returnValueIfTrue": "PROCESSING",
-            "priority": 3
-          }
-        ]
-      }
-    }
-  ],
+  "virtualDataPoints": [],
   "mapping": [],
   "systemInfo": [],
   "templates": {

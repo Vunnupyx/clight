@@ -155,11 +155,10 @@ export class EnergyDataSource extends DataSource {
     const logPrefix = `${this.name}::handleMachineStatusChange`;
 
     const tariffStatusMapping = {
-      unknown: '0',
-      STANDBY: '1',
-      READY_FOR_PROCESSING: '2',
-      WARM_UP: '3',
-      PROCESSING: '4'
+      running: '1',
+      idle: '2',
+      waiting: '3',
+      alarm: '4'
     };
     let newTariffNo: ITariffNumbers = tariffStatusMapping[newStatus];
 

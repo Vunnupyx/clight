@@ -1,6 +1,7 @@
 import { Application, Request } from 'express';
 import { connector as connectorFactory } from 'swagger-routes-express';
 import * as OpenApiValidator from 'express-openapi-validator';
+import winston from 'winston';
 import {
   authHandlers,
   setAuthManager as authSetAuthManager
@@ -70,7 +71,6 @@ import {
 } from '../routes/apis/v1/TermsAndConditions';
 import { healthCheckHandlers } from '../routes/apis/v1/Healthcheck';
 import { ConfigManager } from '../../ConfigManager';
-import swaggerUi from 'swagger-ui-express';
 import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
 import { DataSinksManager } from '../../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../../DatapointCache';
@@ -117,13 +117,6 @@ export class RoutesManager {
 
   constructor(options: RoutesManagerOptions) {
     this.app = options.app;
-
-    // TODO: Remove swagger ui route
-    this.app.use(
-      '/apidocs',
-      swaggerUi.serveFiles(swaggerFile, {}),
-      swaggerUi.setup(swaggerFile)
-    );
 
     //TODO: Refactor
     [

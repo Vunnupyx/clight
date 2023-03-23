@@ -200,10 +200,10 @@
     "SelectVariable": "変数選択",
     "TariffStatus": {
       "0": "通信量カウンタが全て無効です",
-      "1": "実行中",
-      "2": "アイドル",
-      "3": "待機中",
-      "4": "アラーム",
+      "1": "Standby",
+      "2": "Ready for Processing",
+      "3": "Warm Up",
+      "4": "Processing",
       "Unknown": "不定"
     }
   },
@@ -228,6 +228,7 @@
     "DeleteMessage": "本当にデータポイントを削除しますか？",
     "SetThresholds": "閾値設定",
     "SetComparativeValue": "基準値設定",
+    "MissingComparativeValue": "Comparative value is empty",
     "Set": "設定",
     "Value": "値",
     "Threshold": "閾値",
@@ -258,8 +259,8 @@
     "SetFormula": "式設定",
     "Formula": "式",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
-    "WarningWrongVdp": "Update failed. VDP with wrong order"
+    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
+    "SetTariffEnum": "Set Machine Status Mapping"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -274,7 +275,8 @@
     "Equal": "等しい",
     "Unequal": "異なる",
     "Enumeration": "列挙",
-    "Calculation": "計算"
+    "Calculation": "計算",
+    "SetTariff": "Set Energy Tariff"
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",

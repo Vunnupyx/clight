@@ -288,6 +288,8 @@ export class VirtualDataPointService
     });
 
     if (error) {
+      // These warnings work AFTER applying or on page load, if the VDP order is somehow saved to config wrongly.
+      // When user changes the order in the UI, the warning is handled by virtual-data-point.component.ts
       if (
         [
           VirtualDataPointErrorType.UnexpectedError,
@@ -300,9 +302,15 @@ export class VirtualDataPointService
       } else if (error === VirtualDataPointErrorType.WrongVdpsOrder) {
         this.toastr.warning(
           this.translate.instant(`settings-virtual-data-point.WrongVdpsOrder`, {
-            SourceId: notYetDefinedSourceVdpId,
-            ErrorId: vdpIdWithError
-          })
+            SourceId: this._store.snapshot.dataPoints?.find(
+              (x) => x.id === notYetDefinedSourceVdpId
+            )?.name,
+            ErrorId: this._store.snapshot.dataPoints?.find(
+              (x) => x.id === vdpIdWithError
+            )?.name
+          }),
+          undefined,
+          { timeOut: 20000, extendedTimeOut: 10000 }
         );
       }
     }

@@ -200,10 +200,10 @@
     "SelectVariable": "Wählen Sie eine Variable",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
-      "1": "Läuft",
-      "2": "Leerlauf",
-      "3": "Warten",
-      "4": "Alarm",
+      "1": "Bereit",
+      "2": "Bereit zur Verarbeitung",
+      "3": "Warmlauf",
+      "4": "Verarbeitung",
       "Unknown": "Unbekannt"
     }
   },
@@ -228,6 +228,7 @@
     "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
     "SetComparativeValue": "Vergleichswert setzen",
+    "MissingComparativeValue": "Vergleichswert fehlt",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",
@@ -257,9 +258,9 @@
     "ReturnValueIfTrue": "Rückgabewert",
     "SetFormula": "Formel festlegen",
     "Formula": "Formel",
-    "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
-    "WarningWrongVdp": "Update failed. VDP with wrong order"
+    "UnexpectedError": "Die Änderungen wurden nicht übernommen. Bitte versuchen Sie es erneut!",
+    "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte können nur nach ihrer Definition genutzt werden!",
+    "SetTariffEnum": "Mapping für Maschinenzustand setzen"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -274,7 +275,8 @@
     "Equal": "Gleich",
     "Unequal": "Ungleich",
     "Enumeration": "Enumeration",
-    "Calculation": "Kalkulation"
+    "Calculation": "Kalkulation",
+    "SetTariff": "Energie Tariff Setzen"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",

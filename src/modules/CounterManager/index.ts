@@ -14,7 +14,7 @@ export class CounterManager {
   private counters: CounterDict = {};
   private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
   private configFolder = path.join(this.mdcFolder, '/config');
-  private counterStoragePath = '';
+  private counterStoragePath = path.join(this.configFolder, '/counters.json');
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
   private schedulerCheckerInterval = 1000 * 60 * 5; // 5Min
@@ -27,18 +27,13 @@ export class CounterManager {
     private cache: DataPointCache
   ) {
     const logPrefix = `${this.constructor.name}::constructor`;
-    if (!fs.existsSync(path.join(__dirname, this.configFolder))) {
+    if (!fs.existsSync(this.configFolder)) {
       winston.warn(
         `${logPrefix} Configuration folder for storing counter values not found! The counts are not persisted!`
       );
       this.persist = false;
       return;
     }
-
-    this.counterStoragePath = path.join(
-      __dirname,
-      `${this.configFolder}/counters.json`
-    );
 
     if (fs.existsSync(this.counterStoragePath)) {
       // TODO: Update Cache at startup
@@ -133,37 +128,40 @@ export class CounterManager {
       }
     );
     for (const counter of counterEntries) {
-      const id = counter.sources[0];
-      for (const [index, configEntry] of counter?.resetSchedules?.entries()) {
-        const nextDate = CounterManager.calcNextTrigger(
-          configEntry,
-          new Date()
-        );
-        const nextNextDate = CounterManager.calcNextTrigger(
-          configEntry,
-          new Date(nextDate)
-        );
-        const interval = nextNextDate.getTime() - nextDate.getTime();
-        const lastDate = nextDate.getTime() - interval;
+      const id = counter?.sources?.[0];
 
-        if (lastDate < configEntry.created) {
-          // No reset missed because timer is younger
-          winston.debug(
-            `${logPrefix} ignore reset because timer is younger as last trigger date.`
+      if (counter?.resetSchedules?.entries()) {
+        for (const [index, configEntry] of counter?.resetSchedules?.entries()) {
+          const nextDate = CounterManager.calcNextTrigger(
+            configEntry,
+            new Date()
           );
-          continue;
-        }
-        if (lastDate === configEntry?.lastReset) {
-          // last reset correct done
-          winston.debug(
-            `${logPrefix} ignore reset because last reset was successfully.`
+          const nextNextDate = CounterManager.calcNextTrigger(
+            configEntry,
+            new Date(nextDate)
           );
-          continue;
+          const interval = nextNextDate.getTime() - nextDate.getTime();
+          const lastDate = nextDate.getTime() - interval;
+
+          if (lastDate < configEntry.created) {
+            // No reset missed because timer is younger
+            winston.debug(
+              `${logPrefix} ignore reset because timer is younger as last trigger date.`
+            );
+            continue;
+          }
+          if (lastDate === configEntry?.lastReset) {
+            // last reset correct done
+            winston.debug(
+              `${logPrefix} ignore reset because last reset was successfully.`
+            );
+            continue;
+          }
+          winston.debug(
+            `${logPrefix} reset for counter '${id}' because last reset was skipped.`
+          );
+          this.reset(id, index);
         }
-        winston.debug(
-          `${logPrefix} reset for counter '${id}' because last reset was skipped.`
-        );
-        this.reset(id, index);
       }
     }
     winston.debug(`${logPrefix} done.`);

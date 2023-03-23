@@ -24,7 +24,8 @@
     "LoadError": "Failed to load info. Try again later",
     "UpdateError": "Failed to update. Try again later",
     "RegisteredError": "Failed to provisioned",
-    "RegisteredSuccess": "Successfully provisioned"
+    "RegisteredSuccess": "Successfully provisioned",
+    "Unknown": "Unknown"
   },
   "layout": {
     "Settings": "Einstellungen",

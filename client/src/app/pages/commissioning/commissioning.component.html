@@ -22,21 +22,33 @@
           <div class="col-12 col-md-5">
             <p>
               {{ 'commissioning.Serial' | translate }}:
-              {{ machineInformation.Serial }}
+              {{
+                machineInformation.Serial ||
+                  ('commissioning.Unknown' | translate)
+              }}
             </p>
             <p>
               {{ 'commissioning.ControlManufacturer' | translate }}:
-              {{ machineInformation.ControlManufacturer }}
+              {{
+                machineInformation.ControlManufacturer ||
+                  ('commissioning.Unknown' | translate)
+              }}
             </p>
           </div>
           <div class="col-12 col-md-5">
             <p>
               {{ 'commissioning.ControlType' | translate }}:
-              {{ machineInformation.ControlType }}
+              {{
+                machineInformation.ControlType ||
+                  ('commissioning.Unknown' | translate)
+              }}
             </p>
             <p>
               {{ 'commissioning.Model' | translate }}:
-              {{ machineInformation.Model }}
+              {{
+                machineInformation.Model ||
+                  ('commissioning.Unknown' | translate)
+              }}
             </p>
           </div>
           <div class="col-12 col-md-2 text-center align-self-center">
@@ -62,24 +74,33 @@
             <p>
               {{ 'commissioning.State' | translate }}:
               {{
-                (isConnected()
+                (isConnected() === true
                   ? 'commissioning.Connected'
-                  : 'commissioning.Disconnected'
+                  : isConnected() === false
+                  ? 'commissioning.Disconnected'
+                  : 'commissioning.Unknown'
                 ) | translate
               }}
             </p>
             <p>
-              {{ 'commissioning.Mac' | translate }}: {{ adapter.macAddress }}
+              {{ 'commissioning.Mac' | translate }}:
+              {{ adapter?.macAddress || ('commissioning.Unknown' | translate) }}
             </p>
           </div>
           <div class="col-12 col-md-5">
             <p>
               {{ 'commissioning.IP' | translate }}:
-              {{ adapter.ipv4Settings?.ipAddresses[0].Address }}
+              {{
+                adapter?.ipv4Settings?.ipAddresses[0].Address ||
+                  ('commissioning.Unknown' | translate)
+              }}
             </p>
             <p>
               {{ 'commissioning.Netmask' | translate }}:
-              {{ adapter.ipv4Settings?.ipAddresses[0].Netmask }}
+              {{
+                adapter?.ipv4Settings?.ipAddresses[0].Netmask ||
+                  ('commissioning.Unknown' | translate)
+              }}
             </p>
           </div>
           <div class="col-12 col-md-2 text-center align-self-center">
@@ -105,9 +126,11 @@
             <p>
               {{ 'commissioning.State' | translate }}:
               {{
-                (registration
+                (registration === true
                   ? 'commissioning.RegisteredSuccess'
-                  : 'commissioning.RegisteredError'
+                  : registration === false
+                  ? 'commissioning.RegisteredError'
+                  : 'commissioning.Unknown'
                 ) | translate
               }}
             </p>

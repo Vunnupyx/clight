@@ -100,9 +100,15 @@ export class CommissioningComponent implements OnInit {
   }
 
   isConnected() {
+    if (
+      !this.adapterConnection?.linkStatus ||
+      !this.adapterConnection?.configurationStatus
+    ) {
+      return undefined;
+    }
     return (
-      this.adapterConnection.linkStatus === LinkStatus.Connected &&
-      this.adapterConnection.configurationStatus ===
+      this.adapterConnection?.linkStatus === LinkStatus.Connected &&
+      this.adapterConnection?.configurationStatus ===
         ConfigurationStatus.Configured
     );
   }

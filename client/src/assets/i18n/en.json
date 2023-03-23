@@ -258,7 +258,7 @@
     "SetFormula": "Set formula",
     "Formula": "Formula",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte, können nur nach ihrer Definition genutzt werden"
+    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!"
   },
   "virtual-data-point-operation-type": {
     "And": "And",

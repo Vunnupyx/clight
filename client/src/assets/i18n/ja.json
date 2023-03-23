@@ -258,7 +258,7 @@
     "SetFormula": "式設定",
     "Formula": "式",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data point can only be used after they are defined!"
+    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!"
   },
   "virtual-data-point-operation-type": {
     "And": "And",

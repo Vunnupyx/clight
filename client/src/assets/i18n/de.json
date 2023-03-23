@@ -257,8 +257,8 @@
     "ReturnValueIfTrue": "Rückgabewert",
     "SetFormula": "Formel festlegen",
     "Formula": "Formel",
-    "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data point can only be used after they are defined!"
+    "UnexpectedError": "Die Änderungen wurden nicht übernommen. Bitte versuchen Sie es erneut!",
+    "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte können nur nach ihrer Definition genutzt werden!"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",

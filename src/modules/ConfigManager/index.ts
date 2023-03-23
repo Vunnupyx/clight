@@ -500,6 +500,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     updatedConfig.virtualDataPoints = configToCheck.virtualDataPoints?.filter(
       (vdp) => {
+        // Skip mandatory VDPs so that they are not deleted
+        if (vdp.mandatory) {
+          return true;
+        }
         let hasMissingSource = false;
         vdp.sources.forEach((vdpSource) => {
           const sourceExists =

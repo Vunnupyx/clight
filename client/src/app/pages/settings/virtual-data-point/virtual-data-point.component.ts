@@ -101,6 +101,10 @@ export class VirtualDataPointComponent implements OnInit {
     {
       value: VirtualDataPointOperationType.CALCULATION,
       text: 'virtual-data-point-operation-type.Calculation'
+    },
+    {
+      value: VirtualDataPointOperationType.SET_TARIFF,
+      text: 'virtual-data-point-operation-type.SetTariff'
     }
   ];
 
@@ -256,6 +260,38 @@ export class VirtualDataPointComponent implements OnInit {
       delete this.unsavedRow?.thresholds;
     }
 
+    if (
+      this.unsavedRow?.operationType ===
+        VirtualDataPointOperationType.SET_TARIFF &&
+      !this.unsavedRow?.enumeration
+    ) {
+      this.unsavedRow.enumeration = {
+        defaultValue: 'unknown',
+        items: [
+          {
+            source: '',
+            returnValueIfTrue: 'STANDBY',
+            priority: 0
+          },
+          {
+            source: '',
+            returnValueIfTrue: 'READY_FOR_PROCESSING',
+            priority: 1
+          },
+          {
+            source: '',
+            returnValueIfTrue: 'WARM_UP',
+            priority: 2
+          },
+          {
+            source: '',
+            returnValueIfTrue: 'PROCESSING',
+            priority: 3
+          }
+        ]
+      };
+    }
+
     if (this.unsavedRow!.id) {
       this.virtualDataPointService
         .updateDataPoint(this.unsavedRow?.id!, this.unsavedRow!)
@@ -399,7 +435,10 @@ export class VirtualDataPointComponent implements OnInit {
       data: {
         enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
-        protocol
+        protocol,
+        isSetTariffType:
+          virtualPoint.operationType ===
+          VirtualDataPointOperationType.SET_TARIFF
       },
       width: '900px'
     });
@@ -531,6 +570,7 @@ export class VirtualDataPointComponent implements OnInit {
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
       VirtualDataPointOperationType.ENUMERATION,
+      VirtualDataPointOperationType.SET_TARIFF,
       VirtualDataPointOperationType.CALCULATION
     ].includes(operationType!);
   }
@@ -635,5 +675,11 @@ export class VirtualDataPointComponent implements OnInit {
       }
     }
     this.virtualDataPointService.updateOrderDataPoints(vdpList);
+  }
+
+  isSetTariffAlreadyIncluded(): boolean {
+    return this.datapointRows.some(
+      (dp) => dp.operationType === VirtualDataPointOperationType.SET_TARIFF
+    );
   }
 }

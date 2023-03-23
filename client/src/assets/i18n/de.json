@@ -258,9 +258,8 @@
     "ReturnValueIfTrue": "Rückgabewert",
     "SetFormula": "Formel festlegen",
     "Formula": "Formel",
-    "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
-    "WarningWrongVdp": "Update failed. VDP with wrong order",
+    "UnexpectedError": "Die Änderungen wurden nicht übernommen. Bitte versuchen Sie es erneut!",
+    "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte können nur nach ihrer Definition genutzt werden!",
     "SetTariffEnum": "Mapping für Maschinenzustand setzen"
   },
   "virtual-data-point-operation-type": {

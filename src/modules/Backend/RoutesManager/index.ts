@@ -1,6 +1,7 @@
 import { Application, Request } from 'express';
 import { connector as connectorFactory } from 'swagger-routes-express';
 import * as OpenApiValidator from 'express-openapi-validator';
+import winston from 'winston';
 import {
   authHandlers,
   setAuthManager as authSetAuthManager

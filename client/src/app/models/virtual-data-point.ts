@@ -36,6 +36,13 @@ export enum VirtualDataPointErrorType {
   UnexpectedError = 'unexpectedError'
 }
 
+export interface VirtualDataPointReorderValidityStatus {
+  isValid: boolean;
+  error?: 'wrongVdpsOrder' | 'wrongFormat' | 'unexpectedError';
+  vdpIdWithError?: string;
+  notYetDefinedSourceVdpId?: string;
+}
+
 export interface VirtualDataPointErrorReason {
   error?: VirtualDataPointErrorType;
   vdpIdWithError?: string;

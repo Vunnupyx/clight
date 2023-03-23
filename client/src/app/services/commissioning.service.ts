@@ -120,8 +120,6 @@ export class CommissioningService {
         state.machineInformation = response;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('commissioning.LoadError'));
-      errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -142,8 +140,6 @@ export class CommissioningService {
         state.adapter = response;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('commissioning.LoadError'));
-      errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -165,8 +161,6 @@ export class CommissioningService {
         state.adapterConnection = response;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('commissioning.LoadError'));
-      errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -187,8 +181,6 @@ export class CommissioningService {
         state.dataHubsModules[name] = response;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('commissioning.LoadError'));
-      errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
@@ -206,8 +198,6 @@ export class CommissioningService {
         state.registration = response.Registered;
       });
     } catch (err) {
-      this.toastr.error(this.translate.instant('commissioning.LoadError'));
-      errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });

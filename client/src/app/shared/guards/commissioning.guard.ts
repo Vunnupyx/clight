@@ -26,10 +26,11 @@ export class CommissioningGuard implements CanActivate {
 
     if (isFinished) {
       if (route.routeConfig?.path === 'commissioning')
-        return this.router.navigate(['/settings/general']);
+        return this.router.navigate(['/']);
 
       return true;
     }
+    if (route.routeConfig?.path === 'commissioning') return true;
 
     return this.router.navigate(['/commissioning']).then(() => false);
   }

@@ -135,29 +135,44 @@
             <p>
               {{ DataHubModuleName.MdcWebServer }}
               {{ dataHubsModules[DataHubModuleName.MdcWebServer]?.Version }}:
-              {{ dataHubsModules[DataHubModuleName.MdcWebServer]?.Status }}
+              {{
+                dataHubsModules[DataHubModuleName.MdcWebServer]?.Status ||
+                  DataHubModuleStatus.Unknown
+              }}
             </p>
             <p>
               {{ DataHubModuleName.MtconnectAgent }}
               {{ dataHubsModules[DataHubModuleName.MtconnectAgent]?.Version }}:
-              {{ dataHubsModules[DataHubModuleName.MtconnectAgent]?.Status }}
+              {{
+                dataHubsModules[DataHubModuleName.MtconnectAgent]?.Status ||
+                  DataHubModuleStatus.Unknown
+              }}
             </p>
             <p>
               {{ DataHubModuleName.Mdclight }}
               {{ dataHubsModules[DataHubModuleName.Mdclight]?.Version }}:
-              {{ dataHubsModules[DataHubModuleName.Mdclight]?.Status }}
+              {{
+                dataHubsModules[DataHubModuleName.Mdclight]?.Status ||
+                  DataHubModuleStatus.Unknown
+              }}
             </p>
           </div>
           <div class="col-12 col-md-5">
             <p>
               {{ DataHubModuleName.EdgeHub }}
               {{ dataHubsModules[DataHubModuleName.EdgeHub]?.Version }}:
-              {{ dataHubsModules[DataHubModuleName.EdgeHub]?.Status }}
+              {{
+                dataHubsModules[DataHubModuleName.EdgeHub]?.Status ||
+                  DataHubModuleStatus.Unknown
+              }}
             </p>
             <p>
               {{ DataHubModuleName.EdgeAgent }}
               {{ dataHubsModules[DataHubModuleName.EdgeAgent]?.Version }}:
-              {{ dataHubsModules[DataHubModuleName.EdgeAgent]?.Status }}
+              {{
+                dataHubsModules[DataHubModuleName.EdgeAgent]?.Status ||
+                  DataHubModuleStatus.Unknown
+              }}
             </p>
           </div>
           <div class="col-12 col-md-2 text-center align-self-center">
@@ -181,10 +196,10 @@
       mat-button
       color="primary"
       [disabled]="
-        isEmptyMachineInformation() &&
-        isEmptyAdapter() &&
-        !isConnected() &&
-        !registration &&
+        isEmptyMachineInformation() ||
+        isEmptyAdapter() ||
+        !isConnected() ||
+        !registration ||
         !isModulesRunning()
       "
       (click)="onApply()"

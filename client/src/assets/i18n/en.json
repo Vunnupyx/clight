@@ -13,7 +13,7 @@
     "Model": "Model",
     "Ethernet": "Ethernet X1",
     "State": "State",
-    "Mac": "Mac",
+    "Mac": "MAC",
     "IP": "IP",
     "Netmask": "Netmask",
     "Connected": "Connected",
@@ -21,8 +21,7 @@
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Components",
     "FinishCommissioning": "Finish commissioning",
-    "LoadError": "Failed to load info. Try again later",
-    "UpdateError": "Failed to update. Try again later",
+    "FinishError": "Failed to finish commissioning. Please try again later",
     "RegisteredError": "Failed to provisioned",
     "RegisteredSuccess": "Successfully provisioned",
     "Unknown": "Unknown"

@@ -180,7 +180,11 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   onDataSourceIndexChange(idx: number) {
-    if (!this.dataSourceList || !this.dataSourceList[idx]) {
+    if (
+      this.dataSourceIndex === idx ||
+      !this.dataSourceList ||
+      !this.dataSourceList[idx]
+    ) {
       return;
     }
     this.switchDataSource(this.dataSourceList[idx]);
@@ -192,6 +196,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
         await this.promptService.warn();
         await this.sourceDataPointService.revert();
       } catch {
+        this.tabs.selectedIndex = this.dataSourceIndex;
         return;
       }
     }
@@ -348,13 +353,13 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   onAddressSelect(obj: SourceDataPoint) {
     const dialogRef = this.dialog.open(SelectTypeModalComponent, {
+      width: '650px',
       data: {
         selection: obj.address,
         type: obj.type,
         protocol: this.dataSource?.protocol,
         existingAddresses: this.datapointRows?.map((x) => x.address) || []
-      },
-      width: '650px'
+      }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -367,6 +372,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       } else {
         this.unsavedRow!.name = result.name;
         this.unsavedRow!.address = result.address;
+        if (this.dataSource?.protocol === DataSourceProtocol.Energy) {
+          this.unsavedRow!.type = result.type;
+        }
       }
     });
   }

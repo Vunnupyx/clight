@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
+import * as date from 'date-fns';
 import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
@@ -324,6 +325,14 @@ export class CounterManager {
 
         diff = currentDate.getTime() - dateFromScheduling.getTime();
         if (diff < 0) {
+          if (
+            ['date', 'month', 'year'].includes(entry) &&
+            scheduleData.hours === 'Every'
+          ) {
+            // If day, month or year is increased, and hour is "Every", then next scheduled hour is 00
+            dateFromScheduling = date.setHours(dateFromScheduling, 0);
+          }
+
           // New date is in future, break out for loop
           return dateFromScheduling;
         }
@@ -347,9 +356,9 @@ export class CounterManager {
           : scheduleData.month - 1,
       date:
         //@ts-ignore
-        scheduleData.date
+        scheduleData.day !== 'Every'
           ? //@ts-ignore
-            scheduleData.date
+            scheduleData.day
           : currentDate.getDate(),
       hours:
         scheduleData.hours === 'Every'
@@ -367,15 +376,17 @@ export class CounterManager {
       dateFromScheduling = new Date(
         timeData.year,
         timeData.month,
-        currentDate.getDate() +
-          // @ts-ignore
-          ((7 - currentDate.getDay() + Day[scheduleData.day]) % 7 || 0),
+        currentDate.getDate(),
         timeData.hours,
         timeData.minutes,
         timeData.sec
       );
-      // @ts-ignore
-      const diff = currentDate - dateFromScheduling;
+
+      dateFromScheduling =
+        // @ts-ignore
+        date[`next${scheduleData?.day}`]?.(dateFromScheduling);
+
+      const diff = currentDate.getTime() - dateFromScheduling.getTime();
       if (!(diff < 0)) {
         dateFromScheduling = new Date(
           timeData.year,
@@ -403,7 +414,14 @@ export class CounterManager {
         // increase every entries with one and check if new date is in future
         for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
           // Ignore non 'Every' entries
-          if (scheduleData[entry] !== 'Every' && entry !== 'year') continue;
+          if (
+            ((entry !== 'date' && scheduleData[entry] !== 'Every') ||
+              //@ts-ignore
+              (entry === 'date' && scheduleData.day !== 'Every')) &&
+            entry !== 'year'
+          ) {
+            continue;
+          }
           timeData[entry] += 1;
           dateFromScheduling = new Date(
             timeData.year,

@@ -1,5 +1,9 @@
-<h1 mat-dialog-title>
+<h1 mat-dialog-title *ngIf="!isTypeSetTariff()">
   {{ 'settings-virtual-data-point.SetEnumeration' | translate }}
+</h1>
+
+<h1 mat-dialog-title *ngIf="isTypeSetTariff()">
+  {{ 'settings-virtual-data-point.SetTariffEnum' | translate }}
 </h1>
 
 <div mat-dialog-content>
@@ -9,7 +13,11 @@
     </div>
     <div>
       <mat-form-field>
-        <input matInput [(ngModel)]="defaultValue" />
+        <input
+          matInput
+          [(ngModel)]="defaultValue"
+          [disabled]="isTypeSetTariff()"
+        />
       </mat-form-field>
     </div>
   </div>
@@ -55,7 +63,12 @@
             <mat-label>{{
               'settings-virtual-data-point.ReturnValueIfTrue' | translate
             }}</mat-label>
-            <input matInput [(ngModel)]="row.returnValueIfTrue" required />
+            <input
+              matInput
+              [(ngModel)]="row.returnValueIfTrue"
+              required
+              [disabled]="isTypeSetTariff()"
+            />
           </mat-form-field>
         </div>
         <div class="col-3">
@@ -63,7 +76,8 @@
             <mat-label>&nbsp;</mat-label>
             <div class="d-flex">
               <mat-button-toggle
-                (click)="onDelete(idx)"
+                [disabled]="isTypeSetTariff()"
+                (click)="!isTypeSetTariff() && onDelete(idx)"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon svgIcon="mdc:delete"></mat-icon
@@ -75,6 +89,7 @@
     </div>
   </div>
   <button
+    *ngIf="!isTypeSetTariff()"
     type="button"
     mat-mini-fab
     color="primary"

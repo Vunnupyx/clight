@@ -5,14 +5,18 @@ import { SharedModule } from 'app/shared/shared.module';
 import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confirm-dialog.module';
 
 import { DataMappingComponent } from './data-mapping.component';
-import { AuthGuard, QuickStartGuard } from 'app/shared/guards';
+import {
+  AuthGuard,
+  CommissioningGuard,
+  QuickStartGuard
+} from 'app/shared/guards';
 import { DataMappingGuard } from './data-mapping.guard';
 
 const routes: Routes = [
   {
     path: 'settings/data-mapping',
     component: DataMappingComponent,
-    canActivate: [AuthGuard, QuickStartGuard],
+    canActivate: [CommissioningGuard, AuthGuard, QuickStartGuard],
     canDeactivate: [DataMappingGuard]
   }
 ];

@@ -4,6 +4,28 @@
     "Cancel": "キャンセル",
     "LanguageDocumentationPath": "/jp"
   },
+  "commissioning": {
+    "Welcome": "Welcome to IoTconnector flex",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Ethernet": "Ethernet X1",
+    "State": "State",
+    "Mac": "MAC",
+    "IP": "IP",
+    "Netmask": "Netmask",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "CELOSXchange": "CELOS Xchange",
+    "SoftwareComponents": "Software Components",
+    "FinishCommissioning": "Finish commissioning",
+    "FinishError": "Failed to finish commissioning. Please try again later",
+    "RegisteredError": "Failed to provisioned",
+    "RegisteredSuccess": "Successfully provisioned",
+    "Unknown": "Unknown"
+  },
   "layout": {
     "Settings": "設定",
     "General": "一般",

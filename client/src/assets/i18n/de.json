@@ -4,6 +4,28 @@
     "Cancel": "Abbrechen",
     "LanguageDocumentationPath": "/de"
   },
+  "commissioning": {
+    "Welcome": "Willkommen bei IoTconnector flex",
+    "MachineInformation": "Maschine Informationen",
+    "Serial": "Seriennummer",
+    "ControlManufacturer": "Hersteller der Steuerung",
+    "ControlType": "Steuerungstyp",
+    "Model": "Modell",
+    "Ethernet": "Ethernet X1",
+    "State": "Zustand",
+    "Mac": "MAC",
+    "IP": "IP",
+    "Netmask": "Netzmaske",
+    "Connected": "Verbunden",
+    "Disconnected": "Getrennt",
+    "CELOSXchange": "CELOS Xchange",
+    "SoftwareComponents": "Software Komponenten",
+    "FinishCommissioning": "Inbetriebnahme beenden",
+    "FinishError": "Die Inbetriebnahme konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut",
+    "RegisteredError": "Bereitstellung fehlgeschlagen",
+    "RegisteredSuccess": "Erfolgreich bereitgestellt",
+    "Unknown": "Unbekannt"
+  },
   "layout": {
     "Settings": "Einstellungen",
     "General": "Allgemein",

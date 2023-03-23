@@ -13,6 +13,7 @@ import { SystemInformationService } from './system-information.service';
 import { ProfileService } from './profile.service';
 import { TermsAndConditionsService } from './terms-and-conditions.service';
 import { GeneralService } from './general.service';
+import { CommissioningService } from './commissioning.service';
 
 @NgModule({
   providers: [
@@ -28,7 +29,8 @@ import { GeneralService } from './general.service';
     SystemInformationService,
     ProfileService,
     TermsAndConditionsService,
-    GeneralService
+    GeneralService,
+    CommissioningService
   ]
 })
 export class ServicesModule {}

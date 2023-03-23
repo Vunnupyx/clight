@@ -4,6 +4,42 @@ title: Changelog
 
 # Changelog
 
+## [3.0.11]
+
+## Added
+
+- [DIGMDCLGHT-297](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-297) Implements automatic Energy tariff change depending on machine status
+- [DIGMDCLGHT-380](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-380) Adds commissioning feature to IoTconnector flex
+- [DIGMDCLGHT-393](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-393) Shows warning if comparative value is not entered for comparison VDPs
+
+## Fixed
+
+- [DIGMDCLGHT-296](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-296) Fixes routing Energy data points to MTConnect
+- [DIGMDCLGHT-352](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-352) Fixes naming in user documentation
+- [DIGMDCLGHT-385](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-385) Fixes column resizing for data sources
+- [DIGMDCLGHT-386](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-386) Fixes ability to edit Energy data point Type to a wrong type
+- [DIGMDCLGHT-389](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-389) Fixes NETservice login
+- [DIGMDCLGHT-391](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-391) Fixes persistence of counter value across restarts
+- [DIGMDCLGHT-403](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-403) Fixes scheduled reset for counter VDPs
+- [DIGMDCLGHT-406](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-406) Fixes display of current tab when navigation is aborted
+- [DIGMDCLGHT-409](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-409) Fixes translation of the text at login when token expires
+- [DIGMDCLGHT-400](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-400) Fixes missing Tariff data point from the list of data points
+- [DIGMDCLGHT-410](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-410) Fixes the Apply Changes button for OPC UA where it remains inactive despite certain changes
+- [DIGMDCLGHT-418](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-418) Fixes sorting for schedule table of counter resets
+- [DIGMDCLGHT-422](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-422) Fixes column resizing
+- [DIGMDCLGHT-430](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-430) Fixes warning display for reordering VDPs to display name of the affected VDPs
+
+## Changed
+
+- [DIGMDCLGHT-387](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-387) Disables editing OPC UA custom variable if it is in use
+- [DIGMDCLGHT-427](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-427) Makes Type column for Energy data source not editable
+
+## [3.0.10]
+
+## Fixed
+
+- [DIGMDCLGHT-408](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-408) Fixes mapping for IO shield inputs.
+
 ## [3.0.9]
 
 ## Fixed

@@ -258,7 +258,7 @@
     "SetFormula": "Set formula",
     "Formula": "Formula",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results."
+    "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte, können nur nach ihrer Definition genutzt werden"
   },
   "virtual-data-point-operation-type": {
     "And": "And",

@@ -160,7 +160,7 @@
               {{ dataHubsModules[DataHubModuleName.MdcWebServer]?.Version }}:
               {{
                 dataHubsModules[DataHubModuleName.MdcWebServer]?.Status ||
-                  DataHubModuleStatus.Unknown
+                  ('commissioning.Unknown' | translate)
               }}
             </p>
             <p>
@@ -168,7 +168,7 @@
               {{ dataHubsModules[DataHubModuleName.MtconnectAgent]?.Version }}:
               {{
                 dataHubsModules[DataHubModuleName.MtconnectAgent]?.Status ||
-                  DataHubModuleStatus.Unknown
+                  ('commissioning.Unknown' | translate)
               }}
             </p>
             <p>
@@ -176,7 +176,7 @@
               {{ dataHubsModules[DataHubModuleName.Mdclight]?.Version }}:
               {{
                 dataHubsModules[DataHubModuleName.Mdclight]?.Status ||
-                  DataHubModuleStatus.Unknown
+                  ('commissioning.Unknown' | translate)
               }}
             </p>
           </div>
@@ -186,7 +186,7 @@
               {{ dataHubsModules[DataHubModuleName.EdgeHub]?.Version }}:
               {{
                 dataHubsModules[DataHubModuleName.EdgeHub]?.Status ||
-                  DataHubModuleStatus.Unknown
+                  ('commissioning.Unknown' | translate)
               }}
             </p>
             <p>
@@ -194,7 +194,7 @@
               {{ dataHubsModules[DataHubModuleName.EdgeAgent]?.Version }}:
               {{
                 dataHubsModules[DataHubModuleName.EdgeAgent]?.Status ||
-                  DataHubModuleStatus.Unknown
+                  ('commissioning.Unknown' | translate)
               }}
             </p>
           </div>

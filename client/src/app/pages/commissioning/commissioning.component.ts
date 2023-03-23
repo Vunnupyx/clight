@@ -21,6 +21,7 @@ import { ObjectMap } from 'app/shared/utils';
 })
 export class CommissioningComponent implements OnInit {
   DataHubModuleName = DataHubModuleName;
+  DataHubModuleStatus = DataHubModuleStatus;
   sub = new Subscription();
   machineInformation: MachineInformation;
   adapter: NetworkAdapter;
@@ -92,6 +93,7 @@ export class CommissioningComponent implements OnInit {
     if (!this.adapter || Object.keys(this.adapter).length === 0) return true;
 
     return (
+      !this.adapter.macAddress ||
       !this.adapter.ipv4Settings?.ipAddresses[0]?.Address ||
       !this.adapter.ipv4Settings?.ipAddresses[0]?.Netmask
     );

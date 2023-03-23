@@ -4,12 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { CommissioningComponent } from './commissioning.component';
 import { SharedModule } from 'app/shared/shared.module';
+import { CommissioningGuard } from 'app/shared/guards';
 
 const routes: Routes = [
   {
     path: 'commissioning',
     component: CommissioningComponent,
-    data: { noLayout: true }
+    data: { noLayout: true },
+    canActivate: [CommissioningGuard]
   }
 ];
 

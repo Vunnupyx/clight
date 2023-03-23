@@ -1870,7 +1870,8 @@
             "equal",
             "unequal",
             "enumeration",
-            "calculation"
+            "calculation",
+            "setTariff"
           ]
         },
         "comparativeValue": {

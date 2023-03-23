@@ -13,7 +13,8 @@ export enum VirtualDataPointOperationType {
   SMALLER_EQUAL = 'smallerEqual',
   EQUAL = 'equal',
   UNEQUAL = 'unequal',
-  CALCULATION = 'calculation'
+  CALCULATION = 'calculation',
+  SET_TARIFF = 'setTariff'
 }
 
 export class VirtualDataPoint {
@@ -33,6 +34,13 @@ export enum VirtualDataPointErrorType {
   WrongVdpsOrder = 'wrongVdpsOrder',
   WrongFormat = 'wrongFormat',
   UnexpectedError = 'unexpectedError'
+}
+
+export interface VirtualDataPointReorderValidityStatus {
+  isValid: boolean;
+  error?: 'wrongVdpsOrder' | 'wrongFormat' | 'unexpectedError';
+  vdpIdWithError?: string;
+  notYetDefinedSourceVdpId?: string;
 }
 
 export interface VirtualDataPointErrorReason {

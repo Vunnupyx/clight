@@ -94,7 +94,7 @@ export class CommissioningService {
         undefined
       );
     } catch (err) {
-      this.toastr.error(this.translate.instant('commissioning.UpdateError'));
+      this.toastr.error(this.translate.instant('commissioning.FinishError'));
       errorHandler(err);
       this._store.patchState((state) => {
         state.status = Status.Ready;
@@ -163,6 +163,7 @@ export class CommissioningService {
     } catch (err) {
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.adapterConnection = undefined;
       });
     }
   }
@@ -183,6 +184,7 @@ export class CommissioningService {
     } catch (err) {
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.dataHubsModules[name] = undefined;
       });
     }
   }

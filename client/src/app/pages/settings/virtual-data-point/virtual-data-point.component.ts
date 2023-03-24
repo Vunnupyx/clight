@@ -7,7 +7,9 @@ import {
   DataPointLiveData,
   SourceDataPoint,
   VirtualDataPoint,
-  VirtualDataPointOperationType
+  VirtualDataPointErrorType,
+  VirtualDataPointOperationType,
+  VirtualDataPointReorderValidityStatus
 } from '../../../models';
 import {
   ConfirmDialogComponent,
@@ -99,6 +101,10 @@ export class VirtualDataPointComponent implements OnInit {
     {
       value: VirtualDataPointOperationType.CALCULATION,
       text: 'virtual-data-point-operation-type.Calculation'
+    },
+    {
+      value: VirtualDataPointOperationType.SET_TARIFF,
+      text: 'virtual-data-point-operation-type.SetTariff'
     }
   ];
 
@@ -254,6 +260,38 @@ export class VirtualDataPointComponent implements OnInit {
       delete this.unsavedRow?.thresholds;
     }
 
+    if (
+      this.unsavedRow?.operationType ===
+        VirtualDataPointOperationType.SET_TARIFF &&
+      !this.unsavedRow?.enumeration
+    ) {
+      this.unsavedRow.enumeration = {
+        defaultValue: 'unknown',
+        items: [
+          {
+            source: '',
+            returnValueIfTrue: 'STANDBY',
+            priority: 0
+          },
+          {
+            source: '',
+            returnValueIfTrue: 'READY_FOR_PROCESSING',
+            priority: 1
+          },
+          {
+            source: '',
+            returnValueIfTrue: 'WARM_UP',
+            priority: 2
+          },
+          {
+            source: '',
+            returnValueIfTrue: 'PROCESSING',
+            priority: 3
+          }
+        ]
+      };
+    }
+
     if (this.unsavedRow!.id) {
       this.virtualDataPointService
         .updateDataPoint(this.unsavedRow?.id!, this.unsavedRow!)
@@ -397,7 +435,10 @@ export class VirtualDataPointComponent implements OnInit {
       data: {
         enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
-        protocol
+        protocol,
+        isSetTariffType:
+          virtualPoint.operationType ===
+          VirtualDataPointOperationType.SET_TARIFF
       },
       width: '900px'
     });
@@ -529,6 +570,7 @@ export class VirtualDataPointComponent implements OnInit {
       VirtualDataPointOperationType.AND,
       VirtualDataPointOperationType.OR,
       VirtualDataPointOperationType.ENUMERATION,
+      VirtualDataPointOperationType.SET_TARIFF,
       VirtualDataPointOperationType.CALCULATION
     ].includes(operationType!);
   }
@@ -546,10 +588,19 @@ export class VirtualDataPointComponent implements OnInit {
    * @see src/modules/VirtualDataPointManager/index.ts for usage of same logic in backend!
    * Update there as well if any logic changes here
    */
-  public isVdpOrderValid(vdpListToCheck: VirtualDataPoint[]): boolean {
+  public getVdpValidityStatus(
+    vdpListToCheck: VirtualDataPoint[]
+  ): VirtualDataPointReorderValidityStatus {
     if (!Array.isArray(vdpListToCheck) || vdpListToCheck?.length === 0) {
-      return false;
+      return {
+        isValid: false,
+        error: 'wrongFormat'
+      };
     }
+
+    let result: VirtualDataPointReorderValidityStatus = {
+      isValid: true
+    };
 
     try {
       for (let [index, vdp] of vdpListToCheck.entries()) {
@@ -562,25 +613,60 @@ export class VirtualDataPointComponent implements OnInit {
               (x) => x.id === sourceVdpId
             );
             if (indexOfSourceVdp >= index) {
-              return false;
+              result.isValid = false;
+              result.error = 'wrongVdpsOrder';
+              result.vdpIdWithError = vdp.id;
+              result.notYetDefinedSourceVdpId = sourceVdpId;
+              break;
             }
           }
         }
+        if (!result.isValid) {
+          break;
+        }
       }
-      return true;
+      return result;
     } catch {
-      return false;
+      return {
+        isValid: false,
+        error: 'unexpectedError'
+      };
     }
   }
 
   onReorder(event) {
     let vdpList = clone(this.datapointRows);
     moveItemInArray(vdpList, event.previousIndex, event.currentIndex);
-    if (!this.isVdpOrderValid(vdpList)) {
-      this.toastr.warning(
-        this.translate.instant('settings-virtual-data-point.WarningWrongVdp')
-      );
-      while (!this.isVdpOrderValid(vdpList)) {
+
+    // These warnings are shown only on reordering in the UI and prevents from clicking Apply Changes.
+    // On page load, the warning is handled by virtual-data-point.service.ts
+    if (!this.getVdpValidityStatus(vdpList).isValid) {
+      const { vdpIdWithError, notYetDefinedSourceVdpId, error } =
+        this.getVdpValidityStatus(vdpList);
+
+      if (
+        error === VirtualDataPointErrorType.UnexpectedError ||
+        error === VirtualDataPointErrorType.WrongFormat
+      ) {
+        this.toastr.warning(
+          this.translate.instant(`settings-virtual-data-point.UnexpectedError`)
+        );
+      } else if (error === VirtualDataPointErrorType.WrongVdpsOrder) {
+        this.toastr.warning(
+          this.translate.instant('settings-virtual-data-point.WrongVdpsOrder', {
+            SourceId: this.datapointRows.find(
+              (x) => x.id === notYetDefinedSourceVdpId
+            )?.name,
+            ErrorId: this.datapointRows.find((x) => x.id === vdpIdWithError)
+              ?.name
+          }),
+          undefined,
+          { timeOut: 20000, extendedTimeOut: 10000 }
+        );
+      }
+
+      // Revert the changes till the order is valid
+      while (!this.getVdpValidityStatus(vdpList).isValid) {
         event.previousIndex > event.currentIndex
           ? event.currentIndex++
           : event.currentIndex--;
@@ -589,5 +675,11 @@ export class VirtualDataPointComponent implements OnInit {
       }
     }
     this.virtualDataPointService.updateOrderDataPoints(vdpList);
+  }
+
+  isSetTariffAlreadyIncluded(): boolean {
+    return this.datapointRows.some(
+      (dp) => dp.operationType === VirtualDataPointOperationType.SET_TARIFF
+    );
   }
 }

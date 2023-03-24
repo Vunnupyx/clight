@@ -312,7 +312,8 @@ export interface IVirtualDataPointConfig {
     | 'smallerEqual'
     | 'equal'
     | 'unequal'
-    | 'calculation';
+    | 'calculation'
+    | 'setTariff';
   thresholds?: ITargetDataMap;
   enumeration?: {
     defaultValue?: string;
@@ -322,6 +323,7 @@ export interface IVirtualDataPointConfig {
   resetSchedules?: ScheduleDescription[];
   formula?: string;
   name: string;
+  mandatory?: boolean;
 }
 
 export function isValidVdp(input: any): input is IVirtualDataPointConfig {

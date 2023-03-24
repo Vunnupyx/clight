@@ -15,8 +15,7 @@ export interface CommissioningInformation {
 export enum LinkStatus {
   Connected = 'connected',
   Disabled = 'disabled',
-  Disconnected = 'disconnected',
-  Unknown = 'unknown'
+  Disconnected = 'disconnected'
 }
 
 export enum ConfigurationStatus {
@@ -25,8 +24,7 @@ export enum ConfigurationStatus {
   Unmanaged = 'unmanaged',
   Failed = 'failed',
   Pending = 'pending',
-  Linger = 'linger',
-  Unknown = 'unknown'
+  Linger = 'linger'
 }
 
 export interface AdapterConnection {
@@ -36,8 +34,7 @@ export interface AdapterConnection {
 
 export enum DataHubModuleStatus {
   Running = 'running',
-  Stopped = 'stopped',
-  Unknown = 'unknown'
+  Stopped = 'stopped'
 }
 
 export interface DataHubModule {

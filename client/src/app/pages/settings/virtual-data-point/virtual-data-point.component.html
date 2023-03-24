@@ -212,12 +212,6 @@
                     'virtual-data-point-operation-type.Enumeration' | translate
                   }}</ng-container
                 >
-                <ng-container
-                  *ngSwitchCase="VirtualDataPointOperationType.SET_TARIFF"
-                  >{{
-                    'virtual-data-point-operation-type.SetTariff' | translate
-                  }}</ng-container
-                >
                 <ng-container *ngSwitchDefault>{{
                   value | uppercase
                 }}</ng-container>
@@ -229,15 +223,9 @@
               [ngModel]="value"
               (ngModelChange)="unsavedRow && onOperationTypeChange($event)"
             >
-              <mat-option
-                *ngFor="let op of Operations"
-                [value]="op.value"
-                [disabled]="
-                  op.value === VirtualDataPointOperationType.SET_TARIFF &&
-                  isSetTariffAlreadyIncluded()
-                "
-                >{{ op.text | translate }}</mat-option
-              >
+              <mat-option *ngFor="let op of Operations" [value]="op.value">{{
+                op.text | translate
+              }}</mat-option>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
@@ -334,22 +322,6 @@
               {{ liveData[row.id]?.value }}
             </span>
             <ng-template #noLiveData>-</ng-template>
-            <span
-              *ngIf="
-                canSetComparativeValue(row?.operationType) &&
-                !row?.comparativeValue &&
-                !isEditing
-              "
-              style="position: absolute"
-              class="ml-10 color-danger"
-              [matTooltip]="
-                'settings-virtual-data-point.MissingComparativeValue'
-                  | translate
-              "
-              matTooltipPosition="above"
-            >
-              <mat-icon svgIcon="mdc:info"></mat-icon>
-            </span>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
@@ -412,9 +384,7 @@
               <mat-button-toggle
                 *ngIf="
                   row?.operationType ===
-                    VirtualDataPointOperationType.ENUMERATION ||
-                  row?.operationType ===
-                    VirtualDataPointOperationType.SET_TARIFF
+                  VirtualDataPointOperationType.ENUMERATION
                 "
                 (click)="
                   row?.sources?.length > 0 && onSetEnumeration(row);
@@ -526,9 +496,7 @@
               <mat-button-toggle
                 *ngIf="
                   unsavedRow?.operationType ===
-                    VirtualDataPointOperationType.ENUMERATION ||
-                  unsavedRow?.operationType ===
-                    VirtualDataPointOperationType.SET_TARIFF
+                  VirtualDataPointOperationType.ENUMERATION
                 "
                 (click)="
                   !unsavedRow && onSetEnumeration(unsavedRow);

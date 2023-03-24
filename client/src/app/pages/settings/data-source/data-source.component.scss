@@ -9,21 +9,3 @@
 .address-nck {
   margin: -3px 0;
 }
-
-ngx-datatable ::ng-deep {
-  .datatable-header-inner {
-    width: 100% !important;
-  }
-
-  .datatable-scroll {
-    display: inherit !important;
-  }
-
-  .datatable-row-center {
-    width: 100% !important;
-  }
-
-  .datatable-body-row {
-    width: 100% !important;
-  }
-}

@@ -30,11 +30,6 @@ export interface ICosNetworkAdapterStatus {
   message: string;
 }
 
-export interface ICosSystemCommissioningStatus {
-  Timestamp: string;
-  Finished: boolean;
-}
-
 export interface ICosSystemVersion {
   Name: string;
   DisplayName: string;

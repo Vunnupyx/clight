@@ -12,7 +12,6 @@ import { DataPointCache } from '../../DatapointCache';
 import { AuthManager } from '../AuthManager';
 import { VirtualDataPointManager } from '../../VirtualDataPointManager';
 import { ConfigurationAgentManager } from '../../ConfigurationAgentManager';
-import { ICosSystemCommissioningStatus } from '../../ConfigurationAgentManager/interfaces';
 
 interface RestApiManagerOptions {
   configManager: ConfigManager;
@@ -91,31 +90,6 @@ export class RestApiManager {
       `${ConfigurationAgentManager.hostname}:${ConfigurationAgentManager.port}`,
       {
         filter: (req: Request, res: Response) => {
-          // If device is not commissioned allowed these endpoints so that commissioning can be performed
-          if (
-            [
-              '/machine/info',
-              '/system/commissioning',
-              '/network/adapters/enoX1',
-              '/network/adapters/enoX1/status',
-              '/datahub/dps',
-              '/system/commissioning/finish'
-            ].includes(req.url) ||
-            req.url.startsWith('/datahub/status/')
-          ) {
-            if (!this.options.configManager.isDeviceCommissioned) {
-              winston.info(
-                `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
-              );
-              return true;
-            } else {
-              winston.info(
-                `${logPrefix} Commissioning is already completed, requested URL: ${req.url}, is not allowed.`
-              );
-              return false;
-            }
-          }
-
           const isAuthenticated = authManager.verifyJWTAuth({
             withPasswordChangeDetection: true,
             withBooleanResponse: true
@@ -128,29 +102,6 @@ export class RestApiManager {
           }
           return isAuthenticated;
         },
-        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
-          if (
-            userReq.url === '/system/commissioning/finish' &&
-            userReq.method === 'POST'
-          ) {
-            const responseData: ICosSystemCommissioningStatus = JSON.parse(
-              proxyResData.toString('utf8')
-            );
-            if (proxyRes.statusCode === 201 && responseData.Finished === true) {
-              winston.info(
-                `${logPrefix} Device commissioning finished, setting internal status to commissioned`
-              );
-              this.options.configManager.isDeviceCommissioned = true;
-            } else {
-              winston.warn(
-                `${logPrefix} Device commissioning response is not successful! Response code: ${
-                  proxyRes.statusCode
-                }, response: ${JSON.stringify(responseData)}`
-              );
-            }
-          }
-          return proxyResData;
-        },
         proxyReqOptDecorator: (proxyReqOpts) => {
           // Update headers
           delete proxyReqOpts.headers['Authorization'];
@@ -162,7 +113,7 @@ export class RestApiManager {
         },
         proxyErrorHandler: function (err, res, next) {
           winston.error(
-            `${logPrefix} Error at Configuration Agent proxy:${err}`
+            `${logPrefix} Error at Configuration Agent proxy:${err?.code}`
           );
           next(err);
         }

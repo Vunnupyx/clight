@@ -119,9 +119,8 @@
       <mat-button-toggle-group>
         <mat-button-toggle
           [matTooltip]="'settings-data-sink.Edit' | translate"
-          [disabled]="isExisting(row.address)"
           matTooltipPosition="above"
-          (click)="!isExisting(row.address) && onEdit(row)"
+          (click)="onEdit(row)"
           ><mat-icon svgIcon="mdc:edit"></mat-icon>
         </mat-button-toggle>
         <mat-button-toggle

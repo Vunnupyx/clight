@@ -4,6 +4,28 @@
     "Cancel": "キャンセル",
     "LanguageDocumentationPath": "/jp"
   },
+  "commissioning": {
+    "Welcome": "Welcome to IoTconnector flex",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Ethernet": "Ethernet X1",
+    "State": "State",
+    "Mac": "MAC",
+    "IP": "IP",
+    "Netmask": "Netmask",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "CELOSXchange": "CELOS Xchange",
+    "SoftwareComponents": "Software Components",
+    "FinishCommissioning": "Finish commissioning",
+    "FinishError": "Failed to finish commissioning. Please try again later",
+    "RegisteredError": "Failed to provisioned",
+    "RegisteredSuccess": "Successfully provisioned",
+    "Unknown": "Unknown"
+  },
   "layout": {
     "Settings": "設定",
     "General": "一般",
@@ -21,7 +43,8 @@
     "Password": "パスワード",
     "SignIn": "サインイン",
     "ForgotPassword": "パスワードを忘れた場合",
-    "WhereToFindPassword": "パスワードを回復するには"
+    "WhereToFindPassword": "パスワードを回復するには",
+    "AuthError": "User with these credentials could not be found!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "パスワード変更",
@@ -87,7 +110,7 @@
         "ai2ioShieldMessenger": "デジタル・アナログ入力ボードでDMG MORI Messengerにつなぐ",
         "empty": "空のテンプレート",
         "energyAll": "電力測定キット",
-        "gm": "GMシリーズ",
+        "gm": "DMG MORI GMシリーズ",
         "ncAll": "シーメンスSINUMERIK 840D sl",
         "fanucAll": "ファナックNC",
         "ncMessenger": "シーメンスSINUMERIK 840D slをDMG MORI Messengerにつなぐ"
@@ -199,10 +222,10 @@
     "SelectVariable": "変数選択",
     "TariffStatus": {
       "0": "通信量カウンタが全て無効です",
-      "1": "実行中",
-      "2": "アイドル",
-      "3": "待機中",
-      "4": "アラーム",
+      "1": "Standby",
+      "2": "Ready for Processing",
+      "3": "Warm Up",
+      "4": "Processing",
       "Unknown": "不定"
     }
   },
@@ -227,6 +250,7 @@
     "DeleteMessage": "本当にデータポイントを削除しますか？",
     "SetThresholds": "閾値設定",
     "SetComparativeValue": "基準値設定",
+    "MissingComparativeValue": "Comparative value is empty",
     "Set": "設定",
     "Value": "値",
     "Threshold": "閾値",
@@ -257,8 +281,8 @@
     "SetFormula": "式設定",
     "Formula": "式",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
-    "WarningWrongVdp": "Update failed. VDP with wrong order"
+    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
+    "SetTariffEnum": "Set Machine Status Mapping"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -273,7 +297,8 @@
     "Equal": "等しい",
     "Unequal": "異なる",
     "Enumeration": "列挙",
-    "Calculation": "計算"
+    "Calculation": "計算",
+    "SetTariff": "Set Energy Tariff"
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
@@ -482,6 +507,9 @@
   },
   "prompt": {
     "warningText": "保存されていない変更があります。このまま続けますか？"
+  },
+  "http": {
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "システムの時刻がブラウザの時刻と異なります。システムに設定されている時刻を修正してください。不正なシステム時刻はデータソースやアプリケーションインタフェースのエラーにつながります。この警告をクリックし、設定ページを表示、時刻タブを選択して時刻を修正してください"

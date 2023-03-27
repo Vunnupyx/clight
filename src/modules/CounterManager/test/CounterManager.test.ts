@@ -1,5 +1,6 @@
 import { CounterManager } from '..';
-import { ScheduleDescription } from '../interfaces';
+import { ScheduleDescription, DateType, DayType } from '../interfaces';
+import * as date from 'date-fns';
 
 jest.mock('winston');
 jest.mock('fs');
@@ -39,246 +40,286 @@ const datePointCacheMock = {
 };
 
 describe('Test CounterManager', () => {
-  describe('testing static methods', () => {
-    describe(`calcNextTrigger()`, () => {
-      // Constants no reset;
-      const currentTime = new Date(2022, 5, 17, 0, 0, 0); // 17.06.2022 00:00:00
-      describe(`with defined date`, () => {
-        it('full fixed date', () => {
-          const schedule: ScheduleDescription = {
-            month: 12, //December
-            date: 31,
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          // current time is  17.06.2022 00:00:00
-          // @ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 11, 31, 17, 0, 0); // 31.12.2022 17:00:00
+  describe.each([
+    {
+      currentTime: new Date(2022, 5, 17, 20, 15, 10) // 17.06.2022 20:15:10,
+    },
+    {
+      currentTime: new Date(2022, 11, 31, 23, 59, 0) // 31.12.2022 23:59:00
+    },
+    {
+      currentTime: new Date(2023, 0, 1, 0, 0, 0) // 1.1.2023 00:00:00
+    },
+    {
+      currentTime: new Date(2023, 1, 15, 12, 0, 10) // 15.2.2023 12:00:10
+    }
+  ])(
+    'currentTime=$currentTime.toISOString (shown in local timezone)',
+    ({ currentTime }) => {
+      describe('testing static methods', () => {
+        describe(`calcNextTrigger()`, () => {
+          describe(`with defined date`, () => {
+            it('full fixed date', () => {
+              const schedule: ScheduleDescription = {
+                month: 12, //December
+                date: 20,
+                hours: 8,
+                minutes: 0,
+                seconds: 0,
+                lastReset: undefined,
+                created: Date.now()
+              }; // 20.12.2022 9:00:00
 
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
+              //Increase expected year if it is already date behind
+              const expectedYear =
+                date.getMonth(currentTime) === 11 &&
+                date.getDate(currentTime) > schedule.date
+                  ? date.getYear(currentTime) + 1
+                  : date.getYear(currentTime);
 
-        it('fix date every month missed by 2 days', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            date: 15,
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          // current time is  17.06.2022 00:00:00
-          // @ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 6, 15, 17, 0, 0);
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
+              const scheduleDate = new Date(
+                expectedYear,
+                (schedule.month as number) - 1, // December = 11 for new Date() function
+                schedule.date as number,
+                schedule.hours as number,
+                schedule.minutes as number,
+                schedule.seconds as number
+              );
 
-        it('fix date every month next in 1 day', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            date: 18,
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          // current time is  17.06.2022 00:00:00
-          // @ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 18, 17, 0, 0);
-          expect(next.toISOString()).toBe(compare.toISOString());
-        });
+              // @ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toLocaleString()).toBe(scheduleDate.toLocaleString());
+            });
 
-        it('every month at 15th and every hour at this days', () => {
-          const input: ScheduleDescription = {
-            month: 'Every',
-            date: 15,
-            hours: 'Every',
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(input, currentTime);
-          const compare = new Date(2022, 6, 15, 0, 0, 0); // 15.07.2022 0:00:00
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
+            it('fix date every month missed by 2 days', () => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                date: (date.getDate(currentTime) - 2) as DateType,
+                hours: date.getHours(currentTime),
+                minutes: date.getMinutes(currentTime),
+                seconds: date.getSeconds(currentTime),
+                lastReset: undefined,
+                created: Date.now()
+              };
+              const scheduleDate = new Date(
+                date.getYear(currentTime),
+                date.getMonth(currentTime) + 1,
+                schedule.date as number,
+                schedule.hours as number,
+                schedule.minutes as number,
+                schedule.seconds as number
+              );
+
+              // @ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toLocaleString()).toBe(scheduleDate.toLocaleString());
+            });
+
+            it('fix date every month next in 1 day', () => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                date: (date.getDate(currentTime) + 1) as DateType,
+                hours: date.getHours(currentTime),
+                minutes: date.getMinutes(currentTime),
+                seconds: date.getSeconds(currentTime),
+                lastReset: undefined,
+                created: Date.now()
+              };
+              const scheduleDate = new Date(
+                date.getYear(currentTime),
+                date.getMonth(currentTime),
+                schedule.date as number,
+                schedule.hours as number,
+                schedule.minutes as number,
+                schedule.seconds as number
+              );
+              // @ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toISOString()).toBe(scheduleDate.toISOString());
+            });
+
+            it('every month on 15th and every hour at this days', () => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                date: 15,
+                hours: 'Every',
+                minutes: date.getMinutes(currentTime),
+                seconds: date.getSeconds(currentTime),
+                lastReset: undefined,
+                created: Date.now()
+              };
+
+              //Increase expected month if it is already date behind
+              const expectedMonth =
+                date.getDate(currentTime) > schedule.date
+                  ? date.getMonth(currentTime) + 1
+                  : date.getMonth(currentTime);
+
+              //Expected hour is next hour if we are on the same day, otherwise 00:00:00
+              const expectedHour =
+                date.getDate(currentTime) === schedule.date
+                  ? date.getHours(currentTime) + 1
+                  : 0;
+
+              const scheduleDate = new Date(
+                date.getYear(currentTime),
+                expectedMonth,
+                schedule.date as number,
+                expectedHour,
+                schedule.minutes as number,
+                schedule.seconds as number
+              );
+              //@ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toLocaleString()).toBe(scheduleDate.toLocaleString());
+            });
+          });
+
+          describe(`with specific weekday`, () => {
+            test.each([
+              'Monday',
+              'Tuesday',
+              'Wednesday',
+              'Thursday',
+              'Friday',
+              'Saturday',
+              'Sunday'
+            ])('next %s', (day) => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                day: day as DayType,
+                hours: date.getHours(currentTime),
+                minutes: date.getMinutes(currentTime),
+                seconds: date.getSeconds(currentTime),
+                lastReset: undefined,
+                created: Date.now()
+              };
+              let scheduleDate = date[`next${day}`](currentTime);
+              if (date.isBefore(scheduleDate, currentTime)) {
+                scheduleDate = date.addMonths(scheduleDate, 1);
+              }
+              //@ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toLocaleString()).toBe(scheduleDate.toLocaleString());
+            });
+          });
+
+          describe(`with every day`, () => {
+            it('every day and every month', () => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                day: 'Every',
+                hours: 3,
+                minutes: 0,
+                seconds: 0,
+                lastReset: undefined,
+                created: Date.now()
+              };
+
+              const expectedDate =
+                date.getHours(currentTime) >= schedule.hours
+                  ? date.getDate(currentTime) + 1
+                  : date.getDate(currentTime);
+
+              const scheduleDate = new Date(
+                date.getYear(currentTime),
+                date.getMonth(currentTime),
+                expectedDate,
+                schedule.hours as number,
+                schedule.minutes as number,
+                schedule.seconds as number
+              );
+              //@ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toISOString()).toBe(scheduleDate.toISOString());
+            });
+
+            it('every day & month & hour', () => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                day: 'Every',
+                hours: 'Every',
+                minutes: 0,
+                seconds: 0,
+                lastReset: undefined,
+                created: Date.now()
+              };
+
+              const expectedHour =
+                date.getMinutes(currentTime) >= schedule.minutes
+                  ? date.getHours(currentTime) + 1
+                  : date.getHours(currentTime);
+
+              const scheduleDate = new Date(
+                date.getYear(currentTime),
+                date.getMonth(currentTime),
+                date.getDate(currentTime),
+                expectedHour,
+                schedule.minutes as number,
+                schedule.seconds as number
+              );
+              //@ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toISOString()).toBe(scheduleDate.toISOString());
+            });
+
+            it('every day & month & hour & minute', () => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                day: 'Every',
+                hours: 'Every',
+                minutes: 'Every',
+                seconds: 5,
+                lastReset: undefined,
+                created: Date.now()
+              };
+              const expectedMinutes =
+                date.getSeconds(currentTime) >= schedule.seconds
+                  ? date.getMinutes(currentTime) + 1
+                  : date.getMinutes(currentTime);
+
+              const scheduleDate = new Date(
+                date.getYear(currentTime),
+                date.getMonth(currentTime),
+                date.getDate(currentTime),
+                date.getHours(currentTime),
+                expectedMinutes,
+                schedule.seconds as number
+              );
+              //@ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toLocaleString()).toBe(scheduleDate.toLocaleString());
+            });
+          });
         });
       });
-
-      describe(`with weekday`, () => {
-        it('next Monday', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Monday',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 20, 17, 0, 0); // Next Monday
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-
-        it('next Tuesday', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Friday',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 17, 17, 0, 0); // Next Tuesday
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-
-        it('next Wednesday', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Wednesday',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 22, 17, 0, 0); // Next Wednesday
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-
-        it('next Thursday', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Thursday',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 23, 17, 0, 0); // Next Thursday
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-
-        it('next Friday', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Friday',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 17, 17, 0, 0); // Next Friday
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-
-        it('next Saturday', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Saturday',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 18, 17, 0, 0); // Next Saturday
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-
-        it('next Sunday', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Sunday',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 19, 17, 0, 0); // Next Friday
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-      });
-      describe(`with every day`, () => {
-        it('every day and every month', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Every',
-            hours: 17,
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 17, 17, 0, 0);
-          expect(next.toISOString()).toBe(compare.toISOString());
-        });
-
-        it('every day & month & hour', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Every',
-            hours: 'Every',
-            minutes: 0,
-            seconds: 0,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 17, 1, 0, 0);
-          expect(next.toISOString()).toBe(compare.toISOString());
-        });
-
-        it('every day & month & hour & minute', () => {
-          const schedule: ScheduleDescription = {
-            month: 'Every',
-            day: 'Every',
-            hours: 'Every',
-            minutes: 'Every',
-            seconds: 5,
-            lastReset: undefined,
-            created: Date.now()
-          };
-          //@ts-ignore
-          const next = CounterManager.calcNextTrigger(schedule, currentTime);
-          const compare = new Date(2022, 5, 17, 0, 0, 5);
-          expect(next.toLocaleString()).toBe(compare.toLocaleString());
-        });
-      });
-    });
-  });
-  // no side effects by implementation
-
+      // no side effects by implementation
+    }
+  );
   describe('testing instance methods', () => {
     let UUT: CounterManager;
     beforeEach(() => {

@@ -11,6 +11,8 @@ import {
 } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 
 const OPTIONS_DEFAULTS = {
   withCredentials: true,
@@ -33,7 +35,7 @@ export interface RequestOptionsArgs {
   headers?: RequestHttpHeaders;
   params?: RequestHttpParams;
   withCredentials?: boolean;
-  responseType: string;
+  responseType?: string;
   observe?: string;
   reportProgress?: boolean;
 }
@@ -43,7 +45,9 @@ export class HttpService {
   constructor(
     protected http: HttpClient,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private translate: TranslateService,
+    private toastr: ToastrService
   ) {}
 
   get<T = any>(url: string, options?: RequestOptionsArgs) {
@@ -103,6 +107,7 @@ export class HttpService {
   protected _catchError(err: HttpErrorResponse) {
     if (err.status === 401) {
       this.authService.logout();
+      this.toastr.error(this.translate.instant('http.SessionExpired'));
       return EMPTY;
     }
 

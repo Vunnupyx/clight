@@ -26,6 +26,7 @@ export interface SetEnumerationModalData {
   protocol?: DataSourceProtocol;
   sources?: string[];
   enumeration: VirtualDataPointEnumeration;
+  isSetTariffType?: boolean;
 }
 
 @Component({
@@ -174,5 +175,13 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
       ...this.liveData,
       ...obj
     };
+  }
+
+  isSourceOptionAlreadyUsed(sourceOptionId: string): boolean {
+    return !!this.rows.find((row) => row.source === sourceOptionId);
+  }
+
+  isTypeSetTariff(): boolean {
+    return this.data.isSetTariffType;
   }
 }

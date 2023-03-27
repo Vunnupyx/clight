@@ -4,6 +4,28 @@
     "Cancel": "Cancel",
     "LanguageDocumentationPath": ""
   },
+  "commissioning": {
+    "Welcome": "Welcome to IoTconnector flex",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Ethernet": "Ethernet X1",
+    "State": "State",
+    "Mac": "MAC",
+    "IP": "IP",
+    "Netmask": "Netmask",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "CELOSXchange": "CELOS Xchange",
+    "SoftwareComponents": "Software Components",
+    "FinishCommissioning": "Finish commissioning",
+    "FinishError": "Failed to finish commissioning. Please try again later",
+    "RegisteredError": "Failed to provisioned",
+    "RegisteredSuccess": "Successfully provisioned",
+    "Unknown": "Unknown"
+  },
   "layout": {
     "Settings": "Settings",
     "General": "General",
@@ -21,7 +43,8 @@
     "Password": "Password",
     "SignIn": "Sign in",
     "ForgotPassword": "Forgot your password?",
-    "WhereToFindPassword": "Where do I find my login password?"
+    "WhereToFindPassword": "Where do I find my login password?",
+    "AuthError": "User with these credentials could not be found!"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",
@@ -87,7 +110,7 @@
         "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
         "empty": "Empty Template",
         "energyAll": "EEM Kit",
-        "gm": "GM Series",
+        "gm": "DMG MORI GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
         "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
@@ -199,10 +222,10 @@
     "SelectVariable": "Select Variable",
     "TariffStatus": {
       "0": "No tariff counter active",
-      "1": "Running",
-      "2": "Idle",
-      "3": "Waiting",
-      "4": "Alarm",
+      "1": "Standby",
+      "2": "Ready for Processing",
+      "3": "Warm Up",
+      "4": "Processing",
       "Unknown": "Unknown"
     }
   },
@@ -227,6 +250,7 @@
     "DeleteMessage": "Are you sure you want to delete data point?",
     "SetThresholds": "Set Thresholds",
     "SetComparativeValue": "Set Comparative Value",
+    "MissingComparativeValue": "Comparative value is empty",
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",
@@ -257,8 +281,8 @@
     "SetFormula": "Set formula",
     "Formula": "Formula",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
-    "WarningWrongVdp": "Update failed. VDP with wrong order"
+    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
+    "SetTariffEnum": "Set Machine Status Mapping"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -273,7 +297,8 @@
     "Equal": "Equal",
     "Unequal": "Unequal",
     "Enumeration": "Enumeration",
-    "Calculation": "Calculation"
+    "Calculation": "Calculation",
+    "SetTariff": "Set Energy Tariff"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
@@ -349,7 +374,7 @@
       "Enabled": "Enabled",
       "Disabled": "Disabled"
     },
-    "DuplicatedKeys": "You are not allowed to duplicate keys",
+    "DuplicatedKeys": "This value is already in use",
     "TimeZone": "Time zone",
     "Organization": "Organization",
     "Model": "Model",
@@ -482,6 +507,9 @@
   },
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"
+  },
+  "http": {
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces. Click on this warning to go to settings page and choose Time tab to adjust time settings."

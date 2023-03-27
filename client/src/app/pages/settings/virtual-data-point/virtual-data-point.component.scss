@@ -9,6 +9,13 @@
   }
 }
 
+ngx-mat-select-search ::ng-deep {
+  .mat-select-search-clear {
+    box-shadow: none;
+    height: 100%;
+  }
+}
+
 .doc-btn {
   font-size: 11px;
   height: 12px;

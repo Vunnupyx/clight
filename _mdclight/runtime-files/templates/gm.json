@@ -7,6 +7,11 @@
   },
   "dataSources": [
     {
+      "dataPoints": [],
+      "protocol": "ioshield",
+      "enabled": false
+    },
+    {
       "dataPoints": [
         {
           "type": "s7",
@@ -17,13 +22,20 @@
         },
         {
           "type": "s7",
-          "name": "Power On Time Drives",
+          "name": "Machine Type",
+          "address": "DB210,X1.0",
+          "id": "25bef6a8-0806-4f56-b0f7-f1c4f3f7b4eb",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Power On Time Overall (with enabled drives)",
           "address": "DB25,DWORD0",
           "id": "34dd12f0-3dd6-4d07-b610-f7457857b9e5"
         },
         {
           "type": "s7",
-          "name": "Power On Time Overall",
+          "name": "Overall Power On Time",
           "address": "DB25,DWORD4",
           "id": "b2c4e28b-4c75-4a26-9638-8ba7b95b6571",
           "readFrequency": 1000
@@ -37,7 +49,7 @@
         },
         {
           "type": "s7",
-          "name": "Software Version",
+          "name": "Software Versions",
           "address": "DB125,S14.11",
           "id": "ead624a5-3666-48c8-8619-d004be96fe60",
           "readFrequency": 1000
@@ -72,7 +84,21 @@
         },
         {
           "type": "s7",
-          "name": "Alarm active",
+          "name": "Emergency Stop Ch1",
+          "address": "Q360.0",
+          "id": "9670d5e2-626c-4494-bf71-d40652396369",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Emergency Stop Ch2",
+          "address": "Q360.1",
+          "id": "d623f53a-459b-49ab-a4cf-3498cbaf1c61",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Number of active alarms",
           "address": "M65.4",
           "id": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
           "readFrequency": 1000
@@ -85,14 +111,21 @@
         },
         {
           "type": "s7",
-          "name": "Controller Mode",
-          "address": "DB340,BYTE60",
+          "name": "Controller Mode Auto",
+          "address": "M128.4",
           "id": "bc226243-3473-4924-8fa7-e603ac37234c",
           "readFrequency": 1000
         },
         {
           "type": "s7",
-          "name": "Main NC Progam",
+          "name": "Controller Mode Manual",
+          "address": "M128.3",
+          "id": "597bad86-30d2-4f4d-ab2c-7fa767889136",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Main NC Program",
           "address": "DB340,S0.18",
           "id": "6f20efdc-fcbe-402c-bc07-fa51739705d4"
         },
@@ -111,26 +144,49 @@
         },
         {
           "type": "s7",
-          "name": "Least one axis moving",
+          "name": "Least one axis moving (spindle)",
           "address": "DB201,X1.6",
           "id": "e85d2ede-5554-46c8-8ba1-b2613dce0a51",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Least one axis moving (feed axe)",
+          "address": "DB200,X1.6",
+          "id": "7869144c-4792-41f5-990d-95972657f1de",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Desired parts Ch.1",
+          "address": "DB80,DWORD138",
+          "id": "8cc45be9-a215-43c4-93e1-8100b22ea4cd",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "name": "Desired parts Ch.2",
+          "address": "DB340,DWORD44",
+          "id": "5b1abbcb-f288-4c4e-9984-2ebe351eed2c",
+          "readFrequency": 1000
+        },
+        {
+          "type": "s7",
+          "address": "DB101,X1.0",
+          "id": "c532619c-8d09-414a-b986-d01c9993d3d3",
+          "name": "ALARM RESET MACHINE ON",
           "readFrequency": 1000
         }
       ],
       "protocol": "s7",
       "connection": {
-        "ipAddr": "192.168.214.1",
+        "ipAddr": "192.168.214.231",
         "port": 102,
         "rack": 0,
         "slot": 2
       },
       "enabled": true,
-      "type": "nck"
-    },
-    {
-      "dataPoints": [],
-      "protocol": "ioshield",
-      "enabled": false
+      "type": "s7-1200/1500"
     }
   ],
   "dataSinks": [
@@ -310,6 +366,12 @@
             "1": "interrupted",
             "2": "active"
           }
+        },
+        {
+          "id": "1229aa93-667d-4c95-b2b6-d7c8156f7458",
+          "address": "machineSN",
+          "name": "Serial Number",
+          "type": "event"
         }
       ],
       "enabled": true,
@@ -342,10 +404,7 @@
           "address": "avail",
           "initialValue": "AVAILABLE",
           "type": "event",
-          "map": {
-            "0": "UNAVAILABLE",
-            "1": "AVAILABLE"
-          },
+          "map": {},
           "id": "1d894a54-ff1e-427b-bffd-8449718e7f80",
           "mandatory": true
         },
@@ -357,10 +416,14 @@
           "initialValue": "AUTOMATIC",
           "map": {
             "0": "MANUAL",
-            "1": "MANUAL_DATA_INPUT",
             "2": "AUTOMATIC"
           },
-          "mandatory": true
+          "mandatory": true,
+          "dataMapping": {
+            "source": "345f2352-f4d5-4aea-9d33-8983df965110",
+            "target": "ab72a983-0dbb-45bd-9cb0-b99288823004",
+            "id": "720fdc27-f866-40e2-a22b-4bd35978dfa9"
+          }
         },
         {
           "name": "Execution 1",
@@ -369,13 +432,15 @@
           "id": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
           "initialValue": "ACTIVE",
           "map": {
-            "1": "INTERRUPTED",
-            "2": "STOPPED",
-            "3": "IN_PROGRESS",
-            "4": "WAITING",
-            "5": "ABORTED"
+            "true": "STOPPED",
+            "false": "IN_PROGRESS"
           },
-          "mandatory": true
+          "mandatory": true,
+          "dataMapping": {
+            "source": "8c75703b-6aac-42cf-be8b-2fcc0ff68486",
+            "target": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+            "id": "74bd648f-fc6d-4abe-b6f6-654668a5a57d"
+          }
         },
         {
           "name": "Operation Time",
@@ -442,14 +507,130 @@
           "address": "jogoverride1",
           "type": "event",
           "id": "4d3aacc2-f8cd-421b-a96f-5ff4b29b9b9c"
+        },
+        {
+          "address": "logic1",
+          "type": "condition",
+          "name": "Logic Program 1",
+          "enabled": true,
+          "id": "26a78260-901f-4677-a12d-8e4a7164bd5f",
+          "dataMapping": {
+            "source": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
+            "target": "26a78260-901f-4677-a12d-8e4a7164bd5f",
+            "id": "ddd9f600-cdbc-4f17-b393-efb2ed844035"
+          },
+          "map": {
+            "true": "One or more alarms are active"
+          }
+        },
+        {
+          "address": "part_count_desired2",
+          "type": "event",
+          "name": "Desired Part Count 2",
+          "enabled": true,
+          "id": "7ee341a1-2ac7-459f-be1d-bb93035fa265"
         }
       ],
       "protocol": "mtconnect",
       "enabled": true
     }
   ],
-  "virtualDataPoints": [],
-  "mapping": [],
+  "virtualDataPoints": [
+    {
+      "id": "c6fc6b89-d641-401f-be1d-3f600ff94d72",
+      "sources": [
+        "9670d5e2-626c-4494-bf71-d40652396369",
+        "d623f53a-459b-49ab-a4cf-3498cbaf1c61"
+      ],
+      "operationType": "or",
+      "name": "GM Emergency Stop"
+    },
+    {
+      "id": "345f2352-f4d5-4aea-9d33-8983df965110",
+      "sources": [
+        "bc226243-3473-4924-8fa7-e603ac37234c",
+        "597bad86-30d2-4f4d-ab2c-7fa767889136"
+      ],
+      "operationType": "enumeration",
+      "name": "GM Controller Mode",
+      "enumeration": {
+        "items": [
+          {
+            "source": "bc226243-3473-4924-8fa7-e603ac37234c",
+            "returnValueIfTrue": "2",
+            "priority": 0
+          },
+          {
+            "source": "597bad86-30d2-4f4d-ab2c-7fa767889136",
+            "returnValueIfTrue": "0",
+            "priority": 1
+          }
+        ]
+      }
+    }
+  ],
+  "mapping": [
+    {
+      "source": "e0d04d80-93d7-42ed-bfbc-d56abf37cac6",
+      "target": "c6e02ada-de44-4e24-8bef-25cee31af898",
+      "id": "a32d850d-1d1e-4eb8-9e64-4706d248b1af"
+    },
+    {
+      "source": "c6fc6b89-d641-401f-be1d-3f600ff94d72",
+      "target": "0e739177-8709-45c4-83d0-82197b345bbd",
+      "id": "bac6f41e-3d8c-4e92-aa3a-d150f217bc76"
+    },
+    {
+      "source": "345f2352-f4d5-4aea-9d33-8983df965110",
+      "target": "ab72a983-0dbb-45bd-9cb0-b99288823004",
+      "id": "720fdc27-f866-40e2-a22b-4bd35978dfa9"
+    },
+    {
+      "source": "8c75703b-6aac-42cf-be8b-2fcc0ff68486",
+      "target": "441ca41c-d6f2-4f66-bcbf-241f4251e44c",
+      "id": "74bd648f-fc6d-4abe-b6f6-654668a5a57d"
+    },
+    {
+      "source": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
+      "target": "8e9f5af9-0cb8-4168-ac15-42bf8271d4aa",
+      "id": "69df0265-1394-4a44-a801-385d93288885"
+    },
+    {
+      "source": "10fc75af-2a80-477f-92c2-3715d9e3faa4",
+      "target": "26a78260-901f-4677-a12d-8e4a7164bd5f",
+      "id": "ddd9f600-cdbc-4f17-b393-efb2ed844035"
+    },
+    {
+      "source": "34dd12f0-3dd6-4d07-b610-f7457857b9e5",
+      "target": "8cf5bcf4-dc7d-426d-982f-508a0905e888",
+      "id": "75b883ea-0d2e-44e6-9071-a392f6b87f81"
+    },
+    {
+      "source": "4a2ccdca-a0f4-49b9-be43-75993ffa78d9",
+      "target": "48116416-af2c-42d4-b699-7b18f1565278",
+      "id": "47209087-39b2-4e4f-ab13-d80254c82bea"
+    },
+    {
+      "source": "6f20efdc-fcbe-402c-bc07-fa51739705d4",
+      "target": "e4314c9d-7268-43b0-a906-151c07c48c85",
+      "id": "f3dbd05d-8f63-4040-aeab-bcb7ef08a5f6"
+    },
+    {
+      "source": "e578a5ec-e2e2-4ca8-b19b-1d256c5a3dec",
+      "target": "a94d30cc-a5fe-4021-be86-d719049561a0",
+      "id": "6ce6d879-a78f-4b4e-a35f-063e91bfb03c"
+    },
+    {
+      "source": "8cc45be9-a215-43c4-93e1-8100b22ea4cd",
+      "target": "30c15e3d-ec08-47d4-a108-fdbb8c7d7983",
+      "id": "d36b1053-cfbb-4dcf-8d9d-cc6d4c1d1347"
+    },
+    {
+      "source": "5b1abbcb-f288-4c4e-9984-2ebe351eed2c",
+      "target": "7ee341a1-2ac7-459f-be1d-bb93035fa265",
+      "id": "ee987e52-fc6e-4c5c-8303-256ede097be0"
+    }
+  ],
   "quickStart": {
     "completed": true
   },

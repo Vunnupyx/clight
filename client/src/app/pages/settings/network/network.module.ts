@@ -9,13 +9,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { NetworkComponent } from './network.component';
 import { SharedModule } from 'app/shared/shared.module';
-import { AuthGuard, QuickStartGuard } from 'app/shared/guards';
+import {
+  AuthGuard,
+  CommissioningGuard,
+  QuickStartGuard
+} from 'app/shared/guards';
 
 const routes: Route[] = [
   {
     path: 'settings/network',
     component: NetworkComponent,
-    canActivate: [AuthGuard, QuickStartGuard]
+    canActivate: [CommissioningGuard, AuthGuard, QuickStartGuard]
   }
 ];
 

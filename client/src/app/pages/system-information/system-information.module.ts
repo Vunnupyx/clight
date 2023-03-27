@@ -4,14 +4,18 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SystemInformationComponent } from './system-information.component';
 import { SharedModule } from 'app/shared/shared.module';
-import { AuthGuard, QuickStartGuard } from 'app/shared/guards';
+import {
+  AuthGuard,
+  CommissioningGuard,
+  QuickStartGuard
+} from 'app/shared/guards';
 import { LoadingDialogModule } from 'app/shared/components/loading-dialog/loading-dialog.module';
 
 const routes: Routes = [
   {
     path: 'system-information',
     component: SystemInformationComponent,
-    canActivate: [AuthGuard, QuickStartGuard]
+    canActivate: [CommissioningGuard, AuthGuard, QuickStartGuard]
   }
 ];
 

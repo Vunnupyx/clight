@@ -19,6 +19,7 @@ import { BaseChangesService } from './base-changes.service';
 import { DataSourceService } from './data-source.service';
 import { SystemInformationService } from './system-information.service';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
+import { HttpMockupService } from '../shared/services/http-mockup.service';
 
 export class SourceDataPointsState {
   status!: Status;
@@ -27,6 +28,17 @@ export class SourceDataPointsState {
   dataPointsLivedata!: ObjectMap<DataPointLiveData>;
   dataPointsSourceMap!: ObjectMap<DataSourceProtocol>;
 }
+
+const DATA_POINTS: { dataPoints: Array<api.Sourcedatapoint & api.Uuid> } = {
+  dataPoints: [
+    {
+      id: 'string',
+      address: 'string',
+      name: 'string',
+      type: 'event'
+    }
+  ]
+};
 
 @Injectable()
 export class SourceDataPointService
@@ -61,6 +73,7 @@ export class SourceDataPointService
     storeFactory: StoreFactory<SourceDataPointsState>,
     changesFactory: StoreFactory<IChangesState<string, SourceDataPoint>>,
     private httpService: HttpService,
+    private httpMockupService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService,
     private dataSourceService: DataSourceService,
@@ -380,9 +393,9 @@ export class SourceDataPointService
   }
 
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
-    const { dataPoints } = await this.httpService.get<{
+    const { dataPoints } = await this.httpMockupService.get<{
       dataPoints: api.Sourcedatapoint[];
-    }>(`/datasources/${datasourceProtocol}/datapoints`);
+    }>(`/datasources/${datasourceProtocol}/datapoints`, undefined, DATA_POINTS);
 
     this._store.patchState((state) => {
       state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));

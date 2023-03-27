@@ -244,6 +244,30 @@
           "name": "Firmware Version",
           "address": "fw",
           "id": "d40fb48b-a73b-4c55-a0c7-05f3259a8fcd"
+        },
+        {
+          "type": "device",
+          "name": "Hardware Version",
+          "address": "hw",
+          "id": "88b7c9f1-0e68-4fa7-aba5-19646d3351e3"
+        },
+        {
+          "type": "device",
+          "name": "Serial Number",
+          "address": "serial-number",
+          "id": "2de73995-a0a9-4a6e-9886-67c5d098caff"
+        },
+        {
+          "type": "device",
+          "name": "MAC Address",
+          "address": "mac",
+          "id": "35a0c743-0460-4530-a92f-952ee497309f"
+        },
+        {
+          "type": "device",
+          "name": "Article Number",
+          "address": "article-number",
+          "id": "9be5d33f-2aaa-46a7-a41f-1b12fcc7e574"
         }
       ],
       "protocol": "energy",

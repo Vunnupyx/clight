@@ -493,6 +493,7 @@
     "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Waiting for modules to finish installing",
     "UpdateStatus-NO_CONNECTION": "Update failed. Please check the network configuration of the device.",
     "UpdateStatus-UNEXPECTED_ERROR": "Update failed due to an unexpected error. Please try again later.",
+    "UpdateStatus-ERROR_TIMEOUT": "Update has timed out. Please try again later.",
     "UpdateFailed": "Update Failed",
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
     "UpdateFailed-CheckNetworkConfig": "Update failed. Please check your network configuration.",

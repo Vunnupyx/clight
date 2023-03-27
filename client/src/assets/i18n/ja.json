@@ -509,6 +509,9 @@
   "prompt": {
     "warningText": "保存されていない変更があります。このまま続けますか？"
   },
+  "http": {
+    "Logout": "You have been logged out due to inactivity. Please login in again"
+  },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "システムの時刻がブラウザの時刻と異なります。システムに設定されている時刻を修正してください。不正なシステム時刻はデータソースやアプリケーションインタフェースのエラーにつながります。この警告をクリックし、設定ページを表示、時刻タブを選択して時刻を修正してください"
   },

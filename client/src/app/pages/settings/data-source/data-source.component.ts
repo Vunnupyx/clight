@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
-import { Connection } from 'app/api/models';
 import {
   DataPointLiveData,
   DataSource,
@@ -14,7 +13,8 @@ import {
   S7Types,
   EnergyTypes,
   SourceDataPoint,
-  SourceDataPointType
+  SourceDataPointType,
+  Connection
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
 import {

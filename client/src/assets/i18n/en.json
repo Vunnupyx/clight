@@ -509,6 +509,9 @@
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"
   },
+  "http": {
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
+  },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces. Click on this warning to go to settings page and choose Time tab to adjust time settings."
   },

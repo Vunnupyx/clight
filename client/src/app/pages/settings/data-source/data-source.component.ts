@@ -99,7 +99,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   get MTConnectStreamHref() {
-    return `http://${window.location.hostname}:15404/current`;
+    return !this.dataSource?.name
+      ? `http://${window.location.hostname}:15404/current`
+      : `http://${window.location.hostname}:15404/${this.dataSource.name}/current`;
   }
 
   constructor(
@@ -247,12 +249,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateMachineName(valid: boolean | null, val: string) {
-    this.dsFormValid = !!valid;
-
-    if (!valid) {
-      return;
-    }
+  updateMachineName(val: string) {
     if (!this.dataSource) {
       return;
     }

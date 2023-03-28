@@ -54,7 +54,7 @@ const DATA_SOURCES = {
     },
     {
       dataPoints: [],
-      name: 'Machine 1',
+      name: 'DMG_MORI_IoTconnector-flex',
       protocol: 'mtconnect',
       enabled: false,
       type: 'agent',
@@ -193,6 +193,10 @@ export class DataSourceService {
 
     if (ds.type) {
       payload.type = ds.type;
+    }
+
+    if (ds.name) {
+      payload.name = ds.name;
     }
 
     await this.httpService.patch(`/datasources/${protocol}`, payload);

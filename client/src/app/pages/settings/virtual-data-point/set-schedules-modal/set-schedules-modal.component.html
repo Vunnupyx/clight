@@ -29,9 +29,10 @@
     </ngx-datatable-column>
     <ngx-datatable-column
       [name]="'settings-virtual-data-point.DayDate' | translate"
-      prop="day"
+      prop=""
       [minWidth]="80"
       [maxWidth]="300"
+      [comparator]="sortDayDate"
     >
       <ng-template
         ngx-datatable-cell-template

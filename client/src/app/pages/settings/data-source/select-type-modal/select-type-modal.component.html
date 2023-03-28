@@ -7,15 +7,15 @@
     [headerHeight]="50"
     rowHeight="auto"
     [rows]="rows"
-    columnMode="flex"
     class="overflow-auto select-type-table"
   >
     <ngx-datatable-column
       [name]="'settings-data-source.Name' | translate"
       prop="name"
       [canAutoResize]="false"
+      [width]="175"
       [minWidth]="120"
-      [maxWidth]="300"
+      [maxWidth]="175"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -25,7 +25,7 @@
       >
         <div
           class="text-ellipsis"
-          [class.color-disabled]="isExisting(row) || isUnsupported(row)"
+          [class.color-disabled]="isExisting(row)"
           [title]="value"
         >
           {{ value }}
@@ -33,10 +33,16 @@
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column
-      [name]="'settings-data-source.BTSSString' | translate"
+      [name]="
+        (isEnergySource()
+          ? 'settings-data-source.Address'
+          : 'settings-data-source.BTSSString'
+        ) | translate
+      "
       prop="address"
-      [minWidth]="350"
-      [maxWidth]="600"
+      [width]="276"
+      [minWidth]="120"
+      [maxWidth]="276"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -46,21 +52,21 @@
       >
         <div
           class="text-ellipsis"
-          [class.color-disabled]="isExisting(row) || isUnsupported(row)"
+          [class.color-disabled]="isExisting(row)"
           [title]="value"
         >
           {{ value }}
         </div>
       </ng-template>
     </ngx-datatable-column>
-
     <ngx-datatable-column
       [name]="'settings-data-source.Actions' | translate"
       cellClass="button-cell justify-content-center"
       headerClass="text-center"
       [sortable]="false"
-      [minWidth]="80"
-      [maxWidth]="300"
+      [width]="175"
+      [minWidth]="120"
+      [maxWidth]="175"
     >
       <ng-template
         ngx-datatable-cell-template
@@ -70,19 +76,14 @@
       >
         <mat-button-toggle-group #group="matButtonToggleGroup">
           <mat-button-toggle
-            (click)="
-              !isExisting(row) && !isUnsupported(row) && onSelect(row);
-              group.value = null
-            "
+            (click)="!isExisting(row) && onSelect(row); group.value = null"
             [matTooltip]="
-              isUnsupported(row)
-                ? ('settings-data-source.UnsupportedAddress' | translate)
-                : isExisting(row)
+              isExisting(row)
                 ? ('settings-data-source.DuplicatedAddress' | translate)
                 : ('settings-data-source.SelectVariable' | translate)
             "
             matTooltipPosition="above"
-            [disabled]="isExisting(row) || isUnsupported(row)"
+            [disabled]="isExisting(row)"
             ><mat-icon svgIcon="mdc:order-move-down"></mat-icon
           ></mat-button-toggle>
         </mat-button-toggle-group>

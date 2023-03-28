@@ -103,9 +103,6 @@ export class GeneralComponent implements OnInit {
       try {
         const parsedJSON = JSON.parse(await file.text());
         await this.logsService.uploadBackup(file);
-        this.toastr.success(
-          this.translate.instant('settings-general.BackupHasBeenUploaded')
-        );
         event.target.value = null;
       } catch (e) {
         this.toastr.error(

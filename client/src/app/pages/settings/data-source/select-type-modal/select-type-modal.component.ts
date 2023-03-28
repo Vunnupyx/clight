@@ -1,6 +1,5 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 
 import { DataSourceProtocol, SourceDataPointType } from '../../../../models';
 import { DataSourceService } from '../../../../services';
@@ -14,12 +13,11 @@ export interface SelectTypeModalData {
 
 @Component({
   selector: 'app-select-type-modal',
-  templateUrl: 'select-type-modal.component.html'
+  templateUrl: 'select-type-modal.component.html',
+  styleUrls: ['select-type-modal.component.scss']
 })
 export class SelectTypeModalComponent implements OnInit {
   rows: any[] = [];
-
-  @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
   constructor(
     private dialogRef: MatDialogRef<SelectTypeModalComponent>,
@@ -34,10 +32,6 @@ export class SelectTypeModalComponent implements OnInit {
         : this.dataSourceService.getEnergyAddresses();
   }
 
-  ngAfterViewInit() {
-    this.ngxDatatable.columnMode = ColumnMode.force;
-  }
-
   onSelect(row) {
     this.dialogRef.close(row);
   }
@@ -46,11 +40,8 @@ export class SelectTypeModalComponent implements OnInit {
     return this.data.existingAddresses.includes(address);
   }
 
-  isUnsupported({ type }) {
-    if (this.data.protocol === DataSourceProtocol.Energy) {
-      return this.data.type !== type;
-    }
-    return false;
+  isEnergySource() {
+    return this.data.protocol === DataSourceProtocol.Energy;
   }
 
   onClose() {

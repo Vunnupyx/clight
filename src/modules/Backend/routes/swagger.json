@@ -1495,13 +1495,25 @@
             }
           },
           "503": {
-            "description": "Update failed. Possibly no network connection.",
+            "description": "Requesting available updates failed. Possibly no network connection.",
             "schema": {
               "type": "object",
               "properties": {
                 "error": {
                   "type": "string",
                   "enum": ["Unable to get update information."]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Requesting available updates not allowed. Terms and conditions not accepted.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["Terms and conditions not accepted."]
                 }
               }
             }
@@ -1561,6 +1573,18 @@
                 "error": {
                   "type": "string",
                   "enum": ["No version information in request found."]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Executing update not allowed because terms and conditions not accepted.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "enum": ["Terms and conditions not accepted."]
                 }
               }
             }
@@ -1846,7 +1870,8 @@
             "equal",
             "unequal",
             "enumeration",
-            "calculation"
+            "calculation",
+            "setTariff"
           ]
         },
         "comparativeValue": {

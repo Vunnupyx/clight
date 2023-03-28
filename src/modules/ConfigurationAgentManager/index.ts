@@ -6,7 +6,8 @@ import {
   ICosNetworkAdapterStatus,
   ICosResponseError,
   ICosSystemVersions,
-  ICosSystemRestartResponse
+  ICosSystemRestartResponse,
+  ICosSystemCommissioningStatus
 } from './interfaces';
 
 export class ConfigurationAgentManager {
@@ -68,6 +69,14 @@ export class ConfigurationAgentManager {
       );
       return Promise.reject(new Error(e));
     }
+  }
+
+  public static async getCommissioningStatus(): Promise<boolean> {
+    const result = (await this.request(
+      'GET',
+      '/system/commissioning'
+    )) as ICosSystemCommissioningStatus;
+    return result?.Finished ?? false;
   }
 
   public static async getSystemVersions(): Promise<ICosSystemVersions> {

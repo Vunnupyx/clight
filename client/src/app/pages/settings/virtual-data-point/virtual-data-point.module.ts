@@ -6,11 +6,7 @@ import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confir
 import { SharedModule } from 'app/shared/shared.module';
 
 import { VirtualDataPointComponent } from './virtual-data-point.component';
-import {
-  AuthGuard,
-  CommissioningGuard,
-  QuickStartGuard
-} from 'app/shared/guards';
+import { AuthGuard, QuickStartGuard } from 'app/shared/guards';
 import { SetThresholdsModalComponent } from './set-thresholds-modal/set-thresholds-modal.component';
 import { VirtualDataPointGuard } from './virtual-data-point.guard';
 import { SetEnumerationModalComponent } from './set-enumeration-modal/set-enumeration-modal.component';
@@ -23,7 +19,7 @@ const routes: Routes = [
   {
     path: 'settings/virtual-data-point',
     component: VirtualDataPointComponent,
-    canActivate: [CommissioningGuard, AuthGuard, QuickStartGuard],
+    canActivate: [AuthGuard, QuickStartGuard],
     canDeactivate: [VirtualDataPointGuard]
   }
 ];

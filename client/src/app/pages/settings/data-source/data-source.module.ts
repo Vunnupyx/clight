@@ -6,18 +6,14 @@ import { ConfirmDialogModule } from 'app/shared/components/confirm-dialog/confir
 
 import { DataSourceComponent } from './data-source.component';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
-import {
-  AuthGuard,
-  CommissioningGuard,
-  QuickStartGuard
-} from 'app/shared/guards';
+import { AuthGuard, QuickStartGuard } from 'app/shared/guards';
 import { DataSourceGuard } from './data-source.guard';
 
 const routes: Routes = [
   {
     path: 'settings/data-source',
     component: DataSourceComponent,
-    canActivate: [CommissioningGuard, AuthGuard, QuickStartGuard],
+    canActivate: [AuthGuard, QuickStartGuard],
     canDeactivate: [DataSourceGuard]
   }
 ];

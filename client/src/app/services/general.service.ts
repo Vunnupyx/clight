@@ -71,9 +71,6 @@ export class GeneralService {
       headers.append('Accept', 'application/json');
 
       await this.httpService.post('/backup', formData);
-      this.toastr.success(
-        this.translate.instant('settings-general.BackupHasBeenUploaded')
-      );
     } catch (err: any) {
       this.toastr.error(err.error.message);
     }

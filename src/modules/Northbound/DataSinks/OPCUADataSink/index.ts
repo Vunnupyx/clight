@@ -144,11 +144,9 @@ export class OPCUADataSink extends DataSink {
           new Variant({
             value:
               node.dataType.value === DataType.LocalizedText
-                ? new LocalizedText({ locale: 'en', text: String(value) })
+                ? new LocalizedText({ locale: 'en', text: value })
                 : node.dataType.value === DataType.Boolean
                 ? Boolean(value)
-                : node.dataType.value === DataType.String
-                ? String(value)
                 : value,
             dataType: node.dataTypeObj.basicDataType
           })

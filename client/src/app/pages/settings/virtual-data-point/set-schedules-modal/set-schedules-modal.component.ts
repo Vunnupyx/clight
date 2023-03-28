@@ -1,23 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SelectionType } from '@swimlane/ngx-datatable';
-import {
-  ScheduleEvery,
-  ScheduleMonth,
-  VirtualDataPointSchedule
-} from 'app/models';
-import {
-  ConfirmDialogComponent,
-  ConfirmDialogModel
-} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import {
-  EditScheduleModalComponent,
-  EditScheduleModalData
-} from '../edit-schedule-modal/edit-schedule-modal.component';
+import { ScheduleEvery, ScheduleMonth, VirtualDataPointSchedule } from 'app/models';
+import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import { EditScheduleModalComponent, EditScheduleModalData } from '../edit-schedule-modal/edit-schedule-modal.component';
 
 export interface SetSchedulesModalData {
   schedules: VirtualDataPointSchedule[];
@@ -26,7 +12,7 @@ export interface SetSchedulesModalData {
 @Component({
   selector: 'app-set-schedules-modal',
   templateUrl: 'set-schedules-modal.component.html',
-  styleUrls: ['./set-schedules-modal.component.scss']
+  styleUrls: ['./set-schedules-modal.component.scss'],
 })
 export class SetSchedulesModalComponent implements OnInit {
   SelectionType = SelectionType;
@@ -38,11 +24,8 @@ export class SetSchedulesModalComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<
-      SetSchedulesModalComponent,
-      SetSchedulesModalData
-    >,
-    @Inject(MAT_DIALOG_DATA) public data: SetSchedulesModalData
+    private dialogRef: MatDialogRef<SetSchedulesModalComponent, SetSchedulesModalData>,
+    @Inject(MAT_DIALOG_DATA) public data: SetSchedulesModalData,
   ) {}
 
   ngOnInit() {
@@ -79,17 +62,15 @@ export class SetSchedulesModalComponent implements OnInit {
       date: 1,
       hours: 0,
       minutes: 0,
-      seconds: 0
+      seconds: 0,
     } as VirtualDataPointSchedule;
-    const dialogRef = this.dialog.open<
+    const dialogRef = this.dialog.open<EditScheduleModalComponent, EditScheduleModalData, EditScheduleModalData>(
       EditScheduleModalComponent,
-      EditScheduleModalData,
-      EditScheduleModalData
-    >(EditScheduleModalComponent, {
-      data: {
-        schedule: newSchedule
-      }
-    });
+      {
+        data: {
+          schedule: newSchedule,
+        },
+      });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) {
@@ -103,15 +84,13 @@ export class SetSchedulesModalComponent implements OnInit {
     const schedule = selected[0];
     const index = this.rows.indexOf(schedule);
 
-    const dialogRef = this.dialog.open<
+    const dialogRef = this.dialog.open<EditScheduleModalComponent, EditScheduleModalData, EditScheduleModalData>(
       EditScheduleModalComponent,
-      EditScheduleModalData,
-      EditScheduleModalData
-    >(EditScheduleModalComponent, {
-      data: {
-        schedule
-      }
-    });
+      {
+        data: {
+          schedule,
+        },
+      });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) {
@@ -124,7 +103,7 @@ export class SetSchedulesModalComponent implements OnInit {
   onSave() {
     this.dialogRef.close({ schedules: this.rows });
   }
-
+  
   onCancel() {
     this.dialogRef.close();
   }
@@ -134,10 +113,6 @@ export class SetSchedulesModalComponent implements OnInit {
   }
 
   private onEditConfirm(index: number, schedule: VirtualDataPointSchedule) {
-    this.rows = this.rows.map((x, i) => (i === index ? schedule : x));
-  }
-
-  sortDayDate(a: VirtualDataPointSchedule, b: VirtualDataPointSchedule) {
-    return (a.day || String(a.date)) > (b.day || String(b.date)) ? 1 : -1;
+    this.rows = this.rows.map((x, i) => i === index ? schedule : x);
   }
 }

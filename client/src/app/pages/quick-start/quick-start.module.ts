@@ -4,14 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { QuickStartComponent } from './quick-start.component';
 import { SharedModule } from 'app/shared/shared.module';
-import { AuthGuard, CommissioningGuard } from 'app/shared/guards';
+import { AuthGuard } from 'app/shared/guards';
 
 const routes: Routes = [
   {
     path: 'quick-start',
     component: QuickStartComponent,
     data: { noLayout: true },
-    canActivate: [CommissioningGuard, AuthGuard]
+    canActivate: [AuthGuard]
   }
 ];
 

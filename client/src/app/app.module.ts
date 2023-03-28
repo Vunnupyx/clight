@@ -15,8 +15,7 @@ import { AppRoutingModule } from './app.routing';
 import { AppTranslationModule } from './app.translation';
 import { QuickStartModule } from './pages/quick-start/quick-start.module';
 import { SystemInformationModule } from './pages/system-information/system-information.module';
-import { AuthModule } from './pages/auth/auth.module';
-import { CommissioningModule } from './pages/commissioning/commissioning.module';
+import { AuthModule } from "./pages/auth/auth.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,7 +30,6 @@ import { CommissioningModule } from './pages/commissioning/commissioning.module'
 
     AppTranslationModule,
 
-    CommissioningModule,
     AuthModule,
     LayoutModule,
     SettingsModule,

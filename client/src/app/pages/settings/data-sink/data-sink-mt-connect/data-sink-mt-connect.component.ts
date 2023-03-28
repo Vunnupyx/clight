@@ -140,6 +140,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.MTConnectItems =
       this.dataSinkService.getPredefinedMtConnectDataPoints();
+    this.OPCUAAddresses = [
+      ...this.dataSinkService.getPredefinedOPCDataPoints(),
+      ...(this.dataSink.customDataPoints || [])
+    ];
     this.sub.add(
       combineLatest([
         this.dataPointService.dataPoints,
@@ -170,13 +174,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     const dataSink = changes.dataSink?.currentValue;
     if (!dataSink) return;
 
-    this.OPCUAAddresses = [
-      ...this.dataSinkService.getPredefinedOPCDataPoints(),
-      ...(this.dataSink.customDataPoints || [])
-    ];
-    if (dataSink.auth) {
-      this.auth = clone(dataSink.auth);
-    }
     if (
       !changes.dataSink?.previousValue ||
       dataSink.protocol !== changes.dataSink?.previousValue.protocol
@@ -198,6 +195,10 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   }
 
   onDataSink(dataSink: DataSink) {
+    if (dataSink.auth) {
+      this.auth = clone(dataSink.auth);
+    }
+
     if (this.statusSub) {
       this.statusSub.unsubscribe();
     }
@@ -400,13 +401,9 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     ) {
       return;
     }
-    const newAuth = (
-      this.auth.type === DataSinkAuthType.Anonymous
-        ? { type: this.auth.type }
-        : this.auth
-    ) as DataSinkAuth;
+
     this.dataSinkService.updateDataSink(this.dataSink?.protocol!, {
-      auth: newAuth
+      auth: this.auth
     });
   }
 

@@ -83,6 +83,7 @@ jest.mock('azure-iot-device', () => {
 });
 jest.doMock('azure-iot-device-mqtt');
 jest.doMock('https-proxy-agent');
+jest.doMock('socks-proxy-agent');
 
 jest.doMock('azure-iot-security-symmetric-key');
 jest.doMock('azure-iot-provisioning-device-amqp');

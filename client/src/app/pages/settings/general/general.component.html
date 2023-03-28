@@ -100,7 +100,7 @@
         <div>
           <p class="template-label">
             {{ 'settings-general.CurrentTemplate' | translate }}:
-            {{ currentTemplate | async | translate }}
+            {{ currentTemplate | async }}
           </p>
           <button mat-button color="secondary" [routerLink]="['/quick-start']">
             {{ 'settings-general.OpenConfigurationWizard' | translate }}

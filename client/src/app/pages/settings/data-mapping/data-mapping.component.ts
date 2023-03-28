@@ -222,34 +222,42 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     await this.dataMappingService.getDataMappingsAll();
   }
 
-  isTargetAlreadyMapped() {
+  isDuplicatingMapping() {
+    if (!this.mappingRows || !this.unsavedRow) {
+      return false;
+    }
+
     if (
-      !this.mappingRows ||
-      !this.unsavedRow ||
+      this.unsavedRow.source === undefined ||
       this.unsavedRow.target === undefined
     ) {
       return false;
     }
 
-    const newMappingId = this.unsavedRow?.id;
-    const newMappingTarget = (this.unsavedRow.target as string)
+    // check whether other DPs do not have such name
+    const newFieldValueSource = (this.unsavedRow.source as string)
       .toLowerCase()
       .trim();
 
+    const newFieldValueTarget = (this.unsavedRow.target as string)
+      .toLowerCase()
+      .trim();
+
+    const editableId = this.unsavedRow?.id;
+
     return this.mappingRows.some((dp) => {
       return (
-        dp.target.toLowerCase().trim() === newMappingTarget &&
-        dp.id !== newMappingId
+        dp.source.toLowerCase().trim() === newFieldValueSource &&
+        dp.target.toLowerCase().trim() === newFieldValueTarget &&
+        dp.id !== editableId
       );
     });
   }
 
   private clearUnsavedRow() {
-    this.mappingRows = this.mappingRows!.filter((_, idx) =>
-      !this.unsavedRow?.id ? idx !== this.unsavedRowIndex : true
-    );
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
+    this.mappingRows = this.mappingRows?.filter((x) => x.id) || [];
   }
 
   onDelete(obj: DataMapping) {

@@ -1,9 +1,5 @@
-<h1 mat-dialog-title *ngIf="!isTypeSetTariff()">
+<h1 mat-dialog-title>
   {{ 'settings-virtual-data-point.SetEnumeration' | translate }}
-</h1>
-
-<h1 mat-dialog-title *ngIf="isTypeSetTariff()">
-  {{ 'settings-virtual-data-point.SetTariffEnum' | translate }}
 </h1>
 
 <div mat-dialog-content>
@@ -13,11 +9,7 @@
     </div>
     <div>
       <mat-form-field>
-        <input
-          matInput
-          [(ngModel)]="defaultValue"
-          [disabled]="isTypeSetTariff()"
-        />
+        <input matInput [(ngModel)]="defaultValue" />
       </mat-form-field>
     </div>
   </div>
@@ -42,7 +34,6 @@
               <mat-option
                 *ngFor="let sourceOption of sourceOptions"
                 [value]="sourceOption.id"
-                [disabled]="isSourceOptionAlreadyUsed(sourceOption.id)"
                 required
                 >{{ getSourcePrefix(sourceOption) }}
                 {{ sourceOption.name }}</mat-option
@@ -63,12 +54,7 @@
             <mat-label>{{
               'settings-virtual-data-point.ReturnValueIfTrue' | translate
             }}</mat-label>
-            <input
-              matInput
-              [(ngModel)]="row.returnValueIfTrue"
-              required
-              [disabled]="isTypeSetTariff()"
-            />
+            <input matInput [(ngModel)]="row.returnValueIfTrue" required />
           </mat-form-field>
         </div>
         <div class="col-3">
@@ -76,8 +62,7 @@
             <mat-label>&nbsp;</mat-label>
             <div class="d-flex">
               <mat-button-toggle
-                [disabled]="isTypeSetTariff()"
-                (click)="!isTypeSetTariff() && onDelete(idx)"
+                (click)="onDelete(idx)"
                 [matTooltip]="'settings-virtual-data-point.Delete' | translate"
                 matTooltipPosition="above"
                 ><mat-icon svgIcon="mdc:delete"></mat-icon
@@ -89,7 +74,6 @@
     </div>
   </div>
   <button
-    *ngIf="!isTypeSetTariff()"
     type="button"
     mat-mini-fab
     color="primary"

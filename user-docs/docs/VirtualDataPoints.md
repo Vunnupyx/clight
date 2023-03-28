@@ -174,14 +174,6 @@ Custom mathematical expression using variable names and manually typing the math
 **Example Video:**
 <Player controls url={video}/>
 
-##### SET ENERGY TARIFF
-
-Type: Enumeration | Number of Sources: Multiple | Result: Text/Number
-
-This type allows mapping data sources or other VDPs to a specific machine status, which is then used for automatic updating of Energy Tariff counter.
-
-Note: The return values are fixed and cannot be changed, only the order of the machine status can be updated.
-
 ### How to Add a Virtual Data Point
 
 ![Adding new virtual data points](/img/vdp/add_vdp.png)

@@ -6,6 +6,7 @@ import { Status } from '../../../../shared/state';
 import { DeviceInfo } from '../../../../models/device-info';
 import { NgForm } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -29,6 +30,7 @@ export class DeviceInfoComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
+    private toastr: ToastrService,
     private deviceInfoService: DeviceInfoService
   ) {}
 
@@ -43,9 +45,12 @@ export class DeviceInfoComponent implements OnInit {
   }
 
   onSave(form: NgForm) {
-    this.deviceInfoService
-      .updateDeviceInfo(this.deviceInfo)
-      .then(() => form.resetForm(this.deviceInfo));
+    this.deviceInfoService.updateDeviceInfo(this.deviceInfo).then(() => {
+      form.resetForm(this.deviceInfo);
+      this.toastr.success(
+        this.translate.instant('settings-device-info.SaveSuccess')
+      );
+    });
   }
 
   private onDeviceInfo(x: DeviceInfo) {

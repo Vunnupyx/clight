@@ -35,7 +35,6 @@ export class DataHubDataSink extends DataSink {
   protected _protocol = DataSinkProtocols.DATAHUB;
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
-  public initialized: this = null;
   options: DataHubDataSinkOptions;
 
   public constructor(options: DataHubDataSinkOptions) {
@@ -53,10 +52,7 @@ export class DataHubDataSink extends DataSink {
    * @returns
    */
   public getAdapter(): DataHubAdapter {
-    if (this.initialized) {
-      return this.#datahubAdapter;
-    }
-    return null;
+    return this.#datahubAdapter;
   }
 
   private handleAdapterStateChange(newState: LifecycleEventStatus) {
@@ -146,6 +142,7 @@ export class DataHubDataSink extends DataSink {
         `${logPrefix} datahub data sink is disabled. Continue initialization for update mechanism.`
       );
       this.updateCurrentStatus(LifecycleEventStatus.Disabled);
+      return this;
     }
 
     if (!this.termsAndConditionsAccepted) {
@@ -163,7 +160,7 @@ export class DataHubDataSink extends DataSink {
       .then((adapter) => adapter.start())
       .then(() => {
         winston.debug(`${logPrefix} initialized`);
-        return (this.initialized = this);
+        return this;
       })
       .catch((error) => {
         if (error instanceof NorthBoundError) {

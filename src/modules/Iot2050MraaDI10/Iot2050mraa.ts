@@ -26,7 +26,7 @@ interface PinData {
  * Contains specific pin definitions and labels for the SIEMENS SIMATIC IoT2000 Input Modul Sink/Source 10x DI,
  * Order-No: 6ES7647-0KA02-0AA2
  */
-export class Iot2050Mraa {
+export class Iot2050MraaDI10 {
   private ANALOG_PIN_LABELS = ['AI0', 'AI1'];
   private ANALOG_READ_ADDRESSES = [
     path.join(
@@ -42,7 +42,78 @@ export class Iot2050Mraa {
   private BLINKING_MAX_TIME_BETWEEN_EDGES = 2250; // 0,5Hz + tolerance
   private childProcesses: Array<number> = [];
 
-  protected pinData: { [key: string]: PinData } = {};
+  private pinData: { [key: string]: PinData } = {
+    4: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI0'
+    },
+    5: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI1'
+    },
+    6: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI2'
+    },
+    7: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI3'
+    },
+    8: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI4'
+    },
+    9: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI5'
+    },
+    10: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI6'
+    },
+    11: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI7'
+    },
+    12: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI8'
+    },
+    13: {
+      raw: false,
+      oldRaw: false,
+      lastRisingEdges: [0, 0, 0],
+      processedState: PinState.OFF,
+      label: 'DI9'
+    }
+  };
 
   /**
    * Initializes the driver and sets up necessary mraa-gpio instances
@@ -182,120 +253,6 @@ export class Iot2050Mraa {
       state: data[1] === '1'
     };
   }
-}
-
-export class Iot2050MraaDI10 extends Iot2050Mraa {
-  protected pinData: { [key: string]: PinData } = {
-    4: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI0'
-    },
-    5: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI1'
-    },
-    6: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI2'
-    },
-    7: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI3'
-    },
-    8: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI4'
-    },
-    9: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI5'
-    },
-    10: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI6'
-    },
-    11: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI7'
-    },
-    12: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI8'
-    },
-    13: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI9'
-    }
-  };
-}
-export class Iot2050MraaDI2AI5 extends Iot2050Mraa {
-  protected pinData: { [key: string]: PinData } = {
-    4: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI4'
-    },
-    9: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI3'
-    },
-    10: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI2'
-    },
-    11: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI1'
-    },
-    12: {
-      raw: false,
-      oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
-      processedState: PinState.OFF,
-      label: 'DI0'
-    }
-  };
 }
 
 // const io = new Iot2050MraaDI10();

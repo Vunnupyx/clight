@@ -9,11 +9,7 @@ import { DataSinkComponent } from './data-sink.component';
 import { DataSinkMtConnectComponent } from './data-sink-mt-connect/data-sink-mt-connect.component';
 import { CreateDataItemModalComponent } from './create-data-item-modal/create-data-item-modal.component';
 import { SelectMapModalComponent } from './select-map-modal/select-map-modal.component';
-import {
-  AuthGuard,
-  CommissioningGuard,
-  QuickStartGuard
-} from 'app/shared/guards';
+import { AuthGuard, QuickStartGuard } from 'app/shared/guards';
 import { DataSinkGuard } from './data-sink.guard';
 import { RegisterMachineComponent } from './register-machine/register-machine.component';
 import { MessengerConnectionComponent } from './messenger-connection/messenger-connection.component';
@@ -25,7 +21,7 @@ const routes: Routes = [
   {
     path: 'settings/data-sink',
     component: DataSinkComponent,
-    canActivate: [CommissioningGuard, AuthGuard, QuickStartGuard],
+    canActivate: [AuthGuard, QuickStartGuard],
     canDeactivate: [DataSinkGuard]
   }
 ];

@@ -174,7 +174,7 @@
         color="primary"
         type="button"
         class="btn-sm"
-        [disabled]="!isTouchedTable || isLoading || isEditing"
+        [disabled]="!isTouchedTable || isLoading"
         (click)="onApply()"
       >
         {{ 'settings-data-sink.ApplyChanges' | translate }}

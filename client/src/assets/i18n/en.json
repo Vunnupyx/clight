@@ -4,28 +4,6 @@
     "Cancel": "Cancel",
     "LanguageDocumentationPath": ""
   },
-  "commissioning": {
-    "Welcome": "Welcome to IoTconnector flex",
-    "MachineInformation": "Machine information",
-    "Serial": "Serial",
-    "ControlManufacturer": "Control Manufacturer",
-    "ControlType": "Control Type",
-    "Model": "Model",
-    "Ethernet": "Ethernet X1",
-    "State": "State",
-    "Mac": "MAC",
-    "IP": "IP",
-    "Netmask": "Netmask",
-    "Connected": "Connected",
-    "Disconnected": "Disconnected",
-    "CELOSXchange": "CELOS Xchange",
-    "SoftwareComponents": "Software Components",
-    "FinishCommissioning": "Finish commissioning",
-    "FinishError": "Failed to finish commissioning. Please try again later",
-    "RegisteredError": "Failed to provisioned",
-    "RegisteredSuccess": "Successfully provisioned",
-    "Unknown": "Unknown"
-  },
   "layout": {
     "Settings": "Settings",
     "General": "General",
@@ -43,8 +21,7 @@
     "Password": "Password",
     "SignIn": "Sign in",
     "ForgotPassword": "Forgot your password?",
-    "WhereToFindPassword": "Where do I find my login password?",
-    "AuthError": "User with these credentials could not be found!"
+    "WhereToFindPassword": "Where do I find my login password?"
   },
   "settings-change-password": {
     "ChangePasswordTitle": "Change your password",
@@ -110,7 +87,7 @@
         "ai2ioShieldMessenger": "Input board to DMG MORI Messenger",
         "empty": "Empty Template",
         "energyAll": "EEM Kit",
-        "gm": "DMG MORI GM Series",
+        "gm": "GM Series",
         "ncAll": "SIEMENS SINUMERIK 840D sl",
         "fanucAll": "Fanuc Machines",
         "ncMessenger": "SIEMENS SINUMERIK 840D sl to DMG MORI Messenger"
@@ -222,10 +199,10 @@
     "SelectVariable": "Select Variable",
     "TariffStatus": {
       "0": "No tariff counter active",
-      "1": "Standby",
-      "2": "Ready for Processing",
-      "3": "Warm Up",
-      "4": "Processing",
+      "1": "Running",
+      "2": "Idle",
+      "3": "Waiting",
+      "4": "Alarm",
       "Unknown": "Unknown"
     }
   },
@@ -250,7 +227,6 @@
     "DeleteMessage": "Are you sure you want to delete data point?",
     "SetThresholds": "Set Thresholds",
     "SetComparativeValue": "Set Comparative Value",
-    "MissingComparativeValue": "Comparative value is empty",
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",
@@ -281,8 +257,8 @@
     "SetFormula": "Set formula",
     "Formula": "Formula",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
-    "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
-    "SetTariffEnum": "Set Machine Status Mapping"
+    "WrongVdpsOrder": "Virtual data point '{{SourceId}}' is used for '{{ErrorId}}' before it's defined. This may cause wrong result! Please correct the order to ensure correct results.",
+    "WarningWrongVdp": "Update failed. VDP with wrong order"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -297,8 +273,7 @@
     "Equal": "Equal",
     "Unequal": "Unequal",
     "Enumeration": "Enumeration",
-    "Calculation": "Calculation",
-    "SetTariff": "Set Energy Tariff"
+    "Calculation": "Calculation"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
@@ -374,7 +349,7 @@
       "Enabled": "Enabled",
       "Disabled": "Disabled"
     },
-    "DuplicatedKeys": "This value is already in use",
+    "DuplicatedKeys": "You are not allowed to duplicate keys",
     "TimeZone": "Time zone",
     "Organization": "Organization",
     "Model": "Model",
@@ -493,7 +468,6 @@
     "UpdateStatus-WAIT_FOR_MODULE_UPDATE": "Waiting for modules to finish installing",
     "UpdateStatus-NO_CONNECTION": "Update failed. Please check the network configuration of the device.",
     "UpdateStatus-UNEXPECTED_ERROR": "Update failed due to an unexpected error. Please try again later.",
-    "UpdateStatus-ERROR_TIMEOUT": "Update has timed out. Please try again later.",
     "UpdateFailed": "Update Failed",
     "UpdateFailed-error_no_network": "No update possible. Please check your network configuration.",
     "UpdateFailed-CheckNetworkConfig": "Update failed. Please check your network configuration.",
@@ -508,9 +482,6 @@
   },
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"
-  },
-  "http": {
-    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces. Click on this warning to go to settings page and choose Time tab to adjust time settings."

@@ -404,11 +404,6 @@ export class VirtualDataPointManager {
     }
     const value = sourceEvents[0].measurement.value;
     const compare = config.comparativeValue;
-
-    if (!compare) {
-      return null;
-    }
-
     switch (typeof value) {
       case 'number': {
         // Correct method to compare
@@ -463,11 +458,6 @@ export class VirtualDataPointManager {
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
   ): boolean | null {
-    const compare = config?.comparativeValue;
-
-    if (!compare) {
-      return null;
-    }
     return !this.equal(sourceEvents, config);
   }
 
@@ -563,10 +553,7 @@ export class VirtualDataPointManager {
     config: IVirtualDataPointConfig
   ): string | null {
     const logPrefix = `${this.constructor.name}::enumeration`;
-    if (
-      config.operationType !== 'enumeration' &&
-      config.operationType !== 'setTariff'
-    ) {
+    if (config.operationType !== 'enumeration') {
       this.addSummaryLog(
         'error',
         `${logPrefix} receive invalid operation type: ${config.operationType}`
@@ -602,29 +589,6 @@ export class VirtualDataPointManager {
     }
     // No true value in list
     return config.enumeration?.defaultValue || null;
-  }
-
-  /**
-   * Special version of enumeration for setting EEM tariff
-   * @see enumeration
-   *
-   * @param sourceEvents
-   * @param config
-   * @returns string
-   */
-  private setTariff(
-    sourceEvents: IDataSourceMeasurementEvent[],
-    config: IVirtualDataPointConfig
-  ): string | null {
-    const value = this.enumeration(sourceEvents, config);
-
-    const cacheValue = this.cache.getLastestValue(config.id)?.value;
-
-    if (!!value && value !== cacheValue) {
-      this.energyMachineStatusChangeCallback(value);
-    }
-
-    return value;
   }
 
   /**
@@ -709,8 +673,6 @@ export class VirtualDataPointManager {
         return this.unequal(sourceEvents, config);
       case 'calculation':
         return this.calculation(sourceEvents, config);
-      case 'setTariff':
-        return this.setTariff(sourceEvents, config);
       default:
         // TODO Only print this once at startup or config change, if invalid
         // this.addSummaryLog("warn",
@@ -790,6 +752,21 @@ export class VirtualDataPointManager {
 
       _events.push(newEvent);
       virtualEvents.push(newEvent);
+
+      if (
+        process.env.ALLOW_EEM_AUTO_TARIFF_UPDATE &&
+        newEvent.dataSource.protocol === 'virtual' &&
+        vdpConfig.name === 'EEM - Machine Status'
+      ) {
+        const currentValue = this.cache.getLastestValue(
+          newEvent.measurement.id
+        )?.value;
+        const newValue = newEvent.measurement.value;
+
+        if (newValue !== currentValue) {
+          this.energyMachineStatusChangeCallback(newValue);
+        }
+      }
     }
 
     this.cache.update(virtualEvents);
@@ -815,9 +792,6 @@ export class VirtualDataPointManager {
 
   /**
    * Checks order of VDPs to determine if their order is valid according to the dependencies.
-   *
-   * @see client/src/app/pages/settings/virtual-data-point/virtual-data-point.component.ts for usage of same logic in frontend!
-   * Update there as well if any logic changes here
    */
   public getVdpValidityStatus(
     vdpsListToCheck: IVirtualDataPointConfig[]

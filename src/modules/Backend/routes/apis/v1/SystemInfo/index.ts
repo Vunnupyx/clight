@@ -2,13 +2,10 @@ import { Request, Response } from 'express';
 
 import { ConfigManager } from '../../../../../ConfigManager';
 import winston from 'winston';
-import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
-import { DataSinkProtocols } from '../../../../../../common/interfaces';
-import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
-import { sleep } from '../../../../../Utilities';
+import { DataHubAdapter } from '../../../../../Northbound/Adapter/DataHubAdapter';
 
 let configManager: ConfigManager;
-let dataSinksManager: DataSinksManager;
+let datahubAdapter: DataHubAdapter;
 
 /**
  * Set ConfigManager to make accessible for local function
@@ -22,8 +19,8 @@ export function setConfigManager(configMng: ConfigManager): void {
  * Set datahub module client to use in routes
  * @param client
  */
-export function setDataSinksManager(client: DataSinksManager): void {
-  dataSinksManager = client;
+export function setDatahubAdapter(client: DataHubAdapter): void {
+  datahubAdapter = client;
 }
 
 /**
@@ -65,52 +62,14 @@ async function getMDCLUpdates(request: Request, response: Response) {
 
   if (isDevEnvironment(response, logPrefix)) return;
 
-  if (!dataSinksManager) {
+  if (!datahubAdapter) {
     winston.warn(`${logPrefix} called but no module client is available.`);
     return response.status(500).json({
       msg: `No CelosXChange connection available.`
     });
   }
-  // find datahub
-  const datahubSink = dataSinksManager.getDataSinkByProto(
-    DataSinkProtocols.DATAHUB
-  );
-  if (!(datahubSink instanceof DataHubDataSink)) {
-    winston.warn(`${logPrefix} called but no module client is available.`);
-    return response.status(500).json({
-      msg: `No CelosXChange connection available.`
-    });
-  }
-  let datahubAdapter = datahubSink.getAdapter();
-  if (!datahubAdapter && !configManager?.config?.termsAndConditions?.accepted) {
-    winston.warn(`${logPrefix} called but no terms and conditions accepted`);
-    return response.status(403).json({
-      error: 'Terms and conditions not accepted.'
-    });
-  } else if (!datahubAdapter) {
-    winston.warn(`${logPrefix} called but no module client available`);
-
-    // TODO Make event driven, don't use polling
-    // Wait until data hub client gets initialized to not brick the update process
-    let retries = 24;
-    while (!datahubAdapter && retries > 0) {
-      datahubAdapter = datahubSink.getAdapter();
-      retries = retries - 1;
-
-      await sleep(5000);
-    }
-
-    if (!datahubAdapter) {
-      winston.warn(
-        `${logPrefix} failed to connect to azure iot hub after 2 minutes`
-      );
-      return response.status(403).json({
-        error: 'Could not connect to azure iot hub.'
-      });
-    }
-  }
-
   await datahubAdapter.getUpdate(response);
+  return;
 }
 
 /**
@@ -134,51 +93,6 @@ async function updateMdcl(request: Request, response: Response) {
     return response
       .status(400)
       .json({ error: 'No version information in request found.' });
-  }
-
-  if (!dataSinksManager) {
-    winston.warn(`${logPrefix} called but no module client is available.`);
-    return response.status(500).json({
-      msg: `No CelosXChange connection available.`
-    });
-  }
-  // find datahub
-  const datahubSink = dataSinksManager.getDataSinkByProto(
-    DataSinkProtocols.DATAHUB
-  );
-  if (!(datahubSink instanceof DataHubDataSink)) {
-    winston.warn(`${logPrefix} called but no module client is available.`);
-    return response.status(500).json({
-      msg: `No CelosXChange connection available.`
-    });
-  }
-
-  let datahubAdapter = datahubSink.getAdapter();
-  if (!datahubAdapter && !configManager?.config?.termsAndConditions?.accepted) {
-    winston.warn(`${logPrefix} called but no terms and conditions accepted`);
-    return response.status(403).json({
-      error: 'Terms and conditions not accepted.'
-    });
-  } else if (!datahubAdapter) {
-    winston.warn(`${logPrefix} called but no module client available`);
-    // TODO Make event driven, don't use polling
-    // Wait until data hub client gets initialized to not brick the update process
-    let retries = 24;
-    while (!datahubAdapter && retries > 0) {
-      datahubAdapter = datahubSink.getAdapter();
-      retries = retries - 1;
-
-      await sleep(5000);
-    }
-
-    if (!datahubAdapter) {
-      winston.warn(
-        `${logPrefix} failed to connect to azure iot hub after 2 minutes`
-      );
-      return response.status(403).json({
-        error: 'Could not connect to azure iot hub.'
-      });
-    }
   }
 
   return datahubAdapter.setUpdate(response, request.body);

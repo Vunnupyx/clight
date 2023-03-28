@@ -20,9 +20,9 @@ export class DataSinkComponent implements OnInit {
   dataSinkIndex?: number;
 
   sub = new Subscription();
-
+  
   @ViewChild('tabs') tabs: MatTabGroup;
-
+  
   get isTouched() {
     return this.dataPointService.isTouched;
   }
@@ -60,11 +60,7 @@ export class DataSinkComponent implements OnInit {
   }
 
   onDataSinkIndexChange(idx: number) {
-    if (
-      this.dataSinkIndex === idx ||
-      !this.dataSinkList ||
-      !this.dataSinkList[idx]
-    ) {
+    if (!this.dataSinkList || !this.dataSinkList[idx]) {
       return;
     }
     this.switchDataSink(this.dataSinkList[idx]);
@@ -76,7 +72,6 @@ export class DataSinkComponent implements OnInit {
         await this.promptService.warn();
         await this.dataPointService.revert();
       } catch {
-        this.tabs.selectedIndex = this.dataSinkIndex;
         return;
       }
     }

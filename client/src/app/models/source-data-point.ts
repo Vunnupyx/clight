@@ -4,7 +4,9 @@ export enum SourceDataPointType {
   Measurement = 'measurement',
   Meter = 'meter',
   Device = 'device',
-  Event = 'event'
+  Event = 'event',
+  Sample = 'sample',
+  Condition = 'condition'
 }
 
 export class SourceDataPoint {

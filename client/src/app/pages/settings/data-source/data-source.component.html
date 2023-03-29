@@ -101,8 +101,7 @@
                     matInput
                     name="ipAddress"
                     [ngModel]="dataSource?.name"
-                    [required]="true"
-                    (ngModelChange)="updateMachineName(form.valid, $event)"
+                    (ngModelChange)="updateMachineName($event)"
                   />
                 </mat-form-field>
               </div>
@@ -609,6 +608,12 @@
                 <ng-container *ngSwitchCase="SourceDataPointType.Event"
                   >Event</ng-container
                 >
+                <ng-container *ngSwitchCase="SourceDataPointType.Sample"
+                  >Sample</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.Condition"
+                  >Condition</ng-container
+                >
               </ng-container>
             </span>
             <span
@@ -647,12 +652,17 @@
                 <mat-option [value]="SourceDataPointType.Event"
                   >Event</mat-option
                 >
+                <mat-option [value]="SourceDataPointType.Sample"
+                  >Sample</mat-option
+                >
+                <mat-option [value]="SourceDataPointType.Condition"
+                  >Condition</mat-option
+                >
               </ng-container>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          *ngIf="dataSource?.protocol != Protocol.MTConnect"
           [name]="'settings-data-source.LiveData' | translate"
           prop="liveData"
           [flexGrow]="1"

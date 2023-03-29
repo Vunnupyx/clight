@@ -173,6 +173,7 @@
     "Cancel": "キャンセル",
     "Select": "選択",
     "Enabled": "有効",
+    "MachineName": "Machine Name",
     "IPAddress": "IPアドレス",
     "Connection": "接続中",
     "Running": "実行中",
@@ -195,6 +196,7 @@
     "Name": "名前",
     "Type": "型",
     "Description": "記述",
+    "DataItem": "データアイテム",
     "Address": "アドレス",
     "LiveData": "ライブデータ",
     "Actions": "動作",
@@ -203,6 +205,7 @@
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再試行してください。",
     "Tabs": {
       "s7": "SIEMENS",
+      "mtconnect": "MTConnect",
       "ioshield": "デジタル入力",
       "energy": "電力量"
     },
@@ -215,11 +218,13 @@
     },
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
+    "OpenMTConnectStream": "MTConnectストリームを開く",
     "TestConnection": "テスト接続",
     "DuplicatedName": "名前が重複しています",
     "UnsupportedAddress": "The data point does not correspond to the selected type",
     "DuplicatedAddress": "アドレスが重複しています",
     "SelectVariable": "変数選択",
+    "Port": "ポート",
     "TariffStatus": {
       "0": "通信量カウンタが全て無効です",
       "1": "Standby",

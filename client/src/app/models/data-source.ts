@@ -2,6 +2,7 @@ import { SourceDataPoint } from './source-data-point';
 
 export enum DataSourceProtocol {
   S7 = 's7',
+  MTConnect = 'mtconnect',
   IOShield = 'ioshield',
   Energy = 'energy'
 }
@@ -44,6 +45,11 @@ export enum S7Types {
   S7_1200_1500 = 's7-1200/1500'
 }
 
+export enum MTConnectTypes {
+  Agent = 'agent',
+  Adapter = 'adapter'
+}
+
 export enum IOShieldTypes {
   DI_10 = '10di',
   AI_100_5di = 'ai-100+5di',
@@ -55,7 +61,7 @@ export enum EnergyTypes {
 }
 
 export class DataSource {
-  type?: S7Types | IOShieldTypes | EnergyTypes;
+  type?: S7Types | MTConnectTypes | IOShieldTypes | EnergyTypes;
   connection?: Connection;
   dataPoints?: SourceDataPoint[];
   enabled?: boolean;

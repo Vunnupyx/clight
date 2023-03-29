@@ -90,6 +90,81 @@
               </div>
             </div>
           </ng-container>
+          <ng-container *ngSwitchCase="'mtconnect'">
+            <form #form="ngForm">
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-label">
+                  {{ 'settings-data-source.MachineName' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="ipAddress"
+                    [ngModel]="dataSource?.name"
+                    [required]="true"
+                    (ngModelChange)="updateMachineName(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-label">
+                  {{ 'settings-data-source.IPAddress' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="ipAddr"
+                    #ipAddr="ngModel"
+                    [ngModel]="dataSource?.connection?.ipAddr"
+                    [pattern]="ipRegex"
+                    [required]="true"
+                    (ngModelChange)="updateIpAddress(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-label">
+                  {{ 'settings-data-source.Port' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="port"
+                    #port="ngModel"
+                    [ngModel]="dataSource?.connection?.port"
+                    [pattern]="portRegex"
+                    [required]="true"
+                    (ngModelChange)="updatePort(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+            </form>
+            <div>
+              <div class="row d-flex align-items-center">
+                <div class="col-12 col-md-5 pb-label">
+                  <label>{{
+                    'settings-data-source.ControllerType' | translate
+                  }}</label>
+                </div>
+                <div class="col-12 col-md-7">
+                  <mat-form-field>
+                    <mat-select
+                      disableOptionCentering="true"
+                      [ngModel]="dataSource?.type"
+                      (ngModelChange)="updateControllerType($event)"
+                    >
+                      <mat-option [value]="MTConnectTypes.Agent"
+                        >Agent</mat-option
+                      >
+                      <mat-option [value]="MTConnectTypes.Adapter"
+                        >Adapter</mat-option
+                      >
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </ng-container>
           <ng-container *ngSwitchCase="'ioshield'">
             <div>
               <div class="row d-flex align-items-center">
@@ -391,9 +466,23 @@
         </div>
       </div>
       <div
+        class="mt-10 d-flex align-items-center justify-content-end"
+        *ngIf="dataSource?.protocol === Protocol.MTConnect"
+      >
+        <button
+          mat-button
+          type="button"
+          class="btn-sm"
+          color="secondary"
+          (click)="goToMtConnectStream()"
+          [disabled]="dataSource?.type !== MTConnectTypes.Agent"
+        >
+          {{ 'settings-data-source.OpenMTConnectStream' | translate }}
+        </button>
+      </div>
+      <div
         *ngIf="dataSource?.protocol !== Protocol.IOShield"
-        class="d-flex align-items-center justify-content-end markustesting"
-        style="margin-top: 25px"
+        class="mt-10 d-flex align-items-center justify-content-end markustesting"
       >
         <mat-spinner
           diameter="20"
@@ -517,6 +606,9 @@
                 <ng-container *ngSwitchCase="SourceDataPointType.Device"
                   >Device</ng-container
                 >
+                <ng-container *ngSwitchCase="SourceDataPointType.Event"
+                  >Event</ng-container
+                >
               </ng-container>
             </span>
             <span
@@ -551,10 +643,16 @@
                 <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
                 <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
               </ng-container>
+              <ng-container *ngIf="dataSource?.protocol == Protocol.MTConnect">
+                <mat-option [value]="SourceDataPointType.Event"
+                  >Event</mat-option
+                >
+              </ng-container>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
+          *ngIf="dataSource?.protocol != Protocol.MTConnect"
           [name]="'settings-data-source.LiveData' | translate"
           prop="liveData"
           [flexGrow]="1"
@@ -589,7 +687,12 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          [name]="'settings-data-source.Address' | translate"
+          [name]="
+            (dataSource?.protocol === Protocol.MTConnect
+              ? 'settings-data-source.DataItem'
+              : 'settings-data-source.Address'
+            ) | translate
+          "
           prop="address"
           [flexGrow]="3"
           cellClass="input-cell address-cell"

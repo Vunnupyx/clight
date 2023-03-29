@@ -7,10 +7,12 @@ import { from, interval, Observable } from 'rxjs';
 import {
   DataSource,
   DataSourceConnection,
+  DataSourceConnectionStatus,
   DataSourceProtocol,
+  EnergyTypes,
   IOShieldTypes,
-  S7Types,
-  EnergyTypes
+  MTConnectTypes,
+  S7Types
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -18,6 +20,7 @@ import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
 import ENERGY_ADDRESSES from 'app/services/constants/energyAddresses';
+import { HttpMockupService } from '../shared/services/http-mockup.service';
 
 export class DataSourcesState {
   status!: Status;
@@ -29,9 +32,46 @@ export class DataSourcesState {
 
 const DATA_SOURCES_ORDER = [
   DataSourceProtocol.S7,
+  DataSourceProtocol.MTConnect,
   DataSourceProtocol.IOShield,
   DataSourceProtocol.Energy
 ];
+
+const DATA_SOURCES = {
+  dataSources: [
+    {
+      dataPoints: [],
+      protocol: 'energy',
+      enabled: true,
+      type: 'PhoenixEMpro'
+    },
+    {
+      dataPoints: [],
+      protocol: 's7',
+      enabled: false,
+      type: 'nck',
+      connection: { ipAddr: '192.168.214.1', port: 102, rack: 0, slot: 2 }
+    },
+    {
+      dataPoints: [],
+      name: 'Machine 1',
+      protocol: 'mtconnect',
+      enabled: false,
+      type: 'agent',
+      connection: { ipAddr: '192.168.214.1', port: 102, rack: 0, slot: 2 }
+    },
+    {
+      dataPoints: [],
+      protocol: 'ioshield',
+      enabled: false,
+      type: 'ai-100+5di'
+    }
+  ]
+};
+
+const DATA_SOURCES_STATUS = {
+  status: DataSourceConnectionStatus.Connected
+};
 
 @Injectable()
 export class DataSourceService {
@@ -40,6 +80,7 @@ export class DataSourceService {
   constructor(
     storeFactory: StoreFactory<DataSourcesState>,
     private httpService: HttpService,
+    private httpMockupService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -74,9 +115,12 @@ export class DataSourceService {
     }));
 
     try {
-      const { dataSources } = await this.httpService.get<api.DataSourceList>(
-        `/datasources`
-      );
+      const { dataSources } =
+        await this.httpMockupService.get<api.DataSourceList>(
+          `/datasourcesMockup`,
+          undefined,
+          DATA_SOURCES
+        );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSources = this._orderByProtocol(
@@ -104,8 +148,10 @@ export class DataSourceService {
 
   async getStatus(datasourceProtocol: string) {
     try {
-      const obj = await this.httpService.get<DataSourceConnection>(
-        `/datasources/${datasourceProtocol}/status`
+      const obj = await this.httpMockupService.get<DataSourceConnection>(
+        `/datasources/${datasourceProtocol}/status`,
+        undefined,
+        DATA_SOURCES_STATUS
       );
 
       this._store.patchState((state) => {
@@ -178,7 +224,7 @@ export class DataSourceService {
 
   async getDataSourceType(
     protocol: DataSourceProtocol
-  ): Promise<S7Types | IOShieldTypes | EnergyTypes | null> {
+  ): Promise<S7Types | MTConnectTypes | IOShieldTypes | EnergyTypes | null> {
     try {
       const ds = await this.httpService.get<DataSource>(
         `/datasources/${protocol}`

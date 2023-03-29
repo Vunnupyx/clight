@@ -1,0 +1,500 @@
+import winston from 'winston';
+import { DataSource } from '../DataSource';
+import { LifecycleEventStatus } from '../../../../common/interfaces';
+import { IDataSourceParams, IMeasurement } from '../interfaces';
+import {
+  IComponentStream,
+  IEntriesObject,
+  IEntry,
+  IHostConnectivityState,
+  IMTConnectMeasurement,
+  IMTConnectStreamError,
+  IMTConnectStreamResponse,
+  IMeasurementDataObject,
+  IMeasurementData
+} from './interfaces';
+import {
+  IDataPointConfig,
+  IMTConnectDataSourceConnection
+} from '../../../ConfigManager/interfaces';
+import fetch from 'node-fetch';
+import { convert } from 'xmlbuilder2';
+
+/**
+ * Implementation of MTConnect data source
+ */
+export class MTConnectDataSource extends DataSource {
+  protected name = MTConnectDataSource.name;
+  private dataPoints: IDataPointConfig[];
+  private firstSequenceNumber: number;
+  private nextSequenceNumber: number;
+  private lastSequenceNumber: number;
+  private measurements: {
+    [key: string]: IMTConnectMeasurement;
+  } = {};
+  private hostConnectivityState: IHostConnectivityState =
+    IHostConnectivityState.UNKNOWN;
+
+  private DATAPOINT_READ_INTERVAL = 100;
+
+  constructor(params: IDataSourceParams) {
+    super(params);
+
+    this.dataPoints = params.config.dataPoints;
+  }
+
+  /**
+   * Initializes MTConnect data source
+   * @returns void
+   */
+  public async init(): Promise<void> {
+    const logPrefix = `${this.name}::init`;
+    winston.info(`${logPrefix} initializing.`);
+
+    const { enabled } = this.config;
+
+    if (!enabled) {
+      winston.info(
+        `${logPrefix} MTConnect data source is disabled. Skipping initialization.`
+      );
+      this.updateCurrentStatus(LifecycleEventStatus.Disabled);
+      return;
+    }
+
+    if (!this.termsAndConditionsAccepted) {
+      winston.warn(
+        `${logPrefix} skipped start of MTConnect data source due to not accepted terms and conditions`
+      );
+      this.updateCurrentStatus(
+        LifecycleEventStatus.TermsAndConditionsNotAccepted
+      );
+      return;
+    }
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
+
+    try {
+      await this.testHostConnectivity();
+
+      if (this.hostConnectivityState === IHostConnectivityState.OK) {
+        clearTimeout(this.reconnectTimeoutId);
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        winston.info(
+          `${logPrefix} successfully connected to MT Connect Source`
+        );
+        await this.getCurrentResponse();
+        await this.getSampleResponse();
+
+        this.setupDataPoints(this.DATAPOINT_READ_INTERVAL);
+        this.setupLogCycle();
+      } else {
+        throw new Error(
+          `${logPrefix} Host status:${this.hostConnectivityState}`
+        );
+      }
+    } catch (error) {
+      winston.error(`${logPrefix} ${error?.message}`);
+
+      this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
+      this.reconnectTimeoutId = setTimeout(() => {
+        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+        this.init();
+      }, this.RECONNECT_TIMEOUT);
+      return;
+    }
+  }
+
+  /**
+   * Reads all datapoints for current cycle and creates resulting events
+   * @param  {Array<number>} currentIntervals
+   * @returns Promise
+   */
+  protected async dataSourceCycle(
+    currentIntervals: Array<number>
+  ): Promise<void> {
+    this.readCycleCount = this.readCycleCount + 1;
+
+    try {
+      winston.debug(`Reading sequence number: ${this.nextSequenceNumber}`);
+      await this.getSampleResponse();
+
+      const measurements: IMeasurement[] = [];
+      for (const sourceDp of this.dataPoints) {
+        const matchingMeasurementReading = this.measurements[sourceDp.address];
+
+        if (matchingMeasurementReading?.value) {
+          measurements.push({
+            ...matchingMeasurementReading,
+            id: sourceDp.id
+          });
+        }
+      }
+      if (measurements.length > 0) {
+        this.onDataPointMeasurement(measurements);
+      }
+    } catch (e) {
+      winston.error(e);
+    }
+  }
+
+  /**
+   * Disconnects data source
+   * @returns Promise<void>
+   */
+  public async disconnect(): Promise<void> {
+    const logPrefix = `${this.name}::disconnect`;
+    winston.debug(`${logPrefix} triggered.`);
+
+    clearTimeout(this.reconnectTimeoutId);
+    this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
+  }
+
+  /**
+   *
+   */
+  private async getCurrentResponse() {
+    const logPrefix = `${MTConnectDataSource.name}::getCurrentResponse`;
+    const response = await this.getMTConnectAgentXMLResponseAsObject(
+      '/current'
+    );
+    this.handleStreamResponse(response as IMTConnectStreamResponse);
+  }
+
+  /**
+   *
+   */
+  private async getSampleResponse() {
+    const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
+    const response = await this.getMTConnectAgentXMLResponseAsObject(
+      '/sample',
+      this.nextSequenceNumber
+    );
+
+    if ((response as IMTConnectStreamError).MTConnectError) {
+      const errorCode = (response as IMTConnectStreamError).MTConnectError
+        ?.Errors?.Error?.['@errorCode'];
+      const errorMessage: string = (response as IMTConnectStreamError)
+        .MTConnectError?.Errors?.Error?.['#'];
+
+      if (errorMessage.includes('must be greater than')) {
+        const newSequenceNumber = parseInt(
+          errorMessage.trim().split('must be greater than ')[1]
+        );
+        winston.warn(
+          `${logPrefix} current sequence number ${this.nextSequenceNumber} is less than minimum allowed. Updating next sequence number to:${newSequenceNumber}`
+        );
+
+        this.nextSequenceNumber = newSequenceNumber;
+      } else if (errorMessage.includes('must be less than')) {
+        const newSequenceNumber = parseInt(
+          errorMessage.trim().split('must be less than ')[1]
+        );
+        winston.warn(
+          `${logPrefix} current sequence ${this.nextSequenceNumber} is more than maximum allowed. Updating next sequence number to:${newSequenceNumber}`
+        );
+
+        this.nextSequenceNumber = newSequenceNumber;
+      }
+    } else {
+      this.handleStreamResponse(response as IMTConnectStreamResponse);
+    }
+  }
+
+  /**
+   *
+   * @param streamResponse
+   */
+  private handleSequenceNumbers(
+    streamResponse: IMTConnectStreamResponse
+  ): void {
+    const {
+      firstSequence,
+      nextSequence,
+      lastSequence,
+      sender,
+      deviceModelChangeTime
+    } = streamResponse?.MTConnectStreams?.Header?.['@'] ?? {};
+    this.firstSequenceNumber = parseInt(firstSequence);
+    this.nextSequenceNumber = parseInt(nextSequence);
+    this.lastSequenceNumber = parseInt(lastSequence);
+  }
+
+  /**
+   *
+   * @param streamResponse
+   */
+  private handleStreamResponse(streamResponse: IMTConnectStreamResponse): void {
+    this.handleSequenceNumbers(streamResponse);
+
+    let devicesStream = streamResponse?.MTConnectStreams?.Streams?.DeviceStream;
+    if (!devicesStream) {
+      return;
+    }
+    if (!Array.isArray(devicesStream)) {
+      devicesStream = [devicesStream];
+    }
+
+    for (const deviceStreamItem of devicesStream) {
+      const { uuid, name: machineName } = deviceStreamItem['@'] ?? {};
+      let componentsStream = Array.isArray(deviceStreamItem.ComponentStream)
+        ? deviceStreamItem.ComponentStream
+        : [deviceStreamItem.ComponentStream];
+
+      for (const componentStreamItem of componentsStream) {
+        const {
+          componentId,
+          component,
+          name: componentName
+        } = componentStreamItem['@'] ?? {};
+
+        // ## Check Events
+        this.handleEventsOrSamples(
+          'Event',
+          componentStreamItem,
+          machineName,
+          componentName
+        );
+
+        // ## Check Samples
+        this.handleEventsOrSamples(
+          'Sample',
+          componentStreamItem,
+          machineName,
+          componentName
+        );
+        // ## Check Conditions
+        // Out of Scope
+        // this.processCondition(componentStreamItem,machineName,componentName)
+      }
+    }
+  }
+
+  private handleEventsOrSamples(
+    type: 'Event' | 'Sample',
+    componentStreamItem: IComponentStream,
+    machineName: string,
+    componentName: string
+  ) {
+    const logPrefix = `${MTConnectDataSource.name}::processEventOrSample`;
+    let keyToUse: 'Events' | 'Samples';
+    switch (type) {
+      case 'Event':
+        keyToUse = 'Events';
+        break;
+      case 'Sample':
+        keyToUse = 'Samples';
+        break;
+      default:
+        break;
+    }
+    console.log(JSON.stringify(componentStreamItem[keyToUse], null, 2));
+    let objectToProcess: {
+      [key: string]: IMeasurementData & { name?: string };
+    } = {};
+    // In case of recurring event names, events are grouped under # key as an array, otherwise as an object.
+    if (
+      componentStreamItem[keyToUse]?.['#'] &&
+      Array.isArray(componentStreamItem[keyToUse]?.['#'])
+    ) {
+      (
+        componentStreamItem[keyToUse]?.['#'] as IMeasurementDataObject[]
+      ).forEach((obj) => {
+        Object.entries(obj).forEach(([name, list]) => {
+          let eventOrSampleArray = Array.isArray(list) ? list : [list];
+
+          eventOrSampleArray.forEach((details) => {
+            const id = details['@'].dataItemId;
+            objectToProcess[id] = { ...details, name };
+          });
+        });
+      });
+    } else {
+      Object.entries(
+        (componentStreamItem[keyToUse] ?? {}) as IMeasurementDataObject
+      ).forEach(([name, list]) => {
+        let eventOrSampleArray = Array.isArray(list) ? list : [list];
+
+        eventOrSampleArray.forEach((details) => {
+          const id = details['@'].dataItemId;
+          objectToProcess[id] = { ...details, name };
+        });
+      });
+    }
+
+    for (let detailObject of Object.values(objectToProcess)) {
+      const {
+        dataItemId,
+        duration,
+        sequence,
+        subType,
+        assetType,
+        statistic,
+        timestamp
+      } = detailObject['@'] ?? {};
+      const value = detailObject['#'];
+      // In some cases Entry can be present instead of a value
+      let entries: IEntry[];
+      let entriesObject: IEntriesObject = {};
+
+      if (detailObject.Entry) {
+        entries = Array.isArray(detailObject.Entry)
+          ? detailObject.Entry
+          : [detailObject.Entry];
+
+        entries.forEach((entry) => {
+          const keyName = entry['@key'];
+          const keyValue = entry['#'];
+          if (!entriesObject[keyName]) {
+            entriesObject[keyName] = {};
+          }
+          if (keyValue) {
+            entriesObject[keyName] = keyValue;
+          } else {
+            let cells = Array.isArray(entry.Cell) ? entry.Cell : [entry.Cell];
+            cells?.forEach((cellInfo) => {
+              const cellKeyName = cellInfo['@key'];
+              const cellValue = cellInfo['#'];
+              entriesObject[keyName][cellKeyName] = cellValue;
+            });
+          }
+        });
+      }
+      this.measurements[dataItemId] = {
+        id: dataItemId,
+        duration,
+        statistic,
+        name: detailObject.name,
+        sequence,
+        assetType,
+        subType,
+        value,
+        machineName,
+        componentName,
+        type:
+          type === 'Event'
+            ? 'event'
+            : type === 'Sample'
+            ? 'sample'
+            : 'condition',
+        timestamp
+      };
+
+      if (entries.length > 0) {
+        this.measurements[dataItemId].entries = entriesObject;
+      }
+    }
+  }
+
+  /**
+   *
+   * @param componentStreamItem
+   * @param machineName
+   * @param componentName
+   */
+  private handleConditions(
+    componentStreamItem,
+    machineName: string,
+    componentName: string
+  ): void {
+    // !! NOT USED - OUT OF SCOPE !!
+    /*for (let [alarmStatus, details] of Object.entries(
+      componentStreamItem.Condition ?? {}
+    )) {
+      let detailsArray = Array.isArray(details) ? details : [details];
+
+      detailsArray.forEach((detail) => {
+        const { dataItemId, sequence, timestamp, type } = detail['@'];
+
+        this.measurements[dataItemId] = {
+          id: dataItemId,
+          sequence,
+          status: alarmStatus,
+          timestamp,
+          machineName,
+          componentName,
+          type: 'condition'
+        };
+      });
+    }*/
+  }
+
+  /**
+   *
+   * @returns parsed XML as object
+   */
+  private getMTConnectAgentXMLResponseAsObject(
+    endpoint: '/probe' | '/current' | '/sample',
+    nextSequence?: number
+  ): Promise<IMTConnectStreamResponse | IMTConnectStreamError> {
+    const logPrefix = `${this.name}::getMTConnectAgentResponse`;
+
+    return new Promise(async (resolve, reject) => {
+      if (!['/probe', '/current', '/sample'].includes(endpoint)) {
+        const err = `${logPrefix} unexpected endpoint request for MTConnect Agent: ${endpoint}`;
+        winston.error(err);
+        return reject(new Error(err));
+      }
+      if (endpoint === '/sample' && typeof nextSequence !== 'number') {
+        const err = `${logPrefix} missing next sequence number`;
+        winston.error(err);
+        return reject(new Error(err));
+      }
+
+      const { ipAddr, port } = this.config
+        .connection as IMTConnectDataSourceConnection;
+
+      try {
+        const fetchUrl =
+          endpoint === '/sample'
+            ? `${ipAddr}:${port}${endpoint}?from=${nextSequence}&count=1`
+            : `${ipAddr}:${port}${endpoint}`;
+        const response = await fetch(fetchUrl, {
+          method: 'GET',
+          timeout: 5000,
+          compress: false,
+          headers: {
+            Accept: 'text/xml'
+          }
+        });
+        const xmlString = await response?.text();
+        const xmlObj = convert(xmlString, {
+          format: 'object',
+          group: true
+        });
+        // TODO
+        //@ts-ignore
+        return resolve(xmlObj);
+      } catch (e) {
+        const err = `${logPrefix} unexpected error occurred while fetching XML response: ${e?.message}`;
+        winston.error(err);
+        return reject(new Error(err));
+      }
+    });
+  }
+
+  /**
+   * Tests connectivity to given hostname
+   */
+  public async testHostConnectivity() {
+    const logPrefix = `${MTConnectDataSource.name}::testHostConnectivity`;
+    const { ipAddr, port } = this.config
+      .connection as IMTConnectDataSourceConnection;
+
+    try {
+      const response = await fetch(`${ipAddr}:${port}`, {
+        method: 'GET',
+        timeout: 5000
+      });
+
+      if (response.ok) {
+        this.hostConnectivityState = IHostConnectivityState.OK;
+      } else {
+        throw new Error('Response not OK');
+      }
+    } catch (err) {
+      winston.warn(
+        `${logPrefix} error connecting to MTConnect Agent at ${ipAddr}:${port}, err: ${err}`
+      );
+      this.hostConnectivityState = IHostConnectivityState.ERROR;
+    }
+  }
+}

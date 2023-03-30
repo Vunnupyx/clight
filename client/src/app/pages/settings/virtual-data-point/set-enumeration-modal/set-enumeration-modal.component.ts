@@ -21,6 +21,7 @@ import { SourceDataPointService, VirtualDataPointService } from 'app/services';
 import { Subscription } from 'rxjs';
 import { ObjectMap } from 'app/shared/utils';
 import { withLatestFrom } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface SetEnumerationModalData {
   protocol?: DataSourceProtocol;
@@ -47,6 +48,7 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
+    private translate: TranslateService,
     private dialogRef: MatDialogRef<
       SetEnumerationModalComponent,
       SetEnumerationModalData
@@ -86,8 +88,10 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
   }
 
   onDelete(index: number) {
-    const title = `Delete`;
-    const message = `Are you sure you want to delete enumeration item?`;
+    const title = this.translate.instant('settings-virtual-data-point.Delete');
+    const message = this.translate.instant(
+      'settings-virtual-data-point.EnumerationDeleteMessage'
+    );
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

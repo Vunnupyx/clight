@@ -218,6 +218,13 @@
                     'virtual-data-point-operation-type.SetTariff' | translate
                   }}</ng-container
                 >
+                <ng-container
+                  *ngSwitchCase="VirtualDataPointOperationType.BLINK_DETECTION"
+                  >{{
+                    'virtual-data-point-operation-type.BlinkDetection'
+                      | translate
+                  }}</ng-container
+                >
                 <ng-container *ngSwitchDefault>{{
                   value | uppercase
                 }}</ng-container>
@@ -444,6 +451,21 @@
                 ><mat-icon svgIcon="mdc:system"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
+                *ngIf="
+                  row?.operationType ===
+                  VirtualDataPointOperationType.BLINK_DETECTION
+                "
+                (click)="
+                  row?.sources?.length > 0 && onSetBlinkSettings(row);
+                  group.value = null
+                "
+                [matTooltip]="
+                  'settings-virtual-data-point.SetBlinkSettings' | translate
+                "
+                matTooltipPosition="above"
+                ><mat-icon svgIcon="mdc:settings"></mat-icon
+              ></mat-button-toggle>
+              <mat-button-toggle
                 (click)="onEditStart(rowIndex, row); group.value = null"
                 [matTooltip]="'settings-virtual-data-point.Edit' | translate"
                 matTooltipPosition="above"
@@ -555,6 +577,21 @@
                 matTooltipPosition="above"
                 [disabled]="!!unsavedRow"
                 ><mat-icon svgIcon="mdc:system"></mat-icon
+              ></mat-button-toggle>
+              <mat-button-toggle
+                *ngIf="
+                  row?.operationType ===
+                  VirtualDataPointOperationType.BLINK_DETECTION
+                "
+                (click)="
+                  row?.sources?.length > 0 && onSetBlinkSettings(row);
+                  group.value = null
+                "
+                [matTooltip]="
+                  'settings-virtual-data-point.SetBlinkSettings' | translate
+                "
+                matTooltipPosition="above"
+                ><mat-icon svgIcon="mdc:settings"></mat-icon
               ></mat-button-toggle>
               <mat-button-toggle
                 (click)="

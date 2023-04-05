@@ -90,6 +90,10 @@ async function patchSingleDataSourceHandler(
   const protocol = request.params.datasourceProtocol;
   const updatedDataSource = request.body;
 
+  if (protocol === DataSourceProtocols.MTCONNECT) {
+    allowed.push('mtConnectMachineName');
+  }
+
   if (!isValidProtocol(protocol) || isValidDataSource(updatedDataSource)) {
     response.status(400).json({ error: 'Input not valid.' });
     return Promise.resolve();
@@ -113,6 +117,7 @@ async function patchSingleDataSourceHandler(
       response.status(403).json({
         error: `Not allowed to change ${entry}`
       });
+      return Promise.resolve();
     }
   });
 

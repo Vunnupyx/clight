@@ -122,6 +122,7 @@ export interface IDataSourceConfig {
     | IIoShieldDataSourcesTypes
     | IEnergyDataSourcesTypes
     | IMTConnectDataSourcesTypes;
+  mtConnectMachineName?: string;
 }
 
 export function isValidDataSourceDatapoint(dp: any): dp is IDataPointConfig {

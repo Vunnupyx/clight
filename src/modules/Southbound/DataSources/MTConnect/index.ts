@@ -32,9 +32,7 @@ export class MTConnectDataSource extends DataSource {
   private lastSequenceNumber: number;
   private requestCount = 1;
   private hostname = '';
-  private measurements: {
-    [key: string]: IMTConnectMeasurement;
-  } = {};
+  private measurements: IMeasurement[] = [];
   private hostConnectivityState: IHostConnectivityState =
     IHostConnectivityState.UNKNOWN;
 
@@ -96,8 +94,8 @@ export class MTConnectDataSource extends DataSource {
         winston.info(
           `${logPrefix} successfully connected to MT Connect Source`
         );
-        await this.getCurrentResponse();
-        await this.getSampleResponse();
+        await this.getAndProcessCurrentResponse();
+        await this.getAndProcessSampleResponse();
 
         this.setupDataPoints(this.DATAPOINT_READ_INTERVAL);
         this.setupLogCycle();
@@ -130,21 +128,11 @@ export class MTConnectDataSource extends DataSource {
       winston.debug(
         `Reading sequence number: ${this.nextSequenceNumber} with count ${this.requestCount}`
       );
-      await this.getSampleResponse();
+      await this.getAndProcessSampleResponse();
 
-      const measurements: IMeasurement[] = [];
-      for (const sourceDp of this.dataPoints) {
-        const matchingMeasurementReading = this.measurements[sourceDp.address];
-
-        if (matchingMeasurementReading?.value) {
-          measurements.push({
-            ...matchingMeasurementReading,
-            id: sourceDp.id
-          });
-        }
-      }
-      if (measurements.length > 0) {
-        this.onDataPointMeasurement(measurements);
+      if (this.measurements.length > 0) {
+        this.onDataPointMeasurement(this.measurements);
+        this.measurements = [];
       }
     } catch (e) {
       winston.error(e);
@@ -166,7 +154,7 @@ export class MTConnectDataSource extends DataSource {
   /**
    *
    */
-  private async getCurrentResponse() {
+  private async getAndProcessCurrentResponse() {
     const logPrefix = `${MTConnectDataSource.name}::getCurrentResponse`;
     const response = await this.getMTConnectAgentXMLResponseAsObject(
       '/current'
@@ -177,7 +165,7 @@ export class MTConnectDataSource extends DataSource {
   /**
    *
    */
-  private async getSampleResponse() {
+  private async getAndProcessSampleResponse() {
     const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
     const response = await this.getMTConnectAgentXMLResponseAsObject(
       '/sample',
@@ -292,7 +280,6 @@ export class MTConnectDataSource extends DataSource {
         );
         // ## Check Conditions
         // Out of Scope
-        // this.processCondition(componentStreamItem,machineName,componentName)
       }
     }
   }
@@ -315,10 +302,9 @@ export class MTConnectDataSource extends DataSource {
       default:
         break;
     }
-    let objectToProcess: {
-      [key: string]: IMeasurementData & { name?: string };
-    } = {};
-    // In case of recurring event names, events are grouped under # key as an array, otherwise as an object.
+    let arrayToProcess: IMeasurementData[] = [];
+
+    // In case of recurring event/sample names, events/samples are grouped under # key as an array, otherwise as an object.
     if (
       componentStreamItem[keyToUse]?.['#'] &&
       Array.isArray(componentStreamItem[keyToUse]?.['#'])
@@ -329,10 +315,14 @@ export class MTConnectDataSource extends DataSource {
         Object.entries(obj).forEach(([name, list]) => {
           let eventOrSampleArray = Array.isArray(list) ? list : [list];
 
-          eventOrSampleArray.forEach((details) => {
-            const id = details['@'].dataItemId;
-            objectToProcess[id] = { ...details, name };
-          });
+          eventOrSampleArray
+            .sort(
+              // sort potentially multiple measurements by sequence in ascending order!
+              (a, b) => parseInt(a['@']?.sequence) - parseInt(b['@']?.sequence)
+            )
+            .forEach((details) => {
+              arrayToProcess.push({ ...details, name });
+            });
         });
       });
     } else {
@@ -341,14 +331,18 @@ export class MTConnectDataSource extends DataSource {
       ).forEach(([name, list]) => {
         let eventOrSampleArray = Array.isArray(list) ? list : [list];
 
-        eventOrSampleArray.forEach((details) => {
-          const id = details['@'].dataItemId;
-          objectToProcess[id] = { ...details, name };
-        });
+        eventOrSampleArray
+          .sort(
+            // sort potentially multiple measurements by sequence in ascending order!
+            (a, b) => parseInt(a['@']?.sequence) - parseInt(b['@']?.sequence)
+          )
+          .forEach((details) => {
+            arrayToProcess.push({ ...details, name });
+          });
       });
     }
 
-    for (let detailObject of Object.values(objectToProcess)) {
+    for (let detailObject of arrayToProcess) {
       const {
         dataItemId,
         duration,
@@ -386,7 +380,8 @@ export class MTConnectDataSource extends DataSource {
           }
         });
       }
-      this.measurements[dataItemId] = {
+
+      let measurement: IMTConnectMeasurement = {
         id: dataItemId,
         duration,
         statistic,
@@ -407,42 +402,17 @@ export class MTConnectDataSource extends DataSource {
       };
 
       if (entries?.length > 0) {
-        this.measurements[dataItemId].entries = entriesObject;
+        measurement.entries = entriesObject;
+      }
+
+      const matchingDatapoint = this.dataPoints.find(
+        (dp) => dp.address === dataItemId
+      );
+      // Send the reading as measurement if it is a requested data point
+      if (matchingDatapoint) {
+        this.measurements.push({ ...measurement, id: matchingDatapoint.id });
       }
     }
-  }
-
-  /**
-   *
-   * @param componentStreamItem
-   * @param machineName
-   * @param componentName
-   */
-  private handleConditions(
-    componentStreamItem,
-    machineName: string,
-    componentName: string
-  ): void {
-    // !! NOT USED - OUT OF SCOPE !!
-    /*for (let [alarmStatus, details] of Object.entries(
-      componentStreamItem.Condition ?? {}
-    )) {
-      let detailsArray = Array.isArray(details) ? details : [details];
-
-      detailsArray.forEach((detail) => {
-        const { dataItemId, sequence, timestamp, type } = detail['@'];
-
-        this.measurements[dataItemId] = {
-          id: dataItemId,
-          sequence,
-          status: alarmStatus,
-          timestamp,
-          machineName,
-          componentName,
-          type: 'condition'
-        };
-      });
-    }*/
   }
 
   /**

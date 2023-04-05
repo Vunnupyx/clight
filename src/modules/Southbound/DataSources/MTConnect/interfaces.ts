@@ -33,6 +33,7 @@ export interface IMeasurementData {
   };
   '#'?: string;
   Entry?: IEntry | IEntry[];
+  name?: string;
 }
 
 export interface IMeasurementDataObject {

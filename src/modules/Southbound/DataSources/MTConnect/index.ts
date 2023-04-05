@@ -38,7 +38,7 @@ export class MTConnectDataSource extends DataSource {
   private hostConnectivityState: IHostConnectivityState =
     IHostConnectivityState.UNKNOWN;
 
-  private DATAPOINT_READ_INTERVAL = 1000;
+  private DATAPOINT_READ_INTERVAL = 500;
 
   constructor(params: IDataSourceParams) {
     super(params);
@@ -127,7 +127,9 @@ export class MTConnectDataSource extends DataSource {
     this.readCycleCount = this.readCycleCount + 1;
 
     try {
-      winston.debug(`Reading sequence number: ${this.nextSequenceNumber}`);
+      winston.debug(
+        `Reading sequence number: ${this.nextSequenceNumber} with count ${this.requestCount}`
+      );
       await this.getSampleResponse();
 
       const measurements: IMeasurement[] = [];
@@ -189,7 +191,9 @@ export class MTConnectDataSource extends DataSource {
         .MTConnectError?.Errors?.Error?.['#'];
 
       if (errorMessage.includes('must be greater than')) {
-        // TBD Runtime is behind, should sync to next possible firstSequence and must quickly read to catch up to actual nextSequenceNumber
+        // Runtime is behind, should sync to next possible firstSequence and must quickly read to catch up to actual nextSequenceNumber
+        // This should not happen as varying request count always stays in sync
+
         const newFirstSequenceNumber = parseInt(
           errorMessage.trim().split('must be greater than ')[1]
         );
@@ -199,7 +203,8 @@ export class MTConnectDataSource extends DataSource {
 
         this.nextSequenceNumber = newFirstSequenceNumber;
       } else if (errorMessage.includes('must be less than')) {
-        // TBD Runtime is too fast, should sync back to last value
+        // Runtime is too fast, should sync back to last value
+        // This should not happen as varying request count always stays in sync
         const newSequenceNumber = parseInt(
           errorMessage.trim().split('must be less than ')[1]
         );
@@ -208,6 +213,8 @@ export class MTConnectDataSource extends DataSource {
         );
 
         this.nextSequenceNumber = newSequenceNumber;
+      } else {
+        winston.warn(`${logPrefix} ${errorMessage}`);
       }
     } else {
       this.handleStreamResponse(response as IMTConnectStreamResponse);
@@ -231,6 +238,13 @@ export class MTConnectDataSource extends DataSource {
     this.firstSequenceNumber = parseInt(firstSequence);
     this.nextSequenceNumber = parseInt(nextSequence);
     this.lastSequenceNumber = parseInt(lastSequence);
+    if (this.lastSequenceNumber - this.nextSequenceNumber > 1) {
+      // If runtime is behind the last sequence more than 1, then make the next request count to be the difference to catch up
+      this.requestCount = this.lastSequenceNumber - this.nextSequenceNumber;
+    } else {
+      // otherwise read single count
+      this.requestCount = 1;
+    }
   }
 
   /**

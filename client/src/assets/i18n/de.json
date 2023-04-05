@@ -137,7 +137,7 @@
     "Japanese": "日本語",
     "Templates": "Vorkonfigurationen",
     "CurrentTemplate": "Aktuell eingestellte Vorkonfiguration",
-    "OpenConfigurationWizard": "Vorkonfiguation ändern",
+    "ChangeTemplate": "Change Template",
     "BackupAndRestore": "Konfiguration sichern und wiederherstellen",
     "BackupConfiguration": "Aktuelle Konfiguration sichern",
     "RestoreConfiguration": "Konfiguration wiederherstellen",

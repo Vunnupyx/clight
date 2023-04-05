@@ -19,6 +19,7 @@ import {
 } from '../../../ConfigManager/interfaces';
 import fetch from 'node-fetch';
 import { convert } from 'xmlbuilder2';
+import { isValidIpOrHostname } from '../../../Utilities';
 
 /**
  * Implementation of MTConnect data source
@@ -29,18 +30,32 @@ export class MTConnectDataSource extends DataSource {
   private firstSequenceNumber: number;
   private nextSequenceNumber: number;
   private lastSequenceNumber: number;
+  private requestCount = 1;
+  private hostname = '';
   private measurements: {
     [key: string]: IMTConnectMeasurement;
   } = {};
   private hostConnectivityState: IHostConnectivityState =
     IHostConnectivityState.UNKNOWN;
 
-  private DATAPOINT_READ_INTERVAL = 100;
+  private DATAPOINT_READ_INTERVAL = 1000;
 
   constructor(params: IDataSourceParams) {
     super(params);
 
     this.dataPoints = params.config.dataPoints;
+    let { ipAddr, port } = this.config
+      .connection as IMTConnectDataSourceConnection;
+    let machineName = this.config.mtConnectMachineName;
+    this.hostname = isValidIpOrHostname(ipAddr)
+      ? ipAddr?.startsWith('http')
+        ? machineName
+          ? `${ipAddr}:${port}/${machineName}`
+          : `${ipAddr}:${port}`
+        : machineName
+        ? `http://${ipAddr}:${port}/${machineName}`
+        : `http://${ipAddr}:${port}`
+      : '';
   }
 
   /**
@@ -87,9 +102,7 @@ export class MTConnectDataSource extends DataSource {
         this.setupDataPoints(this.DATAPOINT_READ_INTERVAL);
         this.setupLogCycle();
       } else {
-        throw new Error(
-          `${logPrefix} Host status:${this.hostConnectivityState}`
-        );
+        throw new Error(`Host status:${this.hostConnectivityState}`);
       }
     } catch (error) {
       winston.error(`${logPrefix} ${error?.message}`);
@@ -176,15 +189,17 @@ export class MTConnectDataSource extends DataSource {
         .MTConnectError?.Errors?.Error?.['#'];
 
       if (errorMessage.includes('must be greater than')) {
-        const newSequenceNumber = parseInt(
+        // TBD Runtime is behind, should sync to next possible firstSequence and must quickly read to catch up to actual nextSequenceNumber
+        const newFirstSequenceNumber = parseInt(
           errorMessage.trim().split('must be greater than ')[1]
         );
         winston.warn(
-          `${logPrefix} current sequence number ${this.nextSequenceNumber} is less than minimum allowed. Updating next sequence number to:${newSequenceNumber}`
+          `${logPrefix} current sequence number ${this.nextSequenceNumber} is less than minimum allowed. Updating next sequence number to:${newFirstSequenceNumber}`
         );
 
-        this.nextSequenceNumber = newSequenceNumber;
+        this.nextSequenceNumber = newFirstSequenceNumber;
       } else if (errorMessage.includes('must be less than')) {
+        // TBD Runtime is too fast, should sync back to last value
         const newSequenceNumber = parseInt(
           errorMessage.trim().split('must be less than ')[1]
         );
@@ -286,7 +301,6 @@ export class MTConnectDataSource extends DataSource {
       default:
         break;
     }
-    console.log(JSON.stringify(componentStreamItem[keyToUse], null, 2));
     let objectToProcess: {
       [key: string]: IMeasurementData & { name?: string };
     } = {};
@@ -378,7 +392,7 @@ export class MTConnectDataSource extends DataSource {
         timestamp
       };
 
-      if (entries.length > 0) {
+      if (entries?.length > 0) {
         this.measurements[dataItemId].entries = entriesObject;
       }
     }
@@ -439,14 +453,11 @@ export class MTConnectDataSource extends DataSource {
         return reject(new Error(err));
       }
 
-      const { ipAddr, port } = this.config
-        .connection as IMTConnectDataSourceConnection;
-
       try {
         const fetchUrl =
           endpoint === '/sample'
-            ? `${ipAddr}:${port}${endpoint}?from=${nextSequence}&count=1`
-            : `${ipAddr}:${port}${endpoint}`;
+            ? `${this.hostname}${endpoint}?from=${nextSequence}&count=${this.requestCount}`
+            : `${this.hostname}${endpoint}`;
         const response = await fetch(fetchUrl, {
           method: 'GET',
           timeout: 5000,
@@ -476,11 +487,9 @@ export class MTConnectDataSource extends DataSource {
    */
   public async testHostConnectivity() {
     const logPrefix = `${MTConnectDataSource.name}::testHostConnectivity`;
-    const { ipAddr, port } = this.config
-      .connection as IMTConnectDataSourceConnection;
 
     try {
-      const response = await fetch(`${ipAddr}:${port}`, {
+      const response = await fetch(this.hostname, {
         method: 'GET',
         timeout: 5000
       });
@@ -492,7 +501,7 @@ export class MTConnectDataSource extends DataSource {
       }
     } catch (err) {
       winston.warn(
-        `${logPrefix} error connecting to MTConnect Agent at ${ipAddr}:${port}, err: ${err}`
+        `${logPrefix} error connecting to MTConnect Agent at ${this.hostname}, err: ${err}`
       );
       this.hostConnectivityState = IHostConnectivityState.ERROR;
     }

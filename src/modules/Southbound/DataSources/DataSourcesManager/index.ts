@@ -144,7 +144,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
       case DataSourceProtocols.ENERGY:
         return new EnergyDataSource(params, this.virtualDataPointManager);
       case DataSourceProtocols.MTCONNECT:
-        return new MTConnectDataSource(params, this.virtualDataPointManager);
+        return new MTConnectDataSource(params);
       default:
         throw new Error('Invalid data source!');
     }

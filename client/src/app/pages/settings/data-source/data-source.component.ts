@@ -308,7 +308,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
     this.ngxDatatable.sorts = [];
-    this.datapointRows = this.datapointRows.concat([obj]);
+    this.datapointRows = [obj].concat(this.datapointRows);
   }
 
   onEditStart(rowIndex: number, row: any) {

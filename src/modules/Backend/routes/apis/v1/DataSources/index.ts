@@ -91,7 +91,7 @@ async function patchSingleDataSourceHandler(
   const updatedDataSource = request.body;
 
   if (protocol === DataSourceProtocols.MTCONNECT) {
-    allowed.push('mtConnectMachineName');
+    allowed.push('machineName');
   }
 
   if (!isValidProtocol(protocol) || isValidDataSource(updatedDataSource)) {

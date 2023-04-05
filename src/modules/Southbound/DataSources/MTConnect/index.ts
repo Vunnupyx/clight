@@ -44,7 +44,7 @@ export class MTConnectDataSource extends DataSource {
     this.dataPoints = params.config.dataPoints;
     let { ipAddr, port } = this.config
       .connection as IMTConnectDataSourceConnection;
-    let machineName = this.config.mtConnectMachineName;
+    let machineName = this.config.machineName;
     this.hostname = isValidIpOrHostname(ipAddr)
       ? ipAddr?.startsWith('http')
         ? machineName

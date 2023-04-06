@@ -99,7 +99,7 @@
                 <mat-form-field class="col-12 col-md-7">
                   <input
                     matInput
-                    name="ipAddress"
+                    name="machineName"
                     [ngModel]="dataSource?.machineName"
                     (ngModelChange)="updateMachineName($event)"
                   />
@@ -107,17 +107,17 @@
               </div>
               <div class="row d-flex align-items-center">
                 <div class="text-nowrap col-12 col-md-5 pb-20">
-                  {{ 'settings-data-source.IPAddress' | translate }}
+                  {{ 'settings-data-source.Hostname' | translate }}
                 </div>
                 <mat-form-field class="col-12 col-md-7">
                   <input
                     matInput
-                    name="ipAddr"
+                    name="hostname"
                     #ipAddr="ngModel"
                     [ngModel]="dataSource?.connection?.ipAddr"
-                    [pattern]="ipRegex"
+                    [pattern]="ipOrHostRegex"
                     [required]="true"
-                    (ngModelChange)="updateIpAddress(form.valid, $event)"
+                    (ngModelChange)="updateHostname(form.valid, $event)"
                   />
                 </mat-form-field>
               </div>

@@ -36,6 +36,7 @@ export class Connection {
   port?: number;
   rack?: number;
   slot?: number;
+  hostname?: string;
 }
 
 export enum S7Types {

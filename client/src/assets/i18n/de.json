@@ -175,6 +175,7 @@
     "Enabled": "Aktiviert",
     "MachineName": "Machine Name",
     "IPAddress": "IP Adresse",
+    "Hostname": "Hostname",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
     "Disconnected": "Nicht verbunden",

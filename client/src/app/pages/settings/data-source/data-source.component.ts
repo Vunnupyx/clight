@@ -25,7 +25,7 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import { IP_REGEX, PORT_REGEX } from 'app/shared/utils/regex';
+import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -73,6 +73,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   ipRegex = IP_REGEX;
   portRegex = PORT_REGEX;
+  ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
   dsFormValid = true;
 
   filterDigitalInputAddressStr = '';
@@ -270,6 +271,19 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     }
     this.dataSource.connection = this.dataSource.connection || <Connection>{};
     this.dataSource.connection.ipAddr = val;
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      connection: this.dataSource.connection
+    });
+  }
+
+  updateHostname(valid: boolean | null, val: string) {
+    this.dsFormValid = !!valid;
+
+    if (!valid || !this.dataSource) {
+      return;
+    }
+    this.dataSource.connection = this.dataSource.connection || <Connection>{};
+    this.dataSource.connection.hostname = val;
     this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
       connection: this.dataSource.connection
     });

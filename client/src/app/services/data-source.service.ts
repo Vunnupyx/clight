@@ -151,7 +151,8 @@ export class DataSourceService {
       payload.type = ds.type;
     }
 
-    if (ds.machineName) {
+    if (protocol === DataSourceProtocol.MTConnect) {
+      //Always send this with MTConnect so that empty string for removing machine name is also sent
       payload.machineName = ds.machineName;
     }
 

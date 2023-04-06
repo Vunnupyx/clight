@@ -100,8 +100,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   get MTConnectStreamHref() {
     return !this.dataSource?.machineName
-      ? `http://${window.location.hostname}:15404/current`
-      : `http://${window.location.hostname}:15404/${this.dataSource.machineName}/current`;
+      ? `http://${this.dataSource.connection.ipAddr}:${this.dataSource.connection.port}/current`
+      : `http://${this.dataSource.connection.ipAddr}:${this.dataSource.connection.port}/${this.dataSource.machineName}/current`;
   }
 
   constructor(

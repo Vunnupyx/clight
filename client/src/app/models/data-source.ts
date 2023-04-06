@@ -66,7 +66,7 @@ export class DataSource {
   dataPoints?: SourceDataPoint[];
   enabled?: boolean;
   id?: string;
-  name?: string;
+  machineName?: string;
   protocol?: DataSourceProtocol;
   softwareVersion?: string;
 }

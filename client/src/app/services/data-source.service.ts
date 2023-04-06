@@ -7,7 +7,6 @@ import { from, interval, Observable } from 'rxjs';
 import {
   DataSource,
   DataSourceConnection,
-  DataSourceConnectionStatus,
   DataSourceProtocol,
   EnergyTypes,
   IOShieldTypes,
@@ -20,7 +19,6 @@ import { clone, errorHandler, mapOrder } from 'app/shared/utils';
 import * as api from 'app/api/models';
 import NCK_ADDRESSES from 'app/services/constants/nckAddresses';
 import ENERGY_ADDRESSES from 'app/services/constants/energyAddresses';
-import { HttpMockupService } from '../shared/services/http-mockup.service';
 
 export class DataSourcesState {
   status!: Status;
@@ -37,42 +35,6 @@ const DATA_SOURCES_ORDER = [
   DataSourceProtocol.Energy
 ];
 
-const DATA_SOURCES = {
-  dataSources: [
-    {
-      dataPoints: [],
-      protocol: 'energy',
-      enabled: true,
-      type: 'PhoenixEMpro'
-    },
-    {
-      dataPoints: [],
-      protocol: 's7',
-      enabled: false,
-      type: 'nck',
-      connection: { ipAddr: '192.168.214.1', port: 102, rack: 0, slot: 2 }
-    },
-    {
-      dataPoints: [],
-      name: 'DMG_MORI_IoTconnector-flex',
-      protocol: 'mtconnect',
-      enabled: false,
-      type: 'agent',
-      connection: { ipAddr: '192.168.214.1', port: 102, rack: 0, slot: 2 }
-    },
-    {
-      dataPoints: [],
-      protocol: 'ioshield',
-      enabled: false,
-      type: 'ai-100+5di'
-    }
-  ]
-};
-
-const DATA_SOURCES_STATUS = {
-  status: DataSourceConnectionStatus.Connected
-};
-
 @Injectable()
 export class DataSourceService {
   private _store: Store<DataSourcesState>;
@@ -80,7 +42,6 @@ export class DataSourceService {
   constructor(
     storeFactory: StoreFactory<DataSourcesState>,
     private httpService: HttpService,
-    private httpMockupService: HttpMockupService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
@@ -115,12 +76,9 @@ export class DataSourceService {
     }));
 
     try {
-      const { dataSources } =
-        await this.httpMockupService.get<api.DataSourceList>(
-          `/datasourcesMockup`,
-          undefined,
-          DATA_SOURCES
-        );
+      const { dataSources } = await this.httpService.get<api.DataSourceList>(
+        `/datasources`
+      );
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.dataSources = this._orderByProtocol(
@@ -148,10 +106,8 @@ export class DataSourceService {
 
   async getStatus(datasourceProtocol: string) {
     try {
-      const obj = await this.httpMockupService.get<DataSourceConnection>(
-        `/datasources/${datasourceProtocol}/status`,
-        undefined,
-        DATA_SOURCES_STATUS
+      const obj = await this.httpService.get<DataSourceConnection>(
+        `/datasources/${datasourceProtocol}/status`
       );
 
       this._store.patchState((state) => {
@@ -195,8 +151,8 @@ export class DataSourceService {
       payload.type = ds.type;
     }
 
-    if (ds.name) {
-      payload.name = ds.name;
+    if (ds.machineName) {
+      payload.machineName = ds.machineName;
     }
 
     await this.httpService.patch(`/datasources/${protocol}`, payload);

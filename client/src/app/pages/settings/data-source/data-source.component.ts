@@ -99,9 +99,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   get MTConnectStreamHref() {
-    return !this.dataSource?.name
+    return !this.dataSource?.machineName
       ? `http://${window.location.hostname}:15404/current`
-      : `http://${window.location.hostname}:15404/${this.dataSource.name}/current`;
+      : `http://${window.location.hostname}:15404/${this.dataSource.machineName}/current`;
   }
 
   constructor(
@@ -253,9 +253,9 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     if (!this.dataSource) {
       return;
     }
-    this.dataSource.name = val;
+    this.dataSource.machineName = val;
     this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
-      name: this.dataSource.name
+      machineName: this.dataSource.machineName
     });
   }
 

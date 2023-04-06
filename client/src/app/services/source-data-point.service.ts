@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import {
   DataPointLiveData,
+  DataSource,
   DataSourceProtocol,
   SourceDataPoint,
   SourceDataPointType
@@ -12,16 +13,15 @@ import {
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { array2map, clone, errorHandler, ObjectMap } from 'app/shared/utils';
-import * as api from 'app/api/models';
 import { from, interval, Observable } from 'rxjs';
-import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
-import { BaseChangesService } from './base-changes.service';
 import { DataSourceService } from './data-source.service';
 import { SystemInformationService } from './system-information.service';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
+import { v4 as uuidv4 } from 'uuid';
 
 export class SourceDataPointsState {
   status!: Status;
+  touched!: boolean;
   originalDataPoints!: SourceDataPoint[];
   dataPoints!: SourceDataPoint[];
   dataPointsLivedata!: ObjectMap<DataPointLiveData>;
@@ -29,10 +29,7 @@ export class SourceDataPointsState {
 }
 
 @Injectable()
-export class SourceDataPointService
-  extends BaseChangesService<SourceDataPoint>
-  implements IChangesAppliable
-{
+export class SourceDataPointService {
   private _store: Store<SourceDataPointsState>;
 
   get dataPointsLivedata() {
@@ -54,35 +51,31 @@ export class SourceDataPointService
   }
 
   get isTouched() {
-    return this._changes.snapshot.touched || this.dataSourceService.touched;
+    return this._store.snapshot.touched || this.dataSourceService.touched;
   }
 
   constructor(
     storeFactory: StoreFactory<SourceDataPointsState>,
-    changesFactory: StoreFactory<IChangesState<string, SourceDataPoint>>,
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService,
     private dataSourceService: DataSourceService,
     private systemInformationService: SystemInformationService
   ) {
-    super(changesFactory);
-
     this._store = storeFactory.startFrom(this._emptyState());
   }
 
   async revert(): Promise<boolean> {
-    if (this._changes.snapshot.touched) {
+    if (this._store.snapshot.touched) {
       this._store.patchState((state) => {
         state.dataPoints = clone(state.originalDataPoints);
+        state.touched = false;
       });
     }
 
     if (this.dataSourceService.touched) {
       this.dataSourceService.revert();
     }
-
-    this.resetState();
 
     return Promise.resolve(true);
   }
@@ -97,53 +90,18 @@ export class SourceDataPointService
         await this.dataSourceService.apply(datasourceProtocol);
       }
 
-      if (this.isTouched) {
+      if (this._store.snapshot.touched) {
         await this.httpService.patch(
           `/datasources/${datasourceProtocol}/dataPoints`,
           this._store.snapshot.dataPoints
         );
 
-        /*TBD
-        if (Object.keys(this.payload.created).length) {
-          for (let dp of Object.values(this.payload.created)) {
-            await this.httpService.post(
-              `/datasources/${datasourceProtocol}/dataPoints`,
-              dp
-            );
-          }
-        }
-
-        if (Object.keys(this.payload.updated).length) {
-          for (let [dpId, dp] of Object.entries(this.payload.updated)) {
-            await this.httpService.patch(
-              `/datasources/${datasourceProtocol}/dataPoints/${dpId}`,
-              dp
-            );
-          }
-        }
-
-        if (this.payload.deleted.length) {
-          for (let dpId of this.payload.deleted) {
-            await this.httpService.delete(
-              `/datasources/${datasourceProtocol}/dataPoints/${dpId}`
-            );
-          }
-        }
-
-        if (this.payload.replace.length) {
-          await this.httpService.patch(
-            `/datasources/${datasourceProtocol}/dataPoints`,
-            this.payload.replace
-          );
-        }*/
-
         this._getDataPoints(datasourceProtocol);
-
-        this.resetState();
       }
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.touched = false;
       });
 
       this.toastr.success(
@@ -220,9 +178,9 @@ export class SourceDataPointService
     }));
 
     try {
-      const { dataSources } = await this.httpService.get<api.DataSourceList>(
-        `/datasources`
-      );
+      const { dataSources } = await this.httpService.get<{
+        dataSources: DataSource[];
+      }>(`/datasources`);
 
       let dataPoints: SourceDataPoint[] = [];
       let wholeMap = {};
@@ -310,11 +268,13 @@ export class SourceDataPointService
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
-    this.create(obj);
+    obj.id = uuidv4();
+
     this._store.patchState((state) => {
       state.status = Status.Ready;
       state.dataPoints = [...state.dataPoints, obj];
       state.dataPointsSourceMap[obj.id] = datasourceProtocol;
+      state.touched = true;
     });
   }
 
@@ -322,16 +282,11 @@ export class SourceDataPointService
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
-    const oldDp = this._store.snapshot.dataPoints.find(
-      (dp) => dp.id === obj.id
-    );
-
-    this.update(obj.id, { ...oldDp, ...obj });
-
     this._store.patchState((state) => {
       state.dataPoints = state.dataPoints.map((x) =>
         x.id != obj.id ? x : obj
       );
+      state.touched = true;
     });
   }
 
@@ -339,10 +294,9 @@ export class SourceDataPointService
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
-    this.delete(obj.id);
-
     this._store.patchState((state) => {
       state.dataPoints = state.dataPoints.filter((x) => x.id != obj.id);
+      state.touched = true;
     });
   }
 
@@ -383,11 +337,11 @@ export class SourceDataPointService
 
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
     const { dataPoints } = await this.httpService.get<{
-      dataPoints: api.Sourcedatapoint[];
+      dataPoints: SourceDataPoint[];
     }>(`/datasources/${datasourceProtocol}/datapoints`);
 
     this._store.patchState((state) => {
-      state.dataPoints = dataPoints.map((x) => this._parseDataPoint(x));
+      state.dataPoints = dataPoints;
       state.originalDataPoints = clone(state.dataPoints);
       state.dataPointsSourceMap = array2map(
         state.dataPoints,
@@ -399,10 +353,9 @@ export class SourceDataPointService
   }
 
   private _parseDataPoint(
-    obj: api.Sourcedatapoint,
-    parentSource?: api.DataSourceType
+    dataPoint: SourceDataPoint,
+    parentSource: DataSource
   ) {
-    const dataPoint = obj as SourceDataPoint;
     if (parentSource) {
       dataPoint.enabled = Boolean(parentSource.enabled);
     }
@@ -412,6 +365,7 @@ export class SourceDataPointService
   private _emptyState() {
     return <SourceDataPointsState>{
       status: Status.NotInitialized,
+      touched: false,
       dataPoints: [] as SourceDataPoint[],
       originalDataPoints: [] as SourceDataPoint[],
       dataPointsSourceMap: {},

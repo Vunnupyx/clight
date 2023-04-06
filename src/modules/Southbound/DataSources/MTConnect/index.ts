@@ -41,17 +41,17 @@ export class MTConnectDataSource extends DataSource {
     super(params);
 
     this.dataPoints = params.config.dataPoints;
-    let { ipAddr, port } = this.config
+    let { hostname: host, port } = this.config
       .connection as IMTConnectDataSourceConnection;
     let machineName = this.config.machineName;
-    this.hostname = isValidIpOrHostname(ipAddr)
-      ? ipAddr?.startsWith('http')
+    this.hostname = isValidIpOrHostname(host)
+      ? host?.startsWith('http')
         ? machineName
-          ? `${ipAddr}:${port}/${machineName}`
-          : `${ipAddr}:${port}`
+          ? `${host}:${port}/${machineName}`
+          : `${host}:${port}`
         : machineName
-        ? `http://${ipAddr}:${port}/${machineName}`
-        : `http://${ipAddr}:${port}`
+        ? `http://${host}:${port}/${machineName}`
+        : `http://${host}:${port}`
       : '';
   }
 

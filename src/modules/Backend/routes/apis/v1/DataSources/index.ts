@@ -15,6 +15,9 @@ import { isValidIpOrHostname } from '../../../../../Utilities';
 import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
 import {
   IDataPointConfig,
+  IEnergyDataSourceConnection,
+  IMTConnectDataSourceConnection,
+  IS7DataSourceConnection,
   isValidDataSource,
   isValidDataSourceDatapoint
 } from '../../../../../ConfigManager/interfaces';
@@ -430,9 +433,13 @@ function pingDataSourceHandler(request: Request, response: Response) {
     return Promise.resolve();
   }
 
-  const {
-    connection: { ipAddr: ip }
-  } = dataSource;
+  const ip =
+    (
+      dataSource.connection as
+        | IS7DataSourceConnection
+        | IEnergyDataSourceConnection
+    ).ipAddr ??
+    (dataSource.connection as IMTConnectDataSourceConnection).hostname;
 
   winston.debug(`${logPrefix} get ip: ${ip}`);
   if (!ip) {

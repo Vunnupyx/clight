@@ -86,7 +86,7 @@ export type IS7DataSourceConnection = {
   slot?: number;
 };
 export type IMTConnectDataSourceConnection = {
-  ipAddr: string;
+  hostname: string;
   port: number;
 };
 export type IS7DataSourceTypes =

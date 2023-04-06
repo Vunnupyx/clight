@@ -12,7 +12,11 @@ interface ICell {
 }
 
 export interface IEntry {
-  '@key': string;
+  '@'?: {
+    key: string;
+    removed?: boolean;
+  };
+  '@key'?: string;
   '#'?: string;
   Cell?: ICell | ICell[];
 }

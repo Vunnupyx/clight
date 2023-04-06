@@ -32,7 +32,6 @@ export class MTConnectDataSource extends DataSource {
   private lastSequenceNumber: number;
   private requestCount = 1;
   private hostname = '';
-  private measurements: IMeasurement[] = [];
   private hostConnectivityState: IHostConnectivityState =
     IHostConnectivityState.UNKNOWN;
 
@@ -125,15 +124,7 @@ export class MTConnectDataSource extends DataSource {
     this.readCycleCount = this.readCycleCount + 1;
 
     try {
-      winston.debug(
-        `Reading sequence number: ${this.nextSequenceNumber} with count ${this.requestCount}`
-      );
       await this.getAndProcessSampleResponse();
-
-      if (this.measurements.length > 0) {
-        this.onDataPointMeasurement(this.measurements);
-        this.measurements = [];
-      }
     } catch (e) {
       winston.error(e);
     }
@@ -167,6 +158,9 @@ export class MTConnectDataSource extends DataSource {
    */
   private async getAndProcessSampleResponse() {
     const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
+    winston.debug(
+      `${logPrefix} Reading sequence number: ${this.nextSequenceNumber} with count ${this.requestCount}`
+    );
     const response = await this.getMTConnectAgentXMLResponseAsObject(
       '/sample',
       this.nextSequenceNumber
@@ -228,7 +222,8 @@ export class MTConnectDataSource extends DataSource {
     this.lastSequenceNumber = parseInt(lastSequence);
     if (this.lastSequenceNumber - this.nextSequenceNumber > 1) {
       // If runtime is behind the last sequence more than 1, then make the next request count to be the difference to catch up
-      this.requestCount = this.lastSequenceNumber - this.nextSequenceNumber;
+      const diff = this.lastSequenceNumber - this.nextSequenceNumber;
+      this.requestCount = Math.min(diff, 1000); // Request count should be max 1000
     } else {
       // otherwise read single count
       this.requestCount = 1;
@@ -363,20 +358,21 @@ export class MTConnectDataSource extends DataSource {
           : [detailObject.Entry];
 
         entries.forEach((entry) => {
-          const keyName = entry['@key'];
+          const keyName = entry['@key'] ?? entry['@']?.key;
           const keyValue = entry['#'];
-          if (!entriesObject[keyName]) {
-            entriesObject[keyName] = {};
-          }
-          if (keyValue) {
-            entriesObject[keyName] = keyValue;
-          } else {
+
+          if (entry.Cell) {
+            if (!entriesObject[keyName]) {
+              entriesObject[keyName] = {};
+            }
             let cells = Array.isArray(entry.Cell) ? entry.Cell : [entry.Cell];
             cells?.forEach((cellInfo) => {
               const cellKeyName = cellInfo['@key'];
               const cellValue = cellInfo['#'];
               entriesObject[keyName][cellKeyName] = cellValue;
             });
+          } else {
+            entriesObject[keyName] = keyValue;
           }
         });
       }
@@ -410,7 +406,10 @@ export class MTConnectDataSource extends DataSource {
       );
       // Send the reading as measurement if it is a requested data point
       if (matchingDatapoint) {
-        this.measurements.push({ ...measurement, id: matchingDatapoint.id });
+        // Measurement sent directly to be able to handle multiple events for same data point
+        this.onDataPointMeasurement([
+          { ...measurement, id: matchingDatapoint.id }
+        ]);
       }
     }
   }

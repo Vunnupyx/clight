@@ -196,7 +196,6 @@
     "Name": "Name",
     "Type": "Typ",
     "Description": "Description",
-    "DataItem": "Datenpunkt",
     "Address": "Adressse",
     "LiveData": "Aktualwert",
     "Actions": "Aktionen",

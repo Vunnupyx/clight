@@ -689,12 +689,7 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          [name]="
-            (dataSource?.protocol === Protocol.MTConnect
-              ? 'settings-data-source.DataItem'
-              : 'settings-data-source.Address'
-            ) | translate
-          "
+          [name]="'settings-data-source.Address' | translate"
           prop="address"
           [flexGrow]="3"
           cellClass="input-cell address-cell"

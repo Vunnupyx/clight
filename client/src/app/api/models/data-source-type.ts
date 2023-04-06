@@ -6,6 +6,6 @@ export interface DataSourceType {
   connection?: Connection;
   dataPoints?: Array<Sourcedatapoint & Uuid>;
   enabled?: boolean;
-  name?: string;
+  machineName?: string;
   protocol?: string;
 }

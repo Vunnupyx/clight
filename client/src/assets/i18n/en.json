@@ -65,6 +65,7 @@
     "LoadError": "Failed to load info. Please try again later",
     "TermsLoadError": "Error loading Terms and Conditions. Please try again later.",
     "AcceptError": "Error occured while accepting Terms and Conditions. Please try again later.",
+    "Cancel": "Cancel",
     "Next": "Next",
     "Save": "Save",
     "Yes": "Yes",

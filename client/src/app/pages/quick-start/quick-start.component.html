@@ -66,6 +66,15 @@
 
           <button
             mat-button
+            class="mr-15"
+            [routerLink]="['/settings/general']"
+            [disabled]="!termsAccepted || !templatesCompleted"
+          >
+            {{ 'quick-start.Cancel' | translate }}
+          </button>
+
+          <button
+            mat-button
             color="primary"
             matStepperNext
             (click)="onAcceptClicked()"
@@ -119,7 +128,14 @@
           >
             {{ 'quick-start.ContinueWithoutTemplate' | translate }}
           </button>
-
+          <button
+            mat-button
+            class="mr-15"
+            [routerLink]="['/settings/general']"
+            [disabled]="!termsAccepted || !templatesCompleted"
+          >
+            {{ 'quick-start.Cancel' | translate }}
+          </button>
           <!-- <button mat-button color="primary" matStepperNext>
             {{ 'quick-start.Next' | translate }}
           </button> -->

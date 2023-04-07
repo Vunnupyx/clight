@@ -16,6 +16,7 @@ import {
   DataPoint,
   DataPointLiveData,
   DataPointType,
+  DataPointDataType,
   DataSink,
   DataSinkAuth,
   DataSinkAuthType,
@@ -57,6 +58,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   DataPointType = DataPointType;
+  DataPointDataType = DataPointDataType;
   DataSinkAuthTypes = [
     DataSinkAuthType.Anonymous,
     DataSinkAuthType.UserAndPass
@@ -330,6 +332,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     obj.address = value;
 
     const customDataPoint = this.getCustomDataPointByAddress(obj.address);
+    console.log(customDataPoint?.dataType);
     if (customDataPoint?.dataType) {
       obj.dataType = customDataPoint.dataType;
     }

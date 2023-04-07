@@ -392,6 +392,45 @@
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column
+        *ngIf="dataSink?.protocol === Protocol.OPC"
+        [name]="'settings-data-sink.DataType' | translate"
+        prop="dataType"
+        [flexGrow]="1"
+        [minWidth]="120"
+        [maxWidth]="400"
+      >
+        <ng-template
+          ngx-datatable-cell-template
+          let-rowIndex="rowIndex"
+          let-value="value"
+          let-row="row"
+        >
+          <ng-container [ngSwitch]="value">
+            <ng-container *ngSwitchCase="DataPointDataType.String">{{
+              'data-type.String' | translate
+            }}</ng-container>
+            <ng-container *ngSwitchCase="DataPointDataType.Double">{{
+              'data-type.Double' | translate
+            }}</ng-container>
+            <ng-container *ngSwitchCase="DataPointDataType.Byte">{{
+              'data-type.Byte' | translate
+            }}</ng-container>
+            <ng-container *ngSwitchCase="DataPointDataType.UInt16">{{
+              'data-type.UInt16' | translate
+            }}</ng-container>
+            <ng-container *ngSwitchCase="DataPointDataType.UInt32">{{
+              'data-type.UInt32' | translate
+            }}</ng-container>
+            <ng-container *ngSwitchCase="DataPointDataType.Boolean">{{
+              'data-type.Boolean' | translate
+            }}</ng-container>
+            <ng-container *ngSwitchDefault>{{
+              value | uppercase
+            }}</ng-container>
+          </ng-container>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column
         *ngIf="dataSink?.protocol !== Protocol.DH"
         [name]="'settings-data-sink.InitialValue' | translate"
         prop="initialValue"

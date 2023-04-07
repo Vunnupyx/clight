@@ -65,6 +65,7 @@
     "LoadError": "Fehler beim Laden. Bitte versuchen Sie es später erneut.",
     "TermsLoadError": "AGB konnten nicht geladen werden.  Bitte versuchen Sie es später erneut.",
     "AcceptError": "Fehler beim Akzeptieren der AGB.  Bitte versuchen Sie es später erneut.",
+    "Cancel": "Abbrechen",
     "Next": "Weiter",
     "Save": "Speichern",
     "Yes": "Ja",

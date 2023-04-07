@@ -39,6 +39,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
 
   shouldOpenTerms = true;
   termsAccepted = false;
+  templatesCompleted = false;
 
   sub = new Subscription();
 
@@ -107,6 +108,10 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     );
 
     this.templateService.getAvailableTemplates();
+    this.templateService
+      .isCompleted()
+      .then((x) => (this.templatesCompleted = x));
+
     const accepted = await this.termsService.getTermsAndConditions(
       this.currentLang
     );
@@ -146,9 +151,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     const dataSources = this.sourceForm.value.sources;
     const dataSinks = this.applicationInterfacesForm.value.interfaces;
 
-    const isCompleted = await this.templateService.isCompleted();
-
-    if (!isCompleted) {
+    if (!this.templatesCompleted) {
       this.templateService
         .apply({ templateId, dataSources, dataSinks })
         .then(() => this.router.navigate(['/']));

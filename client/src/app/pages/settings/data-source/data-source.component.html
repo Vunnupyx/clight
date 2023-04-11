@@ -114,7 +114,7 @@
                     matInput
                     name="hostname"
                     #ipAddr="ngModel"
-                    [ngModel]="dataSource?.connection?.ipAddr"
+                    [ngModel]="dataSource?.connection?.hostname"
                     [pattern]="ipOrHostRegex"
                     [required]="true"
                     (ngModelChange)="updateHostname(form.valid, $event)"

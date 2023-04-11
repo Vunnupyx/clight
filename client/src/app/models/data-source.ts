@@ -47,8 +47,8 @@ export enum S7Types {
 }
 
 export enum MTConnectTypes {
-  Agent = 'agent',
-  Adapter = 'adapter'
+  Agent = 'Agent',
+  Adapter = 'Adapter'
 }
 
 export enum IOShieldTypes {

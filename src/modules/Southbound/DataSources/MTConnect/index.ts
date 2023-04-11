@@ -35,7 +35,7 @@ export class MTConnectDataSource extends DataSource {
   private hostConnectivityState: IHostConnectivityState =
     IHostConnectivityState.UNKNOWN;
 
-  private DATAPOINT_READ_INTERVAL = 500;
+  private DATAPOINT_READ_INTERVAL = 1000;
 
   constructor(params: IDataSourceParams) {
     super(params);

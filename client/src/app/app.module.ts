@@ -39,7 +39,9 @@ import { CommissioningModule } from './pages/commissioning/commissioning.module'
     SystemInformationModule,
 
     AppRoutingModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      preventDuplicates: true
+    }),
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

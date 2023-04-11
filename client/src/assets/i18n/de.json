@@ -504,7 +504,13 @@
     "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
     "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
     "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
-    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!"
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Unknown": "unknown"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"

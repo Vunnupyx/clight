@@ -1,20 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
-import {
-  ConfigurationAgentHttpService,
-  HttpService,
-  RequestOptionsArgs
-} from '../shared';
-import { Status, Store, StoreFactory } from '../shared/state';
-import { SystemInformationSection } from '../models';
-import { errorHandler } from '../shared/utils';
-import { filter, map } from 'rxjs/operators';
+import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
+import { Status, Store, StoreFactory } from 'app/shared/state';
+import { MachineInformation, SystemInformationSection } from 'app/models';
+import { errorHandler } from 'app/shared/utils';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 export class SystemInformationState {
   status!: Status;
+  machineInformation!: MachineInformation;
   sections!: SystemInformationSection[];
   serverOffset!: number;
 }
@@ -41,10 +37,38 @@ export class SystemInformationService {
     return this._store.snapshot.status;
   }
 
+  get machineInformation() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.machineInformation),
+      distinctUntilChanged()
+    );
+  }
+
   get sections() {
     return this._store.state
       .pipe(filter((x) => x.status != Status.NotInitialized))
       .pipe(map((x) => x.sections));
+  }
+
+  async getMachineInformation() {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+    try {
+      const response = await this.httpService.get<MachineInformation>(
+        '/machine/info'
+      );
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.machineInformation = response;
+      });
+    } catch (err) {
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
   }
 
   async getInfo() {

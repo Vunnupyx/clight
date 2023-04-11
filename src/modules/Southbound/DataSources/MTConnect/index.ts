@@ -93,11 +93,14 @@ export class MTConnectDataSource extends DataSource {
         winston.info(
           `${logPrefix} successfully connected to MT Connect Source`
         );
-        await this.getAndProcessCurrentResponse();
-        await this.getAndProcessSampleResponse();
+        if (this.config.type === 'Agent') {
+          // Currently only Agent is supported.
+          await this.getAndProcessCurrentResponse();
+          await this.getAndProcessSampleResponse();
 
-        this.setupDataPoints(this.DATAPOINT_READ_INTERVAL);
-        this.setupLogCycle();
+          this.setupDataPoints(this.DATAPOINT_READ_INTERVAL);
+          this.setupLogCycle();
+        }
       } else {
         throw new Error(`Host status:${this.hostConnectivityState}`);
       }
@@ -435,7 +438,11 @@ export class MTConnectDataSource extends DataSource {
         winston.error(err);
         return reject(new Error(err));
       }
-
+      if (!this.hostname) {
+        const err = `${logPrefix} missing hostname`;
+        winston.error(err);
+        return reject(new Error(err));
+      }
       try {
         const fetchUrl =
           endpoint === '/sample'

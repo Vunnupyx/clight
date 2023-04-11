@@ -433,16 +433,18 @@ function pingDataSourceHandler(request: Request, response: Response) {
     return Promise.resolve();
   }
 
-  const ip =
-    (
-      dataSource.connection as
-        | IS7DataSourceConnection
-        | IEnergyDataSourceConnection
-    ).ipAddr ??
-    (dataSource.connection as IMTConnectDataSourceConnection).hostname;
+  const ipOrHostname =
+    dataSource.protocol === DataSourceProtocols.MTCONNECT
+      ? (dataSource.connection as IMTConnectDataSourceConnection).hostname
+      : (
+          dataSource.connection as
+            | IS7DataSourceConnection
+            | IEnergyDataSourceConnection
+        ).ipAddr;
 
-  winston.debug(`${logPrefix} get ip: ${ip}`);
-  if (!ip) {
+  winston.debug(`${logPrefix} get ip/hostname: ${ipOrHostname}`);
+
+  if (!ipOrHostname) {
     response
       .json({
         error: {
@@ -451,7 +453,7 @@ function pingDataSourceHandler(request: Request, response: Response) {
       })
       .status(404);
     return;
-  } else if (!isValidIpOrHostname(ip)) {
+  } else if (!isValidIpOrHostname(ipOrHostname)) {
     response
       .json({
         error: {
@@ -461,7 +463,7 @@ function pingDataSourceHandler(request: Request, response: Response) {
       .status(400);
     return;
   }
-  const cmd = `ping -w 1 -i 0.3 ${ip}`;
+  const cmd = `ping -w 1 -i 0.3 ${ipOrHostname}`;
   exec(cmd, (error, stdout, stderr) => {
     if (error || stderr !== '' || stdout === '') {
       winston.debug(`${logPrefix} send 500 response due to host unreachable`);

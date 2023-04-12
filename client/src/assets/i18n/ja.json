@@ -192,6 +192,7 @@
     "SelectAVariable": "変数を選択",
     "ControllerType": "制御装置の型式",
     "CurrentTariff": "現在の通信量",
+    "TariffHelpText": "What do I need the tariff for?",
     "Name": "名前",
     "Type": "型",
     "Description": "記述",

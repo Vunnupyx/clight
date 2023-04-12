@@ -161,9 +161,6 @@ export class MTConnectDataSource extends DataSource {
    */
   private async getAndProcessSampleResponse() {
     const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
-    winston.debug(
-      `${logPrefix} Reading sequence number: ${this.nextSequenceNumber} with count ${this.requestCount}`
-    );
     const response = await this.getMTConnectAgentXMLResponseAsObject(
       '/sample',
       this.nextSequenceNumber

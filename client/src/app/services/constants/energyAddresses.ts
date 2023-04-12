@@ -39,7 +39,8 @@ export default [
   {
     name: 'Tariff',
     type: 'device',
-    address: 'tariff-number'
+    address: 'tariff-number',
+    mandatory: true
   },
   { name: 'Firmware Version', type: 'device', address: 'fw' },
   { name: 'Hardware Version', type: 'device', address: 'hw' },

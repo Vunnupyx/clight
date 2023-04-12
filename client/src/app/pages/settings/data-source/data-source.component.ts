@@ -29,7 +29,7 @@ import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 
-const ENERGY_ADDRESS_REQUIRED = 'tariff-number';
+const ENERGY_TARIFF_NUMBER_DP_ADDRESS = 'tariff-number';
 
 @Component({
   selector: 'app-data-source',
@@ -372,6 +372,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       } else {
         this.unsavedRow!.name = result.name;
         this.unsavedRow!.address = result.address;
+        this.unsavedRow!.mandatory = result.mandatory;
         if (this.dataSource?.protocol === DataSourceProtocol.Energy) {
           this.unsavedRow!.type = result.type;
         }
@@ -438,20 +439,19 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return [SourceDataPointType.NCK].includes(type);
   }
 
-  isDataPointRequired(obj: SourceDataPoint): boolean {
+  findTariffNumberDatapoint(obj: SourceDataPoint): boolean {
     return (
       obj.type === SourceDataPointType.Device &&
-      obj.address === ENERGY_ADDRESS_REQUIRED
+      obj.address === ENERGY_TARIFF_NUMBER_DP_ADDRESS
     );
   }
 
   getTariffText() {
-    const deviceDatapoint = this.datapointRows.find((dp) =>
-      this.isDataPointRequired(dp)
+    const tariffNumberDatapoint = this.datapointRows.find((dp) =>
+      this.findTariffNumberDatapoint(dp)
     );
-    const translationKey = `settings-data-source.TariffStatus.${
-      this.liveData?.[deviceDatapoint?.address]?.value
-    }`;
+    const tariffNumber = this.liveData?.[tariffNumberDatapoint?.address]?.value;
+    const translationKey = `settings-data-source.TariffStatus.${tariffNumber}`;
     const result = this.translate.instant(translationKey);
     return result !== translationKey
       ? result

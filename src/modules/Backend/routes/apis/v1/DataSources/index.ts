@@ -442,8 +442,6 @@ function pingDataSourceHandler(request: Request, response: Response) {
             | IEnergyDataSourceConnection
         ).ipAddr;
 
-  winston.debug(`${logPrefix} get ip/hostname: ${ipOrHostname}`);
-
   if (!ipOrHostname) {
     response
       .json({
@@ -464,10 +462,21 @@ function pingDataSourceHandler(request: Request, response: Response) {
     return;
   }
 
-  if (dataSource.protocol === DataSourceProtocols.MTCONNECT) {
-    //Check the hostname with GET request
+  if (
+    dataSource.protocol === DataSourceProtocols.MTCONNECT ||
+    dataSource.protocol === DataSourceProtocols.ENERGY
+  ) {
+    //Check the hostname with GET request, as they may not allow pinging
     let timeStart = Date.now();
-    fetch(ipOrHostname, {
+    let url = `http://${ipOrHostname}`;
+    if (dataSource.protocol === DataSourceProtocols.MTCONNECT) {
+      url = `${url}:${
+        (dataSource.connection as IMTConnectDataSourceConnection).port
+      }`;
+    }
+    winston.debug(`${logPrefix} ping host with GET: ${url}`);
+
+    fetch(url, {
       method: 'GET',
       timeout: 5000,
       compress: false,
@@ -498,6 +507,8 @@ function pingDataSourceHandler(request: Request, response: Response) {
         return;
       });
   } else {
+    winston.debug(`${logPrefix}: ${ipOrHostname}`);
+
     const cmd = `ping -w 1 -i 0.3 ${ipOrHostname}`;
     exec(cmd, (error, stdout, stderr) => {
       if (error || stderr !== '' || stdout === '') {

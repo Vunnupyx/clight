@@ -1,7 +1,7 @@
 /**
  * All request handlers for requests to datasource endpoints
  */
-
+import fetch from 'node-fetch';
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
@@ -463,35 +463,71 @@ function pingDataSourceHandler(request: Request, response: Response) {
       .status(400);
     return;
   }
-  const cmd = `ping -w 1 -i 0.3 ${ipOrHostname}`;
-  exec(cmd, (error, stdout, stderr) => {
-    if (error || stderr !== '' || stdout === '') {
-      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
-      response.status(500).json({
-        error: {
-          msg: `Host unreachable`
+
+  if (dataSource.protocol === DataSourceProtocols.MTCONNECT) {
+    //Check the hostname with GET request
+    let timeStart = Date.now();
+    fetch(ipOrHostname, {
+      method: 'GET',
+      timeout: 5000,
+      compress: false,
+      headers: {
+        Accept: 'text/xml'
+      }
+    })
+      .then((apiResponse) => {
+        if (apiResponse.status === 200) {
+          response.status(200).json({
+            delay: Date.now() - timeStart
+          });
+          return;
+        } else {
+          winston.info(
+            `${logPrefix} GET response status for ${ipOrHostname} is: ${apiResponse.status}`
+          );
+          throw new Error('Response status is not 200!');
         }
+      })
+      .catch((error) => {
+        winston.debug(`${logPrefix} host unreachable, error: ${error}`);
+        response.status(500).json({
+          error: {
+            msg: `Host unreachable.`
+          }
+        });
+        return;
       });
-      return;
-    }
-    let filtered = stdout
-      .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
-      .join();
-    const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
-    if (!avg) {
-      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
-      response.status(500).json({
-        error: {
-          msg: `Host unreachable.`
-        }
+  } else {
+    const cmd = `ping -w 1 -i 0.3 ${ipOrHostname}`;
+    exec(cmd, (error, stdout, stderr) => {
+      if (error || stderr !== '' || stdout === '') {
+        winston.debug(`${logPrefix} send 500 response due to host unreachable`);
+        response.status(500).json({
+          error: {
+            msg: `Host unreachable`
+          }
+        });
+        return;
+      }
+      let filtered = stdout
+        .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
+        .join();
+      const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
+      if (!avg) {
+        winston.debug(`${logPrefix} send 500 response due to host unreachable`);
+        response.status(500).json({
+          error: {
+            msg: `Host unreachable.`
+          }
+        });
+        return;
+      }
+      winston.debug(`${logPrefix} send response with: ${avg} ms delay`);
+      response.status(200).json({
+        delay: avg
       });
-      return;
-    }
-    winston.debug(`${logPrefix} send response with: ${avg} ms delay`);
-    response.status(200).json({
-      delay: avg
     });
-  });
+  }
 }
 
 export const dataSourceHandlers = {

@@ -15,6 +15,7 @@ module.exports = {
       items: [
         'SINUMERIK840DSLPL',
         'InputBoard',
+        'Energy',
         'VirtualDataPoints',
         'Mapping',
         'ApplicationInterface'

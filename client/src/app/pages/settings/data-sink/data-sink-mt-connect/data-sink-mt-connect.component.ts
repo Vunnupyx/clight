@@ -332,7 +332,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     obj.address = value;
 
     const customDataPoint = this.getCustomDataPointByAddress(obj.address);
-    console.log(customDataPoint?.dataType);
     if (customDataPoint?.dataType) {
       obj.dataType = customDataPoint.dataType;
     }

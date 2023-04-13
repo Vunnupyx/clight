@@ -95,7 +95,6 @@ export class MTConnectDataSource extends DataSource {
         if (this.config.type === 'Agent') {
           // Currently only Agent is supported.
           await this.getAndProcessCurrentResponse();
-          await this.getAndProcessSampleResponse();
 
           this.setupDataPoints(this.DATAPOINT_READ_INTERVAL);
           this.setupLogCycle();

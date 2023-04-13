@@ -202,7 +202,7 @@ export class DataSinkService {
         const customDataPoints = dataSink.customDataPoints || [];
         return {
           ...dataSink,
-          customDataPoints: [...customDataPoints, obj]
+          customDataPoints: [obj, ...customDataPoints]
         };
       });
       state.touched = true;

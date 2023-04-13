@@ -1,7 +1,7 @@
 import winston from 'winston';
 import { DataSource } from '../DataSource';
 import { LifecycleEventStatus } from '../../../../common/interfaces';
-import { IDataSourceParams, IMeasurement } from '../interfaces';
+import { IDataSourceParams } from '../interfaces';
 import {
   IComponentStream,
   IEntriesObject,
@@ -27,7 +27,6 @@ import { isValidIpOrHostname } from '../../../Utilities';
 export class MTConnectDataSource extends DataSource {
   protected name = MTConnectDataSource.name;
   private dataPoints: IDataPointConfig[];
-  private firstSequenceNumber: number;
   private nextSequenceNumber: number;
   private lastSequenceNumber: number;
   private requestCount = 1;
@@ -217,7 +216,6 @@ export class MTConnectDataSource extends DataSource {
       sender,
       deviceModelChangeTime
     } = streamResponse?.MTConnectStreams?.Header?.['@'] ?? {};
-    this.firstSequenceNumber = parseInt(firstSequence);
     this.nextSequenceNumber = parseInt(nextSequence);
     this.lastSequenceNumber = parseInt(lastSequence);
     if (this.lastSequenceNumber - this.nextSequenceNumber > 1) {

@@ -56,7 +56,6 @@ export class MTConnectDataSource extends DataSource {
 
   /**
    * Initializes MTConnect data source
-   * @returns void
    */
   public async init(): Promise<void> {
     const logPrefix = `${this.name}::init`;
@@ -116,8 +115,6 @@ export class MTConnectDataSource extends DataSource {
 
   /**
    * Reads all datapoints for current cycle and creates resulting events
-   * @param  {Array<number>} currentIntervals
-   * @returns Promise
    */
   protected async dataSourceCycle(
     currentIntervals: Array<number>
@@ -133,7 +130,6 @@ export class MTConnectDataSource extends DataSource {
 
   /**
    * Disconnects data source
-   * @returns Promise<void>
    */
   public async disconnect(): Promise<void> {
     const logPrefix = `${this.name}::disconnect`;
@@ -144,7 +140,8 @@ export class MTConnectDataSource extends DataSource {
   }
 
   /**
-   *
+   * Gets the response for /current endpoint and processes the stream result.
+   * This endpoint gives current status of all data points and the sequence numbers
    */
   private async getAndProcessCurrentResponse() {
     const logPrefix = `${MTConnectDataSource.name}::getCurrentResponse`;
@@ -155,7 +152,8 @@ export class MTConnectDataSource extends DataSource {
   }
 
   /**
-   *
+   * Gets the response for /sample endpoint and processes the stream result
+   * This endpoint returns the requested count amount of changes in data point values as well as sequence numbers
    */
   private async getAndProcessSampleResponse() {
     const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
@@ -202,8 +200,7 @@ export class MTConnectDataSource extends DataSource {
   }
 
   /**
-   *
-   * @param streamResponse
+   * Handles sequence number from the stream response. Sequence number is used to stay in sync with measurements Agent publishes.
    */
   private handleSequenceNumbers(
     streamResponse: IMTConnectStreamResponse
@@ -228,8 +225,7 @@ export class MTConnectDataSource extends DataSource {
   }
 
   /**
-   *
-   * @param streamResponse
+   * Handles stream response for both /current and /sample endpoints
    */
   private handleStreamResponse(streamResponse: IMTConnectStreamResponse): void {
     this.handleSequenceNumbers(streamResponse);
@@ -256,7 +252,7 @@ export class MTConnectDataSource extends DataSource {
         } = componentStreamItem['@'] ?? {};
 
         // ## Check Events
-        this.handleEventsOrSamples(
+        this.processEventsOrSamples(
           'Event',
           componentStreamItem,
           machineName,
@@ -264,7 +260,7 @@ export class MTConnectDataSource extends DataSource {
         );
 
         // ## Check Samples
-        this.handleEventsOrSamples(
+        this.processEventsOrSamples(
           'Sample',
           componentStreamItem,
           machineName,
@@ -276,7 +272,30 @@ export class MTConnectDataSource extends DataSource {
     }
   }
 
-  private handleEventsOrSamples(
+  /**
+   * Processes the stream item object to make it ready for extracting measurements.
+   */
+  private processComponentStreamItemObj(
+    arrayToProcess: IMeasurementData[],
+    name: string,
+    list: IMeasurementData | IMeasurementData[]
+  ) {
+    let eventOrSampleArray = Array.isArray(list) ? list : [list];
+
+    eventOrSampleArray
+      .sort(
+        // sort potentially multiple measurements by sequence in ascending order!
+        (a, b) => parseInt(a['@']?.sequence) - parseInt(b['@']?.sequence)
+      )
+      .forEach((details) => {
+        arrayToProcess.push({ ...details, name });
+      });
+  }
+
+  /**
+   * Processes EVENT or SAMPLE type stream
+   */
+  private processEventsOrSamples(
     type: 'Event' | 'Sample',
     componentStreamItem: IComponentStream,
     machineName: string,
@@ -304,34 +323,16 @@ export class MTConnectDataSource extends DataSource {
       (
         componentStreamItem[keyToUse]?.['#'] as IMeasurementDataObject[]
       ).forEach((obj) => {
-        Object.entries(obj).forEach(([name, list]) => {
-          let eventOrSampleArray = Array.isArray(list) ? list : [list];
-
-          eventOrSampleArray
-            .sort(
-              // sort potentially multiple measurements by sequence in ascending order!
-              (a, b) => parseInt(a['@']?.sequence) - parseInt(b['@']?.sequence)
-            )
-            .forEach((details) => {
-              arrayToProcess.push({ ...details, name });
-            });
-        });
+        Object.entries(obj).forEach(([name, list]) =>
+          this.processComponentStreamItemObj(arrayToProcess, name, list)
+        );
       });
     } else {
       Object.entries(
         (componentStreamItem[keyToUse] ?? {}) as IMeasurementDataObject
-      ).forEach(([name, list]) => {
-        let eventOrSampleArray = Array.isArray(list) ? list : [list];
-
-        eventOrSampleArray
-          .sort(
-            // sort potentially multiple measurements by sequence in ascending order!
-            (a, b) => parseInt(a['@']?.sequence) - parseInt(b['@']?.sequence)
-          )
-          .forEach((details) => {
-            arrayToProcess.push({ ...details, name });
-          });
-      });
+      ).forEach(([name, list]) =>
+        this.processComponentStreamItemObj(arrayToProcess, name, list)
+      );
     }
 
     for (let detailObject of arrayToProcess) {
@@ -412,8 +413,7 @@ export class MTConnectDataSource extends DataSource {
   }
 
   /**
-   *
-   * @returns parsed XML as object
+   * Makes the API call according to given parameters and returns parsed XML as an object
    */
   private getMTConnectAgentXMLResponseAsObject(
     endpoint: '/probe' | '/current' | '/sample',
@@ -455,7 +455,7 @@ export class MTConnectDataSource extends DataSource {
           format: 'object',
           group: true
         });
-        // TODO
+        // TODO type cast xmlObj from XMLSerializedAsObject
         //@ts-ignore
         return resolve(xmlObj);
       } catch (e) {

@@ -485,7 +485,7 @@ function pingDataSourceHandler(request: Request, response: Response) {
       }
     })
       .then((apiResponse) => {
-        if (apiResponse.status === 200) {
+        if (apiResponse.status >= 200 && apiResponse.status < 300) {
           response.status(200).json({
             delay: Date.now() - timeStart
           });
@@ -494,7 +494,7 @@ function pingDataSourceHandler(request: Request, response: Response) {
           winston.info(
             `${logPrefix} GET response status for ${ipOrHostname} is: ${apiResponse.status}`
           );
-          throw new Error('Response status is not 200!');
+          throw new Error('Response status is not 2XX!');
         }
       })
       .catch((error) => {

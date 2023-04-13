@@ -20,6 +20,7 @@ import {
   mapOrder,
   ObjectMap
 } from 'app/shared/utils';
+import * as api from 'app/api/models';
 import PREDEFINED_MTCONNECT_DATA_POINTS from './constants/mtconnectDataItems';
 import PREDEFINED_OPCUA_DATA_POINTS from './constants/opcuaDataItems';
 import { filterLiveData } from 'app/shared/utils/filter-livedata';
@@ -146,11 +147,13 @@ export class DataSinkService {
 
     try {
       const { dataSinks } = await this.httpService.get<{
-        dataSinks: DataSink[];
+        dataSinks: api.DataSinkType[];
       }>(`/datasinks`);
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.dataSinks = this._orderByProtocol(dataSinks);
+        state.dataSinks = this._orderByProtocol(
+          dataSinks.map((x) => this._parseDataSink(x))
+        );
         state.originalDataSinks = clone(state.dataSinks);
       });
     } catch (err) {
@@ -304,6 +307,10 @@ export class DataSinkService {
 
   private _orderByProtocol(objs: DataSink[]) {
     return mapOrder<DataSink>(objs, DATA_SINKS_ORDER, 'protocol');
+  }
+
+  private _parseDataSink(obj: api.DataSinkType) {
+    return obj as any as DataSink;
   }
 
   private _emptyState() {

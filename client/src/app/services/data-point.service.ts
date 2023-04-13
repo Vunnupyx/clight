@@ -1,38 +1,45 @@
 import { Injectable } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
 
-import { DataPoint, DataSink, DataSinkProtocol } from 'app/models';
+import { DataPoint, DataSinkProtocol } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { array2map, clone, errorHandler, ObjectMap } from 'app/shared/utils';
+import * as api from 'app/api/models';
+import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
+import { BaseChangesService } from './base-changes.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { DataSinkService } from './data-sink.service';
-import { v4 as uuidv4 } from 'uuid';
 
 export class DataPointsState {
   status!: Status;
-  touched!: boolean;
   originalDataPoints!: DataPoint[];
   dataPoints!: DataPoint[];
   dataPointsSinkMap!: ObjectMap<DataSinkProtocol>;
 }
 
 @Injectable()
-export class DataPointService {
+export class DataPointService
+  extends BaseChangesService<DataPoint>
+  implements IChangesAppliable
+{
   private _store: Store<DataPointsState>;
 
   get isTouched() {
-    return this._store.snapshot.touched || this.dataSinksService.touched;
+    return this._changes.snapshot.touched || this.dataSinksService.touched;
   }
 
   constructor(
     storeFactory: StoreFactory<DataPointsState>,
+    changesFactory: StoreFactory<IChangesState<string, DataPoint>>,
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService,
     private dataSinksService: DataSinkService
   ) {
+    super(changesFactory);
+
     this._store = storeFactory.startFrom(this._emptyState());
   }
 
@@ -53,11 +60,11 @@ export class DataPointService {
     }));
 
     try {
-      const { dataPoints } = await this.httpService.get<{
-        dataPoints: DataPoint[];
-      }>(`/datasinks/${protocol}/dataPoints`);
+      const { dataPoints } = await this.httpService.get<api.DataPointList>(
+        `/datasinks/${protocol}/dataPoints`
+      );
       this._store.patchState((state) => {
-        state.dataPoints = dataPoints;
+        state.dataPoints = dataPoints!.map((x) => this._parseDataPoint(x));
         state.status = Status.Ready;
         state.originalDataPoints = clone(state.dataPoints);
         state.dataPointsSinkMap = array2map(
@@ -83,7 +90,7 @@ export class DataPointService {
 
     try {
       const { dataSinks } = await this.httpService.get<{
-        dataSinks: DataSink[];
+        dataSinks: api.DataSinkType[];
       }>(`/datasinks`);
 
       let dataPoints: DataPoint[] = [];
@@ -121,30 +128,34 @@ export class DataPointService {
   }
 
   async addDataPoint(protocol: DataSinkProtocol, obj: DataPoint) {
-    obj.id = uuidv4();
-
+    this.create(obj);
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataPoints = [obj, ...state.dataPoints];
+      state.dataPoints = [...state.dataPoints, obj];
       state.dataPointsSinkMap[obj.id] = protocol;
-      state.touched = true;
     });
   }
 
   async updateDataPoint(protocol: DataSinkProtocol, obj: DataPoint) {
+    const oldDp = this._store.snapshot.dataPoints.find(
+      (dp) => dp.id === obj.id
+    );
+
+    this.update(obj.id, { ...oldDp, ...obj });
+
     this._store.patchState((state) => {
       state.dataPoints = state.dataPoints.map((x) =>
         x.id != obj.id ? x : obj
       );
-      state.touched = true;
     });
   }
 
   async deleteDataPoint(protocol: DataSinkProtocol, obj: DataPoint) {
+    this.delete(obj.id);
+
     this._store.patchState((state) => {
       state.status = Status.Ready;
       state.dataPoints = state.dataPoints.filter((x) => x.id != obj.id);
-      state.touched = true;
     });
   }
 
@@ -153,11 +164,12 @@ export class DataPointService {
       this.dataSinksService.revert();
     }
 
-    if (this._store.snapshot.touched) {
+    if (this._changes.snapshot.touched) {
       this._store.patchState((state) => {
         state.dataPoints = clone(state.originalDataPoints);
-        state.touched = false;
       });
+
+      this.resetState();
     }
 
     return Promise.resolve(true);
@@ -173,16 +185,50 @@ export class DataPointService {
         await this.dataSinksService.apply(protocol);
       }
 
-      if (this._store.snapshot.touched) {
+      if (this.isTouched) {
         await this.httpService.patch(
           `/datasinks/${protocol}/dataPoints`,
           this._store.snapshot.dataPoints
         );
+        /*TBD
+        if (Object.keys(this.payload.created).length) {
+          for (let dp of Object.values(this.payload.created)) {
+            await this.httpService.post(
+              `/datasinks/${protocol}/dataPoints`,
+              dp
+            );
+          }
+        }
+
+        if (Object.keys(this.payload.updated).length) {
+          for (let [dpId, dp] of Object.entries(this.payload.updated)) {
+            await this.httpService.patch(
+              `/datasinks/${protocol}/dataPoints/${dpId}`,
+              dp
+            );
+          }
+        }
+
+        if (this.payload.deleted.length) {
+          for (let dpId of this.payload.deleted) {
+            await this.httpService.delete(
+              `/datasinks/${protocol}/dataPoints/${dpId}`
+            );
+          }
+        }
+
+        if (this.payload.replace.length) {
+          await this.httpService.patch(
+            `/datasinks/${protocol}/dataPoints`,
+            this.payload.replace
+          );
+        }*/
+
+        this.resetState();
       }
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.touched = false;
       });
 
       this.toastr.success(
@@ -221,7 +267,11 @@ export class DataPointService {
     }
   }
 
-  private _parseDataPoint(dataPoint: DataPoint, parentSink: DataSink) {
+  private _parseDataPoint(
+    obj: api.DataPointType,
+    parentSink?: api.DataSinkType
+  ) {
+    const dataPoint = obj as any as DataPoint;
     if (parentSink) {
       dataPoint.enabled = Boolean(parentSink.enabled);
     }
@@ -231,7 +281,6 @@ export class DataPointService {
   private _emptyState() {
     return <DataPointsState>{
       status: Status.NotInitialized,
-      touched: false,
       dataPointsSinkMap: {}
     };
   }

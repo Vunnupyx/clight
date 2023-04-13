@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
-import { Connection } from 'app/api/models';
 import {
   DataPointLiveData,
   DataSource,
@@ -14,7 +13,9 @@ import {
   S7Types,
   EnergyTypes,
   SourceDataPoint,
-  SourceDataPointType
+  SourceDataPointType,
+  MTConnectTypes,
+  Connection
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
@@ -24,7 +25,7 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import { IP_REGEX } from 'app/shared/utils/regex';
+import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -41,6 +42,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;
+  MTConnectTypes = MTConnectTypes;
   IOShieldTypes = IOShieldTypes;
   EnergyTypes = EnergyTypes;
 
@@ -70,6 +72,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   statusSub!: Subscription;
 
   ipRegex = IP_REGEX;
+  portRegex = PORT_REGEX;
+  ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
   dsFormValid = true;
 
   filterDigitalInputAddressStr = '';
@@ -93,6 +97,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   get isLoading() {
     return this.sourceDataPointService.status === Status.Loading;
+  }
+
+  get MTConnectStreamHref() {
+    return !this.dataSource?.machineName
+      ? `http://${this.dataSource.connection.hostname}:${this.dataSource.connection.port}/current`
+      : `http://${this.dataSource.connection.hostname}:${this.dataSource.connection.port}/${this.dataSource.machineName}/current`;
   }
 
   constructor(
@@ -240,6 +250,16 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateMachineName(val: string) {
+    if (!this.dataSource) {
+      return;
+    }
+    this.dataSource.machineName = val;
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      machineName: this.dataSource.machineName
+    });
+  }
+
   updateIpAddress(valid: boolean | null, val: string) {
     this.dsFormValid = !!valid;
 
@@ -251,6 +271,35 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     }
     this.dataSource.connection = this.dataSource.connection || <Connection>{};
     this.dataSource.connection.ipAddr = val;
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      connection: this.dataSource.connection
+    });
+  }
+
+  updateHostname(valid: boolean | null, val: string) {
+    this.dsFormValid = !!valid;
+
+    if (!valid || !this.dataSource) {
+      return;
+    }
+    this.dataSource.connection = this.dataSource.connection || <Connection>{};
+    this.dataSource.connection.hostname = val;
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      connection: this.dataSource.connection
+    });
+  }
+
+  updatePort(valid: boolean | null, val: number) {
+    this.dsFormValid = !!valid;
+
+    if (!valid) {
+      return;
+    }
+    if (!this.dataSource) {
+      return;
+    }
+    this.dataSource.connection = this.dataSource.connection || <Connection>{};
+    this.dataSource.connection.port = val;
     this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
       connection: this.dataSource.connection
     });
@@ -456,6 +505,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return result !== translationKey
       ? result
       : this.translate.instant('settings-data-source.TariffStatus.Unknown');
+  }
+
+  goToMtConnectStream() {
+    window.open(this.MTConnectStreamHref, '_blank');
   }
 
   async onPing() {

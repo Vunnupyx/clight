@@ -245,11 +245,9 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   private clearUnsavedRow() {
-    this.mappingRows = this.mappingRows!.filter((_, idx) =>
-      !this.unsavedRow?.id ? idx !== this.unsavedRowIndex : true
-    );
     delete this.unsavedRow;
     delete this.unsavedRowIndex;
+    this.mappingRows = this.mappingRows?.filter((x) => x.id) || [];
   }
 
   onDelete(obj: DataMapping) {

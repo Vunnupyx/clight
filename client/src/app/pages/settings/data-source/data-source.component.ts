@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
-import { Connection } from 'app/api/models';
 import {
   DataPointLiveData,
   DataSource,
@@ -15,7 +14,8 @@ import {
   EnergyTypes,
   SourceDataPoint,
   SourceDataPointType,
-  MTConnectTypes
+  MTConnectTypes,
+  Connection
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
@@ -25,7 +25,7 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import { IP_REGEX, PORT_REGEX } from 'app/shared/utils/regex';
+import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -73,6 +73,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   ipRegex = IP_REGEX;
   portRegex = PORT_REGEX;
+  ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
   dsFormValid = true;
 
   filterDigitalInputAddressStr = '';
@@ -100,8 +101,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   get MTConnectStreamHref() {
     return !this.dataSource?.machineName
-      ? `http://${window.location.hostname}:15404/current`
-      : `http://${window.location.hostname}:15404/${this.dataSource.machineName}/current`;
+      ? `http://${this.dataSource.connection.hostname}:${this.dataSource.connection.port}/current`
+      : `http://${this.dataSource.connection.hostname}:${this.dataSource.connection.port}/${this.dataSource.machineName}/current`;
   }
 
   constructor(
@@ -275,6 +276,19 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateHostname(valid: boolean | null, val: string) {
+    this.dsFormValid = !!valid;
+
+    if (!valid || !this.dataSource) {
+      return;
+    }
+    this.dataSource.connection = this.dataSource.connection || <Connection>{};
+    this.dataSource.connection.hostname = val;
+    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
+      connection: this.dataSource.connection
+    });
+  }
+
   updatePort(valid: boolean | null, val: number) {
     this.dsFormValid = !!valid;
 
@@ -343,7 +357,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
     this.ngxDatatable.sorts = [];
-    this.datapointRows = this.datapointRows.concat([obj]);
+    this.datapointRows = [obj].concat(this.datapointRows);
   }
 
   onEditStart(rowIndex: number, row: any) {

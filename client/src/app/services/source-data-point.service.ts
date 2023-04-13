@@ -328,6 +328,8 @@ export class SourceDataPointService {
         return `[DI]`;
       case DataSourceProtocol.Energy:
         return `[Energy]`;
+      case DataSourceProtocol.MTConnect:
+        return `[MTC]`;
       default:
         return '';
     }

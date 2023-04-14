@@ -85,6 +85,10 @@ export type IS7DataSourceConnection = {
   rack?: number;
   slot?: number;
 };
+export type IMTConnectDataSourceConnection = {
+  hostname: string;
+  port: number;
+};
 export type IS7DataSourceTypes =
   | 's7-300/400'
   | 's7-1200/1500'
@@ -94,24 +98,31 @@ export type IS7DataSourceTypes =
 export type IIoShieldDataSourcesTypes = '10di' | 'ai-100+5di' | 'ai-150+5di';
 export type IEnergyDataSourcesTypes = 'PhoenixEMpro';
 export type IEnergyDatapointTypes = 'meter' | 'measurement' | 'device';
+export type IMTConnectDataSourcesTypes = 'Agent' | 'Adapter';
+export type IMTConnectDataPointTypes = 'event' | 'sample' | 'condition';
 
 export interface IDataPointConfig {
   id: string;
   name: string;
   address: string;
   readFrequency?: number;
-  type: 's7' | 'nck' | IEnergyDatapointTypes;
+  type: 's7' | 'nck' | IEnergyDatapointTypes | IMTConnectDataPointTypes;
 }
 
 export interface IDataSourceConfig {
   dataPoints: IDataPointConfig[];
   protocol: DataSourceProtocols;
-  connection?: IS7DataSourceConnection | IEnergyDataSourceConnection;
+  connection?:
+    | IS7DataSourceConnection
+    | IEnergyDataSourceConnection
+    | IMTConnectDataSourceConnection;
   enabled: boolean;
   type:
     | IS7DataSourceTypes
     | IIoShieldDataSourcesTypes
-    | IEnergyDataSourcesTypes;
+    | IEnergyDataSourcesTypes
+    | IMTConnectDataSourcesTypes;
+  machineName?: string;
 }
 
 export function isValidDataSourceDatapoint(dp: any): dp is IDataPointConfig {
@@ -127,8 +138,6 @@ export function isValidDataSource(obj: any): obj is IDataSourceConfig {
     obj.dataPoints?.every(isValidDataSourceDatapoint)
   );
 }
-
-type IMTConnectDataPointTypes = 'event' | 'condition' | 'sample';
 
 // type MapItem = {
 //   [key: string]: "string";

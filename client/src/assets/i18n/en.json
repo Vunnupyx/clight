@@ -173,7 +173,9 @@
     "Cancel": "Cancel",
     "Select": "Select",
     "Enabled": "Enabled",
+    "MachineName": "Machine Name",
     "IPAddress": "IP Address",
+    "Hostname": "Hostname",
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
@@ -203,6 +205,7 @@
     "LoadError": "Failed to load data sources. Try again later",
     "Tabs": {
       "s7": "SIEMENS",
+      "mtconnect": "MTConnect",
       "ioshield": "Input Board",
       "energy": "Energy"
     },
@@ -215,12 +218,14 @@
     },
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
+    "OpenMTConnectStream": "Open MTConnect Stream",
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "UnsupportedAddress": "The data point does not correspond to the selected type",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
     "DeleteMessage": "Are you sure you want to delete data point {{name}}?",
+    "Port": "Port",
     "TariffStatus": {
       "0": "No tariff counter active",
       "1": "Standby",

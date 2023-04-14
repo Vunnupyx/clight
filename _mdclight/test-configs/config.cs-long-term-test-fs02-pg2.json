@@ -5,36 +5,6 @@
     "model": "CMX 50 U",
     "control": "SIEMENS SINUMERIK 840D sl"
   },
-  "networkConfig": {
-    "x1": {
-      "useDhcp": true,
-      "ipAddr": "",
-      "netmask": "",
-      "defaultGateway": "",
-      "dnsServer": ""
-    },
-    "x2": {
-      "useDhcp": false,
-      "ipAddr": "192.168.214.10",
-      "netmask": "255.255.255.0",
-      "defaultGateway": "0.0.0.0",
-      "dnsServer": "0.0.0.0"
-    },
-    "time": {
-      "useNtp": true,
-      "ntpHost": "pool.ntp.org",
-      "currentTime": "",
-      "timezone": "Europe/Berlin"
-    },
-    "proxy": {
-      "useProxy": false,
-      "password": "",
-      "username": "",
-      "port": "",
-      "ipAddr": "",
-      "type": "http"
-    }
-  },
   "dataSources": [
     {
       "dataPoints": [
@@ -339,6 +309,126 @@
           "name": "DWORD7",
           "address": "DB21,DWORD7",
           "id": "778f400b-eaec-42b5-b3d7-1a3270bf6c50"
+        },
+        {
+          "type": "nck",
+          "name": "maxnumAlarms",
+          "address": "/Nck/Configuration/maxnumAlarms",
+          "id": "38fa3aab-be65-4961-9895-c4b565f1f43e"
+        },
+        {
+          "type": "nck",
+          "name": "sequencedAlarmAlarmNo",
+          "address": "/Nck/SequencedAlarms/alarmNo",
+          "id": "fb819c4c-42b2-44c2-8eff-e5a15855b969"
+        },
+        {
+          "type": "nck",
+          "name": "alarmEventAlarmNo",
+          "address": "/Nck/AlarmEvent/alarmNo",
+          "id": "67476d52-cdd0-4eb9-8ff0-6e86bd5e45f8"
+        },
+        {
+          "type": "nck",
+          "name": "lastAlarmNo",
+          "address": "/Nck/LastAlarm/alarmNo",
+          "id": "584be15a-b749-48b9-9010-ba2dacb290a8"
+        },
+        {
+          "type": "nck",
+          "name": "topPrioAlarmNo",
+          "address": "/Nck/TopPrioAlarm/alarmNo",
+          "id": "cdda9752-954f-41cb-88d0-61b769ceadee"
+        },
+        {
+          "type": "nck",
+          "name": "cuttingTime",
+          "address": "/Channel/ChannelDiagnose/cuttingTime",
+          "id": "afd57d51-2bca-4712-9448-c0b2c9a6c6e8"
+        },
+        {
+          "type": "nck",
+          "name": "progStatus",
+          "address": "/Channel/State/progStatus",
+          "id": "e692fce5-3550-4c7f-b4fc-13f35160cbcc"
+        },
+        {
+          "type": "nck",
+          "name": "msg",
+          "address": "/Channel/ProgramInfo/msg",
+          "id": "13e200a9-5cfb-45ce-9ba8-f2607541cb3d"
+        },
+        {
+          "type": "nck",
+          "name": "workPNameLong",
+          "address": "/Channel/ProgramInfo/workPNameLong",
+          "id": "3a507cc1-82ce-4a1c-a51a-ef2fdb29a07f"
+        },
+        {
+          "type": "nck",
+          "name": "workPandProgName",
+          "address": "/Channel/ProgramInfo/workPandProgName",
+          "id": "61af11bc-df9b-4df5-9a5e-5a192699c01b"
+        },
+        {
+          "type": "nck",
+          "name": "specParts ",
+          "address": "/Channel/State/specParts",
+          "id": "f5e06a84-66f1-48e8-8eca-20191c0dadd3"
+        },
+        {
+          "type": "nck",
+          "name": "turnState",
+          "address": "/Channel/Spindle/turnState",
+          "id": "6cd9bf20-b796-446f-a711-06ef20e7ccf7"
+        },
+        {
+          "type": "nck",
+          "name": "anLanguageOnHmi",
+          "address": "/Nck/Configuration/anLanguageOnHmi",
+          "id": "ef289deb-c96c-405c-982c-1553cb713795"
+        },
+        {
+          "type": "nck",
+          "name": "basicLengthUnit",
+          "address": "/Nck/Configuration/basicLengthUnit",
+          "id": "df5cc984-2b34-49c9-afd2-dee675efb995"
+        },
+        {
+          "type": "nck",
+          "name": "nckType",
+          "address": "/Nck/Configuration/nckType",
+          "id": "6ba7ac5d-a7a5-4193-8ce4-ced146a159a9"
+        },
+        {
+          "type": "nck",
+          "name": "nckVersion",
+          "address": "/Nck/Configuration/nckVersion",
+          "id": "3c1d86d7-a654-4884-aff0-4bd413fde73f"
+        },
+        {
+          "type": "nck",
+          "name": "chanStatus ",
+          "address": "/Channel/State/chanStatus",
+          "id": "3b0fe741-855f-4bd6-80ff-7738f5feea38"
+        },
+        {
+          "type": "nck",
+          "name": "optStopActive",
+          "address": "/Channel/ProgramModification/optStopActive",
+          "id": "4f4ad44f-d4ed-4141-8aa3-9611ecafe7c3"
+        },
+        {
+          "type": "nck",
+          "name": "progTestActive",
+          "address": "/Channel/ProgramModification/progTestActive",
+          "id": "a66479ca-b7a2-41ee-be3b-caba1cc20104"
+        },
+        {
+          "type": "nck",
+          "name": "trialRunActive",
+          "address": "/Channel/ProgramModification/trialRunActive",
+          "id": "435be592-2f43-47cc-83c7-b54120a76ccb"
         }
       ],
       "protocol": "s7",
@@ -350,6 +440,275 @@
       },
       "enabled": true,
       "type": "nck"
+    },
+    {
+      "dataPoints": [
+        {
+          "address": "tariff-number",
+          "type": "device",
+          "mandatory": true,
+          "id": "tariff-number",
+          "name": "Tariff"
+        },
+        {
+          "type": "measurement",
+          "name": "IN",
+          "address": "in",
+          "id": "4c6b3034-c3bc-44d7-9bd8-3c263f1c151e"
+        },
+        {
+          "type": "measurement",
+          "name": "P",
+          "address": "p",
+          "id": "f3bb9f89-cd82-4af0-8651-4b938c55cf75"
+        },
+        {
+          "type": "measurement",
+          "name": "Q",
+          "address": "q",
+          "id": "1befeb36-d966-4db6-8e04-8aa020e9bdc5"
+        },
+        {
+          "type": "measurement",
+          "name": "S",
+          "address": "s",
+          "id": "57e2dd64-6cce-43fe-8336-68f77ba1fbff"
+        },
+        {
+          "type": "measurement",
+          "name": "PF",
+          "address": "pf",
+          "id": "1ae71de3-1505-4cae-b3b2-cea7cbac9e9a"
+        },
+        {
+          "type": "meter",
+          "name": "Ea+",
+          "address": "ea-pos-total",
+          "id": "2079c391-6f87-4b49-a7a0-1d0b9857fea7"
+        },
+        {
+          "type": "meter",
+          "name": "Ea-",
+          "address": "ea-neg-total",
+          "id": "690193d4-bfce-4a76-b0e8-cb1ce8f83008"
+        },
+        {
+          "type": "meter",
+          "name": "Er+",
+          "address": "er-pos-total",
+          "id": "eb87479c-2daa-475d-93ce-a812f4dfe80b"
+        },
+        {
+          "type": "meter",
+          "name": "Er-",
+          "address": "er-neg-total",
+          "id": "cd478b03-5f67-49c1-bd8b-65a77b8d0dd8"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Ea+",
+          "address": "t1-ea-pos",
+          "id": "7383170a-0c1a-429a-a57f-df538f98b7c6"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Ea-",
+          "address": "t1-ea-neg",
+          "id": "7cb9f59e-ef9c-4903-8dd9-e89c2753fba3"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Er+",
+          "address": "t1-er-pos",
+          "id": "07de18ee-7467-4675-8995-a1258ba0a7bd"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Er-",
+          "address": "t1-er-neg",
+          "id": "c005d2fe-b223-4d01-a16d-b73d60de9321"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Es",
+          "address": "t1-es",
+          "id": "82948c87-eb57-4a41-a799-a632e24f40f7"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Er",
+          "address": "t1-er",
+          "id": "bb180331-8c28-42d9-bba9-62fa3bc10ede"
+        },
+        {
+          "type": "meter",
+          "name": "T1 Runtime",
+          "address": "t1-runtime",
+          "id": "ecb94864-0a8f-42b7-8b2d-e3500dccb178"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Ea+",
+          "address": "t2-ea-pos",
+          "id": "b192dc91-0912-4dcf-a84d-38be0c9986fd"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Ea-",
+          "address": "t2-ea-neg",
+          "id": "a1da8f7c-4394-4d0e-8997-f3921b5d7ddf"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Er+",
+          "address": "t2-er-pos",
+          "id": "717b512f-11c3-4086-8bcd-41c184e7e988"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Er-",
+          "address": "t2-er-neg",
+          "id": "0ebf67f6-d35b-4de7-9ef0-114cfcb01aeb"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Es",
+          "address": "t2-es",
+          "id": "8d29993b-cbd8-44df-a9a0-64f908568212"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Er",
+          "address": "t2-er",
+          "id": "77727839-8b40-4c8c-9244-bb14362f2a42"
+        },
+        {
+          "type": "meter",
+          "name": "T2 Runtime",
+          "address": "t2-runtime",
+          "id": "72441295-e020-43f0-94ea-5c646972dd2e"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Ea+",
+          "address": "t3-ea-pos",
+          "id": "2f796e2d-d9af-4e25-bd11-9ca1119ccbb6"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Ea-",
+          "address": "t3-ea-neg",
+          "id": "a2942fcb-a6a1-4eeb-9fc2-d85d07fb9ba3"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Er+",
+          "address": "t3-er-pos",
+          "id": "2858b7aa-29a6-47a5-a543-651b05e65840"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Er-",
+          "address": "t3-er-neg",
+          "id": "a989973d-c95e-48f6-8a81-3e42f0de519a"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Es",
+          "address": "t3-es",
+          "id": "731a958b-62c6-40b4-8314-6f7f412a8b93"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Er",
+          "address": "t3-er",
+          "id": "47cd19fc-b663-4315-9624-c31bccd46988"
+        },
+        {
+          "type": "meter",
+          "name": "T3 Runtime",
+          "address": "t3-runtime",
+          "id": "1ced7b58-1fdd-41d3-b7d1-14def9d8a36f"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Ea+",
+          "address": "t4-ea-pos",
+          "id": "52621195-a86d-42b2-8dc3-f5482e032403"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Ea-",
+          "address": "t4-ea-neg",
+          "id": "eb7cbb3c-40e7-464e-9199-c68995edb9d2"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Er+",
+          "address": "t4-er-pos",
+          "id": "ca7b9e64-1fda-4b87-b32e-3b9ae77f40c7"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Er-",
+          "address": "t4-er-neg",
+          "id": "e1cdd9f5-f27e-43b0-a65d-d655e91c4405"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Es",
+          "address": "t4-es",
+          "id": "03e61847-0816-4119-b35c-1dea284b2e1e"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Er",
+          "address": "t4-er",
+          "id": "7f065299-c916-417e-b217-cd940cf8bb15"
+        },
+        {
+          "type": "meter",
+          "name": "T4 Runtime",
+          "address": "t4-runtime",
+          "id": "9bae0f02-8637-4e88-a767-33a1acb979f5"
+        },
+        {
+          "type": "device",
+          "name": "Firmware Version",
+          "address": "fw",
+          "id": "d40fb48b-a73b-4c55-a0c7-05f3259a8fcd"
+        },
+        {
+          "type": "device",
+          "name": "Hardware Version",
+          "address": "hw",
+          "id": "88b7c9f1-0e68-4fa7-aba5-19646d3351e3"
+        },
+        {
+          "type": "device",
+          "name": "Serial Number",
+          "address": "serial-number",
+          "id": "2de73995-a0a9-4a6e-9886-67c5d098caff"
+        },
+        {
+          "type": "device",
+          "name": "MAC Address",
+          "address": "mac",
+          "id": "35a0c743-0460-4530-a92f-952ee497309f"
+        },
+        {
+          "type": "device",
+          "name": "Article Number",
+          "address": "article-number",
+          "id": "9be5d33f-2aaa-46a7-a41f-1b12fcc7e574"
+        }
+      ],
+      "protocol": "energy",
+      "enabled": true,
+      "type": "PhoenixEMpro",
+      "connection": {
+        "ipAddr": "54.194.197.216"
+      }
     }
   ],
   "dataSinks": [
@@ -886,14 +1245,9 @@
         "defaultValue": "OFF",
         "items": [
           {
-            "source": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
-            "returnValueIfTrue": "BLUE",
-            "priority": 3
-          },
-          {
-            "source": "831268a3-6088-4bca-b099-27f745a84637",
-            "returnValueIfTrue": "GREEN",
-            "priority": 2
+            "source": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
+            "returnValueIfTrue": "RED",
+            "priority": 0
           },
           {
             "source": "ac5b6f12-6882-4a17-b0c1-68a781edc0e7",
@@ -901,9 +1255,14 @@
             "priority": 1
           },
           {
-            "source": "86ea22fc-1091-46e5-9a1a-275c8f7768ec",
-            "returnValueIfTrue": "RED",
-            "priority": 0
+            "source": "831268a3-6088-4bca-b099-27f745a84637",
+            "returnValueIfTrue": "GREEN",
+            "priority": 2
+          },
+          {
+            "source": "73fba6ee-ca3b-43bd-af46-b31fba381ab7",
+            "returnValueIfTrue": "BLUE",
+            "priority": 3
           }
         ]
       }
@@ -1049,23 +1408,20 @@
     }
   ],
   "quickStart": {
+    "completed": true,
     "currentTemplate": null,
-    "currentTemplateName": null,
-    "completed": true
+    "currentTemplateName": null
   },
   "termsAndConditions": {
     "accepted": true
   },
-  "env": {
-    "selected": "dev",
-    "mdc": {
-      "tag": "develop"
-    },
-    "mtc": {
-      "tag": "latest"
-    },
-    "web": {
-      "tag": "develop"
-    }
+  "messenger": {
+    "hostname": "",
+    "username": "",
+    "password": "",
+    "name": "",
+    "model": 0,
+    "organization": "",
+    "timezone": 0
   }
 }

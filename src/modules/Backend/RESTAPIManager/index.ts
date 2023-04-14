@@ -94,7 +94,6 @@ export class RestApiManager {
           // If device is not commissioned allowed these endpoints so that commissioning can be performed
           if (
             [
-              '/machine/info',
               '/system/commissioning',
               '/network/adapters/enoX1',
               '/network/adapters/enoX1/status',

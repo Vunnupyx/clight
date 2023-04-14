@@ -56,9 +56,10 @@ export class SystemInformationService {
       state.status = Status.Loading;
     });
     try {
-      const response = await this.httpService.get<MachineInformation>(
-        '/machine/info'
-      );
+      const response =
+        await this.configurationAgentHttpService.get<MachineInformation>(
+          '/machine/info'
+        );
 
       this._store.patchState((state) => {
         state.status = Status.Ready;

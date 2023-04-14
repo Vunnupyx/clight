@@ -125,7 +125,7 @@ export class DataPointService {
 
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataPoints = [...state.dataPoints, obj];
+      state.dataPoints = [obj, ...state.dataPoints];
       state.dataPointsSinkMap[obj.id] = protocol;
       state.touched = true;
     });

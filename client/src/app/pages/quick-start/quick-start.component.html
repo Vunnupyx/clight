@@ -1,5 +1,10 @@
 <div class="container">
-  <mat-stepper class="pt-20" [linear]="true" #stepper>
+  <mat-stepper
+    class="pt-20"
+    [linear]="true"
+    #stepper
+    [selectedIndex]="selectedStepIndex"
+  >
     <mat-step [completed]="termsAccepted">
       <ng-template matStepLabel>
         {{ 'quick-start.TermsAndConditions' | translate }}

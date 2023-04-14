@@ -111,7 +111,7 @@ export class DataMappingService {
   async addDataMapping(obj: DataMapping) {
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataMappings = [...state.dataMappings, { ...obj, id: uuidv4() }];
+      state.dataMappings = [{ ...obj, id: uuidv4() }, ...state.dataMappings];
       state.touched = true;
     });
   }

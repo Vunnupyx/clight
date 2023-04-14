@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { TermsAndConditionsService, TemplateService } from 'app/services';
@@ -37,6 +37,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   checkedSources: { [key: string]: boolean } = {};
   checkedSinks: { [key: string]: boolean } = {};
 
+  selectedStepIndex = 0;
   shouldOpenTerms = true;
   termsAccepted = false;
   templatesCompleted = false;
@@ -78,10 +79,14 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private formBuilder: UntypedFormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog
   ) {}
 
   async ngOnInit(): Promise<void> {
+    const step = this.route.snapshot.queryParams['step'];
+    if (step) this.selectedStepIndex = step;
+
     this.templateForm = this.formBuilder.group({
       templateId: ['', Validators.required]
     });
@@ -117,6 +122,8 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     );
     this.termsAccepted = accepted;
     this.shouldOpenTerms = !accepted;
+
+    if (!accepted) this.selectedStepIndex = 0;
   }
 
   ngOnDestroy() {

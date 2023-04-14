@@ -209,7 +209,7 @@ export class VirtualDataPointService {
   async addDataPoint(obj: VirtualDataPoint) {
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataPoints = [...state.dataPoints, { ...obj, id: uuidv4() }];
+      state.dataPoints = [{ ...obj, id: uuidv4() }, ...state.dataPoints];
       state.touched = true;
     });
   }

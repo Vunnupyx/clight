@@ -1,0 +1,203 @@
+<div class="layout-header">
+  <h2 class="layout-header__title mt-0 mb-0 mr-25 ml-25">
+    {{ 'net-service.NetService' | translate }}
+  </h2>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="row mt-35 mb-35">
+  <div class="col-6 col-sm-2 offset-sm-4">
+    <div class="pl-35 d-inline-flex align-items-center">
+      <button mat-button color="primary">
+        {{ 'net-service.StartNetService' | translate }}
+      </button>
+      <a class="ml-10" [href]="supportHref" target="_blank">
+        <mat-icon class="doc-btn" svgIcon="mdc:unknown"></mat-icon>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="mb-20">
+  <div class="pr-25 pl-25 pt-15 pb-15">
+    <h3 class="m-0 section__title">{{ 'net-service.Status' | translate }}</h3>
+  </div>
+
+  <div class="net-service-container pr-25 pl-25">
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__title">
+          {{ 'net-service.NetServiceSiteControl' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__value">
+          {{ netServiceStatus.ServiceStatus }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-2">
+        <mat-icon
+          class="color-success"
+          *ngIf="netServiceStatus.ServiceStatus === ServiceStatus.Running"
+          svgIcon="mdc:success"
+        ></mat-icon>
+        <mat-icon
+          class="color-danger"
+          *ngIf="netServiceStatus.ServiceStatus !== ServiceStatus.Running"
+          svgIcon="mdc:error"
+        ></mat-icon>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__title">
+          {{ 'net-service.CentralServerConnection' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__value">
+          {{ netServiceStatus.Connected }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-2">
+        <mat-icon
+          class="color-success"
+          *ngIf="netServiceStatus.Connected"
+          svgIcon="mdc:success"
+        ></mat-icon>
+        <mat-icon
+          class="color-danger"
+          *ngIf="!netServiceStatus.Connected"
+          svgIcon="mdc:error"
+        ></mat-icon>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__title">
+          {{ 'net-service.ConnectedClients' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__value">{{ getConnectedClients() }}</h4>
+      </div>
+      <div class="col-12 col-md-2">
+        <mat-icon
+          class="color-success"
+          *ngIf="!isEmptyConnectedClients()"
+          svgIcon="mdc:success"
+        ></mat-icon>
+        <mat-icon
+          class="color-danger"
+          *ngIf="isEmptyConnectedClients()"
+          svgIcon="mdc:error"
+        ></mat-icon>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__title">
+          {{ 'net-service.UpdateStatus' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__value">
+          {{ netServiceStatus.UpdateStatus }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-2">
+        <mat-icon
+          class="color-success"
+          *ngIf="netServiceStatus.UpdateStatus === UpdateStatus.NoUpdate"
+          svgIcon="mdc:success"
+        ></mat-icon>
+        <mat-icon
+          class="color-danger"
+          *ngIf="netServiceStatus.UpdateStatus !== UpdateStatus.NoUpdate"
+          svgIcon="mdc:error"
+        ></mat-icon>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__title">
+          {{ 'net-service.FacilityTree' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-5">
+        <h4 class="m-0 net-service-item__value">
+          {{ netServiceStatus.FacilityTree }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-2">
+        <mat-icon
+          class="color-success"
+          *ngIf="netServiceStatus.FacilityTree"
+          svgIcon="mdc:success"
+        ></mat-icon>
+        <mat-icon
+          class="color-danger"
+          *ngIf="!netServiceStatus.FacilityTree"
+          svgIcon="mdc:error"
+        ></mat-icon>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="d-flex justify-content-end mt-30 mb-30">
+      <button mat-button color="primary" (click)="facilityTreeReset()">
+        {{ 'net-service.ResetFacilityTree' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="pr-25 pl-25 pt-15 pb-15">
+    <h3 class="m-0 section__title">
+      {{ 'net-service.CentralServerConfiguration' | translate }}
+    </h3>
+  </div>
+
+  <form
+    class="net-service-container pr-25 pl-25"
+    #form="ngForm"
+    (ngSubmit)="form.valid && onSave(form)"
+  >
+    <mat-form-field>
+      <mat-label>{{ 'net-service.URL' | translate }}</mat-label>
+      <input
+        matInput
+        name="url"
+        [(ngModel)]="centralServer.url"
+        [pattern]="ipRegex"
+        required
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'net-service.Port' | translate }}</mat-label>
+      <input
+        matInput
+        name="port"
+        type="number"
+        min="1"
+        max="65535"
+        [(ngModel)]="centralServer.port"
+        [pattern]="portRegex"
+        required
+      />
+    </mat-form-field>
+    <div class="d-flex justify-content-end align-items-center">
+      <button
+        type="submit"
+        class="ml-10"
+        mat-button
+        color="primary"
+        [disabled]="!form.dirty || form.invalid"
+      >
+        {{ 'net-service.ApplyChanges' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

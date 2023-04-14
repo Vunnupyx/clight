@@ -380,11 +380,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   onDelete(obj: SourceDataPoint) {
-    const title = this.translate.instant('settings-data-source.Delete');
-    const message = this.translate.instant(
-      'settings-data-source.DeleteMessage',
-      { name: obj.name }
-    );
+    const title = `Delete`;
+    const message = `Are you sure you want to delete data point ${obj.name}?`;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

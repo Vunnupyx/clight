@@ -173,7 +173,9 @@
     "Cancel": "Abbrechen",
     "Select": "Auswählen",
     "Enabled": "Aktiviert",
+    "MachineName": "Machine Name",
     "IPAddress": "IP Adresse",
+    "Hostname": "Hostname",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
     "Disconnected": "Nicht verbunden",
@@ -204,6 +206,7 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
+      "mtconnect": "MTConnect",
       "ioshield": "Input Modul",
       "energy": "Energy"
     },
@@ -215,12 +218,14 @@
       }
     },
     "DiscardChanges": "Änderungen verwerfen",
-    "ApplyChanges": "Ändeurngen speichern",
+    "ApplyChanges": "Änderungen speichern",
+    "OpenMTConnectStream": "MTConnect Stream öffnen",
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "UnsupportedAddress": "Der Datenpunkt entspricht nicht dem ausgewählten Datentyp.",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
+    "Port": "Port",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
       "1": "Bereit",
@@ -509,6 +514,9 @@
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"
+  },
+  "http": {
+    "SessionExpired": "Sie wurden aufgrund von Inaktivität abgemeldet. Bitte loggen Sie sich erneut ein."
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen. Klicken Sie auf diese Warnung, um zur Einstellungsseite zu gelangen, und wählen Sie die Registerkarte Zeit, um die Zeiteinstellungen anzupassen."

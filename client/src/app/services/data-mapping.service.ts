@@ -7,35 +7,34 @@ import { DataMapping } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { clone, errorHandler } from 'app/shared/utils';
-import { BaseChangesService } from './base-changes.service';
-import { IChangesAppliable, IChangesState } from 'app/models/core/data-changes';
+import { v4 as uuidv4 } from 'uuid';
 
 export class DataMappingsState {
   status!: Status;
+  touched!: boolean;
   dataMappings!: DataMapping[];
   originalDataMappings!: DataMapping[];
 }
 
 @Injectable()
-export class DataMappingService
-  extends BaseChangesService<DataMapping>
-  implements IChangesAppliable
-{
+export class DataMappingService {
   private _store: Store<DataMappingsState>;
 
   constructor(
     storeFactory: StoreFactory<DataMappingsState>,
-    changesFactory: StoreFactory<IChangesState<string, DataMapping>>,
     private httpService: HttpService,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
-    super(changesFactory);
     this._store = storeFactory.startFrom(this._emptyState());
   }
 
   get status() {
     return this._store.snapshot.status;
+  }
+
+  get isTouched() {
+    return this._store.snapshot.touched;
   }
 
   get dataMappings() {
@@ -47,9 +46,8 @@ export class DataMappingService
   async revert(): Promise<boolean> {
     this._store.patchState((state) => {
       state.dataMappings = clone(state.originalDataMappings);
+      state.touched = false;
     });
-
-    this.resetState();
 
     return Promise.resolve(true);
   }
@@ -65,33 +63,9 @@ export class DataMappingService
         this._store.snapshot.dataMappings
       );
 
-      /*TBD
-      if (Object.keys(this.payload.created).length) {
-        for (let dm of Object.values(this.payload.created)) {
-          await this.httpService.post(`/mappings`, dm);
-        }
-      }
-
-      if (Object.keys(this.payload.updated).length) {
-        for (let [dmId, dm] of Object.entries(this.payload.updated)) {
-          await this.httpService.patch(`/mappings/${dmId}`, dm);
-        }
-      }
-
-      if (this.payload.deleted.length) {
-        for (let dmId of this.payload.deleted) {
-          await this.httpService.delete(`/mappings/${dmId}`);
-        }
-      }
-
-      if (this.payload.replace.length) {
-        await this.httpService.patch(`/mappings`, this.payload.replace);
-      }*/
-
-      this.resetState();
-
       this._store.patchState((state) => {
         state.status = Status.Ready;
+        state.touched = false;
       });
 
       this.toastr.success(
@@ -135,32 +109,26 @@ export class DataMappingService
   }
 
   async addDataMapping(obj: DataMapping) {
-    this.create(obj);
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataMappings = [...state.dataMappings, obj];
+      state.dataMappings = [{ ...obj, id: uuidv4() }, ...state.dataMappings];
+      state.touched = true;
     });
   }
 
   async updateDataMapping(obj: DataMapping) {
-    const oldDm = this._store.snapshot.dataMappings.find(
-      (dm) => dm.id === obj.id
-    );
-
-    this.update(obj.id, { ...oldDm, ...obj });
-
     this._store.patchState((state) => {
       state.dataMappings = state.dataMappings.map((x) =>
         x.id != obj.id ? x : obj
       );
+      state.touched = true;
     });
   }
 
   async deleteDataMapping(obj: DataMapping) {
-    this.delete(obj.id);
-
     this._store.patchState((state) => {
       state.dataMappings = state.dataMappings.filter((x) => x.id != obj.id);
+      state.touched = true;
     });
   }
 
@@ -170,7 +138,8 @@ export class DataMappingService
 
   private _emptyState() {
     return <DataMappingsState>{
-      status: Status.NotInitialized
+      status: Status.NotInitialized,
+      touched: false
     };
   }
 }

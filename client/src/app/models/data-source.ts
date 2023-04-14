@@ -2,6 +2,7 @@ import { SourceDataPoint } from './source-data-point';
 
 export enum DataSourceProtocol {
   S7 = 's7',
+  MTConnect = 'mtconnect',
   IOShield = 'ioshield',
   Energy = 'energy'
 }
@@ -35,6 +36,7 @@ export class Connection {
   port?: number;
   rack?: number;
   slot?: number;
+  hostname?: string;
 }
 
 export enum S7Types {
@@ -42,6 +44,11 @@ export enum S7Types {
   SinumerikPl = 'nck-pl',
   S7_300_400 = 's7-300/400',
   S7_1200_1500 = 's7-1200/1500'
+}
+
+export enum MTConnectTypes {
+  Agent = 'Agent',
+  Adapter = 'Adapter'
 }
 
 export enum IOShieldTypes {
@@ -55,12 +62,12 @@ export enum EnergyTypes {
 }
 
 export class DataSource {
-  type?: S7Types | IOShieldTypes | EnergyTypes;
+  type?: S7Types | MTConnectTypes | IOShieldTypes | EnergyTypes;
   connection?: Connection;
   dataPoints?: SourceDataPoint[];
   enabled?: boolean;
   id?: string;
-  name?: string;
+  machineName?: string;
   protocol?: DataSourceProtocol;
   softwareVersion?: string;
 }

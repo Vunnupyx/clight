@@ -5,7 +5,10 @@ import { IDataSourceParams, IMeasurement } from '../interfaces';
 import { IHostConnectivityState, ITariffNumbers } from './interfaces';
 import { PhoenixEmProAdapter } from './Adapter/PhoenixEmProAdapter';
 import { VirtualDataPointManager } from '../../../VirtualDataPointManager';
-import { IDataPointConfig } from '../../../ConfigManager/interfaces';
+import {
+  IDataPointConfig,
+  IEnergyDataSourceConnection
+} from '../../../ConfigManager/interfaces';
 
 /**
  * Implementation of Energy data source
@@ -54,7 +57,9 @@ export class EnergyDataSource extends DataSource {
       return;
     }
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
-    this.phoenixEemClient = new PhoenixEmProAdapter(connection);
+    this.phoenixEemClient = new PhoenixEmProAdapter(
+      connection as IEnergyDataSourceConnection
+    );
 
     try {
       await this.phoenixEemClient.testHostConnectivity();

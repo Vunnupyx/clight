@@ -26,6 +26,7 @@ import {
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-data-mapping',
@@ -66,7 +67,8 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     private dataPointService: DataPointService,
     private virtualDataPointService: VirtualDataPointService,
     private dataMappingService: DataMappingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   get isEditing() {
@@ -251,8 +253,10 @@ export class DataMappingComponent implements OnInit, OnDestroy {
   }
 
   onDelete(obj: DataMapping) {
-    const title = `Delete`;
-    const message = `Are you sure you want to delete data mapping?`;
+    const title = this.translate.instant('settings-data-mapping.Delete');
+    const message = this.translate.instant(
+      'settings-data-mapping.DeleteMessage'
+    );
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

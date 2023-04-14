@@ -220,7 +220,7 @@
     "UnsupportedAddress": "Der Datenpunkt entspricht nicht dem ausgewählten Datentyp.",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
-    "DeleteMessage": "Are you sure you want to delete data point {{name}}?",
+    "DeleteMessage": "Möchten Sie wirklich den Datenpunkt {{name}} löschen?",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
       "1": "Bereit",
@@ -248,8 +248,8 @@
     "LiveData": "Aktualwert",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "DeleteMessage": "Sind Sie sicher?",
-    "EnumerationDeleteMessage": "Are you sure you want to delete enumeration item?",
-    "SchedulesDeleteMessage": "Are you sure you want to delete data point {{name}}?",
+    "EnumerationDeleteMessage": "Möchten Sie wirklich die Enumeration löschen?",
+    "SchedulesDeleteMessage": "Möchten Sie wirklich den Datenpunkt {{name}} löschen?",
     "SetThresholds": "Grenzwerte setzen",
     "SetComparativeValue": "Vergleichswert setzen",
     "MissingComparativeValue": "Vergleichswert fehlt",
@@ -397,7 +397,7 @@
     "SetCustomOpcUaVariable": "Benutzerdefinierte OPC UA Variable setzen",
     "NodeId": "Node ID",
     "DeleteMessage": "Sind Sie sicher ",
-    "MappingDeleteMessage": "Are you sure you want to delete mapping {{from}}->{{to}}?",
+    "MappingDeleteMessage": "Möchten Sie wirklich das Mapping {{from}}->{{to}} löschen?",
     "Username": "Benutzername",
     "Hostname": "Hostname",
     "Server": "Server Status",
@@ -441,7 +441,7 @@
     "MappingDisabledTooltip": "Das Mapping ist derzeit nicht aktiv, weil entweder die Datenquelle oder die Anwendungsschnittstelle deaktiviert ist.",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen speichern",
-    "DeleteMessage": "Are you sure you want to delete data mapping?"
+    "DeleteMessage": "Möchten Sie wirklich das Mapping löschen?"
   },
   "settings-network": {
     "Network": "Netzwerkeinstellungen",

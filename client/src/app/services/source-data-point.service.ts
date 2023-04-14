@@ -274,7 +274,7 @@ export class SourceDataPointService {
 
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataPoints = [...state.dataPoints, obj];
+      state.dataPoints = [obj, ...state.dataPoints];
       state.dataPointsSourceMap[obj.id] = datasourceProtocol;
       state.touched = true;
     });
@@ -330,6 +330,8 @@ export class SourceDataPointService {
         return `[DI]`;
       case DataSourceProtocol.Energy:
         return `[Energy]`;
+      case DataSourceProtocol.MTConnect:
+        return `[MTC]`;
       default:
         return '';
     }

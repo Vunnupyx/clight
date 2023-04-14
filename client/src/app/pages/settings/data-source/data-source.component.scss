@@ -1,3 +1,12 @@
+:host {
+  & .mat-form-field {
+    margin-top: 0;
+    & ::ng-deep .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  }
+}
+
 .circle {
   display: inline-block;
   height: 6px;
@@ -26,4 +35,16 @@ ngx-datatable ::ng-deep {
   .datatable-body-row {
     width: 100% !important;
   }
+}
+
+.doc-btn {
+  font-size: 12px;
+  height: 16px;
+  width: 16px;
+  color: #008bd2;
+  margin-left: 3px;
+}
+.pointer {
+  padding-right: 3px;
+  cursor: pointer;
 }

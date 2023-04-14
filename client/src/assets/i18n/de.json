@@ -173,7 +173,9 @@
     "Cancel": "Abbrechen",
     "Select": "Auswählen",
     "Enabled": "Aktiviert",
+    "MachineName": "Machine Name",
     "IPAddress": "IP Adresse",
+    "Hostname": "Hostname",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
     "Disconnected": "Nicht verbunden",
@@ -203,6 +205,7 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
+      "mtconnect": "MTConnect",
       "ioshield": "Input Modul",
       "energy": "Energy"
     },
@@ -214,12 +217,14 @@
       }
     },
     "DiscardChanges": "Änderungen verwerfen",
-    "ApplyChanges": "Ändeurngen speichern",
+    "ApplyChanges": "Änderungen speichern",
+    "OpenMTConnectStream": "MTConnect Stream öffnen",
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "UnsupportedAddress": "Der Datenpunkt entspricht nicht dem ausgewählten Datentyp.",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
+    "Port": "Port",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
       "1": "Bereit",

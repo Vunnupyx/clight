@@ -3,7 +3,10 @@ export enum SourceDataPointType {
   NCK = 'nck',
   Measurement = 'measurement',
   Meter = 'meter',
-  Device = 'device'
+  Device = 'device',
+  Event = 'event',
+  Sample = 'sample',
+  Condition = 'condition'
 }
 
 export class SourceDataPoint {

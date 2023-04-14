@@ -508,6 +508,8 @@
     "MachineInformation": "Machine information",
     "Serial": "Serial",
     "ControlManufacturer": "Control Manufacturer",
+    "Manufacturer": "Manufacturer",
+    "Source": "Source",
     "ControlType": "Control Type",
     "Model": "Model",
     "Unknown": "unknown"

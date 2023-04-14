@@ -254,7 +254,7 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "DeleteMessage": "Möchten Sie wirklich den Virtuellen Datenpunkt löschen?",
     "EnumerationDeleteMessage": "Möchten Sie wirklich die Enumeration löschen?",
-    "SchedulesDeleteMessage": "Möchten Sie wirklich den Datenpunkt {{name}} löschen?",
+    "SchedulesDeleteMessage": "Möchten Sie wirklich den Zeitplan {{name}} löschen?",
     "SetThresholds": "Grenzwerte setzen",
     "SetComparativeValue": "Vergleichswert setzen",
     "MissingComparativeValue": "Vergleichswert fehlt",

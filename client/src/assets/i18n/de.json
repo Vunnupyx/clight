@@ -173,9 +173,7 @@
     "Cancel": "Abbrechen",
     "Select": "Auswählen",
     "Enabled": "Aktiviert",
-    "MachineName": "Machine Name",
     "IPAddress": "IP Adresse",
-    "Hostname": "Hostname",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
     "Disconnected": "Nicht verbunden",
@@ -205,7 +203,6 @@
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
     "Tabs": {
       "s7": "SIEMENS",
-      "mtconnect": "MTConnect",
       "ioshield": "Input Modul",
       "energy": "Energy"
     },
@@ -217,14 +214,13 @@
       }
     },
     "DiscardChanges": "Änderungen verwerfen",
-    "ApplyChanges": "Änderungen speichern",
-    "OpenMTConnectStream": "MTConnect Stream öffnen",
+    "ApplyChanges": "Ändeurngen speichern",
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "UnsupportedAddress": "Der Datenpunkt entspricht nicht dem ausgewählten Datentyp.",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
-    "Port": "Port",
+    "DeleteMessage": "Are you sure you want to delete data point {{name}}?",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
       "1": "Bereit",
@@ -251,8 +247,9 @@
     "SetThreshold": "Grenzwerte setzen",
     "LiveData": "Aktualwert",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
-    "DeleteTitle": "Löschen",
     "DeleteMessage": "Sind Sie sicher?",
+    "EnumerationDeleteMessage": "Are you sure you want to delete enumeration item?",
+    "SchedulesDeleteMessage": "Are you sure you want to delete data point {{name}}?",
     "SetThresholds": "Grenzwerte setzen",
     "SetComparativeValue": "Vergleichswert setzen",
     "MissingComparativeValue": "Vergleichswert fehlt",
@@ -400,6 +397,7 @@
     "SetCustomOpcUaVariable": "Benutzerdefinierte OPC UA Variable setzen",
     "NodeId": "Node ID",
     "DeleteMessage": "Sind Sie sicher ",
+    "MappingDeleteMessage": "Are you sure you want to delete mapping {{from}}->{{to}}?",
     "Username": "Benutzername",
     "Hostname": "Hostname",
     "Server": "Server Status",
@@ -442,7 +440,8 @@
     "TargetDisabledTooltip": "Aktivieren Sie die entsprechende Anwendungsschnittstelle, um diese Zuordnung zu erstellen",
     "MappingDisabledTooltip": "Das Mapping ist derzeit nicht aktiv, weil entweder die Datenquelle oder die Anwendungsschnittstelle deaktiviert ist.",
     "DiscardChanges": "Änderungen verwerfen",
-    "ApplyChanges": "Änderungen speichern"
+    "ApplyChanges": "Änderungen speichern",
+    "DeleteMessage": "Are you sure you want to delete data mapping?"
   },
   "settings-network": {
     "Network": "Netzwerkeinstellungen",

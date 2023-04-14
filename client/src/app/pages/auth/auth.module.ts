@@ -4,14 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from 'app/shared/shared.module';
 import { LoginComponent } from './login/login.component';
-import { AuthGuard, CommissioningGuard } from 'app/shared/guards';
+import { CommissioningGuard } from 'app/shared/guards';
 
 const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
     data: { noLayout: true },
-    canActivate: [AuthGuard, CommissioningGuard]
+    canActivate: [CommissioningGuard]
   }
 ];
 

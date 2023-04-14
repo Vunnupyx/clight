@@ -15,8 +15,7 @@ export enum ErrorTypes {
 export enum DataSourceProtocols {
   S7 = 's7',
   IOSHIELD = 'ioshield',
-  ENERGY = 'energy',
-  MTCONNECT = 'mtconnect'
+  ENERGY = 'energy'
 }
 
 export enum DataSinkProtocols {

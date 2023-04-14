@@ -106,13 +106,8 @@ export abstract class DataSource extends EventEmitter {
     winston.debug(`${logPrefix} setup data points`);
     const datapointIntervals: Array<number> = this.config.dataPoints.map(
       (dataPointConfig) => {
-        // Limit read frequency to 2/s for IO Shield
-        const minFrequencyAllowed =
-          this.protocol === DataSourceProtocols.IOSHIELD ? 500 : 100;
-        return Math.max(
-          dataPointConfig.readFrequency || defaultFrequency,
-          minFrequencyAllowed
-        );
+        // Limit read frequency to 2/s
+        return Math.max(dataPointConfig.readFrequency || defaultFrequency, 500);
       }
     );
     const intervals = Array.from(new Set(datapointIntervals));

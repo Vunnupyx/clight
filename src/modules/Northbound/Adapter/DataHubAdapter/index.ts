@@ -115,7 +115,7 @@ export class DataHubAdapter {
       return;
     }
     if (!isDesiredProps(this.moduleTwin.properties.desired)) {
-      // winston.warn(`${logPrefix} no desired properties found.`);
+      winston.warn(`${logPrefix} no desired properties found.`);
       return;
     }
 

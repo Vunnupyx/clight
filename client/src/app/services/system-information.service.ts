@@ -52,9 +52,10 @@ export class SystemInformationService {
   }
 
   async getMachineInformation() {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-    });
+    this._store.patchState(() => ({
+      status: Status.Loading,
+      sections: []
+    }));
     try {
       const response =
         await this.configurationAgentHttpService.get<MachineInformation>(

@@ -9,6 +9,7 @@ import {
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { clone } from 'app/shared/utils';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface SelectMapModalData {
   map: MapItem[];
@@ -33,7 +34,8 @@ export class SelectMapModalComponent {
   constructor(
     private dialogRef: MatDialogRef<SelectMapModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SelectMapModalData,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   get isEditing() {
@@ -84,8 +86,11 @@ export class SelectMapModalComponent {
   }
 
   onDelete(obj: MapItem) {
-    const title = `Delete`;
-    const message = `Are you sure you want to delete mapping ${obj.from}->${obj.to}?`;
+    const title = this.translate.instant('settings-data-sink.Delete');
+    const message = this.translate.instant(
+      'settings-data-sink.MappingDeleteMessage',
+      { from: obj.from, to: obj.to }
+    );
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

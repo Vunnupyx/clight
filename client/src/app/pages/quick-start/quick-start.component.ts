@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { TermsAndConditionsService, TemplateService } from 'app/services';
@@ -37,8 +37,10 @@ export class QuickStartComponent implements OnInit, OnDestroy {
   checkedSources: { [key: string]: boolean } = {};
   checkedSinks: { [key: string]: boolean } = {};
 
+  selectedStepIndex = 0;
   shouldOpenTerms = true;
   termsAccepted = false;
+  templatesCompleted = false;
 
   sub = new Subscription();
 
@@ -77,10 +79,14 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private formBuilder: UntypedFormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog
   ) {}
 
   async ngOnInit(): Promise<void> {
+    const step = this.route.snapshot.queryParams['step'];
+    if (step) this.selectedStepIndex = step;
+
     this.templateForm = this.formBuilder.group({
       templateId: ['', Validators.required]
     });
@@ -107,11 +113,17 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     );
 
     this.templateService.getAvailableTemplates();
+    this.templateService
+      .isCompleted()
+      .then((x) => (this.templatesCompleted = x));
+
     const accepted = await this.termsService.getTermsAndConditions(
       this.currentLang
     );
     this.termsAccepted = accepted;
     this.shouldOpenTerms = !accepted;
+
+    if (!accepted) this.selectedStepIndex = 0;
   }
 
   ngOnDestroy() {
@@ -146,9 +158,7 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     const dataSources = this.sourceForm.value.sources;
     const dataSinks = this.applicationInterfacesForm.value.interfaces;
 
-    const isCompleted = await this.templateService.isCompleted();
-
-    if (!isCompleted) {
+    if (!this.templatesCompleted) {
       this.templateService
         .apply({ templateId, dataSources, dataSinks })
         .then(() => this.router.navigate(['/']));

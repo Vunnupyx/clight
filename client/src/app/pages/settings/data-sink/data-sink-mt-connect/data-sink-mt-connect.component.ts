@@ -300,7 +300,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.unsavedRowIndex = this.datapointRows!.length;
     this.unsavedRow = obj;
     this.ngxDatatable.sorts = [];
-    this.datapointRows = this.datapointRows!.concat([obj]);
+    this.datapointRows = [obj].concat(this.datapointRows);
   }
 
   onEditStart(rowIndex: number, row: any) {
@@ -332,7 +332,6 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     obj.address = value;
 
     const customDataPoint = this.getCustomDataPointByAddress(obj.address);
-    console.log(customDataPoint?.dataType);
     if (customDataPoint?.dataType) {
       obj.dataType = customDataPoint.dataType;
     }

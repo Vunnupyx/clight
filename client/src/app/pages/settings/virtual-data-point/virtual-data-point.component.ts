@@ -239,10 +239,11 @@ export class VirtualDataPointComponent implements OnInit {
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
     this.ngxDatatable.sorts = [];
-    this.datapointRows = this.datapointRows.concat([obj]);
+    this.datapointRows = [obj].concat(this.datapointRows);
   }
 
   onEditStart(rowIndex: number, row: any) {
+    console.log(rowIndex);
     this.clearUnsavedRow();
     this.unsavedRowIndex = rowIndex;
     this.unsavedRow = clone(row);
@@ -329,9 +330,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDelete(obj: VirtualDataPoint) {
-    const title = this.translate.instant(
-      'settings-virtual-data-point.DeleteTitle'
-    );
+    const title = this.translate.instant('settings-virtual-data-point.Delete');
     const message = this.translate.instant(
       'settings-virtual-data-point.DeleteMessage'
     );

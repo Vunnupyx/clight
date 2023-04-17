@@ -131,7 +131,7 @@ export class S7DataSource extends DataSource {
         await Promise.all([
           this.connectPLC(),
           this.nckClient.connect(
-            (connection as IS7DataSourceConnection).ipAddr,
+            connection.ipAddr,
             undefined,
             undefined,
             this.nckSlot
@@ -141,7 +141,7 @@ export class S7DataSource extends DataSource {
       } else if (nckDataPointsConfigured && !plcDataPointsConfigured) {
         winston.debug(`${logPrefix} Connecting to NCK only`);
         await this.nckClient.connect(
-          (connection as IS7DataSourceConnection).ipAddr,
+          connection.ipAddr,
           undefined,
           undefined,
           this.nckSlot
@@ -403,30 +403,30 @@ export class S7DataSource extends DataSource {
       case 's7-1200/1500':
         connection = {
           ...defaultS71500Connection,
-          ipAddr: (this.config.connection as IS7DataSourceConnection).ipAddr
+          ipAddr: this.config.connection.ipAddr
         };
         break;
       case 's7-300/400':
         connection = {
           ...defaultS7300Connection,
-          ipAddr: (this.config.connection as IS7DataSourceConnection).ipAddr
+          ipAddr: this.config.connection.ipAddr
         };
         break;
       case 'nck':
         connection = {
           ...defaultNckSlConnection,
-          ipAddr: (this.config.connection as IS7DataSourceConnection).ipAddr
+          ipAddr: this.config.connection.ipAddr
         };
         break;
       case 'nck-pl':
         connection = {
           ...defaultNckPlConnection,
-          ipAddr: (this.config.connection as IS7DataSourceConnection).ipAddr
+          ipAddr: this.config.connection.ipAddr
         };
         break;
       case 'custom':
       default:
-        connection = this.config.connection as IS7DataSourceConnection;
+        connection = this.config.connection;
     }
 
     return new Promise((resolve, reject) => {

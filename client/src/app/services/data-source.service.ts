@@ -8,10 +8,9 @@ import {
   DataSource,
   DataSourceConnection,
   DataSourceProtocol,
-  EnergyTypes,
   IOShieldTypes,
-  MTConnectTypes,
-  S7Types
+  S7Types,
+  EnergyTypes
 } from 'app/models';
 import { HttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
@@ -29,7 +28,6 @@ export class DataSourcesState {
 
 const DATA_SOURCES_ORDER = [
   DataSourceProtocol.S7,
-  DataSourceProtocol.MTConnect,
   DataSourceProtocol.IOShield,
   DataSourceProtocol.Energy
 ];
@@ -148,11 +146,6 @@ export class DataSourceService {
       payload.type = ds.type;
     }
 
-    if (protocol === DataSourceProtocol.MTConnect) {
-      //Always send this with MTConnect so that empty string for removing machine name is also sent
-      payload.machineName = ds.machineName;
-    }
-
     await this.httpService.patch(`/datasources/${protocol}`, payload);
 
     this._store.patchState((state) => {
@@ -182,7 +175,7 @@ export class DataSourceService {
 
   async getDataSourceType(
     protocol: DataSourceProtocol
-  ): Promise<S7Types | MTConnectTypes | IOShieldTypes | EnergyTypes | null> {
+  ): Promise<S7Types | IOShieldTypes | EnergyTypes | null> {
     try {
       const ds = await this.httpService.get<DataSource>(
         `/datasources/${protocol}`

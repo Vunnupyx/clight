@@ -521,6 +521,9 @@
     "Byte": "Byte",
     "UInt16": "UInt16",
     "UInt32": "UInt32",
+    "Int16": "Int16",
+    "Int32": "Int32",
+    "LocalizedText": "Localized Text",
     "Boolean": "Boolean"
   },
   "days-of-week": {

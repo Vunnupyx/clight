@@ -26,15 +26,17 @@ export class NetServiceComponent implements OnInit {
   netServiceStatus: NetServiceStatus;
   centralServer: CentralServer = {
     url: '',
-    port: 0
+    port: null
   };
+
+  get NETServiceLoginHref() {
+    return `${window.location.protocol}//${window.location.hostname}/netservice/ccw/index.html#/login`;
+  }
 
   get supportHref() {
     return `${window.location.protocol}//${
       window.location.hostname
-    }/help${this.translate.instant(
-      'common.LanguageDocumentationPath'
-    )}/docs/VirtualDataPoints`;
+    }/help${this.translate.instant('common.LanguageDocumentationPath')}/docs`;
   }
 
   constructor(
@@ -49,7 +51,15 @@ export class NetServiceComponent implements OnInit {
       )
     );
 
-    this.netServiceService.getNetServiceStatus();
+    this.netServiceService
+      .getNetServiceStatus()
+      .then(() =>
+        this.netServiceService.getStatusIcon(this.netServiceStatus.StatusIcon)
+      );
+  }
+
+  openNETServiceLogin() {
+    window.open(this.NETServiceLoginHref, '_blank');
   }
 
   getConnectedClients() {
@@ -86,5 +96,10 @@ export class NetServiceComponent implements OnInit {
 
   private onNetServiceStatus(x: NetServiceStatus) {
     this.netServiceStatus = { ...x };
+  }
+
+  ngOnDestroy() {
+    this.netServiceService.revert();
+    this.sub.unsubscribe();
   }
 }

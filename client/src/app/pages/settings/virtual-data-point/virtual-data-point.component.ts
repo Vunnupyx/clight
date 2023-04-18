@@ -119,6 +119,11 @@ export class VirtualDataPointComponent implements OnInit {
   unsavedRow?: VirtualDataPoint;
   unsavedRowIndex: number | undefined;
   liveData: ObjectMap<DataPointLiveData> = {};
+  defaultBlinkSettings = {
+    timeframe: 10000,
+    risingEdges: 3,
+    linkedBlinkDetections: []
+  };
 
   filterSourceStr: string = '';
 
@@ -298,6 +303,13 @@ export class VirtualDataPointComponent implements OnInit {
           }
         ]
       };
+    }
+
+    if (
+      this.unsavedRow?.operationType === 'blink-detection' &&
+      !this.unsavedRow?.blinkSettings
+    ) {
+      this.unsavedRow.blinkSettings = { ...this.defaultBlinkSettings };
     }
 
     if (this.unsavedRow!.id) {
@@ -564,11 +576,7 @@ export class VirtualDataPointComponent implements OnInit {
 
   onSetBlinkSettings(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.blinkSettings) {
-      virtualPoint.blinkSettings = {
-        timeframe: 10000,
-        risingEdges: 3,
-        linkedBlinkDetections: []
-      };
+      virtualPoint.blinkSettings = { ...this.defaultBlinkSettings };
     }
 
     const dataPointsWithBlinkDetection = this.datapointRows.filter(

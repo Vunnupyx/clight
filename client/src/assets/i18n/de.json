@@ -206,12 +206,10 @@
       "ioshield": "Input Modul",
       "energy": "Energy"
     },
-    "Livedata": {
-      "ioshield": {
-        "0": "0 (Aus)",
-        "1": "1 (An)",
-        "2": "2 (Blinken)"
-      }
+    "BlinkingStatus": {
+      "0": "0 (Aus)",
+      "1": "1 (An)",
+      "2": "2 (Blinken)"
     },
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Ändeurngen speichern",

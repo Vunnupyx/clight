@@ -206,12 +206,10 @@
       "ioshield": "デジタル入力",
       "energy": "電力量"
     },
-    "Livedata": {
-      "ioshield": {
-        "0": "0 (オフ)",
-        "1": "1 (オン)",
-        "2": "2 (点滅)"
-      }
+    "BlinkingStatus": {
+      "0": "0 (オフ)",
+      "1": "1 (オン)",
+      "2": "2 (点滅)"
     },
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",

@@ -338,7 +338,15 @@
             let-row="row"
           >
             <span *ngIf="liveData && liveData[row.id]; else noLiveData">
-              {{ liveData[row.id]?.value }}
+              <span *ngIf="row.operationType === 'blink-detection'">
+                {{
+                'settings-data-source.BlinkingStatus.' +
+                  liveData?.[row.id]?.value | translate
+                }}
+              </span>
+              <span *ngIf="row.operationType !== 'blink-detection'">
+                {{ liveData[row.id]?.value }}
+              </span>
             </span>
             <ng-template #noLiveData>-</ng-template>
             <span

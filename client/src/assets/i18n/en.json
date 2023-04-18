@@ -206,12 +206,10 @@
       "ioshield": "Input Board",
       "energy": "Energy"
     },
-    "Livedata": {
-      "ioshield": {
-        "0": "0 (Off)",
-        "1": "1 (On)",
-        "2": "2 (Blinking)"
-      }
+    "BlinkingStatus": {
+      "0": "0 (Off)",
+      "1": "1 (On)",
+      "2": "2 (Blinking)"
     },
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",

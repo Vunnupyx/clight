@@ -842,12 +842,10 @@
                 <mat-icon svgIcon="mdc:edit"></mat-icon>
               </mat-button-toggle>
               <mat-button-toggle
-                (click)="
-                  !isDataPointRequired(row) && onDelete(row); group.value = null
-                "
+                (click)="!row.mandatory && onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-source.Delete' | translate"
                 matTooltipPosition="above"
-                [disabled]="isDataPointRequired(row)"
+                [disabled]="row.mandatory"
               >
                 <mat-icon svgIcon="mdc:delete"></mat-icon>
               </mat-button-toggle>

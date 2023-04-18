@@ -33,6 +33,7 @@
     "VirtualDataPoints": "Virtual Data Points",
     "DataMapping": "Data Mapping",
     "DataSinks": "Application Interfaces",
+    "NetService": "NETservice",
     "Network": "Network",
     "SystemInformation": "System Information",
     "ChangePassword": "Change Password",
@@ -476,6 +477,23 @@
     "UpdateProxySuccess": "Updated proxy successfully",
     "UpdateAdapterSuccess": "Updated network adapter successfully",
     "UpdateTimestampSuccess": "Updated time configuration successfully"
+  },
+  "net-service": {
+    "NetService": "NETservice",
+    "StartNetService": "Start NETservice",
+    "Status": "Status",
+    "NetServiceSiteControl": "NETservice Site Control",
+    "CentralServerConnection": "Central Server Connection",
+    "ConnectedClients": "Connected Clients",
+    "UpdateStatus": "Update Status",
+    "FacilityTree": "Facility Tree",
+    "CentralServerConfiguration": "Central Server Configuration",
+    "ResetFacilityTree": "Reset Facility Tree",
+    "URL": "URL",
+    "Port": "Port",
+    "ApplyChanges": "Apply Changes",
+    "UpdateError": "Failed to update. Try again later",
+    "SaveSuccess": "Central Server has been saved successfully!"
   },
   "system-information": {
     "SystemInformation": "System Information",

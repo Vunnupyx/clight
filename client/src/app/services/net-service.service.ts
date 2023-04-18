@@ -7,10 +7,12 @@ import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { CentralServer, NetServiceStatus } from 'app/models';
+import { HttpClient } from '@angular/common/http';
 
 export class NetServiceState {
   status!: Status;
   netServiceStatus!: NetServiceStatus;
+  statusIcon!: string;
 }
 
 @Injectable()
@@ -25,13 +27,30 @@ export class NetServiceService {
     );
   }
 
+  get statusIcon() {
+    return this._store.state.pipe(
+      filter((x) => x.status != Status.NotInitialized),
+      map((x) => x.statusIcon),
+      distinctUntilChanged()
+    );
+  }
+
   constructor(
     storeFactory: StoreFactory<NetServiceState>,
     private configurationAgentHttpService: ConfigurationAgentHttpService,
+    protected http: HttpClient,
     private translate: TranslateService,
     private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
+  }
+
+  revert() {
+    this._store.patchState((state) => {
+      state.status = Status.Ready;
+      state.statusIcon = null;
+      state.netServiceStatus = null;
+    });
   }
 
   async facilityTreeReset(): Promise<boolean> {
@@ -57,6 +76,26 @@ export class NetServiceService {
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.netServiceStatus = response;
+      });
+    } catch (err) {
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+    }
+  }
+
+  async getStatusIcon(filename: string) {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
+    try {
+      const response = await this.configurationAgentHttpService.get<{
+        Date: string;
+      }>(`system/icons/${filename}`);
+
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+        state.statusIcon = response.Date;
       });
     } catch (err) {
       this._store.patchState((state) => {

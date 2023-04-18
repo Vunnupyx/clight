@@ -481,6 +481,7 @@
   "net-service": {
     "NetService": "NETservice",
     "StartNetService": "Start NETservice",
+    "WhatIsNetService": "What is a net service?",
     "Status": "Status",
     "NetServiceSiteControl": "NETservice Site Control",
     "CentralServerConnection": "Central Server Connection",
@@ -493,7 +494,15 @@
     "Port": "Port",
     "ApplyChanges": "Apply Changes",
     "UpdateError": "Failed to update. Try again later",
-    "SaveSuccess": "Central Server has been saved successfully!"
+    "SaveSuccess": "Central Server has been saved successfully!",
+    "Running": "Running",
+    "Stopped": "Stopped",
+    "Unknown": "Unknown",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "NoUpdate": "No update",
+    "ClientUpdating": "Client updating",
+    "SiteControlUpdating": "Site control updating"
   },
   "system-information": {
     "SystemInformation": "System Informationen",

@@ -43,9 +43,8 @@ type BlinkingStatus = {
     sourceValue: boolean;
     isBlinking: boolean;
     detectionStatus: 'detectBlinkingStart' | 'detectBlinkingEnd' | 'inactive';
-    detectBlinkingStartTimestamp: number;
-    detectBlinkingEndTimestamp: number;
     risingEdgeTimestamps: number[];
+    resetTimerId?: NodeJS.Timeout;
   };
 };
 
@@ -60,7 +59,6 @@ export class VirtualDataPointManager {
   private blinkingStatus: BlinkingStatus = {};
   private scheduler: SynchronousIntervalScheduler;
   private logSchedulerListenerId: number;
-  private blinkDetectionSchedulerListenerId: number;
   private DEFAULT_BLINK_DETECTION_TIMEFRAME = 10000;
   private DEFAULT_BLINK_DETECTION_RISING_EDGES = 3;
   private logSummary: LogSummary = {
@@ -86,7 +84,6 @@ export class VirtualDataPointManager {
   private init() {
     this.updateConfig();
     this.setupLogCycle();
-    this.setupBlinkDetectionScheduler();
   }
 
   private updateConfig() {
@@ -115,18 +112,6 @@ export class VirtualDataPointManager {
     this.logSchedulerListenerId = this.scheduler.addListener(
       [defaultFrequency],
       this.printSummaryLogs.bind(this)
-    );
-  }
-
-  /**
-   * Setup scheduled check for blink detection endings
-   */
-  private setupBlinkDetectionScheduler() {
-    if (this.blinkDetectionSchedulerListenerId) return;
-
-    this.blinkDetectionSchedulerListenerId = this.scheduler.addListener(
-      [100], //TBD
-      this.checkBlinkDetectionEnd.bind(this)
     );
   }
 
@@ -713,7 +698,7 @@ export class VirtualDataPointManager {
   private detectBlinking(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
-  ): boolean {
+  ): 0 | 1 | 2 {
     if (sourceEvents.length !== 1) {
       this.addSummaryLog(
         'warn',
@@ -722,29 +707,31 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    if (!config.blinkSettings) {
-      return;
-    }
-
     if (!this.blinkingStatus[config.id]) {
       // initialize currentStatus if it is first time
       this.blinkingStatus[config.id] = {
-        sourceValue: false,
-        detectBlinkingStartTimestamp: null,
-        detectBlinkingEndTimestamp: null,
-        detectionStatus: 'inactive',
+        sourceValue: false, //TBD potentially use cache value?
         isBlinking: false,
+        detectionStatus: 'inactive',
         risingEdgeTimestamps: []
       };
     }
 
-    const isLinkedToAnotherBlinkDetectionVDP = config.sources.some((sourceId) =>
-      sourceEvents.find((x) => x.measurement.id === sourceId)
+    const isLinkedToAnotherBlinkDetectionVDP = this.config.some(
+      (vdp) =>
+        vdp.id !== config.id &&
+        vdp.blinkSettings?.linkedBlinkDetections?.includes(config.id)
     );
     const newSourceValue = Boolean(sourceEvents[0].measurement.value);
     const currentTimestamp = Date.now();
-    const requiredRisingEdges = config.blinkSettings.risingEdges;
+    const requiredRisingEdges = Number(
+      config.blinkSettings?.risingEdges ??
+        this.DEFAULT_BLINK_DETECTION_RISING_EDGES
+    );
     const currentStatus = this.blinkingStatus[config.id];
+    const timeframe = Number(
+      config.blinkSettings?.timeframe ?? this.DEFAULT_BLINK_DETECTION_TIMEFRAME
+    );
     const isRisingEdge =
       newSourceValue === true && currentStatus.sourceValue === false;
 
@@ -757,23 +744,35 @@ export class VirtualDataPointManager {
         // Nothing changes as it is waiting for observation timeframe to end
       }
     } else if (newSourceValue === true) {
-      // currentStatus.risingEdgeTimestamps.shift()
-      if (currentStatus.detectionStatus === 'inactive') {
+      if (currentStatus.detectionStatus === 'inactive' && isRisingEdge) {
         // Received new rising edge. Because status was already inactive, it starts blinking detection
         currentStatus.risingEdgeTimestamps.push(currentTimestamp);
         currentStatus.detectionStatus = 'detectBlinkingStart';
-        currentStatus.detectBlinkingStartTimestamp = currentTimestamp;
+
+        // Set timer to reset if not enough rising edges come during within the timeframe
+        this.restartDetectionResetTimer(
+          config,
+          currentStatus,
+          requiredRisingEdges,
+          timeframe
+        );
 
         //If it is linked to another blink-detection VDP, then it resets the parent's timer
         if (isLinkedToAnotherBlinkDetectionVDP) {
           let parentBlinkDetectionVDP = this.config.find((vdp) =>
-            vdp.blinkSettings.linkedBlinkDetections.includes(config.id)
+            vdp.blinkSettings?.linkedBlinkDetections.includes(config.id)
           );
 
           if (parentBlinkDetectionVDP) {
             this.blinkingStatus[
               parentBlinkDetectionVDP.id
-            ].detectBlinkingStartTimestamp = currentTimestamp;
+            ].risingEdgeTimestamps = [];
+            this.restartDetectionResetTimer(
+              parentBlinkDetectionVDP,
+              this.blinkingStatus[parentBlinkDetectionVDP.id],
+              requiredRisingEdges,
+              timeframe
+            );
           }
         }
       } else if (currentStatus.detectionStatus === 'detectBlinkingStart') {
@@ -785,22 +784,19 @@ export class VirtualDataPointManager {
             currentStatus.risingEdgeTimestamps.length === requiredRisingEdges
           ) {
             // If the total rising edge requirement is reached, then start blinking and set detectBlinkingEnd status
-            currentStatus.detectBlinkingStartTimestamp = null;
-            currentStatus.detectBlinkingEndTimestamp = currentTimestamp;
             currentStatus.detectionStatus = 'detectBlinkingEnd';
+            currentStatus.sourceValue = newSourceValue;
+            currentStatus.risingEdgeTimestamps = [];
             currentStatus.isBlinking = true;
+            this.restartDetectionResetTimer(
+              config,
+              currentStatus,
+              requiredRisingEdges,
+              timeframe
+            );
 
-            const newEvent: IDataSourceMeasurementEvent = {
-              dataSource: {
-                protocol: 'virtual'
-              },
-              measurement: {
-                id: config.id,
-                name: '',
-                value: currentStatus.isBlinking // TBD
-              }
-            };
-            this.cache.update([newEvent]);
+            // Return the function here as the rest is not needed once blinking is detected
+            return 2;
           }
         } else {
           // Nothing changes, waiting for new rising edge to detect blinking
@@ -816,53 +812,72 @@ export class VirtualDataPointManager {
     }
 
     currentStatus.sourceValue = newSourceValue;
-    return currentStatus.isBlinking;
+    return currentStatus.isBlinking ? 2 : newSourceValue ? 1 : 0;
   }
 
   /**
-   * This function is called ever 100ms to check ending of blinking detection
+   * This function removes existing timer and restarts the timeout for reset
    */
-  private checkBlinkDetectionEnd() {
-    const blinkDetectionVdps = this.config.filter(
-      (vdp) => vdp.operationType === 'blink-detection'
+  private restartDetectionResetTimer(
+    vdpConfig: IVirtualDataPointConfig,
+    currentStatus: BlinkingStatus[keyof BlinkingStatus],
+    requiredRisingEdges: number,
+    timeframe: number
+  ): void {
+    clearTimeout(currentStatus.resetTimerId);
+    currentStatus.resetTimerId = setTimeout(
+      () =>
+        this.checkBlinkingResetCondition(
+          vdpConfig,
+          requiredRisingEdges,
+          timeframe
+        ),
+      timeframe
     );
-    if (!blinkDetectionVdps || blinkDetectionVdps?.length === 0) {
-      return;
-    }
-    let currentTimestamp = Date.now();
-    for (let vdpToCheck of blinkDetectionVdps) {
-      let blinkStatus = this.blinkingStatus[vdpToCheck.id];
-      let timeframe =
-        vdpToCheck.blinkSettings.timeframe ??
-        this.DEFAULT_BLINK_DETECTION_TIMEFRAME;
-      let requiredRisingEdges =
-        vdpToCheck.blinkSettings.risingEdges ??
-        this.DEFAULT_BLINK_DETECTION_RISING_EDGES;
+  }
 
-      if (
-        currentTimestamp - blinkStatus.detectBlinkingEndTimestamp >=
-          timeframe &&
-        blinkStatus.risingEdgeTimestamps.length < requiredRisingEdges
-      ) {
-        //Not enough rising edges, resetting blinking status
-        blinkStatus.isBlinking = false;
-        blinkStatus.detectBlinkingStartTimestamp = null;
-        blinkStatus.detectBlinkingEndTimestamp = null;
-        blinkStatus.risingEdgeTimestamps = [];
-        blinkStatus.detectionStatus = 'inactive';
+  /**
+   * This function resets the existing status to inactive
+   * It is called after desired timeframe is up without enough rising edges
+   */
+  private checkBlinkingResetCondition(
+    vdpConfig: IVirtualDataPointConfig,
+    requiredRisingEdges: number,
+    timeframe: number
+  ): void {
+    const currentTimestamp = Date.now();
 
-        const newEvent: IDataSourceMeasurementEvent = {
-          dataSource: {
-            protocol: 'virtual'
-          },
-          measurement: {
-            id: vdpToCheck.id,
-            name: '',
-            value: blinkStatus.isBlinking // TBD
-          }
-        };
-        this.cache.update([newEvent]);
-      }
+    let blinkStatus = this.blinkingStatus[vdpConfig.id];
+    const risingEdgeCountWithinTimeframe =
+      blinkStatus.risingEdgeTimestamps.filter(
+        (t) => t >= currentTimestamp - timeframe
+      ).length;
+    if (risingEdgeCountWithinTimeframe < requiredRisingEdges) {
+      // Not enough rising edges, resetting status
+      blinkStatus.isBlinking = false;
+      blinkStatus.risingEdgeTimestamps = [];
+      blinkStatus.detectionStatus = 'inactive';
+
+      const newEvent: IDataSourceMeasurementEvent = {
+        dataSource: {
+          protocol: 'virtual'
+        },
+        measurement: {
+          id: vdpConfig.id,
+          name: '',
+          value: blinkStatus.sourceValue
+        }
+      };
+      this.cache.update([newEvent]);
+    } else if (risingEdgeCountWithinTimeframe >= requiredRisingEdges) {
+      // Enough rising edges, restarts the timer
+      blinkStatus.risingEdgeTimestamps = [];
+      this.restartDetectionResetTimer(
+        vdpConfig,
+        blinkStatus,
+        requiredRisingEdges,
+        timeframe
+      );
     }
   }
   /**

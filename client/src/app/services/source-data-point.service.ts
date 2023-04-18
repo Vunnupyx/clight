@@ -272,7 +272,7 @@ export class SourceDataPointService {
 
     this._store.patchState((state) => {
       state.status = Status.Ready;
-      state.dataPoints = [obj, ...state.dataPoints];
+      state.dataPoints = [...state.dataPoints, obj];
       state.dataPointsSourceMap[obj.id] = datasourceProtocol;
       state.touched = true;
     });

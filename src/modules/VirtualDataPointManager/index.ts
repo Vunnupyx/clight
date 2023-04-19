@@ -763,7 +763,10 @@ export class VirtualDataPointManager {
             vdp.blinkSettings?.linkedBlinkDetections.includes(config.id)
           );
 
-          if (parentBlinkDetectionVDP) {
+          if (
+            parentBlinkDetectionVDP &&
+            this.blinkingStatus[parentBlinkDetectionVDP.id]
+          ) {
             this.blinkingStatus[
               parentBlinkDetectionVDP.id
             ].risingEdgeTimestamps = [];
@@ -777,6 +780,12 @@ export class VirtualDataPointManager {
         }
       } else if (currentStatus.detectionStatus === 'detectBlinkingStart') {
         if (isRisingEdge) {
+          // Filter out old rising edges
+          currentStatus.risingEdgeTimestamps =
+            currentStatus.risingEdgeTimestamps.filter(
+              (t) => t >= currentTimestamp - timeframe
+            );
+
           // Received new rising edge while waiting for detection to start
           currentStatus.risingEdgeTimestamps.push(currentTimestamp);
 
@@ -786,7 +795,6 @@ export class VirtualDataPointManager {
             // If the total rising edge requirement is reached, then start blinking and set detectBlinkingEnd status
             currentStatus.detectionStatus = 'detectBlinkingEnd';
             currentStatus.sourceValue = newSourceValue;
-            currentStatus.risingEdgeTimestamps = [];
             currentStatus.isBlinking = true;
             this.restartDetectionResetTimer(
               config,
@@ -846,16 +854,16 @@ export class VirtualDataPointManager {
     timeframe: number
   ): void {
     const currentTimestamp = Date.now();
-
     let blinkStatus = this.blinkingStatus[vdpConfig.id];
+    // Remove too old rising edges
+    blinkStatus.risingEdgeTimestamps = blinkStatus.risingEdgeTimestamps.filter(
+      (t) => t >= currentTimestamp - timeframe
+    );
     const risingEdgeCountWithinTimeframe =
-      blinkStatus.risingEdgeTimestamps.filter(
-        (t) => t >= currentTimestamp - timeframe
-      ).length;
+      blinkStatus.risingEdgeTimestamps.length;
     if (risingEdgeCountWithinTimeframe < requiredRisingEdges) {
       // Not enough rising edges, resetting status
       blinkStatus.isBlinking = false;
-      blinkStatus.risingEdgeTimestamps = [];
       blinkStatus.detectionStatus = 'inactive';
 
       const newEvent: IDataSourceMeasurementEvent = {
@@ -871,7 +879,6 @@ export class VirtualDataPointManager {
       this.cache.update([newEvent]);
     } else if (risingEdgeCountWithinTimeframe >= requiredRisingEdges) {
       // Enough rising edges, restarts the timer
-      blinkStatus.risingEdgeTimestamps = [];
       this.restartDetectionResetTimer(
         vdpConfig,
         blinkStatus,

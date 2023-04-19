@@ -1,6 +1,5 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
-import { DataPointCache } from '../../DatapointCache';
 import { EventBus } from '../../EventBus';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
@@ -98,7 +97,7 @@ describe('Test VirtualDataPointManager', () => {
   ];
 
   const cache = new mockCache() as any;
-  const virtualDpManager = new VirtualDataPointManager({
+  let virtualDpManager = new VirtualDataPointManager({
     configManager: mockConfigManager,
     cache
   });
@@ -707,5 +706,279 @@ describe('Test VirtualDataPointManager', () => {
         );
       }
     );
+  });
+  describe.only('Blink detection should work correctly', () => {
+    let msTimeAmountEachIterationRepresents = 1000; // each i represents 1000ms
+    let i = 0;
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+    beforeEach(() => {
+      jest.clearAllTimers();
+      jest.clearAllMocks();
+      i = 0;
+    });
+    afterAll(() => {
+      jest.useRealTimers();
+      jest.clearAllMocks();
+    });
+    describe.skip('Single VDP', () => {
+      beforeEach(() => {
+        mockConfigManager.config.virtualDataPoints = [
+          {
+            sources: ['source1'],
+            operationType: 'blink-detection',
+            id: 'vdp1',
+            name: 'vdp1',
+            blinkSettings: {
+              timeframe: 5000,
+              risingEdges: 3,
+              linkedBlinkDetections: []
+            }
+          }
+        ];
+        virtualDpManager = new VirtualDataPointManager({
+          configManager: mockConfigManager,
+          cache
+        });
+        //@ts-ignore
+        virtualDpManager.updateConfig();
+        mockConfigManager.emit('configsLoaded');
+      });
+      test.each([
+        {
+          sourceValueArray: [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult: [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+
+          testname: 'No rising edges'
+        },
+        {
+          sourceValueArray: [
+            1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult: [
+            1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+
+          testname: 'Not enough rising edge in time window, resets to inactive'
+        },
+        {
+          sourceValueArray: [
+            0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult: [
+            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+
+          testname: 'Blink detected and no rising edges after blinking'
+        },
+        {
+          sourceValueArray: [
+            0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult: [
+            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+
+          testname: 'Blink detected and not enough rising edges after blinking'
+        },
+        {
+          sourceValueArray: [
+            0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
+          ],
+          expectedResult: [
+            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+          ],
+
+          testname: 'Blink detected, always enough rising edges after blinking'
+        },
+        {
+          sourceValueArray: [
+            0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult: [
+            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0
+          ],
+
+          testname: 'Blink detected, afterwards blink stops'
+        }
+      ])('$testname', ({ sourceValueArray, expectedResult }) => {
+        let resultArray: number[] = [];
+
+        for (let sourceValue of sourceValueArray) {
+          jest
+            .spyOn(Date, 'now')
+            .mockImplementation(
+              () => 0 + i * msTimeAmountEachIterationRepresents
+            );
+          const events: IDataSourceMeasurementEvent[] = [
+            {
+              dataSource: {
+                protocol: ''
+              },
+              measurement: {
+                id: 'source1',
+                name: '',
+                value: sourceValue
+              }
+            }
+          ];
+          // @ts-ignore
+          let result = virtualDpManager.detectBlinking(
+            events,
+            // @ts-ignore
+            virtualDpManager.config.find((x) => x.id === 'vdp1')
+          );
+
+          resultArray.push(result);
+          jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
+          i++;
+        }
+
+        expect(JSON.stringify(resultArray)).toEqual(
+          JSON.stringify(expectedResult)
+        );
+      });
+    });
+    describe.only('With dependent VDP (VDP2 depends on VDP1)', () => {
+      beforeEach(() => {
+        mockConfigManager.config.virtualDataPoints = [
+          {
+            sources: ['source1'],
+            operationType: 'blink-detection',
+            id: 'vdp1',
+            name: 'vdp1',
+            blinkSettings: {
+              timeframe: 5000,
+              risingEdges: 3,
+              linkedBlinkDetections: []
+            }
+          },
+          {
+            sources: ['source2'],
+            operationType: 'blink-detection',
+            id: 'vdp2',
+            name: 'vdp2',
+            blinkSettings: {
+              timeframe: 5000,
+              risingEdges: 3,
+              linkedBlinkDetections: ['vdp1']
+            }
+          }
+        ];
+        virtualDpManager = new VirtualDataPointManager({
+          configManager: mockConfigManager,
+          cache
+        });
+        //@ts-ignore
+        virtualDpManager.updateConfig();
+        mockConfigManager.emit('configsLoaded');
+      });
+
+      test.each([
+        {
+          sourceValueArray1: [
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          sourceValueArray2: [
+            0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult1: [
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult2: [
+            0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          testname: 'No blinking detected as linked signal resets the main one'
+        },
+        {
+          sourceValueArray1: [
+            1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1
+          ],
+          sourceValueArray2: [
+            0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1
+          ],
+          expectedResult1: [
+            1, 1, 1, 0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+          ],
+          expectedResult2: [
+            0, 0, 1, 0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+          ],
+          testname: 'Use case for Haas machine'
+        }
+      ])(
+        '$testname',
+        ({
+          sourceValueArray1,
+          sourceValueArray2,
+          expectedResult1,
+          expectedResult2
+        }) => {
+          let resultArray1: number[] = [];
+          let resultArray2: number[] = [];
+
+          for (let [index, sourceValue1] of sourceValueArray1.entries()) {
+            let sourceValue2 = sourceValueArray2[index];
+            jest
+              .spyOn(Date, 'now')
+              .mockImplementation(
+                () => 0 + i * msTimeAmountEachIterationRepresents
+              );
+            const events1: IDataSourceMeasurementEvent[] = [
+              {
+                dataSource: {
+                  protocol: ''
+                },
+                measurement: {
+                  id: 'source1',
+                  name: '',
+                  value: sourceValue1
+                }
+              }
+            ];
+            // @ts-ignore
+            let result1 = virtualDpManager.detectBlinking(
+              events1,
+              //@ts-ignore
+              virtualDpManager.config.find((x) => x.id === 'vdp1')
+            );
+
+            const events2: IDataSourceMeasurementEvent[] = [
+              {
+                dataSource: {
+                  protocol: ''
+                },
+                measurement: {
+                  id: 'source2',
+                  name: '',
+                  value: sourceValue2
+                }
+              }
+            ];
+            // @ts-ignore
+            let result2 = virtualDpManager.detectBlinking(
+              events2,
+              // @ts-ignore
+              virtualDpManager.config.find((x) => x.id === 'vdp2')
+            );
+            resultArray1.push(result1);
+            resultArray2.push(result2);
+            jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
+            i++;
+          }
+
+          expect(JSON.stringify(resultArray1)).toEqual(
+            JSON.stringify(expectedResult1)
+          );
+          expect(JSON.stringify(resultArray2)).toEqual(
+            JSON.stringify(expectedResult2)
+          );
+        }
+      );
+    });
   });
 });

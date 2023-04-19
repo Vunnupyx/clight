@@ -31,7 +31,24 @@ export class RestApiManager {
   private readonly expressApp: Express = express();
   private options: RestApiManagerOptions;
   private routeManager: RoutesManager;
-
+  private endpointsAllowedForCommissioningWithoutJWT = [
+    '/machine/info',
+    '/system/commissioning',
+    '/network/adapters/enoX1',
+    '/network/adapters/enoX1/status',
+    '/datahub/dps',
+    '/system/commissioning/finish',
+    '/datahub/status/mdclight',
+    '/datahub/status/edgeAgent',
+    '/datahub/status/edgeHub',
+    '/datahub/status/mdc-web-server',
+    '/datahub/status/mtconnect-agent'
+  ];
+  private endpointsBlockedAfterCommissioning = [
+    '/system/commissioning',
+    '/datahub/dps',
+    '/system/commissioning/finish'
+  ];
   private static className: string;
 
   constructor(options: RestApiManagerOptions) {
@@ -93,22 +110,17 @@ export class RestApiManager {
         filter: (req: Request, res: Response) => {
           // If device is not commissioned allowed these endpoints so that commissioning can be performed
           if (
-            [
-              '/machine/info',
-              '/system/commissioning',
-              '/network/adapters/enoX1',
-              '/network/adapters/enoX1/status',
-              '/datahub/dps',
-              '/system/commissioning/finish'
-            ].includes(req.url) ||
-            req.url.startsWith('/datahub/status/')
+            this.endpointsAllowedForCommissioningWithoutJWT.includes(req.url)
           ) {
             if (!this.options.configManager.isDeviceCommissioned) {
               winston.info(
                 `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
               );
               return true;
-            } else {
+            } else if (
+              this.endpointsBlockedAfterCommissioning.includes(req.url)
+            ) {
+              // Certain endpoints are blocked after commissioning is completed.
               winston.info(
                 `${logPrefix} Commissioning is already completed, requested URL: ${req.url}, is not allowed.`
               );

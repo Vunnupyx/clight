@@ -284,7 +284,8 @@
     "SetBlinkSettings": "Set Blink Settings",
     "Timeframe": "Timeframe",
     "RisingEdges": "Rising Edges",
-    "LinkedBlinkDetections": "Linked Blink Detections"
+    "LinkedBlinkDetections": "Linked Blink Detections",
+    "NoOtherBlinkDetectionVDPsAvailable": "There are no other VDPs with the type Blink Detection to choose from"
   },
   "virtual-data-point-operation-type": {
     "And": "And",

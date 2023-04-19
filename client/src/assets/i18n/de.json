@@ -281,10 +281,11 @@
     "UnexpectedError": "Die Änderungen wurden nicht übernommen. Bitte versuchen Sie es erneut!",
     "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte können nur nach ihrer Definition genutzt werden!",
     "SetTariffEnum": "Mapping für Maschinenzustand setzen",
-    "SetBlinkSettings": "Set Blink Settings",
-    "Timeframe": "Timeframe",
-    "RisingEdges": "Rising Edges",
-    "LinkedBlinkDetections": "Linked Blink Detections"
+    "SetBlinkSettings": "Blinkerkennung Einstellungen",
+    "Timeframe": "Zeitfenster",
+    "RisingEdges": "Steigende Flanken",
+    "LinkedBlinkDetections": "Verlinkte Blinkerkennungen",
+    "NoOtherBlinkDetectionVDPsAvailable": "Es gibt keine anderen VDPs mit dem Typ Blinkerkennung zur Auswahl"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",

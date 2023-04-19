@@ -248,6 +248,7 @@
       [rows]="datapointRows"
       rowHeight="auto"
       columnMode="flex"
+      [messages]="{ emptyMessage: 'common.NoTableData' | translate }"
     >
       <ngx-datatable-column
         [name]="'settings-data-sink.Name' | translate"

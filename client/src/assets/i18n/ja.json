@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "キャンセル",
-    "LanguageDocumentationPath": "/jp"
+    "LanguageDocumentationPath": "/jp",
+    "NoTableData": "First add a data point to see data here",
+    "NoTableDataMapping": "First add a mapping to see data here",
+    "NoTableDataSchedule": "First add a schedule to see data here"
   },
   "commissioning": {
     "Welcome": "Welcome to IoTconnector flex",

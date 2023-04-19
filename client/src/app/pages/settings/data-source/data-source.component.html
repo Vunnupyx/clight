@@ -511,7 +511,7 @@
             <h3>{{ 'settings-data-source.DataPoints' | translate }}</h3>
             <button
               type="button"
-              [disabled]="isEditing"
+              [disabled]="isEditing || isLoading"
               mat-mini-fab
               color="primary"
               class="wh-32 border-round ml-15"

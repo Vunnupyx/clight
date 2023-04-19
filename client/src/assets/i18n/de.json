@@ -301,7 +301,7 @@
     "Enumeration": "Enumeration",
     "Calculation": "Kalkulation",
     "SetTariff": "Energie Tariff Setzen",
-    "BlinkDetection": "Blink Detection"
+    "BlinkDetection": "Blinkerkennung"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",

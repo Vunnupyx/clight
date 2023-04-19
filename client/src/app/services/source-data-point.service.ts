@@ -96,7 +96,7 @@ export class SourceDataPointService {
           this._store.snapshot.dataPoints
         );
 
-        this._getDataPoints(datasourceProtocol);
+        await this._getDataPoints(datasourceProtocol);
       }
 
       this._store.patchState((state) => {

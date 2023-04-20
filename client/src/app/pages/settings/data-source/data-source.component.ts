@@ -510,6 +510,16 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       : this.translate.instant('settings-data-source.TariffStatus.Unknown');
   }
 
+  getLiveDataTextForIoShield(obj: SourceDataPoint) {
+    const liveDataValue = this.liveData[obj.id]?.value;
+
+    if (!obj.address?.startsWith('DI')) return liveDataValue;
+
+    const translationKey = `settings-data-source.Livedata.ioshield.${liveDataValue}`;
+    const result = this.translate.instant(translationKey);
+    return result !== translationKey ? result : liveDataValue;
+  }
+
   goToMtConnectStream() {
     window.open(this.MTConnectStreamHref, '_blank');
   }

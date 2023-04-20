@@ -683,16 +683,7 @@
             <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
-                  <ng-container
-                    *ngIf="row.address?.startsWith('DI'); else noTranslate"
-                    >{{
-                      'settings-data-source.Livedata.ioshield.' +
-                        liveData?.[row.id]?.value | translate
-                    }}
-                  </ng-container>
-                  <ng-template #noTranslate>{{
-                    liveData?.[row.id]?.value
-                  }}</ng-template>
+                  {{ getLiveDataTextForIoShield(row) }}
                 </ng-container>
                 <ng-container *ngSwitchCase="Protocol.Energy">
                   {{ liveData?.[row.id]?.value }}

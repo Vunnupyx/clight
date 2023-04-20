@@ -683,7 +683,7 @@
             <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
-                  {{ getLiveDataText(row) }}
+                  {{ getLiveDataTextForIoShield(row) }}
                 </ng-container>
                 <ng-container *ngSwitchCase="Protocol.Energy">
                   {{ liveData?.[row.id]?.value }}

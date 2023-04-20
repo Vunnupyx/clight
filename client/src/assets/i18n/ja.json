@@ -195,6 +195,7 @@
     "SelectAVariable": "変数を選択",
     "ControllerType": "制御装置の型式",
     "CurrentTariff": "現在の通信量",
+    "TariffHelpText": "What do I need the tariff for?",
     "Name": "名前",
     "Type": "型",
     "Description": "記述",
@@ -521,7 +522,8 @@
     "warningText": "保存されていない変更があります。このまま続けますか？"
   },
   "http": {
-    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again",
+    "RuntimeError": "The service is not available. Please try again later"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "システムの時刻がブラウザの時刻と異なります。システムに設定されている時刻を修正してください。不正なシステム時刻はデータソースやアプリケーションインタフェースのエラーにつながります。この警告をクリックし、設定ページを表示、時刻タブを選択して時刻を修正してください"

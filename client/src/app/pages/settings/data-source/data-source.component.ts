@@ -510,7 +510,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       : this.translate.instant('settings-data-source.TariffStatus.Unknown');
   }
 
-  getLiveDataText(obj: SourceDataPoint) {
+  getLiveDataTextForIoShield(obj: SourceDataPoint) {
     const liveDataValue = this.liveData[obj.id]?.value;
 
     if (!obj.address?.startsWith('DI')) return liveDataValue;

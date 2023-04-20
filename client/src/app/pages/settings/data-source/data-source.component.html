@@ -234,9 +234,25 @@
             </div>
             <div class="row mb-40 d-flex align-items-center">
               <div class="col-12 col-md-5">
-                <label>{{
-                  'settings-data-source.CurrentTariff' | translate
-                }}</label>
+                <label
+                  >{{ 'settings-data-source.CurrentTariff' | translate }}
+                  <a
+                    class="pointer"
+                    href="/help{{
+                      'common.LanguageDocumentationPath' | translate
+                    }}/docs/Energy#tariff"
+                    target="_blank"
+                  >
+                    <mat-icon
+                      class="doc-btn"
+                      svgIcon="mdc:unknown"
+                      [matTooltip]="
+                        'settings-data-source.TariffHelpText' | translate
+                      "
+                      matTooltipPosition="above"
+                    ></mat-icon>
+                  </a>
+                </label>
               </div>
               <div class="col-12 col-md-7">
                 {{ getTariffText() }}
@@ -683,7 +699,7 @@
             <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
-                  {{ getLiveDataText(row) }}
+                  {{ getLiveDataTextForIoShield(row) }}
                 </ng-container>
                 <ng-container *ngSwitchCase="Protocol.Energy">
                   {{ liveData?.[row.id]?.value }}

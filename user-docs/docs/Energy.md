@@ -4,13 +4,13 @@ title: 'Data source: Energy'
 
 ## Introduction
 
-With this data source you can connect an Energy counter device to your IoTconnector flex device. You can then read the data points from the Energy counter and process it further in IoTconnector flex and map it to an application interface data point.
+With this data source you can connect an Energy meter device to your IoTconnector flex device. You can then read the data points from the Energy meter and process it further in IoTconnector flex and map it to an application interface data point.
 
-Note: Currently only Phoenix Contact EMpro Energy counters are supported.
+Note: Currently only Phoenix Contact EMpro Energy meters are supported.
 
-On the top left side of the page you find the main settings for the data source: Enabling, IP address for the Energy counter and selecting the type. At the bottom you will see the [`Current Tariff`](Energy.md#tariff) which is explained further below.
+On the top left side of the page you find the main settings for the data source: Enabling, IP address for the Energy meter and selecting the type. At the bottom you will see the [`Current Tariff`](Energy.md#tariff) which is explained further below.
 
-On the top right side of the page you can see the connection status to the Energy counter and the "Test Connection" button to test reachability of the counter.
+On the top right side of the page you can see the connection status to the Energy meter and the "Test Connection" button to test reachability of the counter.
 
 ## Adding Data Points
 
@@ -43,7 +43,7 @@ The possible data points are listed below and can be added using the blue `Add D
 
 ## Tariff
 
-Tariff is used on the Energy counter to categorize energy usage for better analysis. These are called tariffs, and there are 4 tariffs available:
+Tariff is used on the Energy meter to categorize energy usage for better analysis. These are called tariffs, and there are 4 tariffs available:
 
 - Tariff 1 (T1): STANDBY
 - Tariff 2 (T2): READY_FOR_PROCESSING
@@ -82,6 +82,6 @@ After selecting the sources, please click `Set enumeration` button on the right 
 
 Here you can map the desired source to the desired tariff number. Whenever the source value is `true` (boolean true, or has a positive integer value or has a text) then the tariff will active. If there are multiple tariff number conditions fulfilled, then the result is chosen with the priority order of the tariffs seen on the dialog. You may use drag&drop to rearrange the priority order of the tariff numbers.
 
-The resultant tariff number is then activated on the Energy counter and the counter will categorize energy consumption to that tariff from that moment on and you can see active tariff in Energy Data Source page as well.
+The resultant tariff number is then activated on the Energy meter and the counter will categorize energy consumption to that tariff from that moment on and you can see active tariff in Energy Data Source page as well.
 
 For more information about the usage of this Enumeration VDP, please check VDP Enumeration explanation [`here`](VirtualDataPoints.md#enumeration).

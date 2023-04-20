@@ -707,7 +707,7 @@ describe('Test VirtualDataPointManager', () => {
       }
     );
   });
-  describe.only('Blink detection should work correctly', () => {
+  describe('Blink detection should work correctly', () => {
     let msTimeAmountEachIterationRepresents = 1000; // each i represents 1000ms
     let i = 0;
     beforeAll(() => {
@@ -722,7 +722,7 @@ describe('Test VirtualDataPointManager', () => {
       jest.useRealTimers();
       jest.clearAllMocks();
     });
-    describe.skip('Single VDP', () => {
+    describe('Single VDP', () => {
       beforeEach(() => {
         mockConfigManager.config.virtualDataPoints = [
           {
@@ -753,58 +753,62 @@ describe('Test VirtualDataPointManager', () => {
           expectedResult: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
           ],
-
-          testname: 'No rising edges'
+          testname: 'No rising edges, always OFF'
         },
         {
           sourceValueArray: [
-            1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
           ],
           expectedResult: [
-            1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
           ],
-
+          testname: 'constant ON after first rising edge'
+        },
+        {
+          sourceValueArray: [
+            0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult: [
+            0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          testname: 'Status 1 and then 0 last exactly timeframe amount'
+        },
+        {
+          sourceValueArray: [
+            0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult: [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
           testname: 'Not enough rising edge in time window, resets to inactive'
         },
         {
           sourceValueArray: [
-            0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
           ],
           expectedResult: [
-            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
           ],
-
-          testname: 'Blink detected and no rising edges after blinking'
+          testname: 'Blinking detected and then not enough rising edges'
         },
         {
           sourceValueArray: [
-            0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
           ],
           expectedResult: [
-            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
           ],
-
-          testname: 'Blink detected and not enough rising edges after blinking'
-        },
-        {
-          sourceValueArray: [
-            0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
-          ],
-          expectedResult: [
-            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-          ],
-
           testname: 'Blink detected, always enough rising edges after blinking'
         },
         {
           sourceValueArray: [
-            0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0
           ],
           expectedResult: [
-            0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0
+            0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0
           ],
 
-          testname: 'Blink detected, afterwards blink stops'
+          testname: 'Blink detected, after second cycle blink stops'
         }
       ])('$testname', ({ sourceValueArray, expectedResult }) => {
         let resultArray: number[] = [];
@@ -844,7 +848,7 @@ describe('Test VirtualDataPointManager', () => {
         );
       });
     });
-    describe.only('With dependent VDP (VDP2 depends on VDP1)', () => {
+    describe('With dependent VDP (VDP2 depends on VDP1)', () => {
       beforeEach(() => {
         mockConfigManager.config.virtualDataPoints = [
           {
@@ -888,25 +892,26 @@ describe('Test VirtualDataPointManager', () => {
             0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
           ],
           expectedResult1: [
-            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
           ],
           expectedResult2: [
-            0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
           ],
           testname: 'No blinking detected as linked signal resets the main one'
         },
         {
           sourceValueArray1: [
-            1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1
+            1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
           ],
           sourceValueArray2: [
-            0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1
+            0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
           ],
+          // For expectedResult1: Start value is always 0, so if the first element is 1 in sourceValueArray1 it is treated like rising edge TBD
           expectedResult1: [
-            1, 1, 1, 0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+            0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2
           ],
           expectedResult2: [
-            0, 0, 1, 0, 0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2
           ],
           testname: 'Use case for Haas machine'
         }

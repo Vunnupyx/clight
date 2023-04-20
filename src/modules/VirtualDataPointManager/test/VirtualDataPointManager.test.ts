@@ -722,130 +722,285 @@ describe('Test VirtualDataPointManager', () => {
       jest.useRealTimers();
       jest.clearAllMocks();
     });
+
     describe('Single VDP', () => {
-      beforeEach(() => {
-        mockConfigManager.config.virtualDataPoints = [
-          {
-            sources: ['source1'],
-            operationType: 'blink-detection',
-            id: 'vdp1',
-            name: 'vdp1',
-            blinkSettings: {
-              timeframe: 5000,
-              risingEdges: 3,
-              linkedBlinkDetections: []
-            }
-          }
-        ];
-        virtualDpManager = new VirtualDataPointManager({
-          configManager: mockConfigManager,
-          cache
-        });
-        //@ts-ignore
-        virtualDpManager.updateConfig();
-        mockConfigManager.emit('configsLoaded');
-      });
-      test.each([
-        {
-          sourceValueArray: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          expectedResult: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          testname: 'No rising edges, always OFF'
-        },
-        {
-          sourceValueArray: [
-            0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-          ],
-          expectedResult: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-          ],
-          testname: 'constant ON after first rising edge'
-        },
-        {
-          sourceValueArray: [
-            0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          expectedResult: [
-            0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          testname: 'Status 1 and then 0 last exactly timeframe amount'
-        },
-        {
-          sourceValueArray: [
-            0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          expectedResult: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          testname: 'Not enough rising edge in time window, resets to inactive'
-        },
-        {
-          sourceValueArray: [
-            0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          expectedResult: [
-            0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-          ],
-          testname: 'Blinking detected and then not enough rising edges'
-        },
-        {
-          sourceValueArray: [
-            0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
-          ],
-          expectedResult: [
-            0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-          ],
-          testname: 'Blink detected, always enough rising edges after blinking'
-        },
-        {
-          sourceValueArray: [
-            0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0
-          ],
-          expectedResult: [
-            0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0
-          ],
-
-          testname: 'Blink detected, after second cycle blink stops'
-        }
-      ])('$testname', ({ sourceValueArray, expectedResult }) => {
-        let resultArray: number[] = [];
-
-        for (let sourceValue of sourceValueArray) {
-          jest
-            .spyOn(Date, 'now')
-            .mockImplementation(
-              () => 0 + i * msTimeAmountEachIterationRepresents
-            );
-          const events: IDataSourceMeasurementEvent[] = [
+      describe('Single VDP with 3 rising edges in 5000 ms', () => {
+        beforeEach(() => {
+          mockConfigManager.config.virtualDataPoints = [
             {
-              dataSource: {
-                protocol: ''
-              },
-              measurement: {
-                id: 'source1',
-                name: '',
-                value: sourceValue
+              sources: ['source1'],
+              operationType: 'blink-detection',
+              id: 'vdp1',
+              name: 'vdp1',
+              blinkSettings: {
+                timeframe: 5000,
+                risingEdges: 3,
+                linkedBlinkDetections: []
               }
             }
           ];
-          // @ts-ignore
-          let result = virtualDpManager.detectBlinking(
-            events,
+          virtualDpManager = new VirtualDataPointManager({
+            configManager: mockConfigManager,
+            cache
+          });
+          //@ts-ignore
+          virtualDpManager.updateConfig();
+          mockConfigManager.emit('configsLoaded');
+        });
+        test.each([
+          {
+            sourceValueArray: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            testname: 'No rising edges, always OFF'
+          },
+          {
+            sourceValueArray: [
+              0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            ],
+            testname: 'constant ON after first rising edge'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            testname: 'Status 1 and then 0 last exactly timeframe amount'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            testname:
+              'Not enough rising edge in time window, resets to inactive'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            testname: 'Blinking detected and then not enough rising edges'
+          },
+          {
+            sourceValueArray: [
+              0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+            ],
+            testname:
+              'Blink detected, always enough rising edges after blinking'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0
+            ],
+            testname: 'Blink detected, after second cycle blink stops'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            testname: 'Source rising edges keep coming but not enough amount'
+          }
+        ])('$testname', ({ sourceValueArray, expectedResult }) => {
+          let resultArray: number[] = [];
+
+          for (let sourceValue of sourceValueArray) {
+            jest
+              .spyOn(Date, 'now')
+              .mockImplementation(
+                () => 0 + i * msTimeAmountEachIterationRepresents
+              );
+            const events: IDataSourceMeasurementEvent[] = [
+              {
+                dataSource: {
+                  protocol: ''
+                },
+                measurement: {
+                  id: 'source1',
+                  name: '',
+                  value: sourceValue
+                }
+              }
+            ];
             // @ts-ignore
-            virtualDpManager.config.find((x) => x.id === 'vdp1')
+            let result = virtualDpManager.detectBlinking(
+              events,
+              // @ts-ignore
+              virtualDpManager.config.find((x) => x.id === 'vdp1')
+            );
+
+            resultArray.push(result);
+            jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
+            i++;
+          }
+
+          expect(JSON.stringify(resultArray)).toEqual(
+            JSON.stringify(expectedResult)
           );
+        });
+      });
+      describe('Single VDP with 4 rising edges in 10000 ms', () => {
+        beforeEach(() => {
+          mockConfigManager.config.virtualDataPoints = [
+            {
+              sources: ['source1'],
+              operationType: 'blink-detection',
+              id: 'vdp1',
+              name: 'vdp1',
+              blinkSettings: {
+                timeframe: 10000,
+                risingEdges: 4,
+                linkedBlinkDetections: []
+              }
+            }
+          ];
+          virtualDpManager = new VirtualDataPointManager({
+            configManager: mockConfigManager,
+            cache
+          });
+          //@ts-ignore
+          virtualDpManager.updateConfig();
+          mockConfigManager.emit('configsLoaded');
+        });
+        test.each([
+          {
+            sourceValueArray: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            testname: 'No rising edges, always OFF'
+          },
+          {
+            sourceValueArray: [
+              0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1
+            ],
+            testname: 'constant ON after first rising edge'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+              0
+            ],
+            testname: 'Status 1 and then 0 last exactly timeframe amount'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            testname:
+              'Not enough rising edge in time window, resets to inactive'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0
+            ],
+            testname: 'Blinking detected and then not enough rising edges'
+          },
+          {
+            sourceValueArray: [
+              0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2
+            ],
+            testname:
+              'Blink detected, always enough rising edges after blinking'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+              2, 2, 2, 2, 2, 0, 0
+            ],
+            testname: 'Blink detected, after second cycle blink stops'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+              0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0
+            ],
+            testname: 'Source rising edges keep coming but not enough amount'
+          }
+        ])('$testname', ({ sourceValueArray, expectedResult }) => {
+          let resultArray: number[] = [];
 
-          resultArray.push(result);
-          jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
-          i++;
-        }
+          for (let sourceValue of sourceValueArray) {
+            jest
+              .spyOn(Date, 'now')
+              .mockImplementation(
+                () => 0 + i * msTimeAmountEachIterationRepresents
+              );
+            const events: IDataSourceMeasurementEvent[] = [
+              {
+                dataSource: {
+                  protocol: ''
+                },
+                measurement: {
+                  id: 'source1',
+                  name: '',
+                  value: sourceValue
+                }
+              }
+            ];
+            // @ts-ignore
+            let result = virtualDpManager.detectBlinking(
+              events,
+              // @ts-ignore
+              virtualDpManager.config.find((x) => x.id === 'vdp1')
+            );
 
-        expect(JSON.stringify(resultArray)).toEqual(
-          JSON.stringify(expectedResult)
-        );
+            resultArray.push(result);
+            jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
+            i++;
+          }
+
+          expect(JSON.stringify(resultArray)).toEqual(
+            JSON.stringify(expectedResult)
+          );
+        });
       });
     });
     describe('With dependent VDP (VDP2 depends on VDP1)', () => {

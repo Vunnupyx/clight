@@ -931,7 +931,42 @@ export class VirtualDataPointManager {
     const _events = [...events];
     const virtualEvents: IDataSourceMeasurementEvent[] = [];
 
-    for (const vdpConfig of this.config) {
+    //Check blink detection VDPs that have other VDPs linked as last, so that their values are ready first
+    const sortedVirtualDatapoints = this.config.sort((vdp1, vdp2) => {
+      const isVdp1BlinkDetectionWithDependency =
+        vdp1.operationType === 'blink-detection' &&
+        vdp1.blinkSettings?.linkedBlinkDetections?.length > 0;
+      const isVdp2BlinkDetectionWithDependency =
+        vdp2.operationType === 'blink-detection' &&
+        vdp2.blinkSettings?.linkedBlinkDetections?.length > 0;
+
+      if (
+        isVdp1BlinkDetectionWithDependency ||
+        isVdp2BlinkDetectionWithDependency
+      ) {
+        if (
+          isVdp1BlinkDetectionWithDependency &&
+          isVdp2BlinkDetectionWithDependency
+        ) {
+          if (vdp1.blinkSettings?.linkedBlinkDetections.includes(vdp2.id)) {
+            // if vdp1 depends on vdp2, then first calculate vdp2
+            return 1; // puts vdp1 to last
+          } else if (
+            vdp2.blinkSettings?.linkedBlinkDetections.includes(vdp1.id)
+          ) {
+            // if vdp2 depends on vdp1, then first calculate vdp1
+            return -1; // puts vdp2 to last
+          }
+        } else if (isVdp1BlinkDetectionWithDependency) {
+          return 1; // puts blink detection VDP with dependency as last, puts vdp1 to last
+        } else if (isVdp2BlinkDetectionWithDependency) {
+          return -1; // puts blink detection VDP with dependency as last, puts vdp2 to last
+        }
+      }
+      return 0;
+    });
+
+    for (const vdpConfig of sortedVirtualDatapoints) {
       const calculateVirtualDatapoint = vdpConfig.sources.some((sourceId) =>
         _events.some((e) => e.measurement.id === sourceId)
       );

@@ -13,6 +13,7 @@ title: Changelog
 - [DIGMDCLGHT-411](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-411) Adds data type column for OPC UA application interface data points
 - [DIGMDCLGHT-413](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-413) Adds warning notification when the user session expires
 - [DIGMDCLGHT-415](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-415) Adds ability to change template without displaying T&C page
+- [DIGMDCLGHT-426](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-426) Adds MTConnect Agent as data source
 - [DIGMDCLGHT-435](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-435) Adds user documentation for Energy data source
 - [DIGMDCLGHT-443](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-443) Adds device information to System Information page
 

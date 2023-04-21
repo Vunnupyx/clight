@@ -8,6 +8,7 @@ title: Changelog
 
 ## Added
 
+- [DIGMDCLGHT-21](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-21) Adds Fanuc data source
 - [DIGMDCLGHT-57](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-57) Login page automatically redirects to main page if user is already logged in
 - [DIGMDCLGHT-84](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-84) Adds Cancel button to configuration wizard page
 - [DIGMDCLGHT-411](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-411) Adds data type column for OPC UA application interface data points

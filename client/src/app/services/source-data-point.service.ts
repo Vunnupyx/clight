@@ -268,7 +268,9 @@ export class SourceDataPointService {
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
-    obj.id = uuidv4();
+    // For tariff-number id needs to be address.
+    // As live data endpoint does not send address info, it is important to set id correctly here
+    obj.id = obj.address === 'tariff-number' ? obj.address : uuidv4();
 
     this._store.patchState((state) => {
       state.status = Status.Ready;
@@ -328,6 +330,8 @@ export class SourceDataPointService {
         return `[DI]`;
       case DataSourceProtocol.Energy:
         return `[Energy]`;
+      case DataSourceProtocol.MTConnect:
+        return `[MTC]`;
       default:
         return '';
     }

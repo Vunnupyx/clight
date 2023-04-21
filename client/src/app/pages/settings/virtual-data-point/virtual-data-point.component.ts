@@ -349,9 +349,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDelete(obj: VirtualDataPoint) {
-    const title = this.translate.instant(
-      'settings-virtual-data-point.DeleteTitle'
-    );
+    const title = this.translate.instant('settings-virtual-data-point.Delete');
     const message = this.translate.instant(
       'settings-virtual-data-point.DeleteMessage'
     );

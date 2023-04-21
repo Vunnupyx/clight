@@ -22,7 +22,7 @@
 <div class="d-block m-20">
   <div class="row">
     <div class="col-12 col-md-6 col-lg-4">
-      <div class="row mt-20 mb-25">
+      <div class="row mb-25 align-items-center">
         <div class="col-6 col-lg-5">
           {{ 'settings-data-source.Enabled' | translate }}
         </div>
@@ -38,8 +38,8 @@
 
         <ng-container [ngSwitch]="dataSource?.protocol">
           <ng-container *ngSwitchCase="'s7'">
-            <div class="mt-20 row d-flex align-items-center">
-              <div class="text-nowrap col-12 col-md-5">
+            <div class="row d-flex align-items-center">
+              <div class="text-nowrap col-12 col-md-5 pb-20">
                 {{ 'settings-data-source.IPAddress' | translate }}
               </div>
               <form #form="ngForm" class="col-12 col-md-7">
@@ -60,7 +60,7 @@
             </div>
             <div>
               <div class="row d-flex align-items-center">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-5 pb-20">
                   <label>{{
                     'settings-data-source.ControllerType' | translate
                   }}</label>
@@ -90,10 +90,57 @@
               </div>
             </div>
           </ng-container>
-          <ng-container *ngSwitchCase="'ioshield'">
+          <ng-container *ngSwitchCase="'mtconnect'">
+            <form #form="ngForm">
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
+                  {{ 'settings-data-source.MachineName' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="machineName"
+                    [ngModel]="dataSource?.machineName"
+                    (ngModelChange)="updateMachineName($event)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
+                  {{ 'settings-data-source.Hostname' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="hostname"
+                    #ipAddr="ngModel"
+                    [ngModel]="dataSource?.connection?.hostname"
+                    [pattern]="ipOrHostRegex"
+                    [required]="true"
+                    (ngModelChange)="updateHostname(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
+                  {{ 'settings-data-source.Port' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="port"
+                    #port="ngModel"
+                    [ngModel]="dataSource?.connection?.port"
+                    [pattern]="portRegex"
+                    [required]="true"
+                    (ngModelChange)="updatePort(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+            </form>
             <div>
               <div class="row d-flex align-items-center">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-5 pb-20">
                   <label>{{
                     'settings-data-source.ControllerType' | translate
                   }}</label>
@@ -105,14 +152,13 @@
                       [ngModel]="dataSource?.type"
                       (ngModelChange)="updateControllerType($event)"
                     >
-                      <mat-option [value]="IOShieldTypes.DI_10"
-                        >10 Digital Inputs</mat-option
+                      <mat-option [value]="MTConnectTypes.Agent"
+                        >Agent</mat-option
                       >
-                      <mat-option [value]="IOShieldTypes.AI_100_5di"
-                        >Sensor 100A + 5 Digital Input</mat-option
-                      >
-                      <mat-option [value]="IOShieldTypes.AI_150_5di"
-                        >Sensor 150A + 5 Digital Input</mat-option
+                      <mat-option
+                        [value]="MTConnectTypes.Adapter"
+                        [disabled]="true"
+                        >Adapter</mat-option
                       >
                     </mat-select>
                   </mat-form-field>
@@ -120,10 +166,38 @@
               </div>
             </div>
           </ng-container>
+          <ng-container *ngSwitchCase="'ioshield'">
+            <div class="row d-flex align-items-center">
+              <div class="col-12 col-md-5 pb-20">
+                <label>{{
+                  'settings-data-source.ControllerType' | translate
+                }}</label>
+              </div>
+              <div class="col-12 col-md-7">
+                <mat-form-field>
+                  <mat-select
+                    disableOptionCentering="true"
+                    [ngModel]="dataSource?.type"
+                    (ngModelChange)="updateControllerType($event)"
+                  >
+                    <mat-option [value]="IOShieldTypes.DI_10"
+                      >10 Digital Inputs</mat-option
+                    >
+                    <mat-option [value]="IOShieldTypes.AI_100_5di"
+                      >Sensor 100A + 5 Digital Input</mat-option
+                    >
+                    <mat-option [value]="IOShieldTypes.AI_150_5di"
+                      >Sensor 150A + 5 Digital Input</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </ng-container>
           <ng-container *ngSwitchCase="'energy'">
             <form #form="ngForm">
               <div class="row d-flex align-items-center">
-                <div class="text-nowrap col-12 col-md-5 pb-label">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
                   {{ 'settings-data-source.IPAddress' | translate }}
                 </div>
                 <mat-form-field class="col-12 col-md-7">
@@ -140,7 +214,7 @@
               </div>
             </form>
             <div class="row d-flex align-items-center">
-              <div class="col-12 col-md-5 pb-label">
+              <div class="col-12 col-md-5 pb-20">
                 <label>{{
                   'settings-data-source.ControllerType' | translate
                 }}</label>
@@ -160,9 +234,25 @@
             </div>
             <div class="row mb-40 d-flex align-items-center">
               <div class="col-12 col-md-5">
-                <label>{{
-                  'settings-data-source.CurrentTariff' | translate
-                }}</label>
+                <label
+                  >{{ 'settings-data-source.CurrentTariff' | translate }}
+                  <a
+                    class="pointer"
+                    href="/help{{
+                      'common.LanguageDocumentationPath' | translate
+                    }}/docs/Energy#tariff"
+                    target="_blank"
+                  >
+                    <mat-icon
+                      class="doc-btn"
+                      svgIcon="mdc:unknown"
+                      [matTooltip]="
+                        'settings-data-source.TariffHelpText' | translate
+                      "
+                      matTooltipPosition="above"
+                    ></mat-icon>
+                  </a>
+                </label>
               </div>
               <div class="col-12 col-md-7">
                 {{ getTariffText() }}
@@ -391,9 +481,23 @@
         </div>
       </div>
       <div
+        class="mt-10 d-flex align-items-center justify-content-end"
+        *ngIf="dataSource?.protocol === Protocol.MTConnect"
+      >
+        <button
+          mat-button
+          type="button"
+          class="btn-sm"
+          color="secondary"
+          (click)="goToMtConnectStream()"
+          [disabled]="dataSource?.type !== MTConnectTypes.Agent"
+        >
+          {{ 'settings-data-source.OpenMTConnectStream' | translate }}
+        </button>
+      </div>
+      <div
         *ngIf="dataSource?.protocol !== Protocol.IOShield"
-        class="d-flex align-items-center justify-content-end markustesting"
-        style="margin-top: 25px"
+        class="mt-10 d-flex align-items-center justify-content-end markustesting"
       >
         <mat-spinner
           diameter="20"
@@ -490,6 +594,22 @@
           cellClass="input-cell"
           [minWidth]="120"
         >
+          <ng-template ngx-datatable-header-template let-sort="sortFn">
+            <span class="pointer" (click)="sort()">{{
+              'settings-data-source.Type' | translate
+            }}</span>
+            <a
+              *ngIf="dataSource?.protocol == Protocol.MTConnect"
+              class="pointer"
+              href="/help{{
+                'common.LanguageDocumentationPath' | translate
+              }}/docs/MTConnectDataSource"
+              target="_blank"
+            >
+              <mat-icon class="doc-btn" svgIcon="mdc:unknown"></mat-icon>
+            </a>
+          </ng-template>
+
           <ng-template
             ngx-datatable-cell-template
             let-value="value"
@@ -516,6 +636,12 @@
                 >
                 <ng-container *ngSwitchCase="SourceDataPointType.Device"
                   >Device</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.Event"
+                  >Event</ng-container
+                >
+                <ng-container *ngSwitchCase="SourceDataPointType.Sample"
+                  >Sample</ng-container
                 >
               </ng-container>
             </span>
@@ -551,6 +677,14 @@
                 <mat-option [value]="SourceDataPointType.PLC">PLC</mat-option>
                 <mat-option [value]="SourceDataPointType.NCK">NCK</mat-option>
               </ng-container>
+              <ng-container *ngIf="dataSource?.protocol == Protocol.MTConnect">
+                <mat-option [value]="SourceDataPointType.Event"
+                  >Event</mat-option
+                >
+                <mat-option [value]="SourceDataPointType.Sample"
+                  >Sample</mat-option
+                >
+              </ng-container>
             </mat-select>
           </ng-template>
         </ngx-datatable-column>
@@ -564,6 +698,9 @@
           <ng-template ngx-datatable-cell-template let-row="row">
             <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
               <ng-container [ngSwitch]="dataSource?.protocol">
+                <ng-container *ngSwitchCase="Protocol.IOShield">
+                  {{ getLiveDataTextForIoShield(row) }}
+                </ng-container>
                 <ng-container *ngSwitchCase="Protocol.Energy">
                   {{ liveData?.[row.id]?.value }}
                   {{ liveData?.[row.id]?.unit }}
@@ -712,12 +849,10 @@
                 <mat-icon svgIcon="mdc:edit"></mat-icon>
               </mat-button-toggle>
               <mat-button-toggle
-                (click)="
-                  !isDataPointRequired(row) && onDelete(row); group.value = null
-                "
+                (click)="!row.mandatory && onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-source.Delete' | translate"
                 matTooltipPosition="above"
-                [disabled]="isDataPointRequired(row)"
+                [disabled]="row.mandatory"
               >
                 <mat-icon svgIcon="mdc:delete"></mat-icon>
               </mat-button-toggle>

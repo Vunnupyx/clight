@@ -4,7 +4,7 @@ import { VirtualDataPoint, VirtualDataPointBlinkSettings } from 'app/models';
 import { VirtualDataPointService } from 'app/services';
 
 export interface SetBlinkSettingsModalData {
-  blinkSettings: VirtualDataPointBlinkSettings;
+  virtualPoint: VirtualDataPoint;
   dataPointsWithBlinkDetection: VirtualDataPoint[];
 }
 
@@ -14,7 +14,7 @@ export interface SetBlinkSettingsModalData {
   styleUrls: ['./set-blink-settings-modal.component.scss']
 })
 export class SetBlinkSettingsModalComponent implements OnInit {
-  blinkSettings: VirtualDataPointBlinkSettings;
+  virtualPoint: VirtualDataPoint;
   dataPointsWithBlinkDetection: VirtualDataPoint[];
 
   constructor(
@@ -24,8 +24,14 @@ export class SetBlinkSettingsModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.blinkSettings = this.data.blinkSettings;
+    this.virtualPoint = this.data.virtualPoint;
     this.dataPointsWithBlinkDetection = this.data.dataPointsWithBlinkDetection;
+  }
+
+  isLinkingAllowed(blinkSettings) {
+    return !blinkSettings?.linkedBlinkDetections?.includes(
+      this.virtualPoint?.id
+    );
   }
 
   getVirtualDataPointPrefix() {
@@ -37,6 +43,8 @@ export class SetBlinkSettingsModalComponent implements OnInit {
   }
 
   onSave() {
-    this.dialogRef.close({ blinkSettings: this.blinkSettings });
+    this.dialogRef.close({
+      blinkSettings: this.virtualPoint.blinkSettings
+    });
   }
 }

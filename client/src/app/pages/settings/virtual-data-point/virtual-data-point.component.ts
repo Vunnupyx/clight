@@ -590,7 +590,7 @@ export class VirtualDataPointComponent implements OnInit {
       SetBlinkSettingsModalData
     >(SetBlinkSettingsModalComponent, {
       data: {
-        blinkSettings: { ...virtualPoint.blinkSettings },
+        virtualPoint,
         dataPointsWithBlinkDetection
       },
       width: '700px'

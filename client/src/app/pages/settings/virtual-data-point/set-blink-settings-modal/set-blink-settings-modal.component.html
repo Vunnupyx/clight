@@ -12,7 +12,7 @@
         <input
           matInput
           type="number"
-          [(ngModel)]="blinkSettings.timeframe"
+          [(ngModel)]="virtualPoint.blinkSettings.timeframe"
           required
         />
       </mat-form-field>
@@ -27,7 +27,7 @@
         <input
           matInput
           type="number"
-          [(ngModel)]="blinkSettings.risingEdges"
+          [(ngModel)]="virtualPoint.blinkSettings.risingEdges"
           required
         />
       </mat-form-field>
@@ -50,11 +50,12 @@
           [matTooltipDisabled]="dataPointsWithBlinkDetection?.length > 0"
           matTooltipPosition="above"
           multiple
-          [(ngModel)]="blinkSettings.linkedBlinkDetections"
+          [(ngModel)]="virtualPoint.blinkSettings.linkedBlinkDetections"
         >
           <mat-option
             *ngFor="let dp of dataPointsWithBlinkDetection"
             [value]="dp.id"
+            [disabled]="!isLinkingAllowed(dp.blinkSettings)"
             >{{ getVirtualDataPointPrefix() }} {{ dp.name }}</mat-option
           >
         </mat-select>

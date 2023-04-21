@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "Abbrechen",
-    "LanguageDocumentationPath": "/de"
+    "LanguageDocumentationPath": "/de",
+    "NoTableData": "Fügen Sie zunächst einen Datenpunkt hinzu, um die Daten hier zu sehen",
+    "NoTableDataMapping": "Fügen Sie zunächst ein Mapping hinzu, um die Daten hier zu sehen",
+    "NoTableDataSchedule": "Fügen Sie zunächst einen Zeitplan hinzu, um die Daten hier zu sehen"
   },
   "commissioning": {
     "Welcome": "Willkommen bei IoTconnector flex",

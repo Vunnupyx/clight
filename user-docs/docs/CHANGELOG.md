@@ -4,6 +4,33 @@ title: Changelog
 
 # Changelog
 
+## [4.0.0]
+
+## Changed
+
+- [DIGMDCLGHT-412](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-412) Breaking Change: Blinking behavior is moved to VDP to allow custom blinking detection scenarios
+
+## Added
+
+- [DIGMDCLGHT-57](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-57) Login page automatically redirects to main page if user is already logged in
+- [DIGMDCLGHT-84](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-84) Adds Cancel button to configuration wizard page
+- [DIGMDCLGHT-411](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-411) Adds data type column for OPC UA application interface data points
+- [DIGMDCLGHT-413](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-413) Adds warning notification when the user session expires
+- [DIGMDCLGHT-415](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-415) Adds ability to change template without displaying T&C page
+- [DIGMDCLGHT-426](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-426) Adds MTConnect Agent as data source
+- [DIGMDCLGHT-435](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-435) Adds user documentation for Energy data source
+- [DIGMDCLGHT-443](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-443) Adds device information to System Information page
+
+## Fixed
+
+- [DIGMDCLGHT-428](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-428) Fixes the result of enumeration if value of any of its sources are not available
+- [DIGMDCLGHT-440](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-440) Fixes missing translations for delete confirmation popups
+- [DIGMDCLGHT-457](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-457) Fixes some API endpoints being unavailable after completing commissioning
+- [DIGMDCLGHT-449](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-449) Fixes Energy tariff-number data point when template is not used
+- [DIGMDCLGHT-452](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-452) Fixes missing German translations for Set Schedules dialog
+- [DIGMDCLGHT-455](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-455) Fixes displaying live data wrongly while changing type of input board signal
+- [DIGMDCLGHT-459](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-459) Fixes missing translation when there is no table data
+
 ## [3.0.11]
 
 ## Added

@@ -65,6 +65,7 @@
     "LoadError": "情報の取得に失敗しました。時間をおいて再試行してください。",
     "TermsLoadError": "サービス規約が読み込めませんでした。時間をおいて再試行してください。",
     "AcceptError": "サービス規約承認の処理ができませんでした。時間をおいて再試行してください。",
+    "Cancel": "キャンセル",
     "Next": "次へ",
     "Save": "保存",
     "Yes": "はい",
@@ -137,7 +138,7 @@
     "Japanese": "日本語",
     "Templates": "テンプレート",
     "CurrentTemplate": "選択中のテンプレート",
-    "OpenConfigurationWizard": "設定ウィザードを開始する",
+    "ChangeTemplate": "Change Template",
     "BackupAndRestore": "設定のバックアップと読み込み",
     "BackupConfiguration": "設定のバックアップ",
     "RestoreConfiguration": "設定の読み込み",
@@ -173,7 +174,9 @@
     "Cancel": "キャンセル",
     "Select": "選択",
     "Enabled": "有効",
+    "MachineName": "Machine Name",
     "IPAddress": "IPアドレス",
+    "Hostname": "ホスト名",
     "Connection": "接続中",
     "Running": "実行中",
     "Disconnected": "切断",
@@ -192,6 +195,7 @@
     "SelectAVariable": "変数を選択",
     "ControllerType": "制御装置の型式",
     "CurrentTariff": "現在の通信量",
+    "TariffHelpText": "What do I need the tariff for?",
     "Name": "名前",
     "Type": "型",
     "Description": "記述",
@@ -203,6 +207,7 @@
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再試行してください。",
     "Tabs": {
       "s7": "SIEMENS",
+      "mtconnect": "MTConnect",
       "ioshield": "デジタル入力",
       "energy": "電力量"
     },
@@ -215,11 +220,14 @@
     },
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
+    "OpenMTConnectStream": "MTConnectストリームを開く",
     "TestConnection": "テスト接続",
     "DuplicatedName": "名前が重複しています",
     "UnsupportedAddress": "The data point does not correspond to the selected type",
     "DuplicatedAddress": "アドレスが重複しています",
     "SelectVariable": "変数選択",
+    "DeleteMessage": "Are you sure you want to delete data point {{name}}?",
+    "Port": "ポート",
     "TariffStatus": {
       "0": "通信量カウンタが全て無効です",
       "1": "Standby",
@@ -246,8 +254,9 @@
     "SetThreshold": "閾値設定",
     "LiveData": "ライブデータ",
     "LoadError": "データポイントの読み込みに失敗しました。時間をおいて再試行してください。",
-    "DeleteTitle": "削除",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
+    "EnumerationDeleteMessage": "Are you sure you want to delete enumeration item?",
+    "SchedulesDeleteMessage": "Are you sure you want to delete the schedule {{name}}?",
     "SetThresholds": "閾値設定",
     "SetComparativeValue": "基準値設定",
     "MissingComparativeValue": "Comparative value is empty",
@@ -395,6 +404,8 @@
     "SetCustomOpcUaVariable": "カスタムOPC UA変数設定",
     "NodeId": "ノードID",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
+    "OPCUACustomVariableDeleteMessage": "Are you sure you want to delete the OPC UA Variable?",
+    "MappingDeleteMessage": "Are you sure you want to delete mapping {{from}}->{{to}}?",
     "Username": "ユーザ名",
     "Hostname": "ホスト名",
     "Server": "サーバ状態",
@@ -437,7 +448,8 @@
     "TargetDisabledTooltip": "このマッピングに必要なアプリケーションインタフェースを有効にしてください",
     "MappingDisabledTooltip": "データソースまたはアプリケーションインタフェースが無効なため、このマッピングは無効化されています",
     "DiscardChanges": "変更を破棄",
-    "ApplyChanges": "変更を適用"
+    "ApplyChanges": "変更を適用",
+    "DeleteMessage": "Are you sure you want to delete data mapping?"
   },
   "settings-network": {
     "Network": "ネットワーク",
@@ -518,7 +530,8 @@
     "warningText": "保存されていない変更があります。このまま続けますか？"
   },
   "http": {
-    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again",
+    "RuntimeError": "The service is not available. Please try again later"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "システムの時刻がブラウザの時刻と異なります。システムに設定されている時刻を修正してください。不正なシステム時刻はデータソースやアプリケーションインタフェースのエラーにつながります。この警告をクリックし、設定ページを表示、時刻タブを選択して時刻を修正してください"
@@ -529,6 +542,9 @@
     "Byte": "バイト",
     "UInt16": "UInt16",
     "UInt32": "UInt32",
+    "Int16": "Int16",
+    "Int32": "Int32",
+    "LocalizedText": "Localized Text",
     "Boolean": "ブール値"
   },
   "days-of-week": {

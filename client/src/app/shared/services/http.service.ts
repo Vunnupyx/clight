@@ -116,6 +116,14 @@ export class HttpService {
       return EMPTY;
     }
 
+    if (err.status === 504 && this.authService.token) {
+      this.toastr.error(
+        this.translate.instant('http.RuntimeError'),
+        undefined,
+        { timeOut: 30000 }
+      );
+    }
+
     throw err;
   }
 

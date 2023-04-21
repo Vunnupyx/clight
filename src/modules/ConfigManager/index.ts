@@ -78,6 +78,16 @@ const defaultEnergyDataSource: IDataSourceConfig = {
     ipAddr: ''
   }
 };
+const defaultMTConnectDataSource: IDataSourceConfig = {
+  dataPoints: [],
+  protocol: DataSourceProtocols.MTCONNECT,
+  enabled: false,
+  type: 'Agent',
+  connection: {
+    ipAddr: '',
+    port: 7878
+  }
+};
 const defaultOpcuaDataSink: IDataSinkConfig = {
   dataPoints: [],
   enabled: false,
@@ -287,7 +297,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     const sources = [
       defaultS7DataSource,
       defaultIoShieldDataSource,
-      defaultEnergyDataSource
+      defaultEnergyDataSource,
+      defaultMTConnectDataSource
     ];
 
     this._config = {

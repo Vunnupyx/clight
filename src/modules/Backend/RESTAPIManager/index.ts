@@ -44,11 +44,6 @@ export class RestApiManager {
     '/datahub/status/mdc-web-server',
     '/datahub/status/mtconnect-agent'
   ];
-  private endpointsBlockedAfterCommissioning = [
-    '/system/commissioning',
-    '/datahub/dps',
-    '/system/commissioning/finish'
-  ];
   private static className: string;
 
   constructor(options: RestApiManagerOptions) {
@@ -110,22 +105,13 @@ export class RestApiManager {
         filter: (req: Request, res: Response) => {
           // If device is not commissioned allowed these endpoints so that commissioning can be performed
           if (
+            !this.options.configManager.isDeviceCommissioned &&
             this.endpointsAllowedForCommissioningWithoutJWT.includes(req.url)
           ) {
-            if (!this.options.configManager.isDeviceCommissioned) {
-              winston.info(
-                `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
-              );
-              return true;
-            } else if (
-              this.endpointsBlockedAfterCommissioning.includes(req.url)
-            ) {
-              // Certain endpoints are blocked after commissioning is completed.
-              winston.info(
-                `${logPrefix} Commissioning is already completed, requested URL: ${req.url}, is not allowed.`
-              );
-              return false;
-            }
+            winston.info(
+              `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
+            );
+            return true;
           }
 
           const isAuthenticated = authManager.verifyJWTAuth({

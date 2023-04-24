@@ -84,7 +84,10 @@ export class AuthManager {
       }
     );
 
-    const passwordChangeRequired = loggedUser.passwordChangeRequired;
+    // If device is not commissioned, password change is ignored as user is skipping the commissioning temporarily
+    const passwordChangeRequired = this.configManager.isDeviceCommissioned
+      ? loggedUser.passwordChangeRequired
+      : false;
 
     return Promise.resolve({ accessToken, passwordChangeRequired });
   }
@@ -123,7 +126,12 @@ export class AuthManager {
           (auth) => auth.userName === user.userName
         );
 
-        if (withPasswordChangeDetection && loggedUser.passwordChangeRequired) {
+        // If device is not commissioned, password change is ignored as user is skipping the commissioning temporarily^
+        if (
+          withPasswordChangeDetection &&
+          loggedUser.passwordChangeRequired &&
+          this.configManager.isDeviceCommissioned
+        ) {
           response
             .status(403)
             .json({ message: 'Change default password is required!' });

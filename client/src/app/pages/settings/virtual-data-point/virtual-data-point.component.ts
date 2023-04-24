@@ -417,23 +417,17 @@ export class VirtualDataPointComponent implements OnInit {
     ].includes(operationType!);
   }
 
-  onSetEnumeration(virtualPoint: VirtualDataPoint) {
+  async onSetEnumeration(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.enumeration) {
       virtualPoint.enumeration = { items: [] };
     }
 
-    const protocol = this.sourceDataPointService.getProtocol(
-      virtualPoint.sources![0]
-    );
-
-    this.sourceDataPointService.getSourceDataPointsAll();
-    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
+    await this.sourceDataPointService.getSourceDataPointsAll();
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
       data: {
         enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
-        protocol,
         isSetTariffType:
           virtualPoint.operationType ===
           VirtualDataPointOperationType.SET_TARIFF
@@ -554,10 +548,13 @@ export class VirtualDataPointComponent implements OnInit {
 
   onOperationTypeChange(newOperationType) {
     if (this.unsavedRow) {
-      this.unsavedRow.sources = this.unsavedRow.sources
-        ? [this.unsavedRow.sources[0]]
-        : [];
       this.unsavedRow.operationType = newOperationType;
+
+      if (
+        Array.isArray(this.unsavedRow.sources) &&
+        this.unsavedRow.sources.length
+      )
+        this.unsavedRow.sources = [this.unsavedRow.sources[0]];
     }
   }
 

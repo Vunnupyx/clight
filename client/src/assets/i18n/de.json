@@ -23,6 +23,7 @@
     "Disconnected": "Getrennt",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Komponenten",
+    "SkipCommissioning": "Inbetriebnahme überspringen",
     "FinishCommissioning": "Inbetriebnahme beenden",
     "FinishError": "Die Inbetriebnahme konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut",
     "RegisteredError": "Bereitstellung fehlgeschlagen",

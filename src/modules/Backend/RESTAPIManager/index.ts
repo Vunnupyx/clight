@@ -31,19 +31,6 @@ export class RestApiManager {
   private readonly expressApp: Express = express();
   private options: RestApiManagerOptions;
   private routeManager: RoutesManager;
-  private endpointsAllowedForCommissioningWithoutJWT = [
-    '/machine/info',
-    '/system/commissioning',
-    '/network/adapters/enoX1',
-    '/network/adapters/enoX1/status',
-    '/datahub/dps',
-    '/system/commissioning/finish',
-    '/datahub/status/mdclight',
-    '/datahub/status/edgeAgent',
-    '/datahub/status/edgeHub',
-    '/datahub/status/mdc-web-server',
-    '/datahub/status/mtconnect-agent'
-  ];
   private static className: string;
 
   constructor(options: RestApiManagerOptions) {
@@ -103,11 +90,8 @@ export class RestApiManager {
       `${ConfigurationAgentManager.hostname}:${ConfigurationAgentManager.port}`,
       {
         filter: (req: Request, res: Response) => {
-          // If device is not commissioned allowed these endpoints so that commissioning can be performed
-          if (
-            !this.options.configManager.isDeviceCommissioned &&
-            this.endpointsAllowedForCommissioningWithoutJWT.includes(req.url)
-          ) {
+          // If device is not commissioned allow ALL endpoints so that commissioning can be performed or in case it is skipped
+          if (!this.options.configManager.isDeviceCommissioned) {
             winston.info(
               `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
             );
@@ -126,7 +110,7 @@ export class RestApiManager {
           }
           return isAuthenticated;
         },
-        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+        userResDecorator: async (proxyRes, proxyResData, userReq, userRes) => {
           if (
             userReq.url === '/system/commissioning/finish' &&
             userReq.method === 'POST'
@@ -139,6 +123,20 @@ export class RestApiManager {
                 `${logPrefix} Device commissioning finished, setting internal status to commissioned`
               );
               this.options.configManager.isDeviceCommissioned = true;
+              // Factory reset after commissioning is done.
+              try {
+                winston.debug(
+                  `${logPrefix} Performing factory reset after commissioning`
+                );
+                await this.options.configManager.factoryResetConfiguration();
+                winston.debug(
+                  `${logPrefix} Factory reset performed successfully after commissioning`
+                );
+              } catch (error) {
+                winston.error(
+                  `${logPrefix} Device commissioning finished, but factory reset could not be performed due to ${error?.message}`
+                );
+              }
             } else {
               winston.warn(
                 `${logPrefix} Device commissioning response is not successful! Response code: ${

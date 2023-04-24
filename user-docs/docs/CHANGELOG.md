@@ -16,6 +16,7 @@ title: Changelog
 - [DIGMDCLGHT-415](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-415) Adds ability to change template without displaying T&C page
 - [DIGMDCLGHT-426](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-426) Adds MTConnect Agent as data source
 - [DIGMDCLGHT-435](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-435) Adds user documentation for Energy data source
+- [DIGMDCLGHT-441](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-441) Adds skipping functionality for commissioning
 - [DIGMDCLGHT-443](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-443) Adds device information to System Information page
 
 ## Fixed

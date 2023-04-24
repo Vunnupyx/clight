@@ -708,7 +708,7 @@ describe('Test VirtualDataPointManager', () => {
     );
   });
   describe('Blink detection should work correctly', () => {
-    let msTimeAmountEachIterationRepresents = 1000; // each i represents 1000ms
+    let msTimeAmountEachIterationRepresents = 500; // each i represents 1000ms
     let i = 0;
     beforeAll(() => {
       jest.useFakeTimers();
@@ -762,65 +762,77 @@ describe('Test VirtualDataPointManager', () => {
               0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1
             ],
-            testname: 'constant ON after first rising edge'
+            testname: 'Switch from OFF to ON'
           },
           {
             sourceValueArray: [
               0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0
             ],
-            testname: 'Status 1 and then 0 last exactly timeframe amount'
+            testname: 'ON delayed by one time frame'
           },
           {
             sourceValueArray: [
-              0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+              0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2
+            ],
+            testname: 'Switch from OFF TO BLINK'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0
+            ],
+            testname: 'Switch from BLINK to OFF',
+            comment:
+              'After the 2nd rising edge there are not enough rising edges anymore to fullfil the condition >= 3 in 5 seconds. This would lead to an ON/OFF switches like "2,2,2,0,1,0,1. To prevent this, after the switch from BLINK to OFF, rising edges are ignored for 5 seconds.'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0
+            ],
+            testname: 'Not enough rising edges, ONs are delayed'
+          },
+          {
+            sourceValueArray: [
+              0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+            ],
+            expectedResult: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2
             ],
             testname:
-              'Not enough rising edge in time window, resets to inactive'
+              'Blinking detected and then sometimes not enough rising edges',
+            comment:
+              'Because of the suppressed rising edges after switching to OFF, there is one 2 missing'
           },
           {
             sourceValueArray: [
-              0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+              0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2
             ],
-            testname: 'Blinking detected and then not enough rising edges'
+            testname: 'Long blinking, with sometimes not enough rising edges'
           },
           {
             sourceValueArray: [
-              0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
+              0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0
             ],
-            testname:
-              'Blink detected, always enough rising edges after blinking'
-          },
-          {
-            sourceValueArray: [
-              0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0
-            ],
-            expectedResult: [
-              0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0
-            ],
-            testname: 'Blink detected, after second cycle blink stops'
-          },
-          {
-            sourceValueArray: [
-              0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0
-            ],
-            expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            ],
-            testname: 'Source rising edges keep coming but not enough amount'
+            testname: 'Ignoring rising edge after blink stopped'
           }
         ])('$testname', ({ sourceValueArray, expectedResult }) => {
           let resultArray: number[] = [];
@@ -869,7 +881,7 @@ describe('Test VirtualDataPointManager', () => {
               id: 'vdp1',
               name: 'vdp1',
               blinkSettings: {
-                timeframe: 10000,
+                timeframe: 5000,
                 risingEdges: 4,
                 linkedBlinkDetections: []
               }
@@ -918,17 +930,16 @@ describe('Test VirtualDataPointManager', () => {
               0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0
             ],
-            testname:
-              'Not enough rising edge in time window, resets to inactive'
+            testname: 'Delayed ON'
           },
           {
             sourceValueArray: [
               0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0
+              0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0
             ],
             testname: 'Blinking detected and then not enough rising edges'
           },
@@ -937,7 +948,7 @@ describe('Test VirtualDataPointManager', () => {
               0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2
             ],
             testname:
               'Blink detected, always enough rising edges after blinking'
@@ -948,8 +959,8 @@ describe('Test VirtualDataPointManager', () => {
               0, 0, 0, 0, 0, 0, 0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-              2, 2, 2, 2, 2, 0, 0
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0,
+              0, 0, 0, 0, 0, 0, 0
             ],
             testname: 'Blink detected, after second cycle blink stops'
           },
@@ -959,10 +970,10 @@ describe('Test VirtualDataPointManager', () => {
               0
             ],
             expectedResult: [
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 2,
+              2
             ],
-            testname: 'Source rising edges keep coming but not enough amount'
+            testname: 'Source rising edges keep coming'
           }
         ])('$testname', ({ sourceValueArray, expectedResult }) => {
           let resultArray: number[] = [];
@@ -1063,10 +1074,10 @@ describe('Test VirtualDataPointManager', () => {
           ],
           // For expectedResult1: Start value is always 0, so if the first element is 1 in sourceValueArray1 it is treated like rising edge TBD
           expectedResult1: [
-            0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2
           ],
           expectedResult2: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2
           ],
           testname: 'Use case for Haas machine'
         }

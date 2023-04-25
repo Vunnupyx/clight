@@ -6,6 +6,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../shared';
 import { TimeSyncCheckService } from '../../services/time-sync-check.service';
 import { TranslateService } from '@ngx-translate/core';
+import { CommissioningService } from 'app/services';
 
 @Component({
   selector: 'app-layer',
@@ -37,7 +38,8 @@ export class LayoutComponent {
     private route: ActivatedRoute,
     private auth: AuthService,
     private readonly translate: TranslateService,
-    private timeSyncCheckService: TimeSyncCheckService
+    private timeSyncCheckService: TimeSyncCheckService,
+    private commissioningService: CommissioningService
   ) {
     this.subs.add(
       this.router.events
@@ -67,6 +69,10 @@ export class LayoutComponent {
   }
 
   async logout() {
+    const isCommissioningSkipped = await this.commissioningService.isSkipped();
+    if (isCommissioningSkipped) {
+      await this.commissioningService.resetSkip();
+    }
     await this.auth.logout();
   }
 

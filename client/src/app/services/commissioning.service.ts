@@ -100,6 +100,12 @@ export class CommissioningService {
     return true;
   }
 
+  async resetSkip(): Promise<void> {
+    this._store.patchState((state) => {
+      state.skipped = false;
+    });
+  }
+
   async apply(): Promise<boolean> {
     try {
       this._store.patchState((state) => {

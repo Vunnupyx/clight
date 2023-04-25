@@ -61,6 +61,10 @@ export class LayoutComponent {
     );
   }
 
+  get isCommissioningSkipped$() {
+    return this.commissioningService.skipped;
+  }
+
   ngOnInit() {
     //Check time after a while to avoid not loading translation
     setTimeout(() => {

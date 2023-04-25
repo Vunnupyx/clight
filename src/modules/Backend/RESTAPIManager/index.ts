@@ -93,7 +93,7 @@ export class RestApiManager {
           // If device is not commissioned allow ALL endpoints so that commissioning can be performed or in case it is skipped
           if (!this.options.configManager.isDeviceCommissioned) {
             winston.info(
-              `${logPrefix} requested URL: ${req.url}, allowed for commissioning`
+              `${logPrefix} requested URL: ${req.url}, allowed while commissioning is not complete yet`
             );
             return true;
           }

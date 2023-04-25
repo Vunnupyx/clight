@@ -17,5 +17,4 @@ export class SourceDataPoint {
   readFrequency?: number;
   type?: SourceDataPointType;
   enabled?: boolean;
-  mandatory?: boolean;
 }

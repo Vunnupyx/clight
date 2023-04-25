@@ -134,7 +134,7 @@ export class TemplateService {
 
       return this._store.snapshot.completed;
     } catch (err) {
-      return true;
+      return false;
     }
   }
 

@@ -239,10 +239,11 @@ export class VirtualDataPointComponent implements OnInit {
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
     this.ngxDatatable.sorts = [];
-    this.datapointRows = this.datapointRows.concat([obj]);
+    this.datapointRows = [obj].concat(this.datapointRows);
   }
 
   onEditStart(rowIndex: number, row: any) {
+    console.log(rowIndex);
     this.clearUnsavedRow();
     this.unsavedRowIndex = rowIndex;
     this.unsavedRow = clone(row);
@@ -417,17 +418,23 @@ export class VirtualDataPointComponent implements OnInit {
     ].includes(operationType!);
   }
 
-  async onSetEnumeration(virtualPoint: VirtualDataPoint) {
+  onSetEnumeration(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.enumeration) {
       virtualPoint.enumeration = { items: [] };
     }
 
-    await this.sourceDataPointService.getSourceDataPointsAll();
+    const protocol = this.sourceDataPointService.getProtocol(
+      virtualPoint.sources![0]
+    );
+
+    this.sourceDataPointService.getSourceDataPointsAll();
+    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
       data: {
         enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
+        protocol,
         isSetTariffType:
           virtualPoint.operationType ===
           VirtualDataPointOperationType.SET_TARIFF
@@ -548,13 +555,10 @@ export class VirtualDataPointComponent implements OnInit {
 
   onOperationTypeChange(newOperationType) {
     if (this.unsavedRow) {
+      this.unsavedRow.sources = this.unsavedRow.sources
+        ? [this.unsavedRow.sources[0]]
+        : [];
       this.unsavedRow.operationType = newOperationType;
-
-      if (
-        Array.isArray(this.unsavedRow.sources) &&
-        this.unsavedRow.sources.length
-      )
-        this.unsavedRow.sources = [this.unsavedRow.sources[0]];
     }
   }
 

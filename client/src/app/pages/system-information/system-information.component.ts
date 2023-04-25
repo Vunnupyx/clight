@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
-import { SystemInformationService } from 'app/services';
-import { MachineInformation, SystemInformationSection } from 'app/models';
-import { environment } from 'environments/environment';
+import { SystemInformationService } from '../../services';
+import { SystemInformationSection } from '../../models';
+import { environment } from '../../../environments/environment';
 import { MaterialThemeVersion } from 'app/app.component';
 
 import {
@@ -21,7 +21,7 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
-import { LoadingDialogComponent } from 'app/shared/components/loading-dialog/loading-dialog.component';
+import { LoadingDialogComponent } from '../../shared/components/loading-dialog/loading-dialog.component';
 import { AuthService, LocalStorageService } from 'app/shared';
 
 @Component({
@@ -32,7 +32,6 @@ import { AuthService, LocalStorageService } from 'app/shared';
 export class SystemInformationComponent implements OnInit, OnDestroy {
   readonly MaterialThemeVersion = MaterialThemeVersion;
 
-  machineInformation: MachineInformation;
   data: SystemInformationSection[] = [];
 
   private sub: Subscription = new Subscription();
@@ -48,15 +47,9 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub.add(
-      this.systemInformationService.machineInformation.subscribe((x) =>
-        this.onMachineInformation(x)
-      )
-    );
-    this.sub.add(
       this.systemInformationService.sections.subscribe((x) => this.onData(x))
     );
 
-    this.systemInformationService.getMachineInformation();
     this.systemInformationService.getInfo();
   }
 
@@ -147,10 +140,6 @@ export class SystemInformationComponent implements OnInit, OnDestroy {
         this.auth.logout();
       }, 5 * 60 * 1000); //Show loading indicator for 5 minute
     });
-  }
-
-  private onMachineInformation(x: MachineInformation) {
-    this.machineInformation = { ...x };
   }
 
   private onData(x: SystemInformationSection[]) {

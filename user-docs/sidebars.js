@@ -15,7 +15,6 @@ module.exports = {
       items: [
         'SINUMERIK840DSLPL',
         'InputBoard',
-        'Energy',
         'MTConnectDataSource',
         'VirtualDataPoints',
         'Mapping',

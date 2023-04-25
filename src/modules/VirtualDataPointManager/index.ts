@@ -593,7 +593,7 @@ export class VirtualDataPointManager {
         //   `${logPrefix} measurement is: ${!!event.measurement.value}`
         // );
         return (
-          event?.measurement?.id === entry.source && !!event?.measurement?.value
+          event.measurement.id === entry.source && !!event.measurement.value
         );
       });
       if (hit) {
@@ -744,11 +744,9 @@ export class VirtualDataPointManager {
     const virtualEvents: IDataSourceMeasurementEvent[] = [];
 
     for (const vdpConfig of this.config) {
-      const calculateVirtualDatapoint =
-        vdpConfig.operationType === 'enumeration' ||
-        vdpConfig.sources.some((sourceId) =>
-          _events.some((e) => e?.measurement?.id === sourceId)
-        );
+      const calculateVirtualDatapoint = vdpConfig.sources.some((sourceId) =>
+        _events.some((e) => e.measurement.id === sourceId)
+      );
 
       // If virtual datapoint has no event in the current cycle, do not calculate it
       if (!calculateVirtualDatapoint) {
@@ -756,7 +754,7 @@ export class VirtualDataPointManager {
       }
 
       let sourceEvents = vdpConfig.sources.map((sourceId) => {
-        let event = _events.find((e) => e?.measurement?.id === sourceId);
+        let event = _events.find((e) => e.measurement.id === sourceId);
         if (!event) {
           event = this.cache.getCurrentEvent(sourceId);
         }
@@ -770,15 +768,8 @@ export class VirtualDataPointManager {
         return event;
       });
 
-      // Skip virtual data point if one or more source events are missing if it is not enumeration
-      if (
-        (vdpConfig.operationType === 'enumeration' &&
-          sourceEvents.every((event) => typeof event === 'undefined') &&
-          !vdpConfig.enumeration?.defaultValue) ||
-        (vdpConfig.operationType !== 'enumeration' &&
-          sourceEvents.some((event) => typeof event === 'undefined'))
-      )
-        continue;
+      // Skip virtual data point if one or more source events are missing
+      if (sourceEvents.some((event) => typeof event === 'undefined')) continue;
 
       const value = this.calculateValue(sourceEvents, vdpConfig);
 

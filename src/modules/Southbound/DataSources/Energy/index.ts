@@ -18,7 +18,6 @@ export class EnergyDataSource extends DataSource {
   private phoenixEemClient: PhoenixEmProAdapter;
   private virtualDataPointManager: VirtualDataPointManager;
   private dataPoints: IDataPointConfig[];
-  private ENERGY_DATAPOINT_READING_CYCLE = 15000;
 
   constructor(
     params: IDataSourceParams,
@@ -77,7 +76,7 @@ export class EnergyDataSource extends DataSource {
         this.virtualDataPointManager.setEnergyCallback(
           this.handleMachineStatusChange.bind(this)
         );
-        this.setupDataPoints(this.ENERGY_DATAPOINT_READING_CYCLE);
+        this.setupDataPoints();
         this.setupLogCycle();
       } else {
         throw new Error(

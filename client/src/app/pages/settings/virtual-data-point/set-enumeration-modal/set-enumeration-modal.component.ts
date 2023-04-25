@@ -6,6 +6,7 @@ import {
 } from '@angular/material/dialog';
 import {
   DataPointLiveData,
+  DataSourceProtocol,
   SourceDataPoint,
   VirtualDataPoint,
   VirtualDataPointEnumeration,
@@ -23,6 +24,7 @@ import { withLatestFrom } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
 export interface SetEnumerationModalData {
+  protocol?: DataSourceProtocol;
   sources?: string[];
   enumeration: VirtualDataPointEnumeration;
   isSetTariffType?: boolean;
@@ -75,17 +77,8 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
       )
     );
 
-    for (const source of this.data.sources) {
-      const protocol = this.sourceDataPointService.getProtocol(source);
-      this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
-    }
-
-    const firstSourceProtocol = this.sourceDataPointService.getProtocol(
-      this.data.sources[0]
-    );
-
     this.liveDataSub = this.sourceDataPointService
-      .setLivedataTimer(firstSourceProtocol, 'true')
+      .setLivedataTimer(this.data.protocol!, 'true')
       .subscribe();
 
     this.defaultValue = this.data.enumeration.defaultValue!;
@@ -155,7 +148,7 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
-    this.liveDataSub && this.liveDataSub.unsubscribe();
+    this.liveDataSub.unsubscribe();
   }
 
   private onDataPoints(

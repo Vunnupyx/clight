@@ -59,7 +59,7 @@ export class TermsAndConditionsService {
         state.status = Status.Ready;
       });
 
-      return true;
+      return false;
     }
   }
 

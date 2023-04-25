@@ -33,9 +33,7 @@ export class QuickStartGuard implements CanActivate {
     const isLoggedIn = !!this.authService.token;
     const isCommissioningSkipped = await this.commissioningService.isSkipped();
 
-    if (isCommissioningSkipped) {
-      return true;
-    } else if (isLoggedIn) {
+    if (isLoggedIn || isCommissioningSkipped) {
       const isCompleted = await this.templateService.isCompleted();
       const isTermsAccepted = await this.termsService.isAccepted();
 

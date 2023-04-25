@@ -455,10 +455,12 @@ export class MTConnectDataSource extends DataSource {
           format: 'object',
           group: true
         });
+        this.hostConnectivityState = IHostConnectivityState.OK;
         // TODO type cast xmlObj from XMLSerializedAsObject
         //@ts-ignore
         return resolve(xmlObj);
       } catch (e) {
+        this.hostConnectivityState = IHostConnectivityState.ERROR;
         const err = `${logPrefix} unexpected error occurred while fetching XML response: ${e?.message}`;
         winston.error(err);
         return reject(new Error(err));

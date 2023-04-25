@@ -234,9 +234,25 @@
             </div>
             <div class="row mb-40 d-flex align-items-center">
               <div class="col-12 col-md-5">
-                <label>{{
-                  'settings-data-source.CurrentTariff' | translate
-                }}</label>
+                <label
+                  >{{ 'settings-data-source.CurrentTariff' | translate }}
+                  <a
+                    class="pointer"
+                    href="/help{{
+                      'common.LanguageDocumentationPath' | translate
+                    }}/docs/Energy#tariff"
+                    target="_blank"
+                  >
+                    <mat-icon
+                      class="doc-btn"
+                      svgIcon="mdc:unknown"
+                      [matTooltip]="
+                        'settings-data-source.TariffHelpText' | translate
+                      "
+                      matTooltipPosition="above"
+                    ></mat-icon>
+                  </a>
+                </label>
               </div>
               <div class="col-12 col-md-7">
                 {{ getTariffText() }}
@@ -530,6 +546,7 @@
         [rows]="datapointRows"
         rowHeight="auto"
         columnMode="flex"
+        [messages]="{ emptyMessage: 'common.NoTableData' | translate }"
       >
         <ngx-datatable-column
           [name]="'settings-data-source.Name' | translate"
@@ -683,16 +700,7 @@
             <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
-                  <ng-container
-                    *ngIf="row.address?.startsWith('DI'); else noTranslate"
-                    >{{
-                      'settings-data-source.Livedata.ioshield.' +
-                        liveData?.[row.id]?.value | translate
-                    }}
-                  </ng-container>
-                  <ng-template #noTranslate>{{
-                    liveData?.[row.id]?.value
-                  }}</ng-template>
+                  {{ getLiveDataTextForIoShield(row) }}
                 </ng-container>
                 <ng-container *ngSwitchCase="Protocol.Energy">
                   {{ liveData?.[row.id]?.value }}
@@ -842,12 +850,10 @@
                 <mat-icon svgIcon="mdc:edit"></mat-icon>
               </mat-button-toggle>
               <mat-button-toggle
-                (click)="
-                  !isDataPointRequired(row) && onDelete(row); group.value = null
-                "
+                (click)="!row.mandatory && onDelete(row); group.value = null"
                 [matTooltip]="'settings-data-source.Delete' | translate"
                 matTooltipPosition="above"
-                [disabled]="isDataPointRequired(row)"
+                [disabled]="row.mandatory"
               >
                 <mat-icon svgIcon="mdc:delete"></mat-icon>
               </mat-button-toggle>

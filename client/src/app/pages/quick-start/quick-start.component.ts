@@ -19,6 +19,7 @@ import { DataSinkProtocol, DataSourceProtocol } from 'app/models';
 import { ITemplate } from 'app/models/template';
 import { array2map, ObjectMap } from 'app/shared/utils';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
+import { CommissioningService } from 'app/services';
 
 @Component({
   selector: 'app-quick-start',
@@ -80,11 +81,15 @@ export class QuickStartComponent implements OnInit, OnDestroy {
     private formBuilder: UntypedFormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private commissioningService: CommissioningService
   ) {}
 
   async ngOnInit(): Promise<void> {
-    const step = this.route.snapshot.queryParams['step'];
+    const isCommissioningSkipped = await this.commissioningService.isSkipped();
+    const step = isCommissioningSkipped
+      ? 1
+      : this.route.snapshot.queryParams['step'];
     if (step) this.selectedStepIndex = step;
 
     this.templateForm = this.formBuilder.group({

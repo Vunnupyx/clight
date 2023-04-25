@@ -25,6 +25,7 @@ The following templates are available:
 
 - Input boards (10 digital inputs or current sensors + 5 digital inputs)
 - DMG MORI GM Series (For DMG MORI GM 16-6 or GM 20-6 machines)
+- EEM Kit (Connect Phoenix Contact EMpro Energy counter)
 - SIEMENS SINUMERIK 840D sl (Connect SIEMENS SINUMERIK 840D sl controls to DMG MORI Messenger, OPC UA or CELOS Xchange)
 - SIEMENS SINUMERIK 840D sl to DMG MORI Messenger (Connect SIEMENS SINUMERIK 840D sl controls to DMG MORI Messenger)
 

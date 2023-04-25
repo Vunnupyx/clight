@@ -68,6 +68,12 @@ export class CommissioningComponent implements OnInit {
     }
   }
 
+  async onSkip() {
+    await this.commissioningService
+      .skip()
+      .then(() => this.router.navigate(['/']));
+  }
+
   async onApply() {
     await this.commissioningService
       .apply()

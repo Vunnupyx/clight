@@ -12,6 +12,9 @@ export enum DataPointDataType {
   Byte = 'byte',
   UInt16 = 'uint16',
   UInt32 = 'uint32',
+  Int16 = 'int16', // NOT selectable! Only for displaying data type
+  Int32 = 'int32', // NOT selectable! Only for displaying data type
+  LocalizedText = 'localizedText', // NOT selectable! Only for displaying data type
   Boolean = 'boolean'
 }
 

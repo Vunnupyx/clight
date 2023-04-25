@@ -9,14 +9,14 @@ title: Changelog
 ### Added
 
 - [DIGMDCLGHT-426](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-426) Adds MTConnect Agent as data source
-- [DIGMDCLGHT-465](feature/DIGMDCLGHT-465/circuit-diagrams) Added circuit diagrams to documentation
+- [DIGMDCLGHT-465](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-465) Added circuit diagrams to documentation
 - [DIGMDCLGHT-21](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-21) Adds Fanuc data source
 
 ## [3.0.12]
 
 ## Added
 
-- [DIGMDCLGHT-441](feature/DIGMDCLGHT-441/ability-to-skip-commissioning) Made commissioning skippable
+- [DIGMDCLGHT-441](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-441) Made commissioning skippable
 - [DIGMDCLGHT-57](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-57) Login page automatically redirects to main page if user is already logged in
 - [DIGMDCLGHT-84](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-84) Adds Cancel button to configuration wizard page
 - [DIGMDCLGHT-411](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-411) Adds data type column for OPC UA application interface data points

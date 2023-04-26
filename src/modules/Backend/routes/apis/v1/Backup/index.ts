@@ -94,7 +94,7 @@ async function logsGetHandler(
   );
   const inputPaths = `${logFolderPath}/*log ${configPath}`;
   const outPath = '/mdclight/logs/out';
-  const zipCommand = `mkdir -p ${outPath} && zip -0 -r ${outPath}/${outFileName} ${inputPaths}`;
+  const zipCommand = `mkdir -p ${outPath} && zip -j -0 -r ${outPath}/${outFileName} ${inputPaths}`;
 
   /**
    * Deletes all log archives inside the log folder

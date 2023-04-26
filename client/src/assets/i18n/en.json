@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "Cancel",
-    "LanguageDocumentationPath": ""
+    "LanguageDocumentationPath": "",
+    "NoTableData": "First add a data point to see data here",
+    "NoTableDataMapping": "First add a mapping to see data here",
+    "NoTableDataSchedule": "First add a schedule to see data here"
   },
   "commissioning": {
     "Welcome": "Welcome to IoTconnector flex",
@@ -20,6 +23,7 @@
     "Disconnected": "Disconnected",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Components",
+    "SkipCommissioning": "Skip commissioning",
     "FinishCommissioning": "Finish commissioning",
     "FinishError": "Failed to finish commissioning. Please try again later",
     "RegisteredError": "Failed to provisioned",
@@ -195,6 +199,7 @@
     "SelectAVariable": "Select a variable",
     "ControllerType": "Type",
     "CurrentTariff": "Current Tariff",
+    "TariffHelpText": "What do I need the tariff for?",
     "Name": "Name",
     "Type": "Type",
     "Description": "Description",
@@ -515,13 +520,22 @@
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",
-    "FactoryResetSuccess": "Factory reset performed successfully!"
+    "FactoryResetSuccess": "Factory reset performed successfully!",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "Manufacturer": "Manufacturer",
+    "Source": "Source",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Unknown": "unknown"
   },
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"
   },
   "http": {
-    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again",
+    "RuntimeError": "The service is not available. Please try again later"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces. Click on this warning to go to settings page and choose Time tab to adjust time settings."

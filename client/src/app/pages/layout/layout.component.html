@@ -148,7 +148,11 @@
               'layout.SystemInformation' | translate
             }}</span>
           </a>
-          <a mat-list-item routerLink="settings/change-password">
+          <a
+            mat-list-item
+            routerLink="settings/change-password"
+            *ngIf="!(isCommissioningSkipped$ | async)"
+          >
             <mat-icon svgIcon="mdc:lock"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.ChangePassword' | translate

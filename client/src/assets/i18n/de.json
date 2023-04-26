@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "Abbrechen",
-    "LanguageDocumentationPath": "/de"
+    "LanguageDocumentationPath": "/de",
+    "NoTableData": "Fügen Sie zunächst einen Datenpunkt hinzu, um die Daten hier zu sehen",
+    "NoTableDataMapping": "Fügen Sie zunächst ein Mapping hinzu, um die Daten hier zu sehen",
+    "NoTableDataSchedule": "Fügen Sie zunächst einen Zeitplan hinzu, um die Daten hier zu sehen"
   },
   "commissioning": {
     "Welcome": "Willkommen bei IoTconnector flex",
@@ -20,6 +23,7 @@
     "Disconnected": "Getrennt",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Komponenten",
+    "SkipCommissioning": "Inbetriebnahme überspringen",
     "FinishCommissioning": "Inbetriebnahme beenden",
     "FinishError": "Die Inbetriebnahme konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut",
     "RegisteredError": "Bereitstellung fehlgeschlagen",
@@ -194,7 +198,8 @@
     "DataPoints": "Datenpunkte",
     "SelectAVariable": "Wählen Sie einen Datenpunkt",
     "ControllerType": "Typ",
-    "CurrentTariff": "Current Tariff",
+    "CurrentTariff": "Aktueller Tarif",
+    "TariffHelpText": "Wozu brauche ich den Tarif?",
     "Name": "Name",
     "Type": "Typ",
     "Description": "Description",
@@ -268,18 +273,18 @@
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen übernehmen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
-    "SetSchedules": "Set Schedules",
-    "AddSchedule": "Add Schedule",
-    "ScheduleName": "Schedule Name",
-    "DayDate": "Day/Date",
-    "Month": "Month",
-    "Hour": "Hour",
-    "Minutes": "Minutes",
-    "Seconds": "Seconds",
-    "SetScheduledReset": "Set scheduled reset",
-    "ScheduleEvery": "Every",
-    "Day": "Day",
-    "DayOfMonth": "Day of the month",
+    "SetSchedules": "Zeitpläne erstellen",
+    "AddSchedule": "Zeitplan einfügen",
+    "ScheduleName": "Zeitplan Name",
+    "DayDate": "Tag/Datum",
+    "Month": "Monat",
+    "Hour": "Uhr",
+    "Minutes": "Minuten",
+    "Seconds": "Sekunden",
+    "SetScheduledReset": "Zeitgesteuertes Zurücksetzen einstellen",
+    "ScheduleEvery": "Jede",
+    "Day": "Tag",
+    "DayOfMonth": "Tag des Monats",
     "SetEnumeration": "Enumeration speichern",
     "AddEnumeration": "Enumeration hinzufügen",
     "DefaultValue": "Standardwert",
@@ -515,13 +520,22 @@
     "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
     "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
     "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
-    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!"
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
+    "MachineInformation": "Gerät Informationen",
+    "Serial": "Serialnummer",
+    "ControlManufacturer": "Steuerung Hersteller",
+    "Manufacturer": "Hersteller",
+    "Source": "Quelle",
+    "ControlType": "Steuerung Typ",
+    "Model": "Modell",
+    "Unknown": "Unbekannt"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"
   },
   "http": {
-    "SessionExpired": "Sie wurden aufgrund von Inaktivität abgemeldet. Bitte loggen Sie sich erneut ein."
+    "SessionExpired": "Sie wurden aufgrund von Inaktivität abgemeldet. Bitte loggen Sie sich erneut ein.",
+    "RuntimeError": "Der Service ist aktuell nicht verfügbar. Bitte versuchen Sie es später noch einmal"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen. Klicken Sie auf diese Warnung, um zur Einstellungsseite zu gelangen, und wählen Sie die Registerkarte Zeit, um die Zeiteinstellungen anzupassen."
@@ -538,26 +552,26 @@
     "Boolean": "Boolean"
   },
   "days-of-week": {
-    "Monday": "",
-    "Tuesday": "",
-    "Wednesday": "",
-    "Thursday": "",
-    "Friday": "",
-    "Saturday": "",
-    "Sunday": ""
+    "Monday": "Montag",
+    "Tuesday": "Dienstag",
+    "Wednesday": "Mittwoch",
+    "Thursday": "Donnerstag",
+    "Friday": "Freitag",
+    "Saturday": "Samstag",
+    "Sunday": "Sonntag"
   },
   "month": {
-    "Jan": "",
-    "Feb": "",
-    "Mar": "",
-    "Apr": "",
-    "May": "",
-    "Jun": "",
-    "Jul": "",
-    "Aug": "",
-    "Sep": "",
-    "Oct": "",
-    "Nov": "",
-    "Dec": ""
+    "Jan": "Januar",
+    "Feb": "Februar",
+    "Mar": "März",
+    "Apr": "April",
+    "May": "Mai",
+    "Jun": "Juni",
+    "Jul": "Juli",
+    "Aug": "August",
+    "Sep": "September",
+    "Oct": "Oktober",
+    "Nov": "November",
+    "Dec": "Dezember"
   }
 }

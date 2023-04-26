@@ -41,7 +41,9 @@ import { NetServiceModule } from './pages/net-service/net-service.module';
     SystemInformationModule,
 
     AppRoutingModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      preventDuplicates: true
+    }),
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

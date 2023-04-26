@@ -8,20 +8,26 @@ import {
 } from '@angular/router';
 
 import { AuthService } from '../services';
+import { CommissioningService } from 'app/services';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private commissioningService: CommissioningService
+  ) {}
 
   async canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean | UrlTree> {
     const isLoggedIn = !!this.authService.token;
+    const isCommissioningSkipped = await this.commissioningService.isSkipped();
 
-    if (isLoggedIn) {
+    if (isLoggedIn || isCommissioningSkipped) {
       if (route.routeConfig?.path === 'login')
         return this.router.navigate(['/']);
 

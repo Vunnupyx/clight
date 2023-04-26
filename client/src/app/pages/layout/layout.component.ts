@@ -7,6 +7,7 @@ import { AuthService } from '../../shared';
 import { TimeSyncCheckService } from '../../services/time-sync-check.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NetServiceService } from '../../services';
+import { CommissioningService } from 'app/services';
 
 @Component({
   selector: 'app-layer',
@@ -40,7 +41,8 @@ export class LayoutComponent {
     private auth: AuthService,
     private readonly translate: TranslateService,
     private timeSyncCheckService: TimeSyncCheckService,
-    private netServiceService: NetServiceService
+    private netServiceService: NetServiceService,
+    private commissioningService: CommissioningService
   ) {
     this.subs.add(
       this.router.events
@@ -62,6 +64,10 @@ export class LayoutComponent {
     );
   }
 
+  get isCommissioningSkipped$() {
+    return this.commissioningService.skipped;
+  }
+
   ngOnInit() {
     this.subs.add(
       this.netServiceService.statusIcon.subscribe((x) => (this.statusIcon = x))
@@ -73,6 +79,10 @@ export class LayoutComponent {
   }
 
   async logout() {
+    const isCommissioningSkipped = await this.commissioningService.isSkipped();
+    if (isCommissioningSkipped) {
+      await this.commissioningService.resetSkip();
+    }
     await this.auth.logout();
   }
 

@@ -16,6 +16,7 @@ import {
   DataPoint,
   DataPointLiveData,
   DataPointType,
+  DataPointDataType,
   DataSink,
   DataSinkAuth,
   DataSinkAuthType,
@@ -57,6 +58,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   DataPointType = DataPointType;
+  DataPointDataType = DataPointDataType;
   DataSinkAuthTypes = [
     DataSinkAuthType.Anonymous,
     DataSinkAuthType.UserAndPass
@@ -298,7 +300,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
     this.unsavedRowIndex = this.datapointRows!.length;
     this.unsavedRow = obj;
     this.ngxDatatable.sorts = [];
-    this.datapointRows = [obj].concat(this.datapointRows);
+    this.datapointRows = this.datapointRows!.concat([obj]);
   }
 
   onEditStart(rowIndex: number, row: any) {

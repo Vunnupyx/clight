@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import winston from 'winston';
+import { DataSinkProtocols } from '../../../common/interfaces';
 import { ConfigManager } from '../../ConfigManager';
 import {
   IMessengerMetadata,
@@ -58,6 +59,13 @@ export class MessengerManager {
       this.hostname = await new System().getHostname();
     }
     winston.debug(`${logPrefix} Messenger Manager is initializing`);
+
+    if (!this.isMTConnectApplicationInterfaceEnabled()) {
+      winston.debug(
+        `${logPrefix} MT Connect Application Interface is not enabled, skipping Messenger setup.`
+      );
+      return;
+    }
 
     if (
       this.messengerConfig &&
@@ -759,12 +767,27 @@ export class MessengerManager {
   }
 
   /**
+   * Checks whether the MTConnect application interface is enabled
+   */
+  private isMTConnectApplicationInterfaceEnabled(): boolean {
+    return this.configManager.config.dataSinks?.find(
+      (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
+    )?.enabled;
+  }
+
+  /**
    * Handles changes in config
    */
   public async handleConfigChange() {
     const logPrefix = `${this.name}::handleConfigChange`;
     const newMessengerConfig = this.configManager.config.messenger;
 
+    if (!this.isMTConnectApplicationInterfaceEnabled()) {
+      winston.debug(
+        `${logPrefix} MTConnect Application Interface is disabled, therefore skipping Messenger setup.`
+      );
+      return;
+    }
     if (
       areObjectsEqual(newMessengerConfig, this.messengerConfig) &&
       this.serverStatus.registrationErrorReason !== 'missing_serial'

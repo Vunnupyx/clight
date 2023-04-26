@@ -3,6 +3,7 @@ export interface MachineInformation {
   Model: string;
   ControlType: string;
   ControlManufacturer: string;
+  Manufacturer: string;
   Source: string;
   Timestamp: string;
 }

@@ -87,7 +87,8 @@ async function logsGetHandler(
 
   const outFileName = `${hostname}-${dateString}.zip`;
   const logFolderPath = '/mdclight/logs';
-  const inputPaths = `${logFolderPath}/*log`;
+  const configPath = `/mdclight/config/config.json`;
+  const inputPaths = `${logFolderPath}/*log ${configPath}`;
   const outPath = '/mdclight/logs/out';
   const zipCommand = `mkdir -p ${outPath} && zip -0 -r ${outPath}/${outFileName} ${inputPaths}`;
 

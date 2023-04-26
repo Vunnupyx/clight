@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "Abbrechen",
-    "LanguageDocumentationPath": "/de"
+    "LanguageDocumentationPath": "/de",
+    "NoTableData": "Fügen Sie zunächst einen Datenpunkt hinzu, um die Daten hier zu sehen",
+    "NoTableDataMapping": "Fügen Sie zunächst ein Mapping hinzu, um die Daten hier zu sehen",
+    "NoTableDataSchedule": "Fügen Sie zunächst einen Zeitplan hinzu, um die Daten hier zu sehen"
   },
   "commissioning": {
     "Welcome": "Willkommen bei IoTconnector flex",
@@ -20,6 +23,7 @@
     "Disconnected": "Getrennt",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Komponenten",
+    "SkipCommissioning": "Inbetriebnahme überspringen",
     "FinishCommissioning": "Inbetriebnahme beenden",
     "FinishError": "Die Inbetriebnahme konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut",
     "RegisteredError": "Bereitstellung fehlgeschlagen",
@@ -526,7 +530,15 @@
     "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
     "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
     "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
-    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!"
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
+    "MachineInformation": "Gerät Informationen",
+    "Serial": "Serialnummer",
+    "ControlManufacturer": "Steuerung Hersteller",
+    "Manufacturer": "Hersteller",
+    "Source": "Quelle",
+    "ControlType": "Steuerung Typ",
+    "Model": "Modell",
+    "Unknown": "Unbekannt"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"

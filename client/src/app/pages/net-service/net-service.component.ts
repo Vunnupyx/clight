@@ -36,7 +36,9 @@ export class NetServiceComponent implements OnInit {
   get supportHref() {
     return `${window.location.protocol}//${
       window.location.hostname
-    }/help${this.translate.instant('common.LanguageDocumentationPath')}/docs`;
+    }/help${this.translate.instant(
+      'common.LanguageDocumentationPath'
+    )}/docs/NETservice`;
   }
 
   constructor(

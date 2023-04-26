@@ -218,9 +218,13 @@
     "Livedata": {
       "ioshield": {
         "0": "0 (Off)",
-        "1": "1 (On)",
-        "2": "2 (Blinking)"
+        "1": "1 (On)"
       }
+    },
+    "BlinkingStatus": {
+      "0": "0 (Off)",
+      "1": "1 (On)",
+      "2": "2 (Blinking)"
     },
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
@@ -295,7 +299,12 @@
     "Formula": "Formula",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
     "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
-    "SetTariffEnum": "Set Machine Status Mapping"
+    "SetTariffEnum": "Set Machine Status Mapping",
+    "SetBlinkSettings": "Set Blink Settings",
+    "Timeframe": "Timeframe",
+    "RisingEdges": "Rising Edges",
+    "LinkedBlinkDetections": "Linked Blink Detections",
+    "NoOtherBlinkDetectionVDPsAvailable": "There are no other VDPs with the type Blink Detection to choose from"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -311,7 +320,8 @@
     "Unequal": "Unequal",
     "Enumeration": "Enumeration",
     "Calculation": "Calculation",
-    "SetTariff": "Set Energy Tariff"
+    "SetTariff": "Set Energy Tariff",
+    "BlinkDetection": "Blink Detection"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",

@@ -218,9 +218,13 @@
     "Livedata": {
       "ioshield": {
         "0": "0 (Aus)",
-        "1": "1 (An)",
-        "2": "2 (Blinken)"
+        "1": "1 (An)"
       }
+    },
+    "BlinkingStatus": {
+      "0": "0 (Aus)",
+      "1": "1 (An)",
+      "2": "2 (Blinken)"
     },
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen speichern",
@@ -295,7 +299,12 @@
     "Formula": "Formel",
     "UnexpectedError": "Die Änderungen wurden nicht übernommen. Bitte versuchen Sie es erneut!",
     "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte können nur nach ihrer Definition genutzt werden!",
-    "SetTariffEnum": "Mapping für Maschinenzustand setzen"
+    "SetTariffEnum": "Mapping für Maschinenzustand setzen",
+    "SetBlinkSettings": "Blinkerkennung Einstellungen",
+    "Timeframe": "Zeitfenster",
+    "RisingEdges": "Steigende Flanken",
+    "LinkedBlinkDetections": "Verlinkte Blinkerkennungen",
+    "NoOtherBlinkDetectionVDPsAvailable": "Es gibt keine anderen VDPs mit dem Typ Blinkerkennung zur Auswahl"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -311,7 +320,8 @@
     "Unequal": "Ungleich",
     "Enumeration": "Enumeration",
     "Calculation": "Kalkulation",
-    "SetTariff": "Energie Tariff Setzen"
+    "SetTariff": "Energie Tariff Setzen",
+    "BlinkDetection": "Blinkerkennung"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",

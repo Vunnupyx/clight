@@ -18,6 +18,7 @@ import { PromptDialogModule } from 'app/shared/components/prompt-dialog/prompt-d
 import { SetFormulaModalComponent } from './set-formula-modal/set-formula-modal.component';
 import { EditScheduleModalComponent } from './edit-schedule-modal/edit-schedule-modal.component';
 import { SetSchedulesModalComponent } from './set-schedules-modal/set-schedules-modal.component';
+import { SetBlinkSettingsModalComponent } from './set-blink-settings-modal/set-blink-settings-modal.component';
 
 const routes: Routes = [
   {
@@ -34,7 +35,8 @@ const COMPONENTS = [
   SetEnumerationModalComponent,
   SetFormulaModalComponent,
   SetSchedulesModalComponent,
-  EditScheduleModalComponent
+  EditScheduleModalComponent,
+  SetBlinkSettingsModalComponent
 ];
 
 @NgModule({

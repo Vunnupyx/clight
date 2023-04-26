@@ -9,7 +9,7 @@ import {
 } from 'app/models';
 import { TranslateService } from '@ngx-translate/core';
 import { NgForm } from '@angular/forms';
-import { IP_REGEX, PORT_REGEX } from 'app/shared/utils/regex';
+import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
 
 @Component({
   selector: 'app-net-service',
@@ -21,7 +21,7 @@ export class NetServiceComponent implements OnInit {
   UpdateStatus = UpdateStatus;
   sub = new Subscription();
 
-  ipRegex = IP_REGEX;
+  ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
   portRegex = PORT_REGEX;
   netServiceStatus: NetServiceStatus;
   centralServer: CentralServer = {

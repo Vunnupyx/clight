@@ -54,11 +54,28 @@ export class NetServiceService {
   }
 
   async facilityTreeReset(): Promise<boolean> {
-    try {
-      await this.configurationAgentHttpService.post(`/facility/reset`, null);
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
 
+    try {
+      await this.configurationAgentHttpService.post(
+        `/netservice/facility/reset`,
+        null
+      );
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
+      this.toastr.success(
+        this.translate.instant('net-service.FacilityTreeResetSuccess')
+      );
       return true;
-    } catch (e) {
+    } catch (err) {
+      this.toastr.error(this.translate.instant('net-service.UpdateError'));
+      errorHandler(err);
+      this._store.patchState((state) => {
+        state.status = Status.Ready;
+      });
       return false;
     }
   }
@@ -90,12 +107,12 @@ export class NetServiceService {
     });
     try {
       const response = await this.configurationAgentHttpService.get<{
-        Date: string;
-      }>(`system/icons/${filename}`);
+        Data: string;
+      }>(`/system/icons/${filename}`);
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.statusIcon = response.Date;
+        state.statusIcon = response.Data;
       });
     } catch (err) {
       this._store.patchState((state) => {
@@ -117,7 +134,9 @@ export class NetServiceService {
       this._store.patchState((state) => {
         state.status = Status.Ready;
       });
-      this.toastr.success(this.translate.instant('net-service.SaveSuccess'));
+      this.toastr.success(
+        this.translate.instant('net-service.CentralServerSaveSuccess')
+      );
     } catch (err) {
       this.toastr.error(this.translate.instant('net-service.UpdateError'));
       errorHandler(err);

@@ -90,7 +90,7 @@ async function logsGetHandler(
   const logFolderPath = '/mdclight/logs';
   const configPath = path.join(
     process.env.MDC_LIGHT_FOLDER || process.cwd(),
-    'config.json'
+    '/config/config.json'
   );
   const inputPaths = `${logFolderPath}/*log ${configPath}`;
   const outPath = '/mdclight/logs/out';

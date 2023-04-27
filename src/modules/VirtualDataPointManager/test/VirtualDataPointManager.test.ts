@@ -1,6 +1,6 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
-import { EventBus } from '../../EventBus';
+import { MeasurementEventBus, EventBus } from '../../EventBus';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
 jest.mock('winston');
@@ -96,10 +96,12 @@ describe('Test VirtualDataPointManager', () => {
     }
   ];
 
+  const eventBus = new MeasurementEventBus();
   const cache = new mockCache() as any;
   let virtualDpManager = new VirtualDataPointManager({
     configManager: mockConfigManager,
-    cache
+    cache,
+    measurementsBus: eventBus
   });
 
   //@ts-ignore
@@ -707,7 +709,7 @@ describe('Test VirtualDataPointManager', () => {
       }
     );
   });
-  describe('Blink detection should work correctly', () => {
+  describe.only('Blink detection should work correctly', () => {
     let msTimeAmountEachIterationRepresents = 500; // each i represents 1000ms
     let i = 0;
     beforeAll(() => {
@@ -741,7 +743,8 @@ describe('Test VirtualDataPointManager', () => {
           ];
           virtualDpManager = new VirtualDataPointManager({
             configManager: mockConfigManager,
-            cache
+            cache,
+            measurementsBus: eventBus
           });
           //@ts-ignore
           virtualDpManager.updateConfig();
@@ -855,13 +858,10 @@ describe('Test VirtualDataPointManager', () => {
                 }
               }
             ];
-            // @ts-ignore
-            let result = virtualDpManager.detectBlinking(
-              events,
-              // @ts-ignore
-              virtualDpManager.config.find((x) => x.id === 'vdp1')
-            );
+            virtualDpManager.getVirtualEvents(events);
 
+            // @ts-ignore
+            let result = cache.getLastestValue('vdp1');
             resultArray.push(result);
             jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
             i++;
@@ -889,7 +889,8 @@ describe('Test VirtualDataPointManager', () => {
           ];
           virtualDpManager = new VirtualDataPointManager({
             configManager: mockConfigManager,
-            cache
+            cache,
+            measurementsBus: eventBus
           });
           //@ts-ignore
           virtualDpManager.updateConfig();
@@ -996,13 +997,9 @@ describe('Test VirtualDataPointManager', () => {
                 }
               }
             ];
+            virtualDpManager.getVirtualEvents(events);
             // @ts-ignore
-            let result = virtualDpManager.detectBlinking(
-              events,
-              // @ts-ignore
-              virtualDpManager.config.find((x) => x.id === 'vdp1')
-            );
-
+            let result = cache.getLastestValue('vdp1');
             resultArray.push(result);
             jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
             i++;
@@ -1042,7 +1039,8 @@ describe('Test VirtualDataPointManager', () => {
         ];
         virtualDpManager = new VirtualDataPointManager({
           configManager: mockConfigManager,
-          cache
+          cache,
+          measurementsBus: eventBus
         });
         //@ts-ignore
         virtualDpManager.updateConfig();
@@ -1111,12 +1109,8 @@ describe('Test VirtualDataPointManager', () => {
                 }
               }
             ];
-            // @ts-ignore
-            let result1 = virtualDpManager.detectBlinking(
-              events1,
-              //@ts-ignore
-              virtualDpManager.config.find((x) => x.id === 'vdp1')
-            );
+
+            virtualDpManager.getVirtualEvents(events1);
 
             const events2: IDataSourceMeasurementEvent[] = [
               {
@@ -1130,12 +1124,11 @@ describe('Test VirtualDataPointManager', () => {
                 }
               }
             ];
-            // @ts-ignore
-            let result2 = virtualDpManager.detectBlinking(
-              events2,
-              // @ts-ignore
-              virtualDpManager.config.find((x) => x.id === 'vdp2')
-            );
+
+            virtualDpManager.getVirtualEvents(events2);
+
+            let result1 = cache.getLastestValue('vdp1');
+            let result2 = cache.getLastestValue('vdp');
             resultArray1.push(result1);
             resultArray2.push(result2);
             jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);

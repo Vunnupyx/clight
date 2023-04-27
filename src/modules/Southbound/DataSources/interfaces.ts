@@ -11,7 +11,7 @@ export interface IDataSourceLifecycleEvent extends IBaseLifecycleEvent {
 }
 
 export interface IMeasurement {
-  id: string;
+  id: string; // unique id of the source data point
   name: string;
   value: string | number | boolean;
   unit?: string;

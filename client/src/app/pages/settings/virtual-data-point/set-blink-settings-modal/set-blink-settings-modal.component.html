@@ -5,13 +5,19 @@
 <div mat-dialog-content>
   <div class="row">
     <div class="col">
-      <h5>{{ 'settings-virtual-data-point.Timeframe' | translate }}</h5>
+      <h5>
+        {{ 'settings-virtual-data-point.Timeframe' | translate }} (ms) [{{
+          MIN_TIMEFRAME
+        }}-{{ MAX_TIMEFRAME }}]
+      </h5>
     </div>
     <div class="col">
       <mat-form-field>
         <input
           matInput
           type="number"
+          min="1000"
+          max="120000"
           [(ngModel)]="virtualPoint.blinkSettings.timeframe"
           required
         />
@@ -20,13 +26,19 @@
   </div>
   <div class="row">
     <div class="col">
-      <h5>{{ 'settings-virtual-data-point.RisingEdges' | translate }}</h5>
+      <h5>
+        {{ 'settings-virtual-data-point.RisingEdges' | translate }} [{{
+          MIN_RISING_EDGES
+        }}-{{ MAX_RISING_EDGES }}]
+      </h5>
     </div>
     <div class="col">
       <mat-form-field>
         <input
           matInput
           type="number"
+          min="1"
+          max="10"
           [(ngModel)]="virtualPoint.blinkSettings.risingEdges"
           required
         />
@@ -68,7 +80,13 @@
   <button type="button" mat-button color="secondary" (click)="onCancel()">
     {{ 'settings-virtual-data-point.Cancel' | translate }}
   </button>
-  <button type="submit" mat-button color="primary" (click)="onSave()">
+  <button
+    type="submit"
+    mat-button
+    color="primary"
+    (click)="areInputsValid() && onSave()"
+    [disabled]="!areInputsValid()"
+  >
     {{ 'settings-virtual-data-point.Save' | translate }}
   </button>
 </div>

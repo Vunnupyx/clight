@@ -718,7 +718,7 @@ describe('Test VirtualDataPointManager', () => {
       }
     );
   });
-  describe.only('Blink detection should work correctly', () => {
+  describe('Blink detection should work correctly', () => {
     let msTimeAmountEachIterationRepresents = 500; // each i represents 1000ms
     let i = 0;
     beforeAll(() => {
@@ -735,7 +735,7 @@ describe('Test VirtualDataPointManager', () => {
     });
 
     describe('Single VDP', () => {
-      describe.skip('Single VDP with 3 rising edges in 5000 ms', () => {
+      describe('Single VDP with 3 rising edges in 5000 ms', () => {
         beforeEach(() => {
           mockConfigManager.config.virtualDataPoints = [
             {
@@ -902,7 +902,7 @@ describe('Test VirtualDataPointManager', () => {
           );
         });
       });
-      describe.skip('Single VDP with 4 rising edges in 10000 ms', () => {
+      describe('Single VDP with 4 rising edges in 10000 ms', () => {
         beforeEach(() => {
           mockConfigManager.config.virtualDataPoints = [
             {
@@ -1042,7 +1042,7 @@ describe('Test VirtualDataPointManager', () => {
         });
       });
     });
-    describe.only('With dependent VDP (VDP2 depends on VDP1)', () => {
+    describe('With dependent VDP (VDP2 depends on VDP1)', () => {
       beforeEach(() => {
         mockConfigManager.config.virtualDataPoints = [
           {

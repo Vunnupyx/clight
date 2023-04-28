@@ -45,16 +45,11 @@ type BlinkingStatus = {
     isBlinking: boolean;
     blinkStartTimestamp: number;
     blinkEndTimestamp: number;
-    // detectionStatus: 'detectBlinkingStart' | 'detectBlinkingEnd' | 'inactive';
     sourceValues: {
       value: boolean;
       changed: boolean;
       timestamp: number;
     }[];
-
-    // risingEdgeTimestamps: number[];
-    // resetTimerId?: NodeJS.Timeout;
-    // processedValue?: 0 | 1 | 2; // 0=OFF, 1=ON, 2=BLINKING
   };
 };
 
@@ -705,17 +700,19 @@ export class VirtualDataPointManager {
   }
 
   /**
-   * Calculates rising edges and blink detection
+   * Calculates blink detection and calls timeout function to determine final value
    */
   private detectBlinking(
     sourceEvents: IDataSourceMeasurementEvent[],
     config: IVirtualDataPointConfig
   ): null {
     const logPrefix = `${this.constructor.name}::detectBlinking`;
+
+    // Only one source is allowed
     if (sourceEvents.length !== 1) {
       this.addSummaryLog(
         'warn',
-        `${logPrefix} is only available for one source but receive ${sourceEvents.length}`
+        `${logPrefix} is only available for one source but received ${sourceEvents.length}`
       );
       return null;
     }
@@ -725,8 +722,9 @@ export class VirtualDataPointManager {
     const timeframe = Number(
       config.blinkSettings?.timeframe ?? this.DEFAULT_BLINK_DETECTION_TIMEFRAME
     );
+
+    // initialize blinkingStatus if it is first time this VDP is checked
     if (!this.blinkingStatus[config.id]) {
-      // initialize currentStatus if it is first time this VDP is checked
       this.blinkingStatus[config.id] = {
         isBlinking: false,
         blinkStartTimestamp: null,
@@ -744,6 +742,8 @@ export class VirtualDataPointManager {
 
       let changed = true;
 
+      // If there is already a previous value, calculate if the value has changed,
+      // otherwise very first reading is always changed=true
       if (status.sourceValues.length > 0) {
         changed =
           status.sourceValues[status.sourceValues.length - 1].value !==
@@ -762,6 +762,7 @@ export class VirtualDataPointManager {
           vdp.id !== config.id &&
           vdp.blinkSettings?.linkedBlinkDetections.includes(config.id)
       );
+      // If this change is rising edge and first rising edge in the saved sourceValues then reset the other one
       if (
         affectedOtherBlinkDetectionVDP &&
         changed &&
@@ -778,6 +779,7 @@ export class VirtualDataPointManager {
       }
     }
 
+    // Start the timeout for callback function
     setTimeout(() => {
       this.processBlinkDetection(config.id, currentValue);
     }, timeframe);
@@ -785,10 +787,14 @@ export class VirtualDataPointManager {
     return null;
   }
 
+  /**
+   * Callback function for processing blink detection
+   */
   private processBlinkDetection(id: string, currentValue: boolean) {
     const status = this.blinkingStatus[id];
     if (!status) return;
 
+    // Read from config, in case config changed in meantime
     const config = this.config.find((vdp) => vdp.id === id);
     if (!config) return;
 
@@ -796,18 +802,20 @@ export class VirtualDataPointManager {
     const timeframe = Number(
       config.blinkSettings?.timeframe ?? this.DEFAULT_BLINK_DETECTION_TIMEFRAME
     );
+    // Delete values outside timeframe if it did not start blinking yet,
+    // values need to be kept during blinking
     if (!status.blinkStartTimestamp) {
-      // Delete values outside of timeframe
       status.sourceValues = status.sourceValues.filter(
         (x) => x.timestamp > currentTimestamp - timeframe
       );
     }
 
+    // Reset blink end timestamp after timeframe amount of time passes,
+    // so that during this time 1s are suppressed
     if (
       status.blinkEndTimestamp &&
       currentTimestamp - status.blinkEndTimestamp >= timeframe
     ) {
-      // Reset blink end timestamp after timeframe amount of time passes, so that during this time 1s are suppressed
       status.blinkEndTimestamp = null;
     }
 
@@ -823,22 +831,27 @@ export class VirtualDataPointManager {
         x.timestamp >= currentTimestamp - timeframe
     );
     const hasEnoughRisingEdges = risingEdges.length >= requiredRisingEdges;
-
+    //
     if (hasEnoughRisingEdges && !status.blinkStartTimestamp) {
       status.blinkStartTimestamp = risingEdges[0].timestamp + timeframe;
     }
+
+    // blink is detected if it is not in blink-end mode and
+    // has enough rising edges and
+    // at least timeframe amount of time passed since first rising edge
     let blinkDetected =
       !status.blinkEndTimestamp &&
       hasEnoughRisingEdges &&
       currentTimestamp >= status.blinkStartTimestamp;
 
+    // If blink ended
     if (!blinkDetected && status.isBlinking) {
-      // If blink ended
       status.blinkEndTimestamp = currentTimestamp;
       status.blinkStartTimestamp = null;
     }
-    status.isBlinking = blinkDetected;
 
+    status.isBlinking = blinkDetected;
+    // 0=OFF, 1=ON, 2=BLINKING
     const out = blinkDetected
       ? 2
       : status.blinkEndTimestamp
@@ -847,6 +860,7 @@ export class VirtualDataPointManager {
       ? 1
       : 0;
 
+    // Create event for new value
     const newEvent: IDataSourceMeasurementEvent = {
       dataSource: {
         protocol: 'virtual'

@@ -45,6 +45,7 @@ type BlinkingStatus = {
     isBlinking: boolean;
     blinkStartTimestamp: number;
     blinkEndTimestamp: number;
+    lastResetTimestamp: number;
     sourceValues: {
       value: boolean;
       changed: boolean;
@@ -729,6 +730,7 @@ export class VirtualDataPointManager {
         isBlinking: false,
         blinkStartTimestamp: null,
         blinkEndTimestamp: null,
+        lastResetTimestamp: null,
         sourceValues: [
           {
             value: currentValue,
@@ -756,6 +758,13 @@ export class VirtualDataPointManager {
         changed
       });
 
+      if (
+        status.lastResetTimestamp &&
+        currentTimestamp - status.lastResetTimestamp >= timeframe
+      ) {
+        status.lastResetTimestamp = null;
+      }
+
       // Reset another VDP if that one depends on this one
       let affectedOtherBlinkDetectionVDPs = this.config.filter(
         (vdp) =>
@@ -766,17 +775,24 @@ export class VirtualDataPointManager {
       if (
         affectedOtherBlinkDetectionVDPs?.length > 0 &&
         changed &&
-        currentValue === true &&
-        !status.sourceValues.find((x) => x.changed && x.value) // it should be first rising edge that resets the other one, not every rising edge
+        currentValue === true
       ) {
         affectedOtherBlinkDetectionVDPs.forEach((affectedVdp) => {
-          this.blinkingStatus[affectedVdp.id] = {
-            ...(this.blinkingStatus[affectedVdp.id] ?? {}),
-            isBlinking: false,
-            blinkStartTimestamp: null,
-            blinkEndTimestamp: null,
-            sourceValues: []
-          };
+          if (
+            !this.blinkingStatus[affectedVdp.id].lastResetTimestamp ||
+            currentTimestamp -
+              this.blinkingStatus[affectedVdp.id].lastResetTimestamp >=
+              timeframe
+          ) {
+            this.blinkingStatus[affectedVdp.id] = {
+              ...(this.blinkingStatus[affectedVdp.id] ?? {}),
+              isBlinking: false,
+              blinkStartTimestamp: null,
+              blinkEndTimestamp: null,
+              lastResetTimestamp: currentTimestamp,
+              sourceValues: []
+            };
+          }
         });
       }
     }

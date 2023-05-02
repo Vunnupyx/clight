@@ -757,25 +757,27 @@ export class VirtualDataPointManager {
       });
 
       // Reset another VDP if that one depends on this one
-      let affectedOtherBlinkDetectionVDP = this.config.find(
+      let affectedOtherBlinkDetectionVDPs = this.config.filter(
         (vdp) =>
           vdp.id !== config.id &&
           vdp.blinkSettings?.linkedBlinkDetections.includes(config.id)
       );
-      // If this change is rising edge and first rising edge in the saved sourceValues then reset the other one
+      // If this change is rising edge and first rising edge in the saved sourceValues then reset the other ones
       if (
-        affectedOtherBlinkDetectionVDP &&
+        affectedOtherBlinkDetectionVDPs?.length > 0 &&
         changed &&
         currentValue === true &&
         !status.sourceValues.find((x) => x.changed && x.value) // it should be first rising edge that resets the other one, not every rising edge
       ) {
-        this.blinkingStatus[affectedOtherBlinkDetectionVDP.id] = {
-          ...(this.blinkingStatus[affectedOtherBlinkDetectionVDP.id] ?? {}),
-          isBlinking: false,
-          blinkStartTimestamp: null,
-          blinkEndTimestamp: null,
-          sourceValues: []
-        };
+        affectedOtherBlinkDetectionVDPs.forEach((affectedVdp) => {
+          this.blinkingStatus[affectedVdp.id] = {
+            ...(this.blinkingStatus[affectedVdp.id] ?? {}),
+            isBlinking: false,
+            blinkStartTimestamp: null,
+            blinkEndTimestamp: null,
+            sourceValues: []
+          };
+        });
       }
     }
 

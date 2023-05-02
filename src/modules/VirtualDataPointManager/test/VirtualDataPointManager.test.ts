@@ -1168,9 +1168,128 @@ describe('Test VirtualDataPointManager', () => {
             i++;
           }
 
-          /* expect(JSON.stringify(resultArray1)).toEqual(
+          expect(JSON.stringify(resultArray1)).toEqual(
             JSON.stringify(expectedResult1)
-          );*/
+          );
+          expect(JSON.stringify(resultArray2)).toEqual(
+            JSON.stringify(expectedResult2)
+          );
+        }
+      );
+    });
+    describe('Cyclic dependency is not causing endless loop', () => {
+      beforeEach(() => {
+        mockConfigManager.config.virtualDataPoints = [
+          {
+            sources: ['source1'],
+            operationType: 'blink-detection',
+            id: 'vdp1',
+            name: 'vdp1',
+            blinkSettings: {
+              timeframe: 5000,
+              risingEdges: 3,
+              linkedBlinkDetections: ['vdp2']
+            }
+          },
+          {
+            sources: ['source2'],
+            operationType: 'blink-detection',
+            id: 'vdp2',
+            name: 'vdp2',
+            blinkSettings: {
+              timeframe: 5000,
+              risingEdges: 3,
+              linkedBlinkDetections: ['vdp1']
+            }
+          }
+        ];
+        virtualDpManager = new VirtualDataPointManager({
+          configManager: mockConfigManager,
+          cache,
+          measurementsBus: eventBus
+        });
+        //@ts-ignore
+        virtualDpManager.updateConfig();
+        mockConfigManager.emit('configsLoaded');
+      });
+
+      test.each(
+        // prettier-ignore
+        [
+        {
+          sourceValueArray1: [
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          sourceValueArray2: [
+            0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          expectedResult1: [
+            null,null,null,null,null,null,null,null,null,null, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
+          ],
+          expectedResult2: [
+            null,null,null,null,null,null,null,null,null,null, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0 
+          ],
+          testname: 'No blinking detected as cyclic dependency resets each other'
+        },
+      ]
+      )(
+        '$testname',
+        ({
+          sourceValueArray1,
+          sourceValueArray2,
+          expectedResult1,
+          expectedResult2
+        }) => {
+          let resultArray1: number[] = [];
+          let resultArray2: number[] = [];
+
+          for (let [index, sourceValue1] of sourceValueArray1.entries()) {
+            let sourceValue2 = sourceValueArray2[index];
+            jest
+              .spyOn(Date, 'now')
+              .mockImplementation(
+                () => 0 + i * msTimeAmountEachIterationRepresents
+              );
+            const events1: IDataSourceMeasurementEvent[] = [
+              {
+                dataSource: {
+                  protocol: ''
+                },
+                measurement: {
+                  id: 'source1',
+                  name: '',
+                  value: sourceValue1
+                }
+              }
+            ];
+            jest.advanceTimersByTime(msTimeAmountEachIterationRepresents);
+            virtualDpManager.getVirtualEvents(events1);
+
+            const events2: IDataSourceMeasurementEvent[] = [
+              {
+                dataSource: {
+                  protocol: ''
+                },
+                measurement: {
+                  id: 'source2',
+                  name: '',
+                  value: sourceValue2
+                }
+              }
+            ];
+
+            virtualDpManager.getVirtualEvents(events2);
+
+            let result1 = cache.getLastestValue('vdp1')?.value;
+            let result2 = cache.getLastestValue('vdp2')?.value;
+            resultArray1.push(result1);
+            resultArray2.push(result2);
+            i++;
+          }
+
+          expect(JSON.stringify(resultArray1)).toEqual(
+            JSON.stringify(expectedResult1)
+          );
           expect(JSON.stringify(resultArray2)).toEqual(
             JSON.stringify(expectedResult2)
           );

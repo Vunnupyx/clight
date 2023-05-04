@@ -4,7 +4,7 @@ import { VirtualDataPoint, VirtualDataPointBlinkSettings } from 'app/models';
 import { VirtualDataPointService } from 'app/services';
 
 export interface SetBlinkSettingsModalData {
-  virtualPoint: VirtualDataPoint;
+  blinkSettings: VirtualDataPointBlinkSettings;
   dataPointsWithBlinkDetection: VirtualDataPoint[];
 }
 
@@ -14,7 +14,7 @@ export interface SetBlinkSettingsModalData {
   styleUrls: ['./set-blink-settings-modal.component.scss']
 })
 export class SetBlinkSettingsModalComponent implements OnInit {
-  virtualPoint: VirtualDataPoint;
+  blinkSettings: VirtualDataPointBlinkSettings;
   dataPointsWithBlinkDetection: VirtualDataPoint[];
   MIN_TIMEFRAME = 1000;
   MAX_TIMEFRAME = 120000;
@@ -28,20 +28,14 @@ export class SetBlinkSettingsModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.virtualPoint = this.data.virtualPoint;
+    this.blinkSettings = this.data.blinkSettings;
     this.dataPointsWithBlinkDetection = this.data.dataPointsWithBlinkDetection;
-  }
-
-  isLinkingAllowed(blinkSettings) {
-    return !blinkSettings?.linkedBlinkDetections?.includes(
-      this.virtualPoint?.id
-    );
   }
 
   areInputsValid() {
     let result = false;
-    let timeframe = this.virtualPoint.blinkSettings.timeframe;
-    let risingEdges = this.virtualPoint.blinkSettings.risingEdges;
+    let timeframe = this.blinkSettings.timeframe;
+    let risingEdges = this.blinkSettings.risingEdges;
     if (
       Number.isInteger(timeframe) &&
       timeframe >= this.MIN_TIMEFRAME &&
@@ -65,8 +59,6 @@ export class SetBlinkSettingsModalComponent implements OnInit {
   }
 
   onSave() {
-    this.dialogRef.close({
-      blinkSettings: this.virtualPoint.blinkSettings
-    });
+    this.dialogRef.close({ blinkSettings: this.blinkSettings });
   }
 }

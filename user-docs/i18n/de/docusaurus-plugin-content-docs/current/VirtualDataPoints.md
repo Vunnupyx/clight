@@ -214,6 +214,14 @@ Das Ergebnis des VDPs zeigt den Status der angeschlossenen Quelle an. Mögliche 
 - Wenn ein verknüpftes Signal angeschlossen ist, setzt die ansteigende Flanke des verknüpften Signals das Blinkverhalten des Hauptsignals für eine bestimmte Zeitspanne zurück. Der letzte Wert des Hauptsignals vor dem Zurücksetzen wird während des Zeitrahmens als Ausgabe angezeigt. Dies wird verwendet, um den Blinkstatus von zwei oder mehr verbundenen Signalen zu synchronisieren.
   > Beispiel: Angenommen, der Zeitrahmen beträgt 10 Sekunden, die Anzahl der steigenden Flanken ist 3 und VDP2 hängt von VDP1 ab. Wenn VDP1 eine steigende Flanke hat, kann VDP2 10 Sekunden lang seit der steigenden Flanke von VDP1 keinen blinkenden Status haben. Außerdem wird während dieser Zeit der Ausgang von VDP2 10 Sekunden lang als letzter Wert vor dem Zurücksetzen angezeigt.
 
+Die folgenden Bilder zeigen die Verwendung und den Unterschied zwischen unabhängigen und verknüpften Signalen:
+
+> Unverknüpfte Signale:
+> ![Blink detection with independent signals](/img/vdp/blinking_detection_with_independent_signals.png)
+
+> Verknüpfte Signale:
+> ![Blink detection with linked signals](/img/vdp/blinking_detection_with_dependent_signals.png)
+
 ### Hinzufügen eines virtuellen Datenpunkts
 
 Hinzufügen neuer virtueller Datenpunkte](/img/vdp/add_vdp.png)

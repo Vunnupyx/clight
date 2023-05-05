@@ -205,8 +205,6 @@ With the following adjustable parameters you can customize the blink detection b
 | Rising Edges                       | 1-10 (count)               | Count of rising edges that are required to determine a blinking status within the defined timeframe                                                                                                                                                                                                                                            |
 | Linked Blink Detections (Optional) | -                          | Optionally you can link other signals as dependency. If the linked input starts blinking, it resets the blink detection of this signal, in order to synchronise the output of both signals. It's useful for some use cases that both signals change to blinking at the same time although the blink start appears at different points of time. |
 
-|
-
 ###### Result of the VDP:
 
 Result of the VDP shows the connected source's status. Possible results of this VDP are:
@@ -225,6 +223,14 @@ Result of the VDP shows the connected source's status. Possible results of this 
   > Example: Assume timeframe is 10 seconds and source value turns to false when the blinking ends. Then the output will be shown as false for 10 seconds long, even if source value changes within 10 seconds.
 - If there is a linked signal connected, that linked signal's rising edge resets the blinking behaviour of the main signal for a timeframe amount of time. The last value of the main signal before reset is shown as output during the timeframe. This is used to help synchronize blinking status of two or more connected signals.
   > Example: Assume timeframe is 10 seconds and rising edge count is 3 and VDP2 depends on VDP1. When VDP1 has a rising edge, VDP2 cannot have a blinking status for 10 seconds since the rising edge from VDP1. Also, during this time VDP2 output is shown as its last value before this reset for 10 seconds long.
+
+The following example images show the usage and difference between independent and linked signals:
+
+> Independent Signals:
+> ![Blink detection with independent signals](/img/vdp/blinking_detection_with_independent_signals.png)
+
+> Linked signals:
+> ![Blink detection with linked signals](/img/vdp/blinking_detection_with_dependent_signals.png)
 
 ### How to Add a Virtual Data Point
 

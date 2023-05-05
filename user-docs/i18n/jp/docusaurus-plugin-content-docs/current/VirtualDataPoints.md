@@ -227,6 +227,14 @@ Result of the VDP shows the connected source's status. Possible results of this 
 - If there is a linked signal connected, that linked signal's rising edge resets the blinking behaviour of the main signal for a timeframe amount of time. The last value of the main signal before reset is shown as output during the timeframe. This is used to help synchronize blinking status of two or more connected signals.
   > Example: Assume timeframe is 10 seconds and rising edge count is 3 and VDP2 depends on VDP1. When VDP1 has a rising edge, VDP2 cannot have a blinking status for 10 seconds since the rising edge from VDP1. Also, during this time VDP2 output is shown as its last value before this reset for 10 seconds long.
 
+The following images show the usage and difference between independent and linked signals:
+
+> Independent Signals:
+> ![Blink detection with independent signals](/img/vdp/blinking_detection_with_independent_signals.png)
+
+> Linked signals:
+> ![Blink detection with linked signals](/img/vdp/blinking_detection_with_dependent_signals.png)
+
 ### 仮想データポイントの追加
 
 ![新しい仮想データポイントの追加](/img/vdp/add_vdp.png)

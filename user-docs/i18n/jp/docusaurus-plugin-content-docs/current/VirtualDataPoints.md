@@ -9,16 +9,16 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 ## はじめに
 
-仮想データポイント（VDP）は、1つまたは複数の実データポイント、または以前に定義した仮想データポイントから、計算されたデータポイントを作成する機能です。最終的な値を計算するために、多くの演算が可能です。
+仮想データポイント（VDP）は、1 つまたは複数の実データポイント、または以前に定義した仮想データポイントから、計算されたデータポイントを作成する機能です。最終的な値を計算するために、多くの演算が可能です。
 
-**重要:** VDPが他のVDPのソースとして定義されている場合、ソースVDPは使用前に定義されていなければならず、VDPのリストで上に表示されなければなりません。そうでない場合は、`ソース`のドロップダウンメニューはグレーアウトされます。
+**重要:** VDP が他の VDP のソースとして定義されている場合、ソース VDP は使用前に定義されていなければならず、VDP のリストで上に表示されなければなりません。そうでない場合は、`ソース`のドロップダウンメニューはグレーアウトされます。
 
 #### 非ブール値のブール値への自動変換
 
-ソースがブール値でない場合、論理演算、比較演算、列挙演算を使用すると、VDPの評価中にソースがブール値に変換されます。
+ソースがブール値でない場合、論理演算、比較演算、列挙演算を使用すると、VDP の評価中にソースがブール値に変換されます。
 
 - ソース値が数値の場合: 1 以上の値は `真` 、0 は `偽` と解釈されます。
-- ソース値が数値ではなく、テキストの場合: 1文字以上のテキストは `真` 、空文字列 ("") は `偽` と解釈されます。
+- ソース値が数値ではなく、テキストの場合: 1 文字以上のテキストは `真` 、空文字列 ("") は `偽` と解釈されます。
 
 ### 利用可能な演算子
 
@@ -26,34 +26,35 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 #### 演算子の概要:
 
-| 名称 | タイプ | ソースの数 | 結果
-| ---------------- | ------------ | ----------------- | ----------- |
-| AND              | 論理      | 複数          | ブール値     |
-| OR               | 論理      | 複数          | ブール値     |
-| NOT              | 論理      | 単独            | ブール値     |
-| Counter          | カウンター      | 単独            | 数値      |
-| Thresholds       | 閾値    | 単独            | Text/数値 |
-| Greater          | 比較   | 単独            | ブール値     |
-| Greater or Equal | 比較   | 単独            | ブール値     |
-| Smaller          | 比較   | 単独            | ブール値     |
-| Smaller or Equal | 比較   | 単独            | ブール値     |
-| Equal            | 比較   | 単独            | ブール値     |
-| Unequal          | 比較   | 単独            | ブール値     |
-| Enumeration      | 列挙  | 複数          | 文字列/数値 |
-| Calculation      | 算術 | 複数          | 数値      |
-| AND              | 論理      | 複数          | ブール値     |
-| OR               | 論理      | 複数          | ブール値     |
-| NOT              | 論理      | 単独            | ブール値     |
-| Counter          | カウンター      | 単独            | 数値      |
-| Thresholds       | 閾値    | 単独            | 文字列/数値 |
-| Greater          | 比較   | 単独            | ブール値     |
-| Greater or Equal | 比較   | 単独            | ブール値     |
-| Smaller          | 比較   | 単独            | ブール値     |
-| Smaller or Equal | 比較   | 単独            | ブール値     |
-| Equal            | 比較   | 単独            | ブール値     |
-| Unequal          | 比較   | 単独            | ブール値     |
-| Enumeration      | 列挙  | 複数          | 文字列/数値 |
-| Calculation      | 算術 | 複数          | 数値      |
+| 名称             | タイプ          | ソースの数 | 結果        |
+| ---------------- | --------------- | ---------- | ----------- |
+| AND              | 論理            | 複数       | ブール値    |
+| OR               | 論理            | 複数       | ブール値    |
+| NOT              | 論理            | 単独       | ブール値    |
+| Counter          | カウンター      | 単独       | 数値        |
+| Thresholds       | 閾値            | 単独       | Text/数値   |
+| Greater          | 比較            | 単独       | ブール値    |
+| Greater or Equal | 比較            | 単独       | ブール値    |
+| Smaller          | 比較            | 単独       | ブール値    |
+| Smaller or Equal | 比較            | 単独       | ブール値    |
+| Equal            | 比較            | 単独       | ブール値    |
+| Unequal          | 比較            | 単独       | ブール値    |
+| Enumeration      | 列挙            | 複数       | 文字列/数値 |
+| Calculation      | 算術            | 複数       | 数値        |
+| AND              | 論理            | 複数       | ブール値    |
+| OR               | 論理            | 複数       | ブール値    |
+| NOT              | 論理            | 単独       | ブール値    |
+| Counter          | カウンター      | 単独       | 数値        |
+| Thresholds       | 閾値            | 単独       | 文字列/数値 |
+| Greater          | 比較            | 単独       | ブール値    |
+| Greater or Equal | 比較            | 単独       | ブール値    |
+| Smaller          | 比較            | 単独       | ブール値    |
+| Smaller or Equal | 比較            | 単独       | ブール値    |
+| Equal            | 比較            | 単独       | ブール値    |
+| Unequal          | 比較            | 単独       | ブール値    |
+| Enumeration      | 列挙            | 複数       | 文字列/数値 |
+| Calculation      | 算術            | 複数       | 数値        |
+| Blink Detection  | Blink Detection | 単独       | 数値        |
 
 #### 演算子:
 
@@ -67,7 +68,7 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 タイプ: 論理 | ソースの数: 複数 | 結果: ブール値
 
-少なくとも1つの選択されたソースデータポイント値が真の場合、真を返します。
+少なくとも 1 つの選択されたソースデータポイント値が真の場合、真を返します。
 
 ##### NOT
 
@@ -79,15 +80,15 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 タイプ: カウンタ | ソースの数: 単独 | 結果: 数値
 
-データポイントのすべての状態変化(ソースの立ち上がりフラグ、すなわち0から1または値の増加)をカウントし、変化の総数を数値として示します。
+データポイントのすべての状態変化(ソースの立ち上がりフラグ、すなわち 0 から 1 または値の増加)をカウントし、変化の総数を数値として示します。
 
-カウンターは、再起動後も保持されます。カウンターは、2つの方法でリセットすることができます。
+カウンターは、再起動後も保持されます。カウンターは、2 つの方法でリセットすることができます。
 
-- **手動リセット:** UIからリセットボタンでカウンターを手動でリセットすることができます。
+- **手動リセット:** UI からリセットボタンでカウンターを手動でリセットすることができます。
 
 ![カウンターの手動リセットボタン](/img/vdp/counter_manual_reset.png)
 
-- **スケジュールリセット:** リセットをスケジュール設定することによって、カウンターをリセットすることができます。複数のスケジュールを入力することができ、特定の月、日、時刻、または「毎」として選択することができます。設定された時刻になると、カウンターのカウントは0にリセットされます。
+- **スケジュールリセット:** リセットをスケジュール設定することによって、カウンターをリセットすることができます。複数のスケジュールを入力することができ、特定の月、日、時刻、または「毎」として選択することができます。設定された時刻になると、カウンターのカウントは 0 にリセットされます。
 
 ![カウンタリセットスケジュールボタン](/img/vdp/counter_schedule_reset.png)
 
@@ -98,13 +99,13 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 タイプ: 閾値 | ソースの数: 単独 | 結果: 文字列/数値
 
-1つのデータポイントに対して複数の閾値を設定することができます。
+1 つのデータポイントに対して複数の閾値を設定することができます。
 
 閾値を設定するには、右の閾値設定ボタンをクリックしてダイアログウィンドウを開いてください:
 ![閾値の設定](/img/vdp/set_threshold.png)
-希望する閾値と、その閾値を超えた場合のVDPの値をそれぞれ `値` に入力します。閾値は昇順にソートされ、どの閾値を超えたら、その閾値に対応する `値` がVDPの結果となるかを確認することができます。
+希望する閾値と、その閾値を超えた場合の VDP の値をそれぞれ `値` に入力します。閾値は昇順にソートされ、どの閾値を超えたら、その閾値に対応する `値` が VDP の結果となるかを確認することができます。
 
-**例**: 以下の例では、`タンクの状態`という仮想データポイントが`[AI] タンクレベル`データソースに接続されており、現在の値は13.54(グラフの太い黒線)です。5-低、10-通常、20-高の3つの閾値が与えられています。現在値は13.54未満の閾値は3-通常のため、VDP値は`通常`となります。
+**例**: 以下の例では、`タンクの状態`という仮想データポイントが`[AI] タンクレベル`データソースに接続されており、現在の値は 13.54(グラフの太い黒線)です。5-低、10-通常、20-高の 3 つの閾値が与えられています。現在値は 13.54 未満の閾値は 3-通常のため、VDP 値は`通常`となります。
 ![閾値の追加](/img/vdp/add_threshold.png)
 
 ##### GREATER
@@ -132,6 +133,7 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 比較値を設定するには、その行の `アクション` カラムにある `比較値設定` ボタンを使用します。
 
 ##### SMALLER EQUAL
+
 タイプ: 比較 | ソースの数: 単独 | 結果: ブール値
 
 データポイント値が比較値以下の場合に真を返します。
@@ -168,7 +170,7 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 青いプラス記号をクリックすると、新しい条件を追加することができます。それぞれの条件では、対象の変数と、その変数が`真`になったときに出力する文字列を、"左辺が真である場合の値"欄に入力します。対象の変数がブール値でなければ[`非ブール値のブール値への自動変換`](VirtualDataPoints.md#automatic-conversion-of-non-boolean-values-to-boolean-values) で説明したようにブール値に変換されます。
 ![列挙子の追加](/img/vdp/set_enum_row.png)
 
-注：列挙の順序は、ドラッグ＆ドロップで変更できます。これは、どの値が最初に真になるか、どの列挙子がVDPの結果となるかに影響します。
+注：列挙の順序は、ドラッグ＆ドロップで変更できます。これは、どの値が最初に真になるか、どの列挙子が VDP の結果となるかに影響します。
 
 **例:** 以下の写真にあるような値がある場合の例を示します。黄ランプのデジタル入力が`真`であれば、結果は`警告`になります。緑ランプのデジタル入力が`真`であれば、結果は`良`になります。その他の場合、デフォルトの結果は `情報なし` になります。
 ![列挙の追加例](/img/vdp/set_enum_example.png)
@@ -179,19 +181,60 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 変数名を使用し、数式を手動で入力するカスタム数式です。複数のデータポイントを結合する場合や、より複雑な数学的操作に便利です。
 
-**重要**: ブール値ソースを選択した場合、その値が真なら1、偽なら0と扱われます。
+**重要**: ブール値ソースを選択した場合、その値が真なら 1、偽なら 0 と扱われます。
 
 **サンプル動画:**
 <Player controls url={video}/>
+
+##### BLINK DETECTION
+
+Type: Blink Detection | Number of Sources: Single | Result: Number (0, 1 or 2)
+
+This VDP is used to define a blinking detection behavior for a single source value (from Data Source or another VDP). With the customizable settings, it allows setting the wished behavior for a blink detection.
+
+###### Definition of terms:
+
+`Timeframe`: A moving window of time. It is used to check rising edges within this time period to determine blinking status.
+`Rising Edge`: Change of a source value from `false` to `true`.
+`Falling Edge`: Change of a source value from `true` to `false`.
+
+###### Adjustable Parameters:
+
+With the following adjustable parameters you can customize the blink detection behavior. The given settings apply only to that VDP, so different VDPs can have different settings.
+
+| Name                               | Allowed value range        | Description                                                                                                                                                                                                              |
+| ---------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Timeframe                          | 1000-120000 (milliseconds) | Amount of time in milliseconds, in which defined count of rising edges must occur to detect blinking status of the source value                                                                                          |
+| Rising Edges                       | 1-10 (count)               | Count of rising edges that are required to determine a blinking status within the defined timeframe                                                                                                                      |
+| Linked Blink Detections (Optional) | -                          | Optionally you can link other signals as dependency. When the linked signal has a rising edge, it resets the blink detection status of this signal, so that this signal can only blink of the linked signal also blinks. |
+
+###### Result of the VDP:
+
+Result of the VDP shows the connected source's status. Possible results of this VDP are:
+
+- 0 = OFF
+- 1 = ON
+- 2 = BLINKING
+
+###### Blink Detection Logic and Examples:
+
+- Signals are delayed at the output with timeframe length, even if there is no blinking detected. That is to make sure all values are evaluated within the timeframe to detect potential blinking behaviour.
+  > Example: Assume timeframe is 10 seconds and rising edge count is 3. Any source value will be displayed at the output 10 seconds later. If within this 10 seconds 3 rising edges are detected then the output will be 2 (BLINKING), otherwise its value will be 1(ON) or 0(OFF) depending on the source value.
+- When enough rising edges are available, the blinking is activated at the end of the timeframe and timeframe amount of time is counted from the first rising edge within that timeframe. So, even if blinking detected in the middle of the timeframe, the blink status is shown at the end of the timeframe. Then the result of VDP is 2 (blinking).
+  > Example: Assume timeframe is 10 seconds and rising edge count is 3. When source has 3 rising edges in 6 seconds, the result of blinking is still shown when 10 seconds from first rising edge has passed. The value after that depends again on source values and count of detected rising edges.
+- After blinking of the source ends, the first value is kept for a timeframe long.
+  > Example: Assume timeframe is 10 seconds and source value turns to false when the blinking ends. Then the output will be shown as false for 10 seconds long, even if source value changes within 10 seconds.
+- If there is a linked signal connected, that linked signal's rising edge resets the blinking behaviour of the main signal for a timeframe amount of time. The last value of the main signal before reset is shown as output during the timeframe. This is used to help synchronize blinking status of two or more connected signals.
+  > Example: Assume timeframe is 10 seconds and rising edge count is 3 and VDP2 depends on VDP1. When VDP1 has a rising edge, VDP2 cannot have a blinking status for 10 seconds since the rising edge from VDP1. Also, during this time VDP2 output is shown as its last value before this reset for 10 seconds long.
 
 ### 仮想データポイントの追加
 
 ![新しい仮想データポイントの追加](/img/vdp/add_vdp.png)
 
-1. 青いボタンと白いプラスアイコンをクリックします。VDPのリストに新しい行が追加されます。
-2. 新しく生成するVDPの名前を入力します。
+1. 青いボタンと白いプラスアイコンをクリックします。VDP のリストに新しい行が追加されます。
+2. 新しく生成する VDP の名前を入力します。
 3. 演算子を選択します。
-4. 1つまたは複数のソースを選択します。どの演算子が単独または複数のソースを取るかについては、上の表を参照してください。
+4. 1 つまたは複数のソースを選択します。どの演算子が単独または複数のソースを取るかについては、上の表を参照してください。
    ![ソースの選択](/img/vdp/choose_source.png)
 5. 演算子固有の詳細と設定については、上記の演算子の説明を参照してください。いくつかの演算子では、保存後に追加の情報を設定する必要があります。
 6. 右の `アクション` 欄にある緑色のチェックボタンをクリックして保存し、編集を中止するか、赤色の十字をクリックしてエントリーを破棄してください。
@@ -199,19 +242,19 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 ### 複合操作
 
-複合操作の作成方法は、求める結果の種類によって2通りあります。
+複合操作の作成方法は、求める結果の種類によって 2 通りあります。
 
 - `計算`を使用する場合: 演算を伴う数値結果を得たい場合は、 `数値演算` を用いて複数のデータソースを組み合わせることができます。上記の説明を参照してください。
 
-- 新しい VDP を作成し、それらを結合する場合: 複数のデータソースから論理演算の結果を得たい場合、複数のVDPを作成し、段階的に組み合わせることになります。例えば、_DataPoint1 & DataPoint2 & !DataPoint3_ => の結果を作成するには、以下の4つのステップを踏んでください:
+- 新しい VDP を作成し、それらを結合する場合: 複数のデータソースから論理演算の結果を得たい場合、複数の VDP を作成し、段階的に組み合わせることになります。例えば、_DataPoint1 & DataPoint2 & !DataPoint3_ => の結果を作成するには、以下の 4 つのステップを踏んでください:
 
-1. DP1とDP2を含む最初のVDP1を作成し、AND演算を行う。
+1. DP1 と DP2 を含む最初の VDP1 を作成し、AND 演算を行う。
 2. DP3 で 2 番目の VDP2 を作成し、NOT 演算を行う。
-3. VDP1とVDP2のAND演算で3番目の最終VDP3を作成する。
-4. VDP3を結果として出力する。
+3. VDP1 と VDP2 の AND 演算で 3 番目の最終 VDP3 を作成する。
+4. VDP3 を結果として出力する。
 
 ### 仮想データポイントの削除
 
-1. 削除したいVDPの右側、`アクション`カラムの下にあるゴミ箱アイコンをクリックします。
-2. "データポイントを削除しますか？" という質問のオーバーレイダイアログでYesを選択します。
+1. 削除したい VDP の右側、`アクション`カラムの下にあるゴミ箱アイコンをクリックします。
+2. "データポイントを削除しますか？" という質問のオーバーレイダイアログで Yes を選択します。
 3. `変更を適用`ボタンをクリックして、変更を反映します。

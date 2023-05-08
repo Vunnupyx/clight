@@ -149,9 +149,9 @@
           svgIcon="mdc:success"
         ></mat-icon>
         <mat-icon
-          class="color-danger"
+          class="color-warning"
           *ngIf="netServiceStatus.UpdateStatus !== UpdateStatus.NoUpdate"
-          svgIcon="mdc:error"
+          svgIcon="mdc:warning"
         ></mat-icon>
       </div>
     </div>
@@ -171,13 +171,13 @@
       </div>
       <div class="col-12 col-md-2">
         <mat-icon
-          class="color-success"
-          *ngIf="netServiceStatus.FacilityTree"
-          svgIcon="mdc:success"
+          class="color-warning"
+          *ngIf="netServiceStatus.FacilityTree === 'DEFAULT'"
+          svgIcon="mdc:warning"
         ></mat-icon>
         <mat-icon
           class="color-danger"
-          *ngIf="!netServiceStatus.FacilityTree"
+          *ngIf="netServiceStatus.FacilityTree !== 'DEFAULT'"
           svgIcon="mdc:error"
         ></mat-icon>
       </div>

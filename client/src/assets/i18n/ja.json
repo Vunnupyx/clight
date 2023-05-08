@@ -209,6 +209,7 @@
     "SoftwareVersion": "ソフトウェアバージョン",
     "BTSSString": "BTSS文字列",
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再試行してください。",
+    "MTConnectConnectivityWarningText": "There has been connectivity problems to the host. Please check your network settings or the host.",
     "Tabs": {
       "s7": "SIEMENS",
       "mtconnect": "MTConnect",

@@ -209,6 +209,7 @@
     "SoftwareVersion": "Software Version",
     "BTSSString": "BTSS String",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
+    "MTConnectConnectivityWarningText": "Es gab Probleme mit der Verbindung zum Host. Bitte überprüfen Sie Ihre Netzwerkeinstellungen oder den Host.",
     "Tabs": {
       "s7": "SIEMENS",
       "mtconnect": "MTConnect",

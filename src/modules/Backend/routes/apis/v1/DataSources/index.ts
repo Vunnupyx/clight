@@ -432,7 +432,16 @@ function pingDataSourceHandler(request: Request, response: Response) {
     response.status(404).send();
     return Promise.resolve();
   }
-
+  if (!dataSource.enabled) {
+    response
+      .json({
+        error: {
+          msg: `${datasourceProtocol} is disabled.`
+        }
+      })
+      .status(400);
+    return;
+  }
   const ipOrHostname =
     dataSource.protocol === DataSourceProtocols.MTCONNECT
       ? (dataSource.connection as IMTConnectDataSourceConnection).hostname

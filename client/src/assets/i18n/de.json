@@ -318,7 +318,8 @@
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuchen Sie es bitte später erneut!",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es bitte später erneut!",
     "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
-    "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
+    "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen.",
+    "HostDisabled": "Datenquelle ist deaktiviert. Bitte überprüfen Sie die Einstellungen."
   },
   "settings-data-sink": {
     "DataSink": "Anwendungsschnittstelle",

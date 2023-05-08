@@ -71,7 +71,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   liveDataSub!: Subscription;
   statusSub!: Subscription;
 
-  ipRegex = IP_REGEX;
   portRegex = PORT_REGEX;
   ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
   dsFormValid = true;

@@ -153,7 +153,7 @@
     "RestartDevice": "デバイス初期化",
     "RestartNow": "再起動",
     "RestartDeviceTitle": "デバイス再起動",
-    "RestartDeviceText": "デバイスを再起動しますか？再起動にかかる約1分間はデバイスにアクセスできません。",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for up to 5 minutes.",
     "RestartDeviceSuccess": "デバイスを再起動しました。",
     "RestartDeviceError": "デバイス再起動に失敗しました。",
     "BackupDownloadError": "バックアップをダウンロードできません。時間をおいて再試行してください。",

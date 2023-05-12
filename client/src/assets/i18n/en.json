@@ -153,7 +153,7 @@
     "RestartDevice": "Restart device",
     "RestartNow": "Restart now",
     "RestartDeviceTitle": "Restart device",
-    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for up to 5 minutes.",
     "RestartDeviceSuccess": "Device has been restarted successfully!",
     "RestartDeviceError": "Failed to restart device.",
     "BackupDownloadError": "Could not download backup. Please try again!",

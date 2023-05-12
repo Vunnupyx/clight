@@ -2,7 +2,6 @@ import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import fs from 'fs';
-import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { System } from '../../../../../System';
@@ -88,13 +87,9 @@ async function logsGetHandler(
 
   const outFileName = `${hostname}-${dateString}.zip`;
   const logFolderPath = '/mdclight/logs';
-  const configPath = path.join(
-    process.env.MDC_LIGHT_FOLDER || process.cwd(),
-    '/config/config.json'
-  );
-  const inputPaths = `${logFolderPath}/*log ${configPath}`;
+  const inputPaths = `${logFolderPath}/*log`;
   const outPath = '/mdclight/logs/out';
-  const zipCommand = `mkdir -p ${outPath} && zip -j -0 ${outPath}/${outFileName} ${inputPaths}`;
+  const zipCommand = `mkdir -p ${outPath} && zip -0 -r ${outPath}/${outFileName} ${inputPaths}`;
 
   /**
    * Deletes all log archives inside the log folder

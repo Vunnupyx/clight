@@ -290,17 +290,14 @@ export class PhoenixEmProAdapter {
         });
         if (response.ok) {
           const data = await response?.json();
-          this.hostConnectivityState = IHostConnectivityState.OK;
           //Success
           return resolve(data);
         }
         winston.error(
           `${logPrefix} response was NOT ok from the endpoint: ${url}`
         );
-        this.hostConnectivityState = IHostConnectivityState.ERROR;
         return reject(new Error('Response not OK'));
       } catch (e) {
-        this.hostConnectivityState = IHostConnectivityState.ERROR;
         winston.error(
           `${logPrefix} unexpected error occurred while making API call: ${e?.message}`
         );

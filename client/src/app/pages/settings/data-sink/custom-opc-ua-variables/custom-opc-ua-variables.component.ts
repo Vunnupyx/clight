@@ -2,10 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { DataSinkService } from 'app/services';
-import {
-  ConfirmDialogComponent,
-  ConfirmDialogModel
-} from 'app/shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogModel } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 
 import {
   DataPointDataType,
@@ -91,9 +88,7 @@ export class CustomOpcUaVariablesComponent {
 
   onDelete(obj: PreDefinedDataPoint) {
     const title = this.translate.instant('settings-data-sink.Delete');
-    const message = this.translate.instant(
-      'settings-data-sink.OPCUACustomVariableDeleteMessage'
-    );
+    const message = this.translate.instant('settings-data-sink.DeleteMessage');
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

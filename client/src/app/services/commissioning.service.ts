@@ -17,7 +17,6 @@ import {
 export class CommissioningState {
   status!: Status;
   finished!: boolean;
-  skipped!: boolean;
   machineInformation!: MachineInformation;
   adapter!: NetworkAdapter;
   adapterConnection!: AdapterConnection;
@@ -33,14 +32,6 @@ export class CommissioningService {
     return this._store.state.pipe(
       filter((x) => x.status != Status.NotInitialized),
       map((x) => x.finished),
-      distinctUntilChanged()
-    );
-  }
-
-  get skipped() {
-    return this._store.state.pipe(
-      filter((x) => x.status != Status.NotInitialized),
-      map((x) => x.skipped),
       distinctUntilChanged()
     );
   }
@@ -91,19 +82,6 @@ export class CommissioningService {
     private toastr: ToastrService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
-  }
-
-  async skip(): Promise<boolean> {
-    this._store.patchState((state) => {
-      state.skipped = true;
-    });
-    return true;
-  }
-
-  async resetSkip(): Promise<void> {
-    this._store.patchState((state) => {
-      state.skipped = false;
-    });
   }
 
   async apply(): Promise<boolean> {
@@ -226,10 +204,6 @@ export class CommissioningService {
         state.status = Status.Ready;
       });
     }
-  }
-
-  async isSkipped(): Promise<boolean> {
-    return this._store.snapshot.skipped;
   }
 
   async isFinished(): Promise<boolean> {

@@ -4,45 +4,6 @@ title: Changelog
 
 # Changelog
 
-## [4.0.0]
-
-### Added
-
-- [DIGMDCLGHT-21](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-21) Adds Fanuc data source
-- [DIGMDCLGHT-412](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-412) Breaking Change: Replaces data point blinking logic with flexible blinking configuration
-- [DIGMDCLGHT-426](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-426) Adds MTConnect Agent as data source
-
-## [3.0.12]
-
-## Changed
-
-- [DIGMDCLGHT-462](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-462) Changes reading frequency for Energy data source to 15s
-
-## Added
-
-- [DIGMDCLGHT-57](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-57) Login page automatically redirects to main page if user is already logged in
-- [DIGMDCLGHT-84](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-84) Adds Cancel button to configuration wizard page
-- [DIGMDCLGHT-411](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-411) Adds data type column for OPC UA application interface data points
-- [DIGMDCLGHT-413](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-413) Adds warning notification when the user session expires
-- [DIGMDCLGHT-415](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-415) Adds ability to change template without displaying T&C page
-- [DIGMDCLGHT-435](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-435) Adds user documentation for Energy data source
-- [DIGMDCLGHT-441](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-441) Adds skipping functionality for commissioning
-- [DIGMDCLGHT-443](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-443) Adds device information to System Information page
-- [DIGMDCLGHT-465](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-465) Added circuit diagrams to documentation
-
-## Fixed
-
-- [DIGMDCLGHT-428](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-428) Fixes the result of enumeration if value of any of its sources are not available
-- [DIGMDCLGHT-440](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-440) Fixes missing translations for delete confirmation popups
-- [DIGMDCLGHT-457](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-457) Fixes some API endpoints being unavailable after completing commissioning
-- [DIGMDCLGHT-448](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-448) Fixes connection of Messenger if application interface is disabled
-- [DIGMDCLGHT-449](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-449) Fixes Energy tariff-number data point when template is not used
-- [DIGMDCLGHT-452](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-452) Fixes missing German translations for Set Schedules dialog
-- [DIGMDCLGHT-454](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-454) Fixes add data point button remaining grayed out in slow connection
-- [DIGMDCLGHT-455](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-455) Fixes displaying live data wrongly while changing type of input board signal
-- [DIGMDCLGHT-459](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-459) Fixes missing translation when there is no table data
-- [DIGMDCLGHT-461](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-461) Fixes live data on Enumeration VDP with different source types
-
 ## [3.0.11]
 
 ## Added

@@ -23,9 +23,8 @@ export class CommissioningGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Promise<boolean | UrlTree> {
     const isFinished = await this.commissioningService.isFinished();
-    const isSkipped = await this.commissioningService.isSkipped();
 
-    if (isFinished || isSkipped) {
+    if (isFinished) {
       if (route.routeConfig?.path === 'commissioning')
         return this.router.navigate(['/']);
 

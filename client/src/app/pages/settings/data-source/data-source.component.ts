@@ -30,7 +30,7 @@ import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 
-const ENERGY_TARIFF_NUMBER_DP_ADDRESS = 'tariff-number';
+const ENERGY_ADDRESS_REQUIRED = 'tariff-number';
 
 @Component({
   selector: 'app-data-source',
@@ -357,7 +357,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.unsavedRowIndex = this.datapointRows.length;
     this.unsavedRow = obj;
     this.ngxDatatable.sorts = [];
-    this.datapointRows = this.datapointRows.concat([obj]);
+    this.datapointRows = [obj].concat(this.datapointRows);
   }
 
   onEditStart(rowIndex: number, row: any) {
@@ -421,7 +421,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       } else {
         this.unsavedRow!.name = result.name;
         this.unsavedRow!.address = result.address;
-        this.unsavedRow!.mandatory = result.mandatory;
         if (this.dataSource?.protocol === DataSourceProtocol.Energy) {
           this.unsavedRow!.type = result.type;
         }
@@ -430,11 +429,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   onDelete(obj: SourceDataPoint) {
-    const title = this.translate.instant('settings-data-source.Delete');
-    const message = this.translate.instant(
-      'settings-data-source.DeleteMessage',
-      { name: obj.name }
-    );
+    const title = `Delete`;
+    const message = `Are you sure you want to delete data point ${obj.name}?`;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)
@@ -491,33 +487,24 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return [SourceDataPointType.NCK].includes(type);
   }
 
-  findTariffNumberDatapoint(obj: SourceDataPoint): boolean {
+  isDataPointRequired(obj: SourceDataPoint): boolean {
     return (
       obj.type === SourceDataPointType.Device &&
-      obj.address === ENERGY_TARIFF_NUMBER_DP_ADDRESS
+      obj.address === ENERGY_ADDRESS_REQUIRED
     );
   }
 
   getTariffText() {
-    const tariffNumberDatapoint = this.datapointRows.find((dp) =>
-      this.findTariffNumberDatapoint(dp)
+    const deviceDatapoint = this.datapointRows.find((dp) =>
+      this.isDataPointRequired(dp)
     );
-    const tariffNumber = this.liveData?.[tariffNumberDatapoint?.address]?.value;
-    const translationKey = `settings-data-source.TariffStatus.${tariffNumber}`;
+    const translationKey = `settings-data-source.TariffStatus.${
+      this.liveData?.[deviceDatapoint?.address]?.value
+    }`;
     const result = this.translate.instant(translationKey);
     return result !== translationKey
       ? result
       : this.translate.instant('settings-data-source.TariffStatus.Unknown');
-  }
-
-  getLiveDataTextForIoShield(obj: SourceDataPoint) {
-    const liveDataValue = this.liveData[obj.id]?.value;
-
-    if (!obj.address?.startsWith('DI')) return liveDataValue;
-
-    const translationKey = `settings-data-source.Livedata.ioshield.${liveDataValue}`;
-    const result = this.translate.instant(translationKey);
-    return result !== translationKey ? result : liveDataValue;
   }
 
   goToMtConnectStream() {

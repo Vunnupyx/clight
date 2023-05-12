@@ -8,7 +8,7 @@ Mit dieser Datenquelle können Sie einen Energiezähler an Ihr IoTconnector flex
 
 Hinweis: Derzeit werden nur Phoenix Contact EMpro Energiezähler unterstützt.
 
-Oben links auf der Seite finden Sie die wichtigsten Einstellungen für die Datenquelle: Aktivieren, IP-Adresse für den Energiezähler und Auswahl des Typs. Unten sehen Sie den [`Current Tariff`](Energy.md#tarif), der weiter unten erklärt wird.
+Oben links auf der Seite finden Sie die wichtigsten Einstellungen für die Datenquelle: Aktivieren, Host für den Energiezähler und Auswahl des Typs. Unten sehen Sie den [`Current Tariff`](Energy.md#tarif), der weiter unten erklärt wird.
 
 Oben rechts auf der Seite sehen Sie den Verbindungsstatus zum Energiezähler und die Schaltfläche `Verbindung Testen`, um die Erreichbarkeit des Zählers zu prüfen.
 

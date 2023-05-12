@@ -38,7 +38,7 @@ module.exports = {
       type: 'category',
       label: 'Other',
       collapsed: false,
-      items: ['CircuitDiagrams', 'CHANGELOG', 'OSSAttribution']
+      items: ['NETservice', 'CircuitDiagrams', 'CHANGELOG', 'OSSAttribution']
     }
   ]
 };

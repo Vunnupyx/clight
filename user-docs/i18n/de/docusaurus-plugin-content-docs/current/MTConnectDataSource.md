@@ -6,11 +6,11 @@ title: 'Data source: MTConnect'
 
 Mit dieser Datenquelle können Sie Datenpunkte von anderen Maschinen mit MTConnect Agent oder Adapter in Ihr IoTconnector flex einlesen. Derzeit wird nur der Agent unterstützt.
 
-Oben links auf der Seite finden Sie die wichtigsten Einstellungen für die Datenquelle: Aktiviert, Maschinenname, Hostname, Port und Typ.
+Oben links auf der Seite finden Sie die wichtigsten Einstellungen für die Datenquelle: Aktiviert, Maschinenname, Host, Port und Typ.
 
 - Aktiviert: Zum Aktivieren und Deaktivieren der Verbindung mit der Datenquelle MTConnect.
 - Maschinenname: Die Verwendung dieses Feldes ist optional. Wenn Sie den Namen der Maschine eingeben, werden nur deren Datenpunkte gelesen, andernfalls werden die Datenpunkte aller Maschinen vom MTConnect Agent/Adapter gelesen.
-- Hostname: Hostname oder IP-Adresse des Rechners, auf dem der MTConnect Agent/Adapter läuft.
+- Host: Hostname oder IP-Adresse des Rechners, auf dem der MTConnect Agent/Adapter läuft.
 - Anschluss: Port für den Rechner, auf dem der MTConnect Agent/Adapter läuft.
 - Typ: Agent oder Adapter. (Derzeit wird nur der Agent unterstützt)
 

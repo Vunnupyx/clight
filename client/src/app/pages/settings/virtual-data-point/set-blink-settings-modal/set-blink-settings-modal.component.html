@@ -1,0 +1,91 @@
+<h1 mat-dialog-title>
+  {{ 'settings-virtual-data-point.SetBlinkSettings' | translate }}
+</h1>
+
+<div mat-dialog-content>
+  <div class="row">
+    <div class="col">
+      <h5>
+        {{ 'settings-virtual-data-point.Timeframe' | translate }} (ms) [{{
+          MIN_TIMEFRAME
+        }}-{{ MAX_TIMEFRAME }}]
+      </h5>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          min="1000"
+          max="120000"
+          [(ngModel)]="blinkSettings.timeframe"
+          required
+        />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h5>
+        {{ 'settings-virtual-data-point.RisingEdges' | translate }} [{{
+          MIN_RISING_EDGES
+        }}-{{ MAX_RISING_EDGES }}]
+      </h5>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          min="1"
+          max="10"
+          [(ngModel)]="blinkSettings.risingEdges"
+          required
+        />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h5>
+        {{ 'settings-virtual-data-point.LinkedBlinkDetections' | translate }}
+      </h5>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-select
+          disableOptionCentering="true"
+          [matTooltip]="
+            'settings-virtual-data-point.NoOtherBlinkDetectionVDPsAvailable'
+              | translate
+          "
+          [matTooltipDisabled]="dataPointsWithBlinkDetection?.length > 0"
+          matTooltipPosition="above"
+          multiple
+          [(ngModel)]="blinkSettings.linkedBlinkDetections"
+        >
+          <mat-option
+            *ngFor="let dp of dataPointsWithBlinkDetection"
+            [value]="dp.id"
+            >{{ getVirtualDataPointPrefix() }} {{ dp.name }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end">
+  <button type="button" mat-button color="secondary" (click)="onCancel()">
+    {{ 'settings-virtual-data-point.Cancel' | translate }}
+  </button>
+  <button
+    type="submit"
+    mat-button
+    color="primary"
+    (click)="areInputsValid() && onSave()"
+    [disabled]="!areInputsValid()"
+  >
+    {{ 'settings-virtual-data-point.Save' | translate }}
+  </button>
+</div>

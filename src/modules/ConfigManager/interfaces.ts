@@ -305,6 +305,12 @@ export interface EnumOperationEntry {
   source: string;
   returnValueIfTrue: string;
 }
+
+export interface BlinkSettings {
+  timeframe: number;
+  risingEdges: number;
+  linkedBlinkDetections: string[];
+}
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
@@ -322,12 +328,14 @@ export interface IVirtualDataPointConfig {
     | 'equal'
     | 'unequal'
     | 'calculation'
-    | 'setTariff';
+    | 'setTariff'
+    | 'blink-detection';
   thresholds?: ITargetDataMap;
   enumeration?: {
     defaultValue?: string;
     items: EnumOperationEntry[];
   };
+  blinkSettings?: BlinkSettings;
   comparativeValue?: string | number;
   resetSchedules?: ScheduleDescription[];
   formula?: string;

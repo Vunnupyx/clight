@@ -70,6 +70,7 @@
         (cdkDropListDropped)="onReorder($event)"
         rowHeight="auto"
         columnMode="force"
+        [messages]="{ emptyMessage: 'common.NoTableData' | translate }"
       >
         <ngx-datatable-column
           [name]="'settings-virtual-data-point.Name' | translate"

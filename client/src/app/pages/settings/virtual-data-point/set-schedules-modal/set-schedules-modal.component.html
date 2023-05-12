@@ -11,6 +11,7 @@
     [selectionType]="SelectionType.single"
     (select)="onEdit($event)"
     columnMode="force"
+    [messages]="{ emptyMessage: 'common.NoTableDataSchedule' | translate }"
   >
     <ngx-datatable-column
       [name]="'settings-virtual-data-point.Name' | translate"

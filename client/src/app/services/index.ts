@@ -11,4 +11,3 @@ export * from './network.service';
 export * from './system-information.service';
 export * from './terms-and-conditions.service';
 export * from './commissioning.service';
-export * from './net-service.service';

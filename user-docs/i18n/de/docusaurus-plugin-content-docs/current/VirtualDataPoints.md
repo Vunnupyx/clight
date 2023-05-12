@@ -26,22 +26,23 @@ Hinweis: Wenn Sie eine Kombination von Operationen benötigen, lesen Sie bitte d
 
 #### Übersicht über die Operatoren:
 
-| Name                | Typ            | Anzahl der Quellen | Ergebnis  |
-| ------------------- | -------------- | ------------------ | --------- |
-| Und                 | Logisch        | Mehrfach           | Boolesch  |
-| Oder                | Logisch        | Mehrfach           | Boolesch  |
-| Nicht               | Logisch        | Einfach            | Boolesch  |
-| Zähler              | Zähler         | Einfach            | Zahl      |
-| Schwellenwerte      | Schwellenwert  | Einfach            | Text/Zahl |
-| Größer              | Vergleich      | Einzeln            | Boolesch  |
-| Größer oder gleich  | Vergleich      | Einzeln            | Boolesch  |
-| Kleiner             | Vergleich      | Einzeln            | Boolesch  |
-| Kleiner oder gleich | Vergleich      | Einzeln            | Boolesch  |
-| Gleich              | Vergleich      | Einzeln            | Boolesch  |
-| Ungleich            | Vergleich      | Einzeln            | Boolesch  |
-| Enumeration         | Enumeration    | Mehrfach           | Text/Zahl |
-| Berechnung          | Mathematisch   | Mehrfach           | Zahl      |
-| Blinkerkennung      | Blinkerkennung | Einzeln            | Zahl      |
+| Name                  | Typ            | Anzahl der Quellen | Ergebnis  |
+| --------------------- | -------------- | ------------------ | --------- |
+| Und                   | Logisch        | Mehrfach           | Boolesch  |
+| Oder                  | Logisch        | Mehrfach           | Boolesch  |
+| Nicht                 | Logisch        | Einfach            | Boolesch  |
+| Zähler                | Zähler         | Einfach            | Zahl      |
+| Schwellenwerte        | Schwellenwert  | Einfach            | Text/Zahl |
+| Größer                | Vergleich      | Einzeln            | Boolesch  |
+| Größer oder gleich    | Vergleich      | Einzeln            | Boolesch  |
+| Kleiner               | Vergleich      | Einzeln            | Boolesch  |
+| Kleiner oder gleich   | Vergleich      | Einzeln            | Boolesch  |
+| Gleich                | Vergleich      | Einzeln            | Boolesch  |
+| Ungleich              | Vergleich      | Einzeln            | Boolesch  |
+| Enumeration           | Enumeration    | Mehrfach           | Text/Zahl |
+| Berechnung            | Mathematisch   | Mehrfach           | Zahl      |
+| Energie Tariff Setzen | Enumeration    | Mehrfach           | Text      |
+| Blinkerkennung        | Blinkerkennung | Einzeln            | Zahl      |
 
 #### Operatoren:
 
@@ -172,55 +173,6 @@ Benutzerdefinierter mathematischer Ausdruck unter Verwendung von Variablennamen 
 
 **Beispielvideo:**
 <Player controls url={video}/>
-
-##### BLINKERKENNUNG
-
-Art: Blinkerkennung | Anzahl der Quellen: Einzeln | Ergebnis: Zahl (0, 1 oder 2)
-
-Dieses VDP wird verwendet, um ein Blinkerkennungsverhalten für einen einzelnen Quellwert (aus einer Datenquelle oder einem anderen VDP) zu definieren. Mit den anpassbaren Einstellungen kann das gewünschte Verhalten für eine Blinkerkennung festgelegt werden.
-
-###### Definition der Begriffe:
-
-`Zeitrahmen`: Ein gleitendes Zeitfenster. Es wird verwendet, um steigende Flanken innerhalb dieses Zeitraums zu überprüfen, um den Blinkstatus zu bestimmen.
-`Steigende Flanke`: Änderung eines Quellwertes von `falsch` auf `wahr`.
-`Fallende Flanke`: Wechsel eines Quellwerts von `wahr` auf `falsch`.
-
-###### Einstellbare Parameter:
-
-Mit den folgenden einstellbaren Parametern können Sie das Verhalten der Blinzelerkennung anpassen. Die angegebenen Einstellungen gelten nur für diesen VDP, so dass verschiedene VDPs unterschiedliche Einstellungen haben können.
-
-| Name                                   | Erlaubter Wertebereich      | Beschreibung                                                                                                                                                                                                                                                                                                                                                                  |
-| -------------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Zeitrahmen                             | 1000-120000 (Millisekunden) | Zeitspanne in Millisekunden, in der eine bestimmte Anzahl steigender Flanken auftreten muss, um den Blinkstatus des Quellwerts zu erkennen                                                                                                                                                                                                                                    |
-| Steigende Flanken                      | 1-10 (Anzahl)               | Anzahl der steigenden Flanken, die erforderlich sind, um einen Blinkzustand innerhalb des definierten Zeitrahmens zu bestimmen                                                                                                                                                                                                                                                |
-| Verknüpfte Blinkerkennungen (Optional) | -                           | Optional können Sie andere Signale als Abhängigkeit verknüpfen. Wenn der verknüpfte Eingang zu blinken beginnt, wird die Blinkerkennung dieses Signals zurückgesetzt, um die Ausgabe beider Signale zu synchronisieren. Für einige Anwendungsfälle ist es nützlich, dass beide Signale gleichzeitig blinken, obwohl der Blinkbeginn zu unterschiedlichen Zeitpunkten erfolgt. |
-
-###### Ergebnis des VDP:
-
-Das Ergebnis des VDPs zeigt den Status der angeschlossenen Quelle an. Mögliche Ergebnisse dieses VDPs sind:
-
-- 0 = AUS
-- 1 = AN
-- 2 = BLINKEN
-
-###### Logik und Beispiele für die Blinzelerkennung:
-
-- Die Signale werden am Ausgang um die Länge des Zeitrahmens verzögert, auch wenn kein Blinken erkannt wird. Damit soll sichergestellt werden, dass alle Werte innerhalb des Zeitrahmens ausgewertet werden, um ein mögliches Blinkverhalten zu erkennen.
-  > Beispiel: Angenommen, das Zeitfenster beträgt 10 Sekunden und die Anzahl der steigenden Flanken ist 3. Jeder Quellwert wird 10 Sekunden später am Ausgang angezeigt. Wenn innerhalb dieser 10 Sekunden 3 steigende Flanken erkannt werden, hat der Ausgang den Wert 2 (BLINKEN), andernfalls ist sein Wert 1 (AN) oder 0 (AUS), je nach dem Wert der Quelle.
-- Wenn genügend steigende Flanken vorhanden sind, wird das Blinken am Ende des Zeitrahmens aktiviert, und die Zeitspanne wird ab der ersten steigenden Flanke innerhalb dieses Zeitrahmens gezählt. Selbst wenn also ein Blinken in der Mitte des Zeitrahmens erkannt wird, wird der Blinkstatus am Ende des Zeitrahmens angezeigt. Das Ergebnis von VDP ist dann 2 (BLINKEN).
-  > Beispiel: Angenommen, das Zeitfenster beträgt 10 Sekunden und die Anzahl der steigenden Flanken ist 3. Wenn die Quelle 3 steigende Flanken in 6 Sekunden hat, wird das Ergebnis des Blinkens noch angezeigt, wenn 10 Sekunden nach der ersten steigenden Flanke vergangen sind. Der Wert danach hängt wieder von den Werten der Quelle und der Anzahl der erkannten steigenden Flanken ab.
-- Nach Beendigung des Blinkens der Quelle wird der erste Wert für ein langes Zeitfenster beibehalten.
-  > Beispiel: Angenommen, das Zeitfenster beträgt 10 Sekunden und der Wert der Quelle ändert sich zu false, wenn das Blinken endet. Dann wird der Ausgang 10 Sekunden lang als falsch angezeigt, auch wenn sich der Wert der Quelle innerhalb von 10 Sekunden ändert.
-- Wenn ein verknüpftes Signal angeschlossen ist, setzt die ansteigende Flanke des verknüpften Signals das Blinkverhalten des Hauptsignals für eine bestimmte Zeitspanne zurück. Der letzte Wert des Hauptsignals vor dem Zurücksetzen wird während des Zeitrahmens als Ausgabe angezeigt. Dies wird verwendet, um den Blinkstatus von zwei oder mehr verbundenen Signalen zu synchronisieren.
-  > Beispiel: Angenommen, der Zeitrahmen beträgt 10 Sekunden, die Anzahl der steigenden Flanken ist 3 und VDP2 hängt von VDP1 ab. Wenn VDP1 eine steigende Flanke hat, kann VDP2 10 Sekunden lang seit der steigenden Flanke von VDP1 keinen blinkenden Status haben. Außerdem wird während dieser Zeit der Ausgang von VDP2 10 Sekunden lang als letzter Wert vor dem Zurücksetzen angezeigt.
-
-Die folgenden Bilder zeigen die Verwendung und den Unterschied zwischen unabhängigen und verknüpften Signalen:
-
-> Unverknüpfte Signale:
-> ![Blink detection with independent signals](/img/vdp/blinking_detection_with_independent_signals.png)
-
-> Verknüpfte Signale:
-> ![Blink detection with linked signals](/img/vdp/blinking_detection_with_dependent_signals.png)
 
 ### Hinzufügen eines virtuellen Datenpunkts
 

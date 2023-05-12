@@ -50,10 +50,16 @@ export class HttpService {
     private toastr: ToastrService
   ) {}
 
-  get<T = any>(url: string, options?: RequestOptionsArgs) {
+  get<T = any>(
+    url: string,
+    options?: RequestOptionsArgs,
+    suppressErrorNotification?: boolean
+  ) {
     return this.http
       .get<T>(this._getUrl(url), this._getOptions(options))
-      .pipe(catchError((err) => this._catchError(err)))
+      .pipe(
+        catchError((err) => !suppressErrorNotification && this._catchError(err))
+      )
       .toPromise();
     // .catch((err) => this._catchError(err));
   }

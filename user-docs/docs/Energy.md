@@ -8,7 +8,7 @@ With this data source you can connect an Energy meter device to your IoTconnecto
 
 Note: Currently only Phoenix Contact EMpro Energy meters are supported.
 
-On the top left side of the page you find the main settings for the data source: Enabling, IP address for the Energy meter and selecting the type. At the bottom you will see the [`Current Tariff`](Energy.md#tariff) which is explained further below.
+On the top left side of the page you find the main settings for the data source: Enabling, Host for the Energy meter and selecting the type. At the bottom you will see the [`Current Tariff`](Energy.md#tariff) which is explained further below.
 
 On the top right side of the page you can see the connection status to the Energy meter and the "Test Connection" button to test reachability of the counter.
 

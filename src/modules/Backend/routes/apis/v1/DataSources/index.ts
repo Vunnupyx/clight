@@ -21,6 +21,7 @@ import {
   isValidDataSource,
   isValidDataSourceDatapoint
 } from '../../../../../ConfigManager/interfaces';
+import { MTConnectDataSource } from '../../../../../Southbound/DataSources/MTConnect';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -372,23 +373,33 @@ function getSingleDataSourceStatusHandler(
     return;
   }
 
-  let status, emProTariffNumber;
+  let status, emProTariffNumber, showMTConnectConnectivityWarning;
 
   try {
     status = dataSourcesManager
       .getDataSourceByProto(request.params.datasourceProtocol)
       .getCurrentStatus();
-    if (request.params.datasourceProtocol === 'energy') {
+    if (request.params.datasourceProtocol === DataSourceProtocols.ENERGY) {
       const energyDataSource = dataSourcesManager.getDataSourceByProto(
         request.params.datasourceProtocol
       ) as EnergyDataSource;
       emProTariffNumber = energyDataSource.getCurrentTariffNumber();
+    } else if (
+      request.params.datasourceProtocol === DataSourceProtocols.MTCONNECT
+    ) {
+      const mtConnectDataSource = dataSourcesManager.getDataSourceByProto(
+        request.params.datasourceProtocol
+      ) as MTConnectDataSource;
+      showMTConnectConnectivityWarning =
+        mtConnectDataSource.showConnectivityWarning;
     }
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;
   }
 
-  response.status(200).json({ status, emProTariffNumber });
+  response
+    .status(200)
+    .json({ status, emProTariffNumber, showMTConnectConnectivityWarning });
 }
 
 /**
@@ -432,7 +443,16 @@ function pingDataSourceHandler(request: Request, response: Response) {
     response.status(404).send();
     return Promise.resolve();
   }
-
+  if (!dataSource.enabled) {
+    response
+      .json({
+        error: {
+          msg: `${datasourceProtocol} is disabled.`
+        }
+      })
+      .status(400);
+    return;
+  }
   const ipOrHostname =
     dataSource.protocol === DataSourceProtocols.MTCONNECT
       ? (dataSource.connection as IMTConnectDataSourceConnection).hostname

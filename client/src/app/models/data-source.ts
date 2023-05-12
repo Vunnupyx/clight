@@ -29,6 +29,7 @@ export enum DataSourceConnectionStatus {
 
 export class DataSourceConnection {
   status!: DataSourceConnectionStatus;
+  showMTConnectConnectivityWarning?: boolean;
 }
 
 export class Connection {

@@ -321,7 +321,17 @@
         *ngIf="connection && dataSource?.protocol !== Protocol.IOShield"
       >
         <div class="mt-25">
-          {{ 'settings-data-source.Connection' | translate }}
+          <mat-icon
+            class="color-warning"
+            *ngIf="connection.showMTConnectConnectivityWarning"
+            svgIcon="mdc:warning"
+            [matTooltip]="
+              'settings-data-source.MTConnectConnectivityWarningText'
+                | translate
+            "
+            matTooltipPosition="above"
+          ></mat-icon
+          >{{ 'settings-data-source.Connection' | translate }}
         </div>
 
         <div

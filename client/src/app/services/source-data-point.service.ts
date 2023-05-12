@@ -138,6 +138,12 @@ export class SourceDataPointService {
     return this.httpService
       .get(`/datasources/${protocol}/ping`)
       .then((res) => {
+        if (res?.error?.msg?.includes('disabled')) {
+          this.toastr.error(
+            this.translate.instant('settings-data-source-point.HostDisabled')
+          );
+          return;
+        }
         this.toastr.success(
           this.translate.instant(
             `settings-data-source-point.ConnectionAvailableWithDelay`

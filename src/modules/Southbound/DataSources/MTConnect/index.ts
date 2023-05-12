@@ -26,6 +26,8 @@ import { isValidIpOrHostname } from '../../../Utilities';
  */
 export class MTConnectDataSource extends DataSource {
   protected name = MTConnectDataSource.name;
+  public showConnectivityWarning = false;
+
   private dataPoints: IDataPointConfig[];
   private nextSequenceNumber: number;
   private lastSequenceNumber: number;
@@ -33,8 +35,10 @@ export class MTConnectDataSource extends DataSource {
   private hostname = '';
   private hostConnectivityState: IHostConnectivityState =
     IHostConnectivityState.UNKNOWN;
+  private lastFailedConnectivityTimestamp: number;
 
   private DATAPOINT_READ_INTERVAL = 1000;
+  private SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL = 30 * 60 * 1000;
 
   constructor(params: IDataSourceParams) {
     super(params);
@@ -438,6 +442,13 @@ export class MTConnectDataSource extends DataSource {
         return reject(new Error(err));
       }
       try {
+        if (
+          this.lastFailedConnectivityTimestamp <
+          Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
+        ) {
+          this.showConnectivityWarning = false;
+        }
+
         const fetchUrl =
           endpoint === '/sample'
             ? `${this.hostname}${endpoint}?from=${nextSequence}&count=${this.requestCount}`
@@ -461,6 +472,8 @@ export class MTConnectDataSource extends DataSource {
         return resolve(xmlObj);
       } catch (e) {
         this.hostConnectivityState = IHostConnectivityState.ERROR;
+        this.showConnectivityWarning = true;
+        this.lastFailedConnectivityTimestamp = Date.now();
         const err = `${logPrefix} unexpected error occurred while fetching XML response: ${e?.message}`;
         winston.error(err);
         return reject(new Error(err));
@@ -480,6 +493,13 @@ export class MTConnectDataSource extends DataSource {
         timeout: 5000
       });
 
+      if (
+        this.lastFailedConnectivityTimestamp <
+        Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
+      ) {
+        this.showConnectivityWarning = false;
+      }
+
       if (response.ok) {
         this.hostConnectivityState = IHostConnectivityState.OK;
       } else {
@@ -489,6 +509,8 @@ export class MTConnectDataSource extends DataSource {
       winston.warn(
         `${logPrefix} error connecting to MTConnect Agent at ${this.hostname}, err: ${err}`
       );
+      this.showConnectivityWarning = true;
+      this.lastFailedConnectivityTimestamp = Date.now();
       this.hostConnectivityState = IHostConnectivityState.ERROR;
     }
   }

@@ -1,7 +1,7 @@
 /**
  * All request handlers for requests to datasource endpoints
  */
-import fetch from 'node-fetch';
+
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
@@ -15,13 +15,9 @@ import { isValidIpOrHostname } from '../../../../../Utilities';
 import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
 import {
   IDataPointConfig,
-  IEnergyDataSourceConnection,
-  IMTConnectDataSourceConnection,
-  IS7DataSourceConnection,
   isValidDataSource,
   isValidDataSourceDatapoint
 } from '../../../../../ConfigManager/interfaces';
-import { MTConnectDataSource } from '../../../../../Southbound/DataSources/MTConnect';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -94,10 +90,6 @@ async function patchSingleDataSourceHandler(
   const protocol = request.params.datasourceProtocol;
   const updatedDataSource = request.body;
 
-  if (protocol === DataSourceProtocols.MTCONNECT) {
-    allowed.push('machineName');
-  }
-
   if (!isValidProtocol(protocol) || isValidDataSource(updatedDataSource)) {
     response.status(400).json({ error: 'Input not valid.' });
     return Promise.resolve();
@@ -121,7 +113,6 @@ async function patchSingleDataSourceHandler(
       response.status(403).json({
         error: `Not allowed to change ${entry}`
       });
-      return Promise.resolve();
     }
   });
 
@@ -373,33 +364,23 @@ function getSingleDataSourceStatusHandler(
     return;
   }
 
-  let status, emProTariffNumber, showMTConnectConnectivityWarning;
+  let status, emProTariffNumber;
 
   try {
     status = dataSourcesManager
       .getDataSourceByProto(request.params.datasourceProtocol)
       .getCurrentStatus();
-    if (request.params.datasourceProtocol === DataSourceProtocols.ENERGY) {
+    if (request.params.datasourceProtocol === 'energy') {
       const energyDataSource = dataSourcesManager.getDataSourceByProto(
         request.params.datasourceProtocol
       ) as EnergyDataSource;
       emProTariffNumber = energyDataSource.getCurrentTariffNumber();
-    } else if (
-      request.params.datasourceProtocol === DataSourceProtocols.MTCONNECT
-    ) {
-      const mtConnectDataSource = dataSourcesManager.getDataSourceByProto(
-        request.params.datasourceProtocol
-      ) as MTConnectDataSource;
-      showMTConnectConnectivityWarning =
-        mtConnectDataSource.showConnectivityWarning;
     }
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;
   }
 
-  response
-    .status(200)
-    .json({ status, emProTariffNumber, showMTConnectConnectivityWarning });
+  response.status(200).json({ status, emProTariffNumber });
 }
 
 /**
@@ -443,26 +424,13 @@ function pingDataSourceHandler(request: Request, response: Response) {
     response.status(404).send();
     return Promise.resolve();
   }
-  if (!dataSource.enabled) {
-    response
-      .json({
-        error: {
-          msg: `${datasourceProtocol} is disabled.`
-        }
-      })
-      .status(400);
-    return;
-  }
-  const ipOrHostname =
-    dataSource.protocol === DataSourceProtocols.MTCONNECT
-      ? (dataSource.connection as IMTConnectDataSourceConnection).hostname
-      : (
-          dataSource.connection as
-            | IS7DataSourceConnection
-            | IEnergyDataSourceConnection
-        ).ipAddr;
 
-  if (!ipOrHostname) {
+  const {
+    connection: { ipAddr: ip }
+  } = dataSource;
+
+  winston.debug(`${logPrefix} get ip: ${ip}`);
+  if (!ip) {
     response
       .json({
         error: {
@@ -471,7 +439,7 @@ function pingDataSourceHandler(request: Request, response: Response) {
       })
       .status(404);
     return;
-  } else if (!isValidIpOrHostname(ipOrHostname)) {
+  } else if (!isValidIpOrHostname(ip)) {
     response
       .json({
         error: {
@@ -481,84 +449,35 @@ function pingDataSourceHandler(request: Request, response: Response) {
       .status(400);
     return;
   }
-
-  if (
-    dataSource.protocol === DataSourceProtocols.MTCONNECT ||
-    dataSource.protocol === DataSourceProtocols.ENERGY
-  ) {
-    //Check the hostname with GET request, as they may not allow pinging
-    let timeStart = Date.now();
-    let url = `http://${ipOrHostname}`;
-    if (dataSource.protocol === DataSourceProtocols.MTCONNECT) {
-      url = `${url}:${
-        (dataSource.connection as IMTConnectDataSourceConnection).port
-      }`;
-    }
-    winston.debug(`${logPrefix} ping host with GET: ${url}`);
-
-    fetch(url, {
-      method: 'GET',
-      timeout: 5000,
-      compress: false,
-      headers: {
-        Accept: 'text/xml'
-      }
-    })
-      .then((apiResponse) => {
-        if (apiResponse.status >= 200 && apiResponse.status < 300) {
-          response.status(200).json({
-            delay: Date.now() - timeStart
-          });
-          return;
-        } else {
-          winston.info(
-            `${logPrefix} GET response status for ${ipOrHostname} is: ${apiResponse.status}`
-          );
-          throw new Error('Response status is not 2XX!');
+  const cmd = `ping -w 1 -i 0.3 ${ip}`;
+  exec(cmd, (error, stdout, stderr) => {
+    if (error || stderr !== '' || stdout === '') {
+      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
+      response.status(500).json({
+        error: {
+          msg: `Host unreachable`
         }
-      })
-      .catch((error) => {
-        winston.debug(`${logPrefix} host unreachable, error: ${error}`);
-        response.status(500).json({
-          error: {
-            msg: `Host unreachable.`
-          }
-        });
-        return;
       });
-  } else {
-    winston.debug(`${logPrefix}: ${ipOrHostname}`);
-
-    const cmd = `ping -w 1 -i 0.3 ${ipOrHostname}`;
-    exec(cmd, (error, stdout, stderr) => {
-      if (error || stderr !== '' || stdout === '') {
-        winston.debug(`${logPrefix} send 500 response due to host unreachable`);
-        response.status(500).json({
-          error: {
-            msg: `Host unreachable`
-          }
-        });
-        return;
-      }
-      let filtered = stdout
-        .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
-        .join();
-      const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
-      if (!avg) {
-        winston.debug(`${logPrefix} send 500 response due to host unreachable`);
-        response.status(500).json({
-          error: {
-            msg: `Host unreachable.`
-          }
-        });
-        return;
-      }
-      winston.debug(`${logPrefix} send response with: ${avg} ms delay`);
-      response.status(200).json({
-        delay: avg
+      return;
+    }
+    let filtered = stdout
+      .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
+      .join();
+    const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
+    if (!avg) {
+      winston.debug(`${logPrefix} send 500 response due to host unreachable`);
+      response.status(500).json({
+        error: {
+          msg: `Host unreachable.`
+        }
       });
+      return;
+    }
+    winston.debug(`${logPrefix} send response with: ${avg} ms delay`);
+    response.status(200).json({
+      delay: avg
     });
-  }
+  });
 }
 
 export const dataSourceHandlers = {

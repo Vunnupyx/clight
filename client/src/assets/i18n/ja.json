@@ -2,10 +2,7 @@
   "common": {
     "OK": "OK",
     "Cancel": "キャンセル",
-    "LanguageDocumentationPath": "/jp",
-    "NoTableData": "First add a data point to see data here",
-    "NoTableDataMapping": "First add a mapping to see data here",
-    "NoTableDataSchedule": "First add a schedule to see data here"
+    "LanguageDocumentationPath": "/jp"
   },
   "commissioning": {
     "Welcome": "Welcome to IoTconnector flex",
@@ -23,7 +20,6 @@
     "Disconnected": "Disconnected",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Components",
-    "SkipCommissioning": "Skip commissioning",
     "FinishCommissioning": "Finish commissioning",
     "FinishError": "Failed to finish commissioning. Please try again later",
     "RegisteredError": "Failed to provisioned",
@@ -37,7 +33,6 @@
     "VirtualDataPoints": "仮想データポイント",
     "DataMapping": "データマッピング",
     "DataSinks": "アプリケーションインタフェース",
-    "NetService": "NETservice",
     "Network": "ネットワーク",
     "SystemInformation": "システム情報",
     "ChangePassword": "パスワード変更",
@@ -70,7 +65,6 @@
     "LoadError": "情報の取得に失敗しました。時間をおいて再試行してください。",
     "TermsLoadError": "サービス規約が読み込めませんでした。時間をおいて再試行してください。",
     "AcceptError": "サービス規約承認の処理ができませんでした。時間をおいて再試行してください。",
-    "Cancel": "キャンセル",
     "Next": "次へ",
     "Save": "保存",
     "Yes": "はい",
@@ -143,7 +137,7 @@
     "Japanese": "日本語",
     "Templates": "テンプレート",
     "CurrentTemplate": "選択中のテンプレート",
-    "ChangeTemplate": "Change Template",
+    "OpenConfigurationWizard": "設定ウィザードを開始する",
     "BackupAndRestore": "設定のバックアップと読み込み",
     "BackupConfiguration": "設定のバックアップ",
     "RestoreConfiguration": "設定の読み込み",
@@ -153,7 +147,7 @@
     "RestartDevice": "デバイス初期化",
     "RestartNow": "再起動",
     "RestartDeviceTitle": "デバイス再起動",
-    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for up to 5 minutes.",
+    "RestartDeviceText": "デバイスを再起動しますか？再起動にかかる約1分間はデバイスにアクセスできません。",
     "RestartDeviceSuccess": "デバイスを再起動しました。",
     "RestartDeviceError": "デバイス再起動に失敗しました。",
     "BackupDownloadError": "バックアップをダウンロードできません。時間をおいて再試行してください。",
@@ -179,8 +173,7 @@
     "Cancel": "キャンセル",
     "Select": "選択",
     "Enabled": "有効",
-    "MachineName": "Machine Name",
-    "Host": "Host",
+    "IPAddress": "IPアドレス",
     "Connection": "接続中",
     "Running": "実行中",
     "Disconnected": "切断",
@@ -199,7 +192,6 @@
     "SelectAVariable": "変数を選択",
     "ControllerType": "制御装置の型式",
     "CurrentTariff": "現在の通信量",
-    "TariffHelpText": "What do I need the tariff for?",
     "Name": "名前",
     "Type": "型",
     "Description": "記述",
@@ -209,10 +201,8 @@
     "SoftwareVersion": "ソフトウェアバージョン",
     "BTSSString": "BTSS文字列",
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再試行してください。",
-    "MTConnectConnectivityWarningText": "There has been connectivity problems to the host. Please check your network settings or the host.",
     "Tabs": {
       "s7": "SIEMENS",
-      "mtconnect": "MTConnect",
       "ioshield": "デジタル入力",
       "energy": "電力量"
     },
@@ -225,14 +215,11 @@
     },
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
-    "OpenMTConnectStream": "MTConnectストリームを開く",
     "TestConnection": "テスト接続",
     "DuplicatedName": "名前が重複しています",
     "UnsupportedAddress": "The data point does not correspond to the selected type",
     "DuplicatedAddress": "アドレスが重複しています",
     "SelectVariable": "変数選択",
-    "DeleteMessage": "Are you sure you want to delete data point {{name}}?",
-    "Port": "ポート",
     "TariffStatus": {
       "0": "通信量カウンタが全て無効です",
       "1": "Standby",
@@ -259,9 +246,8 @@
     "SetThreshold": "閾値設定",
     "LiveData": "ライブデータ",
     "LoadError": "データポイントの読み込みに失敗しました。時間をおいて再試行してください。",
+    "DeleteTitle": "削除",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
-    "EnumerationDeleteMessage": "Are you sure you want to delete enumeration item?",
-    "SchedulesDeleteMessage": "Are you sure you want to delete the schedule {{name}}?",
     "SetThresholds": "閾値設定",
     "SetComparativeValue": "基準値設定",
     "MissingComparativeValue": "Comparative value is empty",
@@ -296,7 +282,11 @@
     "Formula": "式",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
     "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
-    "SetTariffEnum": "Set Machine Status Mapping"
+    "SetTariffEnum": "Set Machine Status Mapping",
+    "SetBlinkSettings": "Set Blink Settings",
+    "Timeframe": "Timeframe",
+    "RisingEdges": "Rising Edges",
+    "LinkedBlinkDetections": "Linked Blink Detections"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -312,15 +302,15 @@
     "Unequal": "異なる",
     "Enumeration": "列挙",
     "Calculation": "計算",
-    "SetTariff": "Set Energy Tariff"
+    "SetTariff": "Set Energy Tariff",
+    "BlinkDetection": "Blink Detection"
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
     "BulkError": "変更下適用できません。再試行してください。",
     "LoadError": "ソースデータポンとが読み込めません。再試行してください。",
     "ConnectionAvailableWithDelay": "の応答時間で接続可能。 ",
-    "HostUnreachable": "ホストに到達できません。IP設定を確認してください。",
-    "HostDisabled": "Data source is disabled, please check data source settings."
+    "HostUnreachable": "ホストに到達できません。IP設定を確認してください。"
   },
   "settings-data-sink": {
     "DataSink": "データシンク",
@@ -410,8 +400,6 @@
     "SetCustomOpcUaVariable": "カスタムOPC UA変数設定",
     "NodeId": "ノードID",
     "DeleteMessage": "本当にデータポイントを削除しますか？",
-    "OPCUACustomVariableDeleteMessage": "Are you sure you want to delete the OPC UA Variable?",
-    "MappingDeleteMessage": "Are you sure you want to delete mapping {{from}}->{{to}}?",
     "Username": "ユーザ名",
     "Hostname": "ホスト名",
     "Server": "サーバ状態",
@@ -454,8 +442,7 @@
     "TargetDisabledTooltip": "このマッピングに必要なアプリケーションインタフェースを有効にしてください",
     "MappingDisabledTooltip": "データソースまたはアプリケーションインタフェースが無効なため、このマッピングは無効化されています",
     "DiscardChanges": "変更を破棄",
-    "ApplyChanges": "変更を適用",
-    "DeleteMessage": "Are you sure you want to delete data mapping?"
+    "ApplyChanges": "変更を適用"
   },
   "settings-network": {
     "Network": "ネットワーク",
@@ -490,33 +477,6 @@
     "UpdateAdapterSuccess": "ネットワーク設定を更新しました",
     "UpdateTimestampSuccess": "時刻設定を更新しました"
   },
-  "net-service": {
-    "NetService": "NETservice",
-    "StartNetService": "Start NETservice",
-    "WhatIsNetService": "What is NETservice?",
-    "Status": "Status",
-    "NetServiceSiteControl": "NETservice Site Control",
-    "CentralServerConnection": "Central Server Connection",
-    "ConnectedClients": "Connected Clients",
-    "UpdateStatus": "Update Status",
-    "FacilityTree": "Facility Tree",
-    "CentralServerConfiguration": "Central Server Configuration",
-    "ResetFacilityTree": "Reset Facility Tree",
-    "URL": "URL",
-    "Port": "Port",
-    "ApplyChanges": "Apply Changes",
-    "UpdateError": "Failed to update. Try again later",
-    "FacilityTreeResetSuccess": "Facility tree has been reset successfully!",
-    "CentralServerSaveSuccess": "Central Server has been saved successfully!",
-    "Running": "Running",
-    "Stopped": "Stopped",
-    "Unknown": "Unknown",
-    "Connected": "Connected",
-    "Disconnected": "Disconnected",
-    "NoUpdate": "No update",
-    "ClientUpdating": "Client updating",
-    "SiteControlUpdating": "Site control updating"
-  },
   "system-information": {
     "SystemInformation": "システム情報",
     "UpdateSystem": "システムの更新",
@@ -549,22 +509,13 @@
     "FactoryResetNow": "デバイスの設定を工場出荷状態にリセットします",
     "FactoryResetDeviceTitle": "工場初期化実行",
     "FactoryResetDeviceText": "処理を続けますか？ネットワーク設定も初期化されますので、現在のネットワーク環境では接続ができなくなる可能性があります",
-    "FactoryResetSuccess": "工場初期化が完了しました",
-    "MachineInformation": "Machine information",
-    "Serial": "Serial",
-    "ControlManufacturer": "Control Manufacturer",
-    "Manufacturer": "Manufacturer",
-    "Source": "Source",
-    "ControlType": "Control Type",
-    "Model": "Model",
-    "Unknown": "unknown"
+    "FactoryResetSuccess": "工場初期化が完了しました"
   },
   "prompt": {
     "warningText": "保存されていない変更があります。このまま続けますか？"
   },
   "http": {
-    "SessionExpired": "You have been logged out due to inactivity. Please login in again",
-    "RuntimeError": "The service is not available. Please try again later"
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "システムの時刻がブラウザの時刻と異なります。システムに設定されている時刻を修正してください。不正なシステム時刻はデータソースやアプリケーションインタフェースのエラーにつながります。この警告をクリックし、設定ページを表示、時刻タブを選択して時刻を修正してください"
@@ -575,9 +526,6 @@
     "Byte": "バイト",
     "UInt16": "UInt16",
     "UInt32": "UInt32",
-    "Int16": "Int16",
-    "Int32": "Int32",
-    "LocalizedText": "Localized Text",
     "Boolean": "ブール値"
   },
   "days-of-week": {

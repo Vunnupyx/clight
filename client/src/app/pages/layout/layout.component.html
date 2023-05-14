@@ -24,18 +24,6 @@
       </div>
       <span class="spacer"></span>
       <span class="help-wrapper">
-        <a
-          *ngIf="statusIcon"
-          mat-icon-button
-          routerLink="settings/general"
-          target="_blank"
-        >
-          <img
-            src="{{ 'data:image/png;base64,' + statusIcon }}"
-            width="24"
-            height="24"
-          />
-        </a>
         <a mat-icon-button [href]="supportHref" target="_blank">
           <mat-icon
             class="color-light-primary"
@@ -94,18 +82,6 @@
       </div>
       <span class="spacer"></span>
       <span class="help-wrapper">
-        <a
-          *ngIf="statusIcon"
-          mat-icon-button
-          routerLink="settings/general"
-          target="_blank"
-        >
-          <img
-            src="{{ 'data:image/png;base64,' + statusIcon }}"
-            width="24"
-            height="24"
-          />
-        </a>
         <a mat-icon-button [href]="supportHref" target="_blank">
           <mat-icon
             class="color-light-primary"
@@ -160,12 +136,6 @@
               'layout.DataSinks' | translate
             }}</span>
           </a>
-          <a mat-list-item routerLink="net-service">
-            <mat-icon svgIcon="mdc:service-support"></mat-icon>
-            <span routerLinkActive="active" class="menu-text">{{
-              'layout.NetService' | translate
-            }}</span>
-          </a>
           <a mat-list-item routerLink="settings/network">
             <mat-icon svgIcon="mdc:network"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
@@ -178,11 +148,7 @@
               'layout.SystemInformation' | translate
             }}</span>
           </a>
-          <a
-            mat-list-item
-            routerLink="settings/change-password"
-            *ngIf="!(isCommissioningSkipped$ | async)"
-          >
+          <a mat-list-item routerLink="settings/change-password">
             <mat-icon svgIcon="mdc:lock"></mat-icon>
             <span routerLinkActive="active" class="menu-text">{{
               'layout.ChangePassword' | translate

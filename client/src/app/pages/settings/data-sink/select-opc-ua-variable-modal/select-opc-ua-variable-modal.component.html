@@ -29,7 +29,6 @@
     rowHeight="auto"
     [rows]="rows"
     class="select-type-table"
-    [messages]="{ emptyMessage: 'common.NoTableData' | translate }"
   >
     <ngx-datatable-column
       [name]="'settings-data-sink.Name' | translate"
@@ -70,58 +69,6 @@
           [title]="value"
         >
           {{ value }}
-        </div>
-      </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column
-      [name]="'settings-data-sink.DataType' | translate"
-      prop="dataType"
-      [minWidth]="80"
-      [maxWidth]="300"
-    >
-      <ng-template
-        ngx-datatable-cell-template
-        let-rowIndex="rowIndex"
-        let-value="value"
-        let-row="row"
-      >
-        <div
-          class="text-ellipsis"
-          [class.color-disabled]="isExisting(row.address)"
-          [title]="value"
-        >
-          <ng-container [ngSwitch]="value">
-            <ng-container *ngSwitchCase="DataPointDataType.String">{{
-              'data-type.String' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.Double">{{
-              'data-type.Double' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.Byte">{{
-              'data-type.Byte' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.UInt16">{{
-              'data-type.UInt16' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.UInt32">{{
-              'data-type.UInt32' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.Int16">{{
-              'data-type.Int16' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.Int32">{{
-              'data-type.Int32' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.LocalizedText">{{
-              'data-type.LocalizedText' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchCase="DataPointDataType.Boolean">{{
-              'data-type.Boolean' | translate
-            }}</ng-container>
-            <ng-container *ngSwitchDefault>{{
-              value | uppercase
-            }}</ng-container>
-          </ng-container>
         </div>
       </ng-template>
     </ngx-datatable-column>

@@ -102,13 +102,8 @@
             {{ 'settings-general.CurrentTemplate' | translate }}:
             {{ currentTemplate | async | translate }}
           </p>
-          <button
-            mat-button
-            color="secondary"
-            [routerLink]="['/quick-start']"
-            [queryParams]="{ step: 1 }"
-          >
-            {{ 'settings-general.ChangeTemplate' | translate }}
+          <button mat-button color="secondary" [routerLink]="['/quick-start']">
+            {{ 'settings-general.OpenConfigurationWizard' | translate }}
           </button>
         </div>
       </mat-expansion-panel>

@@ -3,7 +3,6 @@ import { MessengerManager } from '..';
 import emptyDefaultConfig from '../../../../../_mdclight/runtime-files/templates/empty.json';
 import { ConfigManager } from '../../../ConfigManager';
 import { EventBus } from '../../../EventBus';
-import { DataSinkProtocols } from '../../../../common/interfaces';
 
 function log(m) {
   //console.log(m);
@@ -41,17 +40,7 @@ describe('MessengerManager', () => {
         ...emptyDefaultConfig.general,
         //@ts-ignore
         serialNumber: SERIALNUMBER
-      },
-      dataSinks: [
-        //@ts-ignore
-        ...emptyDefaultConfig.dataSinks,
-        {
-          protocol: DataSinkProtocols.MTCONNECT,
-          enabled: true,
-          //@ts-ignore
-          dataPoints: []
-        }
-      ]
+      }
     };
     //@ts-ignore
     configManager.config = configManager._config;
@@ -149,17 +138,7 @@ describe('MessengerManager', () => {
         ...emptyDefaultConfig.general,
         //@ts-ignore
         serialNumber: undefined
-      },
-      dataSinks: [
-        //@ts-ignore
-        ...emptyDefaultConfig.dataSinks,
-        {
-          protocol: DataSinkProtocols.MTCONNECT,
-          enabled: true,
-          //@ts-ignore
-          dataPoints: []
-        }
-      ]
+      }
     };
     //@ts-ignore
     configManager.config = configManager._config;

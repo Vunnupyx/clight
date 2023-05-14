@@ -26,22 +26,21 @@ Note: If you need a combination of operations please read the `Combine Operation
 
 #### Overview of Operators:
 
-| Name              | Type         | Number of Sources | Result      |
-| ----------------- | ------------ | ----------------- | ----------- |
-| AND               | Logical      | Multiple          | Boolean     |
-| OR                | Logical      | Multiple          | Boolean     |
-| NOT               | Logical      | Single            | Boolean     |
-| Counter           | Counter      | Single            | Number      |
-| Thresholds        | Threshold    | Single            | Text/Number |
-| Greater           | Comparison   | Single            | Boolean     |
-| Greater or Equal  | Comparison   | Single            | Boolean     |
-| Smaller           | Comparison   | Single            | Boolean     |
-| Smaller or Equal  | Comparison   | Single            | Boolean     |
-| Equal             | Comparison   | Single            | Boolean     |
-| Unequal           | Comparison   | Single            | Boolean     |
-| Enumeration       | Enumeration  | Multiple          | Text/Number |
-| Calculation       | Mathematical | Multiple          | Number      |
-| Set Energy Tariff | Enumeration  | Multiple          | Text        |
+| Name             | Type         | Number of Sources | Result      |
+| ---------------- | ------------ | ----------------- | ----------- |
+| AND              | Logical      | Multiple          | Boolean     |
+| OR               | Logical      | Multiple          | Boolean     |
+| NOT              | Logical      | Single            | Boolean     |
+| Counter          | Counter      | Single            | Number      |
+| Thresholds       | Threshold    | Single            | Text/Number |
+| Greater          | Comparison   | Single            | Boolean     |
+| Greater or Equal | Comparison   | Single            | Boolean     |
+| Smaller          | Comparison   | Single            | Boolean     |
+| Smaller or Equal | Comparison   | Single            | Boolean     |
+| Equal            | Comparison   | Single            | Boolean     |
+| Unequal          | Comparison   | Single            | Boolean     |
+| Enumeration      | Enumeration  | Multiple          | Text/Number |
+| Calculation      | Mathematical | Multiple          | Number      |
 
 #### Operators:
 
@@ -177,7 +176,7 @@ Custom mathematical expression using variable names and manually typing the math
 
 ##### SET ENERGY TARIFF
 
-Type: Enumeration | Number of Sources: Multiple | Result: Text
+Type: Enumeration | Number of Sources: Multiple | Result: Text/Number
 
 This type allows mapping data sources or other VDPs to a specific machine status, which is then used for automatic updating of Energy Tariff counter.
 

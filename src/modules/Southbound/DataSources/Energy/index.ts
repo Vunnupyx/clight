@@ -5,10 +5,7 @@ import { IDataSourceParams, IMeasurement } from '../interfaces';
 import { IHostConnectivityState, ITariffNumbers } from './interfaces';
 import { PhoenixEmProAdapter } from './Adapter/PhoenixEmProAdapter';
 import { VirtualDataPointManager } from '../../../VirtualDataPointManager';
-import {
-  IDataPointConfig,
-  IEnergyDataSourceConnection
-} from '../../../ConfigManager/interfaces';
+import { IDataPointConfig } from '../../../ConfigManager/interfaces';
 
 /**
  * Implementation of Energy data source
@@ -18,7 +15,6 @@ export class EnergyDataSource extends DataSource {
   private phoenixEemClient: PhoenixEmProAdapter;
   private virtualDataPointManager: VirtualDataPointManager;
   private dataPoints: IDataPointConfig[];
-  private ENERGY_DATAPOINT_READING_CYCLE = 15000;
 
   constructor(
     params: IDataSourceParams,
@@ -58,9 +54,7 @@ export class EnergyDataSource extends DataSource {
       return;
     }
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
-    this.phoenixEemClient = new PhoenixEmProAdapter(
-      connection as IEnergyDataSourceConnection
-    );
+    this.phoenixEemClient = new PhoenixEmProAdapter(connection);
 
     try {
       await this.phoenixEemClient.testHostConnectivity();
@@ -77,7 +71,7 @@ export class EnergyDataSource extends DataSource {
         this.virtualDataPointManager.setEnergyCallback(
           this.handleMachineStatusChange.bind(this)
         );
-        this.setupDataPoints(this.ENERGY_DATAPOINT_READING_CYCLE);
+        this.setupDataPoints();
         this.setupLogCycle();
       } else {
         throw new Error(

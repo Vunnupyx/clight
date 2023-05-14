@@ -26,22 +26,21 @@ Hinweis: Wenn Sie eine Kombination von Operationen benötigen, lesen Sie bitte d
 
 #### Übersicht über die Operatoren:
 
-| Name                  | Typ           | Anzahl der Quellen | Ergebnis  |
-| --------------------- | ------------- | ------------------ | --------- |
-| Und                   | Logisch       | Mehrfach           | Boolesch  |
-| Oder                  | Logisch       | Mehrfach           | Boolesch  |
-| Nicht                 | Logisch       | Einfach            | Boolesch  |
-| Zähler                | Zähler        | Einfach            | Zahl      |
-| Schwellenwerte        | Schwellenwert | Einfach            | Text/Zahl |
-| Größer                | Vergleich     | Einzeln            | Boolesch  |
-| Größer oder gleich    | Vergleich     | Einzeln            | Boolesch  |
-| Kleiner               | Vergleich     | Einzeln            | Boolesch  |
-| Kleiner oder gleich   | Vergleich     | Einzeln            | Boolesch  |
-| Gleich                | Vergleich     | Einzeln            | Boolesch  |
-| Ungleich              | Vergleich     | Einzeln            | Boolesch  |
-| Enumeration           | Enumeration   | Mehrfach           | Text/Zahl |
-| Berechnung            | Mathematisch  | Mehrfach           | Zahl      |
-| Energie Tariff Setzen | Enumeration   | Mehrfach           | Text      |
+| Name                | Typ           | Anzahl der Quellen | Ergebnis  |
+| ------------------- | ------------- | ------------------ | --------- |
+| Und                 | Logisch       | Mehrfach           | Boolesch  |
+| Oder                | Logisch       | Mehrfach           | Boolesch  |
+| Nicht               | Logisch       | Einfach            | Boolesch  |
+| Zähler              | Zähler        | Einfach            | Zahl      |
+| Schwellenwerte      | Schwellenwert | Einfach            | Text/Zahl |
+| Größer              | Vergleich     | Einzeln            | Boolesch  |
+| Größer oder gleich  | Vergleich     | Einzeln            | Boolesch  |
+| Kleiner             | Vergleich     | Einzeln            | Boolesch  |
+| Kleiner oder gleich | Vergleich     | Einzeln            | Boolesch  |
+| Gleich              | Vergleich     | Einzeln            | Boolesch  |
+| Ungleich            | Vergleich     | Einzeln            | Boolesch  |
+| Enumeration         | Enumeration   | Mehrfach           | Text/Zahl |
+| Berechnung          | Mathematisch  | Mehrfach           | Zahl      |
 
 #### Operatoren:
 
@@ -172,14 +171,6 @@ Benutzerdefinierter mathematischer Ausdruck unter Verwendung von Variablennamen 
 
 **Beispielvideo:**
 <Player controls url={video}/>
-
-##### Energie Tariff Setzen
-
-Art: Enumeration | Anzahl der Quellen: Mehrere | Ergebnis: Text
-
-Dieser Typ ermöglicht die Zuordnung von Datenquellen oder anderen VDPs zu einem bestimmten Maschinenstatus, der dann für die automatische Aktualisierung des Energietarifzählers verwendet wird.
-
-Hinweis: Die Rückgabewerte sind fest und können nicht geändert werden, nur die Reihenfolge des Maschinenstatus kann aktualisiert werden.
 
 ### Hinzufügen eines virtuellen Datenpunkts
 

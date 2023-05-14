@@ -17,7 +17,6 @@ import { QuickStartModule } from './pages/quick-start/quick-start.module';
 import { SystemInformationModule } from './pages/system-information/system-information.module';
 import { AuthModule } from './pages/auth/auth.module';
 import { CommissioningModule } from './pages/commissioning/commissioning.module';
-import { NetServiceModule } from './pages/net-service/net-service.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,13 +36,10 @@ import { NetServiceModule } from './pages/net-service/net-service.module';
     LayoutModule,
     SettingsModule,
     QuickStartModule,
-    NetServiceModule,
     SystemInformationModule,
 
     AppRoutingModule,
-    ToastrModule.forRoot({
-      preventDuplicates: true
-    }),
+    ToastrModule.forRoot(),
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

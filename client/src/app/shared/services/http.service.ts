@@ -50,16 +50,10 @@ export class HttpService {
     private toastr: ToastrService
   ) {}
 
-  get<T = any>(
-    url: string,
-    options?: RequestOptionsArgs,
-    suppressErrorNotification?: boolean
-  ) {
+  get<T = any>(url: string, options?: RequestOptionsArgs) {
     return this.http
       .get<T>(this._getUrl(url), this._getOptions(options))
-      .pipe(
-        catchError((err) => !suppressErrorNotification && this._catchError(err))
-      )
+      .pipe(catchError((err) => this._catchError(err)))
       .toPromise();
     // .catch((err) => this._catchError(err));
   }
@@ -120,14 +114,6 @@ export class HttpService {
     if (err.status === 403 && this.authService.token) {
       this.router.navigate(['/reset-password']);
       return EMPTY;
-    }
-
-    if (err.status === 504 && this.authService.token) {
-      this.toastr.error(
-        this.translate.instant('http.RuntimeError'),
-        undefined,
-        { timeOut: 30000 }
-      );
     }
 
     throw err;

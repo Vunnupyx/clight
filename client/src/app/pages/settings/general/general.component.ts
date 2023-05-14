@@ -8,16 +8,13 @@ import {
   SystemInformationService,
   TemplateService
 } from 'app/services';
-import { ConfigurationAgentHttpService, LocalStorageService } from 'app/shared';
+import { LocalStorageService } from 'app/shared';
 import {
   ConfirmDialogComponent,
   ConfirmDialogModel
 } from 'app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { checkContinuously } from 'app/shared/utils';
-
-const RESTART_STATUS_POLLING_INTERVAL_MS = 10_000;
 
 @Component({
   selector: 'app-general',
@@ -33,7 +30,6 @@ export class GeneralComponent implements OnInit {
     private systemInformationService: SystemInformationService,
     private translate: TranslateService,
     private localStorageService: LocalStorageService,
-    private configAgentEndpoint: ConfigurationAgentHttpService,
     private templatesService: TemplateService,
     private toastr: ToastrService,
     private dialog: MatDialog
@@ -90,55 +86,14 @@ export class GeneralComponent implements OnInit {
         );
         this.showLoadingRestart = false;
       } else {
-        // Check that runtime is not reachable
-        await checkContinuously(
-          this.checkSystemShutdown.bind(this),
-          RESTART_STATUS_POLLING_INTERVAL_MS
-        );
-        // Check that runtime is reachable again
-        await checkContinuously(
-          this.checkSystemRestart.bind(this),
-          RESTART_STATUS_POLLING_INTERVAL_MS
-        );
-        // System restarted successfully
-        this.toastr.success(
-          this.translate.instant('settings-general.RestartDeviceSuccess')
-        );
-        this.showLoadingRestart = false;
+        setTimeout(() => {
+          this.toastr.success(
+            this.translate.instant('settings-general.RestartDeviceSuccess')
+          );
+          this.showLoadingRestart = false;
+        }, 2.5 * 60 * 1000); // Show loading indicator for 2.5 minutes
       }
     });
-  }
-
-  /**
-   * Checks if the system has been shut down
-   */
-  private async checkSystemShutdown() {
-    try {
-      await this.configAgentEndpoint.get(
-        `/system/versions`,
-        undefined,
-        true //disables error notification
-      );
-      return false;
-    } catch (e) {
-      return true;
-    }
-  }
-
-  /**
-   * Checks if the system has been restarted
-   */
-  async checkSystemRestart() {
-    try {
-      await this.configAgentEndpoint.get(
-        `/system/versions`,
-        undefined,
-        true //disables error notification
-      );
-      return true;
-    } catch (e) {
-      return false;
-    }
   }
 
   async onRestoreFileChange(event: any) {

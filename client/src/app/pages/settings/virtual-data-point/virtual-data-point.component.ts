@@ -38,6 +38,10 @@ import {
 } from './set-schedules-modal/set-schedules-modal.component';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { ToastrService } from 'ngx-toastr';
+import {
+  SetBlinkSettingsModalComponent,
+  SetBlinkSettingsModalData
+} from './set-blink-settings-modal/set-blink-settings-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -105,6 +109,10 @@ export class VirtualDataPointComponent implements OnInit {
     {
       value: VirtualDataPointOperationType.SET_TARIFF,
       text: 'virtual-data-point-operation-type.SetTariff'
+    },
+    {
+      value: VirtualDataPointOperationType.BLINK_DETECTION,
+      text: 'virtual-data-point-operation-type.BlinkDetection'
     }
   ];
 
@@ -329,7 +337,9 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDelete(obj: VirtualDataPoint) {
-    const title = this.translate.instant('settings-virtual-data-point.Delete');
+    const title = this.translate.instant(
+      'settings-virtual-data-point.DeleteTitle'
+    );
     const message = this.translate.instant(
       'settings-virtual-data-point.DeleteMessage'
     );
@@ -417,17 +427,23 @@ export class VirtualDataPointComponent implements OnInit {
     ].includes(operationType!);
   }
 
-  async onSetEnumeration(virtualPoint: VirtualDataPoint) {
+  onSetEnumeration(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.enumeration) {
       virtualPoint.enumeration = { items: [] };
     }
 
-    await this.sourceDataPointService.getSourceDataPointsAll();
+    const protocol = this.sourceDataPointService.getProtocol(
+      virtualPoint.sources![0]
+    );
+
+    this.sourceDataPointService.getSourceDataPointsAll();
+    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
       data: {
         enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
+        protocol,
         isSetTariffType:
           virtualPoint.operationType ===
           VirtualDataPointOperationType.SET_TARIFF
@@ -546,15 +562,52 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
+  onSetBlinkSettings(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.blinkSettings) {
+      virtualPoint.blinkSettings = {
+        timeframe: 10000,
+        risingEdges: 3,
+        linkedBlinkDetections: []
+      };
+    }
+
+    const dataPointsWithBlinkDetection = this.datapointRows.filter(
+      (x) =>
+        x.operationType === VirtualDataPointOperationType.BLINK_DETECTION &&
+        x.id !== virtualPoint.id
+    );
+
+    const dialogRef = this.dialog.open<
+      SetBlinkSettingsModalComponent,
+      SetBlinkSettingsModalData
+    >(SetBlinkSettingsModalComponent, {
+      data: {
+        blinkSettings: { ...virtualPoint.blinkSettings },
+        dataPointsWithBlinkDetection
+      },
+      width: '700px'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.blinkSettings = result.blinkSettings;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          blinkSettings: result.blinkSettings
+        });
+      }
+    });
+  }
+
   onOperationTypeChange(newOperationType) {
     if (this.unsavedRow) {
+      this.unsavedRow.sources = this.unsavedRow.sources
+        ? [this.unsavedRow.sources[0]]
+        : [];
       this.unsavedRow.operationType = newOperationType;
-
-      if (
-        Array.isArray(this.unsavedRow.sources) &&
-        this.unsavedRow.sources.length
-      )
-        this.unsavedRow.sources = [this.unsavedRow.sources[0]];
     }
   }
 

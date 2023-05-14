@@ -96,7 +96,7 @@ export class SourceDataPointService {
           this._store.snapshot.dataPoints
         );
 
-        await this._getDataPoints(datasourceProtocol);
+        this._getDataPoints(datasourceProtocol);
       }
 
       this._store.patchState((state) => {
@@ -138,12 +138,6 @@ export class SourceDataPointService {
     return this.httpService
       .get(`/datasources/${protocol}/ping`)
       .then((res) => {
-        if (res?.error?.msg?.includes('disabled')) {
-          this.toastr.error(
-            this.translate.instant('settings-data-source-point.HostDisabled')
-          );
-          return;
-        }
         this.toastr.success(
           this.translate.instant(
             `settings-data-source-point.ConnectionAvailableWithDelay`
@@ -274,9 +268,7 @@ export class SourceDataPointService {
     datasourceProtocol: DataSourceProtocol,
     obj: SourceDataPoint
   ) {
-    // For tariff-number id needs to be address.
-    // As live data endpoint does not send address info, it is important to set id correctly here
-    obj.id = obj.address === 'tariff-number' ? obj.address : uuidv4();
+    obj.id = uuidv4();
 
     this._store.patchState((state) => {
       state.status = Status.Ready;
@@ -336,8 +328,6 @@ export class SourceDataPointService {
         return `[DI]`;
       case DataSourceProtocol.Energy:
         return `[Energy]`;
-      case DataSourceProtocol.MTConnect:
-        return `[MTC]`;
       default:
         return '';
     }

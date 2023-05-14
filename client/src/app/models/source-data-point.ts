@@ -3,10 +3,7 @@ export enum SourceDataPointType {
   NCK = 'nck',
   Measurement = 'measurement',
   Meter = 'meter',
-  Device = 'device',
-  Event = 'event',
-  Sample = 'sample',
-  Condition = 'condition'
+  Device = 'device'
 }
 
 export class SourceDataPoint {
@@ -17,5 +14,4 @@ export class SourceDataPoint {
   readFrequency?: number;
   type?: SourceDataPointType;
   enabled?: boolean;
-  mandatory?: boolean;
 }

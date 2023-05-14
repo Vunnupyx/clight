@@ -4,7 +4,7 @@ title: Anwendungsschnittstellen
 
 ## Einleitung
 
-`Anwendungsschnittstellen` bieten die Möglichkeit, Daten aus dem IoTconnector flex an externe Anwendungen zu exportieren. Die aus den Datenquellen ausgelesenen und aufbereiteten Daten können so von externen Anwendungen, wie z.B. dem DMG MORI Messenger, oder Cloud-Plattformen weiterverarbeitet werden.
+`Application Interfaces` bieten die Möglichkeit, Daten aus dem IoTconnector flex an externe Anwendungen zu exportieren. Die aus den Datenquellen ausgelesenen und aufbereiteten Daten können so von externen Anwendungen, wie z.B. dem DMG MORI Messenger, oder Cloud-Plattformen weiterverarbeitet werden.
 
 Die aktuell unterstützten Schnittstellen/Protokolle sind:
 

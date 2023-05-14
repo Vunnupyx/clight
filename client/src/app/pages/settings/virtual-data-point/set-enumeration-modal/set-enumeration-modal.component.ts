@@ -6,6 +6,7 @@ import {
 } from '@angular/material/dialog';
 import {
   DataPointLiveData,
+  DataSourceProtocol,
   SourceDataPoint,
   VirtualDataPoint,
   VirtualDataPointEnumeration,
@@ -20,9 +21,9 @@ import { SourceDataPointService, VirtualDataPointService } from 'app/services';
 import { Subscription } from 'rxjs';
 import { ObjectMap } from 'app/shared/utils';
 import { withLatestFrom } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 
 export interface SetEnumerationModalData {
+  protocol?: DataSourceProtocol;
   sources?: string[];
   enumeration: VirtualDataPointEnumeration;
   isSetTariffType?: boolean;
@@ -46,7 +47,6 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    private translate: TranslateService,
     private dialogRef: MatDialogRef<
       SetEnumerationModalComponent,
       SetEnumerationModalData
@@ -75,17 +75,8 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
       )
     );
 
-    for (const source of this.data.sources) {
-      const protocol = this.sourceDataPointService.getProtocol(source);
-      this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
-    }
-
-    const firstSourceProtocol = this.sourceDataPointService.getProtocol(
-      this.data.sources[0]
-    );
-
     this.liveDataSub = this.sourceDataPointService
-      .setLivedataTimer(firstSourceProtocol, 'true')
+      .setLivedataTimer(this.data.protocol!, 'true')
       .subscribe();
 
     this.defaultValue = this.data.enumeration.defaultValue!;
@@ -95,10 +86,8 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
   }
 
   onDelete(index: number) {
-    const title = this.translate.instant('settings-virtual-data-point.Delete');
-    const message = this.translate.instant(
-      'settings-virtual-data-point.EnumerationDeleteMessage'
-    );
+    const title = `Delete`;
+    const message = `Are you sure you want to delete enumeration item?`;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)
@@ -155,7 +144,7 @@ export class SetEnumerationModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
-    this.liveDataSub && this.liveDataSub.unsubscribe();
+    this.liveDataSub.unsubscribe();
   }
 
   private onDataPoints(

@@ -1,10 +1,6 @@
 import { StateMachine, StateAndTransitions } from './state-machine';
 import { ConfigurationAgentHttpService, HttpService } from 'app/shared';
-import {
-  sleep,
-  compareSemanticVersion,
-  checkContinuously
-} from 'app/shared/utils';
+import { sleep, compareSemanticVersion } from 'app/shared/utils';
 import { HealthcheckResponse } from 'app/services';
 
 interface CosInstalledVersion {
@@ -290,14 +286,14 @@ export class UpdateManager {
   private async validateCosDownload() {
     const logPrefix = `${UpdateManager.name}::validateCosDownload`;
     try {
-      const downloadStatus: checkDownloadStatus = await checkContinuously(
+      const downloadStatus: checkDownloadStatus = await this.checkContinuously(
         this.checkCosDownloadStatus.bind(this),
         DOWNLOAD_STATUS_POLLING_INTERVAL_MS
       );
 
       if (downloadStatus === 'success') {
         //! GET https://<ip>/configuration-agent/v1/system/update is required! If not executed, applying the update does not work!
-        const cosDownloaded: checkDownloadStatus = await checkContinuously(
+        const cosDownloaded: checkDownloadStatus = await this.checkContinuously(
           this.checkCosDownloaded.bind(this),
           CHECK_DOWNLOADED_POLLING_INTERVAL_MS,
           24
@@ -381,12 +377,12 @@ export class UpdateManager {
   private async waitForSystemRestart() {
     const logPrefix = `${UpdateManager.name}::waitForSystemRestart`;
     try {
-      await checkContinuously(
+      await this.checkContinuously(
         this.checkSystemShutdown.bind(this),
         RESTART_STATUS_POLLING_INTERVAL_MS
       );
 
-      await checkContinuously(
+      await this.checkContinuously(
         this.checkSystemRestart.bind(this),
         RESTART_STATUS_POLLING_INTERVAL_MS
       );
@@ -440,7 +436,7 @@ export class UpdateManager {
     const logPrefix = `${UpdateManager.name}::waitForModuleUpdates`;
 
     try {
-      const result = await checkContinuously(
+      const result = await this.checkContinuously(
         this.checkSystemVersions.bind(this),
         CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS
       );
@@ -450,7 +446,7 @@ export class UpdateManager {
         return this.waitForModuleUpdates(true);
       } else if (hasBackendRestarted) {
         //With healthcheck make sure runtime is also running
-        const healthCheckResponse = await checkContinuously(
+        const healthCheckResponse = await this.checkContinuously(
           this.checkRuntimeHealth.bind(this),
           CHECK_MODULE_UPDATE_STATUS_POLLING_INTERVAL_MS
         );
@@ -467,6 +463,39 @@ export class UpdateManager {
       console.log(logPrefix, err);
       return 'UNEXPECTED_ERROR';
     }
+  }
+
+  /**
+   * Periodically checks given Promise with given delay until it resolves
+   *
+   * @param fn function that returns a Promise to check periodically
+   * @param msDelayBetweenCalls delay between checks
+   * @param maxRetryCount max retries until the function returns the last result
+   * @returns
+   */
+  private async checkContinuously(
+    fn: () => Promise<any>,
+    msDelayBetweenCalls: number,
+    maxRetryCount: number = null
+  ) {
+    const logPrefix = `${UpdateManager.name}::checkContinuously`;
+    return fn()
+      .then(async (result) => {
+        if (result || (maxRetryCount !== null && maxRetryCount <= 0)) {
+          return result;
+        } else {
+          await sleep(msDelayBetweenCalls);
+          return this.checkContinuously(
+            fn,
+            msDelayBetweenCalls,
+            maxRetryCount !== null ? maxRetryCount - 1 : null
+          );
+        }
+      })
+      .catch((err) => {
+        // When server is down response is 502, so it will come here as expected
+        return 'ERROR';
+      });
   }
 
   /**

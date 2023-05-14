@@ -26,35 +26,34 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 #### 演算子の概要:
 
-| 名称              | タイプ     | ソースの数 | 結果        |
-| ----------------- | ---------- | ---------- | ----------- |
-| AND               | 論理       | 複数       | ブール値    |
-| OR                | 論理       | 複数       | ブール値    |
-| NOT               | 論理       | 単独       | ブール値    |
-| Counter           | カウンター | 単独       | 数値        |
-| Thresholds        | 閾値       | 単独       | Text/数値   |
-| Greater           | 比較       | 単独       | ブール値    |
-| Greater or Equal  | 比較       | 単独       | ブール値    |
-| Smaller           | 比較       | 単独       | ブール値    |
-| Smaller or Equal  | 比較       | 単独       | ブール値    |
-| Equal             | 比較       | 単独       | ブール値    |
-| Unequal           | 比較       | 単独       | ブール値    |
-| Enumeration       | 列挙       | 複数       | 文字列/数値 |
-| Calculation       | 算術       | 複数       | 数値        |
-| AND               | 論理       | 複数       | ブール値    |
-| OR                | 論理       | 複数       | ブール値    |
-| NOT               | 論理       | 単独       | ブール値    |
-| Counter           | カウンター | 単独       | 数値        |
-| Thresholds        | 閾値       | 単独       | 文字列/数値 |
-| Greater           | 比較       | 単独       | ブール値    |
-| Greater or Equal  | 比較       | 単独       | ブール値    |
-| Smaller           | 比較       | 単独       | ブール値    |
-| Smaller or Equal  | 比較       | 単独       | ブール値    |
-| Equal             | 比較       | 単独       | ブール値    |
-| Unequal           | 比較       | 単独       | ブール値    |
-| Enumeration       | 列挙       | 複数       | 文字列/数値 |
-| Calculation       | 算術       | 複数       | 数値        |
-| Set Energy Tariff | 列挙       | 複数       | Text        |
+| 名称 | タイプ | ソースの数 | 結果
+| ---------------- | ------------ | ----------------- | ----------- |
+| AND              | 論理      | 複数          | ブール値     |
+| OR               | 論理      | 複数          | ブール値     |
+| NOT              | 論理      | 単独            | ブール値     |
+| Counter          | カウンター      | 単独            | 数値      |
+| Thresholds       | 閾値    | 単独            | Text/数値 |
+| Greater          | 比較   | 単独            | ブール値     |
+| Greater or Equal | 比較   | 単独            | ブール値     |
+| Smaller          | 比較   | 単独            | ブール値     |
+| Smaller or Equal | 比較   | 単独            | ブール値     |
+| Equal            | 比較   | 単独            | ブール値     |
+| Unequal          | 比較   | 単独            | ブール値     |
+| Enumeration      | 列挙  | 複数          | 文字列/数値 |
+| Calculation      | 算術 | 複数          | 数値      |
+| AND              | 論理      | 複数          | ブール値     |
+| OR               | 論理      | 複数          | ブール値     |
+| NOT              | 論理      | 単独            | ブール値     |
+| Counter          | カウンター      | 単独            | 数値      |
+| Thresholds       | 閾値    | 単独            | 文字列/数値 |
+| Greater          | 比較   | 単独            | ブール値     |
+| Greater or Equal | 比較   | 単独            | ブール値     |
+| Smaller          | 比較   | 単独            | ブール値     |
+| Smaller or Equal | 比較   | 単独            | ブール値     |
+| Equal            | 比較   | 単独            | ブール値     |
+| Unequal          | 比較   | 単独            | ブール値     |
+| Enumeration      | 列挙  | 複数          | 文字列/数値 |
+| Calculation      | 算術 | 複数          | 数値      |
 
 #### 演算子:
 
@@ -184,14 +183,6 @@ import video from '../../../../static/video/vdp_calculation.mp4';
 
 **サンプル動画:**
 <Player controls url={video}/>
-
-##### SET ENERGY TARIFF
-
-Type: Enumeration | Number of Sources: Multiple | Result: Text
-
-This type allows mapping data sources or other VDPs to a specific machine status, which is then used for automatic updating of Energy Tariff counter.
-
-Note: The return values are fixed and cannot be changed, only the order of the machine status can be updated.
 
 ### 仮想データポイントの追加
 

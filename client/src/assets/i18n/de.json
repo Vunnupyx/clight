@@ -2,10 +2,7 @@
   "common": {
     "OK": "OK",
     "Cancel": "Abbrechen",
-    "LanguageDocumentationPath": "/de",
-    "NoTableData": "Fügen Sie zunächst einen Datenpunkt hinzu, um die Daten hier zu sehen",
-    "NoTableDataMapping": "Fügen Sie zunächst ein Mapping hinzu, um die Daten hier zu sehen",
-    "NoTableDataSchedule": "Fügen Sie zunächst einen Zeitplan hinzu, um die Daten hier zu sehen"
+    "LanguageDocumentationPath": "/de"
   },
   "commissioning": {
     "Welcome": "Willkommen bei IoTconnector flex",
@@ -23,7 +20,6 @@
     "Disconnected": "Getrennt",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Komponenten",
-    "SkipCommissioning": "Inbetriebnahme überspringen",
     "FinishCommissioning": "Inbetriebnahme beenden",
     "FinishError": "Die Inbetriebnahme konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut",
     "RegisteredError": "Bereitstellung fehlgeschlagen",
@@ -37,7 +33,6 @@
     "VirtualDataPoints": "Virtuelle Datenpunkte",
     "DataMapping": "Mapping",
     "DataSinks": "Anwendungs Schnittstellen",
-    "NetService": "NETservice",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen",
     "ChangePassword": "Passwort Ändern",
@@ -70,7 +65,6 @@
     "LoadError": "Fehler beim Laden. Bitte versuchen Sie es später erneut.",
     "TermsLoadError": "AGB konnten nicht geladen werden.  Bitte versuchen Sie es später erneut.",
     "AcceptError": "Fehler beim Akzeptieren der AGB.  Bitte versuchen Sie es später erneut.",
-    "Cancel": "Abbrechen",
     "Next": "Weiter",
     "Save": "Speichern",
     "Yes": "Ja",
@@ -143,7 +137,7 @@
     "Japanese": "日本語",
     "Templates": "Vorkonfigurationen",
     "CurrentTemplate": "Aktuell eingestellte Vorkonfiguration",
-    "ChangeTemplate": "Vorkonfiguration ändern",
+    "OpenConfigurationWizard": "Vorkonfiguation ändern",
     "BackupAndRestore": "Konfiguration sichern und wiederherstellen",
     "BackupConfiguration": "Aktuelle Konfiguration sichern",
     "RestoreConfiguration": "Konfiguration wiederherstellen",
@@ -153,7 +147,7 @@
     "RestartDevice": "Gerät neustarten",
     "RestartNow": "Neustarten",
     "RestartDeviceTitle": "Gerät neustarten",
-    "RestartDeviceText": "Wollen Sie das Gerät wirklich neustarten? Das Gerät ist danach bis zu 5 Minuten nicht verfügbar.",
+    "RestartDeviceText": "Wollen Sie das Gerät wirklich neustarten? Das Gerät ist danach für ca. 2 Minuten nicht verfügbar.",
     "RestartDeviceSuccess": "Das Gerät wurde erfolgreich neugestartet!",
     "RestartDeviceError": "Das Gerät konnte nicht neugestartet werden.",
     "BackupDownloadError": "Es könnte keine Sicherung der Konfiguration heruntergeladen werden. Versuchen Sie es später erneut!",
@@ -179,8 +173,7 @@
     "Cancel": "Abbrechen",
     "Select": "Auswählen",
     "Enabled": "Aktiviert",
-    "MachineName": "Machine Name",
-    "Host": "Host",
+    "IPAddress": "IP Adresse",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
     "Disconnected": "Nicht verbunden",
@@ -198,8 +191,7 @@
     "DataPoints": "Datenpunkte",
     "SelectAVariable": "Wählen Sie einen Datenpunkt",
     "ControllerType": "Typ",
-    "CurrentTariff": "Aktueller Tarif",
-    "TariffHelpText": "Wozu brauche ich den Tarif?",
+    "CurrentTariff": "Current Tariff",
     "Name": "Name",
     "Type": "Typ",
     "Description": "Description",
@@ -209,10 +201,8 @@
     "SoftwareVersion": "Software Version",
     "BTSSString": "BTSS String",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
-    "MTConnectConnectivityWarningText": "Es gab Probleme mit der Verbindung zum Host. Bitte überprüfen Sie Ihre Netzwerkeinstellungen oder den Host.",
     "Tabs": {
       "s7": "SIEMENS",
-      "mtconnect": "MTConnect",
       "ioshield": "Input Modul",
       "energy": "Energy"
     },
@@ -224,15 +214,12 @@
       }
     },
     "DiscardChanges": "Änderungen verwerfen",
-    "ApplyChanges": "Änderungen speichern",
-    "OpenMTConnectStream": "MTConnect Stream öffnen",
+    "ApplyChanges": "Ändeurngen speichern",
     "TestConnection": "Verbindung Testen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "UnsupportedAddress": "Der Datenpunkt entspricht nicht dem ausgewählten Datentyp.",
     "DuplicatedAddress": "Ein Datenpunkt mit der selben Addresse ist breits vorhanden",
     "SelectVariable": "Wählen Sie eine Variable",
-    "DeleteMessage": "Möchten Sie wirklich den Datenpunkt {{name}} löschen?",
-    "Port": "Port",
     "TariffStatus": {
       "0": "Keine Tariffzähler aktiv",
       "1": "Bereit",
@@ -259,9 +246,8 @@
     "SetThreshold": "Grenzwerte setzen",
     "LiveData": "Aktualwert",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
-    "DeleteMessage": "Möchten Sie wirklich den Virtuellen Datenpunkt löschen?",
-    "EnumerationDeleteMessage": "Möchten Sie wirklich die Enumeration löschen?",
-    "SchedulesDeleteMessage": "Möchten Sie wirklich den Zeitplan {{name}} löschen?",
+    "DeleteTitle": "Löschen",
+    "DeleteMessage": "Sind Sie sicher?",
     "SetThresholds": "Grenzwerte setzen",
     "SetComparativeValue": "Vergleichswert setzen",
     "MissingComparativeValue": "Vergleichswert fehlt",
@@ -274,18 +260,18 @@
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen übernehmen",
     "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
-    "SetSchedules": "Zeitpläne erstellen",
-    "AddSchedule": "Zeitplan einfügen",
-    "ScheduleName": "Zeitplan Name",
-    "DayDate": "Tag/Datum",
-    "Month": "Monat",
-    "Hour": "Uhr",
-    "Minutes": "Minuten",
-    "Seconds": "Sekunden",
-    "SetScheduledReset": "Zeitgesteuertes Zurücksetzen einstellen",
-    "ScheduleEvery": "Jede",
-    "Day": "Tag",
-    "DayOfMonth": "Tag des Monats",
+    "SetSchedules": "Set Schedules",
+    "AddSchedule": "Add Schedule",
+    "ScheduleName": "Schedule Name",
+    "DayDate": "Day/Date",
+    "Month": "Month",
+    "Hour": "Hour",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "SetScheduledReset": "Set scheduled reset",
+    "ScheduleEvery": "Every",
+    "Day": "Day",
+    "DayOfMonth": "Day of the month",
     "SetEnumeration": "Enumeration speichern",
     "AddEnumeration": "Enumeration hinzufügen",
     "DefaultValue": "Standardwert",
@@ -296,7 +282,11 @@
     "Formula": "Formel",
     "UnexpectedError": "Die Änderungen wurden nicht übernommen. Bitte versuchen Sie es erneut!",
     "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte können nur nach ihrer Definition genutzt werden!",
-    "SetTariffEnum": "Mapping für Maschinenzustand setzen"
+    "SetTariffEnum": "Mapping für Maschinenzustand setzen",
+    "SetBlinkSettings": "Set Blink Settings",
+    "Timeframe": "Timeframe",
+    "RisingEdges": "Rising Edges",
+    "LinkedBlinkDetections": "Linked Blink Detections"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -312,15 +302,15 @@
     "Unequal": "Ungleich",
     "Enumeration": "Enumeration",
     "Calculation": "Kalkulation",
-    "SetTariff": "Energie Tariff Setzen"
+    "SetTariff": "Energie Tariff Setzen",
+    "BlinkDetection": "Blink Detection"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuchen Sie es bitte später erneut!",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es bitte später erneut!",
     "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
-    "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen.",
-    "HostDisabled": "Datenquelle ist deaktiviert. Bitte überprüfen Sie die Einstellungen."
+    "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
   },
   "settings-data-sink": {
     "DataSink": "Anwendungsschnittstelle",
@@ -409,9 +399,7 @@
     "DataType": "Datentyp",
     "SetCustomOpcUaVariable": "Benutzerdefinierte OPC UA Variable setzen",
     "NodeId": "Node ID",
-    "DeleteMessage": "Möchten Sie wirklich den Datenpunkt löschen?",
-    "OPCUACustomVariableDeleteMessage": "Möchten Sie wirklich die OPC UA Variable löschen?",
-    "MappingDeleteMessage": "Möchten Sie wirklich das Mapping {{from}}->{{to}} löschen?",
+    "DeleteMessage": "Sind Sie sicher ",
     "Username": "Benutzername",
     "Hostname": "Hostname",
     "Server": "Server Status",
@@ -454,8 +442,7 @@
     "TargetDisabledTooltip": "Aktivieren Sie die entsprechende Anwendungsschnittstelle, um diese Zuordnung zu erstellen",
     "MappingDisabledTooltip": "Das Mapping ist derzeit nicht aktiv, weil entweder die Datenquelle oder die Anwendungsschnittstelle deaktiviert ist.",
     "DiscardChanges": "Änderungen verwerfen",
-    "ApplyChanges": "Änderungen speichern",
-    "DeleteMessage": "Möchten Sie wirklich das Mapping löschen?"
+    "ApplyChanges": "Änderungen speichern"
   },
   "settings-network": {
     "Network": "Netzwerkeinstellungen",
@@ -490,33 +477,6 @@
     "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
     "UpdateTimestampSuccess": "Zeiteinstellung wurde erfolgreich aktualisiert"
   },
-  "net-service": {
-    "NetService": "NETservice",
-    "StartNetService": "Start NETservice",
-    "WhatIsNetService": "What is NETservice?",
-    "Status": "Status",
-    "NetServiceSiteControl": "NETservice Site Control",
-    "CentralServerConnection": "Central Server Connection",
-    "ConnectedClients": "Connected Clients",
-    "UpdateStatus": "Update Status",
-    "FacilityTree": "Facility Tree",
-    "CentralServerConfiguration": "Central Server Configuration",
-    "ResetFacilityTree": "Reset Facility Tree",
-    "URL": "URL",
-    "Port": "Port",
-    "ApplyChanges": "Apply Changes",
-    "UpdateError": "Failed to update. Try again later",
-    "FacilityTreeResetSuccess": "Facility tree has been reset successfully!",
-    "CentralServerSaveSuccess": "Central Server has been saved successfully!",
-    "Running": "Running",
-    "Stopped": "Stopped",
-    "Unknown": "Unknown",
-    "Connected": "Connected",
-    "Disconnected": "Disconnected",
-    "NoUpdate": "No update",
-    "ClientUpdating": "Client updating",
-    "SiteControlUpdating": "Site control updating"
-  },
   "system-information": {
     "SystemInformation": "System Informationen",
     "UpdateSystem": "Systemaktualisierung",
@@ -549,22 +509,13 @@
     "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
     "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
     "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
-    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
-    "MachineInformation": "Gerät Informationen",
-    "Serial": "Serialnummer",
-    "ControlManufacturer": "Steuerung Hersteller",
-    "Manufacturer": "Hersteller",
-    "Source": "Quelle",
-    "ControlType": "Steuerung Typ",
-    "Model": "Modell",
-    "Unknown": "Unbekannt"
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"
   },
   "http": {
-    "SessionExpired": "Sie wurden aufgrund von Inaktivität abgemeldet. Bitte loggen Sie sich erneut ein.",
-    "RuntimeError": "Der Service ist aktuell nicht verfügbar. Bitte versuchen Sie es später noch einmal"
+    "SessionExpired": "Sie wurden aufgrund von Inaktivität abgemeldet. Bitte loggen Sie sich erneut ein."
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "Die Systemzeit unterscheidet sich von deiner aktuellen Browserzeit. Bitte stelle sicher, dass auf dem System de richtige Uhrzeit gesetzt ist. Eine falsche Systemzeit führt kann zum Ausfall der Datenquellen und Applikationsschnittstellen führen. Klicken Sie auf diese Warnung, um zur Einstellungsseite zu gelangen, und wählen Sie die Registerkarte Zeit, um die Zeiteinstellungen anzupassen."
@@ -575,32 +526,29 @@
     "Byte": "Byte",
     "UInt16": "UInt16",
     "UInt32": "UInt32",
-    "Int16": "Int16",
-    "Int32": "Int32",
-    "LocalizedText": "Localized Text",
     "Boolean": "Boolean"
   },
   "days-of-week": {
-    "Monday": "Montag",
-    "Tuesday": "Dienstag",
-    "Wednesday": "Mittwoch",
-    "Thursday": "Donnerstag",
-    "Friday": "Freitag",
-    "Saturday": "Samstag",
-    "Sunday": "Sonntag"
+    "Monday": "",
+    "Tuesday": "",
+    "Wednesday": "",
+    "Thursday": "",
+    "Friday": "",
+    "Saturday": "",
+    "Sunday": ""
   },
   "month": {
-    "Jan": "Januar",
-    "Feb": "Februar",
-    "Mar": "März",
-    "Apr": "April",
-    "May": "Mai",
-    "Jun": "Juni",
-    "Jul": "Juli",
-    "Aug": "August",
-    "Sep": "September",
-    "Oct": "Oktober",
-    "Nov": "November",
-    "Dec": "Dezember"
+    "Jan": "",
+    "Feb": "",
+    "Mar": "",
+    "Apr": "",
+    "May": "",
+    "Jun": "",
+    "Jul": "",
+    "Aug": "",
+    "Sep": "",
+    "Oct": "",
+    "Nov": "",
+    "Dec": ""
   }
 }

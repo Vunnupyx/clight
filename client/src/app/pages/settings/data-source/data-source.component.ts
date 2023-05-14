@@ -14,7 +14,6 @@ import {
   EnergyTypes,
   SourceDataPoint,
   SourceDataPointType,
-  MTConnectTypes,
   Connection
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
@@ -25,18 +24,12 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
+import { IP_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 
-const ENERGY_TARIFF_NUMBER_DP_ADDRESS = 'tariff-number';
-const SUPPORTED_DATA_SOURCE_PROTOCOLS = [
-  DataSourceProtocol.S7,
-  DataSourceProtocol.IOShield,
-  DataSourceProtocol.Energy,
-  DataSourceProtocol.MTConnect
-];
+const ENERGY_ADDRESS_REQUIRED = 'tariff-number';
 
 @Component({
   selector: 'app-data-source',
@@ -48,7 +41,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   Protocol = DataSourceProtocol;
   DataSourceConnectionStatus = DataSourceConnectionStatus;
   S7Types = S7Types;
-  MTConnectTypes = MTConnectTypes;
   IOShieldTypes = IOShieldTypes;
   EnergyTypes = EnergyTypes;
 
@@ -77,8 +69,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   liveDataSub!: Subscription;
   statusSub!: Subscription;
 
-  portRegex = PORT_REGEX;
-  ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
+  ipRegex = IP_REGEX;
   dsFormValid = true;
 
   filterDigitalInputAddressStr = '';
@@ -102,12 +93,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
 
   get isLoading() {
     return this.sourceDataPointService.status === Status.Loading;
-  }
-
-  get MTConnectStreamHref() {
-    return !this.dataSource?.machineName
-      ? `http://${this.dataSource.connection.hostname}:${this.dataSource.connection.port}/current`
-      : `http://${this.dataSource.connection.hostname}:${this.dataSource.connection.port}/${this.dataSource.machineName}/current`;
   }
 
   constructor(
@@ -180,9 +165,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     if (!arr || !arr.length) {
       return;
     }
-    this.dataSourceList = arr.filter((source) =>
-      SUPPORTED_DATA_SOURCE_PROTOCOLS.includes(source.protocol)
-    );
+    this.dataSourceList = arr;
 
     if (!this.dataSource) {
       this.switchDataSource(arr[0]);
@@ -257,16 +240,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateMachineName(val: string) {
-    if (!this.dataSource) {
-      return;
-    }
-    this.dataSource.machineName = val;
-    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
-      machineName: this.dataSource.machineName
-    });
-  }
-
   updateIpAddress(valid: boolean | null, val: string) {
     this.dsFormValid = !!valid;
 
@@ -278,35 +251,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     }
     this.dataSource.connection = this.dataSource.connection || <Connection>{};
     this.dataSource.connection.ipAddr = val;
-    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
-      connection: this.dataSource.connection
-    });
-  }
-
-  updateHostname(valid: boolean | null, val: string) {
-    this.dsFormValid = !!valid;
-
-    if (!valid || !this.dataSource) {
-      return;
-    }
-    this.dataSource.connection = this.dataSource.connection || <Connection>{};
-    this.dataSource.connection.hostname = val;
-    this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
-      connection: this.dataSource.connection
-    });
-  }
-
-  updatePort(valid: boolean | null, val: number) {
-    this.dsFormValid = !!valid;
-
-    if (!valid) {
-      return;
-    }
-    if (!this.dataSource) {
-      return;
-    }
-    this.dataSource.connection = this.dataSource.connection || <Connection>{};
-    this.dataSource.connection.port = val;
     this.dataSourceService.updateDataSource(this.dataSource.protocol!, {
       connection: this.dataSource.connection
     });
@@ -428,7 +372,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       } else {
         this.unsavedRow!.name = result.name;
         this.unsavedRow!.address = result.address;
-        this.unsavedRow!.mandatory = result.mandatory;
         if (this.dataSource?.protocol === DataSourceProtocol.Energy) {
           this.unsavedRow!.type = result.type;
         }
@@ -437,11 +380,8 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   onDelete(obj: SourceDataPoint) {
-    const title = this.translate.instant('settings-data-source.Delete');
-    const message = this.translate.instant(
-      'settings-data-source.DeleteMessage',
-      { name: obj.name }
-    );
+    const title = `Delete`;
+    const message = `Are you sure you want to delete data point ${obj.name}?`;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)
@@ -498,37 +438,24 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     return [SourceDataPointType.NCK].includes(type);
   }
 
-  findTariffNumberDatapoint(obj: SourceDataPoint): boolean {
+  isDataPointRequired(obj: SourceDataPoint): boolean {
     return (
       obj.type === SourceDataPointType.Device &&
-      obj.address === ENERGY_TARIFF_NUMBER_DP_ADDRESS
+      obj.address === ENERGY_ADDRESS_REQUIRED
     );
   }
 
   getTariffText() {
-    const tariffNumberDatapoint = this.datapointRows.find((dp) =>
-      this.findTariffNumberDatapoint(dp)
+    const deviceDatapoint = this.datapointRows.find((dp) =>
+      this.isDataPointRequired(dp)
     );
-    const tariffNumber = this.liveData?.[tariffNumberDatapoint?.address]?.value;
-    const translationKey = `settings-data-source.TariffStatus.${tariffNumber}`;
+    const translationKey = `settings-data-source.TariffStatus.${
+      this.liveData?.[deviceDatapoint?.address]?.value
+    }`;
     const result = this.translate.instant(translationKey);
     return result !== translationKey
       ? result
       : this.translate.instant('settings-data-source.TariffStatus.Unknown');
-  }
-
-  getLiveDataTextForIoShield(obj: SourceDataPoint) {
-    const liveDataValue = this.liveData[obj.id]?.value;
-
-    if (!obj.address?.startsWith('DI')) return liveDataValue;
-
-    const translationKey = `settings-data-source.Livedata.ioshield.${liveDataValue}`;
-    const result = this.translate.instant(translationKey);
-    return result !== translationKey ? result : liveDataValue;
-  }
-
-  goToMtConnectStream() {
-    window.open(this.MTConnectStreamHref, '_blank');
   }
 
   async onPing() {

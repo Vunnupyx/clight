@@ -15,6 +15,8 @@ module.exports = {
       items: [
         'SINUMERIK840DSLPL',
         'InputBoard',
+        'Energy',
+        'MTConnectDataSource',
         'VirtualDataPoints',
         'Mapping',
         'ApplicationInterface'
@@ -36,7 +38,7 @@ module.exports = {
       type: 'category',
       label: 'Other',
       collapsed: false,
-      items: ['CHANGELOG', 'OSSAttribution']
+      items: ['NETservice', 'CircuitDiagrams', 'CHANGELOG', 'OSSAttribution']
     }
   ]
 };

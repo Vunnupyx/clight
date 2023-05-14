@@ -119,6 +119,11 @@ export class VirtualDataPointComponent implements OnInit {
   unsavedRow?: VirtualDataPoint;
   unsavedRowIndex: number | undefined;
   liveData: ObjectMap<DataPointLiveData> = {};
+  defaultBlinkSettings = {
+    timeframe: 10000,
+    risingEdges: 3,
+    linkedBlinkDetections: []
+  };
 
   filterSourceStr: string = '';
 
@@ -300,6 +305,13 @@ export class VirtualDataPointComponent implements OnInit {
       };
     }
 
+    if (
+      this.unsavedRow?.operationType === 'blink-detection' &&
+      !this.unsavedRow?.blinkSettings
+    ) {
+      this.unsavedRow.blinkSettings = { ...this.defaultBlinkSettings };
+    }
+
     if (this.unsavedRow!.id) {
       this.virtualDataPointService
         .updateDataPoint(this.unsavedRow?.id!, this.unsavedRow!)
@@ -337,9 +349,7 @@ export class VirtualDataPointComponent implements OnInit {
   }
 
   onDelete(obj: VirtualDataPoint) {
-    const title = this.translate.instant(
-      'settings-virtual-data-point.DeleteTitle'
-    );
+    const title = this.translate.instant('settings-virtual-data-point.Delete');
     const message = this.translate.instant(
       'settings-virtual-data-point.DeleteMessage'
     );
@@ -427,23 +437,17 @@ export class VirtualDataPointComponent implements OnInit {
     ].includes(operationType!);
   }
 
-  onSetEnumeration(virtualPoint: VirtualDataPoint) {
+  async onSetEnumeration(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.enumeration) {
       virtualPoint.enumeration = { items: [] };
     }
 
-    const protocol = this.sourceDataPointService.getProtocol(
-      virtualPoint.sources![0]
-    );
-
-    this.sourceDataPointService.getSourceDataPointsAll();
-    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
+    await this.sourceDataPointService.getSourceDataPointsAll();
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
       data: {
         enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
-        protocol,
         isSetTariffType:
           virtualPoint.operationType ===
           VirtualDataPointOperationType.SET_TARIFF
@@ -564,11 +568,7 @@ export class VirtualDataPointComponent implements OnInit {
 
   onSetBlinkSettings(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.blinkSettings) {
-      virtualPoint.blinkSettings = {
-        timeframe: 10000,
-        risingEdges: 3,
-        linkedBlinkDetections: []
-      };
+      virtualPoint.blinkSettings = { ...this.defaultBlinkSettings };
     }
 
     const dataPointsWithBlinkDetection = this.datapointRows.filter(
@@ -604,10 +604,13 @@ export class VirtualDataPointComponent implements OnInit {
 
   onOperationTypeChange(newOperationType) {
     if (this.unsavedRow) {
-      this.unsavedRow.sources = this.unsavedRow.sources
-        ? [this.unsavedRow.sources[0]]
-        : [];
       this.unsavedRow.operationType = newOperationType;
+
+      if (
+        Array.isArray(this.unsavedRow.sources) &&
+        this.unsavedRow.sources.length
+      )
+        this.unsavedRow.sources = [this.unsavedRow.sources[0]];
     }
   }
 

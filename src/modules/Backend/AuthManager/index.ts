@@ -84,7 +84,10 @@ export class AuthManager {
       }
     );
 
-    const passwordChangeRequired = loggedUser.passwordChangeRequired;
+    // If device is not commissioned, password change is ignored as user is skipping the commissioning temporarily
+    const passwordChangeRequired = this.configManager.isDeviceCommissioned
+      ? loggedUser.passwordChangeRequired
+      : false;
 
     return Promise.resolve({ accessToken, passwordChangeRequired });
   }
@@ -105,6 +108,15 @@ export class AuthManager {
     return (request: Request, response: Response, next?: NextFunction) => {
       const header = request.headers['authorization'];
 
+      // If device is not commissioned, password change is ignored as user is skipping the commissioning temporarily^
+      if (!this.configManager.isDeviceCommissioned) {
+        if (withBooleanResponse) {
+          return true;
+        } else {
+          next();
+          return;
+        }
+      }
       if (!header) {
         response
           .status(403)

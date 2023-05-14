@@ -6,6 +6,8 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../shared';
 import { TimeSyncCheckService } from '../../services/time-sync-check.service';
 import { TranslateService } from '@ngx-translate/core';
+import { NetServiceService } from '../../services';
+import { CommissioningService } from 'app/services';
 
 @Component({
   selector: 'app-layer',
@@ -22,6 +24,7 @@ export class LayoutComponent {
 
   noLayout = false;
   resetPasswordLayout = false;
+  statusIcon: string;
 
   get supportHref() {
     return `${window.location.protocol}//${
@@ -37,7 +40,9 @@ export class LayoutComponent {
     private route: ActivatedRoute,
     private auth: AuthService,
     private readonly translate: TranslateService,
-    private timeSyncCheckService: TimeSyncCheckService
+    private timeSyncCheckService: TimeSyncCheckService,
+    private netServiceService: NetServiceService,
+    private commissioningService: CommissioningService
   ) {
     this.subs.add(
       this.router.events
@@ -59,7 +64,14 @@ export class LayoutComponent {
     );
   }
 
+  get isCommissioningSkipped$() {
+    return this.commissioningService.skipped;
+  }
+
   ngOnInit() {
+    this.subs.add(
+      this.netServiceService.statusIcon.subscribe((x) => (this.statusIcon = x))
+    );
     //Check time after a while to avoid not loading translation
     setTimeout(() => {
       this.timeSyncCheckService.checkTimeDifference();
@@ -67,6 +79,10 @@ export class LayoutComponent {
   }
 
   async logout() {
+    const isCommissioningSkipped = await this.commissioningService.isSkipped();
+    if (isCommissioningSkipped) {
+      await this.commissioningService.resetSkip();
+    }
     await this.auth.logout();
   }
 

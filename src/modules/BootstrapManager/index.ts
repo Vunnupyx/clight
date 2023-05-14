@@ -50,7 +50,8 @@ export class BootstrapManager {
 
     this.virtualDataPointManager = new VirtualDataPointManager({
       configManager: this.configManager,
-      cache: this.dataPointCache
+      cache: this.dataPointCache,
+      measurementsBus: this.measurementsEventsBus
     });
 
     this.dataSinksManager = new DataSinksManager({

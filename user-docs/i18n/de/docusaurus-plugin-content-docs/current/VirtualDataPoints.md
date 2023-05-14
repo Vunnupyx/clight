@@ -26,21 +26,23 @@ Hinweis: Wenn Sie eine Kombination von Operationen benötigen, lesen Sie bitte d
 
 #### Übersicht über die Operatoren:
 
-| Name                | Typ           | Anzahl der Quellen | Ergebnis  |
-| ------------------- | ------------- | ------------------ | --------- |
-| Und                 | Logisch       | Mehrfach           | Boolesch  |
-| Oder                | Logisch       | Mehrfach           | Boolesch  |
-| Nicht               | Logisch       | Einfach            | Boolesch  |
-| Zähler              | Zähler        | Einfach            | Zahl      |
-| Schwellenwerte      | Schwellenwert | Einfach            | Text/Zahl |
-| Größer              | Vergleich     | Einzeln            | Boolesch  |
-| Größer oder gleich  | Vergleich     | Einzeln            | Boolesch  |
-| Kleiner             | Vergleich     | Einzeln            | Boolesch  |
-| Kleiner oder gleich | Vergleich     | Einzeln            | Boolesch  |
-| Gleich              | Vergleich     | Einzeln            | Boolesch  |
-| Ungleich            | Vergleich     | Einzeln            | Boolesch  |
-| Enumeration         | Enumeration   | Mehrfach           | Text/Zahl |
-| Berechnung          | Mathematisch  | Mehrfach           | Zahl      |
+| Name                  | Typ            | Anzahl der Quellen | Ergebnis  |
+| --------------------- | -------------- | ------------------ | --------- |
+| Und                   | Logisch        | Mehrfach           | Boolesch  |
+| Oder                  | Logisch        | Mehrfach           | Boolesch  |
+| Nicht                 | Logisch        | Einfach            | Boolesch  |
+| Zähler                | Zähler         | Einfach            | Zahl      |
+| Schwellenwerte        | Schwellenwert  | Einfach            | Text/Zahl |
+| Größer                | Vergleich      | Einzeln            | Boolesch  |
+| Größer oder gleich    | Vergleich      | Einzeln            | Boolesch  |
+| Kleiner               | Vergleich      | Einzeln            | Boolesch  |
+| Kleiner oder gleich   | Vergleich      | Einzeln            | Boolesch  |
+| Gleich                | Vergleich      | Einzeln            | Boolesch  |
+| Ungleich              | Vergleich      | Einzeln            | Boolesch  |
+| Enumeration           | Enumeration    | Mehrfach           | Text/Zahl |
+| Berechnung            | Mathematisch   | Mehrfach           | Zahl      |
+| Energie Tariff Setzen | Enumeration    | Mehrfach           | Text      |
+| Blinkerkennung        | Blinkerkennung | Einzeln            | Zahl      |
 
 #### Operatoren:
 

@@ -26,21 +26,23 @@ Note: If you need a combination of operations please read the `Combine Operation
 
 #### Overview of Operators:
 
-| Name             | Type         | Number of Sources | Result      |
-| ---------------- | ------------ | ----------------- | ----------- |
-| AND              | Logical      | Multiple          | Boolean     |
-| OR               | Logical      | Multiple          | Boolean     |
-| NOT              | Logical      | Single            | Boolean     |
-| Counter          | Counter      | Single            | Number      |
-| Thresholds       | Threshold    | Single            | Text/Number |
-| Greater          | Comparison   | Single            | Boolean     |
-| Greater or Equal | Comparison   | Single            | Boolean     |
-| Smaller          | Comparison   | Single            | Boolean     |
-| Smaller or Equal | Comparison   | Single            | Boolean     |
-| Equal            | Comparison   | Single            | Boolean     |
-| Unequal          | Comparison   | Single            | Boolean     |
-| Enumeration      | Enumeration  | Multiple          | Text/Number |
-| Calculation      | Mathematical | Multiple          | Number      |
+| Name              | Type            | Number of Sources | Result      |
+| ----------------- | --------------- | ----------------- | ----------- |
+| AND               | Logical         | Multiple          | Boolean     |
+| OR                | Logical         | Multiple          | Boolean     |
+| NOT               | Logical         | Single            | Boolean     |
+| Counter           | Counter         | Single            | Number      |
+| Thresholds        | Threshold       | Single            | Text/Number |
+| Greater           | Comparison      | Single            | Boolean     |
+| Greater or Equal  | Comparison      | Single            | Boolean     |
+| Smaller           | Comparison      | Single            | Boolean     |
+| Smaller or Equal  | Comparison      | Single            | Boolean     |
+| Equal             | Comparison      | Single            | Boolean     |
+| Unequal           | Comparison      | Single            | Boolean     |
+| Enumeration       | Enumeration     | Multiple          | Text/Number |
+| Calculation       | Mathematical    | Multiple          | Number      |
+| Set Energy Tariff | Enumeration     | Multiple          | Text        |
+| Blink Detection   | Blink Detection | Single            | Number      |
 
 #### Operators:
 
@@ -176,11 +178,60 @@ Custom mathematical expression using variable names and manually typing the math
 
 ##### SET ENERGY TARIFF
 
-Type: Enumeration | Number of Sources: Multiple | Result: Text/Number
+Type: Enumeration | Number of Sources: Multiple | Result: Text
 
 This type allows mapping data sources or other VDPs to a specific machine status, which is then used for automatic updating of Energy Tariff counter.
 
 Note: The return values are fixed and cannot be changed, only the order of the machine status can be updated.
+
+##### BLINK DETECTION
+
+Type: Blink Detection | Number of Sources: Single | Result: Number (0, 1 or 2)
+
+This VDP is used to define a blinking detection behavior for a single source value (from Data Source or another VDP). With the customizable settings, it allows setting the wished behavior for a blink detection.
+
+###### Definition of terms:
+
+`Timeframe`: A moving window of time. It is used to check rising edges within this time period to determine blinking status.
+`Rising Edge`: Change of a source value from `false` to `true`.
+`Falling Edge`: Change of a source value from `true` to `false`.
+
+###### Adjustable Parameters:
+
+With the following adjustable parameters you can customize the blink detection behavior. The given settings apply only to that VDP, so different VDPs can have different settings.
+
+| Name                               | Allowed value range        | Description                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Timeframe                          | 1000-120000 (milliseconds) | Amount of time in milliseconds, in which defined count of rising edges must occur to detect blinking status of the source value                                                                                                                                                                                                                |
+| Rising Edges                       | 1-10 (count)               | Count of rising edges that are required to determine a blinking status within the defined timeframe                                                                                                                                                                                                                                            |
+| Linked Blink Detections (Optional) | -                          | Optionally you can link other signals as dependency. If the linked input starts blinking, it resets the blink detection of this signal, in order to synchronise the output of both signals. It's useful for some use cases that both signals change to blinking at the same time although the blink start appears at different points of time. |
+
+###### Result of the VDP:
+
+Result of the VDP shows the connected source's status. Possible results of this VDP are:
+
+- 0 = OFF
+- 1 = ON
+- 2 = BLINKING
+
+###### Blink Detection Logic and Examples:
+
+- Signals are delayed at the output with timeframe length, even if there is no blinking detected. That is to make sure all values are evaluated within the timeframe to detect potential blinking behaviour.
+  > Example: Assume timeframe is 10 seconds and rising edge count is 3. Any source value will be displayed at the output 10 seconds later. If within this 10 seconds 3 rising edges are detected then the output will be 2 (BLINKING), otherwise its value will be 1(ON) or 0(OFF) depending on the source value.
+- When enough rising edges are available, the blinking is activated at the end of the timeframe and timeframe amount of time is counted from the first rising edge within that timeframe. So, even if blinking detected in the middle of the timeframe, the blink status is shown at the end of the timeframe. Then the result of VDP is 2 (blinking).
+  > Example: Assume timeframe is 10 seconds and rising edge count is 3. When source has 3 rising edges in 6 seconds, the result of blinking is still shown when 10 seconds from first rising edge has passed. The value after that depends again on source values and count of detected rising edges.
+- After blinking of the source ends, the first value is kept for a timeframe long.
+  > Example: Assume timeframe is 10 seconds and source value turns to false when the blinking ends. Then the output will be shown as false for 10 seconds long, even if source value changes within 10 seconds.
+- If there is a linked signal connected, that linked signal's rising edge resets the blinking behaviour of the main signal for a timeframe amount of time. The last value of the main signal before reset is shown as output during the timeframe. This is used to help synchronize blinking status of two or more connected signals.
+  > Example: Assume timeframe is 10 seconds and rising edge count is 3 and VDP2 depends on VDP1. When VDP1 has a rising edge, VDP2 cannot have a blinking status for 10 seconds since the rising edge from VDP1. Also, during this time VDP2 output is shown as its last value before this reset for 10 seconds long.
+
+The following example images show the usage and difference between independent and linked signals:
+
+> Independent Signals:
+> ![Blink detection with independent signals](/img/vdp/blinking_detection_with_independent_signals.png)
+
+> Linked signals:
+> ![Blink detection with linked signals](/img/vdp/blinking_detection_with_dependent_signals.png)
 
 ### How to Add a Virtual Data Point
 

@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "Cancel",
-    "LanguageDocumentationPath": ""
+    "LanguageDocumentationPath": "",
+    "NoTableData": "First add a data point to see data here",
+    "NoTableDataMapping": "First add a mapping to see data here",
+    "NoTableDataSchedule": "First add a schedule to see data here"
   },
   "commissioning": {
     "Welcome": "Welcome to IoTconnector flex",
@@ -20,6 +23,7 @@
     "Disconnected": "Disconnected",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Components",
+    "SkipCommissioning": "Skip commissioning",
     "FinishCommissioning": "Finish commissioning",
     "FinishError": "Failed to finish commissioning. Please try again later",
     "RegisteredError": "Failed to provisioned",
@@ -33,6 +37,7 @@
     "VirtualDataPoints": "Virtual Data Points",
     "DataMapping": "Data Mapping",
     "DataSinks": "Application Interfaces",
+    "NetService": "NETservice",
     "Network": "Network",
     "SystemInformation": "System Information",
     "ChangePassword": "Change Password",
@@ -65,6 +70,7 @@
     "LoadError": "Failed to load info. Please try again later",
     "TermsLoadError": "Error loading Terms and Conditions. Please try again later.",
     "AcceptError": "Error occured while accepting Terms and Conditions. Please try again later.",
+    "Cancel": "Cancel",
     "Next": "Next",
     "Save": "Save",
     "Yes": "Yes",
@@ -137,7 +143,7 @@
     "Japanese": "日本語",
     "Templates": "Templates",
     "CurrentTemplate": "Current Template",
-    "OpenConfigurationWizard": "Open Configuration Wizard",
+    "ChangeTemplate": "Change Template",
     "BackupAndRestore": "Backup and Restore Configuration",
     "BackupConfiguration": "Backup Configuration",
     "RestoreConfiguration": "Restore Configuration",
@@ -147,7 +153,7 @@
     "RestartDevice": "Restart device",
     "RestartNow": "Restart now",
     "RestartDeviceTitle": "Restart device",
-    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for up to 5 minutes.",
     "RestartDeviceSuccess": "Device has been restarted successfully!",
     "RestartDeviceError": "Failed to restart device.",
     "BackupDownloadError": "Could not download backup. Please try again!",
@@ -173,7 +179,8 @@
     "Cancel": "Cancel",
     "Select": "Select",
     "Enabled": "Enabled",
-    "IPAddress": "IP Address",
+    "MachineName": "Machine Name",
+    "Host": "Host",
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
@@ -192,6 +199,7 @@
     "SelectAVariable": "Select a variable",
     "ControllerType": "Type",
     "CurrentTariff": "Current Tariff",
+    "TariffHelpText": "What do I need the tariff for?",
     "Name": "Name",
     "Type": "Type",
     "Description": "Description",
@@ -201,25 +209,34 @@
     "SoftwareVersion": "Software Version",
     "BTSSString": "BTSS String",
     "LoadError": "Failed to load data sources. Try again later",
+    "MTConnectConnectivityWarningText": "There has been connectivity problems to the host. Please check your network settings or the host.",
     "Tabs": {
       "s7": "SIEMENS",
+      "mtconnect": "MTConnect",
       "ioshield": "Input Board",
       "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
         "0": "0 (Off)",
-        "1": "1 (On)",
-        "2": "2 (Blinking)"
+        "1": "1 (On)"
       }
+    },
+    "BlinkingStatus": {
+      "0": "0 (Off)",
+      "1": "1 (On)",
+      "2": "2 (Blinking)"
     },
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
+    "OpenMTConnectStream": "Open MTConnect Stream",
     "TestConnection": "Test Connection",
     "DuplicatedName": "You are not allowed to duplicate names",
     "UnsupportedAddress": "The data point does not correspond to the selected type",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "SelectVariable": "Select Variable",
+    "DeleteMessage": "Are you sure you want to delete data point {{name}}?",
+    "Port": "Port",
     "TariffStatus": {
       "0": "No tariff counter active",
       "1": "Standby",
@@ -246,8 +263,9 @@
     "SetThreshold": "Set Threshold",
     "LiveData": "Live Data",
     "LoadError": "Failed to load data points. Try again later",
-    "DeleteTitle": "Delete",
     "DeleteMessage": "Are you sure you want to delete data point?",
+    "EnumerationDeleteMessage": "Are you sure you want to delete enumeration item?",
+    "SchedulesDeleteMessage": "Are you sure you want to delete the schedule {{name}}?",
     "SetThresholds": "Set Thresholds",
     "SetComparativeValue": "Set Comparative Value",
     "MissingComparativeValue": "Comparative value is empty",
@@ -286,7 +304,8 @@
     "SetBlinkSettings": "Set Blink Settings",
     "Timeframe": "Timeframe",
     "RisingEdges": "Rising Edges",
-    "LinkedBlinkDetections": "Linked Blink Detections"
+    "LinkedBlinkDetections": "Linked Blink Detections",
+    "NoOtherBlinkDetectionVDPsAvailable": "There are no other VDPs with the type Blink Detection to choose from"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -310,7 +329,8 @@
     "BulkError": "Changes have not been applied. Please, try again!",
     "LoadError": "Failed to load source data points. Try again later",
     "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
-    "HostUnreachable": "Host unreachable please check IP configuration"
+    "HostUnreachable": "Host unreachable please check IP configuration",
+    "HostDisabled": "Data source is disabled, please check data source settings."
   },
   "settings-data-sink": {
     "DataSink": "Application Interface",
@@ -400,6 +420,8 @@
     "SetCustomOpcUaVariable": "Set Custom OPC UA Variable",
     "NodeId": "Node ID",
     "DeleteMessage": "Are you sure you want to delete data point?",
+    "OPCUACustomVariableDeleteMessage": "Are you sure you want to delete the OPC UA Variable?",
+    "MappingDeleteMessage": "Are you sure you want to delete mapping {{from}}->{{to}}?",
     "Username": "Username",
     "Hostname": "Hostname",
     "Server": "Server Status",
@@ -442,7 +464,8 @@
     "TargetDisabledTooltip": "Activate the related application interface to create this mapping",
     "MappingDisabledTooltip": "The mapping is currently not active because either the data source or the application interface is deactivated.",
     "DiscardChanges": "Discard Changes",
-    "ApplyChanges": "Apply Changes"
+    "ApplyChanges": "Apply Changes",
+    "DeleteMessage": "Are you sure you want to delete data mapping?"
   },
   "settings-network": {
     "Network": "Network",
@@ -477,6 +500,33 @@
     "UpdateAdapterSuccess": "Updated network adapter successfully",
     "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
+  "net-service": {
+    "NetService": "NETservice",
+    "StartNetService": "Start NETservice",
+    "WhatIsNetService": "What is NETservice?",
+    "Status": "Status",
+    "NetServiceSiteControl": "NETservice Site Control",
+    "CentralServerConnection": "Central Server Connection",
+    "ConnectedClients": "Connected Clients",
+    "UpdateStatus": "Update Status",
+    "FacilityTree": "Facility Tree",
+    "CentralServerConfiguration": "Central Server Configuration",
+    "ResetFacilityTree": "Reset Facility Tree",
+    "URL": "URL",
+    "Port": "Port",
+    "ApplyChanges": "Apply Changes",
+    "UpdateError": "Failed to update. Try again later",
+    "FacilityTreeResetSuccess": "Facility tree has been reset successfully!",
+    "CentralServerSaveSuccess": "Central Server has been saved successfully!",
+    "Running": "Running",
+    "Stopped": "Stopped",
+    "Unknown": "Unknown",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "NoUpdate": "No update",
+    "ClientUpdating": "Client updating",
+    "SiteControlUpdating": "Site control updating"
+  },
   "system-information": {
     "SystemInformation": "System Information",
     "UpdateSystem": "Update System",
@@ -509,13 +559,22 @@
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",
-    "FactoryResetSuccess": "Factory reset performed successfully!"
+    "FactoryResetSuccess": "Factory reset performed successfully!",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "Manufacturer": "Manufacturer",
+    "Source": "Source",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Unknown": "unknown"
   },
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"
   },
   "http": {
-    "SessionExpired": "You have been logged out due to inactivity. Please login in again"
+    "SessionExpired": "You have been logged out due to inactivity. Please login in again",
+    "RuntimeError": "The service is not available. Please try again later"
   },
   "clock": {
     "WarningSystemTimeVsBrowserTime": "The system time is different from your current browser time. Please make sure that the correct time is set on the system. An incorrect system time can lead to the failure of data sources and application interfaces. Click on this warning to go to settings page and choose Time tab to adjust time settings."
@@ -526,6 +585,9 @@
     "Byte": "Byte",
     "UInt16": "UInt16",
     "UInt32": "UInt32",
+    "Int16": "Int16",
+    "Int32": "Int32",
+    "LocalizedText": "Localized Text",
     "Boolean": "Boolean"
   },
   "days-of-week": {

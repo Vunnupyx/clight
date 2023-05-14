@@ -18,6 +18,7 @@ import {
   EditScheduleModalComponent,
   EditScheduleModalData
 } from '../edit-schedule-modal/edit-schedule-modal.component';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface SetSchedulesModalData {
   schedules: VirtualDataPointSchedule[];
@@ -38,6 +39,7 @@ export class SetSchedulesModalComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private translate: TranslateService,
     private dialogRef: MatDialogRef<
       SetSchedulesModalComponent,
       SetSchedulesModalData
@@ -54,8 +56,11 @@ export class SetSchedulesModalComponent implements OnInit {
   }
 
   onDelete(index: number) {
-    const title = `Delete`;
-    const message = `Are you sure you want to delete data point ${this.rows[index].name}?`;
+    const title = this.translate.instant('settings-virtual-data-point.Delete');
+    const message = this.translate.instant(
+      'settings-virtual-data-point.SchedulesDeleteMessage',
+      { name: this.rows[index].name }
+    );
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: new ConfirmDialogModel(title, message)

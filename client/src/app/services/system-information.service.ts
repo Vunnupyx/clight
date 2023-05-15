@@ -1,3 +1,4 @@
+import * as moment from 'moment/moment';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -61,10 +62,12 @@ export class SystemInformationService {
         await this.configurationAgentHttpService.get<MachineInformation>(
           '/machine/info'
         );
+      const verifiedMachineInformation =
+        this._serializeMachineInformation(response);
 
       this._store.patchState((state) => {
         state.status = Status.Ready;
-        state.machineInformation = response;
+        state.machineInformation = verifiedMachineInformation;
       });
     } catch (err) {
       this._store.patchState((state) => {
@@ -138,6 +141,17 @@ export class SystemInformationService {
     }
 
     return this._store.snapshot.serverOffset;
+  }
+
+  private _serializeMachineInformation(
+    machineInformation: MachineInformation
+  ): MachineInformation {
+    return {
+      ...machineInformation,
+      Timestamp: moment(machineInformation?.Timestamp).format(
+        'YYYY-MM-DD HH:mm:ss'
+      )
+    };
   }
 
   private _emptyState() {

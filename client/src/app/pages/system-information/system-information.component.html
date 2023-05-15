@@ -43,6 +43,71 @@
   <mat-divider></mat-divider>
 
   <div class="system-info-container pr-25 pl-25">
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__title">
+          {{ 'system-information.ControlManufacturer' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__value">
+          {{
+            machineInformation.ControlManufacturer ||
+              ('system-information.Unknown' | translate)
+          }}
+        </h4>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__title">
+          {{ 'system-information.ControlType' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__value">
+          {{
+            machineInformation.ControlType ||
+              ('system-information.Unknown' | translate)
+          }}
+        </h4>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__title">
+          {{ 'system-information.Manufacturer' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__value">
+          {{
+            machineInformation.Manufacturer ||
+              ('system-information.Unknown' | translate)
+          }}
+        </h4>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__title">
+          {{ 'system-information.Model' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__value">
+          {{
+            machineInformation.Model ||
+              ('system-information.Unknown' | translate)
+          }}
+        </h4>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
     <div class="row pt-15 pb-15">
       <div class="col-12 col-md-6">
         <h4 class="m-0 system-info-item__title">
@@ -53,6 +118,38 @@
         <h4 class="m-0 system-info-item__value">
           {{
             machineInformation.Serial ||
+              ('system-information.Unknown' | translate)
+          }}
+        </h4>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__title">
+          {{ 'system-information.Source' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__value">
+          {{
+            machineInformation.Source ||
+              ('system-information.Unknown' | translate)
+          }}
+        </h4>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row pt-15 pb-15">
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__title">
+          {{ 'system-information.Timestamp' | translate }}
+        </h4>
+      </div>
+      <div class="col-12 col-md-6">
+        <h4 class="m-0 system-info-item__value">
+          {{
+            machineInformation.Timestamp ||
               ('system-information.Unknown' | translate)
           }}
         </h4>

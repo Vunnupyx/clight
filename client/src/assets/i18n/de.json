@@ -567,6 +567,7 @@
     "Source": "Quelle",
     "ControlType": "Steuerung Typ",
     "Model": "Modell",
+    "Timestamp": "Timestamp",
     "Unknown": "Unbekannt"
   },
   "prompt": {

@@ -1,10 +1,9 @@
-import { PathLike, writeFileSync } from 'fs';
-import { promises as fs } from 'fs';
 import winston from 'winston';
 import { LifecycleEventStatus } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { DataSourceEventTypes } from '../Southbound/DataSources/interfaces';
+import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
 
 enum LED {
   ON = '1',
@@ -24,6 +23,7 @@ export class LedStatusService {
   #southboundConnected = false;
   #configCheckRunning = false;
   #sysfsPrefix = process.env.SYS_PREFIX || '';
+  #ledIds: { [key: string]: string } = {}; // Received LED Ids are currently "user1" and "user2"
 
   constructor(
     private configManager: ConfigManager,
@@ -32,6 +32,7 @@ export class LedStatusService {
     this.configManager.once('configsLoaded', async () => {
       this.registerDataSourceEvents();
       await this.checkConfigTemplateTerms();
+      await this.getLedIds();
     });
     this.configManager.on('configChange', async () => {
       await this.checkConfigTemplateTerms();
@@ -39,7 +40,7 @@ export class LedStatusService {
   }
 
   private registerDataSourceEvents(): void {
-    const logPrefix = `LedStatusService::registerDataSourceEvents`;
+    const logPrefix = `${LedStatusService.name}::registerDataSourceEvents`;
     const sources = this.datasourceManager.getDataSources();
     if (!sources || sources.length < 1) {
       winston.error(`${logPrefix} no datasources available`);
@@ -56,7 +57,7 @@ export class LedStatusService {
             if (this.#southboundConnected) return;
             if (this.#configured) {
               await this.clearLed(1);
-              await this.setLed([this.getLedPathByNumberAndColor(1, 'green')]);
+              await this.setLed(1, 'green');
             }
             this.#southboundConnected = true;
             winston.debug(
@@ -67,10 +68,7 @@ export class LedStatusService {
           case LifecycleEventStatus.Disconnected: {
             await this.clearLed(1);
             // Orange light
-            await this.setLed([
-              this.getLedPathByNumberAndColor(1, 'red'),
-              this.getLedPathByNumberAndColor(1, 'green')
-            ]);
+            await this.setLed(1, 'orange');
             this.#southboundConnected = false;
             winston.debug(
               `${logPrefix} successfully configured and but not connected to NC. Set USER 1 LED to orange light.`
@@ -99,22 +97,15 @@ export class LedStatusService {
     OffDurationMs: number,
     color: TLedColors
   ): void {
-    const logPrefix = `LedStatusService::blink`;
-    let paths;
+    const logPrefix = `${LedStatusService.name}::blink`;
     switch (color) {
       case 'green': {
-        paths = [this.getLedPathByNumberAndColor(ledNumber, color)];
         break;
       }
       case 'red': {
-        paths = [this.getLedPathByNumberAndColor(ledNumber, color)];
         break;
       }
       case 'orange': {
-        paths = [
-          this.getLedPathByNumberAndColor(ledNumber, 'green'),
-          this.getLedPathByNumberAndColor(ledNumber, 'red')
-        ];
         break;
       }
       default: {
@@ -126,30 +117,30 @@ export class LedStatusService {
 
     if (ledNumber === 1) {
       const set = () => {
-        this.#led1Blink = setTimeout(() => {
-          this.setLed(paths);
+        this.#led1Blink = setTimeout(async () => {
+          await this.setLed(ledNumber, color);
           unset();
         }, OffDurationMs);
       };
 
       const unset = () => {
-        this.#led1Blink = setTimeout(() => {
-          this.unsetLed(paths);
+        this.#led1Blink = setTimeout(async () => {
+          await this.unsetLed(ledNumber);
           set();
         }, OnDurationMs);
       };
       unset();
     } else {
       const set = () => {
-        this.#led2Blink = setTimeout(() => {
-          this.setLed(paths);
+        this.#led2Blink = setTimeout(async () => {
+          await this.setLed(ledNumber, color);
           unset();
         }, OffDurationMs);
       };
 
       const unset = () => {
-        this.#led2Blink = setTimeout(() => {
-          this.unsetLed(paths);
+        this.#led2Blink = setTimeout(async () => {
+          await this.unsetLed(ledNumber);
           set();
         }, OnDurationMs);
       };
@@ -161,11 +152,8 @@ export class LedStatusService {
    * Stop blinking of selected LED.
    */
   private async clearLed(ledNumber: 1 | 2) {
-    const logPrefix = `LedStatusService::clearLed`;
-    const paths = [
-      this.getLedPathByNumberAndColor(ledNumber, 'red'),
-      this.getLedPathByNumberAndColor(ledNumber, 'green')
-    ];
+    const logPrefix = `${LedStatusService.name}::clearLed`;
+
     switch (ledNumber) {
       case 1: {
         if (this.#led1Blink) {
@@ -189,40 +177,45 @@ export class LedStatusService {
         throw new Error(errMsg);
       }
     }
-    await this.unsetLed(paths);
+    await this.unsetLed(ledNumber);
     winston.debug(`${logPrefix} successfully cleared USER ${ledNumber} LED.`);
   }
 
   /**
-   * Generate path of the led brightness file.
+   * Set LED status, color and frequency.
    */
-  private getLedPathByNumberAndColor(
-    ledNumber: 1 | 2,
-    color: 'red' | 'green'
-  ): PathLike | null {
-    return `${this.#sysfsPrefix}/sys/class/leds/user-led${ledNumber.toString(
-      10
-    )}-${color}/brightness`;
+  private async setLed(
+    ledNumber: number | string,
+    color: TLedColors,
+    frequency?: number
+  ): Promise<void> {
+    await ConfigurationAgentManager.setLedStatus(
+      this.#ledIds[ledNumber],
+      'on',
+      color,
+      frequency
+    );
   }
 
   /**
-   * Activate LED selected by paths.
+   * Disable LED.
    */
-  private setLed(paths: PathLike[]): void {
-    writeFileSync(paths[0], LED.ON);
-    if (paths.length === 2) {
-      writeFileSync(paths[1], LED.ON);
-    }
+  private async unsetLed(ledNumber: number | string): Promise<void> {
+    await ConfigurationAgentManager.setLedStatus(
+      this.#ledIds[ledNumber],
+      'off'
+    );
   }
 
   /**
-   * Disable LED selected by paths.
+   * Reads IDs of LEDs from configuration agent
    */
-  private unsetLed(paths: PathLike[]): void {
-    writeFileSync(paths[0], LED.OFF);
-    if (paths.length === 2) {
-      writeFileSync(paths[1], LED.OFF);
-    }
+  private async getLedIds() {
+    let list = await ConfigurationAgentManager.getLedList();
+    list?.forEach((id, index) => {
+      let letNumber = `${index + 1}`;
+      this.#ledIds[letNumber] = id;
+    });
   }
 
   /**
@@ -234,7 +227,7 @@ export class LedStatusService {
   private async checkConfigTemplateTerms(): Promise<void> {
     this.#configCheckRunning = true;
     const terms = this.configManager.config.termsAndConditions;
-    const logPrefix = `LedStatusService::checkConfigTemplateTerms`;
+    const logPrefix = `${LedStatusService.name}::checkConfigTemplateTerms`;
 
     winston.debug(`${logPrefix} start checking.`);
 
@@ -269,18 +262,13 @@ export class LedStatusService {
               // disable blinking
               await this.clearLed(1);
               // led orange
-              await this.setLed([
-                this.getLedPathByNumberAndColor(1, 'red'),
-                this.getLedPathByNumberAndColor(1, 'green')
-              ]);
+              await this.setLed(1, 'orange');
               if (this.#southboundConnected) {
                 winston.debug(
                   `${logPrefix} catch connected event during check. Set USER 1 LED to green. `
                 );
                 await this.clearLed(1);
-                await this.setLed([
-                  this.getLedPathByNumberAndColor(1, 'green')
-                ]);
+                await this.setLed(1, 'green');
               }
               this.#configured = true;
               this.#configCheckRunning = false;
@@ -298,22 +286,15 @@ export class LedStatusService {
   /**
    * Shutdown Service
    */
-  public shutdown(): void {
-    const logPrefix = `LedStatusService::shutdown`;
+  public async shutdown(): Promise<void> {
+    const logPrefix = `${LedStatusService.name}::shutdown`;
     winston.info(`${logPrefix} running.`);
     clearTimeout(this.#led1Blink);
     clearTimeout(this.#led2Blink);
     clearTimeout(this.#configWatcher);
-    const paths1 = [
-      this.getLedPathByNumberAndColor(1, 'red'),
-      this.getLedPathByNumberAndColor(1, 'green')
-    ];
-    const paths2 = [
-      this.getLedPathByNumberAndColor(2, 'red'),
-      this.getLedPathByNumberAndColor(2, 'green')
-    ];
-    this.unsetLed(paths1);
-    this.unsetLed(paths2);
+
+    await this.unsetLed(1);
+    await this.unsetLed(2);
     winston.info(`${logPrefix} successfully.`);
   }
 
@@ -325,7 +306,7 @@ export class LedStatusService {
    *  - Not accepted AGB
    */
   private noConfigBlink(): void {
-    const logPrefix = `LedStatusService::noConfigBlink`;
+    const logPrefix = `${LedStatusService.name}::noConfigBlink`;
     if (this.#led1Blink) return;
     this.blink(1, 500, 500, 'orange');
 
@@ -338,12 +319,11 @@ export class LedStatusService {
    * Set/unset LED2 for display of runtime status.
    */
   public runTimeStatus(status: boolean): void {
-    const logPrefix = `LedStatusService::runTimeStatus`;
+    const logPrefix = `${LedStatusService.name}::runTimeStatus`;
 
-    const path = this.getLedPathByNumberAndColor(2, 'green');
-    this.clearLed(2).then(() => {
+    this.clearLed(2).then(async () => {
       if (status) {
-        this.setLed([path]);
+        await this.setLed(2, 'green');
         winston.info(
           `${logPrefix} set USER LED 2 to ${
             status ? 'green' : 'OFF'

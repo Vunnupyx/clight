@@ -49,3 +49,5 @@ export interface ICosResponseError {
   message: string;
   error: string;
 }
+
+export type ICosLedsList = string[];

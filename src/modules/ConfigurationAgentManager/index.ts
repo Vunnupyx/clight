@@ -7,7 +7,8 @@ import {
   ICosResponseError,
   ICosSystemVersions,
   ICosSystemRestartResponse,
-  ICosSystemCommissioningStatus
+  ICosSystemCommissioningStatus,
+  ICosLedsList
 } from './interfaces';
 
 export class ConfigurationAgentManager {
@@ -28,6 +29,7 @@ export class ConfigurationAgentManager {
     | ICosNetworkAdapterStatus
     | ICosSystemVersions
     | ICosSystemRestartResponse
+    | ICosLedsList
     | ICosResponseError
   > {
     const logPrefix = `${ConfigurationAgentManager.name}::request`;
@@ -127,5 +129,38 @@ export class ConfigurationAgentManager {
       `/network/adapters/${adapterId}/status`
     )) as ICosNetworkAdapterStatus;
     return result;
+  }
+
+  /**
+   * Gets the ids of the LEDs on CELOS, currently defined as "user1" and "user2"
+   */
+  public static async getLedList(): Promise<ICosLedsList> {
+    const result = (await this.request('GET', `/system/leds`)) as ICosLedsList;
+    return result;
+  }
+
+  /**
+   * Sets the new LED status, on/off, its color and frequency
+   */
+  public static async setLedStatus(
+    ledId: string | number,
+    newStatus: 'on' | 'off' = 'off',
+    color?: 'green' | 'red' | 'orange',
+    frequency?: number // 0-20, DEFAULT is 0
+  ): Promise<boolean> {
+    try {
+      const freq = frequency > 20 ? 20 : frequency < 0 ? 0 : frequency;
+      const baseQuery = `/system/leds/${ledId}/${newStatus}`;
+      const offQuery = baseQuery;
+      let onQuery = `${baseQuery}?colour=${color}`; // API query is "colour"
+      if (freq) {
+        onQuery = `${onQuery}&frequency=${freq}`;
+      }
+
+      await this.request('POST', newStatus === 'on' ? onQuery : offQuery);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

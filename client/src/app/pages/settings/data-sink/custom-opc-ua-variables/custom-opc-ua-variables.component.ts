@@ -40,23 +40,31 @@ export class CustomOpcUaVariablesComponent {
 
   onAdd() {
     const newCustomDatapoint = {} as PreDefinedDataPoint;
+    const predefinedOPCDataPoints =
+      this.dataSinkService.getPredefinedOPCDataPoints();
 
     this.dialog
       .open<
         EditCustomOpcUaVariableModalComponent,
         EditCustomOpcUaVariableModalData,
-        EditCustomOpcUaVariableModalData
+        PreDefinedDataPoint
       >(EditCustomOpcUaVariableModalComponent, {
         data: {
+          existingAddresses: [
+            ...(predefinedOPCDataPoints || [])
+              .map((dp) => dp.address)
+              .filter(Boolean),
+            ...(this.rows || []).map((dp) => dp.address).filter(Boolean)
+          ],
           customDatapoint: newCustomDatapoint
-        }
+        } as EditCustomOpcUaVariableModalData
       })
       .afterClosed()
       .subscribe((result) => {
         if (!result) {
           return;
         }
-        this.onAddConfirm(result.customDatapoint);
+        this.onAddConfirm(result);
       });
   }
 
@@ -69,19 +77,19 @@ export class CustomOpcUaVariablesComponent {
       .open<
         EditCustomOpcUaVariableModalComponent,
         EditCustomOpcUaVariableModalData,
-        EditCustomOpcUaVariableModalData
+        PreDefinedDataPoint
       >(EditCustomOpcUaVariableModalComponent, {
         data: {
-          isEditing: true,
+          existingAddresses: this.existingAddresses,
           customDatapoint: obj
-        }
+        } as EditCustomOpcUaVariableModalData
       })
       .afterClosed()
       .subscribe((result) => {
         if (!result) {
           return;
         }
-        this.onEditConfirm(result.customDatapoint);
+        this.onEditConfirm(result);
       });
   }
 

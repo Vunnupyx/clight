@@ -140,15 +140,22 @@ export class ConfigurationAgentManager {
    * Gets the ids of the LEDs on CELOS, currently defined as "user1" and "user2"
    */
   public static async getLedList(): Promise<ICosLedsList> {
-    const result = (await this.request('GET', `/system/leds`)) as ICosLedsList;
-    return result;
+    try {
+      const result = (await this.request(
+        'GET',
+        `/system/leds`
+      )) as ICosLedsList;
+      return result;
+    } catch (e) {
+      return [];
+    }
   }
 
   /**
    * Sets the new LED status, on/off, its color and frequency
    */
   public static async setLedStatus(
-    ledId: string | number,
+    ledId: string,
     newStatus: 'on' | 'off' = 'off',
     color?: 'green' | 'red' | 'orange',
     frequency?: number // 0-20, DEFAULT is 0

@@ -23,7 +23,7 @@ export class LedStatusService {
   #southboundConnected = false;
   #configCheckRunning = false;
   #sysfsPrefix = process.env.SYS_PREFIX || '';
-  #ledIds: { [key: string]: string } = {}; // Received LED Ids are currently "user1" and "user2"
+  #ledIds: { [key: string]: string } = { '1': 'user1', '2': 'user2' }; // Received LED Ids are currently "user1" and "user2", default added to avoid undefined at beginning
 
   constructor(
     private configManager: ConfigManager,

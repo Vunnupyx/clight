@@ -65,6 +65,10 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
+    this.messengerManager = new MessengerManager({
+      configManager: this.configManager,
+      messengerConfig: this.configManager.config.messenger
+    });
   }
 
   private async init(): Promise<DataSinksManager> {
@@ -120,12 +124,6 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     const logPrefix = `${DataSinksManager.#className}::createDataSinks`;
     winston.info(`${logPrefix} creating ${protocol} data sink`);
 
-    if (protocol === DataSinkProtocols.MTCONNECT) {
-      this.messengerManager = new MessengerManager({
-        configManager: this.configManager,
-        messengerConfig: this.configManager.config.messenger
-      });
-    }
     const sink = this.dataSourceFactory(protocol);
 
     // It must be pushed before initialization, to prevent double initialization

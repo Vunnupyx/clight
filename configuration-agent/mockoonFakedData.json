@@ -3047,7 +3047,7 @@
       "responses": [
         {
           "uuid": "354066a9-8364-4265-905d-d1d7513c4387",
-          "body": "[\n  \"\"\n]",
+          "body": "[\n  \"user1\"\n,\n  \"user2\"\n]",
           "latency": 0,
           "statusCode": 200,
           "label": "List of available LED devices",

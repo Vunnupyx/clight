@@ -1552,6 +1552,9 @@ definitions:
     type: array
     items:
       type: string
+    example:
+      - user1
+      - user2
 
   ServerAddressList:
     type: array

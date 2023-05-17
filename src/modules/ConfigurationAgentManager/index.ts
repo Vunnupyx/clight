@@ -22,7 +22,8 @@ export class ConfigurationAgentManager {
 
   private static async request(
     method: string = 'GET',
-    endpoint: string
+    endpoint: string,
+    skipResponseParsing: boolean = false
   ): Promise<
     | ICosNetworkAdapterSettings
     | ICosNetworkAdapterSetting
@@ -50,6 +51,10 @@ export class ConfigurationAgentManager {
       ) {
         winston.error(`${logPrefix} error in response: ${response.status}`);
         return Promise.reject(new Error(`Error: ${response.status}`));
+      }
+
+      if (skipResponseParsing) {
+        return response;
       }
 
       let responseData:
@@ -157,7 +162,7 @@ export class ConfigurationAgentManager {
         onQuery = `${onQuery}&frequency=${freq}`;
       }
 
-      await this.request('POST', newStatus === 'on' ? onQuery : offQuery);
+      await this.request('POST', newStatus === 'on' ? onQuery : offQuery, true);
       return true;
     } catch (e) {
       return false;

@@ -1,11 +1,10 @@
 /**
  * All request handlers for requests to datasource endpoints
  */
-import fetch from 'node-fetch';
+import net from 'net';
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
-import { exec } from 'child_process';
 import { DataSourcesManager } from '../../../../../Southbound/DataSources/DataSourcesManager';
 import {
   DataSourceProtocols,
@@ -402,22 +401,44 @@ function getSingleDataSourceStatusHandler(
     .json({ status, emProTariffNumber, showMTConnectConnectivityWarning });
 }
 
+function pingSocketPromise(port, host, timeout) {
+  return new Promise<void>((resolve, reject) => {
+    const tcpClient = new net.Socket();
+    tcpClient.setTimeout(timeout);
+    tcpClient.once('close', () => {
+      tcpClient.destroy();
+      reject('close');
+    });
+    tcpClient.once('timeout', () => {
+      tcpClient.destroy();
+      reject('timeout');
+    });
+    tcpClient.connect(port, host, () => {
+      // Success
+      tcpClient.destroy();
+      resolve();
+    });
+  });
+}
+
 /**
  * Send ICMP ping to sps. Send back response with avg of ping
  *
  * @param request
  * @param response
  */
-function pingDataSourceHandler(request: Request, response: Response) {
+async function pingDataSourceHandler(request: Request, response: Response) {
   const logPrefix = `Backend::DataSources::pingDataSource`;
   let datasourceProtocol = request.params
     .datasourceProtocol as DataSourceProtocols;
+
+  const PING_TIMEOUT = 5000;
 
   if (!isValidProtocol(datasourceProtocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
-  winston.debug(`${logPrefix} called.`);
+  winston.debug(`${logPrefix} called for ${datasourceProtocol}.`);
   if (datasourceProtocol === DataSourceProtocols.IOSHIELD) {
     winston.debug(
       `${logPrefix} selected protocol is invalid for pinging: ${datasourceProtocol}`
@@ -436,6 +457,24 @@ function pingDataSourceHandler(request: Request, response: Response) {
     return src.protocol === datasourceProtocol;
   });
 
+  const ipOrHostname =
+    dataSource.protocol === DataSourceProtocols.MTCONNECT
+      ? (dataSource.connection as IMTConnectDataSourceConnection).hostname
+      : (
+          dataSource.connection as
+            | IS7DataSourceConnection
+            | IEnergyDataSourceConnection
+        ).ipAddr;
+  let port = (
+    dataSource.connection as
+      | IS7DataSourceConnection
+      | IMTConnectDataSourceConnection
+  ).port;
+
+  if (!port && datasourceProtocol === DataSourceProtocols.ENERGY) {
+    port = 80;
+  }
+
   if (!dataSource) {
     winston.warn(
       `${logPrefix} data source is not defined for protocol ${datasourceProtocol}`
@@ -453,14 +492,6 @@ function pingDataSourceHandler(request: Request, response: Response) {
       .status(400);
     return;
   }
-  const ipOrHostname =
-    dataSource.protocol === DataSourceProtocols.MTCONNECT
-      ? (dataSource.connection as IMTConnectDataSourceConnection).hostname
-      : (
-          dataSource.connection as
-            | IS7DataSourceConnection
-            | IEnergyDataSourceConnection
-        ).ipAddr;
 
   if (!ipOrHostname) {
     response
@@ -482,82 +513,27 @@ function pingDataSourceHandler(request: Request, response: Response) {
     return;
   }
 
-  if (
-    dataSource.protocol === DataSourceProtocols.MTCONNECT ||
-    dataSource.protocol === DataSourceProtocols.ENERGY
-  ) {
-    //Check the hostname with GET request, as they may not allow pinging
+  try {
     let timeStart = Date.now();
-    let url = `http://${ipOrHostname}`;
-    if (dataSource.protocol === DataSourceProtocols.MTCONNECT) {
-      url = `${url}:${
-        (dataSource.connection as IMTConnectDataSourceConnection).port
-      }`;
-    }
-    winston.debug(`${logPrefix} ping host with GET: ${url}`);
-
-    fetch(url, {
-      method: 'GET',
-      timeout: 5000,
-      compress: false,
-      headers: {
-        Accept: 'text/xml'
-      }
-    })
-      .then((apiResponse) => {
-        if (apiResponse.status >= 200 && apiResponse.status < 300) {
-          response.status(200).json({
-            delay: Date.now() - timeStart
-          });
-          return;
-        } else {
-          winston.info(
-            `${logPrefix} GET response status for ${ipOrHostname} is: ${apiResponse.status}`
-          );
-          throw new Error('Response status is not 2XX!');
-        }
-      })
-      .catch((error) => {
-        winston.debug(`${logPrefix} host unreachable, error: ${error}`);
-        response.status(500).json({
-          error: {
-            msg: `Host unreachable.`
-          }
-        });
-        return;
-      });
-  } else {
-    winston.debug(`${logPrefix}: ${ipOrHostname}`);
-
-    const cmd = `ping -w 1 -i 0.3 ${ipOrHostname}`;
-    exec(cmd, (error, stdout, stderr) => {
-      if (error || stderr !== '' || stdout === '') {
-        winston.debug(`${logPrefix} send 500 response due to host unreachable`);
-        response.status(500).json({
-          error: {
-            msg: `Host unreachable`
-          }
-        });
-        return;
-      }
-      let filtered = stdout
-        .match(/(([[0-9]{1,3}\.[0-9]{1,3})[/]){3}[0-9]{1,3}\.[0-9]{1,3}/g)
-        .join();
-      const [min, avg, max, mdev] = filtered?.match(/[0-9]*\.[0-9]*/g);
-      if (!avg) {
-        winston.debug(`${logPrefix} send 500 response due to host unreachable`);
-        response.status(500).json({
-          error: {
-            msg: `Host unreachable.`
-          }
-        });
-        return;
-      }
-      winston.debug(`${logPrefix} send response with: ${avg} ms delay`);
-      response.status(200).json({
-        delay: avg
-      });
+    await pingSocketPromise(port, ipOrHostname, PING_TIMEOUT);
+    const delay = Date.now() - timeStart;
+    winston.debug(
+      `${logPrefix} successful ping for ${datasourceProtocol} at ${ipOrHostname}:${port} with ${delay}ms delay.`
+    );
+    response.status(200).json({
+      delay
     });
+    return;
+  } catch (error) {
+    winston.debug(
+      `${logPrefix} host unreachable for ${datasourceProtocol} at ${ipOrHostname}:${port} due to ${error}.`
+    );
+    response.status(500).json({
+      error: {
+        msg: `Host unreachable.`
+      }
+    });
+    return;
   }
 }
 

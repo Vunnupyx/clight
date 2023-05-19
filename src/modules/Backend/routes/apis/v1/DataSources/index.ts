@@ -401,6 +401,9 @@ function getSingleDataSourceStatusHandler(
     .json({ status, emProTariffNumber, showMTConnectConnectivityWarning });
 }
 
+/**
+ * Promise for pinging a data source
+ */
 function pingSocketPromise(port, host, timeout) {
   return new Promise<void>((resolve, reject) => {
     const tcpClient = new net.Socket();
@@ -422,10 +425,7 @@ function pingSocketPromise(port, host, timeout) {
 }
 
 /**
- * Send ICMP ping to sps. Send back response with avg of ping
- *
- * @param request
- * @param response
+ * Pings data sources and sends the delay to UI
  */
 async function pingDataSourceHandler(request: Request, response: Response) {
   const logPrefix = `Backend::DataSources::pingDataSource`;

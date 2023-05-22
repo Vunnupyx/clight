@@ -19,7 +19,6 @@ type OPCUANodeDict = {
 
 export interface IOPCUADataSinkOptions extends IDataSinkOptions {
   runtimeConfig: IOPCUAConfig;
-  generalConfig: IGeneralConfig;
 }
 /**
  * Implementation of the OPCDataSink.
@@ -30,16 +29,14 @@ export class OPCUADataSink extends DataSink {
   private opcuaNodes: OPCUANodeDict = {};
   protected _protocol = DataSinkProtocols.OPCUA;
   protected name = OPCUADataSink.name;
-  private generalConfig: IGeneralConfig;
 
   constructor(options: IOPCUADataSinkOptions) {
     super(options);
     this.opcuaAdapter = new OPCUAAdapter({
       dataSinkConfig: options.dataSinkConfig,
-      generalConfig: options.generalConfig,
+      generalConfig: this.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
-    this.generalConfig = options.generalConfig;
   }
 
   public async init(): Promise<OPCUADataSink> {

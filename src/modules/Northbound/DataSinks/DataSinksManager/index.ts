@@ -173,6 +173,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         const dataHubDataSinkOptions: DataHubDataSinkOptions = {
           mapping: this.configManager.config.mapping,
           dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
+          generalConfig: this.configManager.config.general,
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           termsAndConditionsAccepted:
             this.configManager.config.termsAndConditions.accepted,
@@ -185,6 +186,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
           mapping: this.configManager.config.mapping,
           dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT),
+          generalConfig: this.configManager.config.general,
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
             this.configManager.config.termsAndConditions.accepted,
@@ -238,7 +240,10 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
           this.configManager.config.mapping,
-          this.configManager.config.termsAndConditions.accepted
+          this.configManager.config.termsAndConditions.accepted,
+          {
+            generalConfig: this.configManager.config.general
+          }
         )
       ) {
         winston.info(

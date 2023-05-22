@@ -7,6 +7,7 @@ import {
 import {
   IDataPointMapping,
   IDataSinkConfig,
+  IGeneralConfig,
   IProxyConfig,
   ITargetDataMap
 } from '../../ConfigManager/interfaces';
@@ -31,12 +32,14 @@ export type TDataSinkStatus = keyof typeof DataSinkStatus;
 export interface IDataSinkOptions {
   mapping: IDataPointMapping[];
   dataSinkConfig: IDataSinkConfig;
+  generalConfig: IGeneralConfig;
   termsAndConditionsAccepted: boolean;
   dataPointCache: DataPointCache;
 }
 
 export type OptionalConfigs = {
   proxy?: IProxyConfig;
+  generalConfig: IGeneralConfig;
 };
 
 /**
@@ -45,6 +48,7 @@ export type OptionalConfigs = {
 export abstract class DataSink {
   protected name = DataSink.name;
   protected config: IDataSinkConfig;
+  protected generalConfig: IGeneralConfig;
   protected mappingConfig: IDataPointMapping[];
   protected dataPointMapper: DataPointMapper;
   protected dataPointCache: DataPointCache;
@@ -59,6 +63,7 @@ export abstract class DataSink {
    */
   constructor(options: IDataSinkOptions) {
     this.config = JSON.parse(JSON.stringify(options.dataSinkConfig));
+    this.generalConfig = JSON.parse(JSON.stringify(options.generalConfig));
     this.mappingConfig = options.mapping;
     this.dataPointMapper = new DataPointMapper(options.mapping);
     this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
@@ -78,7 +83,11 @@ export abstract class DataSink {
     return (
       JSON.stringify(this.config) === JSON.stringify(config) &&
       JSON.stringify(this.mappingConfig) === JSON.stringify(mappingConfig) &&
-      this.termsAndConditionsAccepted === termsAndConditions
+      this.termsAndConditionsAccepted === termsAndConditions &&
+      (config.protocol !== DataSinkProtocols.OPCUA ||
+        (config.protocol === DataSinkProtocols.OPCUA &&
+          JSON.stringify(this.generalConfig) ===
+            JSON.stringify(optionalConfigs.generalConfig)))
     );
   }
 

@@ -269,6 +269,7 @@
     "SetThresholds": "Set Thresholds",
     "SetComparativeValue": "Set Comparative Value",
     "MissingComparativeValue": "Comparative value is empty",
+    "SourceUsedInFormula": "Data point is currently used in the formula. Please update the formula before editing this data source.",
     "Set": "Set",
     "Value": "Value",
     "Threshold": "Threshold",

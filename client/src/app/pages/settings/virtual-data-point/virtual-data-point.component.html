@@ -282,14 +282,32 @@
                     [(ngModel)]="filterSourceStr"
                   ></ngx-mat-select-search>
                 </mat-option>
-                <mat-option *ngFor="let s of dataSourcesFiltered" [value]="s.id"
+                <mat-option
+                  *ngFor="let s of dataSourcesFiltered"
+                  [value]="s.id"
+                  [matTooltip]="
+                    'settings-virtual-data-point.SourceUsedInFormula'
+                      | translate
+                  "
+                  matTooltipPosition="above"
+                  [matTooltipDisabled]="!unsavedRow?.formula?.includes(s.id)"
+                  [disabled]="unsavedRow?.formula?.includes(s.id)"
                   >{{ getDataSourceDataPointPrefix(s.id) }}
                   {{ s.name }}</mat-option
                 >
                 <mat-option
                   *ngFor="let s of previousVirtualPointsFiltered"
                   [value]="s.id"
-                  [disabled]="getRowIndex(s.id) > rowIndex"
+                  [matTooltip]="
+                    'settings-virtual-data-point.SourceUsedInFormula'
+                      | translate
+                  "
+                  matTooltipPosition="above"
+                  [matTooltipDisabled]="!unsavedRow?.formula?.includes(s.id)"
+                  [disabled]="
+                    getRowIndex(s.id) > rowIndex ||
+                    unsavedRow?.formula?.includes(s.id)
+                  "
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
                 >
               </mat-select>

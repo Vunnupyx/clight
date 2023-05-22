@@ -269,6 +269,7 @@
     "SetThresholds": "閾値設定",
     "SetComparativeValue": "基準値設定",
     "MissingComparativeValue": "Comparative value is empty",
+    "SourceUsedInFormula": "Data point is currently used in the formula. Please update the formula before editing this data source.",
     "Set": "設定",
     "Value": "値",
     "Threshold": "閾値",

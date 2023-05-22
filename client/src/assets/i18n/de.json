@@ -269,6 +269,7 @@
     "SetThresholds": "Grenzwerte setzen",
     "SetComparativeValue": "Vergleichswert setzen",
     "MissingComparativeValue": "Vergleichswert fehlt",
+    "SourceUsedInFormula": "Der Datenpunkt wird derzeit in der Formel verwendet. Bitte aktualisieren Sie die Formel, bevor Sie diese Datenquelle bearbeiten.",
     "Set": "Speichern",
     "Value": "Wert",
     "Threshold": "Grenzwert",

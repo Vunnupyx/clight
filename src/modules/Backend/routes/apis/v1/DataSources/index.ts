@@ -1,7 +1,6 @@
 /**
  * All request handlers for requests to datasource endpoints
  */
-import net from 'net';
 import { ConfigManager } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
@@ -10,7 +9,10 @@ import {
   DataSourceProtocols,
   LifecycleEventStatus
 } from '../../../../../../common/interfaces';
-import { isValidIpOrHostname } from '../../../../../Utilities';
+import {
+  isValidIpOrHostname,
+  pingSocketPromise
+} from '../../../../../Utilities';
 import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
 import {
   IDataPointConfig,
@@ -399,29 +401,6 @@ function getSingleDataSourceStatusHandler(
   response
     .status(200)
     .json({ status, emProTariffNumber, showMTConnectConnectivityWarning });
-}
-
-/**
- * Promise for pinging a data source
- */
-function pingSocketPromise(port, host, timeout) {
-  return new Promise<void>((resolve, reject) => {
-    const tcpClient = new net.Socket();
-    tcpClient.setTimeout(timeout);
-    tcpClient.once('close', () => {
-      tcpClient.destroy();
-      reject('close');
-    });
-    tcpClient.once('timeout', () => {
-      tcpClient.destroy();
-      reject('timeout');
-    });
-    tcpClient.connect(port, host, () => {
-      // Success
-      tcpClient.destroy();
-      resolve();
-    });
-  });
 }
 
 /**

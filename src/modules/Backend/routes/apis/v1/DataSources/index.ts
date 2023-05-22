@@ -461,16 +461,6 @@ async function pingDataSourceHandler(request: Request, response: Response) {
     response.status(404).send();
     return Promise.resolve();
   }
-  if (!dataSource.enabled) {
-    response
-      .json({
-        error: {
-          msg: `${datasourceProtocol} is disabled.`
-        }
-      })
-      .status(400);
-    return;
-  }
 
   if (!ipOrHostname) {
     response

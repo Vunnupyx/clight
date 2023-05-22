@@ -46,8 +46,8 @@ and three different colors for each LED:
 USER 1 LED displays the current configuration state:
 
 - orange blinking (No Configuration/Not accepted Terms and Conditions)
-- orange ([`configured`](LedStatusDisplay.md#what-does-configured-mean) but not connected to NC)
-- green ([`configured`](LedStatusDisplay.md#what-does-configured-mean) and successfully connected to NC)
+- orange ([`configured`](LedStatusDisplay.md#what-does-configured-mean) but not connected to at least one data source)
+- green ([`configured`](LedStatusDisplay.md#what-does-configured-mean) and successfully connected to at least one data source)
 
 #### States of USER 2 LED
 

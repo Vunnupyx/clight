@@ -9,7 +9,7 @@ title: Status LEDs
 There are 4 different LEDs on the `SIEMENS SIMATIC IOT2050` device:
 ![SIEMENS SIMATIC IOT2050 LEDs](/img/IoT2050Leds.png)
 
-- PWR: Displays the power status of the machine.
+- PWR: Displays the power status of the device.
 - STAT: Displays the status of the Operating System (CELOS X)
 - USER 1 and USER 2: Controlled by the IoTconnector flex to display various purposes and explained below.
 

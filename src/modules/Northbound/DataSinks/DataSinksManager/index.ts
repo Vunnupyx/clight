@@ -166,11 +166,20 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   }
 
   private dataSourceFactory(protocol): DataSink {
+    const logPrefix = `${DataSinksManager.name}::dataSourceFactory`;
+
+    const dataSinkConfig = this.findDataSinkConfig(protocol);
+    if (!dataSinkConfig) {
+      winston.info(
+        `${logPrefix} data sink '${protocol}' is not found in config, skipping spawning it.`
+      );
+      return;
+    }
     switch (protocol) {
       case DataSinkProtocols.DATAHUB: {
         const dataHubDataSinkOptions: DataHubDataSinkOptions = {
           mapping: this.configManager.config.mapping,
-          dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
+          dataSinkConfig,
           generalConfig: this.configManager.config.general,
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           termsAndConditionsAccepted:
@@ -183,7 +192,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       case DataSinkProtocols.MTCONNECT: {
         const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
           mapping: this.configManager.config.mapping,
-          dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT),
+          dataSinkConfig,
           generalConfig: this.configManager.config.general,
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
@@ -196,7 +205,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       case DataSinkProtocols.OPCUA: {
         return new OPCUADataSink({
           mapping: this.configManager.config.mapping,
-          dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.OPCUA),
+          dataSinkConfig,
           generalConfig: this.configManager.config.general,
           runtimeConfig: this.configManager.runtimeConfig.opcua,
           termsAndConditionsAccepted:

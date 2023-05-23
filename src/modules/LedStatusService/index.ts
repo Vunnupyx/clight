@@ -60,7 +60,7 @@ export class LedStatusService {
             }
             this.#southboundConnected = true;
             winston.debug(
-              `${logPrefix} successfully configured and connected to NC. Set USER 1 LED to green light.`
+              `${logPrefix} successfully configured and connected to at least one data source. Set USER 1 LED to green light.`
             );
             return;
           }
@@ -73,7 +73,7 @@ export class LedStatusService {
             ]);
             this.#southboundConnected = false;
             winston.debug(
-              `${logPrefix} successfully configured and but not connected to NC. Set USER 1 LED to orange light.`
+              `${logPrefix} successfully configured and but not connected to at least one data source. Set USER 1 LED to orange light.`
             );
             return;
           }

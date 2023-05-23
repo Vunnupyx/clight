@@ -110,10 +110,15 @@ export function pingSocketPromise(
       tcpClient.destroy();
       reject('error');
     });
-    tcpClient.connect(port, host, () => {
-      // Success
+    try {
+      tcpClient.connect(port, host, () => {
+        // Success
+        tcpClient.destroy();
+        resolve();
+      });
+    } catch (e) {
       tcpClient.destroy();
-      resolve();
-    });
+      reject(e);
+    }
   });
 }

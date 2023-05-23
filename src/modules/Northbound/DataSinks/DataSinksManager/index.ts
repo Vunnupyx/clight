@@ -273,7 +273,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       })
       .then(() => {
         winston.info(`${logPrefix} reinitializing data sinks.`);
-        this.init();
+        return this.init();
       })
       .then(() => {
         winston.info(`${logPrefix} data sinks restarted successfully.`);

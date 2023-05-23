@@ -55,9 +55,19 @@ function isValidProtocol(protocol: any): boolean {
  *
  */
 function getAllDataSourcesHandler(request: Request, response: Response): void {
-  response
-    .status(200)
-    .json({ dataSources: configManager?.config?.dataSources || [] });
+  const SUPPORTED_DATA_SOURCE_PROTOCOLS = [
+    DataSourceProtocols.S7,
+    DataSourceProtocols.IOSHIELD,
+    DataSourceProtocols.ENERGY,
+    DataSourceProtocols.MTCONNECT
+  ];
+
+  response.status(200).json({
+    dataSources:
+      configManager?.config?.dataSources?.filter((source) =>
+        SUPPORTED_DATA_SOURCE_PROTOCOLS.includes(source.protocol)
+      ) || []
+  });
 }
 
 /**

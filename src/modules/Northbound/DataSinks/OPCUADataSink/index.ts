@@ -21,8 +21,6 @@ export interface IOPCUADataSinkOptions extends IDataSinkOptions {
   runtimeConfig: IOPCUAConfig;
   generalConfig: IGeneralConfig;
 }
-
-const OPCUA_RESTART_DELAY_TIME = 10000;
 /**
  * Implementation of the OPCDataSink.
  * Provides datapoints via node-opcua module.
@@ -66,17 +64,6 @@ export class OPCUADataSink extends DataSink {
       return this;
     }
 
-    if (this.currentStatus === LifecycleEventStatus.Connecting) {
-      // It should not happen, as UI does not allow clicking Apply Changes in this mode but still another config change can cause this.
-      winston.warn(
-        `${logPrefix} OPC UA server is currently in Connecting status, delaying restart request...`
-      );
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(this.init());
-        }, OPCUA_RESTART_DELAY_TIME);
-      });
-    }
     this.updateCurrentStatus(LifecycleEventStatus.Connecting);
     return this.opcuaAdapter
       .init()

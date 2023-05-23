@@ -106,6 +106,10 @@ export function pingSocketPromise(
       tcpClient.destroy();
       reject('timeout');
     });
+    tcpClient.once('error', () => {
+      tcpClient.destroy();
+      reject('error');
+    });
     tcpClient.connect(port, host, () => {
       // Success
       tcpClient.destroy();

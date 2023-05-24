@@ -96,7 +96,6 @@ export class BootstrapManager {
    */
   public async start() {
     try {
-      await this.ledManager.init();
       this.setupKillEvents();
 
       await this.tlsKeyManager.generateKeys();

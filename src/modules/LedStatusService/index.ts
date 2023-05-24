@@ -88,10 +88,6 @@ export class LedStatusService {
     });
   }
 
-  public async init(): Promise<LedStatusService> {
-    return this;
-  }
-
   /**
    * Turn on the given LED with color and frequency. Frequency default is 0 (=non blink)
    */

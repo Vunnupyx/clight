@@ -86,3 +86,39 @@ export function isValidIpOrHostname(textInput: string): boolean {
   const isValidHostname = validHostnameRegex.test(textInput);
   return isValidIP || isValidHostname;
 }
+
+/**
+ * Pings a given host and port
+ */
+export function pingSocketPromise(
+  port: number,
+  host: string,
+  timeout: number
+): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    const tcpClient = new nodeNet.Socket();
+    tcpClient.setTimeout(timeout);
+    tcpClient.once('close', () => {
+      tcpClient.destroy();
+      reject('close');
+    });
+    tcpClient.once('timeout', () => {
+      tcpClient.destroy();
+      reject('timeout');
+    });
+    tcpClient.once('error', () => {
+      tcpClient.destroy();
+      reject('error');
+    });
+    try {
+      tcpClient.connect(port, host, () => {
+        // Success
+        tcpClient.destroy();
+        resolve();
+      });
+    } catch (e) {
+      tcpClient.destroy();
+      reject(e);
+    }
+  });
+}

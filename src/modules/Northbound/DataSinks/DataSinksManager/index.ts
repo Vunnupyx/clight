@@ -67,7 +67,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.measurementsBus = params.measurementsBus;
     this.messengerManager = new MessengerManager({
       configManager: this.configManager,
-      messengerConfig: this.configManager.config.messenger
+      messengerConfig: this.configManager.config?.messenger
     });
   }
 

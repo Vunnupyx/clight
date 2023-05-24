@@ -5,25 +5,16 @@ import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager
 import { DataSourceEventTypes } from '../Southbound/DataSources/interfaces';
 import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
 
-enum LED {
-  ON = '1',
-  OFF = '0'
-}
-
 type TLedColors = 'red' | 'green' | 'orange';
 
 /**
  * Set LEDs or blink to display status of the runtime for user.
  */
 export class LedStatusService {
-  #led1Blink: NodeJS.Timer = null;
-  #led2Blink: NodeJS.Timer = null;
-  #configWatcher: NodeJS.Timer = null;
   #configured = false;
   #southboundConnected = false;
   #configCheckRunning = false;
-  #sysfsPrefix = process.env.SYS_PREFIX || '';
-  #ledIds: { [key: string]: string } = { '1': 'user1', '2': 'user2' }; // Received LED Ids are currently "user1" and "user2", default added to avoid undefined at beginning
+  #ledIds: { [key: string]: string } = { '1': 'user1', '2': 'user2' }; // Received LED Ids are "user1" and "user2", already assigned to avoid undefined at beginning
 
   constructor(
     private configManager: ConfigManager,
@@ -41,11 +32,13 @@ export class LedStatusService {
 
   private registerDataSourceEvents(): void {
     const logPrefix = `${LedStatusService.name}::registerDataSourceEvents`;
+
     const sources = this.datasourceManager.getDataSources();
     if (!sources || sources.length < 1) {
-      winston.error(`${logPrefix} no datasources available`);
+      winston.error(`${logPrefix} no data sources available`);
     }
-    winston.debug(`${logPrefix} register on sources.`);
+    winston.debug(`${logPrefix} registering listeners on data sources.`);
+
     sources.forEach((source) => {
       source.on(DataSourceEventTypes.Lifecycle, async (status) => {
         switch (status) {
@@ -56,23 +49,26 @@ export class LedStatusService {
             }
             if (this.#southboundConnected) return;
             if (this.#configured) {
-              await this.clearLed(1);
+              winston.debug(
+                `${logPrefix} successfully configured and connected to at least one data source. Set USER 1 LED to green light.`
+              );
               await this.setLed(1, 'green');
+            } else {
+              winston.debug(
+                `${logPrefix} successfully connected to at least one data source but not configured yet.`
+              );
             }
             this.#southboundConnected = true;
-            winston.debug(
-              `${logPrefix} successfully configured and connected to NC. Set USER 1 LED to green light.`
-            );
+
             return;
           }
           case LifecycleEventStatus.Disconnected: {
-            await this.clearLed(1);
-            // Orange light
-            await this.setLed(1, 'orange');
-            this.#southboundConnected = false;
             winston.debug(
-              `${logPrefix} successfully configured and but not connected to NC. Set USER 1 LED to orange light.`
+              `${logPrefix} successfully configured and but not connected to at least one data source. Set USER 1 LED to orange light.`
             );
+            this.#southboundConnected = false;
+            await this.setLed(1, 'orange');
+
             return;
           }
           default: {
@@ -89,100 +85,7 @@ export class LedStatusService {
   }
 
   /**
-   * Start blinking of selected led.
-   */
-  private blink(
-    ledNumber: 1 | 2,
-    OnDurationMs: number,
-    OffDurationMs: number,
-    color: TLedColors
-  ): void {
-    const logPrefix = `${LedStatusService.name}::blink`;
-    switch (color) {
-      case 'green': {
-        break;
-      }
-      case 'red': {
-        break;
-      }
-      case 'orange': {
-        break;
-      }
-      default: {
-        const errMSg = `${logPrefix} error setting blink due to wrong color.`;
-        winston.error(errMSg);
-        throw new Error(errMSg);
-      }
-    }
-
-    if (ledNumber === 1) {
-      const set = () => {
-        this.#led1Blink = setTimeout(async () => {
-          await this.setLed(ledNumber, color);
-          unset();
-        }, OffDurationMs);
-      };
-
-      const unset = () => {
-        this.#led1Blink = setTimeout(async () => {
-          await this.unsetLed(ledNumber);
-          set();
-        }, OnDurationMs);
-      };
-      unset();
-    } else {
-      const set = () => {
-        this.#led2Blink = setTimeout(async () => {
-          await this.setLed(ledNumber, color);
-          unset();
-        }, OffDurationMs);
-      };
-
-      const unset = () => {
-        this.#led2Blink = setTimeout(async () => {
-          await this.unsetLed(ledNumber);
-          set();
-        }, OnDurationMs);
-      };
-      unset();
-    }
-  }
-
-  /**
-   * Stop blinking of selected LED.
-   */
-  private async clearLed(ledNumber: 1 | 2) {
-    const logPrefix = `${LedStatusService.name}::clearLed`;
-
-    switch (ledNumber) {
-      case 1: {
-        if (this.#led1Blink) {
-          clearTimeout(this.#led1Blink);
-          winston.debug(`${logPrefix} USER ${ledNumber} disable blinking.`);
-        }
-        this.#led1Blink = null;
-        break;
-      }
-      case 2: {
-        if (this.#led2Blink) {
-          clearTimeout(this.#led2Blink);
-          winston.debug(`${logPrefix} USER ${ledNumber} disable blinking.`);
-        }
-        this.#led2Blink = null;
-        break;
-      }
-      default: {
-        const errMsg = `${logPrefix} error due to invalid LED number ${ledNumber}`;
-        winston.error(errMsg);
-        throw new Error(errMsg);
-      }
-    }
-    await this.unsetLed(ledNumber);
-    winston.debug(`${logPrefix} successfully cleared USER ${ledNumber} LED.`);
-  }
-
-  /**
-   * Set LED status, color and frequency.
+   * Turn on the given LED with color and frequency. Frequency default is 0 (=non blink)
    */
   private async setLed(
     ledNumber: number | string,
@@ -198,7 +101,7 @@ export class LedStatusService {
   }
 
   /**
-   * Disable LED.
+   * Turn off the given LED.
    */
   private async unsetLed(ledNumber: number | string): Promise<void> {
     await ConfigurationAgentManager.setLedStatus(
@@ -257,17 +160,13 @@ export class LedStatusService {
             if (!sink.enabled) continue;
             if (sink.dataPoints.some((point) => point.id === sinkDatapoint)) {
               winston.debug(
-                `${logPrefix} correct configuration found. Set USER 1 LED to orange`
+                `${logPrefix} correct configuration found. Set USER 1 LED to orange.`
               );
-              // disable blinking
-              await this.clearLed(1);
-              // led orange
               await this.setLed(1, 'orange');
               if (this.#southboundConnected) {
                 winston.debug(
-                  `${logPrefix} catch connected event during check. Set USER 1 LED to green. `
+                  `${logPrefix} catch connected event during check. Set USER 1 LED to green.`
                 );
-                await this.clearLed(1);
                 await this.setLed(1, 'green');
               }
               this.#configured = true;
@@ -284,21 +183,6 @@ export class LedStatusService {
   }
 
   /**
-   * Shutdown Service
-   */
-  public async shutdown(): Promise<void> {
-    const logPrefix = `${LedStatusService.name}::shutdown`;
-    winston.info(`${logPrefix} running.`);
-    clearTimeout(this.#led1Blink);
-    clearTimeout(this.#led2Blink);
-    clearTimeout(this.#configWatcher);
-
-    await this.unsetLed(1);
-    await this.unsetLed(2);
-    winston.info(`${logPrefix} successfully.`);
-  }
-
-  /**
    * Enable or disable orange blinking USER LED 1.
    * Represented one of this state:
    *  - No Configuration
@@ -307,37 +191,47 @@ export class LedStatusService {
    */
   private noConfigBlink(): void {
     const logPrefix = `${LedStatusService.name}::noConfigBlink`;
-    if (this.#led1Blink) return;
-    this.blink(1, 500, 500, 'orange');
-
     winston.info(
       `${logPrefix} set USER LED 1 to 'orange blinking' because not not completely configured.`
     );
+
+    // Blink LED 1 with 1 Hertz = 0.5s on, 0.5s off
+    this.setLed(1, 'orange', 1);
   }
 
   /**
    * Set/unset LED2 for display of runtime status.
    */
-  public runTimeStatus(status: boolean): void {
+  public async runTimeStatus(status: boolean): Promise<void> {
     const logPrefix = `${LedStatusService.name}::runTimeStatus`;
+    winston.info(
+      `${logPrefix} set USER LED 2 to ${
+        status ? 'green' : 'OFF'
+      } (Runtime status: ${status ? 'RUNNING' : 'NOT RUNNING'})`
+    );
 
-    this.clearLed(2).then(async () => {
-      if (status) {
-        await this.setLed(2, 'green');
-        winston.info(
-          `${logPrefix} set USER LED 2 to ${
-            status ? 'green' : 'OFF'
-          } (Runtime status: ${status ? 'RUNNING' : 'NOT RUNNING'})`
-        );
-      }
-    });
+    if (status) {
+      await this.setLed(2, 'green');
+    } else {
+      await this.unsetLed(2);
+    }
   }
 
   /**
    * Turns off both led's of the device
    */
   public async turnOffLeds() {
-    await this.clearLed(1);
-    await this.clearLed(2);
+    await Promise.all([this.unsetLed(1), this.unsetLed(2)]);
+  }
+
+  /**
+   * Shutdown LED Service
+   */
+  public async shutdown(): Promise<void> {
+    const logPrefix = `${LedStatusService.name}::shutdown`;
+    winston.info(`${logPrefix} starting.`);
+
+    await this.turnOffLeds();
+    winston.info(`${logPrefix} successfully.`);
   }
 }

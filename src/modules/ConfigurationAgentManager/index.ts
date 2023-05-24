@@ -140,13 +140,16 @@ export class ConfigurationAgentManager {
    * Gets the ids of the LEDs on CELOS, currently defined as "user1" and "user2"
    */
   public static async getLedList(): Promise<ICosLedsList> {
+    const logPrefix = `${ConfigurationAgentManager.name}::getLedList`;
     try {
       const result = (await this.request(
         'GET',
         `/system/leds`
       )) as ICosLedsList;
       return result;
-    } catch (e) {
+    } catch (error) {
+      winston.error(`${logPrefix} error setting LED status: ${error}`);
+
       return [];
     }
   }
@@ -160,6 +163,7 @@ export class ConfigurationAgentManager {
     color?: 'green' | 'red' | 'orange',
     frequency?: number // 0-20, DEFAULT is 0
   ): Promise<boolean> {
+    const logPrefix = `${ConfigurationAgentManager.name}::setLedStatus`;
     try {
       const freq = frequency > 20 ? 20 : frequency < 0 ? 0 : frequency;
       const baseQuery = `/system/leds/${ledId}/${newStatus}`;
@@ -171,7 +175,8 @@ export class ConfigurationAgentManager {
 
       await this.request('POST', newStatus === 'on' ? onQuery : offQuery, true);
       return true;
-    } catch (e) {
+    } catch (error) {
+      winston.error(`${logPrefix} error setting LED status: ${error}`);
       return false;
     }
   }

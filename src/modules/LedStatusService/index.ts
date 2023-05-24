@@ -12,8 +12,9 @@ type TLedColors = 'red' | 'green' | 'orange';
  */
 export class LedStatusService {
   #configured = false;
-  #southboundConnected = false;
-  #configCheckRunning = false;
+  #southboundConnectionStatus: {
+    [key: string]: boolean;
+  } = {};
   #ledIds: { [key: string]: string } = { '1': 'user1', '2': 'user2' }; // Received LED Ids are "user1" and "user2", already assigned to avoid undefined at beginning
 
   constructor(
@@ -45,14 +46,18 @@ export class LedStatusService {
     winston.debug(`${logPrefix} registering listeners on data sources.`);
 
     sources.forEach((source) => {
+      // Initialize the connection status object.
+      // Read current status of the data source as it might have been connected before this registration
+      if (!this.#southboundConnectionStatus[source.protocol]) {
+        this.#southboundConnectionStatus[source.protocol] =
+          source.currentStatus === LifecycleEventStatus.Connected;
+      }
+
       source.on(DataSourceEventTypes.Lifecycle, async (status) => {
         switch (status) {
           case LifecycleEventStatus.Connected: {
-            if (this.#configCheckRunning) {
-              this.#southboundConnected = true;
-              return;
-            }
-            if (this.#southboundConnected) return;
+            this.#southboundConnectionStatus[source.protocol] = true;
+
             if (this.#configured) {
               winston.debug(
                 `${logPrefix} successfully configured and connected to at least one data source. Set USER 1 LED to green light.`
@@ -63,15 +68,13 @@ export class LedStatusService {
                 `${logPrefix} successfully connected to at least one data source but not configured yet.`
               );
             }
-            this.#southboundConnected = true;
-
             return;
           }
           case LifecycleEventStatus.Disconnected: {
             winston.debug(
               `${logPrefix} successfully configured and but not connected to at least one data source. Set USER 1 LED to orange light.`
             );
-            this.#southboundConnected = false;
+            this.#southboundConnectionStatus[source.protocol] = false;
             await this.setLed(1, 'orange');
 
             return;
@@ -133,7 +136,6 @@ export class LedStatusService {
    * - Terms and Conditions are accepted
    */
   private async checkConfigTemplateTerms(): Promise<void> {
-    this.#configCheckRunning = true;
     const terms = this.configManager.config.termsAndConditions;
     const logPrefix = `${LedStatusService.name}::checkConfigTemplateTerms`;
 
@@ -148,6 +150,7 @@ export class LedStatusService {
 
     /*
      * WARNING: Very bad bad performance! In worst case O(n * m * o * p * q)
+     *           However, amount of data sources or data points are typically not very high
      * n = count of mappings
      * m = count of sources
      * o = count of datapoints in sources
@@ -160,22 +163,33 @@ export class LedStatusService {
 
       loop2: for (const source of this.configManager.config.dataSources) {
         if (!source.enabled) continue;
-        if (source.dataPoints.some((point) => point.id === sourceDatapoint)) {
+        const isDataSourceForThisMapping = source.dataPoints.some(
+          (point) => point.id === sourceDatapoint
+        );
+
+        if (isDataSourceForThisMapping) {
           loop3: for (const sink of this.configManager.config.dataSinks) {
             if (!sink.enabled) continue;
-            if (sink.dataPoints.some((point) => point.id === sinkDatapoint)) {
-              winston.debug(
-                `${logPrefix} correct configuration found. Set USER 1 LED to orange.`
-              );
-              await this.setLed(1, 'orange');
-              if (this.#southboundConnected) {
+            const isDataSinkForThisMapping = sink.dataPoints.some(
+              (point) => point.id === sinkDatapoint
+            );
+
+            if (isDataSinkForThisMapping) {
+              // Data source is configured
+
+              if (this.#southboundConnectionStatus[source.protocol]) {
+                // Data source is connected
                 winston.debug(
-                  `${logPrefix} catch connected event during check. Set USER 1 LED to green.`
+                  `${logPrefix} data source ${source.protocol} is configured and connected. Set USER 1 LED to green.`
                 );
                 await this.setLed(1, 'green');
+              } else {
+                winston.debug(
+                  `${logPrefix} data source ${source.protocol} is configured but not connected. Set USER 1 LED to orange.`
+                );
+                await this.setLed(1, 'orange');
               }
               this.#configured = true;
-              this.#configCheckRunning = false;
               return;
             }
           }
@@ -184,7 +198,6 @@ export class LedStatusService {
     }
     this.noConfigBlink();
     this.#configured = false;
-    this.#configCheckRunning = false;
   }
 
   /**

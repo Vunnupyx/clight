@@ -25,6 +25,11 @@ export class LedStatusService {
       await this.checkConfigTemplateTerms();
       await this.getLedIds();
     });
+    this.datasourceManager.on('dataSourcesRestarted', async () => {
+      // Re-register data source event listeners as they were deleted and recreated during restart
+      this.registerDataSourceEvents();
+      await this.checkConfigTemplateTerms();
+    });
     this.configManager.on('configChange', async () => {
       await this.checkConfigTemplateTerms();
     });

@@ -38,10 +38,10 @@ export abstract class DataSource extends EventEmitter {
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
   public timestamp: number;
   public protocol: DataSourceProtocols;
+  public currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected scheduler: SynchronousIntervalScheduler;
   protected readSchedulerListenerId: number;
   protected logSchedulerListenerId: number;
-  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected termsAndConditionsAccepted = false;
   protected processedDataPointCount = 0;
   protected dataPointReadErrors: DataPointReadErrorSummary[] = [];

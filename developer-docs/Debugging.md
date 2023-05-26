@@ -59,7 +59,7 @@ docker run \
     -p 443:443 \
     --network azure-iot-edge \
     --network-alias=mdc-web-server \
-    -n mdclight \
+    -n mdc-web-server \
     -d \
     mdclightdev.azurecr.io/mdc-web-server:3.0.5-197-g11456c38
 ```

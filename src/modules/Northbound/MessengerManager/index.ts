@@ -31,16 +31,8 @@ export class MessengerManager {
     registration: 'unknown',
     registrationErrorReason: null
   };
-  public messengerConfig: IMessengerServerConfig = {
-    // Init with default values to avoid undefined errors before config has loaded
-    hostname: null,
-    username: null,
-    password: null,
-    name: null,
-    model: null,
-    organization: null,
-    timezone: null
-  };
+  public messengerConfig: IMessengerServerConfig;
+
   private configManager: ConfigManager;
   private loginToken: string;
   private invalidHostTimer: NodeJS.Timer;

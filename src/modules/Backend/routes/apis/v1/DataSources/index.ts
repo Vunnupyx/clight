@@ -109,7 +109,7 @@ async function patchSingleDataSourceHandler(
     allowed.push('machineName');
   }
 
-  if (!isValidProtocol(protocol) || isValidDataSource(updatedDataSource)) {
+  if (!isValidProtocol(protocol) || !isValidDataSource(updatedDataSource)) {
     response.status(400).json({ error: 'Input not valid.' });
     return Promise.resolve();
   }

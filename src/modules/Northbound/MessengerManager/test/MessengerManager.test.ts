@@ -69,7 +69,13 @@ describe('MessengerManager', () => {
     await messengerAdapter.init();
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
-    expect(messengerAdapter.messengerConfig).toEqual(undefined);
+    expect(messengerAdapter.messengerConfig.hostname).toBeNull();
+    expect(messengerAdapter.messengerConfig.username).toBeNull();
+    expect(messengerAdapter.messengerConfig.password).toBeNull();
+    expect(messengerAdapter.messengerConfig.name).toBeNull();
+    expect(messengerAdapter.messengerConfig.model).toBeNull();
+    expect(messengerAdapter.messengerConfig.organization).toBeNull();
+    expect(messengerAdapter.messengerConfig.timezone).toBeNull();
     expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);

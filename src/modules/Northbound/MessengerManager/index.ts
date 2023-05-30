@@ -53,6 +53,7 @@ export class MessengerManager {
   protected name = MessengerManager.name;
 
   constructor(options) {
+    if (options.messengerConfig) this.messengerConfig = options.messengerConfig;
     this.configManager = options.configManager;
     this.configManager.on('configChange', this.handleConfigChange.bind(this));
   }

@@ -812,9 +812,10 @@ export class MessengerManager {
     }
     //Config changed
     if (
-      this.messengerConfig.hostname !== newMessengerConfig.hostname ||
-      this.messengerConfig.username !== newMessengerConfig.username ||
-      this.messengerConfig.password !== newMessengerConfig.password
+      !this.messengerConfig ||
+      this.messengerConfig?.hostname !== newMessengerConfig.hostname ||
+      this.messengerConfig?.username !== newMessengerConfig.username ||
+      this.messengerConfig?.password !== newMessengerConfig.password
     ) {
       // status must be reset
       clearTimeout(this.invalidHostTimer);

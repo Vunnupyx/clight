@@ -165,7 +165,13 @@ export class ConfigurationAgentManager {
   ): Promise<boolean> {
     const logPrefix = `${ConfigurationAgentManager.name}::setLedStatus`;
     try {
-      const freq = frequency > 20 ? 20 : frequency < 0 ? 0 : frequency;
+      const freq = !frequency
+        ? 0
+        : frequency > 20
+        ? 20
+        : frequency < 0
+        ? 0
+        : frequency;
       const baseQuery = `/system/leds/${ledId}/${newStatus}`;
       const offQuery = baseQuery;
       let onQuery = `${baseQuery}?colour=${color}`; // API query is "colour"

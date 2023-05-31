@@ -88,7 +88,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    * Shutdown all available data sinks.
    */
   public async shutdownAllDataSinks(): Promise<void> {
-    const shutdownFn = [];
+    const shutdownFn: Promise<void>[] = [];
     this.dataSinks.forEach(async (dataSink) => {
       this.disconnectDataSinkFromBus(dataSink);
       shutdownFn.push(dataSink.shutdown());
@@ -126,16 +126,20 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     const sink = this.dataSourceFactory(protocol);
 
-    // It must be pushed before initialization, to prevent double initialization
-    this.dataSinks.push(sink);
+    if (sink) {
+      // It must be pushed before initialization, to prevent double initialization
+      this.dataSinks.push(sink);
 
-    await sink.init();
+      await sink.init();
 
-    this.connectDataSinksToBus(sink);
-    winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
+      this.connectDataSinksToBus(sink);
+      winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
+    }
   }
 
-  private findDataSinkConfig(protocol: DataSinkProtocols): IDataSinkConfig {
+  private findDataSinkConfig(
+    protocol: DataSinkProtocols
+  ): IDataSinkConfig | undefined {
     return this.configManager.config.dataSinks.find(
       (sink) => sink.protocol === protocol
     );
@@ -165,7 +169,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.lifecycleBus.removeEventListener(`${sink.protocol}_onLifeCycleEvent`);
   }
 
-  private dataSourceFactory(protocol): DataSink {
+  private dataSourceFactory(protocol: DataSinkProtocols): DataSink | undefined {
     const logPrefix = `${DataSinksManager.name}::dataSourceFactory`;
 
     const dataSinkConfig = this.findDataSinkConfig(protocol);
@@ -173,7 +177,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       winston.info(
         `${logPrefix} data sink '${protocol}' is not found in config, skipping spawning it.`
       );
-      return;
+      return undefined;
     }
     switch (protocol) {
       case DataSinkProtocols.DATAHUB: {
@@ -240,7 +244,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     winston.info(`${logPrefix} reloading data sinks.`);
 
-    const shutdownFunctions = [];
+    const shutdownFunctions: Promise<void>[] = [];
 
     this.dataSinks.forEach((sink) => {
       if (
@@ -274,7 +278,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
     });
 
-    let err: Error = null;
+    let err: Error;
     await Promise.allSettled(shutdownFunctions)
       .then((results) => {
         winston.info(`${logPrefix} data sinks disconnected.`);

@@ -55,6 +55,7 @@ async function postSingleVdpHandler(
     }
     if (
       newVdp.operationType === 'counter' &&
+      newVdp.resetSchedules &&
       newVdp.resetSchedules?.length > 0
     ) {
       for (const [index, resetEntry] of newVdp.resetSchedules.entries()) {
@@ -131,8 +132,10 @@ async function deleteSingleVdpHandler(
   const vdp = configManager?.config?.virtualDataPoints?.find(
     (point) => point.id === request.params.id
   );
-  configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-  await configManager.configChangeCompleted();
+  if (vdp) {
+    configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
+    await configManager.configChangeCompleted();
+  }
   response.status(vdp ? 200 : 404).json({
     deleted: vdp
   });

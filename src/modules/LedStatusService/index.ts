@@ -17,9 +17,9 @@ type TLedColors = 'red' | 'green' | 'orange';
  * Set LEDs or blink to display status of the runtime for user.
  */
 export class LedStatusService {
-  #led1Blink: NodeJS.Timer = null;
-  #led2Blink: NodeJS.Timer = null;
-  #configWatcher: NodeJS.Timer = null;
+  #led1Blink: NodeJS.Timer | undefined = undefined;
+  #led2Blink: NodeJS.Timer | undefined = undefined;
+  #configWatcher: NodeJS.Timer | undefined = undefined;
   #configured = false;
   #southboundConnected = false;
   #configCheckRunning = false;
@@ -172,7 +172,7 @@ export class LedStatusService {
           clearTimeout(this.#led1Blink);
           winston.debug(`${logPrefix} USER ${ledNumber} disable blinking.`);
         }
-        this.#led1Blink = null;
+        this.#led1Blink = undefined;
         break;
       }
       case 2: {
@@ -180,7 +180,7 @@ export class LedStatusService {
           clearTimeout(this.#led2Blink);
           winston.debug(`${logPrefix} USER ${ledNumber} disable blinking.`);
         }
-        this.#led2Blink = null;
+        this.#led2Blink = undefined;
         break;
       }
       default: {
@@ -199,7 +199,7 @@ export class LedStatusService {
   private getLedPathByNumberAndColor(
     ledNumber: 1 | 2,
     color: 'red' | 'green'
-  ): PathLike | null {
+  ): PathLike {
     return `${this.#sysfsPrefix}/sys/class/leds/user-led${ledNumber.toString(
       10
     )}-${color}/brightness`;

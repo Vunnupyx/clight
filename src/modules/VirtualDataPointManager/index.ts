@@ -62,7 +62,7 @@ type BlinkingStatus = {
 export class VirtualDataPointManager {
   private configManager: ConfigManager;
   private measurementBus: MeasurementEventBus;
-  private config: IVirtualDataPointConfig[] = null;
+  private config: IVirtualDataPointConfig[];
   private cache: DataPointCache;
   private counters: CounterManager;
   private blinkingStatus: BlinkingStatus = {};

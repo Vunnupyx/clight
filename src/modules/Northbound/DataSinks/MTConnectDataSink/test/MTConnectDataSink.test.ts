@@ -15,6 +15,7 @@ import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 import { MessengerManager } from '../../../MessengerManager';
 import { DataPointCache } from '../../../../DatapointCache';
+import { LogLevel } from '../../../../Logger/interfaces';
 
 jest.mock('fs');
 jest.mock('winston');
@@ -100,8 +101,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should map bool values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(),
-      lifecycleEventsBus: new EventBus()
+      errorEventsBus: new EventBus(LogLevel.DEBUG),
+      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -164,8 +165,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should map enum values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(),
-      lifecycleEventsBus: new EventBus()
+      errorEventsBus: new EventBus(LogLevel.DEBUG),
+      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -254,8 +255,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should not change string or number values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(),
-      lifecycleEventsBus: new EventBus()
+      errorEventsBus: new EventBus(LogLevel.DEBUG),
+      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -351,8 +352,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('with initialization value is set to 0', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(),
-      lifecycleEventsBus: new EventBus()
+      errorEventsBus: new EventBus(LogLevel.DEBUG),
+      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
     });
 
     const dataSinkConfig: IDataSinkConfig = {

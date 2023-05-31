@@ -101,6 +101,6 @@ export type ScheduledCounterResetDict = {
 
 export type timerDict = {
   [counterId: string]: {
-    [scheduleIndex: number]: NodeJS.Timer;
+    [scheduleIndex: number]: NodeJS.Timer | undefined;
   };
 };

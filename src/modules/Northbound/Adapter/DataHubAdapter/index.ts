@@ -107,7 +107,7 @@ export class DataHubAdapter {
   /**
    * Get desired properties object by device twin.
    */
-  public getDesiredProps(): IDesiredProps {
+  public getDesiredProps(): IDesiredProps | undefined {
     const logPrefix = `${this.constructor.name}::getDesiredProps`;
 
     if (!this.moduleTwin) {
@@ -243,11 +243,11 @@ export class DataHubAdapter {
     const logPrefix = `${this.constructor.name}::stop`;
     if (!this.isRunning) {
       winston.debug(`${logPrefix} try to stop a not running adapter.`);
-      return;
+      return Promise.reject();
     }
     this.isRunning = false;
     this.runningTimers.forEach((timer) => clearInterval(timer));
-    this.dataHubClient
+    return this.dataHubClient
       .close()
       .then(() => {
         this.onStateChange(LifecycleEventStatus.Disconnected);

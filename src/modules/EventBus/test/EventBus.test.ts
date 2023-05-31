@@ -1,4 +1,5 @@
 import { EventBus } from '..';
+import { LogLevel } from '../../Logger/interfaces';
 jest.mock('winston');
 
 describe('Test EventBus', () => {
@@ -10,7 +11,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus();
+    const bus = new EventBus(LogLevel.DEBUG);
 
     bus.addEventListener(testCb1, 'id1');
     bus.addEventListener(testCb2, 'id2');
@@ -32,7 +33,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus();
+    const bus = new EventBus(LogLevel.DEBUG);
 
     bus.addEventListener(testCb1, 'id1');
     bus.addEventListener(testCb2, 'id2');
@@ -57,7 +58,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus();
+    const bus = new EventBus(LogLevel.DEBUG);
 
     bus.addEventListener(testCb1, 'id1');
     bus.addEventListener(testCb2, 'id1');
@@ -81,7 +82,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus();
+    const bus = new EventBus(LogLevel.DEBUG);
 
     bus.addEventListener(testCb1, 'id1');
     bus.addEventListener(testCb2, 'id2');
@@ -112,7 +113,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus();
+    const bus = new EventBus(LogLevel.DEBUG);
 
     bus.addEventListener(testCb1, 'id1');
     bus.addEventListener(testCb2, 'id2');
@@ -141,7 +142,7 @@ describe('Test EventBus', () => {
     const testCb1 = jest.fn();
     const testCb2 = jest.fn();
 
-    const bus = new EventBus();
+    const bus = new EventBus(LogLevel.DEBUG);
 
     bus.addEventListener(testCb1, 'id1');
     bus.addEventListener(testCb2, 'id2');

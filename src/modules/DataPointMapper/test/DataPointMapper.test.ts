@@ -7,6 +7,7 @@ import { ConfigManager } from '../../ConfigManager';
 import emptyDefaultConfig from '../../../../_mdclight/runtime-files/templates/empty.json';
 import { EventBus } from '../../EventBus';
 import { DataSourceProtocols } from '../../../common/interfaces';
+import { LogLevel } from '../../Logger/interfaces';
 
 jest.mock('fs', () => {
   return {
@@ -22,8 +23,8 @@ jest.mock('../../ConfigManager');
 describe('Test DataPointMapper', () => {
   test("should map a source to it's target", async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(),
-      lifecycleEventsBus: new EventBus()
+      errorEventsBus: new EventBus(LogLevel.DEBUG),
+      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
     });
 
     const dataSource: IDataSourceConfig = {

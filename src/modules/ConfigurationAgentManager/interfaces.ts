@@ -7,7 +7,7 @@ interface ICosNetworkIPSettings {
 }
 
 export interface ICosNetworkAdapterSetting {
-  id: string;
+  id: 'enoX1' | 'enoX2';
   displayName: string;
   enabled: boolean;
   ipv4Settings: ICosNetworkIPSettings[];

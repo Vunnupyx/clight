@@ -3,6 +3,7 @@ import { ConfigManager } from '../../../../ConfigManager';
 import { IConfig, IRuntimeConfig } from '../../../../ConfigManager/interfaces';
 import { DataPointCache } from '../../../../DatapointCache';
 import { EventBus, MeasurementEventBus } from '../../../../EventBus';
+import { LogLevel } from '../../../../Logger/interfaces';
 
 jest.mock('winston');
 jest.mock('events');
@@ -54,15 +55,15 @@ jest.mock('../../../../EventBus', () => {
 
 let dataSinksManager;
 const mockConfigManager = new ConfigManager({
-  errorEventsBus: new EventBus(),
-  lifecycleEventsBus: new EventBus()
+  errorEventsBus: new EventBus(LogLevel.DEBUG),
+  lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
 });
 
 const mockParams: IDataSinkManagerParams = {
   configManager: mockConfigManager,
-  errorBus: new EventBus(),
-  measurementsBus: new MeasurementEventBus(),
-  lifecycleBus: new EventBus(),
+  errorBus: new EventBus(LogLevel.DEBUG),
+  measurementsBus: new MeasurementEventBus(LogLevel.DEBUG),
+  lifecycleBus: new EventBus(LogLevel.DEBUG),
   dataPointCache: new DataPointCache()
 };
 describe('DataSinksManager', () => {

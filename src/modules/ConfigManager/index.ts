@@ -2,7 +2,6 @@ import { promises as promisefs } from 'fs';
 import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
 import { promisify } from 'util';
 import { generateKeyPair } from 'crypto';
 import fetch from 'node-fetch';
@@ -28,8 +27,7 @@ import {
   IAuthUser,
   IAuthUsersConfig,
   IDefaultTemplate,
-  IMessengerServerConfig,
-  IVirtualDataPointConfig
+  IMessengerServerConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -131,8 +129,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private _defaultTemplates: IDefaultTemplates;
   private _authConfig: IAuthConfig;
   private _authUsers: IAuthUsersConfig;
-  #resolveConfigChanged = null;
-  #configChangeCompletedPromise = null;
+  #resolveConfigChanged: null | ((value: void) => void) = null;
+  #configChangeCompletedPromise: null | Promise<unknown> = null;
   private pendingEvents: string[] = [];
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
@@ -189,8 +187,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this._runtimeConfig = runtimeConfig;
 
     this._authConfig = {
-      secret: null,
-      public: null
+      secret: '',
+      public: ''
     };
 
     this._authUsers = {
@@ -480,11 +478,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     this._config = {
       ...this._config,
-      ...template,
+      ...(template ?? {}),
       quickStart: {
         completed: true,
         currentTemplate: templateFileName,
-        currentTemplateName: template.name
+        currentTemplateName: template?.name
       }
     };
 
@@ -604,7 +602,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private loadConfig<ConfigType>(
     configName: string,
-    defaultConfig: any
+    defaultConfig: ConfigType
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
     const configPath = path.join(this.configFolder, configName);
@@ -627,7 +625,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         );
       })
       .then((file) => {
-        return JSON.parse(file);
+        return JSON.parse(file) as ConfigType;
       })
       .catch((error) => {
         winston.error(
@@ -637,8 +635,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       })
       .then((parsedFile) => {
         // Make a copy of the defaultConfig to avoid overwriting it
-        const mergedFile = this.mergeDeep(
-          JSON.parse(JSON.stringify(defaultConfig)),
+        const mergedFile = this.mergeDeep<ConfigType>(
+          JSON.parse(JSON.stringify(defaultConfig)) as ConfigType,
           parsedFile
         );
         return mergedFile;
@@ -672,14 +670,18 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         publicKey
       };
     } catch (err) {
-      return null;
+      winston.error(`${logPrefix} error loading JWT key pair, ${err}`);
+      return {
+        privateKey: '',
+        publicKey: ''
+      };
     }
   }
 
   /**
    * Loads default template by filename
    */
-  private async loadTemplate(templateName) {
+  private async loadTemplate(templateName: string) {
     try {
       const configPath = path.join(
         this.runtimeFolder,
@@ -725,14 +727,17 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * @param item
    * @returns {boolean}
    */
-  private isObject(item) {
+  private isObject(item: any): boolean {
     return item && typeof item === 'object' && !Array.isArray(item);
   }
 
   /**
    * Deep merge two objects.
    */
-  private mergeDeep(target: object, ...sources: object[]) {
+  private mergeDeep<ConfigType>(
+    target: ConfigType,
+    ...sources: ConfigType[]
+  ): ConfigType {
     if (!sources.length) return target;
     const source = sources.shift();
 
@@ -762,11 +767,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       ...config.messenger,
       ...incomingMessengerConfig,
       password:
+        incomingMessengerConfig.password &&
         incomingMessengerConfig.password?.length > 0
           ? incomingMessengerConfig.password
           : config.messenger.password
     };
     if (
+      newMessengerConfig.hostname &&
       newMessengerConfig.hostname.length > 5 &&
       !newMessengerConfig.hostname.startsWith('http://') &&
       !newMessengerConfig.hostname.startsWith('https://')
@@ -798,9 +805,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   >(
     operation: ChangeOperation,
     configCategory: Category,
-    // @ts-ignore // TODO Remove ts-ignore
     data: DataType[number] | string,
-    // @ts-ignore // TODO Remove ts-ignore
     selector: (item: DataType[number]) => string = (item) => item.id
   ) {
     const logPrefix = `${this.constructor.name}::changeConfig`;
@@ -814,12 +819,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     switch (operation) {
       case 'insert': {
         if (typeof data !== 'string') {
-          // @ts-ignore TODO: Fix data type
           const index = categoryArray.findIndex(
             (entry) => selector(entry) === selector(data)
           );
           if (index < 0) {
-            //@ts-ignore
             categoryArray.push(data);
           }
         }
@@ -828,14 +831,12 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       case 'update': {
         if (typeof data === 'string' || isDataPointMapping(data))
           throw new Error();
-        // @ts-ignore
         const index = categoryArray.findIndex(
           (entry) => selector(entry) === selector(data)
         );
         if (index < 0) throw Error(`No Entry found`); //TODO:
         const change = categoryArray[index];
         categoryArray.splice(index, 1);
-        //@ts-ignore
         categoryArray.push(data);
         break;
       }
@@ -892,17 +893,17 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * @param obj full or partial config object to use for saving
    * @param replace True would replace existing config with given obj. Default is false and it merges obj and existing config
    */
-  public saveConfig(
-    obj: Partial<IConfig> = null,
-    replace = false
-  ): Promise<void> {
+  public saveConfig(obj: Partial<IConfig>, replace = false): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfig`;
 
     if (obj) {
       if (replace) {
         this._config = obj as IConfig;
       } else {
-        this._config = this.mergeDeep(this._config, obj);
+        this._config = this.mergeDeep<Partial<IConfig>>(
+          this._config,
+          obj
+        ) as IConfig;
       }
     }
 
@@ -949,7 +950,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Save configFile content into config
    */
-  restoreConfigFile(configFile) {
+  restoreConfigFile(configFile: { data: Buffer }): void {
     const buffer = configFile.data;
 
     this.config = JSON.parse(buffer.toString());
@@ -1105,7 +1106,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Waits for restarting events after an configuration change. Timeout if not all events were fired in 60sec
    * @returns
    */
-  public configChangeCompleted(): Promise<void> {
+  public configChangeCompleted(): Promise<unknown> {
     const logPrefix = `${ConfigManager.className}::configChangeCompleted`;
 
     if (this.#configChangeCompletedPromise)

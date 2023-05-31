@@ -109,7 +109,7 @@ async function patchSingleDataSourceHandler(
     allowed.push('machineName');
   }
 
-  if (!isValidProtocol(protocol) || isValidDataSource(updatedDataSource)) {
+  if (!isValidProtocol(protocol) || !isValidDataSource(updatedDataSource)) {
     response.status(400).json({ error: 'Input not valid.' });
     return Promise.resolve();
   }
@@ -342,7 +342,7 @@ async function patchSingleDatapointHandler(
   );
   const index = dataSource?.dataPoints?.findIndex(
     (point) => point.id === request.params.datapointId
-  );
+  ) as number;
   if (dataSource && index >= 0) {
     dataSource.dataPoints.splice(index, 1);
 
@@ -389,7 +389,7 @@ function getSingleDataSourceStatusHandler(
   try {
     status = dataSourcesManager
       .getDataSourceByProto(request.params.datasourceProtocol)
-      .getCurrentStatus();
+      ?.getCurrentStatus();
     if (request.params.datasourceProtocol === DataSourceProtocols.ENERGY) {
       const energyDataSource = dataSourcesManager.getDataSourceByProto(
         request.params.datasourceProtocol
@@ -447,15 +447,15 @@ async function pingDataSourceHandler(request: Request, response: Response) {
   });
 
   const ipOrHostname =
-    dataSource.protocol === DataSourceProtocols.MTCONNECT
+    dataSource?.protocol === DataSourceProtocols.MTCONNECT
       ? (dataSource.connection as IMTConnectDataSourceConnection).hostname
       : (
-          dataSource.connection as
+          dataSource?.connection as
             | IS7DataSourceConnection
             | IEnergyDataSourceConnection
         ).ipAddr;
   let port = (
-    dataSource.connection as
+    dataSource?.connection as
       | IS7DataSourceConnection
       | IMTConnectDataSourceConnection
   ).port;
@@ -494,7 +494,7 @@ async function pingDataSourceHandler(request: Request, response: Response) {
 
   try {
     let timeStart = Date.now();
-    await pingSocketPromise(port, ipOrHostname, PING_TIMEOUT);
+    await pingSocketPromise(port!, ipOrHostname, PING_TIMEOUT);
     const delay = Date.now() - timeStart;
     winston.debug(
       `${logPrefix} successful ping for ${datasourceProtocol} at ${ipOrHostname}:${port} with ${delay}ms delay.`

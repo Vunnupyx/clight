@@ -75,7 +75,7 @@ export function areObjectsEqual(
  * http:// or https:// in the beginning of hostname,
  * as user can paste the hostname together with http
  */
-export function isValidIpOrHostname(textInput: string): boolean {
+export function isValidIpOrHostname(textInput: any): boolean {
   if (!textInput || typeof textInput !== 'string') {
     return false;
   }

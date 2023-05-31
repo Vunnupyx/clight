@@ -75,19 +75,19 @@ export abstract class DataSink {
    * Compares given config with the current data sink config to determine if data source should be restarted or not
    */
   configEqual(
-    config: IDataSinkConfig,
+    config: IDataSinkConfig | undefined,
     mappingConfig: IDataPointMapping[],
     termsAndConditions: boolean,
     optionalConfigs?: OptionalConfigs
   ) {
     return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
+      JSON.stringify(this.config ?? {}) === JSON.stringify(config ?? {}) &&
       JSON.stringify(this.mappingConfig) === JSON.stringify(mappingConfig) &&
       this.termsAndConditionsAccepted === termsAndConditions &&
-      (config.protocol !== DataSinkProtocols.OPCUA ||
-        (config.protocol === DataSinkProtocols.OPCUA &&
+      (config?.protocol !== DataSinkProtocols.OPCUA ||
+        (config?.protocol === DataSinkProtocols.OPCUA &&
           JSON.stringify(this.generalConfig) ===
-            JSON.stringify(optionalConfigs.generalConfig)))
+            JSON.stringify(optionalConfigs?.generalConfig)))
     );
   }
 

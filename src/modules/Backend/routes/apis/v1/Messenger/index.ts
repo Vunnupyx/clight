@@ -61,7 +61,9 @@ function messengerConfigurationGetHandler(
   if (currentConfig) {
     payload = {
       ...currentConfig,
-      password: currentConfig.password?.length > 0
+      password: currentConfig.password
+        ? currentConfig.password?.length > 0
+        : false
     };
   }
 

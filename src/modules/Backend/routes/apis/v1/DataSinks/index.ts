@@ -78,17 +78,17 @@ function getAllDataSinksHandler(request: Request, response: Response): void {
  * @param  {Request} request
  * @param  {Response} response
  */
-function getSingleDataSinkHandler(request, response): void {
+function getSingleDataSinkHandler(request: Request, response: Response): void {
   if (!isValidProtocol(request.params.datasinkProtocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
-  const dataSink: IDataSinkConfigResponse =
+  const dataSink: IDataSinkConfigResponse | undefined =
     configManager.config?.dataSinks?.find(
       (sink) => sink.protocol === request.params.datasinkProtocol
     );
 
-  if (dataSink.protocol === DataSinkProtocols.DATAHUB) {
+  if (dataSink?.protocol === DataSinkProtocols.DATAHUB) {
     const sink = dataSinksManager.getDataSinkByProto(
       DataSinkProtocols.DATAHUB
     ) as DataHubDataSink;
@@ -110,9 +110,9 @@ async function patchSingleDataSinkHandler(
 ): Promise<void> {
   let allowed = ['enabled', 'auth', 'customDataPoints'];
   const protocol = request.params.datasinkProtocol;
-  const updatedDataSink = request.body;
+  const updatedDataSink = request.body as IDataSinkConfig;
 
-  if (!isValidProtocol(protocol) || isValidDataSink(updatedDataSink)) {
+  if (!isValidProtocol(protocol) || !isValidDataSink(updatedDataSink)) {
     response.status(400).json({ error: 'Input not valid.' });
     return Promise.resolve();
   }
@@ -160,7 +160,8 @@ async function patchSingleDataSinkHandler(
     updatedDataSink.auth &&
     'type' in updatedDataSink.auth &&
     'userName' in updatedDataSink.auth &&
-    'password' in updatedDataSink.auth
+    'password' in updatedDataSink.auth &&
+    typeof updatedDataSink.auth.password === 'string'
   ) {
     updatedDataSink.auth.password = await hash(
       updatedDataSink.auth.password,
@@ -310,9 +311,17 @@ async function postSingleDatapointHandler(
   const changedSinkObject = config.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
+  if (!changedSinkObject) {
+    winston.error(
+      `Can't find data sink with ${request.params.datasinkProtocol}`
+    );
+
+    response.status(400).send();
+    return Promise.resolve();
+  }
 
   if (
-    changedSinkObject.dataPoints.some(
+    changedSinkObject.dataPoints?.some(
       (dp) => dp.address === newDatapoint.address || dp.id === newDatapoint.id
     )
   ) {
@@ -357,7 +366,15 @@ async function patchSingleDataPointHandler(
   const sink = config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
-  const dataPoint = sink?.dataPoints?.find(
+  if (!sink) {
+    winston.error(
+      `Can't find data sink with ${request.params.datasinkProtocol}`
+    );
+
+    response.status(400).send();
+    return Promise.resolve();
+  }
+  const dataPoint = sink.dataPoints?.find(
     (point) => point.id === request.params.dataPointId
   );
   if (!dataPoint) {
@@ -414,6 +431,15 @@ async function deleteSingleDatapointHandler(
   const sink = config?.dataSinks.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
+  if (!sink) {
+    winston.error(
+      `Can't find data sink with ${request.params.datasinkProtocol}`
+    );
+
+    response.status(400).send();
+    return Promise.resolve();
+  }
+
   const index = sink.dataPoints.findIndex(
     (point) => point.id === request.params.dataPointId
   );
@@ -452,9 +478,10 @@ function getSingleDataSinkStatusHandler(request: Request, response: Response) {
   let status;
 
   try {
-    status = dataSinksManager
-      .getDataSinkByProto(request.params.datasinkProtocol)
-      .getCurrentStatus();
+    const sink = dataSinksManager.getDataSinkByProto(
+      request.params.datasinkProtocol
+    )!;
+    status = sink.getCurrentStatus();
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;
   }

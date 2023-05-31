@@ -157,7 +157,7 @@ export class EnergyDataSource extends DataSource {
    * not processed in VDP side
    * @param newStatus
    */
-  public async handleMachineStatusChange(newStatus): Promise<ITariffNumbers> {
+  public async handleMachineStatusChange(newStatus: string): Promise<void> {
     const logPrefix = `${this.name}::handleMachineStatusChange`;
 
     const tariffStatusMapping = {
@@ -182,7 +182,6 @@ export class EnergyDataSource extends DataSource {
       );
       if (changeResult) {
         winston.debug(`${logPrefix} EEM Tariff changed to: ${newTariffNo}`);
-        return newTariffNo;
       }
     } catch (e) {
       winston.warn(

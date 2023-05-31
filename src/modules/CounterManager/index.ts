@@ -5,7 +5,7 @@ import * as date from 'date-fns';
 import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
-import { CounterDict, Day, ScheduleDescription, timerDict } from './interfaces';
+import { CounterDict, ScheduleDescription, timerDict } from './interfaces';
 
 /**
  * Manages counter (virtual data points)
@@ -89,7 +89,10 @@ export class CounterManager {
    * Rest counter to zero
    * @param counterId identifier of the vdp counter
    */
-  public reset(counterId: string, schedulingIndex: number = undefined): void {
+  public reset(
+    counterId: string,
+    schedulingIndex: number | undefined = undefined
+  ): void {
     const logPrefix = `CounterManager::reset`;
 
     winston.debug(`${logPrefix} started for id: ${counterId}`);
@@ -98,10 +101,13 @@ export class CounterManager {
       return;
     }
     this.counters[counterId] = 0;
-    if (schedulingIndex) {
-      this.configManager.config.virtualDataPoints.find(
+    if (typeof schedulingIndex === 'number') {
+      const counterVdp = this.configManager.config.virtualDataPoints.find(
         (vdp) => vdp.id === counterId
-      ).resetSchedules[schedulingIndex].lastReset = Date.now();
+      );
+      if (counterVdp?.resetSchedules) {
+        counterVdp.resetSchedules[schedulingIndex].lastReset = Date.now();
+      }
     }
 
     this.cache.resetValue(counterId, 0);
@@ -224,6 +230,7 @@ export class CounterManager {
                 `${logPrefix} timer for ${counterId} expired. Start reset.`
               );
               this.reset(counterId, index);
+              clearTimeout(this.startedTimers[counterId][index]);
               this.startedTimers[counterId][index] = undefined;
             }, timeDiff * -1)
           };
@@ -274,7 +281,7 @@ export class CounterManager {
   private static calcWithDate(
     scheduleData: ScheduleDescription,
     currentDate: Date
-  ) {
+  ): Date {
     const logPrefix = `${this.constructor.name}::calcWithDate`;
     const timeData = {
       year: currentDate.getFullYear(),
@@ -339,7 +346,6 @@ export class CounterManager {
         timeData[entry] -= 1;
       }
       winston.error(`${logPrefix} no next date found for: ${scheduleData}`);
-      return null;
     }
     return dateFromScheduling;
   }
@@ -347,7 +353,7 @@ export class CounterManager {
   private static calcWithDay(
     scheduleData: ScheduleDescription,
     currentDate: Date
-  ) {
+  ): Date {
     const timeData = {
       year: currentDate.getFullYear(),
       month:

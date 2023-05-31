@@ -66,7 +66,7 @@ export class S7DataSource extends DataSource {
 
   private nckEnabled = false;
 
-  private client = null;
+  private client: NodeS7 = null;
   private nckClient = new SinumerikNCK();
 
   get nckSlot() {
@@ -178,7 +178,7 @@ export class S7DataSource extends DataSource {
   private readPlcData(): Promise<S7DataPointsWithError> {
     return new Promise((resolve, reject) => {
       if (this.getPlcAddresses().length === 0)
-        resolve({ datapoints: [], error: null });
+        resolve({ datapoints: [], error: false });
       try {
         const timeoutId = setTimeout(
           () =>
@@ -329,11 +329,14 @@ export class S7DataSource extends DataSource {
         // Prevent to add nck data point with an undefined value in case we have no nck connection
         if (dp.type === 'nck' && !this.nckEnabled) continue;
 
-        let value,
-          error = null;
+        let value: any = undefined;
+        let error: string | undefined = undefined;
+
         if (dp.type === 's7') {
           value = plcResults.datapoints[dp.address];
-          error = this.checkS7Error(plcResults.error, value);
+          error = this.checkS7Error(plcResults.error, value)
+            ? 's7error'
+            : undefined;
 
           if (!error) allS7DpError = false;
         } else if (dp.type === 'nck') {

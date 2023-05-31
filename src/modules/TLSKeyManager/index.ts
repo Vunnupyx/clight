@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import winston from 'winston';
 import path from 'path';
 
@@ -21,10 +21,10 @@ export class TLSKeyManager {
               winston.debug(`${logPrefix} failed to generate SSL keys`);
               winston.error(JSON.stringify(err));
               reject(err);
-              return;
+              return undefined;
             }
             resolve();
-            return;
+            return undefined;
           }
         );
       } else {
@@ -39,12 +39,12 @@ export class TLSKeyManager {
     callback = (err: Error | string, stderr: string, stdout: string) =>
       undefined
   ): void {
-    const stdout = [];
-    const stderr = [];
+    const stdout: any[] = [];
+    const stderr: any[] = [];
 
     let parameters =
       typeof params === 'string'
-        ? params.match(/(?:[^\s"]+|"[^"]*")+/g) //Regex preserves the quoted substring.
+        ? params.match(/(?:[^\s"]+|"[^"]*")+/g) ?? [] //Regex preserves the quoted substring.
         : params;
 
     if (parameters[0] === 'openssl') {

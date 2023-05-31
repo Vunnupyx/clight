@@ -95,9 +95,10 @@ async function templatesSkipPostHandler(
     ...configManager.config,
     quickStart: {
       completed: true,
-      currentTemplate: configManager.config.quickStart.currentTemplate || null,
+      currentTemplate:
+        configManager.config.quickStart.currentTemplate || undefined,
       currentTemplateName:
-        configManager.config.quickStart.currentTemplateName || null
+        configManager.config.quickStart.currentTemplateName || undefined
     }
   };
 

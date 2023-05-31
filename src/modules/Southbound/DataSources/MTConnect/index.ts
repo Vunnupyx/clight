@@ -315,7 +315,7 @@ export class MTConnectDataSource extends DataSource {
         keyToUse = 'Samples';
         break;
       default:
-        break;
+        return;
     }
     let arrayToProcess: IMeasurementData[] = [];
 
@@ -351,7 +351,7 @@ export class MTConnectDataSource extends DataSource {
       } = detailObject['@'] ?? {};
       const value = detailObject['#'];
       // In some cases Entry can be present instead of a value
-      let entries: IEntry[];
+      let entries: IEntry[] = [];
       let entriesObject: IEntriesObject = {};
 
       if (detailObject.Entry) {

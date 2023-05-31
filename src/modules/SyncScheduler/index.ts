@@ -5,7 +5,7 @@ type SubscribersForInterval = { [key: number]: SubscriberById };
  * Implements a (globally) synchronous interval scheduler
  */
 export class SynchronousIntervalScheduler {
-  private static instance: SynchronousIntervalScheduler;
+  private static instance: SynchronousIntervalScheduler | undefined;
 
   private subscribers: SubscribersForInterval = {};
   private lastAssignedSubId = 0;
@@ -24,7 +24,7 @@ export class SynchronousIntervalScheduler {
    */
   public shutdown() {
     clearInterval(this.internalCycleInterval);
-    SynchronousIntervalScheduler.instance = undefined; // TBD: If after shutdown a Scheduler instance is taken, it will not start the timer otherwise
+    SynchronousIntervalScheduler.instance = undefined;
   }
 
   /**

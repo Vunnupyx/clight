@@ -1,6 +1,7 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
 import { MeasurementEventBus, EventBus } from '../../EventBus';
+import { LogLevel } from '../../Logger/interfaces';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
 jest.mock('winston');
@@ -59,8 +60,8 @@ class mockCache {
 
 describe('Test VirtualDataPointManager', () => {
   const mockConfigManager = new ConfigManager({
-    errorEventsBus: new EventBus(),
-    lifecycleEventsBus: new EventBus()
+    errorEventsBus: new EventBus(LogLevel.DEBUG),
+    lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
   });
   mockConfigManager.config = {
     virtualDataPoints: []
@@ -105,7 +106,7 @@ describe('Test VirtualDataPointManager', () => {
     }
   ];
 
-  const eventBus = new MeasurementEventBus();
+  const eventBus = new MeasurementEventBus(LogLevel.DEBUG);
   const cache = new mockCache() as any;
   let virtualDpManager = new VirtualDataPointManager({
     configManager: mockConfigManager,

@@ -178,7 +178,7 @@ function getSingleMappingHandler(
   );
   response.status(map ? 200 : 404).json(map);
 
-  return;
+  return Promise.resolve();
 }
 
 export const mappingHandlers = {

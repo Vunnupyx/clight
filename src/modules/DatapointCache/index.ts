@@ -29,7 +29,7 @@ export class DataPointCache {
   public update(
     events: IDataSourceMeasurementEvent | IDataSourceMeasurementEvent[]
   ): void {
-    let _events = [];
+    let _events: IDataSourceMeasurementEvent[] = [];
     if (Array.isArray(events)) {
       _events = events;
     } else {
@@ -68,7 +68,7 @@ export class DataPointCache {
    * @param  {string} id
    * @returns IMeasurementEvent
    */
-  public getCurrentEvent(id: string): IDataSourceMeasurementEvent | null {
+  public getCurrentEvent(id: string): IDataSourceMeasurementEvent | undefined {
     return this.dataPoints[id] ? this.dataPoints[id].event : undefined;
   }
 

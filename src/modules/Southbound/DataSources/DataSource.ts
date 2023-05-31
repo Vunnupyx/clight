@@ -33,7 +33,7 @@ export abstract class DataSource extends EventEmitter {
 
   protected config: IDataSourceConfig;
   protected level = EventLevels.DataSource;
-  protected reconnectTimeoutId: Timeout = null;
+  protected reconnectTimeoutId: Timeout;
   protected RECONNECT_TIMEOUT =
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
   public timestamp: number;
@@ -62,9 +62,12 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Compares given config with the current data source config to determine if data source should be restarted or not
    */
-  configEqual(config: IDataSourceConfig, termsAndConditions: boolean) {
+  configEqual(
+    config: IDataSourceConfig | undefined,
+    termsAndConditions: boolean
+  ) {
     return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
+      JSON.stringify(this.config ?? {}) === JSON.stringify(config ?? {}) &&
       this.termsAndConditionsAccepted === termsAndConditions
     );
   }

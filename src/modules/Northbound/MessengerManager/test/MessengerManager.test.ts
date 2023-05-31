@@ -4,6 +4,7 @@ import emptyDefaultConfig from '../../../../../_mdclight/runtime-files/templates
 import { ConfigManager } from '../../../ConfigManager';
 import { EventBus } from '../../../EventBus';
 import { DataSinkProtocols } from '../../../../common/interfaces';
+import { LogLevel } from '../../../Logger/interfaces';
 
 function log(m) {
   //console.log(m);
@@ -28,8 +29,8 @@ let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 let messengerAdapter: MessengerManager;
 let configManager = new ConfigManager({
-  errorEventsBus: new EventBus(),
-  lifecycleEventsBus: new EventBus()
+  errorEventsBus: new EventBus(LogLevel.DEBUG),
+  lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
 });
 
 describe('MessengerManager', () => {

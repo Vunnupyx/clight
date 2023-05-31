@@ -50,7 +50,7 @@ async function backupPostHandle(
   request: Request,
   response: Response
 ): Promise<void> {
-  const configFile = (request.files as any)?.config;
+  const configFile = (request.files as any)?.config as { data: Buffer };
 
   if (!configFile) {
     winston.error('Backup restore failed. No file provided!');
@@ -150,7 +150,7 @@ async function logsGetHandler(
   try {
     stream = fs.createReadStream(`${outPath}/${outFileName}`);
   } catch (err) {
-    winston.error(`${logPrefix} error during read file due to ${err?.msg}`);
+    winston.error(`${logPrefix} error during read file due to ${err}`);
     saveDelete();
     response.status(500).send('Internal server error. Please try again later.');
     return;

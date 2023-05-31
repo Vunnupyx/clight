@@ -9,9 +9,9 @@ import { TSubscriberFn } from './interfaces';
  */
 export class EventBus<TEventType> {
   private callbacks: { [key: string]: TSubscriberFn<TEventType> } = {};
-  protected logLevel: string;
+  protected logLevel: LogLevel;
 
-  constructor(logLevel: LogLevel = null) {
+  constructor(logLevel: LogLevel) {
     this.logLevel = logLevel;
 
     if (this.logLevel) {

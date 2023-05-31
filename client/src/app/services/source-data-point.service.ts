@@ -149,6 +149,11 @@ export class SourceDataPointService {
             this.translate.instant('settings-data-source-point.HostDisabled')
           );
           return;
+        } else if (res?.error?.msg) {
+          this.toastr.error(
+            this.translate.instant('settings-data-source-point.HostUnreachable')
+          );
+          return;
         }
         this.toastr.success(
           this.translate.instant(

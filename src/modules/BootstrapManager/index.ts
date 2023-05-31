@@ -37,9 +37,18 @@ export class BootstrapManager {
   private tlsKeyManager: TLSKeyManager;
 
   constructor() {
-    this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
-    this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(LogLevel.INFO);
-    this.measurementsEventsBus = new MeasurementEventBus(LogLevel.DEBUG);
+    this.errorEventsBus = new EventBus<IErrorEvent>(
+      'ErrorEventBus',
+      LogLevel.ERROR
+    );
+    this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(
+      'LifecycleEventBus',
+      LogLevel.VERBOSE
+    );
+    this.measurementsEventsBus = new MeasurementEventBus(
+      'MeasurementEventBus',
+      LogLevel.DEBUG
+    );
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,
@@ -74,7 +83,9 @@ export class BootstrapManager {
 
     this.ledManager = new LedStatusService(
       this.configManager,
-      this.dataSourcesManager
+      this.dataSourcesManager,
+      this.dataSinksManager,
+      this.lifecycleEventsBus
     );
 
     this.configManager.dataSourcesManager = this.dataSourcesManager;
@@ -99,6 +110,7 @@ export class BootstrapManager {
       this.setupKillEvents();
 
       await this.tlsKeyManager.generateKeys();
+      await this.ledManager.init();
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {

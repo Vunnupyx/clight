@@ -1,91 +1,48 @@
 import winston from 'winston';
-import { LifecycleEventStatus } from '../../common/interfaces';
+import {
+  DataSinkProtocols,
+  DataSourceProtocols,
+  ILifecycleEvent,
+  LifecycleEventStatus
+} from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
-import { DataSourceEventTypes } from '../Southbound/DataSources/interfaces';
+import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
+import { EventBus } from '../EventBus';
+import { IDataPointMapping } from '../ConfigManager/interfaces';
+import { ca } from 'date-fns/locale';
 
 type TLedColors = 'red' | 'green' | 'orange';
+type TUser1State = 'not_configured' | 'configured' | 'connected';
 
 /**
  * Set LEDs or blink to display status of the runtime for user.
  */
 export class LedStatusService {
-  #configured = false;
-  #southboundConnectionStatus: {
-    [key: string]: boolean;
-  } = {};
   #ledIds: { [key: string]: string } = { '1': 'user1', '2': 'user2' }; // Received LED Ids are "user1" and "user2", already assigned to avoid undefined at beginning
+  user1State: TUser1State = 'not_configured';
 
   constructor(
     private configManager: ConfigManager,
-    private datasourceManager: DataSourcesManager
+    private datasourceManager: DataSourcesManager,
+    private dataSinksManager: DataSinksManager,
+    private lifecycleBus: EventBus<ILifecycleEvent>
   ) {
     this.configManager.once('configsLoaded', async () => {
-      this.registerDataSourceEvents();
-      await this.checkConfigTemplateTerms();
-      await this.getLedIds();
-    });
-    this.datasourceManager.on('dataSourcesRestarted', async () => {
-      // Re-register data source event listeners as they were deleted and recreated during restart
-      this.registerDataSourceEvents();
-      await this.checkConfigTemplateTerms();
+      await this.checkUserLED1();
     });
     this.configManager.on('configChange', async () => {
-      await this.checkConfigTemplateTerms();
+      await this.checkUserLED1();
     });
+    this.lifecycleBus.addEventListener(
+      this.handleLiveCycleEvent.bind(this),
+      'LedStatusService_onLifecycleEvent'
+    );
   }
 
-  private registerDataSourceEvents(): void {
-    const logPrefix = `${LedStatusService.name}::registerDataSourceEvents`;
-
-    const sources = this.datasourceManager.getDataSources();
-    if (!sources || sources.length < 1) {
-      winston.error(`${logPrefix} no data sources available`);
-    }
-    winston.debug(`${logPrefix} registering listeners on data sources.`);
-
-    sources.forEach((source) => {
-      // Initialize the connection status object.
-      // Read current status of the data source as it might have been connected before this registration
-      if (!this.#southboundConnectionStatus[source.protocol]) {
-        this.#southboundConnectionStatus[source.protocol] =
-          source.currentStatus === LifecycleEventStatus.Connected;
-      }
-
-      source.on(DataSourceEventTypes.Lifecycle, async (status) => {
-        switch (status) {
-          case LifecycleEventStatus.Connected: {
-            this.#southboundConnectionStatus[source.protocol] = true;
-
-            if (this.#configured) {
-              winston.debug(
-                `${logPrefix} successfully configured and connected to at least one data source. Set USER 1 LED to green light.`
-              );
-              await this.setLed(1, 'green');
-            } else {
-              winston.debug(
-                `${logPrefix} successfully connected to at least one data source but not configured yet.`
-              );
-            }
-            return;
-          }
-          case LifecycleEventStatus.Disconnected: {
-            winston.debug(
-              `${logPrefix} successfully configured and but not connected to at least one data source. Set USER 1 LED to orange light.`
-            );
-            this.#southboundConnectionStatus[source.protocol] = false;
-            await this.setLed(1, 'orange');
-
-            return;
-          }
-          default: {
-            // Ignore all other events!
-            return;
-          }
-        }
-      });
-    });
+  public async init(): Promise<void> {
+    await this.getLedIds();
   }
 
   /**
@@ -96,6 +53,9 @@ export class LedStatusService {
     color: TLedColors,
     frequency?: number
   ): Promise<void> {
+    // Turn off LED before turn on with new color or frequency.
+    // Currently, the configuration agent behaves uncontrolled when changing the LED status.
+    await this.unsetLed(ledNumber);
     await ConfigurationAgentManager.setLedStatus(
       this.#ledIds[ledNumber],
       'on',
@@ -131,69 +91,91 @@ export class LedStatusService {
    * - Template is selected
    * - Terms and Conditions are accepted
    */
-  private async checkConfigTemplateTerms(): Promise<void> {
-    const terms = this.configManager.config.termsAndConditions;
-    const logPrefix = `${LedStatusService.name}::checkConfigTemplateTerms`;
+  private checkUserLED1(): void {
+    const logPrefix = `${LedStatusService.name}::checkUserLED1`;
 
     winston.debug(`${logPrefix} start checking.`);
 
-    // Fast way out of check
-    if (!terms) {
-      winston.debug(`${logPrefix} terms and conditions not accepted.`);
-      this.noConfigBlink();
-      return;
-    }
-
-    /*
-     * WARNING: Very bad bad performance! In worst case O(n * m * o * p * q)
-     *           However, amount of data sources or data points are typically not very high
-     * n = count of mappings
-     * m = count of sources
-     * o = count of datapoints in sources
-     * p = count of sinks
-     * q = count of datapoints in sinks
-     */
-    loop1: for (const mapping of this.configManager.config.mapping) {
-      const sourceDatapoint = mapping.source;
-      const sinkDatapoint = mapping.target;
-
-      loop2: for (const source of this.configManager.config.dataSources) {
-        if (!source.enabled) continue;
-        const isDataSourceForThisMapping = source.dataPoints.some(
-          (point) => point.id === sourceDatapoint
-        );
-
-        if (isDataSourceForThisMapping) {
-          loop3: for (const sink of this.configManager.config.dataSinks) {
-            if (!sink.enabled) continue;
-            const isDataSinkForThisMapping = sink.dataPoints.some(
-              (point) => point.id === sinkDatapoint
-            );
-
-            if (isDataSinkForThisMapping) {
-              // Data source is configured
-
-              if (this.#southboundConnectionStatus[source.protocol]) {
-                // Data source is connected
-                winston.debug(
-                  `${logPrefix} data source ${source.protocol} is configured and connected. Set USER 1 LED to green.`
-                );
-                await this.setLed(1, 'green');
-              } else {
-                winston.debug(
-                  `${logPrefix} data source ${source.protocol} is configured but not connected. Set USER 1 LED to orange.`
-                );
-                await this.setLed(1, 'orange');
-              }
-              this.#configured = true;
-              return;
-            }
-          }
-        }
+    if (this.isConfigured()) {
+      if (this.getDataSourcesConnected() && this.getDataSinksConnected()) {
+        this.setLed1State('connected');
+      } else {
+        this.setLed1State('configured');
       }
+    } else {
+      // not configured
+      this.setLed1State('not_configured');
     }
-    this.noConfigBlink();
-    this.#configured = false;
+  }
+
+  private getConfiguredSources = (): DataSourceProtocols[] => {
+    const logPrefix = `${LedStatusService.name}::getConfiguredSources`;
+
+    const configured = this.configManager.config?.dataSources
+      ?.filter((source) => source.enabled && source.dataPoints?.length > 0)
+      .map((source) => source.protocol);
+
+    winston.verbose(
+      `${logPrefix} Configured sources: ${JSON.stringify(configured)}`
+    );
+
+    return configured;
+  };
+
+  private getConfiguredSinks = (): DataSinkProtocols[] => {
+    const logPrefix = `${LedStatusService.name}::getConfiguredSinks`;
+
+    const configured = this.configManager.config?.dataSinks
+      ?.filter((sink) => sink.enabled && sink.dataPoints.length > 0)
+      .map((sink) => sink.protocol);
+
+    winston.verbose(
+      `${logPrefix} Configured sources: ${JSON.stringify(configured)}`
+    );
+
+    return configured;
+  };
+
+  private getConfiguredMappings = (): IDataPointMapping[] => {
+    const logPrefix = `${LedStatusService.name}::getConfiguredMappings`;
+    winston.verbose(
+      `${logPrefix} ${this.configManager.config?.mapping?.length} mappings configured`
+    );
+    return this.configManager.config?.mapping || [];
+  };
+
+  private getTermsAccepted = (): boolean => {
+    const logPrefix = `${LedStatusService.name}::getTermsAccepted`;
+    winston.verbose(
+      `${logPrefix} Terms accepted: ${this.configManager.config?.termsAndConditions?.accepted}`
+    );
+    return this.configManager.config?.termsAndConditions?.accepted;
+  };
+
+  private getDataSourcesConnected = (): boolean => {
+    return this.getConfiguredSources().some(
+      (source) =>
+        this.datasourceManager
+          .getDataSourceByProto(source)
+          ?.getCurrentStatus() === LifecycleEventStatus.Connected
+    );
+  };
+
+  private getDataSinksConnected = (): boolean => {
+    return this.getConfiguredSinks().some(
+      (sink) =>
+        this.dataSinksManager.getDataSinkByProto(sink).getCurrentStatus() ===
+        LifecycleEventStatus.Connected
+    );
+  };
+
+  private isConfigured(): boolean {
+    return (
+      this.getTermsAccepted() &&
+      this.getConfiguredSources().length > 0 &&
+      this.getConfiguredSinks().length > 0 &&
+      this.getConfiguredMappings().length > 0
+    );
   }
 
   /**
@@ -203,14 +185,37 @@ export class LedStatusService {
    *  - No Template
    *  - Not accepted AGB
    */
-  private noConfigBlink(): void {
-    const logPrefix = `${LedStatusService.name}::noConfigBlink`;
-    winston.info(
-      `${logPrefix} set USER LED 1 to 'orange blinking' because not not completely configured.`
-    );
+  private setLed1State(state: TUser1State): void {
+    const logPrefix = `${LedStatusService.name}::setLed1State`;
 
-    // Blink LED 1 with 1 Hertz = 0.5s on, 0.5s off
-    this.setLed(1, 'orange', 1);
+    if (this.user1State === state) {
+      winston.debug(
+        `${logPrefix} USER LED 1 is already in state '${state}'. Nothing to do.`
+      );
+      return;
+    }
+
+    this.user1State = state;
+
+    switch (state) {
+      case 'not_configured':
+        winston.info(
+          `${logPrefix} set USER LED 1 to 'orange blinking' because not not completely configured.`
+        );
+        this.setLed(1, 'orange', 1);
+      case 'configured':
+        winston.info(
+          `${logPrefix} set USER LED 1 to 'orange ON' because configured`
+        );
+        this.setLed(1, 'orange', 0);
+      case 'connected':
+        winston.info(
+          `${logPrefix} set USER LED 1 to 'green ON' because configured and connected`
+        );
+        this.setLed(1, 'green', 1);
+      default:
+        this.unsetLed(1);
+    }
   }
 
   /**
@@ -247,5 +252,13 @@ export class LedStatusService {
 
     await this.turnOffLeds();
     winston.info(`${logPrefix} successfully.`);
+  }
+
+  private async handleLiveCycleEvent(event: ILifecycleEvent): Promise<void> {
+    const logPrefix = `${LedStatusService.name}::handleLiveCycleEvent`;
+    winston.info(
+      `${logPrefix} a status has changed. Reevaluating USER LED 1 status...`
+    );
+    this.checkUserLED1();
   }
 }

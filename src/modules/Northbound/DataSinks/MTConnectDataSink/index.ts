@@ -5,7 +5,6 @@ import { MTConnectAdapter } from '../../Adapter/MTConnectAdapter';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import {
   DataSinkProtocols,
-  DataSourceLifecycleEventTypes,
   ILifecycleEvent,
   LifecycleEventStatus,
   MTConnectDataItemTypes
@@ -168,13 +167,9 @@ export class MTConnectDataSink extends DataSink {
     );
     MTConnectDataSink.schedulerListenerId = null;
 
-    Object.getOwnPropertyNames(this).forEach((prop) => {
-      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
-      if (this[prop].close) shutdownFunctions.push(this[prop].close());
+    shutdownFunctions.push(this.mtcAdapter.shutdown());
 
-      // delete this[prop]; // TODO Why was this required?
-    });
-
+    winston.verbose(`${logPrefix} Waiting for shutdown.`);
     return Promise.all(shutdownFunctions)
       .then(() => {
         winston.info(`${logPrefix} successfully.`);

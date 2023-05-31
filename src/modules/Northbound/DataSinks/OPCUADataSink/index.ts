@@ -1,17 +1,13 @@
 import winston from 'winston';
 import {
   DataSinkProtocols,
-  DataSourceLifecycleEventTypes,
   ILifecycleEvent,
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
 import { Variant, UAVariable, LocalizedText, DataType } from 'node-opcua';
-import {
-  IGeneralConfig,
-  IOPCUAConfig
-} from '../../../ConfigManager/interfaces';
+import { IOPCUAConfig } from '../../../ConfigManager/interfaces';
 
 type OPCUANodeDict = {
   [key: string]: UAVariable;
@@ -170,23 +166,23 @@ export class OPCUADataSink extends DataSink {
 
     // Check for OPCUA Error Messages
     switch (event.type) {
-      case DataSourceLifecycleEventTypes.Connecting: {
+      case LifecycleEventStatus.Connecting: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.Connected: {
+      case LifecycleEventStatus.Connected: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.ConnectionError: {
+      case LifecycleEventStatus.ConnectionError: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.Disconnected: {
+      case LifecycleEventStatus.Disconnected: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.Reconnecting: {
+      case LifecycleEventStatus.Reconnecting: {
         // TODO: To be implemented
         break;
       }

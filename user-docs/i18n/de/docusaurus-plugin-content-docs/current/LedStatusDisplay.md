@@ -44,8 +44,8 @@ und drei verschiedene Farben für jede LED:
 Die USER 1 LED zeigt den aktuellen Konfigurationsstatus an:
 
 - orange blinkend (Keine Konfiguration/Nicht akzeptierte Bedingungen)
-- orange ([`konfiguriert`](LedStatusDisplay.md#what-does-configured-mean) aber nicht mit NC verbunden)
-- grün ([`konfiguriert`](LedStatusDisplay.md#what-does-configured-mean) und erfolgreich mit der NC verbunden)
+- orange ([`konfiguriert`](LedStatusDisplay.md#what-does-configured-mean) aber keine verbundene Datenquelle oder Anwendungsschnittstellen)
+- grün ([`konfiguriert`](LedStatusDisplay.md#what-does-configured-mean) und verbundene Datenquelle und Anwendungsschnittstellen)
 
 #### Zustände der USER 2 LED
 
@@ -59,7 +59,6 @@ Die USER 2 LED hat nur 2 Zustände:
 
 Der Status `konfiguriert` ist definiert als:
 
-- Eine aktivierte Datenquelle
-- Mindestens ein aktiver Datenpunkt an dieser aktiven Quelle
-- Eine aktivierte Anwendungsschnittstelle mit mindestens einem Datenpunkt
-- Ein aktives Mapping zwischen dem Datenpunkt der aktivierten verbundenen Datenquelle und dem Datenpunkt der aktivierten Anwendungsschnittstelle
+- Eine aktivierte Datenquelle mit einem oder mehreren Datenpunkten
+- Eine Anwendungsschnittstelle mit einem oder mehreren Datenpunkten
+- Eine oder mehrere aktive Mapping

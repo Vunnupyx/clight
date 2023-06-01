@@ -46,8 +46,8 @@ and three different colors for each LED:
 USER 1 LED displays the current configuration state:
 
 - orange blinking (No Configuration/Not accepted Terms and Conditions)
-- orange ([`configured`](LedStatusDisplay.md#what-does-configured-mean) but not connected to at least one data source)
-- green ([`configured`](LedStatusDisplay.md#what-does-configured-mean) and successfully connected to at least one data source)
+- orange ([`configured`](LedStatusDisplay.md#what-does-configured-mean) but no running data source or application interface)
+- green ([`configured`](LedStatusDisplay.md#what-does-configured-mean) and running data source and application interface)
 
 #### States of USER 2 LED
 
@@ -60,7 +60,6 @@ USER 2 LED has only 2 states:
 
 The status `configured` is defined as:
 
-- One enabled data source
-- Minimum one active data point at this active source
-- One enabled Application Interface with minimum one data point
-- One active mapping between the enabled connected data source data point and the enabled Application Interface data point
+- One enabled data source with on or more data points
+- One enabled data sink with one or more data points
+- One or more mapping

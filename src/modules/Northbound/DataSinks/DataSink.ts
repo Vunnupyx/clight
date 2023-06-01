@@ -1,8 +1,10 @@
 import winston from 'winston';
+import { v4 } from 'uuid';
 import {
+  LifecycleEventStatus,
   DataSinkProtocols,
   ILifecycleEvent,
-  LifecycleEventStatus
+  EventLevels
 } from '../../../common/interfaces';
 import {
   IDataPointMapping,
@@ -12,22 +14,18 @@ import {
   ITargetDataMap
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
-import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
+import {
+  DataSinkEventTypes,
+  IDataSourceMeasurementEvent
+} from '../../Southbound/DataSources/interfaces';
 import { isEmpty } from 'lodash';
 import { DataPointCache } from '../../DatapointCache';
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
 
-export enum DataSinkStatus {
-  CONNECTING = 'CONNECTING',
-  CONNECTED = 'CONNECTED',
-  DISCONNECTED = 'DISCONNECTED',
-  RECONNECTING = 'RECONNECTING',
-  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
-  NO_NETWORK_AVAILABLE = 'NO_NETWORK_AVAILABLE',
-  INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
-  INVALID_STATE = 'INVALID_STATE'
+interface IDataSinkEvents {
+  [DataSinkEventTypes.Lifecycle]: (event: ILifecycleEvent) => void;
 }
-
-export type TDataSinkStatus = keyof typeof DataSinkStatus;
 
 export interface IDataSinkOptions {
   mapping: IDataPointMapping[];
@@ -45,7 +43,7 @@ export type OptionalConfigs = {
 /**
  * Base class of northbound data sinks
  */
-export abstract class DataSink {
+export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<IDataSinkEvents>) {
   protected name = DataSink.name;
   protected config: IDataSinkConfig;
   protected generalConfig: IGeneralConfig;
@@ -62,6 +60,7 @@ export abstract class DataSink {
    * @param params The user configuration object for this data source
    */
   constructor(options: IDataSinkOptions) {
+    super();
     this.config = JSON.parse(JSON.stringify(options.dataSinkConfig));
     this.generalConfig = JSON.parse(JSON.stringify(options.generalConfig));
     this.mappingConfig = options.mapping;
@@ -104,6 +103,12 @@ export abstract class DataSink {
       `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
     );
     this.currentStatus = newState;
+    this.emit(DataSinkEventTypes.Lifecycle, {
+      dataSink: { protocol: this.protocol },
+      type: newState,
+      level: EventLevels.DataSink,
+      id: v4()
+    });
   }
 
   public get protocol() {

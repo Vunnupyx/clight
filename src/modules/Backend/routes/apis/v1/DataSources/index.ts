@@ -463,18 +463,18 @@ async function pingDataSourceHandler(request: Request, response: Response) {
   });
 
   const ipOrHostname =
-    dataSource.protocol === DataSourceProtocols.MTCONNECT
-      ? (dataSource.connection as IMTConnectDataSourceConnection).hostname
+    dataSource?.protocol === DataSourceProtocols.MTCONNECT
+      ? (dataSource?.connection as IMTConnectDataSourceConnection)?.hostname
       : (
-          dataSource.connection as
+          dataSource?.connection as
             | IS7DataSourceConnection
             | IEnergyDataSourceConnection
-        ).ipAddr;
+        )?.ipAddr;
   let port = (
-    dataSource.connection as
+    dataSource?.connection as
       | IS7DataSourceConnection
       | IMTConnectDataSourceConnection
-  ).port;
+  )?.port;
 
   if (!port && datasourceProtocol === DataSourceProtocols.ENERGY) {
     port = 80;

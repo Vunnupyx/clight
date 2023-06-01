@@ -11,7 +11,6 @@ import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
 import { EventBus } from '../EventBus';
 import { IDataPointMapping } from '../ConfigManager/interfaces';
-import { ca } from 'date-fns/locale';
 
 type TLedColors = 'red' | 'green' | 'orange';
 type TUser1State = 'not_configured' | 'configured' | 'connected';
@@ -109,46 +108,22 @@ export class LedStatusService {
   }
 
   private getConfiguredSources = (): DataSourceProtocols[] => {
-    const logPrefix = `${LedStatusService.name}::getConfiguredSources`;
-
-    const configured = this.configManager.config?.dataSources
+    return this.configManager.config?.dataSources
       ?.filter((source) => source.enabled && source.dataPoints?.length > 0)
       .map((source) => source.protocol);
-
-    winston.verbose(
-      `${logPrefix} Configured sources: ${JSON.stringify(configured)}`
-    );
-
-    return configured;
   };
 
   private getConfiguredSinks = (): DataSinkProtocols[] => {
-    const logPrefix = `${LedStatusService.name}::getConfiguredSinks`;
-
-    const configured = this.configManager.config?.dataSinks
+    return this.configManager.config?.dataSinks
       ?.filter((sink) => sink.enabled && sink.dataPoints.length > 0)
       .map((sink) => sink.protocol);
-
-    winston.verbose(
-      `${logPrefix} Configured sources: ${JSON.stringify(configured)}`
-    );
-
-    return configured;
   };
 
   private getConfiguredMappings = (): IDataPointMapping[] => {
-    const logPrefix = `${LedStatusService.name}::getConfiguredMappings`;
-    winston.verbose(
-      `${logPrefix} ${this.configManager.config?.mapping?.length} mappings configured`
-    );
     return this.configManager.config?.mapping || [];
   };
 
   private getTermsAccepted = (): boolean => {
-    const logPrefix = `${LedStatusService.name}::getTermsAccepted`;
-    winston.verbose(
-      `${logPrefix} Terms accepted: ${this.configManager.config?.termsAndConditions?.accepted}`
-    );
     return this.configManager.config?.termsAndConditions?.accepted;
   };
 

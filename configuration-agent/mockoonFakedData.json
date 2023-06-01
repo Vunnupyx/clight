@@ -1,20 +1,20 @@
 {
-  "uuid": "0416b947-aa7a-4695-b975-a0c3227ab945",
-  "lastMigration": 22,
+  "uuid": "fbc16957-12d0-4813-b105-7efe873952d4",
+  "lastMigration": 24,
   "name": "Configuration Agent API",
   "endpointPrefix": "api/v1",
   "latency": 0,
   "port": 1884,
-  "hostname": "0.0.0.0",
+  "hostname": "127.0.0.1",
   "routes": [
     {
-      "uuid": "bd311334-e717-4049-80f8-2ec7fa991ca4",
+      "uuid": "bab75a73-0dd9-421a-b00f-9a8a5f9e60a6",
       "documentation": "Get list of local ports those cannot be forwarded",
       "method": "get",
       "endpoint": "network/firewall/reservedlocalports",
       "responses": [
         {
-          "uuid": "d9dddb37-7fd8-417a-91ed-b3f567dcd03e",
+          "uuid": "af8722df-6cd5-451f-81c9-684cdcad699d",
           "body": "[\n  {\n    \"Port\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\"\n  }\n]",
           "latency": 0,
           "statusCode": 200,
@@ -25,7 +25,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -34,7 +36,7 @@
           "default": true
         },
         {
-          "uuid": "79a44c38-eda3-4c43-aaa6-5ffd9bba7417",
+          "uuid": "5aa01140-69c3-4032-acff-07cb803d8f7f",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -45,7 +47,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -58,14 +62,14 @@
       "responseMode": null
     },
     {
-      "uuid": "1b32de3b-ca09-405a-b97a-e82e74da6142",
+      "uuid": "e51539b3-f3e4-4f45-b944-1fcc69273526",
       "documentation": "Get list of configured static port forwarding rules",
       "method": "get",
       "endpoint": "network/firewall/staticportforwarding",
       "responses": [
         {
-          "uuid": "881767ba-0f1a-4b42-9229-ea091b66e345",
-          "body": "[\n  {\n    \"Enabled\": {{faker 'datatype.boolean'}},\n    \"InternalPort\": {{faker 'datatype.number'}},\n    \"InternalIPAddress\": \"\",\n    \"ExternalPort\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\",\n    \"Name\": \"\",\n    \"Comment\": \"\"\n  }\n]",
+          "uuid": "4b060612-a897-419d-9e27-7ba847ff4bf4",
+          "body": "[\n  {\n    \"Enabled\": {{faker 'datatype.boolean'}},\n    \"InternalPort\": {{faker 'datatype.number'}},\n    \"InternalIPAddress\": \"\",\n    \"ExternalPort\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\",\n    \"Name\": \"\",\n    \"Comment\": \"\",\n    \"BuiltIn\": {{faker 'datatype.boolean'}}\n  }\n]",
           "latency": 0,
           "statusCode": 200,
           "label": "List of static port forwarding rules",
@@ -75,7 +79,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -84,7 +90,7 @@
           "default": true
         },
         {
-          "uuid": "1b37ce7f-01ed-4d97-a70c-e5da60365b5b",
+          "uuid": "757ca86d-74a3-4b1b-a838-f7d08517bbab",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -95,7 +101,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -108,24 +116,26 @@
       "responseMode": null
     },
     {
-      "uuid": "c4529648-fe84-4158-ad44-6ea3030c5caa",
+      "uuid": "3ad7a0e7-e5e8-4013-8a07-850a127077a1",
       "documentation": "Set list of static port forwarding rules",
       "method": "put",
       "endpoint": "network/firewall/staticportforwarding",
       "responses": [
         {
-          "uuid": "38b33883-402b-4dba-a747-d9eebd6e21e6",
-          "body": "[\n  {\n    \"Enabled\": {{faker 'datatype.boolean'}},\n    \"InternalPort\": {{faker 'datatype.number'}},\n    \"InternalIPAddress\": \"\",\n    \"ExternalPort\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\",\n    \"Name\": \"\",\n    \"Comment\": \"\"\n  }\n]",
+          "uuid": "5deb17d7-c82b-40c8-88ab-09c8c7e0ceaa",
+          "body": "[\n  {\n    \"Enabled\": {{faker 'datatype.boolean'}},\n    \"InternalPort\": {{faker 'datatype.number'}},\n    \"InternalIPAddress\": \"\",\n    \"ExternalPort\": {{faker 'datatype.number'}},\n    \"Protocol\": \"{{oneOf (array 'tcp' 'udp')}}\",\n    \"Name\": \"\",\n    \"Comment\": \"\",\n    \"BuiltIn\": {{faker 'datatype.boolean'}}\n  }\n]",
           "latency": 0,
           "statusCode": 200,
-          "label": "List of static port forwarding rules",
+          "label": "List of static port forwarding rules, the response returns the actual applied rules, thefore the BuiltIn=true rules, too (even the parameter is empty array)",
           "headers": [
             {
               "key": "Content-Type",
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -134,7 +144,7 @@
           "default": true
         },
         {
-          "uuid": "4d80238c-9665-4e3f-925c-2342048000f6",
+          "uuid": "e3f6bfb7-d1a3-4ad9-9db5-e821d0db7cd9",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -145,7 +155,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -158,13 +170,121 @@
       "responseMode": null
     },
     {
-      "uuid": "cdff4818-543b-414c-817a-6509f9c155ac",
+      "uuid": "0ca7d529-d30a-4dfc-80af-0ef025a6824a",
+      "documentation": "Get list of user configured static routing table routes",
+      "method": "get",
+      "endpoint": "network/staticroutes",
+      "responses": [
+        {
+          "uuid": "564b2e2f-506e-41b8-a09e-4509e44efa2d",
+          "body": "[\n  {\n    \"Target\": \"\",\n    \"Netmask\": \"\",\n    \"Gateway\": \"\",\n    \"Active\": {{faker 'datatype.boolean'}}\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of configured routing table routes",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "856cb30b-08a0-46b2-975a-e9267539b06f",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "c7db5ad7-870e-4ad4-a065-e308e94476da",
+      "documentation": "Set list of user configured static routing table routes",
+      "method": "put",
+      "endpoint": "network/staticroutes",
+      "responses": [
+        {
+          "uuid": "8f659fe8-224c-4140-8202-f34b9334e1b4",
+          "body": "[\n  {\n    \"Target\": \"\",\n    \"Netmask\": \"\",\n    \"Gateway\": \"\",\n    \"Active\": {{faker 'datatype.boolean'}}\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of configured routing table routes",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "be841385-3469-4fa3-b57c-d8010123d280",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "69e697f2-9b99-49b3-97a0-e252fa77c636",
       "documentation": "Get current internet access configuration",
       "method": "get",
       "endpoint": "network/firewall/internetaccess",
       "responses": [
         {
-          "uuid": "b191eab1-7958-4988-ba1b-233daf7d5823",
+          "uuid": "8aa96926-839c-4ceb-846c-f8997baf21f8",
           "body": "{\n  \"AccessMode\": \"{{oneOf (array 'manual' 'scheduled')}}\",\n  \"ManualAccessMode\": {\n    \"Enabled\": {{faker 'datatype.boolean'}}\n  }\n}",
           "latency": 0,
           "statusCode": 200,
@@ -175,7 +295,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -184,7 +306,7 @@
           "default": true
         },
         {
-          "uuid": "154b04f2-bb58-4e46-886a-2125d05ace86",
+          "uuid": "486fe6ed-25a0-4a25-ac64-29c68bc36149",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -195,7 +317,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -208,13 +332,13 @@
       "responseMode": null
     },
     {
-      "uuid": "8c9ac1e7-a47f-4935-adda-96f180311b63",
+      "uuid": "601514f2-1640-47b2-91f9-a8c11a263b8c",
       "documentation": "Set internet access configuration",
       "method": "put",
       "endpoint": "network/firewall/internetaccess",
       "responses": [
         {
-          "uuid": "74651ad5-0855-4acc-8c79-2ca4491e0528",
+          "uuid": "5b6d1bb7-2005-4d10-968d-9afcfc245e51",
           "body": "{\n  \"AccessMode\": \"{{oneOf (array 'manual' 'scheduled')}}\",\n  \"ManualAccessMode\": {\n    \"Enabled\": {{faker 'datatype.boolean'}}\n  }\n}",
           "latency": 0,
           "statusCode": 200,
@@ -225,7 +349,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -234,7 +360,7 @@
           "default": true
         },
         {
-          "uuid": "f229419c-b767-4a7c-8db9-95423d414405",
+          "uuid": "b44818c7-f46b-42ea-b981-5db9d70c037a",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -245,7 +371,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -258,13 +386,13 @@
       "responseMode": null
     },
     {
-      "uuid": "396d5b04-d39c-44cd-980f-5fc041a05bdb",
+      "uuid": "a3669e90-5a36-4293-8428-e71224477669",
       "documentation": "Get list of configured NTP servers",
       "method": "get",
       "endpoint": "network/ntp",
       "responses": [
         {
-          "uuid": "843e9341-8abf-4ff2-9aa9-07ef4b485723",
+          "uuid": "efb287d2-d688-4458-ab3e-dbb23f68369a",
           "body": "[\n  \"\"\n]",
           "latency": 0,
           "statusCode": 200,
@@ -275,7 +403,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -284,7 +414,7 @@
           "default": true
         },
         {
-          "uuid": "8dc1ce79-f0a7-4164-9c3d-25275393e41b",
+          "uuid": "604e743e-23b0-4725-8eb3-643367d96bfe",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -295,7 +425,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -308,13 +440,13 @@
       "responseMode": null
     },
     {
-      "uuid": "2e0dd75d-9fd9-489a-9ee7-6a466358fbd0",
+      "uuid": "9c844f34-9711-462c-af73-fdef0ab62262",
       "documentation": "Updates the list of NTP servers",
       "method": "put",
       "endpoint": "network/ntp",
       "responses": [
         {
-          "uuid": "935e9136-c69c-4ceb-a627-25b4b0884168",
+          "uuid": "1f83273d-a2a0-49ad-8d31-2fe6eedbf570",
           "body": "[\n  \"\"\n]",
           "latency": 0,
           "statusCode": 200,
@@ -325,7 +457,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -334,7 +468,7 @@
           "default": true
         },
         {
-          "uuid": "2290daa4-64ac-4a4a-9501-af4b4a33f388",
+          "uuid": "e158d624-cacf-42fe-9f90-d93d9b198d0d",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -345,7 +479,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -358,13 +494,13 @@
       "responseMode": null
     },
     {
-      "uuid": "a97470da-533a-46df-b421-64ad7dc5067b",
+      "uuid": "921a90aa-cfd1-4ebc-b2ab-52ccdca4a9d0",
       "documentation": "Return list of all network adapters of the operating system",
       "method": "get",
       "endpoint": "network/adapters",
       "responses": [
         {
-          "uuid": "7906dbbf-5ce3-4bee-91c4-e811d16861ba",
+          "uuid": "9484fc85-3d41-4c56-9da8-7b48455c5cae",
           "body": "[\n  {\n    \"id\": \"\",\n    \"displayName\": \"\",\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"ipv4Settings\": {\n      \"enabled\": {{faker 'datatype.boolean'}},\n      \"dhcp\": {{faker 'datatype.boolean'}},\n      \"ipAddresses\": [\n        {\n          \"Address\": \"\",\n          \"Netmask\": \"\"\n        }\n      ],\n      \"defaultGateway\": \"\",\n      \"dnsserver\": [\n        \"\"\n      ]\n    },\n    \"ipv6Settings\": {\n      \"enabled\": {{faker 'datatype.boolean'}},\n      \"dhcp\": {{faker 'datatype.boolean'}},\n      \"ipAddresses\": [\n        {\n          \"Address\": \"\",\n          \"Netmask\": \"\"\n        }\n      ],\n      \"defaultGateway\": \"\",\n      \"dnsserver\": [\n        \"\"\n      ]\n    },\n    \"macAddress\": \"\",\n    \"ssid\": \"\"\n  }\n]",
           "latency": 0,
           "statusCode": 200,
@@ -375,7 +511,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -384,7 +522,7 @@
           "default": true
         },
         {
-          "uuid": "2b915c1c-8d97-4680-85e0-ce75762dbcb5",
+          "uuid": "63b449fc-aaab-4c7f-86b7-0254b4c5c934",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -395,7 +533,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -408,13 +548,13 @@
       "responseMode": null
     },
     {
-      "uuid": "cbf1cf04-f6e4-427f-82d1-131bdd31f0bd",
+      "uuid": "0ea216dc-9291-4caa-a9db-37303789fde3",
       "documentation": "Return network adapter configuration of defined id",
       "method": "get",
       "endpoint": "network/adapters/:adapterID",
       "responses": [
         {
-          "uuid": "4cc4d3a6-b34d-4847-9f5b-116387971b7c",
+          "uuid": "1e3b344e-d270-4203-9afa-4a6655a5ec06",
           "body": "{\n  \"id\": \"\",\n  \"displayName\": \"\",\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"ipv4Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"ipv6Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"macAddress\": \"\",\n  \"ssid\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -425,7 +565,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -434,7 +576,7 @@
           "default": true
         },
         {
-          "uuid": "3c4b438c-7775-446a-a539-52d87e72ba2f",
+          "uuid": "ce56ee3a-670c-4e78-acab-94376012c151",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -445,7 +587,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -454,7 +598,7 @@
           "default": false
         },
         {
-          "uuid": "e8a129d0-5230-4848-9098-acd5fda46efc",
+          "uuid": "3aef68df-3f96-4495-a6c5-5e8f84f988d9",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -465,7 +609,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -478,13 +624,13 @@
       "responseMode": null
     },
     {
-      "uuid": "7e611b04-3948-4f50-a9d2-1fef55fdafa6",
+      "uuid": "dd8fe289-e827-40a1-a0e8-6f97657f231e",
       "documentation": "Update network adapter configuration of defined id",
       "method": "put",
       "endpoint": "network/adapters/:adapterID",
       "responses": [
         {
-          "uuid": "3f054d1c-7522-4031-985d-3db87f6385b2",
+          "uuid": "85c1105b-680f-4613-928a-3805c13b6e35",
           "body": "{\n  \"id\": \"\",\n  \"displayName\": \"\",\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"ipv4Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"ipv6Settings\": {\n    \"enabled\": {{faker 'datatype.boolean'}},\n    \"dhcp\": {{faker 'datatype.boolean'}},\n    \"ipAddresses\": [\n      {\n        \"Address\": \"\",\n        \"Netmask\": \"\"\n      }\n    ],\n    \"defaultGateway\": \"\",\n    \"dnsserver\": [\n      \"\"\n    ]\n  },\n  \"macAddress\": \"\",\n  \"ssid\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -495,7 +641,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -504,7 +652,7 @@
           "default": true
         },
         {
-          "uuid": "70d2198b-00ab-45b6-bff3-ddca4a30bd2c",
+          "uuid": "4e7c6b99-7966-413b-80aa-29c4a0ab917c",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -515,7 +663,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -524,7 +674,7 @@
           "default": false
         },
         {
-          "uuid": "c59ae5ae-d4b6-4a05-b611-06ce1d64f9bd",
+          "uuid": "31dddecd-bca9-477f-aa4b-7864576a90c3",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -535,7 +685,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -548,13 +700,13 @@
       "responseMode": null
     },
     {
-      "uuid": "95d12c51-45ad-4b70-ac8d-bd3d62473b18",
+      "uuid": "0a24aeb5-6a1f-4ac6-ae57-12db1df2c589",
       "documentation": "Return status of network adapter of defined id",
       "method": "get",
       "endpoint": "network/adapters/:adapterID/status",
       "responses": [
         {
-          "uuid": "0d7a21bc-666f-4d02-8af5-12144b8a36d2",
+          "uuid": "2fc8ecea-2a99-4f7f-8bae-25819a91c572",
           "body": "{\n  \"linkStatus\": \"{{oneOf (array 'disabled' 'disconnected' 'connected' 'unknown')}}\",\n  \"configurationStatus\": \"{{oneOf (array 'configured' 'configuring' 'unmanaged' 'failed' 'pending' 'linger' 'unknown')}}\",\n  \"message\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -565,7 +717,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -574,7 +728,7 @@
           "default": true
         },
         {
-          "uuid": "b5339c33-b193-44ba-95dd-ecb97c3a4bc7",
+          "uuid": "0994aa0d-5458-4ef6-a263-6bda96ed9134",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -585,7 +739,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -594,7 +750,7 @@
           "default": false
         },
         {
-          "uuid": "f6f81cd2-8168-4261-be35-53ffece0abc0",
+          "uuid": "a9ea3a39-b61d-4f0f-85f8-c91802a6355b",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -605,7 +761,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -618,13 +776,13 @@
       "responseMode": null
     },
     {
-      "uuid": "3a972fcb-e876-4d6c-98cd-4e0cedd3d8b4",
+      "uuid": "f0dcde96-1940-4874-99c8-45006efd0ec9",
       "documentation": "Proxy configuration of the system.",
       "method": "get",
       "endpoint": "network/proxy",
       "responses": [
         {
-          "uuid": "07170192-becb-436e-ad19-ecc31aa22c0e",
+          "uuid": "4a8855bc-417b-428d-8f66-65c7874acabc",
           "body": "{\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"host\": \"\",\n  \"port\": {{faker 'datatype.number'}},\n  \"username\": \"\",\n  \"password\": \"\",\n  \"whitelist\": [\n    \"\"\n  ]\n}",
           "latency": 0,
           "statusCode": 200,
@@ -635,7 +793,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -644,7 +804,7 @@
           "default": true
         },
         {
-          "uuid": "8dbb41e0-5aa9-48cc-9725-c4ca4af0f7b4",
+          "uuid": "7cb5ee89-9bed-4f99-8dff-ff9c45e5b3d4",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -655,7 +815,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -668,13 +830,13 @@
       "responseMode": null
     },
     {
-      "uuid": "a8ed64f7-aa67-498c-bebe-cb3f4f2c55d7",
+      "uuid": "19117d08-49de-4600-a86e-a115ca19e44c",
       "documentation": "Updates the proxy confiugration of the system",
       "method": "put",
       "endpoint": "network/proxy",
       "responses": [
         {
-          "uuid": "42ceca1c-1d20-42bd-9e67-f40639377f4d",
+          "uuid": "356761a4-5ca9-4a85-8de2-2f62eb698f7b",
           "body": "{\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"host\": \"\",\n  \"port\": {{faker 'datatype.number'}},\n  \"username\": \"\",\n  \"password\": \"\",\n  \"whitelist\": [\n    \"\"\n  ]\n}",
           "latency": 0,
           "statusCode": 200,
@@ -685,7 +847,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -694,7 +858,7 @@
           "default": true
         },
         {
-          "uuid": "1a6d7775-9297-4572-95ba-a2c3ce794616",
+          "uuid": "63068562-64df-4fea-9290-326a12904ae4",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -705,7 +869,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -718,13 +884,13 @@
       "responseMode": null
     },
     {
-      "uuid": "73ebe845-a1c2-4d4d-ae80-a681a15eec42",
+      "uuid": "03233841-6afc-4880-b1cd-a6b9ba9c42cf",
       "documentation": "Returns the current status of the proxy",
       "method": "get",
       "endpoint": "network/proxy/status",
       "responses": [
         {
-          "uuid": "17288679-d090-4f31-94a9-703a685f100c",
+          "uuid": "0081dffa-b62b-4551-ab23-d82917aedd78",
           "body": "{\n  \"serviceStatus\": \"{{oneOf (array 'running' 'stopped' 'unknown')}}\",\n  \"configurationStatus\": \"{{oneOf (array 'notused' 'configured' 'validating' 'failed' 'unknown')}}\",\n  \"message\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -735,7 +901,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -744,7 +912,7 @@
           "default": true
         },
         {
-          "uuid": "d1307cd1-96d6-477e-9b79-c1f2ffcccf5b",
+          "uuid": "40bc19e6-8ef3-4c1c-b90b-a486f7291f5b",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -755,7 +923,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -768,13 +938,13 @@
       "responseMode": null
     },
     {
-      "uuid": "f4cac515-9c57-41b4-93b2-d56a48fc8651",
+      "uuid": "75991acc-4819-4aca-ab7f-4be1f4979b0a",
       "documentation": "Returns central server configuration of the NETservcie site control.",
       "method": "get",
       "endpoint": "netservice/centralserver",
       "responses": [
         {
-          "uuid": "9b2034af-755e-4b7f-bcfb-04369325e60e",
+          "uuid": "1a0ab4ed-de53-4ca8-bbbc-86d89efe7497",
           "body": "{\n  \"url\": \"netservice-live.dmgmori.com\",\n  \"port\": 443\n}",
           "latency": 0,
           "statusCode": 200,
@@ -785,7 +955,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -794,10 +966,10 @@
           "default": true
         },
         {
-          "uuid": "d4806965-6ee9-4d8e-a38a-8f35164db2f2",
+          "uuid": "443eb04d-612f-4402-bb57-e5b571972a5e",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
-          "statusCode": 500,
+          "statusCode": 200,
           "label": "Unknown Error",
           "headers": [
             {
@@ -805,7 +977,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -818,13 +992,13 @@
       "responseMode": null
     },
     {
-      "uuid": "18d4baea-f9f4-48a0-9a63-e1c2d4f03230",
+      "uuid": "b802dfc4-420c-4b50-bca3-9ffa742c6cfb",
       "documentation": "Update central server configuration of the NETservice site control.",
       "method": "put",
       "endpoint": "netservice/centralserver",
       "responses": [
         {
-          "uuid": "aa55f07d-80bd-4fcf-8d6c-ca474dc77fe6",
+          "uuid": "311b60cf-b917-4122-95fa-897a05b5bede",
           "body": "{\n  \"url\": \"netservice-live.dmgmori.com\",\n  \"port\": 443\n}",
           "latency": 0,
           "statusCode": 200,
@@ -835,7 +1009,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -844,10 +1020,10 @@
           "default": true
         },
         {
-          "uuid": "7a4eb9f5-44a6-469b-a55d-f81860fccacc",
+          "uuid": "9e8dcadd-876f-4b25-90f7-a319da904c8e",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
-          "statusCode": 500,
+          "statusCode": 200,
           "label": "Unknown Error",
           "headers": [
             {
@@ -855,7 +1031,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -868,13 +1046,13 @@
       "responseMode": null
     },
     {
-      "uuid": "81a49ac6-b0bb-4db5-a4e6-6c57189745e2",
+      "uuid": "c2cc7e63-3182-446f-ba64-2e22d6b7183f",
       "documentation": "Get the current status of the NETservice site control.",
       "method": "get",
       "endpoint": "netservice/status",
       "responses": [
         {
-          "uuid": "544a1201-4509-492a-ac50-2b273f643845",
+          "uuid": "e7ec9d5e-5af0-4b62-9140-71f29c84ce1c",
           "body": "{\n  \"ServiceStatus\": \"{{oneOf (array 'running' 'stopped' 'unknown')}}\",\n  \"Connected\": {{faker 'datatype.boolean'}},\n  \"ConnectedClients\": [\n    \"\"\n  ],\n  \"UpdateStatus\": \"{{oneOf (array 'noupdate' 'clientupdating' 'sitecontrolupdating')}}\",\n  \"FacilityTree\": \"\",\n  \"StatusIcon\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -885,7 +1063,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -894,10 +1074,10 @@
           "default": true
         },
         {
-          "uuid": "fe6841f9-13de-4daf-a5dc-617ee4070d2d",
+          "uuid": "b918a23a-8925-438c-9a41-d2de99953c22",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
-          "statusCode": 500,
+          "statusCode": 200,
           "label": "Unknown Error",
           "headers": [
             {
@@ -905,7 +1085,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -918,13 +1100,13 @@
       "responseMode": null
     },
     {
-      "uuid": "906fef4f-fed2-491a-96d2-311ac7b57edb",
+      "uuid": "e9b74820-c637-4a95-b000-f5bd8f8fb171",
       "documentation": "Returns the default credentials for the machine app.",
       "method": "get",
       "endpoint": "netservice/machineappcredentials",
       "responses": [
         {
-          "uuid": "b0b2fa7f-1b92-4bea-be83-5eba544dc417",
+          "uuid": "b7ce9c8d-76a8-4d83-8e76-354a1a98ef7c",
           "body": "{\n  \"username\": \"\",\n  \"password\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -935,7 +1117,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -944,10 +1128,10 @@
           "default": true
         },
         {
-          "uuid": "20779b76-0e7d-4a73-aabc-5c103265e2e0",
+          "uuid": "26100bee-eacb-4853-a4d4-3739cdbc83db",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
-          "statusCode": 500,
+          "statusCode": 200,
           "label": "Unknown Error",
           "headers": [
             {
@@ -955,7 +1139,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -968,13 +1154,13 @@
       "responseMode": null
     },
     {
-      "uuid": "eb0ddc81-a185-4834-b9be-81e34123e698",
+      "uuid": "3d699e97-c686-47c6-816c-fdbe806ce97a",
       "documentation": "This endpoint should be called when the NETservice machine app is started.",
       "method": "post",
       "endpoint": "netservice/machineappactive",
       "responses": [
         {
-          "uuid": "1d1b55c3-2c2b-4cca-90b0-1cdfd13ca068",
+          "uuid": "c5cfaa3d-e9d0-40dd-a954-81cc80ed4883",
           "body": "",
           "latency": 0,
           "statusCode": 204,
@@ -985,7 +1171,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -994,10 +1182,10 @@
           "default": true
         },
         {
-          "uuid": "6572791c-8416-4a3a-a92a-b7ac3d92f53e",
+          "uuid": "100c242d-e4a7-4eef-9fc9-0076fa2afa04",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
-          "statusCode": 500,
+          "statusCode": 200,
           "label": "Unknown Error",
           "headers": [
             {
@@ -1005,7 +1193,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1018,13 +1208,13 @@
       "responseMode": null
     },
     {
-      "uuid": "1c7b7804-8363-4f8d-9d01-d94c71804f25",
+      "uuid": "a31d0c31-be86-4357-a9b5-0fa0304b919a",
       "documentation": "This endpoint triggers a reset of the NETsevice facility tree.",
       "method": "post",
       "endpoint": "netservice/facility/reset",
       "responses": [
         {
-          "uuid": "edbb60d2-5102-4f3e-a080-3dfce80519b6",
+          "uuid": "23ecdd65-3144-47b3-9247-f612d7658861",
           "body": "",
           "latency": 0,
           "statusCode": 204,
@@ -1035,7 +1225,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1044,10 +1236,10 @@
           "default": true
         },
         {
-          "uuid": "0069cf37-074f-45af-b2c7-47f0d07353c6",
+          "uuid": "0b498966-ca66-4407-a871-f13c2d8a9fda",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
-          "statusCode": 500,
+          "statusCode": 200,
           "label": "Unknown Error",
           "headers": [
             {
@@ -1055,7 +1247,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1068,14 +1262,122 @@
       "responseMode": null
     },
     {
-      "uuid": "71cf9dc8-8299-4a61-9c1c-c1e00d7ed0e6",
+      "uuid": "a9d87c9b-0112-4dd1-98af-d16093d2e598",
+      "documentation": "Read the NETservice specific proxy configuration.",
+      "method": "get",
+      "endpoint": "netservice/proxy",
+      "responses": [
+        {
+          "uuid": "a07b269f-9740-416c-8e2e-55ec0d3d85fa",
+          "body": "{\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"host\": \"\",\n  \"port\": {{faker 'datatype.number'}},\n  \"username\": \"\",\n  \"password\": \"\",\n  \"whitelist\": [\n    \"\"\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "b9243f0f-4d7f-4470-bbc8-4fb18a8ead48",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "5cf0a20c-9035-468b-85b8-7ed43e3a8dca",
+      "documentation": "Update the NETservice specific proxy settings (will override the global proxy settings).",
+      "method": "put",
+      "endpoint": "netservice/proxy",
+      "responses": [
+        {
+          "uuid": "d9243cff-e5d8-45ff-befd-5600a3731c8d",
+          "body": "{\n  \"enabled\": {{faker 'datatype.boolean'}},\n  \"host\": \"\",\n  \"port\": {{faker 'datatype.number'}},\n  \"username\": \"\",\n  \"password\": \"\",\n  \"whitelist\": [\n    \"\"\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "OK",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "2ec714f6-9aa5-4ac9-b665-e56ca9cf44e9",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "b9ca3fcb-3d75-473d-b4aa-3e986542cd2d",
       "documentation": "Current machine information.",
       "method": "get",
       "endpoint": "machine/info",
       "responses": [
         {
-          "uuid": "d6411804-8b83-4dc2-b156-4f29017bfae3",
-          "body": "{\n  \"Serial\": \"\",\n  \"Model\": \"\",\n  \"ControlType\": \"{{oneOf (array 'UNSPECIFIED' '840D' 'SIN_ONE' 'TNC_620' 'TNC_640' 'MAPPS6' 'FANUC' 'SIN_ONE_LEG' 'TNC_7')}}\",\n  \"ControlManufacturer\": \"{{oneOf (array 'UNSPECIFIED' 'SIEMENS' 'HEIDENHAIN' 'FANUC' 'MITSUBISHI' 'BECKHOFF')}}\",\n  \"Manufacturer\": \"\",\n  \"Source\": \"{{oneOf (array 'unknown' 'ncplcagent' 'operator')}}\",\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
+          "uuid": "aed6ecec-0f8e-460d-92b3-c908157aba1f",
+          "body": "{\n  \"Serial\": \"\",\n  \"Model\": \"\",\n  \"ControlType\": \"\",\n  \"ControlManufacturer\": \"\",\n  \"Manufacturer\": \"\",\n  \"Source\": \"{{oneOf (array 'unknown' 'ncplcagent' 'operator')}}\",\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "OK",
@@ -1085,7 +1387,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1094,7 +1398,7 @@
           "default": true
         },
         {
-          "uuid": "076f3949-8aab-49c8-9130-f6cc802a93af",
+          "uuid": "3211adc9-350e-45a7-b526-630273892ebb",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1105,7 +1409,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1118,14 +1424,14 @@
       "responseMode": null
     },
     {
-      "uuid": "e7130a97-6a61-4c2c-bbec-498f78b63046",
+      "uuid": "22e4ba34-a77d-4bec-9a1c-49af096225fb",
       "documentation": "Update machine information.",
       "method": "put",
       "endpoint": "machine/info",
       "responses": [
         {
-          "uuid": "a2e88cfc-da30-412b-b9a0-dd006bbb8197",
-          "body": "{\n  \"Serial\": \"\",\n  \"Model\": \"\",\n  \"ControlType\": \"{{oneOf (array 'UNSPECIFIED' '840D' 'SIN_ONE' 'TNC_620' 'TNC_640' 'MAPPS6' 'FANUC' 'SIN_ONE_LEG' 'TNC_7')}}\",\n  \"ControlManufacturer\": \"{{oneOf (array 'UNSPECIFIED' 'SIEMENS' 'HEIDENHAIN' 'FANUC' 'MITSUBISHI' 'BECKHOFF')}}\",\n  \"Manufacturer\": \"\",\n  \"Source\": \"{{oneOf (array 'unknown' 'ncplcagent' 'operator')}}\",\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
+          "uuid": "2ae82e79-93bd-4933-897b-eea0417d40e6",
+          "body": "{\n  \"Serial\": \"\",\n  \"Model\": \"\",\n  \"ControlType\": \"\",\n  \"ControlManufacturer\": \"\",\n  \"Manufacturer\": \"\",\n  \"Source\": \"{{oneOf (array 'unknown' 'ncplcagent' 'operator')}}\",\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "OK",
@@ -1135,7 +1441,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1144,7 +1452,7 @@
           "default": true
         },
         {
-          "uuid": "240c359f-af00-4ca3-8ec6-23c15e8857dc",
+          "uuid": "6c67d895-3e04-4a2d-a15b-2de9d252865d",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1155,7 +1463,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1168,13 +1478,13 @@
       "responseMode": null
     },
     {
-      "uuid": "268ca5c8-689e-4bbc-95c9-cf9d1b61d628",
+      "uuid": "6a58564d-f67c-4d36-b456-9019ccf55c34",
       "documentation": "IP addresses of the plcncagent.",
       "method": "get",
       "endpoint": "machine/plcncagent",
       "responses": [
         {
-          "uuid": "a88d691b-cb6f-46d0-94b4-0503c9b603f2",
+          "uuid": "1df4c53c-35d9-451b-a072-2b17b5e67c20",
           "body": "[\n  {\n    \"host\": \"\",\n    \"port\": 1400\n  }\n]",
           "latency": 0,
           "statusCode": 200,
@@ -1185,7 +1495,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1194,7 +1506,7 @@
           "default": true
         },
         {
-          "uuid": "b8bcb29e-864c-457f-8a52-1f95cccdd7ae",
+          "uuid": "cf0a03af-8bd1-472e-8ad9-2fa345d6323d",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1205,7 +1517,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1218,13 +1532,13 @@
       "responseMode": null
     },
     {
-      "uuid": "06812d1c-68b9-450a-98af-e6e066a3f4bc",
+      "uuid": "95c3363d-ece7-4f05-a2ac-3cf98d5b40f6",
       "documentation": "Set the plcncagent ip addresses.",
       "method": "put",
       "endpoint": "machine/plcncagent",
       "responses": [
         {
-          "uuid": "f8ad569d-533e-4719-9064-b1d53cc0e841",
+          "uuid": "9f992754-7fca-42ff-b9e5-79fac3029968",
           "body": "[\n  {\n    \"host\": \"\",\n    \"port\": 1400\n  }\n]",
           "latency": 0,
           "statusCode": 200,
@@ -1235,7 +1549,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1244,7 +1560,7 @@
           "default": true
         },
         {
-          "uuid": "398f9616-3fac-4435-b5e0-ffe4310f8e63",
+          "uuid": "1c2ef4e1-0906-4a74-b443-1b4d08c97ac1",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1255,7 +1571,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1268,13 +1586,13 @@
       "responseMode": null
     },
     {
-      "uuid": "f2ebf310-e810-4775-9d71-82b86e47d8d0",
+      "uuid": "697a5a82-671f-4683-a12d-980a05c4fd55",
       "documentation": "IP addresses of the control ipc.",
       "method": "get",
       "endpoint": "machine/controlipc",
       "responses": [
         {
-          "uuid": "09cf3996-8650-497d-8e2e-7170977d58aa",
+          "uuid": "9aa02a35-d5b0-4d22-b959-7847662d9dbd",
           "body": "{\n  \"IP\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1285,7 +1603,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1294,7 +1614,7 @@
           "default": true
         },
         {
-          "uuid": "36078487-bd35-4866-b000-f4ebff8452c6",
+          "uuid": "8df6ab3a-6726-4ddc-aa53-191675081ef1",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1305,7 +1625,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1318,13 +1640,13 @@
       "responseMode": null
     },
     {
-      "uuid": "56b12d46-ca39-4d57-8804-6cb9a73d99a2",
+      "uuid": "716657ca-a0f7-4217-8cd6-78d5a76781ae",
       "documentation": "Get configuration of device management platform.",
       "method": "get",
       "endpoint": "devicemanagement/server",
       "responses": [
         {
-          "uuid": "0a49fa53-08dd-428b-b7c6-5a2fabae830e",
+          "uuid": "ea42a982-2ce7-4fe4-b862-4e2139583339",
           "body": "{\n  \"url\": \"https://dmgmoridevices.adamos.com\",\n  \"tenant\": \"dmgmoridevices\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1335,7 +1657,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1344,7 +1668,7 @@
           "default": true
         },
         {
-          "uuid": "d91a494d-7eb7-4c64-80c5-24c4ddf6e596",
+          "uuid": "2d914684-65d9-4f57-9a7c-6b5a01157daa",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1355,7 +1679,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1368,13 +1694,13 @@
       "responseMode": null
     },
     {
-      "uuid": "1504f341-5098-4fd4-966a-1c87c7253030",
+      "uuid": "aabe7c4c-a5eb-406f-8ed5-27c151b53c36",
       "documentation": "Update configuration of device management platform.",
       "method": "put",
       "endpoint": "devicemanagement/server",
       "responses": [
         {
-          "uuid": "516ff7d9-c84e-450f-8727-9ef48a1038e7",
+          "uuid": "1603c471-abe0-4360-97a7-7bb321ffd4e0",
           "body": "{\n  \"url\": \"https://dmgmoridevices.adamos.com\",\n  \"tenant\": \"dmgmoridevices\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1385,7 +1711,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1394,7 +1722,7 @@
           "default": true
         },
         {
-          "uuid": "ebf0a44f-5cfd-4beb-81e3-493876b80268",
+          "uuid": "93b3ac6f-731c-407a-832c-91a926096d7f",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1405,7 +1733,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1418,13 +1748,13 @@
       "responseMode": null
     },
     {
-      "uuid": "17c52459-0670-4f48-88ee-e906d0c17345",
+      "uuid": "25d9adab-656a-49d6-b782-2119000959f7",
       "documentation": "Get configuration of messenger server.",
       "method": "get",
       "endpoint": "messenger/server",
       "responses": [
         {
-          "uuid": "41846c1d-9890-45e3-b2a0-d8c3c160ed23",
+          "uuid": "8b913afb-90ce-40ea-b2be-ce1b43561a92",
           "body": "{\n  \"URL\": \"\",\n  \"Name\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1435,7 +1765,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1444,7 +1776,7 @@
           "default": true
         },
         {
-          "uuid": "a6349a78-dad0-4363-bc48-a214230f0a7e",
+          "uuid": "505c7aed-3da8-4a33-85db-5318f76f34cc",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1455,7 +1787,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1468,13 +1802,13 @@
       "responseMode": null
     },
     {
-      "uuid": "018492f7-293a-4ebd-b96f-c15bab07b8a9",
+      "uuid": "0625752b-db82-4ad2-8fa2-9d10e5510cfa",
       "documentation": "Update configuration of the messenger server.",
       "method": "put",
       "endpoint": "messenger/server",
       "responses": [
         {
-          "uuid": "9c4703d5-486b-484b-8732-cf56993b9cf9",
+          "uuid": "c045f18a-772f-4e6b-881d-36d8ca9f9121",
           "body": "{\n  \"URL\": \"\",\n  \"Name\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1485,7 +1819,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1494,7 +1830,7 @@
           "default": true
         },
         {
-          "uuid": "e592b652-a873-41dc-a123-54d5164fbed5",
+          "uuid": "ee6365bf-f6f9-48b2-825e-f366b8bf6e28",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1505,7 +1841,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1518,13 +1856,13 @@
       "responseMode": null
     },
     {
-      "uuid": "8a44ae14-4ef5-45ed-965f-645a0b49b080",
+      "uuid": "48b48990-d696-4b2a-8a1b-587bfca4f98c",
       "documentation": "Request shutdown of system",
       "method": "post",
       "endpoint": "system/shutdown",
       "responses": [
         {
-          "uuid": "0b3061d3-6b33-4879-bc62-2254d551842d",
+          "uuid": "4fac5e0e-2361-4141-8b97-b8f37f5a8951",
           "body": "{}",
           "latency": 0,
           "statusCode": 201,
@@ -1535,7 +1873,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1544,7 +1884,7 @@
           "default": true
         },
         {
-          "uuid": "91e203d5-daee-4332-844a-0563b8ab281c",
+          "uuid": "d6eb0733-ca38-4de2-a7df-8f3d931b06c4",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1555,7 +1895,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1568,13 +1910,13 @@
       "responseMode": null
     },
     {
-      "uuid": "a5aa66d9-a70c-4be7-8b78-cc3eb5790f1e",
+      "uuid": "981e6372-7f0d-4b8c-b0af-7beb5d19726b",
       "documentation": "Request restart of system",
       "method": "post",
       "endpoint": "system/restart",
       "responses": [
         {
-          "uuid": "dbe8d092-458f-4aa8-af66-3441ecc11b4c",
+          "uuid": "78c2afd3-2c0f-4475-bbcb-a1669b07e3d1",
           "body": "{}",
           "latency": 0,
           "statusCode": 201,
@@ -1585,7 +1927,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1594,7 +1938,7 @@
           "default": true
         },
         {
-          "uuid": "dfddb16f-3ce9-4a47-9be3-0fa31334c7fb",
+          "uuid": "5c6ccf4a-809c-41e4-a68b-2769ad332191",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1605,7 +1949,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1618,13 +1964,13 @@
       "responseMode": null
     },
     {
-      "uuid": "a3ed5922-2a14-4cfd-8b55-3f2f1eba0362",
+      "uuid": "bf614bf4-c8cf-41c3-aff1-1efa87a8a055",
       "documentation": "Request version information",
       "method": "get",
       "endpoint": "system/versions",
       "responses": [
         {
-          "uuid": "a4f28f89-9a05-4d63-accf-9b85697f0a45",
+          "uuid": "32c42a21-743e-4fb3-a330-194ecfa1206e",
           "body": "[\n  {\n    \"Name\": \"\",\n    \"DisplayName\": \"\",\n    \"Version\": \"\"\n  }\n]",
           "latency": 0,
           "statusCode": 200,
@@ -1635,7 +1981,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1644,7 +1992,7 @@
           "default": true
         },
         {
-          "uuid": "8777f832-18c1-438c-bc99-addc018c246e",
+          "uuid": "2e88763e-9013-4c51-bee6-ba378232409c",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1655,7 +2003,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1668,13 +2018,13 @@
       "responseMode": null
     },
     {
-      "uuid": "1906bf7f-5c71-4c3f-94f4-ef6b1b160427",
+      "uuid": "184a2a83-6fa3-4c40-ac37-063ede2f7400",
       "documentation": "Request log export of iotedge module with given id",
       "method": "get",
       "endpoint": "system/logs/:moduleID",
       "responses": [
         {
-          "uuid": "bac6238f-906e-4d0b-9229-543178a36c8e",
+          "uuid": "afb730f9-74a2-46e0-b5f7-4fc7757b6c69",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -1689,7 +2039,9 @@
               "value": ""
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1698,7 +2050,7 @@
           "default": true
         },
         {
-          "uuid": "2bf91787-dd4d-473f-9df2-858d0e927a91",
+          "uuid": "6bba02f8-bf7d-4fc8-aec9-41a3e5e54aed",
           "body": "",
           "latency": 0,
           "statusCode": 404,
@@ -1709,7 +2061,9 @@
               "value": "application/octet-stream"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1718,7 +2072,7 @@
           "default": false
         },
         {
-          "uuid": "864eca9a-8888-43eb-8d17-4c413a424f1a",
+          "uuid": "ea3083de-1993-4f49-b80d-6464a31b7dcf",
           "body": "",
           "latency": 0,
           "statusCode": 500,
@@ -1729,7 +2083,9 @@
               "value": "application/octet-stream"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1742,13 +2098,13 @@
       "responseMode": null
     },
     {
-      "uuid": "10331756-b15c-4077-9ac9-1a3059b2b98b",
+      "uuid": "19d7d1a3-6a1c-4265-8d6b-60f051997aac",
       "documentation": "Request log export of CELOS OS",
       "method": "get",
       "endpoint": "system/logs",
       "responses": [
         {
-          "uuid": "359b3bc5-8077-4e73-8659-926e18ba29fa",
+          "uuid": "a01a0a4d-5a66-43a6-935b-2eb11437e4f7",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -1763,7 +2119,9 @@
               "value": ""
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1772,7 +2130,7 @@
           "default": true
         },
         {
-          "uuid": "63b4b246-6f49-4cbe-998b-43e273f7c9e8",
+          "uuid": "9fdba87c-18c7-424a-b676-d35230db3cb7",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -1783,7 +2141,9 @@
               "value": "application/octet-stream"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1796,13 +2156,13 @@
       "responseMode": null
     },
     {
-      "uuid": "4150b2ab-60e8-49aa-b649-12933d6d9784",
+      "uuid": "06ce5dd3-d280-444b-b6d2-288545d3d6fe",
       "documentation": "Get meta information of last triggered log export. Will be empty if no log export has been triggered before this call.",
       "method": "get",
       "endpoint": "system/logs/metainformation",
       "responses": [
         {
-          "uuid": "4427e84d-27fd-4207-97ff-7303545f4331",
+          "uuid": "befb2094-dd94-4c8b-bee9-a97fb423b480",
           "body": "{\n  \"Filename\": \"\",\n  \"DateFrom\": \"{{faker 'date.recent' 365}}\",\n  \"DateTo\": \"{{faker 'date.recent' 365}}\",\n  \"Pattern\": \"\",\n  \"MachineSerial\": \"\",\n  \"Logs\": [\n    {\n      \"DateFrom\": \"{{faker 'date.recent' 365}}\",\n      \"DateTo\": \"{{faker 'date.recent' 365}}\",\n      \"Path\": \"\",\n      \"Truncated\": {{faker 'datatype.boolean'}},\n      \"Module\": \"\",\n      \"Empty\": {{faker 'datatype.boolean'}}\n    }\n  ]\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1813,7 +2173,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1822,7 +2184,7 @@
           "default": true
         },
         {
-          "uuid": "f3ad5b0d-4737-44f0-87f7-4e24f764f71d",
+          "uuid": "bf712386-8970-4d63-9eb4-58748d116e87",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1833,7 +2195,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1846,13 +2210,13 @@
       "responseMode": null
     },
     {
-      "uuid": "e1265439-cd39-4f1b-b89b-cf8189c7f2f8",
+      "uuid": "26849db9-bf07-446d-8080-4f9a0840f66d",
       "documentation": "Get list of available log modules.",
       "method": "get",
       "endpoint": "system/logs/modules",
       "responses": [
         {
-          "uuid": "708ff819-2eec-4fc4-81d2-a438bc966923",
+          "uuid": "bfb86e42-733c-44ad-a0d5-d3fdc6c4a506",
           "body": "[\n  \"\"\n]",
           "latency": 0,
           "statusCode": 200,
@@ -1863,7 +2227,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1872,7 +2238,7 @@
           "default": true
         },
         {
-          "uuid": "4d36b7f9-049e-4623-a83b-ab74a2d45934",
+          "uuid": "9906f379-0a6f-4b7c-b3f7-6859ea44b812",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1883,7 +2249,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1896,13 +2264,13 @@
       "responseMode": null
     },
     {
-      "uuid": "6708c67c-73d5-46e6-9a54-957128c334b9",
+      "uuid": "81c3eb10-31fd-48c2-b06f-7d0777ba08d9",
       "documentation": "Get list of available status icons",
       "method": "get",
       "endpoint": "system/icons",
       "responses": [
         {
-          "uuid": "fbff068b-7939-4f60-9df4-d741639acfd9",
+          "uuid": "6caae043-4680-4a66-90cd-06bdce64b3d8",
           "body": "[\n  \"\"\n]",
           "latency": 0,
           "statusCode": 200,
@@ -1913,7 +2281,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1922,7 +2292,7 @@
           "default": true
         },
         {
-          "uuid": "9d76984e-1c57-42a2-ac2e-a756d1de2662",
+          "uuid": "aa795f4b-7666-403e-a29a-c10bcc081bd9",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -1933,7 +2303,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1946,13 +2318,13 @@
       "responseMode": null
     },
     {
-      "uuid": "12f1820e-b39c-48cf-87cf-bafaff868d94",
+      "uuid": "a475aa42-5d8d-4c70-a490-ed6019ed9f53",
       "documentation": "Get icon of given id.",
       "method": "get",
       "endpoint": "system/icons/:iconID",
       "responses": [
         {
-          "uuid": "baf989ed-8485-4911-b38f-30778899a36f",
+          "uuid": "dd03ebd6-625a-492e-8f8f-aca15e1f9eb3",
           "body": "{\n  \"Data\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -1963,7 +2335,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1972,7 +2346,7 @@
           "default": true
         },
         {
-          "uuid": "014e1a9d-e51a-459d-87a9-c509de76348f",
+          "uuid": "4ab3c932-dbfa-4c1f-892e-0dd4fa23e3de",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -1983,7 +2357,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -1992,7 +2368,7 @@
           "default": false
         },
         {
-          "uuid": "7abf52ab-ec08-4937-b433-8779bce9b3b8",
+          "uuid": "3d6f4c88-7ac2-4928-af63-015317a41d42",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2003,7 +2379,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2016,13 +2394,13 @@
       "responseMode": null
     },
     {
-      "uuid": "18d1e1ff-1144-40a5-aa28-5f0e1689fce0",
+      "uuid": "c5e79c5c-6ea4-4834-8ca1-d4721149ae2e",
       "documentation": "Get available system update (Celos Next OS)",
       "method": "get",
       "endpoint": "system/update",
       "responses": [
         {
-          "uuid": "dc41beb4-5036-4287-a37c-7b63a0dced0d",
+          "uuid": "a6de4eb6-5c87-4882-8e6a-c672f5b2bd31",
           "body": "{\n  \"Title\": \"\",\n  \"Version\": \"\",\n  \"Description\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2033,7 +2411,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2042,7 +2422,7 @@
           "default": true
         },
         {
-          "uuid": "6a0de810-dc13-4e42-90b4-2f5c4b8b109a",
+          "uuid": "e5471e51-11da-4ae5-bb3c-711484d4fbc1",
           "body": "",
           "latency": 0,
           "statusCode": 204,
@@ -2053,7 +2433,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2062,7 +2444,7 @@
           "default": false
         },
         {
-          "uuid": "27968237-9f78-4b56-a735-508b15b82584",
+          "uuid": "850950a0-710d-4c8a-a2d2-0ae9d415fb85",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2073,7 +2455,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2086,13 +2470,13 @@
       "responseMode": null
     },
     {
-      "uuid": "1b64c66f-75c2-4948-995d-82cdda3c72b3",
+      "uuid": "1fef8d82-3799-49e9-ab61-8ea60f70b8a7",
       "documentation": "Start system update",
       "method": "post",
       "endpoint": "system/applyupdate",
       "responses": [
         {
-          "uuid": "19d8890f-af73-4355-a8c0-11668710b0cd",
+          "uuid": "2cfd9f03-00ea-4973-9c48-a25c6b17e915",
           "body": "{\n  \"Title\": \"\",\n  \"Version\": \"\",\n  \"Success\": {{faker 'datatype.boolean'}},\n  \"Error\": \"\"\n}",
           "latency": 0,
           "statusCode": 201,
@@ -2103,7 +2487,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2112,7 +2498,7 @@
           "default": true
         },
         {
-          "uuid": "87b96157-b019-4763-9389-e35dce58e0da",
+          "uuid": "82e2b944-08fb-4a64-8a87-cd704bf0472c",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -2123,7 +2509,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2132,7 +2520,7 @@
           "default": false
         },
         {
-          "uuid": "8ab281d2-1955-44e1-9543-3942b3c49c22",
+          "uuid": "6a303345-4f8b-4c9e-83ea-da3ca2f96c29",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2143,7 +2531,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2156,13 +2546,13 @@
       "responseMode": null
     },
     {
-      "uuid": "9e476983-2f89-4241-93d8-4b805d2c2d80",
+      "uuid": "e9dd2333-11e1-4dbb-8bfc-70951292c805",
       "documentation": "Request download of CELOS OS with given version",
       "method": "post",
       "endpoint": "system/update/:osversion/download",
       "responses": [
         {
-          "uuid": "6446c6ec-978c-495e-a35e-ca4f38ac2518",
+          "uuid": "fa3e0b06-924e-427d-ac2c-1a57a0063570",
           "body": "{\n  \"Version\": \"\"\n}",
           "latency": 0,
           "statusCode": 201,
@@ -2173,7 +2563,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2182,7 +2574,7 @@
           "default": true
         },
         {
-          "uuid": "f96204b3-c0b7-4c59-aeff-3e4d68d7cbbf",
+          "uuid": "443c8a45-4637-4e4c-8cde-ae32303f4c2b",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2193,7 +2585,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2206,13 +2600,13 @@
       "responseMode": null
     },
     {
-      "uuid": "634c8741-cab8-4171-83fd-af051d2233ae",
+      "uuid": "cb6d5ae2-d17a-41a2-bec0-02a7d9be53a7",
       "documentation": "Get download status of CELOS OS",
       "method": "get",
       "endpoint": "system/update/download/status",
       "responses": [
         {
-          "uuid": "7cbe0366-22b9-4714-abe3-6230d73207a6",
+          "uuid": "ba194ac6-b7cc-4cc2-8241-c48c821f2923",
           "body": "{\n  \"PendingPackageCount\": {{faker 'datatype.number'}},\n  \"FailedPackageCount\": {{faker 'datatype.number'}},\n  \"LastStatusUpdate\": \"{{faker 'date.recent' 365}}\",\n  \"Connected\": {{faker 'datatype.boolean'}}\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2223,7 +2617,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2232,7 +2628,7 @@
           "default": true
         },
         {
-          "uuid": "16d3d084-2782-4a38-bbae-19d8cbcc3abb",
+          "uuid": "e5a30d8f-cb88-42ea-9cc2-9dc086861912",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2243,7 +2639,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2256,13 +2654,13 @@
       "responseMode": null
     },
     {
-      "uuid": "87930fa0-036c-4dbc-a32d-0ac9bd36a856",
+      "uuid": "7ec364de-b450-450e-9a56-f3d44ba39332",
       "documentation": "Get commissioning status.",
       "method": "get",
       "endpoint": "system/commissioning",
       "responses": [
         {
-          "uuid": "cb30ed54-0a8a-4b7c-80ac-4db1dccf6b9a",
+          "uuid": "62663a49-cb6f-4f3e-a2e2-39f8ccabb774",
           "body": "{\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\",\n  \"Finished\": {{faker 'datatype.boolean'}}\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2273,7 +2671,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2282,7 +2682,7 @@
           "default": true
         },
         {
-          "uuid": "930be177-0492-429b-96eb-5f51d37b1679",
+          "uuid": "1139289a-341e-4f68-a058-cfc5cdb623ae",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2293,7 +2693,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2306,13 +2708,13 @@
       "responseMode": null
     },
     {
-      "uuid": "89de3729-24b3-41d9-bbd3-9527cb508812",
+      "uuid": "48632573-2e92-4469-848a-3bea649c61fc",
       "documentation": "Finish commissioning of device",
       "method": "post",
       "endpoint": "system/commissioning/finish",
       "responses": [
         {
-          "uuid": "7db09d17-83cb-4dfd-868e-a162f18ac065",
+          "uuid": "1b36f575-a6b7-4977-aaf8-738560e480b0",
           "body": "{\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\",\n  \"Finished\": {{faker 'datatype.boolean'}}\n}",
           "latency": 0,
           "statusCode": 201,
@@ -2323,7 +2725,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2332,7 +2736,7 @@
           "default": true
         },
         {
-          "uuid": "9e2f58a9-b7aa-4c31-b408-5344df1807a7",
+          "uuid": "f4711953-822d-4006-a45b-bee3110d1c0e",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2343,7 +2747,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2356,13 +2762,13 @@
       "responseMode": null
     },
     {
-      "uuid": "d71647a7-2949-4343-832b-5e66020b4f47",
+      "uuid": "bc3c4d05-bfff-464a-9eb6-3a1f34a39098",
       "documentation": "Get backup archive from IPC",
       "method": "get",
       "endpoint": "system/backup",
       "responses": [
         {
-          "uuid": "ca5e94dd-33fc-4006-a282-120e246fbf0c",
+          "uuid": "1501229d-e501-4c4d-b251-a178ae6f999b",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -2377,7 +2783,9 @@
               "value": ""
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2386,7 +2794,7 @@
           "default": true
         },
         {
-          "uuid": "abc0d8e4-6ed0-443e-8b99-17aa0af1bc10",
+          "uuid": "3e24cfcd-6c6c-4980-ba03-116f0ecc33da",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -2397,7 +2805,9 @@
               "value": "application/octet-stream"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2410,13 +2820,13 @@
       "responseMode": null
     },
     {
-      "uuid": "cbf7527c-8d7a-4245-9549-07fed1293f45",
+      "uuid": "649e562c-825b-4424-9efa-3406c6278b6e",
       "documentation": "Apply recovery archive to IPC",
       "method": "post",
       "endpoint": "system/recover",
       "responses": [
         {
-          "uuid": "93fb1335-f533-4d6d-8b06-28835b0e8a59",
+          "uuid": "f6883286-9276-4e92-af81-ddf00cc90513",
           "body": "",
           "latency": 0,
           "statusCode": 204,
@@ -2427,7 +2837,9 @@
               "value": "multipart/form-data"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2436,7 +2848,7 @@
           "default": true
         },
         {
-          "uuid": "ff2adbb8-bb61-4121-bc36-7a7705c4b1f1",
+          "uuid": "29195c2a-e2fb-4dfe-b6ed-e261c30d8f1e",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -2447,7 +2859,9 @@
               "value": "multipart/form-data"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2460,63 +2874,13 @@
       "responseMode": null
     },
     {
-      "uuid": "feb2f7fa-bba8-4594-88bf-5210f8882108",
+      "uuid": "01fae5d0-feb2-49f6-9669-1df13974a0d5",
       "documentation": "Get current system time",
       "method": "get",
       "endpoint": "system/time",
       "responses": [
         {
-          "uuid": "36de6b7e-cacb-4722-9a00-3dc964a2cd25",
-          "body": "{\n  \"Timestamp\": \"{{ now 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n}",
-          "latency": 0,
-          "statusCode": 200,
-          "label": "Current utc system time",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "filePath": "",
-          "sendFileAsBody": false,
-          "rules": [],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": true
-        },
-        {
-          "uuid": "08aa2ff6-6642-4cac-a744-dd34a916c2b7",
-          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
-          "latency": 0,
-          "statusCode": 200,
-          "label": "Unknown Error",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "filePath": "",
-          "sendFileAsBody": false,
-          "rules": [],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": false
-        }
-      ],
-      "enabled": true,
-      "responseMode": null
-    },
-    {
-      "uuid": "fbe6cfa5-dce6-4451-87d7-91ec0cde338f",
-      "documentation": "Set system time to tiven time. The given time will be always converted to utc.",
-      "method": "put",
-      "endpoint": "system/time",
-      "responses": [
-        {
-          "uuid": "e7fe1737-2460-4edc-9c9f-fde21231d259",
+          "uuid": "c0c2ee4e-44ad-490c-82be-ce81dd0a6237",
           "body": "{\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2527,7 +2891,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2536,7 +2902,7 @@
           "default": true
         },
         {
-          "uuid": "9d5e6cad-492a-4ad1-8a3f-6c4400dd39dc",
+          "uuid": "6fa59c82-8213-438b-af8a-331c64ca58a8",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2547,7 +2913,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2560,13 +2928,67 @@
       "responseMode": null
     },
     {
-      "uuid": "b345b401-ee4e-4740-bdee-a147b967ba65",
+      "uuid": "c5beb089-1298-4147-955f-fb62d0e25bcb",
+      "documentation": "Set system time to tiven time. The given time will be always converted to utc.",
+      "method": "put",
+      "endpoint": "system/time",
+      "responses": [
+        {
+          "uuid": "76d9250a-bad0-4063-9069-ea4c02ed8cb6",
+          "body": "{\n  \"Timestamp\": \"{{faker 'date.recent' 365}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Current utc system time",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "07794cb2-af1f-41ec-9283-a0b354a04a50",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "13a818e0-efef-43bb-824e-553df4fafb0e",
       "documentation": "Get RSA public key of CELOS IPC (marked for removal)",
       "method": "get",
       "endpoint": "system/rsaPublicKey",
       "responses": [
         {
-          "uuid": "9eb3f391-9253-4e3d-944b-8caae1ec86ab",
+          "uuid": "56c23ab1-8769-4b57-8afb-926acaa2d7b7",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -2581,7 +3003,9 @@
               "value": ""
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2590,7 +3014,7 @@
           "default": true
         },
         {
-          "uuid": "0e9c34f1-ab40-4cb7-aa39-f0147e32ce84",
+          "uuid": "30c0439b-0d7b-48b6-84c5-2c95f20766fe",
           "body": "",
           "latency": 0,
           "statusCode": 200,
@@ -2601,7 +3025,9 @@
               "value": "application/octet-stream"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2614,13 +3040,175 @@
       "responseMode": null
     },
     {
-      "uuid": "dc5f56bb-7666-47b5-b059-1b4977f33153",
+      "uuid": "d3ebe233-0d66-405b-9dd7-5fdfa30aa09a",
+      "documentation": "Get list of available leds",
+      "method": "get",
+      "endpoint": "system/leds",
+      "responses": [
+        {
+          "uuid": "354066a9-8364-4265-905d-d1d7513c4387",
+          "body": "[\n  \"user1\"\n,\n  \"user2\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of available LED devices",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "a4ef7485-3681-4f68-9f13-83e630ede621",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "181c5920-a54b-4597-8e54-efc18b54bc77",
+      "documentation": "Swicht LED off",
+      "method": "post",
+      "endpoint": "system/leds/:ledID/off",
+      "responses": [
+        {
+          "uuid": "40eea43b-f78b-4d6a-8077-f18de1db2fef",
+          "body": "",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "Successfully switchted LED off",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "2cfec0f8-32b5-4c62-b577-3bb90e678c45",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "dc55bc77-2f30-4dcb-b401-c8407e1e19c1",
+      "documentation": "Swicht LED on",
+      "method": "post",
+      "endpoint": "system/leds/:ledID/on",
+      "responses": [
+        {
+          "uuid": "001130fa-b76d-4a40-af67-b2bf2452a8fe",
+          "body": "",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "Successfully switchted LED on",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        },
+        {
+          "uuid": "38d6b3cc-c68b-470b-9535-443d9318dd89",
+          "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Unknown Error",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "18cb747e-9946-465e-85ee-8e376586853b",
       "documentation": "Get settings of device provisioning service used by iotedge.",
       "method": "get",
       "endpoint": "datahub/dps",
       "responses": [
         {
-          "uuid": "a92b71e1-0c20-4212-95eb-89f8f221049c",
+          "uuid": "bf2007b9-be75-4a3f-86b5-8284d8508fdd",
           "body": "{\n  \"Registered\": {{faker 'datatype.boolean'}},\n  \"RegistrationID\": \"\",\n  \"DPSEndpoint\": \"\",\n  \"ScopeID\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2631,7 +3219,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2640,7 +3230,7 @@
           "default": true
         },
         {
-          "uuid": "ff2a4479-10e1-4050-9297-85aa5df7a530",
+          "uuid": "f9775cab-635a-4223-90b5-c896c070b38c",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2651,7 +3241,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2664,13 +3256,13 @@
       "responseMode": null
     },
     {
-      "uuid": "f332f941-b879-43ed-8567-3d0097b6a86f",
+      "uuid": "9e716e11-5dad-4934-9bfa-1178187b1c81",
       "documentation": "Get list of iotedge modules.",
       "method": "get",
       "endpoint": "datahub/modules",
       "responses": [
         {
-          "uuid": "97f08fdf-86a8-4287-b7ad-d33cf4b0c1b8",
+          "uuid": "c352d20c-ecae-4bc6-a7a5-100a73f875b2",
           "body": "[\n  \"\"\n]",
           "latency": 0,
           "statusCode": 200,
@@ -2681,7 +3273,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2690,7 +3284,7 @@
           "default": true
         },
         {
-          "uuid": "d99321ed-9bd5-44e7-becd-95635f5e8809",
+          "uuid": "e1e47e60-aa2b-4daf-916b-10f1647b3713",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2701,7 +3295,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2714,13 +3310,13 @@
       "responseMode": null
     },
     {
-      "uuid": "a0024538-0f6a-44cb-a3b1-0cb4580379cc",
+      "uuid": "ecbe4a67-b980-45f1-9606-b36c06740bab",
       "documentation": "Get status of iotedge module with given id",
       "method": "get",
       "endpoint": "datahub/status/:moduleID",
       "responses": [
         {
-          "uuid": "ac1f8c31-2ac7-4b9c-b9ed-b5c68b98765e",
+          "uuid": "fb7f8f38-1195-4f17-82a6-f4ddb532ceea",
           "body": "{\n  \"ImageName\": \"\",\n  \"DisplayName\": \"\",\n  \"Version\": \"\",\n  \"Status\": \"\",\n  \"StartedAt\": \"\",\n  \"Error\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2731,7 +3327,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2740,7 +3338,7 @@
           "default": true
         },
         {
-          "uuid": "90341b9f-a822-4ed5-891a-25e98f6b3aca",
+          "uuid": "8c949dc4-3823-47ac-9469-fbc57f8b4dfa",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 404,
@@ -2751,7 +3349,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2760,7 +3360,7 @@
           "default": false
         },
         {
-          "uuid": "7808593e-4bd5-4c28-a31c-da4fc4099736",
+          "uuid": "d9184b93-a7b4-4ae1-9a0e-94cb52ee1437",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2771,7 +3371,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2784,13 +3386,13 @@
       "responseMode": null
     },
     {
-      "uuid": "a959e7b6-0f93-4335-98d2-f5879310b04b",
+      "uuid": "46485b50-1e38-4f67-8b82-c27555100b31",
       "documentation": "Get status of cloud connection",
       "method": "get",
       "endpoint": "datahub/status",
       "responses": [
         {
-          "uuid": "c3bd0250-9d2d-4329-af6b-6f4b4b134196",
+          "uuid": "1b27c439-ec43-44cf-8f52-7c3f62ca3a2a",
           "body": "{\n  \"ConnectionType\": \"{{oneOf (array 'LAN' 'WIFI' 'MOBILE')}}\",\n  \"ConnectionStatus\": {{faker 'datatype.boolean'}},\n  \"NetserviceStatus\": {{faker 'datatype.boolean'}},\n  \"CumulocityStatus\": {{faker 'datatype.boolean'}},\n  \"EdgeAgentStatus\": {{faker 'datatype.boolean'}},\n  \"NetworkStatus\": {{faker 'datatype.boolean'}},\n  \"StatusIcon\": \"\"\n}",
           "latency": 0,
           "statusCode": 200,
@@ -2801,7 +3403,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2810,7 +3414,7 @@
           "default": true
         },
         {
-          "uuid": "c6845227-a960-4f27-813a-98afc31063d6",
+          "uuid": "27b56f25-e81c-4f84-ac5f-2996a1cc79fb",
           "body": "{\n  \"message\": \"\",\n  \"error\": \"\"\n}",
           "latency": 0,
           "statusCode": 500,
@@ -2821,7 +3425,9 @@
               "value": "application/json"
             }
           ],
+          "bodyType": "INLINE",
           "filePath": "",
+          "databucketID": "",
           "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
@@ -2859,5 +3465,6 @@
       "key": "",
       "value": ""
     }
-  ]
+  ],
+  "data": []
 }

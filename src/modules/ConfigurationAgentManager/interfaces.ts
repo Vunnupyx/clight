@@ -50,6 +50,7 @@ export interface ICosResponseError {
   error: string;
 }
 
+export type ICosLedsList = string[];
 export interface IMachineInfo {
   Serial: string;
   Model: string;

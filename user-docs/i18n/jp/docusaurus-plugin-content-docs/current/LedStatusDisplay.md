@@ -46,8 +46,8 @@ There are two different LEDs on the `SIEMENS SIMATIC IOT2050` device that are re
 USER 1 の LED は、現在のコンフィギュレーション状態を表示します:
 
 - オレンジの点滅 (設定されていない/利用規約に同意していない)
-- オレンジ ([`設定済み`](LedStatusDisplay.md#what-does-configured-mean) だが、NC に接続されていない)
-- 緑 ([`設定済み`](LedStatusDisplay.md#what-does-configured-mean) かつ、NC に正常に接続されている)
+- orange ([`configured`](LedStatusDisplay.md#what-does-configured-mean) but no running data source or application interface)
+- green ([`configured`](LedStatusDisplay.md#what-does-configured-mean) and running data source and application interface)
 
 #### USER 2 LED の状態
 
@@ -61,7 +61,6 @@ USER 2 LED は 2 つの状態しかありません:
 
 ステータス `設定済み` は次のように定義されます:
 
-- 有効なデータソースが 1 つある
-- この有効なソースに対して最低 1 つの有効なデータポイント
-- 最低 1 つのデータポイントを持つ 1 つの有効なアプリケーションインターフェイス
-- 有効な接続データソースデータポイントと有効なアプリケーションインターフェイスデータポイントの間の 1 つの有効ななマッピング
+- One enabled data source with on or more data points
+- One enabled data sink with one or more data points
+- One or more mapping

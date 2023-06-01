@@ -44,7 +44,6 @@ export class CounterManager {
       );
     }
 
-    this.registerScheduleChecker();
     this.configManager.once(
       'configsLoaded',
       this.handleConfigsLoaded.bind(this)
@@ -53,6 +52,7 @@ export class CounterManager {
   }
 
   private handleConfigsLoaded() {
+    this.registerScheduleChecker();
     this.checkMissedResets();
     this.checkTimers();
   }
@@ -450,7 +450,7 @@ export class CounterManager {
    * Returns all virtual data point configurations for counters with active scheduled resets.
    */
   private getScheduledVirtualDataPoints(): IVirtualDataPointConfig[] {
-    return this.configManager.config.virtualDataPoints.filter((vdp) => {
+    return this.configManager.config?.virtualDataPoints?.filter((vdp) => {
       return (
         vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
       );

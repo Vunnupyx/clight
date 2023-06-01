@@ -19,6 +19,7 @@ import {
   MTConnectDataSink
 } from '../MTConnectDataSink';
 import { OPCUADataSink } from '../OPCUADataSink';
+import { DataSinkEventTypes } from '../../../Southbound/DataSources/interfaces';
 
 interface IDataSinkManagerEvents {
   dataSinksRestarted: (error: Error | null) => void;
@@ -129,6 +130,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     // It must be pushed before initialization, to prevent double initialization
     this.dataSinks.push(sink);
 
+    sink.on(DataSinkEventTypes.Lifecycle, this.onLifecycleEvent);
     await sink.init();
 
     this.connectDataSinksToBus(sink);
@@ -305,4 +307,16 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         }
       });
   }
+
+  /**
+   * Published lifecycle events
+   * @param  {ILifecycleEvent} lifeCycleEvent
+   * @returns void
+   */
+  private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
+    const logPrefix = `${DataSinksManager.name}::onLifecycleEvent`;
+    winston.verbose(`${logPrefix}`);
+
+    this.lifecycleBus.push(lifeCycleEvent);
+  };
 }

@@ -29,6 +29,7 @@ import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
+import { isDataPointNameValid } from 'app/shared/utils/validity-checker';
 
 const ENERGY_TARIFF_NUMBER_DP_ADDRESS = 'tariff-number';
 const SUPPORTED_DATA_SOURCE_PROTOCOLS = [
@@ -80,6 +81,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   portRegex = PORT_REGEX;
   ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
   dsFormValid = true;
+  isDataPointNameValid = isDataPointNameValid;
 
   filterDigitalInputAddressStr = '';
 

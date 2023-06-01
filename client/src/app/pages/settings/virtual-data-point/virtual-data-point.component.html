@@ -100,13 +100,19 @@
               type="text"
               class="w-100"
               [matTooltip]="
-                'settings-virtual-data-point.DuplicatedName' | translate
+                isDuplicatingName()
+                  ? ('settings-virtual-data-point.DuplicatedName' | translate)
+                  : ('settings-virtual-data-point.InvalidName' | translate)
               "
               matTooltipPosition="above"
-              [matTooltipDisabled]="!isDuplicatingName()"
+              [matTooltipDisabled]="
+                !isDuplicatingName() && isDataPointNameValid(unsavedRow.name)
+              "
               [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
-              [class.border-danger]="isDuplicatingName()"
+              [class.border-danger]="
+                isDuplicatingName() || !isDataPointNameValid(unsavedRow.name)
+              "
               autofocus
             />
           </ng-template>

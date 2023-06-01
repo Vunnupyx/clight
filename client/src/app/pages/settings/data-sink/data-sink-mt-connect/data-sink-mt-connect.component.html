@@ -290,8 +290,10 @@
             "
             matTooltipPosition="above"
             [matTooltip]="
-              isDuplicatingName() || !isDataPointNameValid(unsavedRow.name)
+              isDuplicatingName()
                 ? ('settings-data-sink.DuplicatedName' | translate)
+                : !isDataPointNameValid(unsavedRow.name)
+                ? ('settings-data-sink.InvalidName' | translate)
                 : ''
             "
             autofocus

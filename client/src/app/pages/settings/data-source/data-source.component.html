@@ -589,10 +589,20 @@
               class="w-100"
               [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
-              [matTooltip]="'settings-data-source.DuplicatedName' | translate"
+              [matTooltip]="
+                isDuplicatingField('name')
+                  ? ('settings-data-source.DuplicatedName' | translate)
+                  : ('settings-data-source.InvalidName' | translate)
+              "
               matTooltipPosition="above"
-              [matTooltipDisabled]="!isDuplicatingField('name')"
-              [class.border-danger]="isDuplicatingField('name')"
+              [matTooltipDisabled]="
+                !isDuplicatingField('name') &&
+                isDataPointNameValid(unsavedRow.name)
+              "
+              [class.border-danger]="
+                isDuplicatingField('name') ||
+                !isDataPointNameValid(unsavedRow.name)
+              "
               autofocus
             />
           </ng-template>

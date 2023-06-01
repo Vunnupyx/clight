@@ -50,6 +50,7 @@ import {
 } from '../select-opc-ua-variable-modal/select-opc-ua-variable-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
+import { isDataPointNameValid } from 'app/shared/utils/validity-checker';
 
 @Component({
   selector: 'app-data-sink-mt-connect',
@@ -93,6 +94,7 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
   statusSub!: Subscription;
 
   filterAddressStr = '';
+  isDataPointNameValid = isDataPointNameValid;
 
   @ViewChild(DatatableComponent) ngxDatatable: DatatableComponent;
 
@@ -197,6 +199,20 @@ export class DataSinkMtConnectComponent implements OnInit, OnChanges {
 
   onApply() {
     return this.dataPointService.apply(this.dataSink?.protocol!);
+  }
+
+  isDuplicatingName() {
+    if (!this.datapointRows) {
+      return false;
+    }
+
+    // check whether other VDPs do not have such name
+    const newName = this.unsavedRow?.name?.toLowerCase().trim();
+    const editableId = this.unsavedRow?.id;
+
+    return this.datapointRows.some((dp) => {
+      return dp.name?.toLowerCase().trim() === newName && dp.id !== editableId;
+    });
   }
 
   onDataSink(dataSink: DataSink) {

@@ -9,7 +9,7 @@ import {
   IDataSinkConfig,
   IGeneralConfig,
   IProxyConfig,
-  ITargetDataMap
+  IDataSinkMap
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
@@ -122,7 +122,7 @@ export abstract class DataSink {
     if (this.config.dataPoints.length < 1) return;
     interface IEvent {
       mapValue?: string;
-      map?: ITargetDataMap;
+      map?: IDataSinkMap;
       value: number | string | boolean;
     }
 

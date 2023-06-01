@@ -1,4 +1,4 @@
-import { ConfigManager } from '../../../../../ConfigManager';
+import { ConfigManager, mdcLightFolder } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import fs from 'fs';
@@ -88,10 +88,7 @@ async function logsGetHandler(
 
   const outFileName = `${hostname}-${dateString}.zip`;
   const logFolderPath = '/mdclight/logs';
-  const configPath = path.join(
-    process.env.MDC_LIGHT_FOLDER || process.cwd(),
-    '/config/config.json'
-  );
+  const configPath = path.join(mdcLightFolder, '/config/config.json');
   const inputPaths = `${logFolderPath}/*log ${configPath}`;
   const outPath = '/mdclight/logs/out';
   const zipCommand = `mkdir -p ${outPath} && zip -j -0 ${outPath}/${outFileName} ${inputPaths}`;

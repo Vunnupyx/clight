@@ -139,17 +139,19 @@ export function isValidDataSource(obj: any): obj is IDataSourceConfig {
   );
 }
 
-// type MapItem = {
-//   [key: string]: "string";
-// };
-export type ITargetDataMap = object;
+export type IDataSinkMap = {
+  [key: string]: string;
+};
+export type IVdpThreshold = {
+  [key: string]: number;
+};
 
 export interface IDataSinkDataPointConfig {
   id: string;
   address: string;
   name: string;
   type?: IMTConnectDataPointTypes | TDataHubDataPointType;
-  map?: ITargetDataMap;
+  map?: IDataSinkMap;
   initialValue?: string | number;
   mandatory?: true; //only used inside frontend
 }
@@ -330,7 +332,7 @@ export interface IVirtualDataPointConfig {
     | 'calculation'
     | 'setTariff'
     | 'blink-detection';
-  thresholds?: ITargetDataMap;
+  thresholds?: IVdpThreshold;
   enumeration?: {
     defaultValue?: string;
     items: EnumOperationEntry[];

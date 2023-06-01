@@ -22,6 +22,7 @@ import path from 'path';
 import { compare } from 'bcryptjs';
 import { System } from '../../../System';
 import { create } from 'xmlbuilder2';
+import { mdcLightFolder } from '../../../ConfigManager';
 
 interface IOPCUAAdapterOptions {
   dataSinkConfig: IDataSinkConfig;
@@ -112,16 +113,10 @@ export class OPCUAAdapter {
    * Rewrites all xml nodesets into tmp folder and replaces static texts like the machineName
    */
   private async setupNodesets() {
-    this.nodesetDir = path.join(
-      process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      'config/tmpnodesets'
-    );
+    this.nodesetDir = path.join(mdcLightFolder, 'config/tmpnodesets');
     await fs.rm(this.nodesetDir, { recursive: true, force: true });
     await fs.copy(
-      path.join(
-        process.env.MDC_LIGHT_FOLDER || process.cwd(),
-        this.opcuaRuntimeConfig.nodesetDir
-      ),
+      path.join(mdcLightFolder, this.opcuaRuntimeConfig.nodesetDir),
       this.nodesetDir
     );
     const files = (await fs.readdir(this.nodesetDir)) as string[];
@@ -287,10 +282,7 @@ export class OPCUAAdapter {
     const hostname = await this.system.getHostname();
 
     const applicationUri = `urn:${hostname}`;
-    const certificateFolder = path.join(
-      process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      '/certs'
-    );
+    const certificateFolder = path.join(mdcLightFolder, '/certs');
     const certificateFile = path.join(
       certificateFolder,
       'server_certificate.pem'

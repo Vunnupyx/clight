@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
 import * as date from 'date-fns';
-import { ConfigManager } from '../ConfigManager';
+import { ConfigManager, mdcLightFolder } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
 import { CounterDict, ScheduleDescription, timerDict } from './interfaces';
@@ -13,8 +13,7 @@ import { CounterDict, ScheduleDescription, timerDict } from './interfaces';
 export class CounterManager {
   private persist = true;
   private counters: CounterDict = {};
-  private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
-  private configFolder = path.join(this.mdcFolder, '/config');
+  private configFolder = path.join(mdcLightFolder, '/config');
   private counterStoragePath = path.join(this.configFolder, '/counters.json');
   private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};

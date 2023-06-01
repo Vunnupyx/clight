@@ -49,6 +49,8 @@ interface IConfigManagerEvents {
 
 type ChangeOperation = 'insert' | 'update' | 'delete';
 
+export const mdcLightFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
+
 const defaultS7DataSource: IDataSourceConfig = {
   dataPoints: [],
   protocol: DataSourceProtocols.S7,
@@ -112,12 +114,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   public isDeviceCommissioned = false;
 
-  private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
-  private configFolder = path.join(this.mdcFolder, '/config');
-  private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
-  private sslFolder = path.join(this.mdcFolder, 'sslkeys');
-  private runtimeFolder = path.join(this.mdcFolder, 'runtime-files');
-  private certificateFolder = path.join(this.mdcFolder, 'certs');
+  private configFolder = path.join(mdcLightFolder, '/config');
+  private keyFolder = path.join(mdcLightFolder, 'jwtkeys');
+  private sslFolder = path.join(mdcLightFolder, 'sslkeys');
+  private runtimeFolder = path.join(mdcLightFolder, 'runtime-files');
+  private certificateFolder = path.join(mdcLightFolder, 'certs');
 
   private configName = 'config.json';
   private authUsersConfigName = 'auth.json';

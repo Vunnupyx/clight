@@ -2,9 +2,10 @@ import fs from 'fs';
 import { spawn } from 'child_process';
 import winston from 'winston';
 import path from 'path';
+import { mdcLightFolder } from '../ConfigManager';
 
 export class TLSKeyManager {
-  private PATH = path.join(process.env.MDC_LIGHT_FOLDER, 'sslkeys');
+  private PATH = path.join(mdcLightFolder, 'sslkeys');
 
   public async generateKeys(): Promise<void> {
     return new Promise((resolve, reject) => {

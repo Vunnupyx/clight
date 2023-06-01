@@ -410,6 +410,7 @@
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Password",
+    "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "HasDataMapping": "Data point is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",

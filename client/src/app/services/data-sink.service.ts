@@ -209,7 +209,11 @@ export class DataSinkService {
     });
   }
 
-  updateCustomDatapoint(protocol: DataSinkProtocol, obj: PreDefinedDataPoint) {
+  updateCustomDatapoint(
+    replaceAt: number,
+    protocol: DataSinkProtocol,
+    obj: PreDefinedDataPoint
+  ) {
     this._store.patchState((state) => {
       state.dataSinks = state.dataSinks.map((dataSink) => {
         if (dataSink.protocol != protocol) {
@@ -218,9 +222,11 @@ export class DataSinkService {
         const customDataPoints = dataSink.customDataPoints || [];
         return {
           ...dataSink,
-          customDataPoints: customDataPoints.map((dp) =>
-            dp.address === obj.address ? obj : dp
-          )
+          customDataPoints: [
+            ...customDataPoints.slice(0, replaceAt),
+            obj,
+            ...customDataPoints.slice(replaceAt + 1)
+          ]
         };
       });
       state.touched = true;

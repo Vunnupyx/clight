@@ -410,6 +410,7 @@
     "Status": "状態",
     "Registration": "登録",
     "Password": "パスワード",
+    "DuplicatedName": "名前が重複しています",
     "DuplicatedAddress": "アドレスが重複しています",
     "HasDataMapping": "ソースにデータポイントがマップされています",
     "OpcUaVariables": "OPC UA変数",

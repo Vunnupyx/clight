@@ -180,6 +180,7 @@
     "Select": "Select",
     "Enabled": "Enabled",
     "MachineName": "Machine Name",
+    "IPAddress": "IP Address",
     "Host": "Host",
     "Connection": "Connection",
     "Running": "Running",

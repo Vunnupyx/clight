@@ -180,6 +180,7 @@
     "Select": "Auswählen",
     "Enabled": "Aktiviert",
     "MachineName": "Machine Name",
+    "IPAddress": "IP Adresse",
     "Host": "Host",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",

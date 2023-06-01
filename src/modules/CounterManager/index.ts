@@ -6,6 +6,7 @@ import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
 import { CounterDict, Day, ScheduleDescription, timerDict } from './interfaces';
+import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 /**
  * Manages counter (virtual data points)
@@ -16,7 +17,7 @@ export class CounterManager {
   private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
   private configFolder = path.join(this.mdcFolder, '/config');
   private counterStoragePath = path.join(this.configFolder, '/counters.json');
-  private schedulerChecker: NodeJS.Timer;
+  private schedulerChecker: SynchronousIntervalScheduler;
   private startedTimers: timerDict = {};
   private schedulerCheckerInterval = 1000 * 60 * 5; // 5Min
 
@@ -43,7 +44,6 @@ export class CounterManager {
       );
     }
 
-    this.registerScheduleChecker();
     this.configManager.once(
       'configsLoaded',
       this.handleConfigsLoaded.bind(this)
@@ -52,6 +52,7 @@ export class CounterManager {
   }
 
   private handleConfigsLoaded() {
+    this.registerScheduleChecker();
     this.checkMissedResets();
     this.checkTimers();
   }
@@ -241,9 +242,10 @@ export class CounterManager {
       winston.debug(
         `${logPrefix} set interval with timing ${this.schedulerCheckerInterval} for scheduler checker.`
       );
-      this.schedulerChecker = setInterval(
-        this.checkTimers.bind(this),
-        this.schedulerCheckerInterval
+      this.schedulerChecker = SynchronousIntervalScheduler.getInstance();
+      this.schedulerChecker.addListener(
+        [this.schedulerCheckerInterval],
+        this.checkTimers.bind(this)
       );
     }
   }
@@ -448,7 +450,7 @@ export class CounterManager {
    * Returns all virtual data point configurations for counters with active scheduled resets.
    */
   private getScheduledVirtualDataPoints(): IVirtualDataPointConfig[] {
-    return this.configManager.config.virtualDataPoints.filter((vdp) => {
+    return this.configManager.config?.virtualDataPoints?.filter((vdp) => {
       return (
         vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
       );

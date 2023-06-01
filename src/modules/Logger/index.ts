@@ -49,7 +49,7 @@ export class Logger {
       handleRejections: true,
       filename:
         process.env.NODE_ENV === 'development'
-          ? path.join(__dirname, '../../../mdc-light/logs')
+          ? path.join(__dirname, '../../../mdclight/logs')
           : '/etc/mdc-light/logs',
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(

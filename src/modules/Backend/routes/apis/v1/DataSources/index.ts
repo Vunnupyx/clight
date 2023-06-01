@@ -24,6 +24,8 @@ import {
 } from '../../../../../ConfigManager/interfaces';
 import { MTConnectDataSource } from '../../../../../Southbound/DataSources/MTConnect';
 
+const name = 'DataSourceAPIHandler';
+
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
 
@@ -103,13 +105,27 @@ async function patchSingleDataSourceHandler(
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
-  const updatedDataSource = request.body;
+  const updatedDataSource = {
+    ...request.body,
+    protocol
+  };
 
   if (protocol === DataSourceProtocols.MTCONNECT) {
     allowed.push('machineName');
   }
 
   if (!isValidProtocol(protocol) || !isValidDataSource(updatedDataSource)) {
+    if (!isValidProtocol(protocol))
+      winston.verbose(
+        `${name}::patchSingleDataSourceHandler protocol ${protocol} is not valid`
+      );
+    if (!isValidDataSource(updatedDataSource))
+      winston.verbose(
+        `${name}::patchSingleDataSourceHandler data source ${JSON.stringify(
+          updatedDataSource
+        )} is not valid`
+      );
+
     response.status(400).json({ error: 'Input not valid.' });
     return Promise.resolve();
   }

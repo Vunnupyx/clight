@@ -51,3 +51,12 @@ export interface ICosResponseError {
 }
 
 export type ICosLedsList = string[];
+export interface IMachineInfo {
+  Serial: string;
+  Model: string;
+  ControlType: string;
+  ControlManufacturer: string;
+  Manufacturer: string;
+  Source: string;
+  Timestamp: string;
+}

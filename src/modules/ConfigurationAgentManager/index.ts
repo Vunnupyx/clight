@@ -8,7 +8,8 @@ import {
   ICosSystemVersions,
   ICosSystemRestartResponse,
   ICosSystemCommissioningStatus,
-  ICosLedsList
+  ICosLedsList,
+  IMachineInfo
 } from './interfaces';
 
 export class ConfigurationAgentManager {
@@ -93,6 +94,12 @@ export class ConfigurationAgentManager {
     )) as ICosSystemVersions;
     return result;
   }
+
+  public static async getMachineInfo(): Promise<IMachineInfo> {
+    const result = (await this.request('GET', '/machine/info')) as IMachineInfo;
+    return result;
+  }
+
   public static async systemRestart(): Promise<ICosSystemRestartResponse> {
     const result = (await this.request(
       'POST',

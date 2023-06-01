@@ -1,7 +1,6 @@
 import winston from 'winston';
 import { IAppEvent } from '../../common/interfaces';
 import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
-import { LogLevel } from '../Logger/interfaces';
 import { TSubscriberFn } from './interfaces';
 
 /**
@@ -9,14 +8,10 @@ import { TSubscriberFn } from './interfaces';
  */
 export class EventBus<TEventType> {
   private callbacks: { [key: string]: TSubscriberFn<TEventType> } = {};
-  protected logLevel: string;
 
-  constructor(private name: string = EventBus.name, logLevel: LogLevel = null) {
-    this.logLevel = logLevel;
-
-    if (this.logLevel) {
-      this.addEventListener(this.log.bind(this), `EventBus_log`);
-    }
+  constructor(private name: string = EventBus.name) {
+    // Activate if necessary
+    // this.addEventListener(this.log.bind(this), `EventBus_log`);
   }
 
   /**
@@ -33,7 +28,8 @@ export class EventBus<TEventType> {
       const message = `Level: ${level}, Type: ${type}, ${id}${
         payload ? `, Payload: ${payload?.toString()}` : ''
       }`;
-      // winston.log(this.logLevel, message, { source: 'EVENTBUS' });
+
+      winston.verbose(message, { source: 'EVENTBUS' });
     });
   }
 

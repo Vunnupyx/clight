@@ -1,5 +1,4 @@
 import winston from 'winston';
-import fetch from 'node-fetch';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { EventBus, MeasurementEventBus } from '../EventBus';
 import {
@@ -9,7 +8,6 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
-import { LogLevel } from '../Logger/interfaces';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
@@ -37,18 +35,11 @@ export class BootstrapManager {
   private tlsKeyManager: TLSKeyManager;
 
   constructor() {
-    this.errorEventsBus = new EventBus<IErrorEvent>(
-      'ErrorEventBus',
-      LogLevel.ERROR
-    );
+    this.errorEventsBus = new EventBus<IErrorEvent>('ErrorEventBus');
     this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(
-      'LifecycleEventBus',
-      LogLevel.VERBOSE
+      'LifecycleEventBus'
     );
-    this.measurementsEventsBus = new MeasurementEventBus(
-      'MeasurementEventBus',
-      LogLevel.DEBUG
-    );
+    this.measurementsEventsBus = new MeasurementEventBus('MeasurementEventBus');
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,

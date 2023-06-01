@@ -32,12 +32,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { isDataPointNameValid } from 'app/shared/utils/validity-checker';
 
 const ENERGY_TARIFF_NUMBER_DP_ADDRESS = 'tariff-number';
-const SUPPORTED_DATA_SOURCE_PROTOCOLS = [
-  DataSourceProtocol.S7,
-  DataSourceProtocol.IOShield,
-  DataSourceProtocol.Energy,
-  DataSourceProtocol.MTConnect
-];
 
 @Component({
   selector: 'app-data-source',
@@ -182,9 +176,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     if (!arr || !arr.length) {
       return;
     }
-    this.dataSourceList = arr.filter((source) =>
-      SUPPORTED_DATA_SOURCE_PROTOCOLS.includes(source.protocol)
-    );
+    this.dataSourceList = arr;
 
     if (!this.dataSource) {
       this.switchDataSource(arr[0]);

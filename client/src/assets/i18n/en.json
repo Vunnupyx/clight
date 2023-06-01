@@ -332,7 +332,7 @@
     "BulkError": "Changes have not been applied. Please, try again!",
     "LoadError": "Failed to load source data points. Try again later",
     "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
-    "HostUnreachable": "Host unreachable please check IP configuration",
+    "HostUnreachable": "Host unreachable please check data source configuration",
     "HostDisabled": "Data source is disabled, please check data source settings."
   },
   "settings-data-sink": {

@@ -7,7 +7,9 @@ import {
   ICosResponseError,
   ICosSystemVersions,
   ICosSystemRestartResponse,
-  ICosSystemCommissioningStatus
+  ICosSystemCommissioningStatus,
+  ICosLedsList,
+  IMachineInfo
 } from './interfaces';
 
 export class ConfigurationAgentManager {
@@ -21,13 +23,15 @@ export class ConfigurationAgentManager {
 
   private static async request(
     method: string = 'GET',
-    endpoint: string
+    endpoint: string,
+    skipResponseParsing: boolean = false
   ): Promise<
     | ICosNetworkAdapterSettings
     | ICosNetworkAdapterSetting
     | ICosNetworkAdapterStatus
     | ICosSystemVersions
     | ICosSystemRestartResponse
+    | ICosLedsList
     | ICosResponseError
   > {
     const logPrefix = `${ConfigurationAgentManager.name}::request`;
@@ -48,6 +52,10 @@ export class ConfigurationAgentManager {
       ) {
         winston.error(`${logPrefix} error in response: ${response.status}`);
         return Promise.reject(new Error(`Error: ${response.status}`));
+      }
+
+      if (skipResponseParsing) {
+        return response;
       }
 
       let responseData:
@@ -86,6 +94,12 @@ export class ConfigurationAgentManager {
     )) as ICosSystemVersions;
     return result;
   }
+
+  public static async getMachineInfo(): Promise<IMachineInfo> {
+    const result = (await this.request('GET', '/machine/info')) as IMachineInfo;
+    return result;
+  }
+
   public static async systemRestart(): Promise<ICosSystemRestartResponse> {
     const result = (await this.request(
       'POST',
@@ -127,5 +141,56 @@ export class ConfigurationAgentManager {
       `/network/adapters/${adapterId}/status`
     )) as ICosNetworkAdapterStatus;
     return result;
+  }
+
+  /**
+   * Gets the ids of the LEDs on CELOS, currently defined as "user1" and "user2"
+   */
+  public static async getLedList(): Promise<ICosLedsList> {
+    const logPrefix = `${ConfigurationAgentManager.name}::getLedList`;
+    try {
+      const result = (await this.request(
+        'GET',
+        `/system/leds`
+      )) as ICosLedsList;
+      return result;
+    } catch (error) {
+      winston.error(`${logPrefix} error setting LED status: ${error}`);
+
+      return [];
+    }
+  }
+
+  /**
+   * Sets the new LED status, on/off, its color and frequency
+   */
+  public static async setLedStatus(
+    ledId: string,
+    newStatus: 'on' | 'off' = 'off',
+    color?: 'green' | 'red' | 'orange',
+    frequency?: number // 0-20, DEFAULT is 0
+  ): Promise<boolean> {
+    const logPrefix = `${ConfigurationAgentManager.name}::setLedStatus`;
+    try {
+      const freq = !frequency
+        ? 0
+        : frequency > 20
+        ? 20
+        : frequency < 0
+        ? 0
+        : frequency;
+      const baseQuery = `/system/leds/${ledId}/${newStatus}`;
+      const offQuery = baseQuery;
+      let onQuery = `${baseQuery}?colour=${color}`; // API query is "colour"
+      if (freq) {
+        onQuery = `${onQuery}&frequency=${freq}`;
+      }
+
+      await this.request('POST', newStatus === 'on' ? onQuery : offQuery, true);
+      return true;
+    } catch (error) {
+      winston.error(`${logPrefix} error setting LED status: ${error}`);
+      return false;
+    }
   }
 }

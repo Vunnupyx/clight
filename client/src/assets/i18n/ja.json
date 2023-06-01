@@ -180,6 +180,7 @@
     "Select": "選択",
     "Enabled": "有効",
     "MachineName": "Machine Name",
+    "IPAddress": "IPアドレス",
     "Host": "Host",
     "Connection": "接続中",
     "Running": "実行中",

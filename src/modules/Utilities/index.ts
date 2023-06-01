@@ -41,11 +41,15 @@ export function unique<T>(array: T[], selector: (item: T) => any): T[] {
  * @returns boolean
  */
 export function areObjectsEqual(
-  object1: object,
-  object2: object,
+  object1: any,
+  object2: any,
   ignoreKeys: string[] = []
 ): boolean {
-  if (Object.keys(object1).length !== Object.keys(object2).length) {
+  if (
+    typeof object1 !== 'object' ||
+    typeof object2 !== 'object' ||
+    Object.keys(object1 ?? {}).length !== Object.keys(object2 ?? {}).length
+  ) {
     return false;
   }
   let hasChange = false;

@@ -10,12 +10,19 @@ import {
   IEnergyDataSourceConnection
 } from '../../../ConfigManager/interfaces';
 
+interface TariffStatusMapping {
+  unknown: '0';
+  STANDBY: '1';
+  READY_FOR_PROCESSING: '2';
+  WARM_UP: '3';
+  PROCESSING: '4';
+}
 /**
  * Implementation of Energy data source
  */
 export class EnergyDataSource extends DataSource {
   protected name = EnergyDataSource.name;
-  private phoenixEemClient: PhoenixEmProAdapter;
+  private phoenixEemClient: PhoenixEmProAdapter | null = null;
   private virtualDataPointManager: VirtualDataPointManager;
   private dataPoints: IDataPointConfig[];
   private ENERGY_DATAPOINT_READING_CYCLE = 15000;
@@ -85,7 +92,7 @@ export class EnergyDataSource extends DataSource {
         );
       }
     } catch (error) {
-      winston.error(`${logPrefix} ${error?.message}`);
+      winston.error(`${logPrefix} ${(error as Error)?.message}`);
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
@@ -107,6 +114,7 @@ export class EnergyDataSource extends DataSource {
     this.readCycleCount = this.readCycleCount + 1;
 
     try {
+      if (!this.phoenixEemClient) throw new Error('client is not defined');
       const readings = await this.phoenixEemClient.getAllDatapoints();
 
       const measurements: IMeasurement[] = [];
@@ -148,6 +156,8 @@ export class EnergyDataSource extends DataSource {
    * @return {string}
    */
   public getCurrentTariffNumber(): string {
+    if (!this.phoenixEemClient) throw new Error('client is not defined');
+
     return this.phoenixEemClient.currentTariff;
   }
 
@@ -157,10 +167,12 @@ export class EnergyDataSource extends DataSource {
    * not processed in VDP side
    * @param newStatus
    */
-  public async handleMachineStatusChange(newStatus: string): Promise<void> {
+  public async handleMachineStatusChange(
+    newStatus: keyof TariffStatusMapping
+  ): Promise<void> {
     const logPrefix = `${this.name}::handleMachineStatusChange`;
 
-    const tariffStatusMapping = {
+    const tariffStatusMapping: TariffStatusMapping = {
       unknown: '0',
       STANDBY: '1',
       READY_FOR_PROCESSING: '2',
@@ -177,6 +189,7 @@ export class EnergyDataSource extends DataSource {
     }
 
     try {
+      if (!this.phoenixEemClient) throw new Error('client is not defined');
       const changeResult = await this.phoenixEemClient.changeTariff(
         newTariffNo
       );
@@ -185,7 +198,9 @@ export class EnergyDataSource extends DataSource {
       }
     } catch (e) {
       winston.warn(
-        `${logPrefix} Error occurred while changing tariff: ${e?.message}`
+        `${logPrefix} Error occurred while changing tariff: ${
+          (e as Error)?.message
+        }`
       );
     }
   }

@@ -26,11 +26,11 @@ interface RestApiManagerOptions {
  * Manage express server implementation.
  */
 export class RestApiManager {
-  private port: number;
-  private config: IRestApiConfig;
+  private port: number | null = null;
+  private config: IRestApiConfig | null = null;
   private readonly expressApp: Express = express();
   private options: RestApiManagerOptions;
-  private routeManager: RoutesManager;
+  private routeManager: RoutesManager | null = null;
   private static className: string;
 
   constructor(options: RestApiManagerOptions) {

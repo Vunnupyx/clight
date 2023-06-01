@@ -37,8 +37,11 @@ export class TLSKeyManager {
 
   private opensslWrapper(
     params: string | Array<string>,
-    callback = (err: Error | string, stderr: string, stdout: string) =>
-      undefined
+    callback = (
+      err: Error | string | null,
+      stderr: string | null,
+      stdout: string | null
+    ) => undefined
   ): void {
     const stdout: any[] = [];
     const stderr: any[] = [];
@@ -82,7 +85,11 @@ export class TLSKeyManager {
       if (closeStatusCode === 0) {
         callback(null, stderr.toString(), stdout.toString());
       } else {
-        callback(new Error(closeSignal), stderr.toString(), stdout.toString());
+        callback(
+          new Error(closeSignal as string),
+          stderr.toString(),
+          stdout.toString()
+        );
       }
     });
   }

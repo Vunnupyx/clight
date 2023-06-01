@@ -86,7 +86,9 @@ export class PhoenixEmProAdapter {
         }
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading all measurements: ${e?.message || e}`
+          `${logPrefix} Error reading all measurements: ${
+            (e as Error)?.message || e
+          }`
         );
         hasMeasurementReadingError = true;
       }
@@ -107,7 +109,7 @@ export class PhoenixEmProAdapter {
         }
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading all meters: ${e?.message || e}`
+          `${logPrefix} Error reading all meters: ${(e as Error)?.message || e}`
         );
         hasMeterReadingError = true;
       }
@@ -130,7 +132,9 @@ export class PhoenixEmProAdapter {
         }
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading device information: ${e?.message || e}`
+          `${logPrefix} Error reading device information: ${
+            (e as Error)?.message || e
+          }`
         );
         hasDeviceInformationReadingError = true;
       }
@@ -149,7 +153,9 @@ export class PhoenixEmProAdapter {
         });
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading current tariff: ${e?.message || e}`
+          `${logPrefix} Error reading current tariff: ${
+            (e as Error)?.message || e
+          }`
         );
         hasTariffReadingError = true;
       }
@@ -198,7 +204,9 @@ export class PhoenixEmProAdapter {
           return reject(new Error(result?.error));
         }
       } catch (e) {
-        winston.warn(`${logPrefix} Error changing tariff: ${e?.message || e}`);
+        winston.warn(
+          `${logPrefix} Error changing tariff: ${(e as Error)?.message || e}`
+        );
         return reject(e);
       }
     });
@@ -209,7 +217,7 @@ export class PhoenixEmProAdapter {
    * @param dataPointAddress Address field of the data point
    * @returns {Promise<IMeasurement>}
    */
-  public getSingleDataPoint(dataPointAddress): Promise<IMeasurement> {
+  public getSingleDataPoint(dataPointAddress: string): Promise<IMeasurement> {
     const logPrefix = `${PhoenixEmProAdapter.name}::getSingleDataPoint`;
     return new Promise(async (resolve, reject) => {
       if (!EMPRO_GET_ENDPOINTS[dataPointAddress]) {
@@ -234,7 +242,7 @@ export class PhoenixEmProAdapter {
         return resolve(result);
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading data point: ${e?.message || e}`
+          `${logPrefix} Error reading data point: ${(e as Error)?.message || e}`
         );
         return reject(e);
       }
@@ -264,7 +272,9 @@ export class PhoenixEmProAdapter {
             : '0'
         );
       } catch (e) {
-        winston.warn(`${logPrefix} Error reading tariff: ${e?.message || e}`);
+        winston.warn(
+          `${logPrefix} Error reading tariff: ${(e as Error)?.message || e}`
+        );
         return reject(e);
       }
     });
@@ -302,9 +312,11 @@ export class PhoenixEmProAdapter {
       } catch (e) {
         this.hostConnectivityState = IHostConnectivityState.ERROR;
         winston.error(
-          `${logPrefix} unexpected error occurred while making API call: ${e?.message}`
+          `${logPrefix} unexpected error occurred while making API call: ${
+            (e as Error)?.message
+          }`
         );
-        return reject(new Error(e?.message || 'Unexpected Error'));
+        return reject(new Error((e as Error)?.message || 'Unexpected Error'));
       }
     });
   }

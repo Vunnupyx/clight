@@ -15,7 +15,7 @@ import { IMeasurement } from '../interfaces';
 import SinumerikNCK from './SinumerikNCK/NCDriver';
 
 interface S7DataPointsWithError {
-  datapoints: Array<any>;
+  datapoints: NodeS7.ReadValues;
   error: boolean;
 }
 
@@ -66,7 +66,7 @@ export class S7DataSource extends DataSource {
 
   private nckEnabled = false;
 
-  private client: NodeS7 = null;
+  private client: NodeS7 | null = null;
   private nckClient = new SinumerikNCK();
 
   get nckSlot() {
@@ -178,8 +178,11 @@ export class S7DataSource extends DataSource {
   private readPlcData(): Promise<S7DataPointsWithError> {
     return new Promise((resolve, reject) => {
       if (this.getPlcAddresses().length === 0)
-        resolve({ datapoints: [], error: false });
+        resolve({ datapoints: {}, error: false });
       try {
+        if (!this.client) {
+          throw new Error('client not defined');
+        }
         const timeoutId = setTimeout(
           () =>
             reject(
@@ -211,7 +214,7 @@ export class S7DataSource extends DataSource {
       try {
         dp.value = await this.nckClient.readVariableBTSS(address);
       } catch (error) {
-        dp.error = error.toString();
+        dp.error = (error as Error).toString();
       }
       results.push(dp);
     }
@@ -390,7 +393,9 @@ export class S7DataSource extends DataSource {
 
       if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
-      winston.error(`S7DataSource Error: ${e.message} / ${JSON.stringify(e)}`);
+      winston.error(
+        `S7DataSource Error: ${(e as Error).message} / ${JSON.stringify(e)}`
+      );
     }
     this.cycleActive = false;
   }

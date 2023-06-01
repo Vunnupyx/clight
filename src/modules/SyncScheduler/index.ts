@@ -1,5 +1,5 @@
-type SubscriberById = { [key: number]: (id: number) => void };
-type SubscribersForInterval = { [key: number]: SubscriberById };
+type SubscriberById = { [key: string]: (id: number[]) => void };
+type SubscribersForInterval = { [key: string]: SubscriberById };
 
 /**
  * Implements a (globally) synchronous interval scheduler
@@ -10,7 +10,7 @@ export class SynchronousIntervalScheduler {
   private subscribers: SubscribersForInterval = {};
   private lastAssignedSubId = 0;
   private internalCycleInterval: ReturnType<typeof setInterval>;
-  private internalCycleLastExecution: { [key: number]: number } = {};
+  private internalCycleLastExecution: { [key: string]: number } = {};
 
   /**
    * Sets up the internal scheduler loop
@@ -52,8 +52,8 @@ export class SynchronousIntervalScheduler {
    * @returns
    */
   public addListener(
-    cycleIntervals: Array<number>,
-    callback: (interval: number) => void
+    cycleIntervals: number[],
+    callback: (interval: number[]) => void
   ): number {
     this.lastAssignedSubId += 1;
     cycleIntervals.forEach((cycleInterval) => {

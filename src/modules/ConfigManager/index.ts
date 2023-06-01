@@ -126,8 +126,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private publicKeyName = 'jwtRS256.key.pub';
 
   private _runtimeConfig: IRuntimeConfig;
-  private _config: IConfig;
-  private _defaultTemplates: IDefaultTemplates;
+  private _config: IConfig | null = null;
+  private _defaultTemplates: IDefaultTemplates | null = null;
   private _authConfig: IAuthConfig;
   private _authUsers: IAuthUsersConfig;
   #resolveConfigChanged: null | ((value: void) => void) = null;
@@ -136,8 +136,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private _dataSinksManager: DataSinksManager;
-  private _dataSourcesManager: DataSourcesManager;
+  private _dataSinksManager: DataSinksManager | null = null;
+  private _dataSourcesManager: DataSourcesManager | null = null;
 
   private static className: string = ConfigManager.name;
 

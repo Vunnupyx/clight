@@ -29,13 +29,13 @@ export class MTConnectDataSource extends DataSource {
   public showConnectivityWarning = false;
 
   private dataPoints: IDataPointConfig[];
-  private nextSequenceNumber: number;
-  private lastSequenceNumber: number;
+  private nextSequenceNumber: number | null = null;
+  private lastSequenceNumber: number | null = null;
   private requestCount = 1;
   private hostname = '';
   private hostConnectivityState: IHostConnectivityState =
     IHostConnectivityState.UNKNOWN;
-  private lastFailedConnectivityTimestamp: number;
+  private lastFailedConnectivityTimestamp: number | null = null;
 
   private DATAPOINT_READ_INTERVAL = 1000;
   private SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL = 30 * 60 * 1000;
@@ -106,7 +106,7 @@ export class MTConnectDataSource extends DataSource {
         throw new Error(`Host status:${this.hostConnectivityState}`);
       }
     } catch (error) {
-      winston.error(`${logPrefix} ${error?.message}`);
+      winston.error(`${logPrefix} ${(error as Error)?.message}`);
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
@@ -163,7 +163,7 @@ export class MTConnectDataSource extends DataSource {
     const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
     const response = await this.getMTConnectAgentXMLResponseAsObject(
       '/sample',
-      this.nextSequenceNumber
+      this.nextSequenceNumber ?? 0
     );
 
     if ((response as IMTConnectStreamError).MTConnectError) {
@@ -360,7 +360,7 @@ export class MTConnectDataSource extends DataSource {
           : [detailObject.Entry];
 
         entries.forEach((entry) => {
-          const keyName = entry['@key'] ?? entry['@']?.key;
+          const keyName = entry['@key'] ?? entry['@']?.key ?? '';
           const keyValue = entry['#'];
 
           if (entry.Cell) {
@@ -443,8 +443,9 @@ export class MTConnectDataSource extends DataSource {
       }
       try {
         if (
+          this.lastFailedConnectivityTimestamp &&
           this.lastFailedConnectivityTimestamp <
-          Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
+            Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
         ) {
           this.showConnectivityWarning = false;
         }
@@ -474,7 +475,9 @@ export class MTConnectDataSource extends DataSource {
         this.hostConnectivityState = IHostConnectivityState.ERROR;
         this.showConnectivityWarning = true;
         this.lastFailedConnectivityTimestamp = Date.now();
-        const err = `${logPrefix} unexpected error occurred while fetching XML response: ${e?.message}`;
+        const err = `${logPrefix} unexpected error occurred while fetching XML response: ${
+          (e as Error)?.message
+        }`;
         winston.error(err);
         return reject(new Error(err));
       }
@@ -494,8 +497,9 @@ export class MTConnectDataSource extends DataSource {
       });
 
       if (
+        this.lastFailedConnectivityTimestamp &&
         this.lastFailedConnectivityTimestamp <
-        Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
+          Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
       ) {
         this.showConnectivityWarning = false;
       }

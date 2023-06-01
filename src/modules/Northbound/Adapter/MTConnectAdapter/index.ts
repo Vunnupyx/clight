@@ -56,10 +56,14 @@ export class MTConnectAdapter {
       winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
     });
     client.setTimeout(this.TIMEOUT * 2, () => {
-      winston.info(`${logPrefix} client timed out`);
-      client.destroy();
-      this.clients = this.clients.filter((c) => c.id !== client.id);
-      winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
+      try {
+        winston.info(`${logPrefix} client timed out`);
+        client.destroy();
+        this.clients = this.clients.filter((c) => c.id !== client.id);
+        winston.info(`${logPrefix} connected clients: ${this.clients.length}`);
+      } catch (error) {
+        winston.error(`${logPrefix} error in timeout callback: ${error}`);
+      }
     });
     client.on('data', async (data: string) => {
       await this.receive(client, data);

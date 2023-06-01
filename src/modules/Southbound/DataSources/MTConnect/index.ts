@@ -110,8 +110,12 @@ export class MTConnectDataSource extends DataSource {
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
-        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
-        this.init();
+        try {
+          this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+          this.init();
+        } catch (error) {
+          winston.error(`${logPrefix} error in reconnecting: ${error}`);
+        }
       }, this.RECONNECT_TIMEOUT);
       return;
     }

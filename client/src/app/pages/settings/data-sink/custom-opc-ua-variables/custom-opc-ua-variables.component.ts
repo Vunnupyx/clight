@@ -50,6 +50,9 @@ export class CustomOpcUaVariablesComponent {
         PreDefinedDataPoint
       >(EditCustomOpcUaVariableModalComponent, {
         data: {
+          existingNames: [
+            ...(this.rows || []).map((dp) => dp.name).filter(Boolean)
+          ],
           existingAddresses: [
             ...(predefinedOPCDataPoints || [])
               .map((dp) => dp.address)
@@ -73,6 +76,10 @@ export class CustomOpcUaVariablesComponent {
   }
 
   onEdit(obj: PreDefinedDataPoint) {
+    const rowsWithoutObj = (this.rows || []).filter(
+      (dp) => dp.address !== obj.address
+    );
+
     this.dialog
       .open<
         EditCustomOpcUaVariableModalComponent,
@@ -80,7 +87,8 @@ export class CustomOpcUaVariablesComponent {
         PreDefinedDataPoint
       >(EditCustomOpcUaVariableModalComponent, {
         data: {
-          existingAddresses: this.existingAddresses,
+          existingNames: [...rowsWithoutObj.map((dp) => dp.name)],
+          existingAddresses: [...rowsWithoutObj.map((dp) => dp.address)],
           customDatapoint: obj
         } as EditCustomOpcUaVariableModalData
       })
@@ -89,12 +97,17 @@ export class CustomOpcUaVariablesComponent {
         if (!result) {
           return;
         }
-        this.onEditConfirm(result);
+        const rowIndex = this.rows?.indexOf(obj) || 0;
+        this.onEditConfirm(rowIndex, result);
       });
   }
 
-  private onEditConfirm(obj: PreDefinedDataPoint) {
-    this.dataSinkService.updateCustomDatapoint(DataSinkProtocol.OPC, obj);
+  private onEditConfirm(replaceAt: number, obj: PreDefinedDataPoint) {
+    this.dataSinkService.updateCustomDatapoint(
+      replaceAt,
+      DataSinkProtocol.OPC,
+      obj
+    );
   }
 
   onDelete(obj: PreDefinedDataPoint) {

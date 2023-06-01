@@ -4,6 +4,7 @@ import { DataPointDataType, PreDefinedDataPoint } from 'app/models';
 import { Subscription } from 'rxjs';
 
 export interface EditCustomOpcUaVariableModalData {
+  existingNames: string[];
   existingAddresses: string[];
   customDatapoint: PreDefinedDataPoint;
 }
@@ -31,16 +32,31 @@ export class EditCustomOpcUaVariableModalComponent implements OnInit {
     this.customDatapoint = { ...this.data.customDatapoint };
   }
 
-  isDuplicatingAddress(unsavedObj: PreDefinedDataPoint) {
-    if (!this.data.existingAddresses) {
+  isDuplicatingName(unsavedObj: PreDefinedDataPoint) {
+    if (
+      !Array.isArray(this.data.existingNames) ||
+      this.data.existingNames?.length === 0
+    ) {
       return false;
     }
+    const newName = unsavedObj?.name?.toLowerCase().trim();
 
-    // check whether other DPs do not have such address
+    return this.data.existingNames.some((dp) => {
+      return dp?.toLowerCase().trim() === newName;
+    });
+  }
+
+  isDuplicatingAddress(unsavedObj: PreDefinedDataPoint) {
+    if (
+      !Array.isArray(this.data.existingAddresses) ||
+      this.data.existingAddresses?.length === 0
+    ) {
+      return false;
+    }
     const newAddress = unsavedObj?.address?.toLowerCase().trim();
 
-    return this.data.existingAddresses.some((addr) => {
-      return addr?.toLowerCase().trim() === newAddress;
+    return this.data.existingAddresses.some((dp) => {
+      return dp?.toLowerCase().trim() === newAddress;
     });
   }
 

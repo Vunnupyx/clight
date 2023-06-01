@@ -16,6 +16,7 @@ import {
 import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
 import {
   IDataPointConfig,
+  IDataSourceConfig,
   IEnergyDataSourceConnection,
   IMTConnectDataSourceConnection,
   IS7DataSourceConnection,
@@ -105,7 +106,21 @@ async function patchSingleDataSourceHandler(
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
-  const updatedDataSource = {
+
+  Object.keys(request.body).forEach((entry) => {
+    if (!allowed.includes(entry)) {
+      winston.warn(
+        `dataSourcePatchHandler tried to change property: ${entry}. Not allowed`
+      );
+      response.status(403).json({
+        error: `Not allowed to change ${entry}`
+      });
+      return Promise.resolve();
+    }
+  });
+
+  const updatedDataSource: IDataSourceConfig = {
+    dataPoints: [],
     ...request.body,
     protocol
   };
@@ -140,17 +155,6 @@ async function patchSingleDataSourceHandler(
     response.status(404).send();
     return Promise.resolve();
   }
-  Object.keys(updatedDataSource).forEach((entry) => {
-    if (!allowed.includes(entry)) {
-      winston.warn(
-        `dataSourcePatchHandler tried to change property: ${entry}. Not allowed`
-      );
-      response.status(403).json({
-        error: `Not allowed to change ${entry}`
-      });
-      return Promise.resolve();
-    }
-  });
 
   let changedDatasource = { ...dataSource, ...updatedDataSource };
 

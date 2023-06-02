@@ -299,7 +299,7 @@ export class CounterManager {
           : scheduleData.month - 1,
       date:
         //@ts-ignore
-        scheduleData.date
+        scheduleData.date && scheduleData.date !== 'Every'
           ? //@ts-ignore
             scheduleData.date
           : currentDate.getDate(),

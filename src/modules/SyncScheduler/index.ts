@@ -41,7 +41,13 @@ export class SynchronousIntervalScheduler {
 
         if (now - lastRun >= currentInterval) {
           Object.keys(this.subscribers[key]).forEach((subscriberId) => {
-            this.subscribers[key][subscriberId]([currentInterval]);
+            try {
+              this.subscribers[key][subscriberId]([currentInterval]);
+            } catch (error) {
+              winston.error(
+                `${logPrefix} ${subscriberId} with current interval ${currentInterval} returns error : ${error}`
+              );
+            }
           });
           this.internalCycleLastExecution[key] = now;
         }

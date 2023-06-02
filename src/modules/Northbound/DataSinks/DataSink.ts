@@ -50,7 +50,7 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
   protected mappingConfig: IDataPointMapping[];
   protected dataPointMapper: DataPointMapper;
   protected dataPointCache: DataPointCache;
-  protected readonly _protocol: DataSinkProtocols;
+  protected readonly _protocol!: DataSinkProtocols;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected enabled = false;
   protected termsAndConditionsAccepted = false;
@@ -131,7 +131,7 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
       value: number | string | boolean;
     }
 
-    let mappedTargetEvents = [];
+    let mappedTargetEvents: IDataSourceMeasurementEvent[] = [];
 
     // Group events by their target, to use for target data points, depending on more than one source data point
     const eventsByTarget: {
@@ -165,7 +165,9 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     });
     this.dataPointCache.update(mappedTargetEvents);
 
-    let dataPoints = {};
+    let dataPoints: {
+      [key: string]: string | number | boolean;
+    } = {};
     Object.keys(eventsByTarget).forEach((target) => {
       const events = eventsByTarget[target];
 
@@ -184,8 +186,8 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
         const triggeredEvents = events.filter((e) => e.value);
 
         const sortedEvents = triggeredEvents.sort((a, b) => {
-          const mapValueA = parseInt(a.mapValue, 10);
-          const mapValueB = parseInt(b.mapValue, 10);
+          const mapValueA = parseInt(a?.mapValue ?? '0', 10);
+          const mapValueB = parseInt(b?.mapValue ?? '0', 10);
 
           if (mapValueA < mapValueB) return -1;
           if (mapValueA > mapValueB) return 1;

@@ -25,8 +25,8 @@ jest.mock('../../ConfigManager');
 describe('Test DataPointMapper', () => {
   test("should map a source to it's target", async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(LogLevel.DEBUG),
-      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSource: IDataSourceConfig = {

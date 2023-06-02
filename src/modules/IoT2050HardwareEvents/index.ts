@@ -14,7 +14,7 @@ export default class IoT2050HardwareEvents {
   #buttonPressedTriggerTimeMs = 5000;
   #userButtonGpioPin = 20;
   #fistEventTS: number = 0;
-  #child: ChildProcessWithoutNullStreams;
+  #child: ChildProcessWithoutNullStreams | null = null;
   #initData = false;
   #callbacks: Function[] = [];
   #unusedSlots: number[] = [];
@@ -126,7 +126,7 @@ export default class IoT2050HardwareEvents {
         stderr
       )}`
     );
-    if (this.#child.exitCode) {
+    if (this.#child && this.#child.exitCode) {
       await this.watchUserButtonLongPress();
     }
   }

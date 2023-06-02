@@ -1113,7 +1113,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     if (this.#configChangeCompletedPromise)
       return this.#configChangeCompletedPromise;
 
-    if (this.pendingEvents.length === 0) return;
+    if (this.pendingEvents.length === 0) return Promise.resolve();
 
     this.#configChangeCompletedPromise = Promise.race([
       new Promise<void>((resolve, reject) => {

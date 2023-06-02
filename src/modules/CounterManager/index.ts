@@ -16,7 +16,7 @@ export class CounterManager {
   private counters: CounterDict = {};
   private configFolder = path.join(mdcLightFolder, '/config');
   private counterStoragePath = path.join(this.configFolder, '/counters.json');
-  private schedulerChecker: SynchronousIntervalScheduler;
+  private schedulerChecker: SynchronousIntervalScheduler | null = null;
   private startedTimers: timerDict = {};
   private schedulerCheckerInterval = 1000 * 60 * 5; // 5Min
 

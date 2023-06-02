@@ -48,13 +48,14 @@ export class DataHubAdapter {
   private onStateChange: (state: LifecycleEventStatus) => void;
 
   private initialized: boolean = false;
+  private moduleId: string = '';
 
   // Datahub and Twin
-  private dataHubClient: ModuleClient;
-  private moduleTwin: Twin;
-  private probeBuffer: MessageBuffer;
-  private telemetryBuffer: MessageBuffer;
-  private serialNumber: string;
+  private dataHubClient: ModuleClient | null = null;
+  private moduleTwin: Twin | null = null;
+  private probeBuffer: MessageBuffer | null = null;
+  private telemetryBuffer: MessageBuffer | null = null;
+  private serialNumber: string = '';
   private firstMeasurement = true;
   private probeSendInterval: number;
   private telemetrySendInterval: number;
@@ -69,7 +70,7 @@ export class DataHubAdapter {
   private setCommandId = uuid();
   private setCallbackName = this.setCommandId;
   private setUpdateRequests: Array<Response> = [];
-  private requestedVersion: VersionInformation['release'];
+  private requestedVersion: VersionInformation['release'] | null = null;
 
   private lastSentEventValues: { [key: string]: boolean | number | string } =
     {};
@@ -83,6 +84,13 @@ export class DataHubAdapter {
     staticOptions: DataHubAdapterOptions,
     onStateChange: (state: LifecycleEventStatus) => void = (state) => {}
   ) {
+    if (!process.env.IOTEDGE_MODULEID) {
+      winston.warn(
+        `${DataHubAdapter.name}::init process.env.IOTEDGE_MODULEID is not defined!`
+      );
+    } else {
+      this.moduleId = process.env.IOTEDGE_MODULEID;
+    }
     if (
       !staticOptions.dataPointTypesData.probe.intervalHours ||
       !staticOptions.dataPointTypesData.telemetry.intervalHours
@@ -136,11 +144,14 @@ export class DataHubAdapter {
       }
 
       winston.info(`${logPrefix} updating reported properties`);
-      this.moduleTwin.properties.reported.update({ services: data }, (err) => {
-        if (err) winston.error(`${logPrefix} error due to ${err.message}`);
-        else this.deviceTwinChanged = false;
-        return res();
-      });
+      this.moduleTwin.properties.reported.update(
+        { services: data },
+        (err: unknown) => {
+          if (err) winston.error(`${logPrefix} error due to ${err}`);
+          else this.deviceTwinChanged = false;
+          return res();
+        }
+      );
     });
   }
 
@@ -188,6 +199,10 @@ export class DataHubAdapter {
       );
       return Promise.resolve();
     }
+    if (!this.dataHubClient)
+      return Promise.reject(
+        new NorthBoundError(`${logPrefix} datahub client is not defined yet.`)
+      );
 
     return this.dataHubClient
       .on('error', (...args) =>
@@ -196,7 +211,7 @@ export class DataHubAdapter {
       .open()
       .then((result) => {
         this.isRunning = result ? true : false;
-        return this.dataHubClient.getTwin();
+        return this.dataHubClient!.getTwin();
       })
       .then((twin) => {
         this.moduleTwin = twin;
@@ -245,11 +260,19 @@ export class DataHubAdapter {
     }
     this.isRunning = false;
     this.runningTimers.forEach((timer) => clearInterval(timer));
+
+    if (!this.dataHubClient)
+      return Promise.reject(
+        new NorthBoundError(`${logPrefix} datahub client is not defined.`)
+      );
+
     return this.dataHubClient
       .close()
       .then(() => {
         this.onStateChange(LifecycleEventStatus.Disconnected);
         Object.keys(this).forEach((key) => {
+          // TBD To be clarified and fixed!
+          //@ts-ignore
           delete this[key];
         });
         winston.info(`${logPrefix} successfully stopped adapter.`);
@@ -316,11 +339,20 @@ export class DataHubAdapter {
           winston.debug(
             `${logPrefix} publishing ${filteredMeasurementArray.length} event data points (${sendTime})`
           );
-          this.dataHubClient.sendEvent(msg, (result) => {
-            winston.debug(
-              `${logPrefix} successfully published ${filteredMeasurementArray.length} event data points (${sendTime})`
+          try {
+            if (!this.dataHubClient)
+              throw new Error('datahub client is not defined');
+
+            this.dataHubClient.sendEvent(msg, (result) => {
+              winston.debug(
+                `${logPrefix} successfully published ${filteredMeasurementArray.length} event data points (${sendTime})`
+              );
+            });
+          } catch (error) {
+            winston.error(
+              `${logPrefix} could not publish ${filteredMeasurementArray.length} event data points (${sendTime}) due to ${error}`
             );
-          });
+          }
 
           continue;
         }
@@ -389,7 +421,7 @@ export class DataHubAdapter {
   public shutdown(): Promise<void> {
     const logPrefix = `${DataHubAdapter.name}::shutdown`;
 
-    const shutdownFunctions = [];
+    const shutdownFunctions: Promise<any>[] = [];
     [this.dataHubClient, this.moduleTwin].forEach((prop) => {
       // @ts-ignore
       if (prop?.shutdown) shutdownFunctions.push(prop.shutdown());
@@ -399,7 +431,7 @@ export class DataHubAdapter {
       if (prop?.removeAllListeners)
         // @ts-ignore
         shutdownFunctions.push(prop.removeAllListeners());
-      prop = undefined;
+      prop = null;
     });
     this.runningTimers.forEach((timer) => {
       clearTimeout(timer);
@@ -421,13 +453,16 @@ export class DataHubAdapter {
 
     winston.info(`${logPrefix} registering ${this.getCommandId}`);
     try {
+      if (!this.dataHubClient) throw new Error('datahub client is not defined');
       this.dataHubClient.onMethod(
         this.getCallbackName,
         this.getUpdateResponseHandler.bind(this)
       );
       winston.info(`${logPrefix} ${this.getCommandId} registered.`);
     } catch (err) {
-      winston.info(`${logPrefix} ${this.getCommandId} already registered.`);
+      winston.info(
+        `${logPrefix} ${this.getCommandId} already registered or datahubclient is not defined (error = ${err}).`
+      );
       return;
     }
   }
@@ -449,12 +484,13 @@ export class DataHubAdapter {
     const msg = new Message(JSON.stringify(payload));
 
     msg.properties.add('messageType', 'command');
-    msg.properties.add('moduleId', process.env.IOTEDGE_MODULEID);
+    msg.properties.add('moduleId', this.moduleId);
     msg.properties.add('command', azureFuncName);
     msg.properties.add('commandId', this.getCommandId);
     msg.properties.add('methodName', this.getCallbackName);
 
     try {
+      if (!this.dataHubClient) throw new Error('datahub client is not defined');
       await this.dataHubClient.sendEvent(msg);
     } catch (error) {
       const msg = `Error sending event msg'`;
@@ -470,7 +506,7 @@ export class DataHubAdapter {
    */
   private getUpdateResponseHandler(
     azureResponse: AzureResponse,
-    azureFunctionCallback
+    azureFunctionCallback: (arg0: number, arg1: { message: string }) => void
   ): void {
     const logPrefix = `${DataHubAdapter.name}::getUpdateResponseHandler`;
     winston.info(`${logPrefix} called from azure backend.`);
@@ -495,6 +531,7 @@ export class DataHubAdapter {
         winston.debug(
           `${logPrefix} acknowledge receive of message from called azure function.`
         );
+        // TBD
         azureFunctionCallback.send(200, {
           message: `ACK`
         });
@@ -546,6 +583,7 @@ export class DataHubAdapter {
         winston.debug(
           `${logPrefix} acknowledge receive of message from called azure function.`
         );
+        // TBD
         azureFunctionCallback.send(200, {
           message: `ACK`
         });
@@ -556,6 +594,7 @@ export class DataHubAdapter {
           azureResponse
         )}. Waiting for final result.`
       );
+      // TBD
       azureFunctionCallback.send(200, {
         message: `ACK`
       });
@@ -599,12 +638,15 @@ export class DataHubAdapter {
     const msg = new Message(JSON.stringify(payload));
 
     msg.properties.add('messageType', 'command');
-    msg.properties.add('moduleId', process.env.IOTEDGE_MODULEID);
+    msg.properties.add('moduleId', this.moduleId);
     msg.properties.add('command', azureFuncName);
     msg.properties.add('commandId', this.setCommandId);
     msg.properties.add('methodName', this.setCallbackName);
 
     try {
+      if (!this.dataHubClient)
+        throw new Error(`${logPrefix} datahub client is not defined.`);
+
       await this.dataHubClient.sendEvent(msg);
     } catch (error) {
       const msg = `Error sending event msg'`;
@@ -621,6 +663,9 @@ export class DataHubAdapter {
 
     winston.info(`${logPrefix} registering ${this.setCommandId}`);
     try {
+      if (!this.dataHubClient)
+        throw new Error(`${logPrefix} datahub client is not defined.`);
+
       this.dataHubClient.onMethod(
         this.setCallbackName,
         this.setUpdateResponseHandler.bind(this)

@@ -59,7 +59,9 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         this.init();
       } catch (err) {
         winston.error(
-          `Error initializing DataSinksManager after configsLoaded due to:${err?.message}`
+          `Error initializing DataSinksManager after configsLoaded due to:${
+            (err as Error)?.message
+          }`
         );
       }
     });

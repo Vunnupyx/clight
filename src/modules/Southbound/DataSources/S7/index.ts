@@ -151,11 +151,15 @@ export class S7DataSource extends DataSource {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
-        // if (!this.isDisconnected) {
-        //   return;
-        // }
-        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
-        this.init();
+        try {
+          // if (!this.isDisconnected) {
+          //   return;
+          // }
+          this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+          this.init();
+        } catch (error) {
+          winston.error(`${logPrefix} error in reconnecting: ${error}`);
+        }
       }, this.RECONNECT_TIMEOUT);
       return;
     }
@@ -481,8 +485,11 @@ export class S7DataSource extends DataSource {
     this.client = null;
 
     winston.info(`${logPrefix} shutdown nck client`);
-    await this.nckClient.disconnect();
-
+    try {
+      await this.nckClient.disconnect();
+    } catch (error) {
+      winston.error(`${logPrefix} error in disconnecting nck client: ${error}`);
+    }
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 }

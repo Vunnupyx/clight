@@ -76,9 +76,9 @@ export class EventBus<TEventType> {
 
     const promises = Object.values(this.callbacks).map((cb) => cb(event));
 
-    winston.verbose(
-      `${logPrefix} pushing event to ${promises.length} callbacks`
-    );
+    // winston.verbose(
+    //   `${logPrefix} pushing event to ${promises.length} callbacks`
+    // );
 
     await Promise.allSettled(promises).then((results) => {
       results.forEach((result) => {

@@ -122,51 +122,60 @@ export class CounterManager {
   private checkMissedResets() {
     const logPrefix = `${this.constructor.name}::checkMissedResets`;
     winston.debug(`${logPrefix} started.`);
-    const counterEntries = this.configManager.config.virtualDataPoints.filter(
-      (vdp) => {
-        return (
-          vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
-        );
-      }
-    );
-    for (const counter of counterEntries) {
-      const id = counter?.sources?.[0];
+    try {
+      const counterEntries = this.configManager.config.virtualDataPoints.filter(
+        (vdp) => {
+          return (
+            vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
+          );
+        }
+      );
+      for (const counter of counterEntries) {
+        const id = counter?.sources?.[0];
 
-      if (counter?.resetSchedules?.entries()) {
-        for (const [index, configEntry] of counter?.resetSchedules?.entries()) {
-          const nextDate = CounterManager.calcNextTrigger(
-            configEntry,
-            new Date()
-          );
-          const nextNextDate = CounterManager.calcNextTrigger(
-            configEntry,
-            new Date(nextDate)
-          );
-          const interval = nextNextDate.getTime() - nextDate.getTime();
-          const lastDate = nextDate.getTime() - interval;
+        if (counter?.resetSchedules?.entries()) {
+          for (const [
+            index,
+            configEntry
+          ] of counter?.resetSchedules?.entries()) {
+            const nextDate = CounterManager.calcNextTrigger(
+              configEntry,
+              new Date()
+            );
+            const nextNextDate = CounterManager.calcNextTrigger(
+              configEntry,
+              new Date(nextDate)
+            );
+            const interval = nextNextDate.getTime() - nextDate.getTime();
+            const lastDate = nextDate.getTime() - interval;
 
-          if (lastDate < configEntry.created) {
-            // No reset missed because timer is younger
+            if (lastDate < configEntry.created) {
+              // No reset missed because timer is younger
+              winston.debug(
+                `${logPrefix} ignore reset because timer is younger as last trigger date.`
+              );
+              continue;
+            }
+            if (lastDate === configEntry?.lastReset) {
+              // last reset correct done
+              winston.debug(
+                `${logPrefix} ignore reset because last reset was successfully.`
+              );
+              continue;
+            }
             winston.debug(
-              `${logPrefix} ignore reset because timer is younger as last trigger date.`
+              `${logPrefix} reset for counter '${id}' because last reset was skipped.`
             );
-            continue;
+            this.reset(id, index);
           }
-          if (lastDate === configEntry?.lastReset) {
-            // last reset correct done
-            winston.debug(
-              `${logPrefix} ignore reset because last reset was successfully.`
-            );
-            continue;
-          }
-          winston.debug(
-            `${logPrefix} reset for counter '${id}' because last reset was skipped.`
-          );
-          this.reset(id, index);
         }
       }
+      winston.debug(`${logPrefix} done.`);
+    } catch (error) {
+      winston.error(
+        `${logPrefix} Error while checking missed counter resets: ${error}`
+      );
     }
-    winston.debug(`${logPrefix} done.`);
   }
 
   /**

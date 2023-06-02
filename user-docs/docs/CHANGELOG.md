@@ -12,6 +12,12 @@ title: Changelog
 - [DIGMDCLGHT-412](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-412) Breaking Change: Replaces data point blinking logic with flexible blinking configuration
 - [DIGMDCLGHT-426](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-426) Adds MTConnect Agent as data source
 
+## [3.0.13]
+
+### Fixes
+
+- [DIGSRVWRLD-249](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-249) Fixed a bug were a specific counter reset schedule crashes the runtime
+
 ## [3.0.12]
 
 ## Changed

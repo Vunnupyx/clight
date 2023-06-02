@@ -98,10 +98,10 @@ export class VirtualDataPointManager {
     const logPrefix = `${VirtualDataPointManager.className}::updateConfig`;
     winston.debug(`${logPrefix} refreshing config`);
 
-    this.config = this.configManager.config.virtualDataPoints;
+    this.config = this.configManager.config?.virtualDataPoints;
     // Update blinking status object if any blink-detection VDP is deleted
     for (let vdpId of Object.keys(this.blinkingStatus)) {
-      if (!this.config.find((vdp) => vdp.id === vdpId)) {
+      if (!this.config?.find((vdp) => vdp.id === vdpId)) {
         //If VDP is deleted, then remove the blinking status information as well
         delete this.blinkingStatus[vdpId];
       }

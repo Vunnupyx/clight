@@ -375,7 +375,7 @@ export interface TermsAndConditionsConfig {
 
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: Array<IDataSinkConfig>;
+  dataSinks: IDataSinkConfig[];
   virtualDataPoints: IVirtualDataPointConfig[];
   messenger: IMessengerServerConfig;
   mapping: IDataPointMapping[];

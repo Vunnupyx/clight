@@ -45,8 +45,8 @@ async function postSingleMappingHandler(
     }
 
     configManager.config = {
-      ...configManager.config,
-      mapping: [...configManager.config.mapping, newMapping]
+      ...(configManager.config ?? {}),
+      mapping: [...configManager.config?.mapping, newMapping]
     };
     await configManager.configChangeCompleted();
 
@@ -75,7 +75,7 @@ async function patchAllMappingsHandler(
     }
 
     configManager.config = {
-      ...configManager.config,
+      ...(configManager.config ?? {}),
       mapping: newMappings
     };
     await configManager.configChangeCompleted();
@@ -96,7 +96,7 @@ async function patchSingleMappingHandler(
   response: Response
 ): Promise<void> {
   try {
-    const mapping = configManager.config.mapping.find(
+    const mapping = configManager.config?.mapping?.find(
       (x) => x.id === request.params.mapId
     );
 
@@ -109,13 +109,13 @@ async function patchSingleMappingHandler(
     if (!isDataPointMapping(newMapping)) {
       throw new Error();
     }
-    const updatedMapping = {
+    const updatedMapping: IDataPointMapping = {
       ...mapping,
       ...newMapping,
       id: request.params.mapId
     };
 
-    configManager.changeConfig(
+    configManager.changeConfig<'mapping', IDataPointMapping>(
       'update',
       'mapping',
       updatedMapping,
@@ -142,7 +142,7 @@ async function deleteSingleMappingHandler(
 ): Promise<void> {
   const config = configManager.config;
 
-  const index = config.mapping.findIndex(
+  const index = config?.mapping?.findIndex(
     (map) => map.id === request.params.mapId
   );
 
@@ -173,7 +173,7 @@ function getSingleMappingHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const map = configManager.config.mapping.find(
+  const map = configManager.config?.mapping?.find(
     (map) => map.id === request.params.mapId
   );
   response.status(map ? 200 : 404).json(map);

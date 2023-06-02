@@ -144,7 +144,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   private findDataSinkConfig(
     protocol: DataSinkProtocols
   ): IDataSinkConfig | undefined {
-    return this.configManager.config.dataSinks.find(
+    return this.configManager.config?.dataSinks?.find(
       (sink) => sink.protocol === protocol
     );
   }
@@ -186,12 +186,12 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     switch (protocol) {
       case DataSinkProtocols.DATAHUB: {
         const dataHubDataSinkOptions: DataHubDataSinkOptions = {
-          mapping: this.configManager.config.mapping,
+          mapping: this.configManager.config?.mapping,
           dataSinkConfig,
-          generalConfig: this.configManager.config.general,
+          generalConfig: this.configManager.config?.general,
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           dataPointCache: this.dataPointCache
         };
 
@@ -199,12 +199,12 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
       case DataSinkProtocols.MTCONNECT: {
         const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
-          mapping: this.configManager.config.mapping,
+          mapping: this.configManager.config?.mapping,
           dataSinkConfig,
-          generalConfig: this.configManager.config.general,
+          generalConfig: this.configManager.config?.general,
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           messengerManager: this.messengerManager,
           dataPointCache: this.dataPointCache
         };
@@ -212,12 +212,12 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
       case DataSinkProtocols.OPCUA: {
         return new OPCUADataSink({
-          mapping: this.configManager.config.mapping,
+          mapping: this.configManager.config?.mapping,
           dataSinkConfig,
-          generalConfig: this.configManager.config.general,
+          generalConfig: this.configManager.config?.general,
           runtimeConfig: this.configManager.runtimeConfig.opcua,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           dataPointCache: this.dataPointCache
         });
       }
@@ -254,10 +254,10 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
-          this.configManager.config.mapping,
-          this.configManager.config.termsAndConditions.accepted,
+          this.configManager.config?.mapping,
+          this.configManager.config?.termsAndConditions?.accepted,
           {
-            generalConfig: this.configManager.config.general
+            generalConfig: this.configManager.config?.general
           }
         )
       ) {

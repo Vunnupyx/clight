@@ -59,7 +59,8 @@ export class DataHubAdapter {
   private firstMeasurement = true;
   private probeSendInterval: number;
   private telemetrySendInterval: number;
-  private runningTimers: Array<NodeJS.Timer> = [];
+  private probeTimerId: NodeJS.Timer | null = null;
+  private telemetryTimerId: NodeJS.Timer | null = null;
 
   // Get update mechanismn
   private getCommandId = uuid();
@@ -224,16 +225,15 @@ export class DataHubAdapter {
 
           await this.setReportedProps(data);
         });
-        this.runningTimers.push(
-          setInterval(() => {
-            this.sendMessage('probe');
-          }, this.probeSendInterval)
-        );
-        this.runningTimers.push(
-          setInterval(() => {
-            this.sendMessage('telemetry');
-          }, this.telemetrySendInterval)
-        );
+
+        this.probeTimerId = setInterval(() => {
+          this.sendMessage('probe');
+        }, this.probeSendInterval);
+
+        this.telemetryTimerId = setInterval(() => {
+          this.sendMessage('telemetry');
+        }, this.telemetrySendInterval);
+
         this.registerSetUpdateHandler();
         this.registerGetUpdateResponseHandler();
         this.onStateChange(LifecycleEventStatus.Connected);
@@ -259,7 +259,14 @@ export class DataHubAdapter {
       return Promise.reject();
     }
     this.isRunning = false;
-    this.runningTimers.forEach((timer) => clearInterval(timer));
+    if (this.probeTimerId) {
+      clearInterval(this.probeTimerId);
+      this.probeTimerId = null;
+    }
+    if (this.telemetryTimerId) {
+      clearInterval(this.telemetryTimerId);
+      this.telemetryTimerId = null;
+    }
 
     if (!this.dataHubClient)
       return Promise.reject(
@@ -437,9 +444,14 @@ export class DataHubAdapter {
         shutdownFunctions.push(prop.removeAllListeners());
       prop = null;
     });
-    this.runningTimers.forEach((timer) => {
-      clearTimeout(timer);
-    });
+    if (this.probeTimerId) {
+      clearInterval(this.probeTimerId);
+      this.probeTimerId = null;
+    }
+    if (this.telemetryTimerId) {
+      clearInterval(this.telemetryTimerId);
+      this.telemetryTimerId = null;
+    }
     return Promise.all(shutdownFunctions)
       .then(() => {
         winston.info(`${logPrefix} successfully.`);

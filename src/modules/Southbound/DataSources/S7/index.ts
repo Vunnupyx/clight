@@ -132,7 +132,10 @@ export class S7DataSource extends DataSource {
             this.nckSlot
           )
         ]);
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       } else if (nckDataPointsConfigured && !plcDataPointsConfigured) {
         winston.debug(`${logPrefix} Connecting to NCK only`);
         await this.nckClient.connect(
@@ -141,11 +144,17 @@ export class S7DataSource extends DataSource {
           undefined,
           this.nckSlot
         );
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       } else if (plcDataPointsConfigured && !nckDataPointsConfigured) {
         winston.debug(`${logPrefix} Connecting to PLC only`);
         await this.connectPLC();
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       }
     } catch (error) {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
@@ -463,7 +472,10 @@ export class S7DataSource extends DataSource {
     this.isDisconnected = true;
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
 
-    clearTimeout(this.reconnectTimeoutId);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         winston.warn(`${logPrefix} closing s7 connection timed out after 5s`);

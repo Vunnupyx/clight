@@ -186,7 +186,7 @@ export class MTConnectDataSink extends DataSink {
    * Disconnects all data items and set status to unavailable.
    * TODO: Why adapter is not disconnected?
    */
-  public disconnect() {
+  public async disconnect(): Promise<void> {
     Object.keys(this.dataItems).forEach((key) => {
       this.dataItems[key].unavailable();
     });

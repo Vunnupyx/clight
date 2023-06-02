@@ -159,12 +159,14 @@ async function patchSingleDataSourceHandler(
   let changedDatasource = { ...dataSource, ...updatedDataSource };
 
   const config = configManager.config;
-  config.dataSources = [
-    ...config.dataSources.filter(
-      (dataSource) => dataSource.protocol !== protocol
-    ),
-    changedDatasource
-  ];
+  if (config) {
+    config.dataSources = [
+      ...config.dataSources.filter(
+        (dataSource) => dataSource.protocol !== protocol
+      ),
+      changedDatasource
+    ];
+  }
   configManager.config = config;
   await configManager.configChangeCompleted();
   response.status(200).json(changedDatasource);
@@ -221,7 +223,7 @@ async function patchAllDatapointsHandler(
       return Promise.resolve();
     }
     dataSource = { ...dataSource, dataPoints: newDataPointsArray };
-    configManager.changeConfig(
+    configManager.changeConfig<'dataSources', IDataSourceConfig>(
       'update',
       'dataSources',
       dataSource,
@@ -284,7 +286,7 @@ function getSingleDatapointHandler(request: Request, response: Response): void {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
-  const dataSource = configManager.config.dataSources.find(
+  const dataSource = configManager.config?.dataSources?.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const point = dataSource?.dataPoints?.find(
@@ -357,7 +359,7 @@ async function patchSingleDatapointHandler(
     return Promise.resolve();
   }
   const config = configManager.config;
-  const dataSource = config.dataSources.find(
+  const dataSource = config?.dataSources?.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const index = dataSource?.dataPoints?.findIndex(

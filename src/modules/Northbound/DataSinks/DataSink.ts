@@ -199,7 +199,7 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
       }
 
       if (!setEvent) return;
-      let value;
+      let value: number | string | boolean;
 
       if (typeof setEvent.mapValue !== 'undefined' && setEvent.map) {
         value = setEvent.map[setEvent.mapValue];
@@ -229,7 +229,9 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     this.processDataPointValues(dataPoints);
   }
 
-  protected processDataPointValues(obj) {
+  protected processDataPointValues(obj: {
+    [key: string]: number | string | boolean;
+  }) {
     Object.keys(obj).forEach((key) => {
       try {
         this.processDataPointValue(key, obj[key]);
@@ -237,7 +239,10 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     });
   }
 
-  protected abstract processDataPointValue(dataPointId, value): void;
+  protected abstract processDataPointValue(
+    dataPointId: string,
+    value: number | string | boolean
+  ): void;
 
   /**
    * Each data sink should handle lifecycle events
@@ -252,12 +257,12 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
   /**
    * Shuts down the data source
    */
-  public abstract shutdown();
+  public abstract shutdown(): Promise<void>;
 
   /**
    * Should disconnect the data source and clean up all connection resources
    */
-  public abstract disconnect();
+  public abstract disconnect(): Promise<void>;
 
   /**
    * Returns the current status of the data sink

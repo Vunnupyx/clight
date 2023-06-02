@@ -102,7 +102,7 @@ export class CounterManager {
     }
     this.counters[counterId] = 0;
     if (typeof schedulingIndex === 'number') {
-      const counterVdp = this.configManager.config.virtualDataPoints.find(
+      const counterVdp = this.configManager.config?.virtualDataPoints?.find(
         (vdp) => vdp.id === counterId
       );
       if (counterVdp?.resetSchedules) {
@@ -127,7 +127,7 @@ export class CounterManager {
   private checkMissedResets() {
     const logPrefix = `${this.constructor.name}::checkMissedResets`;
     winston.debug(`${logPrefix} started.`);
-    const counterEntries = this.configManager.config.virtualDataPoints.filter(
+    const counterEntries = this.configManager.config?.virtualDataPoints?.filter(
       (vdp) => {
         return (
           vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0

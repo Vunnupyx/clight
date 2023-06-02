@@ -63,7 +63,11 @@ async function postSingleVdpHandler(
         newVdp.resetSchedules[index].lastReset = undefined;
       }
     }
-    configManager.changeConfig('insert', 'virtualDataPoints', newVdp);
+    configManager.changeConfig<'virtualDataPoints', IVirtualDataPointConfig>(
+      'insert',
+      'virtualDataPoints',
+      newVdp
+    );
     await configManager.configChangeCompleted();
     response.status(200).json({
       created: newVdp,
@@ -98,7 +102,7 @@ async function patchAllVdpsHandler(
     }
 
     configManager.config = {
-      ...configManager.config,
+      ...(configManager.config ?? {}),
       virtualDataPoints: newVdpArray
     };
     await configManager.configChangeCompleted();
@@ -159,13 +163,11 @@ async function patchSingleVdpHandler(
       if (!isValidVdp(newVdp)) {
         throw new Error();
       }
-      configManager.changeConfig(
+      configManager.changeConfig<'virtualDataPoints', IVirtualDataPointConfig>(
         'update',
         'virtualDataPoints',
         newVdp,
-        (vdp) => {
-          return (vdp.id = newVdp.id);
-        }
+        (vdp) => (vdp.id = newVdp.id)
       );
       await configManager.configChangeCompleted();
     }

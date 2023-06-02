@@ -76,7 +76,10 @@ export class EnergyDataSource extends DataSource {
         this.phoenixEemClient.hostConnectivityState ===
         IHostConnectivityState.OK
       ) {
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
         this.updateCurrentStatus(LifecycleEventStatus.Connected);
         winston.info(
           `${logPrefix} successfully connected to Phoenix EEM client`
@@ -151,7 +154,10 @@ export class EnergyDataSource extends DataSource {
     const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
-    clearTimeout(this.reconnectTimeoutId);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 

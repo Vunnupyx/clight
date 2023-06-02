@@ -27,7 +27,9 @@ import {
   IAuthUser,
   IAuthUsersConfig,
   IDefaultTemplate,
-  IMessengerServerConfig
+  IMessengerServerConfig,
+  IDataPointMapping,
+  IVirtualDataPointConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
 import winston from 'winston';
@@ -126,7 +128,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private publicKeyName = 'jwtRS256.key.pub';
 
   private _runtimeConfig: IRuntimeConfig;
-  private _config: IConfig | null = null;
+  private _config: IConfig = {} as IConfig;
   private _defaultTemplates: IDefaultTemplates | null = null;
   private _authConfig: IAuthConfig;
   private _authUsers: IAuthUsersConfig;
@@ -142,7 +144,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private static className: string = ConfigManager.name;
 
   public get config(): IConfig {
-    return this._config;
+    return this._config ?? ({} as IConfig);
   }
 
   public set config(config: IConfig) {
@@ -165,7 +167,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public get defaultTemplates(): IDefaultTemplates {
-    return this._defaultTemplates;
+    return this._defaultTemplates ?? ({} as IDefaultTemplates);
   }
 
   public get authUsers(): IAuthUser[] {
@@ -207,14 +209,16 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.isDeviceCommissioned =
       await ConfigurationAgentManager.getCommissioningStatus();
     if (!factoryReset) {
-      this._dataSinksManager.on(
-        'dataSinksRestarted',
-        this.onDataSinksRestarted.bind(this)
-      );
-      this._dataSourcesManager.on(
-        'dataSourcesRestarted',
-        this.onDataSourcesRestarted.bind(this)
-      );
+      if (this._dataSinksManager)
+        this._dataSinksManager.on(
+          'dataSinksRestarted',
+          this.onDataSinksRestarted.bind(this)
+        );
+      if (this._dataSourcesManager)
+        this._dataSourcesManager.on(
+          'dataSourcesRestarted',
+          this.onDataSourcesRestarted.bind(this)
+        );
     } else {
       winston.warn(`${logPrefix} Factory reset requested`);
 
@@ -303,11 +307,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this._config = {
       ...this._config,
       dataSources: [
-        ...this._config.dataSources,
+        ...(this._config?.dataSources ?? []),
         // Add missing sources
         ...sources.filter(
           (source) =>
-            !this._config.dataSources.some(
+            !this._config?.dataSources?.some(
               (x) => x.protocol === source.protocol
             )
         )
@@ -473,13 +477,14 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Applies template settings.
    */
   public applyTemplate(templateFileName: string) {
-    const template = this._defaultTemplates.templates.find(
-      (x) => x.id === templateFileName
-    );
+    const template: IDefaultTemplate =
+      this._defaultTemplates?.templates?.find(
+        (x) => x.id === templateFileName
+      ) ?? ({} as IDefaultTemplate);
 
     this._config = {
       ...this._config,
-      ...(template ?? {}),
+      ...template,
       quickStart: {
         completed: true,
         currentTemplate: templateFileName,
@@ -742,7 +747,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     if (!sources.length) return target;
     const source = sources.shift();
 
-    if (this.isObject(target) && this.isObject(source)) {
+    if (target && source && this.isObject(target) && this.isObject(source)) {
       for (const key in source) {
         if (this.isObject(source[key])) {
           if (!target[key]) Object.assign(target, { [key]: {} });
@@ -783,7 +788,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     }
     if (
       areObjectsEqual(newMessengerConfig, config.messenger) &&
-      this._dataSinksManager.messengerManager.serverStatus.registration ===
+      this._dataSinksManager?.messengerManager?.serverStatus?.registration ===
         'registered'
     ) {
       winston.debug(
@@ -801,13 +806,16 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * change the config with a given object or change it.
    */
   public changeConfig<
-    Category extends keyof IConfig,
-    DataType extends IConfig[Category]
+    Category extends keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >,
+    DataType extends IConfig[Category][number]
   >(
     operation: ChangeOperation,
     configCategory: Category,
-    data: DataType[number] | string,
-    selector: (item: DataType[number]) => string = (item) => item.id
+    data: DataType | string,
+    selector: (item: DataType) => string = (item) => item.id
   ) {
     const logPrefix = `${this.constructor.name}::changeConfig`;
     if (operation === 'delete' && typeof data !== 'string')

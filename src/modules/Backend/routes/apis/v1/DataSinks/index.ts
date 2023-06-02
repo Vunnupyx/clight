@@ -57,7 +57,7 @@ export function setDataSinksManager(manager: DataSinksManager) {
  * @param  {Response} response
  */
 function getAllDataSinksHandler(request: Request, response: Response): void {
-  const dataSinks: IDataSinkConfigResponse[] = configManager.config.dataSinks;
+  const dataSinks: IDataSinkConfigResponse[] = configManager.config?.dataSinks;
 
   dataSinks.forEach((dataSink) => {
     if (dataSink.protocol === DataSinkProtocols.DATAHUB) {
@@ -70,7 +70,7 @@ function getAllDataSinksHandler(request: Request, response: Response): void {
   });
 
   response.status(200).json({
-    dataSinks: configManager.config.dataSinks
+    dataSinks: configManager.config?.dataSinks
   });
 }
 /**
@@ -118,7 +118,7 @@ async function patchSingleDataSinkHandler(
   }
 
   const config = configManager.config;
-  let dataSink = config.dataSinks.find(
+  let dataSink = config?.dataSinks?.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
 
@@ -174,7 +174,7 @@ async function patchSingleDataSinkHandler(
   }
 
   dataSink = { ...dataSink, ...updatedDataSink };
-  configManager.changeConfig(
+  configManager.changeConfig<'dataSinks', IDataSinkConfig>(
     'update',
     'dataSinks',
     dataSink,
@@ -217,7 +217,7 @@ async function patchAllDatapointsHandler(
       return Promise.resolve();
     }
     dataSink = { ...dataSink, dataPoints: newDataPointsArray };
-    configManager.changeConfig(
+    configManager.changeConfig<'dataSinks', IDataSinkConfig>(
       'update',
       'dataSinks',
       dataSink,
@@ -308,7 +308,7 @@ async function postSingleDatapointHandler(
   }
 
   const config = configManager.config;
-  const changedSinkObject = config.dataSinks.find(
+  const changedSinkObject = config?.dataSinks?.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
   if (!changedSinkObject) {

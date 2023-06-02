@@ -123,7 +123,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     const params: IDataSourceParams = {
       config: sourceConfig,
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config?.termsAndConditions?.accepted
     };
 
     const dataSource = this.dataSourceFactory(params);
@@ -139,7 +139,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private findDataSourceConfig(
     protocol: DataSourceProtocols
   ): IDataSourceConfig | undefined {
-    return this.configManager.config.dataSources.find(
+    return this.configManager.config?.dataSources?.find(
       (sink) => sink.protocol === protocol
     );
   }
@@ -219,7 +219,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
       if (
         !source.configEqual(
           this.findDataSourceConfig(source.protocol),
-          this.configManager.config.termsAndConditions.accepted
+          this.configManager.config?.termsAndConditions?.accepted
         )
       ) {
         winston.info(

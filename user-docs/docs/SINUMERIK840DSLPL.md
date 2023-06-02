@@ -6,7 +6,7 @@ title: 'Data source: SIEMENS SINUMERIK 840D pl/sl'
 
 With this data source you can connect SIEMENS SINUMERIK 840D pl and SIEMENS SINUMERIK 840D sl controls and SIEMENS S7 PLCs. You must configure the UI according to the model so that it works correctly. You can read data points from the NCK and the PLC part of the 840D.
 
-On the top of the page you find the main settings for the data source: Enabling, entering Host and selecting the type of control.
+On the top of the page you find the main settings for the data source: Enabling, entering IP address and selecting the type of control.
 
 ## Changing the type of the Siemens data source
 

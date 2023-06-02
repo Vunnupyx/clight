@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+import TypedEmitter from 'typed-emitter';
+import { v4 } from 'uuid';
 
 import { IDataSourceConfig } from '../../ConfigManager/interfaces';
 import {
@@ -6,8 +8,8 @@ import {
   IDataSourceMeasurementEvent,
   IDataSourceParams,
   IMeasurement,
-  IDataSourceDataPointLifecycleEvent,
-  DataPointEventTypes
+  DataPointEventTypes,
+  IDataSourceLifecycleEvent
 } from './interfaces';
 import {
   DataSourceProtocols,
@@ -25,10 +27,18 @@ type DataPointReadErrorSummary = {
   count: number;
 };
 
+interface IDataSourceEvents {
+  [DataSourceEventTypes.Lifecycle]: (event: ILifecycleEvent) => void;
+  [DataSourceEventTypes.Measurement]: (
+    measurements: IDataSourceMeasurementEvent[]
+  ) => void;
+  [DataPointEventTypes.Lifecycle]: (event: ILifecycleEvent) => void;
+}
+
 /**
  * Implements data source
  */
-export abstract class DataSource extends EventEmitter {
+export abstract class DataSource extends (EventEmitter as new () => TypedEmitter<IDataSourceEvents>) {
   protected name = DataSource.name;
 
   protected config: IDataSourceConfig;
@@ -38,10 +48,10 @@ export abstract class DataSource extends EventEmitter {
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
   public timestamp: number;
   public protocol: DataSourceProtocols;
+  public currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected scheduler: SynchronousIntervalScheduler;
   protected readSchedulerListenerId: number;
   protected logSchedulerListenerId: number;
-  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected termsAndConditionsAccepted = false;
   protected processedDataPointCount = 0;
   protected dataPointReadErrors: DataPointReadErrorSummary[] = [];
@@ -85,7 +95,13 @@ export abstract class DataSource extends EventEmitter {
       `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
     );
     this.currentStatus = newState;
-    this.emit(DataSourceEventTypes.Lifecycle, newState);
+
+    this.emit(DataSourceEventTypes.Lifecycle, {
+      dataSource: { protocol: this.protocol },
+      type: newState,
+      level: EventLevels.DataSource,
+      id: v4()
+    });
   }
 
   /**
@@ -229,16 +245,7 @@ export abstract class DataSource extends EventEmitter {
    */
   protected onDataPointLifecycle = (
     lifecycleEvent: IBaseLifecycleEvent
-  ): void => {
-    const { protocol } = this.config;
-    const DPLifecycleEvent: IDataSourceDataPointLifecycleEvent = {
-      dataSource: {
-        protocol
-      },
-      ...lifecycleEvent
-    };
-    this.submitDataPointLifecycle(DPLifecycleEvent);
-  };
+  ): void => {};
 
   /**
    * Emits process data as a native {@link Event}

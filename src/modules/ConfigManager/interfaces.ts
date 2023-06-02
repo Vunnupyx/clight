@@ -1,4 +1,5 @@
 import {
+  DataSinkProtocols,
   DataSourceProtocols,
   IErrorEvent,
   ILifecycleEvent
@@ -203,7 +204,7 @@ export interface IMessengerMetadata {
 
 export interface IDataSinkConfig {
   dataPoints: IDataSinkDataPointConfig[];
-  protocol: string;
+  protocol: DataSinkProtocols;
   enabled: boolean;
   auth?: IOpcuaAuth;
   customDataPoints?: IOpcuaCustomDataPoint[];

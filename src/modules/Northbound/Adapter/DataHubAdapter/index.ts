@@ -24,6 +24,7 @@ import {
   isUpdateTriggeredResultPayload,
   VersionInformation
 } from './interfaces';
+import { ConfigurationAgentManager } from '../../../ConfigurationAgentManager';
 
 interface DataHubAdapterOptions extends IDataHubConfig {}
 
@@ -149,11 +150,8 @@ export class DataHubAdapter {
   public async init(): Promise<DataHubAdapter> {
     const logPrefix = `${this.constructor.name}::init`;
 
-    this.serialNumber = (
-      (await new System().readMacAddress('eth0')) || '000000000000'
-    )
-      .split(':')
-      .join('');
+    this.serialNumber =
+      (await ConfigurationAgentManager.getMachineInfo())?.Serial || 'unknown';
 
     return Promise.resolve()
       .then(() => {

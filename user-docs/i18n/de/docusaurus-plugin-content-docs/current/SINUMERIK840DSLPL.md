@@ -6,7 +6,7 @@ title: 'Datenquelle: SIEMENS SINUMERIK 840D pl/sl'
 
 Mit dieser Datenquelle können Sie SIEMENS SINUMERIK 840D pl und SIEMENS SINUMERIK 840D sl Steuerungen und SIEMENS S7 SPSen verbinden. Sie müssen die Benutzeroberfläche entsprechend dem Modell konfigurieren, damit sie korrekt funktioniert. Sie können Datenpunkte von der NCK und dem SPS-Teil der 840D lesen.
 
-Oben auf der Seite finden Sie die wichtigsten Einstellungen für die Datenquelle: Aktivieren, Host (Eingabe der IP-Adresse bzw. Hostname) und Auswahl des Steuerungstyps.
+Oben auf der Seite finden Sie die wichtigsten Einstellungen für die Datenquelle: Aktivieren, Eingabe der IP-Adresse und Auswahl des Steuerungstyps.
 
 ## Ändern des Typs der Siemens-Datenquelle
 

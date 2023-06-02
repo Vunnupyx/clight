@@ -6,8 +6,10 @@ import { DataPointMapper } from '..';
 import { ConfigManager } from '../../ConfigManager';
 import emptyDefaultConfig from '../../../../_mdclight/runtime-files/templates/empty.json';
 import { EventBus } from '../../EventBus';
-import { DataSourceProtocols } from '../../../common/interfaces';
-import { LogLevel } from '../../Logger/interfaces';
+import {
+  DataSinkProtocols,
+  DataSourceProtocols
+} from '../../../common/interfaces';
 
 jest.mock('fs', () => {
   return {
@@ -42,7 +44,7 @@ describe('Test DataPointMapper', () => {
       ]
     };
     const dataSink: IDataSinkConfig = {
-      protocol: '',
+      protocol: DataSinkProtocols.DATAHUB,
       enabled: true,
       dataPoints: [
         { id: 'target1', name: '', type: 'event', map: {}, address: '' }

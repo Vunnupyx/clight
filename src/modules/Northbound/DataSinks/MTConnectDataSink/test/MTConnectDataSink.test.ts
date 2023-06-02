@@ -191,7 +191,7 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
-      protocol: '',
+      protocol: DataSinkProtocols.MTCONNECT,
       enabled: true,
       dataPoints: [
         {
@@ -281,7 +281,7 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
-      protocol: '',
+      protocol: DataSinkProtocols.MTCONNECT,
       enabled: true,
       dataPoints: [
         {
@@ -357,7 +357,7 @@ describe('Test MTConnectDataSink', () => {
     });
 
     const dataSinkConfig: IDataSinkConfig = {
-      protocol: '',
+      protocol: DataSinkProtocols.MTCONNECT,
       enabled: true,
       dataPoints: []
     };

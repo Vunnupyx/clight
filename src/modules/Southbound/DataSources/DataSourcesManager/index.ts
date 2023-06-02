@@ -181,6 +181,9 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
    * @returns void
    */
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
+    const logPrefix = `${DataSourcesManager.name}::onLifecycleEvent`;
+    winston.verbose(`${logPrefix}`);
+
     this.lifecycleBus.push(lifeCycleEvent);
   };
 

@@ -16,6 +16,7 @@ import {
 import { EnergyDataSource } from '../../../../../Southbound/DataSources/Energy';
 import {
   IDataPointConfig,
+  IDataSourceConfig,
   IEnergyDataSourceConnection,
   IMTConnectDataSourceConnection,
   IS7DataSourceConnection,
@@ -23,6 +24,8 @@ import {
   isValidDataSourceDatapoint
 } from '../../../../../ConfigManager/interfaces';
 import { MTConnectDataSource } from '../../../../../Southbound/DataSources/MTConnect';
+
+const name = 'DataSourceAPIHandler';
 
 let configManager: ConfigManager;
 let dataSourcesManager: DataSourcesManager;
@@ -103,13 +106,41 @@ async function patchSingleDataSourceHandler(
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
-  const updatedDataSource = request.body;
+
+  Object.keys(request.body).forEach((entry) => {
+    if (!allowed.includes(entry)) {
+      winston.warn(
+        `dataSourcePatchHandler tried to change property: ${entry}. Not allowed`
+      );
+      response.status(403).json({
+        error: `Not allowed to change ${entry}`
+      });
+      return Promise.resolve();
+    }
+  });
+
+  const updatedDataSource: IDataSourceConfig = {
+    dataPoints: [],
+    ...request.body,
+    protocol
+  };
 
   if (protocol === DataSourceProtocols.MTCONNECT) {
     allowed.push('machineName');
   }
 
   if (!isValidProtocol(protocol) || !isValidDataSource(updatedDataSource)) {
+    if (!isValidProtocol(protocol))
+      winston.verbose(
+        `${name}::patchSingleDataSourceHandler protocol ${protocol} is not valid`
+      );
+    if (!isValidDataSource(updatedDataSource))
+      winston.verbose(
+        `${name}::patchSingleDataSourceHandler data source ${JSON.stringify(
+          updatedDataSource
+        )} is not valid`
+      );
+
     response.status(400).json({ error: 'Input not valid.' });
     return Promise.resolve();
   }
@@ -124,17 +155,6 @@ async function patchSingleDataSourceHandler(
     response.status(404).send();
     return Promise.resolve();
   }
-  Object.keys(updatedDataSource).forEach((entry) => {
-    if (!allowed.includes(entry)) {
-      winston.warn(
-        `dataSourcePatchHandler tried to change property: ${entry}. Not allowed`
-      );
-      response.status(403).json({
-        error: `Not allowed to change ${entry}`
-      });
-      return Promise.resolve();
-    }
-  });
 
   let changedDatasource = { ...dataSource, ...updatedDataSource };
 
@@ -448,17 +468,17 @@ async function pingDataSourceHandler(request: Request, response: Response) {
 
   const ipOrHostname =
     dataSource?.protocol === DataSourceProtocols.MTCONNECT
-      ? (dataSource.connection as IMTConnectDataSourceConnection).hostname
+      ? (dataSource?.connection as IMTConnectDataSourceConnection)?.hostname
       : (
           dataSource?.connection as
             | IS7DataSourceConnection
             | IEnergyDataSourceConnection
-        ).ipAddr;
+        )?.ipAddr;
   let port = (
     dataSource?.connection as
       | IS7DataSourceConnection
       | IMTConnectDataSourceConnection
-  ).port;
+  )?.port;
 
   if (!port && datasourceProtocol === DataSourceProtocols.ENERGY) {
     port = 80;

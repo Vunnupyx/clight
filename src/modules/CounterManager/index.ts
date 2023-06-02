@@ -353,8 +353,9 @@ export class CounterManager {
         }
         timeData[entry] -= 1;
       }
-      winston.error(`${logPrefix} no next date found for: ${scheduleData}`);
-      return null;
+      winston.error(
+        `${logPrefix} no next date found for: ${JSON.stringify(scheduleData)}`
+      );
     }
     return dateFromScheduling;
   }

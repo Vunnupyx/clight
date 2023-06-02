@@ -1,3 +1,4 @@
+import winston from 'winston';
 type SubscriberById = { [key: number]: (id: number) => void };
 type SubscribersForInterval = { [key: number]: SubscriberById };
 
@@ -31,18 +32,29 @@ export class SynchronousIntervalScheduler {
    * Scheduler main loop, called with limited timer resolution
    */
   private cycle() {
-    Object.keys(this.subscribers).forEach((key) => {
-      const now = Date.now();
-      const currentInterval = parseInt(key, 10);
-      const lastRun = this.internalCycleLastExecution[key] || 0;
+    const logPrefix = `${SynchronousIntervalScheduler.name}::cycle`;
+    try {
+      Object.keys(this.subscribers).forEach((key) => {
+        const now = Date.now();
+        const currentInterval = parseInt(key, 10);
+        const lastRun = this.internalCycleLastExecution[key] || 0;
 
-      if (now - lastRun >= currentInterval) {
-        Object.keys(this.subscribers[key]).forEach((subscriberId) => {
-          this.subscribers[key][subscriberId]([currentInterval]);
-        });
-        this.internalCycleLastExecution[key] = now;
-      }
-    });
+        if (now - lastRun >= currentInterval) {
+          Object.keys(this.subscribers[key]).forEach((subscriberId) => {
+            try {
+              this.subscribers[key][subscriberId]([currentInterval]);
+            } catch (error) {
+              winston.error(
+                `${logPrefix} ${subscriberId} with current interval ${currentInterval} returns error : ${error}`
+              );
+            }
+          });
+          this.internalCycleLastExecution[key] = now;
+        }
+      });
+    } catch (error) {
+      winston.error(`${logPrefix} Error in sync scheduler cycle: ${error}`);
+    }
   }
 
   /**

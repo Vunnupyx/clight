@@ -111,8 +111,17 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
    * @returns void
    */
   public async spawnDataSource(protocol: DataSourceProtocols): Promise<void> {
+    const logPrefix = `${DataSourcesManager.name}::spawnDataSource`;
+
+    const sourceConfig = this.findDataSourceConfig(protocol);
+    if (!sourceConfig) {
+      winston.info(
+        `${logPrefix} data source '${protocol}' is not found in config, skipping spawning it.`
+      );
+      return;
+    }
     const params: IDataSourceParams = {
-      config: this.findDataSourceConfig(protocol),
+      config: sourceConfig,
       termsAndConditionsAccepted:
         this.configManager.config.termsAndConditions.accepted
     };
@@ -172,6 +181,9 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
    * @returns void
    */
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
+    const logPrefix = `${DataSourcesManager.name}::onLifecycleEvent`;
+    winston.verbose(`${logPrefix}`);
+
     this.lifecycleBus.push(lifeCycleEvent);
   };
 

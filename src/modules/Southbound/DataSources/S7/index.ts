@@ -1,12 +1,7 @@
 import NodeS7 from 'nodes7';
 import winston from 'winston';
 import { DataSource } from '../DataSource';
-import {
-  DataSourceLifecycleEventTypes,
-  LifecycleEventStatus,
-  DataPointLifecycleEventTypes,
-  EventLevels
-} from '../../../../common/interfaces';
+import { LifecycleEventStatus } from '../../../../common/interfaces';
 import {
   IDataPointConfig,
   IS7DataSourceConnection
@@ -156,11 +151,15 @@ export class S7DataSource extends DataSource {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
-        // if (!this.isDisconnected) {
-        //   return;
-        // }
-        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
-        this.init();
+        try {
+          // if (!this.isDisconnected) {
+          //   return;
+          // }
+          this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+          this.init();
+        } catch (error) {
+          winston.error(`${logPrefix} error in reconnecting: ${error}`);
+        }
       }, this.RECONNECT_TIMEOUT);
       return;
     }
@@ -353,21 +352,11 @@ export class S7DataSource extends DataSource {
 
         if (!error) {
           measurements.push(measurement);
-          this.onDataPointLifecycle({
-            id: dp.id,
-            level: EventLevels.DataPoint,
-            type: DataPointLifecycleEventTypes.ReadSuccess
-          });
         } else {
           // winston.error(
           //   `Failed to read datapoint ${dp.name} - Error: ${error}`
           // );
           this.handleReadDpError(error);
-          this.onDataPointLifecycle({
-            id: dp.id,
-            level: EventLevels.DataPoint,
-            type: DataPointLifecycleEventTypes.ReadError
-          });
         }
       }
 
@@ -488,8 +477,11 @@ export class S7DataSource extends DataSource {
     this.client = null;
 
     winston.info(`${logPrefix} shutdown nck client`);
-    await this.nckClient.disconnect();
-
+    try {
+      await this.nckClient.disconnect();
+    } catch (error) {
+      winston.error(`${logPrefix} error in disconnecting nck client: ${error}`);
+    }
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 }

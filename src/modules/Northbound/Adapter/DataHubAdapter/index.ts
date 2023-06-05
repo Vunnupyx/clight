@@ -24,6 +24,7 @@ import {
   isUpdateTriggeredResultPayload,
   VersionInformation
 } from './interfaces';
+import { ConfigurationAgentManager } from '../../../ConfigurationAgentManager';
 
 interface DataHubAdapterOptions extends IDataHubConfig {}
 
@@ -149,11 +150,8 @@ export class DataHubAdapter {
   public async init(): Promise<DataHubAdapter> {
     const logPrefix = `${this.constructor.name}::init`;
 
-    this.serialNumber = (
-      (await new System().readMacAddress('eth0')) || '000000000000'
-    )
-      .split(':')
-      .join('');
+    this.serialNumber =
+      (await ConfigurationAgentManager.getMachineInfo())?.Serial || 'unknown';
 
     return Promise.resolve()
       .then(() => {
@@ -353,31 +351,35 @@ export class DataHubAdapter {
 
   private sendMessage(msgType: Exclude<TDataHubDataPointType, 'event'>): void {
     const logPrefix = `${this.constructor.name}::sendMessage`;
-    if (!this.dataHubClient || !this.isRunning) {
-      winston.error(
-        `${logPrefix} try to send ${msgType} to datahub on not running adapter.`
-      );
-      return;
-    }
-    const buffer =
-      msgType === 'telemetry' ? this.telemetryBuffer : this.probeBuffer;
-    if (!buffer) {
-      winston.warn(
-        `${logPrefix} try to send ${msgType} but no data buffer available`
-      );
-      return;
-    }
-    const msg = this.addMsgType(msgType, buffer.getMessage());
-
-    this.dataHubClient.sendEvent(msg, (err, result) => {
-      if (err) {
-        winston.error(`${logPrefix} error sending due to ${err}`);
+    try {
+      if (!this.dataHubClient || !this.isRunning) {
+        winston.error(
+          `${logPrefix} try to send ${msgType} to datahub on not running adapter.`
+        );
         return;
       }
-      winston.debug(
-        `${logPrefix} successfully published ${msgType} data points`
-      );
-    });
+      const buffer =
+        msgType === 'telemetry' ? this.telemetryBuffer : this.probeBuffer;
+      if (!buffer) {
+        winston.warn(
+          `${logPrefix} try to send ${msgType} but no data buffer available`
+        );
+        return;
+      }
+      const msg = this.addMsgType(msgType, buffer.getMessage());
+
+      this.dataHubClient.sendEvent(msg, (err, result) => {
+        if (err) {
+          winston.error(`${logPrefix} error sending due to ${err}`);
+          return;
+        }
+        winston.debug(
+          `${logPrefix} successfully published ${msgType} data points`
+        );
+      });
+    } catch (error) {
+      winston.error(`${logPrefix} Error while sending message: ${error}`);
+    }
   }
 
   /**

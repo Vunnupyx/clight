@@ -180,6 +180,7 @@
     "Select": "選択",
     "Enabled": "有効",
     "MachineName": "Machine Name",
+    "IPAddress": "IPアドレス",
     "Host": "Host",
     "Connection": "接続中",
     "Running": "実行中",
@@ -329,7 +330,7 @@
     "BulkError": "変更下適用できません。再試行してください。",
     "LoadError": "ソースデータポンとが読み込めません。再試行してください。",
     "ConnectionAvailableWithDelay": "の応答時間で接続可能。 ",
-    "HostUnreachable": "ホストに到達できません。IP設定を確認してください。",
+    "HostUnreachable": "Host unreachable please check data source configuration",
     "HostDisabled": "Data source is disabled, please check data source settings."
   },
   "settings-data-sink": {

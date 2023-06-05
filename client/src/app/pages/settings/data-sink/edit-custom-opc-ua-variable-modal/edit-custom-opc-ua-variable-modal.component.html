@@ -4,10 +4,16 @@
 
 <form
   #form="ngForm"
-  (ngSubmit)="!isDuplicatingAddress(customDatapoint) && onSave()"
+  (ngSubmit)="
+    !isDuplicatingAddress(customDatapoint) &&
+      !isDuplicatingName(customDatapoint) &&
+      onSave()
+  "
 >
   <div mat-dialog-content *ngIf="customDatapoint">
-    <mat-form-field>
+    <mat-form-field
+      [class.mat-form-field-invalid]="isDuplicatingName(customDatapoint)"
+    >
       <mat-label>{{ 'settings-data-sink.Name' | translate }}</mat-label>
       <input
         matInput
@@ -16,6 +22,9 @@
         [placeholder]="'settings-data-sink.Name' | translate"
         pattern="^[\w\s\-]+$"
         autofocus
+        [matTooltip]="'settings-data-sink.DuplicatedName' | translate"
+        matTooltipPosition="above"
+        [matTooltipDisabled]="!isDuplicatingName(customDatapoint)"
         required
       />
     </mat-form-field>
@@ -82,7 +91,10 @@
       mat-button
       color="primary"
       [disabled]="
-        !form.dirty || form.invalid || isDuplicatingAddress(customDatapoint)
+        !form.dirty ||
+        form.invalid ||
+        isDuplicatingAddress(customDatapoint) ||
+        isDuplicatingName(customDatapoint)
       "
     >
       {{ 'settings-data-sink.Save' | translate }}

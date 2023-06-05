@@ -453,13 +453,17 @@ export class OPCUAAdapter {
     const logPrefix = `${OPCUAAdapter.name}::shutdown`;
     const shutdownFunctions: Promise<any>[] = [];
     winston.debug(`${logPrefix} triggered.`);
-    Object.getOwnPropertyNames(this).forEach((prop) => {
-      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
-      if (this[prop].removeAllListeners)
-        shutdownFunctions.push(this[prop].removeAllListeners());
-      if (this[prop].close) shutdownFunctions.push(this[prop].close());
-      delete this[prop];
-    });
+
+    const serverShutdownPromise: Promise<void> = new Promise(
+      async (resolve, reject) => {
+        if (this.server?.removeAllListeners) this.server.removeAllListeners();
+        if (this.server?.shutdown) await this.server.shutdown();
+        this.server = null;
+        resolve();
+      }
+    );
+    shutdownFunctions.push(serverShutdownPromise);
+
     return (
       Promise.all(shutdownFunctions)
         .then(() => {

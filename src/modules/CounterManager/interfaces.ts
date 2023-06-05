@@ -99,6 +99,15 @@ export type ScheduledCounterResetDict = {
   [id: string]: ScheduleDescription[];
 };
 
+export type ScheduleTimeDataType = {
+  year: number;
+  month: number;
+  date: number;
+  hours: number;
+  minutes: number;
+  sec: number;
+};
+
 export type timerDict = {
   [counterId: string]: {
     [scheduleIndex: number]: NodeJS.Timer | undefined;

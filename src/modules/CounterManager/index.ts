@@ -5,7 +5,12 @@ import * as date from 'date-fns';
 import { ConfigManager, mdcLightFolder } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
-import { CounterDict, ScheduleDescription, timerDict } from './interfaces';
+import {
+  CounterDict,
+  ScheduleDescription,
+  ScheduleTimeDataType,
+  timerDict
+} from './interfaces';
 import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 /**
@@ -296,7 +301,7 @@ export class CounterManager {
     currentDate: Date
   ): Date {
     const logPrefix = `${this.constructor.name}::calcWithDate`;
-    const timeData = {
+    const timeData: ScheduleTimeDataType = {
       year: currentDate.getFullYear(),
       month:
         scheduleData.month === 'Every'
@@ -332,8 +337,9 @@ export class CounterManager {
       // increase every entries with one and check if new date is in future
       for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
         // Ignore non 'Every' entries but there is no year entry
+        //@ts-ignore date does not exists on ScheduleDescription
         if (scheduleData[entry] !== 'Every' && entry !== 'year') continue;
-        timeData[entry] += 1;
+        timeData[entry as Partial<keyof ScheduleTimeDataType>] += 1;
         dateFromScheduling = new Date(
           timeData.year,
           timeData.month,
@@ -356,7 +362,7 @@ export class CounterManager {
           // New date is in future, break out for loop
           return dateFromScheduling;
         }
-        timeData[entry] -= 1;
+        timeData[entry as Partial<keyof ScheduleTimeDataType>] -= 1;
       }
       winston.error(
         `${logPrefix} no next date found for: ${JSON.stringify(scheduleData)}`
@@ -369,7 +375,7 @@ export class CounterManager {
     scheduleData: ScheduleDescription,
     currentDate: Date
   ): Date {
-    const timeData = {
+    const timeData: ScheduleTimeDataType = {
       year: currentDate.getFullYear(),
       month:
         scheduleData.month === 'Every'
@@ -436,14 +442,15 @@ export class CounterManager {
         for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
           // Ignore non 'Every' entries
           if (
+            //@ts-ignore date does not exists on ScheduleDescription
             ((entry !== 'date' && scheduleData[entry] !== 'Every') ||
-              //@ts-ignore
+              //@ts-ignore day does not exists on ScheduleDescription
               (entry === 'date' && scheduleData.day !== 'Every')) &&
             entry !== 'year'
           ) {
             continue;
           }
-          timeData[entry] += 1;
+          timeData[entry as Partial<keyof ScheduleTimeDataType>] += 1;
           dateFromScheduling = new Date(
             timeData.year,
             timeData.month,
@@ -458,7 +465,7 @@ export class CounterManager {
             // New date is in future, break out for loop
             return dateFromScheduling;
           }
-          timeData[entry] -= 1;
+          timeData[entry as Partial<keyof ScheduleTimeDataType>] -= 1;
         }
       }
       return dateFromScheduling;

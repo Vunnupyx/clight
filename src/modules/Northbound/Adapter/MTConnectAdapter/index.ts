@@ -282,7 +282,7 @@ export class MTConnectAdapter {
   public shutdown(): Promise<void> {
     const logPrefix = `${MTConnectAdapter.name}::shutdown`;
     winston.debug(`${logPrefix} triggered.`);
-    const shutdownFunctions: Promise<any>[] = [];
+    const shutdownFunctions: (Socket | Promise<any>)[] = [];
     this.clients.forEach((sock) => {
       sock.removeAllListeners();
       shutdownFunctions.push(sock.end());

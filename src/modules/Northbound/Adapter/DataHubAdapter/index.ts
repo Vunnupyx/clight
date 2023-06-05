@@ -522,7 +522,9 @@ export class DataHubAdapter {
    */
   private getUpdateResponseHandler(
     azureResponse: AzureResponse,
-    azureFunctionCallback: (arg0: number, arg1: { message: string }) => void
+    azureFunctionCallback: {
+      send: (arg0: number, arg1: { message: string }) => void;
+    }
   ): void {
     const logPrefix = `${DataHubAdapter.name}::getUpdateResponseHandler`;
     winston.info(`${logPrefix} called from azure backend.`);
@@ -700,7 +702,9 @@ export class DataHubAdapter {
    */
   private setUpdateResponseHandler(
     azureResponse: AzureResponse,
-    azureFunctionCallback
+    azureFunctionCallback: {
+      send: (arg0: number, arg1: { message: string }) => void;
+    }
   ): void {
     const logPrefix = `${DataHubAdapter.name}::setUpdateResponseHandler`;
     winston.verbose(`${logPrefix} setUpdateResponseHandler called.`);

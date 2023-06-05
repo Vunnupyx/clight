@@ -1,7 +1,5 @@
 import { Application, Request } from 'express';
 import { connector as connectorFactory } from 'swagger-routes-express';
-import * as OpenApiValidator from 'express-openapi-validator';
-import winston from 'winston';
 import {
   authHandlers,
   setAuthManager as authSetAuthManager
@@ -94,7 +92,6 @@ interface RoutesManagerOptions {
  * Controls all REST Routes
  */
 export class RoutesManager {
-  private inputValidator;
   private app: Application;
   private routeHandlers = {
     ...authHandlers,
@@ -147,12 +144,6 @@ export class RoutesManager {
     livedataDataSinksSetDataPointCache(options.dataPointCache);
     livedataVirtualDataPointsSetDataPointCache(options.dataPointCache);
 
-    this.inputValidator = OpenApiValidator.middleware({
-      apiSpec: swaggerFile as any,
-      validateRequests: false,
-      validateResponses: false
-    });
-
     //TODO: Make code async ?
     connectorFactory(this.routeHandlers, swaggerFile, {
       security: {
@@ -166,7 +157,6 @@ export class RoutesManager {
           })(req as Request, res, next)
       }
     })(this.app);
-    // this.app.use(this.inputValidator);
     this.app.use(this.requestErrorHandler);
   }
 

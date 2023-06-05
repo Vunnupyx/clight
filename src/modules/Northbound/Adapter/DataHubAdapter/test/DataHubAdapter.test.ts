@@ -60,6 +60,14 @@ function log(m) {
   // console.log(m);
 }
 
+jest.mock('../../../../ConfigurationAgentManager', () => {
+  return {
+    ConfigurationAgentManager: {
+      getMachineInfo: () => ({ Serial: '12345678901' })
+    }
+  };
+});
+
 jest.mock('winston', () => {
   return {
     debug: log,

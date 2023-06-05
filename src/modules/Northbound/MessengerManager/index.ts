@@ -45,7 +45,7 @@ export class MessengerManager {
   protected name = MessengerManager.name;
 
   constructor(options) {
-    this.messengerConfig = options.messengerConfig;
+    if (options.messengerConfig) this.messengerConfig = options.messengerConfig;
     this.configManager = options.configManager;
     this.configManager.on('configChange', this.handleConfigChange.bind(this));
   }
@@ -812,9 +812,10 @@ export class MessengerManager {
     }
     //Config changed
     if (
-      this.messengerConfig.hostname !== newMessengerConfig.hostname ||
-      this.messengerConfig.username !== newMessengerConfig.username ||
-      this.messengerConfig.password !== newMessengerConfig.password
+      !this.messengerConfig ||
+      this.messengerConfig?.hostname !== newMessengerConfig.hostname ||
+      this.messengerConfig?.username !== newMessengerConfig.username ||
+      this.messengerConfig?.password !== newMessengerConfig.password
     ) {
       // status must be reset
       clearTimeout(this.invalidHostTimer);

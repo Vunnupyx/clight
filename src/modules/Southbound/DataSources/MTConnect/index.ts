@@ -110,8 +110,12 @@ export class MTConnectDataSource extends DataSource {
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
-        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
-        this.init();
+        try {
+          this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+          this.init();
+        } catch (error) {
+          winston.error(`${logPrefix} error in reconnecting: ${error}`);
+        }
       }, this.RECONNECT_TIMEOUT);
       return;
     }
@@ -172,29 +176,24 @@ export class MTConnectDataSource extends DataSource {
       const errorMessage: string = (response as IMTConnectStreamError)
         .MTConnectError?.Errors?.Error?.['#'];
 
-      if (errorMessage.includes('must be greater than')) {
+      if (
+        errorMessage.includes('must be greater than') ||
+        errorMessage.includes('must be less than')
+      ) {
         // Runtime is behind, should sync to next possible firstSequence and must quickly read to catch up to actual nextSequenceNumber
-        // This should not happen as varying request count always stays in sync
-
-        const newFirstSequenceNumber = parseInt(
-          errorMessage.trim().split('must be greater than ')[1]
-        );
-        winston.warn(
-          `${logPrefix} current sequence number ${this.nextSequenceNumber} is less than minimum allowed. Updating next sequence number to:${newFirstSequenceNumber}`
-        );
-
-        this.nextSequenceNumber = newFirstSequenceNumber;
-      } else if (errorMessage.includes('must be less than')) {
+        // OR
         // Runtime is too fast, should sync back to last value
         // This should not happen as varying request count always stays in sync
-        const newSequenceNumber = parseInt(
-          errorMessage.trim().split('must be less than ')[1]
-        );
-        winston.warn(
-          `${logPrefix} current sequence ${this.nextSequenceNumber} is more than maximum allowed. Updating next sequence number to:${newSequenceNumber}`
-        );
 
-        this.nextSequenceNumber = newSequenceNumber;
+        // new first sequence number is the number that is written in the error message as the minimum number. Regex extracts the number
+        const newSequenceNumber = errorMessage.match(/\d+/g)?.[0] ?? '0';
+        this.nextSequenceNumber = parseInt(newSequenceNumber);
+
+        winston.warn(
+          `${logPrefix} current sequence number ${this.nextSequenceNumber} is ${
+            errorMessage.includes('must be greater than') ? 'less' : 'more'
+          } than minimum allowed. Updating next sequence number to:${newSequenceNumber}`
+        );
       } else {
         winston.warn(`${logPrefix} ${errorMessage}`);
       }

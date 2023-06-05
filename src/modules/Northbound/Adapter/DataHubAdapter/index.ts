@@ -22,6 +22,7 @@ import {
   isErrorResultPayload,
   isUpdatesResultPayload,
   isUpdateTriggeredResultPayload,
+  UpdatesResultPayload,
   VersionInformation
 } from './interfaces';
 import { ConfigurationAgentManager } from '../../../ConfigurationAgentManager';
@@ -521,8 +522,8 @@ export class DataHubAdapter {
    * @param azureFunctionCallback Response object to send receive ack to azure function
    */
   private getUpdateResponseHandler(
-    azureResponse: AzureResponse,
-    azureFunctionCallback: {
+    azureResponse?: AzureResponse,
+    azureFunctionCallback?: {
       send: (arg0: number, arg1: { message: string }) => void;
     }
   ): void {
@@ -531,8 +532,8 @@ export class DataHubAdapter {
 
     try {
       const errorPayload =
-        isErrorResultPayload(azureResponse.payload.payload) &&
-        azureResponse.payload.payload;
+        isErrorResultPayload(azureResponse?.payload?.payload) &&
+        azureResponse?.payload?.payload;
       if (errorPayload) {
         winston.error(
           `${logPrefix} receive error from azure function call due to ${JSON.stringify(
@@ -549,29 +550,29 @@ export class DataHubAdapter {
         winston.debug(
           `${logPrefix} acknowledge receive of message from called azure function.`
         );
-        // TBD
-        azureFunctionCallback.send(200, {
-          message: `ACK`
-        });
+        if (azureFunctionCallback)
+          azureFunctionCallback.send(200, {
+            message: `ACK`
+          });
         return;
       }
 
-      if (isUpdatesResultPayload(azureResponse.payload.payload)) {
+      if (isUpdatesResultPayload(azureResponse?.payload?.payload)) {
         winston.debug(
           `Receive result payload from azure with payload: ${JSON.stringify(
-            azureResponse.payload
+            azureResponse?.payload
           )}`
         );
+        const updatesResultPayload: UpdatesResultPayload =
+          azureResponse?.payload?.payload;
         const status =
-          azureResponse.payload.payload.result.updateList.length > 0
-            ? 200
-            : 204; // OK or no content
+          updatesResultPayload?.result?.updateList?.length > 0 ? 200 : 204; // OK or no content
         const message =
           status === 200
             ? 'List of available MDCL updates.'
             : 'No updates available.';
         const updates: Array<VersionInformation> =
-          azureResponse.payload.payload.result.updateList.map(
+          updatesResultPayload?.result?.updateList?.map(
             ({
               release,
               releaseNotes,
@@ -601,10 +602,10 @@ export class DataHubAdapter {
         winston.debug(
           `${logPrefix} acknowledge receive of message from called azure function.`
         );
-        // TBD
-        azureFunctionCallback.send(200, {
-          message: `ACK`
-        });
+        if (azureFunctionCallback)
+          azureFunctionCallback.send(200, {
+            message: `ACK`
+          });
         return;
       }
       winston.info(
@@ -612,10 +613,10 @@ export class DataHubAdapter {
           azureResponse
         )}. Waiting for final result.`
       );
-      // TBD
-      azureFunctionCallback.send(200, {
-        message: `ACK`
-      });
+      if (azureFunctionCallback)
+        azureFunctionCallback.send(200, {
+          message: `ACK`
+        });
     } catch (error) {
       winston.error(`${logPrefix} error inside azure callback function.`);
     }
@@ -701,8 +702,8 @@ export class DataHubAdapter {
    * @param azureFunctionCallback Response object to send receive ack to azure function
    */
   private setUpdateResponseHandler(
-    azureResponse: AzureResponse,
-    azureFunctionCallback: {
+    azureResponse?: AzureResponse,
+    azureFunctionCallback?: {
       send: (arg0: number, arg1: { message: string }) => void;
     }
   ): void {
@@ -710,8 +711,8 @@ export class DataHubAdapter {
     winston.verbose(`${logPrefix} setUpdateResponseHandler called.`);
 
     const errorPayload =
-      isErrorResultPayload(azureResponse.payload.payload) &&
-      azureResponse.payload.payload;
+      isErrorResultPayload(azureResponse?.payload?.payload) &&
+      azureResponse?.payload?.payload;
     if (errorPayload) {
       winston.error(
         `${logPrefix} receive error from azure function call due to ${JSON.stringify(
@@ -728,14 +729,15 @@ export class DataHubAdapter {
         `${logPrefix} acknowledge receive of message from called azure function.`
       );
       // ACK response
-      azureFunctionCallback.send(200, {
-        message: `ACK`
-      });
+      if (azureFunctionCallback)
+        azureFunctionCallback.send(200, {
+          message: `ACK`
+        });
       return;
     }
     const {
       payload: { payload }
-    } = azureResponse;
+    } = azureResponse ?? {};
 
     if (isUpdateTriggeredResultPayload(payload)) {
       const status = /success/i.test(payload.result.message) ? 202 : 404;
@@ -761,9 +763,10 @@ export class DataHubAdapter {
         `${logPrefix} acknowledge receive of message from called azure function.`
       );
       // ACK response
-      azureFunctionCallback.send(200, {
-        message: `ACK`
-      });
+      if (azureFunctionCallback)
+        azureFunctionCallback.send(200, {
+          message: `ACK`
+        });
       return;
     }
     winston.info(
@@ -771,9 +774,10 @@ export class DataHubAdapter {
         azureResponse
       )}. Wait for final result.`
     );
-    azureFunctionCallback.send(200, {
-      message: `ACK`
-    });
+    if (azureFunctionCallback)
+      azureFunctionCallback.send(200, {
+        message: `ACK`
+      });
     return;
   }
 

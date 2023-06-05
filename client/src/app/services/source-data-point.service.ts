@@ -125,9 +125,6 @@ export class SourceDataPointService {
    * @returns
    */
   async ping(protocol: DataSourceProtocol | undefined): Promise<string> {
-    this._store.patchState((state) => {
-      state.status = Status.Loading;
-    });
     if (protocol === undefined) protocol = DataSourceProtocol.S7;
     const errorHandler = () => {
       this.toastr.error(
@@ -141,17 +138,9 @@ export class SourceDataPointService {
     return this.httpService
       .get(`/datasources/${protocol}/ping`)
       .then((res) => {
-        this._store.patchState((state) => {
-          state.status = Status.Ready;
-        });
         if (res?.error?.msg?.includes('disabled')) {
           this.toastr.error(
             this.translate.instant('settings-data-source-point.HostDisabled')
-          );
-          return;
-        } else if (res?.error?.msg) {
-          this.toastr.error(
-            this.translate.instant('settings-data-source-point.HostUnreachable')
           );
           return;
         }
@@ -165,9 +154,6 @@ export class SourceDataPointService {
         return res.delay;
       })
       .catch(() => {
-        this._store.patchState((state) => {
-          state.status = Status.Ready;
-        });
         return errorHandler();
       });
   }

@@ -1,52 +1,50 @@
 import winston from 'winston';
-import { v4 } from 'uuid';
 import {
-  LifecycleEventStatus,
   DataSinkProtocols,
   ILifecycleEvent,
-  EventLevels
+  LifecycleEventStatus
 } from '../../../common/interfaces';
 import {
   IDataPointMapping,
   IDataSinkConfig,
-  IGeneralConfig,
   IProxyConfig,
   ITargetDataMap
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
-import {
-  DataSinkEventTypes,
-  IDataSourceMeasurementEvent
-} from '../../Southbound/DataSources/interfaces';
+import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 import { isEmpty } from 'lodash';
 import { DataPointCache } from '../../DatapointCache';
-import EventEmitter from 'events';
-import TypedEmitter from 'typed-emitter';
 
-interface IDataSinkEvents {
-  [DataSinkEventTypes.Lifecycle]: (event: ILifecycleEvent) => void;
+export enum DataSinkStatus {
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED',
+  DISCONNECTED = 'DISCONNECTED',
+  RECONNECTING = 'RECONNECTING',
+  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
+  NO_NETWORK_AVAILABLE = 'NO_NETWORK_AVAILABLE',
+  INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
+  INVALID_STATE = 'INVALID_STATE'
 }
+
+export type TDataSinkStatus = keyof typeof DataSinkStatus;
 
 export interface IDataSinkOptions {
   mapping: IDataPointMapping[];
   dataSinkConfig: IDataSinkConfig;
-  generalConfig: IGeneralConfig;
   termsAndConditionsAccepted: boolean;
   dataPointCache: DataPointCache;
 }
 
 export type OptionalConfigs = {
   proxy?: IProxyConfig;
-  generalConfig: IGeneralConfig;
 };
 
 /**
  * Base class of northbound data sinks
  */
-export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<IDataSinkEvents>) {
+export abstract class DataSink {
   protected name = DataSink.name;
   protected config: IDataSinkConfig;
-  protected generalConfig: IGeneralConfig;
   protected mappingConfig: IDataPointMapping[];
   protected dataPointMapper: DataPointMapper;
   protected dataPointCache: DataPointCache;
@@ -60,9 +58,7 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
    * @param params The user configuration object for this data source
    */
   constructor(options: IDataSinkOptions) {
-    super();
     this.config = JSON.parse(JSON.stringify(options.dataSinkConfig));
-    this.generalConfig = JSON.parse(JSON.stringify(options.generalConfig));
     this.mappingConfig = options.mapping;
     this.dataPointMapper = new DataPointMapper(options.mapping);
     this.termsAndConditionsAccepted = options.termsAndConditionsAccepted;
@@ -82,11 +78,7 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     return (
       JSON.stringify(this.config) === JSON.stringify(config) &&
       JSON.stringify(this.mappingConfig) === JSON.stringify(mappingConfig) &&
-      this.termsAndConditionsAccepted === termsAndConditions &&
-      (config.protocol !== DataSinkProtocols.OPCUA ||
-        (config.protocol === DataSinkProtocols.OPCUA &&
-          JSON.stringify(this.generalConfig) ===
-            JSON.stringify(optionalConfigs.generalConfig)))
+      this.termsAndConditionsAccepted === termsAndConditions
     );
   }
 
@@ -103,12 +95,6 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
       `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
     );
     this.currentStatus = newState;
-    this.emit(DataSinkEventTypes.Lifecycle, {
-      dataSink: { protocol: this.protocol },
-      type: newState,
-      level: EventLevels.DataSink,
-      id: v4()
-    });
   }
 
   public get protocol() {

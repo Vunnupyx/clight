@@ -654,19 +654,11 @@ export default class SinumerikNCKProtocolDriver {
 
       shutdownTimeoutId = setTimeout(() => {
         if (this.tcpClient) {
-          try {
-            this.tcpClient.destroy();
-            winston.debug(
-              `${logPrefix} NCK Driver: Timeout while waiting for socket disconnect.`
-            );
-            delete this.tcpClient;
-          } catch (error) {
-            winston.error(
-              `${logPrefix} error while shutting down nck client: ${error}`
-            );
-            reject();
-            return;
-          }
+          this.tcpClient.destroy();
+          winston.debug(
+            `${logPrefix} NCK Driver: Timeout while waiting for socket disconnect.`
+          );
+          delete this.tcpClient;
         }
         resolve();
         return;

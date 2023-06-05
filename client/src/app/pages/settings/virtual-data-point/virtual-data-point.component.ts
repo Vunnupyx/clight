@@ -312,14 +312,6 @@ export class VirtualDataPointComponent implements OnInit {
       this.unsavedRow.blinkSettings = { ...this.defaultBlinkSettings };
     }
 
-    if (
-      Array.isArray(this.unsavedRow.sources) &&
-      this.unsavedRow.sources.length &&
-      !this.isAbleToSelectMultipleSources(this.unsavedRow?.operationType)
-    ) {
-      this.unsavedRow.sources = [this.unsavedRow.sources[0]];
-    }
-
     if (this.unsavedRow!.id) {
       this.virtualDataPointService
         .updateDataPoint(this.unsavedRow?.id!, this.unsavedRow!)
@@ -608,6 +600,18 @@ export class VirtualDataPointComponent implements OnInit {
         });
       }
     });
+  }
+
+  onOperationTypeChange(newOperationType) {
+    if (this.unsavedRow) {
+      this.unsavedRow.operationType = newOperationType;
+
+      if (
+        Array.isArray(this.unsavedRow.sources) &&
+        this.unsavedRow.sources.length
+      )
+        this.unsavedRow.sources = [this.unsavedRow.sources[0]];
+    }
   }
 
   isAbleToSelectMultipleSources(

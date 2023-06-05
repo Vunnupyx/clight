@@ -40,7 +40,7 @@
           <ng-container *ngSwitchCase="'s7'">
             <div class="row d-flex align-items-center">
               <div class="text-nowrap col-12 col-md-5 pb-20">
-                {{ 'settings-data-source.IPAddress' | translate }}
+                {{ 'settings-data-source.Host' | translate }}
               </div>
               <form #form="ngForm" class="col-12 col-md-7">
                 <div>
@@ -50,7 +50,7 @@
                       name="ipAddress"
                       #ipAddr="ngModel"
                       [ngModel]="dataSource?.connection?.ipAddr"
-                      [pattern]="ipRegex"
+                      [pattern]="ipOrHostRegex"
                       [required]="true"
                       (ngModelChange)="updateIpAddress(form.valid, $event)"
                     />

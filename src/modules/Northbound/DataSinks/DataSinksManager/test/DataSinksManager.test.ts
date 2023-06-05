@@ -75,11 +75,7 @@ describe('DataSinksManager', () => {
     } as IRuntimeConfig;
     mockConfigManager.config = {
       messenger: {},
-      dataSinks: [
-        { protocol: 'mtconnect' },
-        { protocol: 'opcua' },
-        { protocol: 'datahub' }
-      ],
+      dataSinks: [{}],
       termsAndConditions: {
         accepted: true
       }

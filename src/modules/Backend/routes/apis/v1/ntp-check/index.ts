@@ -172,16 +172,10 @@ function testNTPServer(server: string): Promise<boolean> {
     const requestData = Buffer.from(bufferData);
 
     const timeout = setTimeout(() => {
-      try {
-        client.close();
-        client.removeAllListeners();
-        winston.error(`${logPrefix} ntp request timed out.`);
-        return res(false);
-      } catch (error) {
-        winston.error(
-          `${logPrefix} error with timeout of ntp request: ${error}`
-        );
-      }
+      client.close();
+      client.removeAllListeners();
+      winston.error(`${logPrefix} ntp request timed out.`);
+      return res(false);
     }, timeOut);
 
     client.on('error', (err) => {

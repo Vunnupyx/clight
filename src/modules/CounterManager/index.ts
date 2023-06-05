@@ -6,7 +6,6 @@ import { ConfigManager } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
 import { CounterDict, Day, ScheduleDescription, timerDict } from './interfaces';
-import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 /**
  * Manages counter (virtual data points)
@@ -17,7 +16,7 @@ export class CounterManager {
   private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
   private configFolder = path.join(this.mdcFolder, '/config');
   private counterStoragePath = path.join(this.configFolder, '/counters.json');
-  private schedulerChecker: SynchronousIntervalScheduler;
+  private schedulerChecker: NodeJS.Timer;
   private startedTimers: timerDict = {};
   private schedulerCheckerInterval = 1000 * 60 * 5; // 5Min
 
@@ -44,6 +43,7 @@ export class CounterManager {
       );
     }
 
+    this.registerScheduleChecker();
     this.configManager.once(
       'configsLoaded',
       this.handleConfigsLoaded.bind(this)
@@ -52,7 +52,6 @@ export class CounterManager {
   }
 
   private handleConfigsLoaded() {
-    this.registerScheduleChecker();
     this.checkMissedResets();
     this.checkTimers();
   }
@@ -176,73 +175,60 @@ export class CounterManager {
     const logPrefix = `${this.constructor.name}::checkTimers`;
     winston.debug(`${logPrefix} looking for scheduled resets.`);
 
-    try {
-      for (const scheduleData of this.getScheduledVirtualDataPoints()) {
-        const vdpId = scheduleData.id;
-        const counterId = vdpId;
+    for (const scheduleData of this.getScheduledVirtualDataPoints()) {
+      const vdpId = scheduleData.id;
+      const counterId = vdpId;
 
-        // Double check if there are scheduled resets
-        if (typeof scheduleData.resetSchedules === 'undefined') {
+      // Double check if there are scheduled resets
+      if (typeof scheduleData.resetSchedules === 'undefined') {
+        continue;
+      }
+
+      // Iterate over all scheduled resets of a virtual counter
+      for (const [index, entry] of scheduleData.resetSchedules.entries()) {
+        winston.debug(
+          `${logPrefix} found scheduling for id: ${counterId} with index: ${index} : ${JSON.stringify(
+            entry
+          )}`
+        );
+
+        // Check if there is a active timer for this reset
+        if (
+          this.startedTimers[counterId] &&
+          this.startedTimers[counterId][index] !== undefined
+        ) {
+          winston.debug(`${logPrefix} timer for ${counterId} already started.`);
           continue;
         }
 
-        // Iterate over all scheduled resets of a virtual counter
-        for (const [index, entry] of scheduleData.resetSchedules.entries()) {
+        const now = new Date();
+
+        const nextScheduling = CounterManager.calcNextTrigger(entry, now);
+
+        const timeDiff = now.getTime() - nextScheduling.getTime();
+        winston.debug(
+          `${logPrefix} local time for next reset found: ${nextScheduling.toLocaleString()}. Current local time is: ${now.toLocaleString()}`
+        );
+        winston.debug(`Time difference to next trigger: ${timeDiff}`);
+        winston.debug(`Used Interval: ${this.schedulerCheckerInterval}`);
+        //Check if diff is in range of interval. Only near resets are real scheduled via setTimeout queue
+        if (timeDiff > this.schedulerCheckerInterval * -1) {
           winston.debug(
-            `${logPrefix} found scheduling for id: ${counterId} with index: ${index} : ${JSON.stringify(
-              entry
-            )}`
+            `${logPrefix} ${nextScheduling.toLocaleString()} reset is inside next timer interval. Start reset timer for virtual data point : ${counterId} with index: ${index}`
           );
 
-          // Check if there is a active timer for this reset
-          if (
-            this.startedTimers[counterId] &&
-            this.startedTimers[counterId][index] !== undefined
-          ) {
-            winston.debug(
-              `${logPrefix} timer for ${counterId} already started.`
-            );
-            continue;
-          }
-
-          const now = new Date();
-
-          const nextScheduling = CounterManager.calcNextTrigger(entry, now);
-
-          const timeDiff = now.getTime() - nextScheduling.getTime();
-          winston.debug(
-            `${logPrefix} local time for next reset found: ${nextScheduling.toLocaleString()}. Current local time is: ${now.toLocaleString()}`
-          );
-          winston.debug(`Time difference to next trigger: ${timeDiff}`);
-          winston.debug(`Used Interval: ${this.schedulerCheckerInterval}`);
-          //Check if diff is in range of interval. Only near resets are real scheduled via setTimeout queue
-          if (timeDiff > this.schedulerCheckerInterval * -1) {
-            winston.debug(
-              `${logPrefix} ${nextScheduling.toLocaleString()} reset is inside next timer interval. Start reset timer for virtual data point : ${counterId} with index: ${index}`
-            );
-
-            this.startedTimers[counterId] = {
-              ...this.startedTimers[counterId],
-              [index]: setTimeout(() => {
-                try {
-                  winston.debug(
-                    `${logPrefix} timer for ${counterId} expired. Start reset.`
-                  );
-                  this.reset(counterId, index);
-                  clearTimeout(this.startedTimers[counterId][index]);
-                  this.startedTimers[counterId][index] = undefined;
-                } catch (error) {
-                  winston.error(
-                    `${logPrefix} error resetting counter: ${error}`
-                  );
-                }
-              }, timeDiff * -1)
-            };
-          }
+          this.startedTimers[counterId] = {
+            ...this.startedTimers[counterId],
+            [index]: setTimeout(() => {
+              winston.debug(
+                `${logPrefix} timer for ${counterId} expired. Start reset.`
+              );
+              this.reset(counterId, index);
+              this.startedTimers[counterId][index] = undefined;
+            }, timeDiff * -1)
+          };
         }
       }
-    } catch (error) {
-      winston.error(`${logPrefix} Error while checking timers: ${error}`);
     }
   }
 
@@ -255,10 +241,9 @@ export class CounterManager {
       winston.debug(
         `${logPrefix} set interval with timing ${this.schedulerCheckerInterval} for scheduler checker.`
       );
-      this.schedulerChecker = SynchronousIntervalScheduler.getInstance();
-      this.schedulerChecker.addListener(
-        [this.schedulerCheckerInterval],
-        this.checkTimers.bind(this)
+      this.schedulerChecker = setInterval(
+        this.checkTimers.bind(this),
+        this.schedulerCheckerInterval
       );
     }
   }
@@ -353,9 +338,8 @@ export class CounterManager {
         }
         timeData[entry] -= 1;
       }
-      winston.error(
-        `${logPrefix} no next date found for: ${JSON.stringify(scheduleData)}`
-      );
+      winston.error(`${logPrefix} no next date found for: ${scheduleData}`);
+      return null;
     }
     return dateFromScheduling;
   }
@@ -464,7 +448,7 @@ export class CounterManager {
    * Returns all virtual data point configurations for counters with active scheduled resets.
    */
   private getScheduledVirtualDataPoints(): IVirtualDataPointConfig[] {
-    return this.configManager.config?.virtualDataPoints?.filter((vdp) => {
+    return this.configManager.config.virtualDataPoints.filter((vdp) => {
       return (
         vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
       );

@@ -1,4 +1,5 @@
 import winston from 'winston';
+import fetch from 'node-fetch';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { EventBus, MeasurementEventBus } from '../EventBus';
 import {
@@ -8,6 +9,7 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
+import { LogLevel } from '../Logger/interfaces';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
@@ -35,11 +37,9 @@ export class BootstrapManager {
   private tlsKeyManager: TLSKeyManager;
 
   constructor() {
-    this.errorEventsBus = new EventBus<IErrorEvent>('ErrorEventBus');
-    this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(
-      'LifecycleEventBus'
-    );
-    this.measurementsEventsBus = new MeasurementEventBus('MeasurementEventBus');
+    this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
+    this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(LogLevel.INFO);
+    this.measurementsEventsBus = new MeasurementEventBus(LogLevel.DEBUG);
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,
@@ -74,9 +74,7 @@ export class BootstrapManager {
 
     this.ledManager = new LedStatusService(
       this.configManager,
-      this.dataSourcesManager,
-      this.dataSinksManager,
-      this.lifecycleEventsBus
+      this.dataSourcesManager
     );
 
     this.configManager.dataSourcesManager = this.dataSourcesManager;
@@ -98,10 +96,10 @@ export class BootstrapManager {
    */
   public async start() {
     try {
+      await this.ledManager.init();
       this.setupKillEvents();
 
       await this.tlsKeyManager.generateKeys();
-      await this.ledManager.init();
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {

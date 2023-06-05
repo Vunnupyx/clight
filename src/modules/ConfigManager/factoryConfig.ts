@@ -1,4 +1,3 @@
-import { DataSinkProtocols } from '../../common/interfaces';
 import { IConfig } from './interfaces';
 
 export const factoryConfig: IConfig = {
@@ -189,7 +188,7 @@ export const factoryConfig: IConfig = {
         }
       ],
       enabled: true,
-      protocol: DataSinkProtocols.DATAHUB
+      protocol: 'datahub'
     }
   ],
   virtualDataPoints: [],

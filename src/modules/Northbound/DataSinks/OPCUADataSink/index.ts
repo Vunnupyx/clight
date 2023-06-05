@@ -1,13 +1,17 @@
 import winston from 'winston';
 import {
   DataSinkProtocols,
+  DataSourceLifecycleEventTypes,
   ILifecycleEvent,
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
 import { Variant, UAVariable, LocalizedText, DataType } from 'node-opcua';
-import { IOPCUAConfig } from '../../../ConfigManager/interfaces';
+import {
+  IGeneralConfig,
+  IOPCUAConfig
+} from '../../../ConfigManager/interfaces';
 
 type OPCUANodeDict = {
   [key: string]: UAVariable;
@@ -15,6 +19,7 @@ type OPCUANodeDict = {
 
 export interface IOPCUADataSinkOptions extends IDataSinkOptions {
   runtimeConfig: IOPCUAConfig;
+  generalConfig: IGeneralConfig;
 }
 /**
  * Implementation of the OPCDataSink.
@@ -25,14 +30,16 @@ export class OPCUADataSink extends DataSink {
   private opcuaNodes: OPCUANodeDict = {};
   protected _protocol = DataSinkProtocols.OPCUA;
   protected name = OPCUADataSink.name;
+  private generalConfig: IGeneralConfig;
 
   constructor(options: IOPCUADataSinkOptions) {
     super(options);
     this.opcuaAdapter = new OPCUAAdapter({
       dataSinkConfig: options.dataSinkConfig,
-      generalConfig: this.generalConfig,
+      generalConfig: options.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
+    this.generalConfig = options.generalConfig;
   }
 
   public async init(): Promise<OPCUADataSink> {
@@ -166,23 +173,23 @@ export class OPCUADataSink extends DataSink {
 
     // Check for OPCUA Error Messages
     switch (event.type) {
-      case LifecycleEventStatus.Connecting: {
+      case DataSourceLifecycleEventTypes.Connecting: {
         // TODO: To be implemented
         break;
       }
-      case LifecycleEventStatus.Connected: {
+      case DataSourceLifecycleEventTypes.Connected: {
         // TODO: To be implemented
         break;
       }
-      case LifecycleEventStatus.ConnectionError: {
+      case DataSourceLifecycleEventTypes.ConnectionError: {
         // TODO: To be implemented
         break;
       }
-      case LifecycleEventStatus.Disconnected: {
+      case DataSourceLifecycleEventTypes.Disconnected: {
         // TODO: To be implemented
         break;
       }
-      case LifecycleEventStatus.Reconnecting: {
+      case DataSourceLifecycleEventTypes.Reconnecting: {
         // TODO: To be implemented
         break;
       }

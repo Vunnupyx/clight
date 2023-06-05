@@ -1,10 +1,8 @@
-import { IDataSinkLifecycleEvent } from '../modules/Northbound/DataSinks/interfaces';
 import { IDataSourceLifecycleEvent } from '../modules/Southbound/DataSources/interfaces';
 
 export enum EventLevels {
   Device = 'device',
   DataSource = 'dataSource',
-  DataSink = 'dataSink',
   DataPoint = 'dataPoint'
 }
 
@@ -40,6 +38,14 @@ export enum DeviceLifecycleEventTypes {
   DeviceConfigDoesNotExists = 'device.config-file-does-not-exists'
 }
 
+export enum DataSourceLifecycleEventTypes {
+  Connecting = 'datasource.connecting',
+  Connected = 'datasource.connected',
+  Disconnected = 'datasource.disconnected',
+  Reconnecting = 'datasource.reconnecting',
+  ConnectionError = 'datasource.failed-to-connect'
+}
+
 export enum DataPointLifecycleEventTypes {
   Init = 'datapoint.init',
   ReadError = 'datapoint.read-error',
@@ -49,7 +55,6 @@ export enum DataPointLifecycleEventTypes {
 export enum LifecycleEventStatus {
   Disabled = 'disabled',
   NotConfigured = 'notconfigured',
-  InvalidConfiguration = 'invalidconfiguration',
   TimeError = 'clienttimedeviation',
   NoNetwork = 'nonetwork',
   Connecting = 'connecting',
@@ -58,9 +63,7 @@ export enum LifecycleEventStatus {
   Reconnecting = 'reconnecting',
   ConnectionError = 'failedtoconnect',
   Unavailable = 'unavailable',
-  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted',
-  AuthenticationFailed = 'authenticationfailed',
-  InvalidState = 'invalidstate'
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
 }
 
 export interface IBaseAppEvent {
@@ -72,7 +75,7 @@ export interface IBaseAppEvent {
 
 export interface IBaseLifecycleEvent extends IBaseAppEvent {
   type:
-    | LifecycleEventStatus
+    | DataSourceLifecycleEventTypes
     | ErrorTypes
     | DeviceLifecycleEventTypes
     | DataPointLifecycleEventTypes;
@@ -82,9 +85,6 @@ export interface IErrorEvent extends IBaseAppEvent {
   level: EventLevels;
 }
 
-export type ILifecycleEvent =
-  | IDataSourceLifecycleEvent
-  | IDataSinkLifecycleEvent
-  | IBaseLifecycleEvent;
+export type ILifecycleEvent = IDataSourceLifecycleEvent | IBaseLifecycleEvent;
 
 export type IAppEvent = ILifecycleEvent | IErrorEvent;

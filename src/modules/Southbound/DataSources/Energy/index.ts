@@ -89,12 +89,8 @@ export class EnergyDataSource extends DataSource {
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
-        try {
-          this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
-          this.init();
-        } catch (error) {
-          winston.error(`${logPrefix} error in reconnecting: ${error}`);
-        }
+        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+        this.init();
       }, this.RECONNECT_TIMEOUT);
       return;
     }

@@ -1,6 +1,9 @@
 import winston from 'winston';
 import { DataSource } from '../DataSource';
-import { LifecycleEventStatus } from '../../../../common/interfaces';
+import {
+  DataSourceLifecycleEventTypes,
+  LifecycleEventStatus
+} from '../../../../common/interfaces';
 import { IDataPointConfig } from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
 import {

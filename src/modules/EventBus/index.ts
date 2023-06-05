@@ -1,6 +1,7 @@
 import winston from 'winston';
 import { IAppEvent } from '../../common/interfaces';
 import { IDataSourceMeasurementEvent } from '../Southbound/DataSources/interfaces';
+import { LogLevel } from '../Logger/interfaces';
 import { TSubscriberFn } from './interfaces';
 
 /**
@@ -8,10 +9,14 @@ import { TSubscriberFn } from './interfaces';
  */
 export class EventBus<TEventType> {
   private callbacks: { [key: string]: TSubscriberFn<TEventType> } = {};
+  protected logLevel: string;
 
-  constructor(private name: string = EventBus.name) {
-    // Activate if necessary
-    // this.addEventListener(this.log.bind(this), `EventBus_log`);
+  constructor(logLevel: LogLevel = null) {
+    this.logLevel = logLevel;
+
+    if (this.logLevel) {
+      this.addEventListener(this.log.bind(this), `EventBus_log`);
+    }
   }
 
   /**
@@ -28,8 +33,7 @@ export class EventBus<TEventType> {
       const message = `Level: ${level}, Type: ${type}, ${id}${
         payload ? `, Payload: ${payload?.toString()}` : ''
       }`;
-
-      winston.verbose(message, { source: 'EVENTBUS' });
+      // winston.log(this.logLevel, message, { source: 'EVENTBUS' });
     });
   }
 
@@ -40,7 +44,7 @@ export class EventBus<TEventType> {
    * @returns void
    */
   public addEventListener(cb: TSubscriberFn<TEventType>, id: string): void {
-    const logPrefix = `${this.name}::addEventListener`;
+    const logPrefix = `${EventBus.name}::addEventListener`;
     if (this.callbacks[id]) {
       winston.warn(
         `${logPrefix} callback with id ${id} already exists. Overwriting the event listener.`
@@ -54,7 +58,7 @@ export class EventBus<TEventType> {
    * @param id The id of the callback that should be removed
    */
   public removeEventListener(id: string): void {
-    const logPrefix = `${this.name}::removeEventListener`;
+    const logPrefix = `${EventBus.name}::removeEventListener`;
     if (this.callbacks[id]) {
       delete this.callbacks[id];
     } else {
@@ -72,14 +76,9 @@ export class EventBus<TEventType> {
   // TODO Rename
   public async push(event: TEventType): Promise<void> {
     // TODO These are not promises
-    const logPrefix = `${this.name}::push`;
+    const logPrefix = `${EventBus.name}::push`;
 
     const promises = Object.values(this.callbacks).map((cb) => cb(event));
-
-    // winston.verbose(
-    //   `${logPrefix} pushing event to ${promises.length} callbacks`
-    // );
-
     await Promise.allSettled(promises).then((results) => {
       results.forEach((result) => {
         if (result.status === 'rejected')

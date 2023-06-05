@@ -47,10 +47,7 @@ export class Logger {
       maxSize: '10m',
       handleExceptions: true,
       handleRejections: true,
-      filename:
-        process.env.NODE_ENV === 'development'
-          ? path.join(__dirname, '../../../mdclight/logs')
-          : '/etc/mdc-light/logs',
+      filename: path.join(__dirname, '../../../mdclight/logs/mdc-light'),
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),

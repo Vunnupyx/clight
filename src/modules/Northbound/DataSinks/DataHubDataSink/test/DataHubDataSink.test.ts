@@ -57,14 +57,10 @@ jest.doMock('../../../../DataPointMapper', () => {
 
 import {
   IDataHubConfig,
-  IDataSinkConfig,
-  IGeneralConfig
+  IDataSinkConfig
 } from '../../../../ConfigManager/interfaces';
 import { DataHubDataSink, DataHubDataSinkOptions } from '..';
-import {
-  DataSinkProtocols,
-  LifecycleEventStatus
-} from '../../../../../common/interfaces';
+import { LifecycleEventStatus } from '../../../../../common/interfaces';
 import { DataPointCache } from '../../../../DatapointCache';
 
 jest.mock('../../../../DatapointCache');
@@ -72,16 +68,9 @@ jest.mock('../../../../DatapointCache');
  * GLOBAL MOCKS
  */
 const configMock: IDataSinkConfig = {
-  protocol: DataSinkProtocols.DATAHUB,
+  protocol: 'datahub',
   enabled: true,
   dataPoints: []
-};
-
-const generalConfigMock: IGeneralConfig = {
-  manufacturer: '',
-  serialNumber: '',
-  model: '',
-  control: ''
 };
 
 const runTimeConfigMock: IDataHubConfig = {
@@ -108,7 +97,6 @@ describe('DataHubDataSink', () => {
   let datasinkUUT: DataHubDataSink;
   let dataHubDataSinkOptions: DataHubDataSinkOptions = {
     mapping: [],
-    generalConfig: generalConfigMock,
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
     termsAndConditionsAccepted: true,

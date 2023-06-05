@@ -7,8 +7,7 @@ import { ConfigManager } from '../../../../ConfigManager';
 import emptyDefaultConfig from '../../../../../../_mdclight/runtime-files/templates/empty.json';
 import {
   IDataSinkConfig,
-  IDataSourceConfig,
-  IGeneralConfig
+  IDataSourceConfig
 } from '../../../../ConfigManager/interfaces';
 import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../../../EventBus';
@@ -31,13 +30,6 @@ jest.mock('../../../../SyncScheduler', () => ({
     }))
   }
 }));
-
-const generalConfigMock: IGeneralConfig = {
-  manufacturer: '',
-  serialNumber: '',
-  model: '',
-  control: ''
-};
 
 let addDataItemMock = jest.fn();
 (ConfigManager as any).mockImplementation(() => {
@@ -77,7 +69,6 @@ describe('Test MTConnectDataSink', () => {
 
     const dataSink = new MTConnectDataSink({
       mapping: [],
-      generalConfig: generalConfigMock,
       dataSinkConfig,
       mtConnectConfig,
       messengerManager,
@@ -135,7 +126,6 @@ describe('Test MTConnectDataSink', () => {
     const dataSink = new MTConnectDataSink({
       mapping: config.config.mapping,
       dataSinkConfig,
-      generalConfig: generalConfigMock,
       mtConnectConfig,
       messengerManager,
       termsAndConditionsAccepted: true,
@@ -190,7 +180,7 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
-      protocol: DataSinkProtocols.MTCONNECT,
+      protocol: '',
       enabled: true,
       dataPoints: [
         {
@@ -215,7 +205,6 @@ describe('Test MTConnectDataSink', () => {
     const dataSink = new MTConnectDataSink({
       mapping: config.config.mapping,
       dataSinkConfig,
-      generalConfig: generalConfigMock,
       mtConnectConfig,
       messengerManager,
       termsAndConditionsAccepted: true,
@@ -280,7 +269,7 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     const dataSinkConfig: IDataSinkConfig = {
-      protocol: DataSinkProtocols.MTCONNECT,
+      protocol: '',
       enabled: true,
       dataPoints: [
         {
@@ -310,7 +299,6 @@ describe('Test MTConnectDataSink', () => {
     const dataSink = new MTConnectDataSink({
       mapping: config.config.mapping,
       dataSinkConfig,
-      generalConfig: generalConfigMock,
       mtConnectConfig,
       messengerManager,
       termsAndConditionsAccepted: true,
@@ -356,7 +344,7 @@ describe('Test MTConnectDataSink', () => {
     });
 
     const dataSinkConfig: IDataSinkConfig = {
-      protocol: DataSinkProtocols.MTCONNECT,
+      protocol: '',
       enabled: true,
       dataPoints: []
     };
@@ -364,7 +352,6 @@ describe('Test MTConnectDataSink', () => {
     const dataSink = new MTConnectDataSink({
       mapping: [],
       dataSinkConfig,
-      generalConfig: generalConfigMock,
       mtConnectConfig,
       messengerManager,
       termsAndConditionsAccepted: true,

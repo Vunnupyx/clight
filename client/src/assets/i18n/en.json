@@ -180,7 +180,6 @@
     "Select": "Select",
     "Enabled": "Enabled",
     "MachineName": "Machine Name",
-    "IPAddress": "IP Address",
     "Host": "Host",
     "Connection": "Connection",
     "Running": "Running",
@@ -330,7 +329,7 @@
     "BulkError": "Changes have not been applied. Please, try again!",
     "LoadError": "Failed to load source data points. Try again later",
     "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
-    "HostUnreachable": "Host unreachable please check data source configuration",
+    "HostUnreachable": "Host unreachable please check IP configuration",
     "HostDisabled": "Data source is disabled, please check data source settings."
   },
   "settings-data-sink": {
@@ -411,6 +410,7 @@
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Password",
+    "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "HasDataMapping": "Data point is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",

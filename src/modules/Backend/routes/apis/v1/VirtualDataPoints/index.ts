@@ -63,11 +63,10 @@ async function postSingleVdpHandler(
         newVdp.resetSchedules[index].lastReset = undefined;
       }
     }
-    configManager.changeConfig<'virtualDataPoints', IVirtualDataPointConfig>(
-      'insert',
+    configManager.insertIntoConfig<
       'virtualDataPoints',
-      newVdp
-    );
+      IVirtualDataPointConfig
+    >('virtualDataPoints', newVdp, (item) => item.id === newVdp.id);
     await configManager.configChangeCompleted();
     response.status(200).json({
       created: newVdp,
@@ -137,7 +136,10 @@ async function deleteSingleVdpHandler(
     (point) => point.id === request.params.id
   );
   if (vdp) {
-    configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
+    configManager.deleteFromConfig<
+      'virtualDataPoints',
+      IVirtualDataPointConfig
+    >('virtualDataPoints', (item) => item.id === vdp.id);
     await configManager.configChangeCompleted();
   }
   response.status(vdp ? 200 : 404).json({
@@ -163,12 +165,10 @@ async function patchSingleVdpHandler(
       if (!isValidVdp(newVdp)) {
         throw new Error();
       }
-      configManager.changeConfig<'virtualDataPoints', IVirtualDataPointConfig>(
-        'update',
+      configManager.updateInConfig<
         'virtualDataPoints',
-        newVdp,
-        (vdp) => (vdp.id = newVdp.id)
-      );
+        IVirtualDataPointConfig
+      >('virtualDataPoints', newVdp, (item) => item.id === newVdp.id);
       await configManager.configChangeCompleted();
     }
     response.status(200).json({

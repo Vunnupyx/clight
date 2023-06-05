@@ -223,11 +223,10 @@ async function patchAllDatapointsHandler(
       return Promise.resolve();
     }
     dataSource = { ...dataSource, dataPoints: newDataPointsArray };
-    configManager.changeConfig<'dataSources', IDataSourceConfig>(
-      'update',
+    configManager.updateInConfig<'dataSources', IDataSourceConfig>(
       'dataSources',
       dataSource,
-      (item) => item.protocol
+      (item) => item.protocol === dataSource?.protocol
     );
     await configManager.configChangeCompleted();
     response.status(200).send();

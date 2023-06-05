@@ -126,3 +126,44 @@ export function pingSocketPromise(
     }
   });
 }
+
+export function insertToArrayIfNotExists<EntryType>(
+  array: EntryType[],
+  entry: EntryType,
+  validatorFn?: (arg0: EntryType) => boolean
+): void {
+  const index = array.findIndex((item) =>
+    validatorFn ? validatorFn(item) : item === entry
+  );
+  if (index < 0) {
+    //inserts entry if not exists
+    array.push(entry);
+  }
+}
+
+export function deleteFromArray<EntryType>(
+  array: EntryType[],
+  validatorFn: (arg0: EntryType) => boolean
+): void {
+  const index = array.findIndex((item) => validatorFn(item));
+  if (index < 0) {
+    throw Error(`No Entry found`);
+  } else {
+    // Removes entry
+    array.splice(index, 1);
+  }
+}
+
+export function updateItemInArray<EntryType>(
+  array: EntryType[],
+  entry: EntryType,
+  validatorFn: (arg0: EntryType) => boolean
+): void {
+  const index = array.findIndex((item) => validatorFn(item));
+  if (index < 0) {
+    throw Error(`No Entry found`);
+  } else {
+    //Replaces entry
+    array.splice(index, 1, entry);
+  }
+}

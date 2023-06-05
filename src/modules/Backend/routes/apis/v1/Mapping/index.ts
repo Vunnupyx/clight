@@ -115,11 +115,10 @@ async function patchSingleMappingHandler(
       id: request.params.mapId
     };
 
-    configManager.changeConfig<'mapping', IDataPointMapping>(
-      'update',
+    configManager.updateInConfig<'mapping', IDataPointMapping>(
       'mapping',
       updatedMapping,
-      (item) => item.id
+      (item) => item.id === updatedMapping.id
     );
     await configManager.configChangeCompleted();
 

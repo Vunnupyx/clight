@@ -174,11 +174,10 @@ async function patchSingleDataSinkHandler(
   }
 
   dataSink = { ...dataSink, ...updatedDataSink };
-  configManager.changeConfig<'dataSinks', IDataSinkConfig>(
-    'update',
+  configManager.updateInConfig<'dataSinks', IDataSinkConfig>(
     'dataSinks',
     dataSink,
-    (item) => item.protocol
+    (item) => item.protocol === dataSink?.protocol
   );
   await configManager.configChangeCompleted();
   response.status(200).json(dataSink);
@@ -217,11 +216,10 @@ async function patchAllDatapointsHandler(
       return Promise.resolve();
     }
     dataSink = { ...dataSink, dataPoints: newDataPointsArray };
-    configManager.changeConfig<'dataSinks', IDataSinkConfig>(
-      'update',
+    configManager.updateInConfig<'dataSinks', IDataSinkConfig>(
       'dataSinks',
       dataSink,
-      (item) => item.protocol
+      (item) => item.protocol === dataSink?.protocol
     );
     await configManager.configChangeCompleted();
     response.status(200).send();

@@ -36,7 +36,12 @@ import winston from 'winston';
 import { System } from '../System';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
-import { areObjectsEqual } from '../Utilities';
+import {
+  areObjectsEqual,
+  deleteFromArray,
+  insertToArrayIfNotExists,
+  updateItemInArray
+} from '../Utilities';
 import { factoryConfig } from './factoryConfig';
 import { runtimeConfig } from './runtimeConfig';
 import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
@@ -802,71 +807,96 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     await this.configChangeCompleted();
   }
 
-  /**
-   * change the config with a given object or change it.
-   */
-  public changeConfig<
+  /** Inserts an object into the config, for example adding a new mapping to list of Mappings */
+  public insertIntoConfig<
     Category extends keyof Omit<
       IConfig,
       'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
     >,
-    DataType extends IConfig[Category][number]
+    DataType extends IConfig[keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >][number]
   >(
-    operation: ChangeOperation,
     configCategory: Category,
-    data: DataType | string,
-    selector: (item: DataType) => string = (item) => item.id
+    data: DataType,
+    validatorFn: (item: DataType) => boolean
   ) {
-    const logPrefix = `${this.constructor.name}::changeConfig`;
-    if (operation === 'delete' && typeof data !== 'string')
-      throw new Error(`${logPrefix} error due try to delete without id.`); // Combination actually not defined in type def.
-
-    const categoryArray = this.config[configCategory];
-
-    if (!Array.isArray(categoryArray)) return;
-
-    switch (operation) {
-      case 'insert': {
-        if (typeof data !== 'string') {
-          const index = categoryArray.findIndex(
-            (entry) => selector(entry) === selector(data)
-          );
-          if (index < 0) {
-            categoryArray.push(data);
-          }
-        }
-        break;
-      }
-      case 'update': {
-        if (typeof data === 'string' || isDataPointMapping(data))
-          throw new Error();
-        const index = categoryArray.findIndex(
-          (entry) => selector(entry) === selector(data)
-        );
-        if (index < 0) throw Error(`No Entry found`); //TODO:
-        const change = categoryArray[index];
-        categoryArray.splice(index, 1);
-        categoryArray.push(data);
-        break;
-      }
-      case 'delete': {
-        const index = categoryArray.findIndex(
-          (entry) => selector(entry) === data
-        );
-        if (index < 0) throw Error(`No Entry found`); //TODO:
-        const change = categoryArray[index];
-        categoryArray.splice(index, 1);
-        break;
-      }
-      default: {
-        throw new Error();
-      }
+    const logPrefix = `${ConfigManager.name}::${this.insertIntoConfig.name}`;
+    try {
+      const categoryArray = this.config[configCategory] as DataType[];
+      if (!Array.isArray(categoryArray)) return;
+      insertToArrayIfNotExists<DataType>(categoryArray, data, validatorFn);
+      /**
+       * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+       * This setter already includes this.saveConfigToFile();
+       */
+      this.config = this.config;
+    } catch (error) {
+      winston.error(
+        `${logPrefix} error while updating from ${configCategory} config: ${error}`
+      );
     }
-    /**
-     * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
-     * This setter already includes this.saveConfigToFile();
-     */
-    this.config = this.config;
+  }
+
+  /** Updates an existing object in the config, for example renaming a VDP in the list of VDPs */
+  public updateInConfig<
+    Category extends keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >,
+    DataType extends IConfig[keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >][number]
+  >(
+    configCategory: Category,
+    data: DataType,
+    validatorFn: (item: DataType) => boolean
+  ) {
+    const logPrefix = `${ConfigManager.name}::${this.updateInConfig.name}`;
+    try {
+      const categoryArray = this.config[configCategory] as DataType[];
+      if (!Array.isArray(categoryArray)) return;
+      updateItemInArray<DataType>(categoryArray, data, validatorFn);
+      /**
+       * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+       * This setter already includes this.saveConfigToFile();
+       */
+      this.config = this.config;
+    } catch (error) {
+      winston.error(
+        `${logPrefix} error while updating from ${configCategory} config: ${error}`
+      );
+    }
+  }
+
+  /** Deletes an object from the config, for example removing a mapping from list of Mappings */
+  public deleteFromConfig<
+    Category extends keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >,
+    DataType extends IConfig[keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >][number]
+  >(configCategory: Category, validatorFn: (item: DataType) => boolean) {
+    const logPrefix = `${ConfigManager.name}::${this.deleteFromConfig.name}`;
+    try {
+      const categoryArray = this.config[configCategory] as DataType[];
+      if (!Array.isArray(categoryArray)) return;
+      deleteFromArray<DataType>(categoryArray, validatorFn);
+      /**
+       * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+       * This setter already includes this.saveConfigToFile();
+       */
+      this.config = this.config;
+    } catch (error) {
+      winston.error(
+        `${logPrefix} error while deleting from ${configCategory} config: ${error}`
+      );
+    }
   }
 
   /**

@@ -382,7 +382,7 @@ export class VirtualDataPointComponent implements OnInit {
     this.virtualDataPointService.resetCounter(obj);
   }
 
-  getSourceNames(sources: string[]) {
+  getSourceNamesWithPrefix(sources: string[]) {
     return this.sources
       .filter((x) => sources.includes(x.id))
       .map(
@@ -392,6 +392,13 @@ export class VirtualDataPointComponent implements OnInit {
             this.getVirtualDataPointPrefix()
           } ${x.name}`
       )
+      .join(', ');
+  }
+
+  getSourceNames(sources: string[]) {
+    return this.sources
+      .filter((x) => sources.includes(x.id))
+      .map((x) => x.name)
       .join(', ');
   }
 
@@ -553,7 +560,7 @@ export class VirtualDataPointComponent implements OnInit {
       data: {
         thresholds: { ...virtualPoint.thresholds },
         source: virtualPoint.sources![0],
-        sourceName: this.getSourceNames(virtualPoint.sources!)
+        sourceName: this.getSourceNamesWithPrefix(virtualPoint.sources!)
       },
       width: '1400px',
       maxWidth: '100%'
@@ -729,4 +736,14 @@ export class VirtualDataPointComponent implements OnInit {
       (dp) => dp.operationType === VirtualDataPointOperationType.SET_TARIFF
     );
   }
+
+  compareSources = (rowA: string[], rowB: string[]) => {
+    const nameA = this.getSourceNames(rowA).toLowerCase();
+    const nameB = this.getSourceNames(rowB).toLowerCase();
+
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+
+    return 0;
+  };
 }

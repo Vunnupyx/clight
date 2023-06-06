@@ -4,9 +4,9 @@ import emptyDefaultConfig from '../../../../../_mdclight/runtime-files/templates
 import { ConfigManager } from '../../../ConfigManager';
 import { EventBus } from '../../../EventBus';
 import { DataSinkProtocols } from '../../../../common/interfaces';
-import { LogLevel } from '../../../Logger/interfaces';
+import { IMessengerServerConfig } from '../../../ConfigManager/interfaces';
 
-function log(m) {
+function log(m: any) {
   //console.log(m);
 }
 
@@ -29,8 +29,8 @@ let mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 let messengerAdapter: MessengerManager;
 let configManager = new ConfigManager({
-  errorEventsBus: new EventBus(LogLevel.DEBUG),
-  lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
+  errorEventsBus: new EventBus(),
+  lifecycleEventsBus: new EventBus()
 });
 
 describe('MessengerManager', () => {
@@ -47,6 +47,7 @@ describe('MessengerManager', () => {
         //@ts-ignore
         ...emptyDefaultConfig.dataSinks,
         {
+          //@ts-ignore
           protocol: DataSinkProtocols.MTCONNECT,
           enabled: true,
           //@ts-ignore
@@ -65,12 +66,13 @@ describe('MessengerManager', () => {
 
   test('initialization without configuration', async () => {
     messengerAdapter = new MessengerManager({
-      configManager
+      configManager,
+      messengerConfig: null!
     });
     await messengerAdapter.init();
 
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);
-    expect(messengerAdapter.messengerConfig).toEqual(undefined);
+    expect(messengerAdapter.messengerConfig).toEqual(null);
     expect(messengerAdapter.serverStatus.server).toEqual('not_configured');
     expect(messengerAdapter.serverStatus.registration).toEqual('unknown');
     expect(messengerAdapter.serverStatus.registrationErrorReason).toEqual(null);
@@ -79,7 +81,7 @@ describe('MessengerManager', () => {
   test('initialization with empty configuration', async () => {
     messengerAdapter = new MessengerManager({
       configManager,
-      messengerConfig: {}
+      messengerConfig: {} as IMessengerServerConfig
     });
     await messengerAdapter.init();
 
@@ -155,6 +157,7 @@ describe('MessengerManager', () => {
         //@ts-ignore
         ...emptyDefaultConfig.dataSinks,
         {
+          //@ts-ignore
           protocol: DataSinkProtocols.MTCONNECT,
           enabled: true,
           //@ts-ignore
@@ -714,7 +717,7 @@ describe('MessengerManager', () => {
 
     messengerAdapter = new MessengerManager({
       configManager,
-      messengerConfig: {}
+      messengerConfig: {} as IMessengerServerConfig
     });
     await messengerAdapter.init();
     expect(messengerAdapter).toBeInstanceOf(MessengerManager);

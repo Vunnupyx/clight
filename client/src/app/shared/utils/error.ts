@@ -1,8 +1,8 @@
-export function errorHandler(error) {
+export function errorHandler(error: any) {
   console.error(error);
 }
 
-export function errorMockup(error, mockup) {
+export function errorMockup(error: any, mockup: any) {
   console.error(error);
   console.log(
     '==========================' +

@@ -7,7 +7,7 @@ type TimeSeriesValue = {
   value: boolean | number | string;
 };
 
-type EventsById = {
+export type EventsById = {
   [id: string]: {
     changed: boolean;
     event: IDataSourceMeasurementEvent;

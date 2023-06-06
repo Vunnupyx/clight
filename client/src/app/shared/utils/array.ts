@@ -2,9 +2,11 @@ export function flatArray<T = any>(array: T[][]): T[] {
   return array.reduce((acc, curr) => acc.concat(...curr), []);
 }
 
-export function mapOrder<T>(array: T[], order, key): T[] {
+export function mapOrder<T>(array: T[], order: string[], key: string): T[] {
   array.sort((a, b) => {
+    //@ts-ignore TBD
     let A = a[key];
+    //@ts-ignore TBD
     let B = b[key];
 
     if (order.indexOf(A) > order.indexOf(B)) {
@@ -18,7 +20,7 @@ export function mapOrder<T>(array: T[], order, key): T[] {
 }
 
 export function unique<T>(array: T[], selector: (item: T) => any): T[] {
-  return [...new Map(array.map(item => [selector(item), item])).values()];
+  return [...new Map(array.map((item) => [selector(item), item])).values()];
 }
 
 export function ascendingSorter(a: any, b: any) {

@@ -1,7 +1,7 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
+import { EventsById } from '../../DatapointCache';
 import { MeasurementEventBus, EventBus } from '../../EventBus';
-import { LogLevel } from '../../Logger/interfaces';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
 jest.mock('winston');
@@ -13,9 +13,9 @@ jest.mock('../../ConfigManager');
 jest.mock('../../SyncScheduler');
 
 class mockCache {
-  private dataPoints = {};
+  private dataPoints: EventsById = {};
 
-  update(events) {
+  update(events: IDataSourceMeasurementEvent[]) {
     events?.forEach((event) => {
       const lastEvent = this.getCurrentEvent(event.measurement.id);
       this.dataPoints[event.measurement.id] = {
@@ -35,7 +35,7 @@ class mockCache {
       };
     });
   }
-  getCurrentEvent(id) {
+  getCurrentEvent(id: string) {
     return this.dataPoints[id]?.event;
   }
 
@@ -45,7 +45,7 @@ class mockCache {
     ];
   }
 
-  hasChanged(id) {
+  hasChanged(id: string) {
     return this.dataPoints[id]?.changed;
   }
 
@@ -60,8 +60,8 @@ class mockCache {
 
 describe('Test VirtualDataPointManager', () => {
   const mockConfigManager = new ConfigManager({
-    errorEventsBus: new EventBus(LogLevel.DEBUG),
-    lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
+    errorEventsBus: new EventBus(),
+    lifecycleEventsBus: new EventBus()
   });
   mockConfigManager.config = {
     virtualDataPoints: []
@@ -106,7 +106,7 @@ describe('Test VirtualDataPointManager', () => {
     }
   ];
 
-  const eventBus = new MeasurementEventBus(LogLevel.DEBUG);
+  const eventBus = new MeasurementEventBus();
   const cache = new mockCache() as any;
   let virtualDpManager = new VirtualDataPointManager({
     configManager: mockConfigManager,

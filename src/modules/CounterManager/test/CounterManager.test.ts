@@ -73,7 +73,7 @@ describe('Test CounterManager', () => {
               //Increase expected year if it is already date behind
               const expectedYear =
                 date.getMonth(currentTime) === 11 &&
-                date.getDate(currentTime) > schedule.date
+                Number(date.getDate(currentTime)) > Number(schedule.date)
                   ? date.getYear(currentTime) + 1
                   : date.getYear(currentTime);
 
@@ -160,7 +160,7 @@ describe('Test CounterManager', () => {
 
               //Increase expected month if it is already date behind
               const expectedMonth =
-                date.getDate(currentTime) > schedule.date
+                Number(date.getDate(currentTime)) > Number(schedule.date)
                   ? date.getMonth(currentTime) + 1
                   : date.getMonth(currentTime);
 
@@ -206,6 +206,7 @@ describe('Test CounterManager', () => {
                 lastReset: undefined,
                 created: Date.now()
               };
+              //@ts-ignore
               let scheduleDate = date[`next${day}`](currentTime);
               if (date.isBefore(scheduleDate, currentTime)) {
                 scheduleDate = date.addMonths(scheduleDate, 1);
@@ -232,7 +233,7 @@ describe('Test CounterManager', () => {
               };
 
               const expectedDate =
-                date.getHours(currentTime) >= schedule.hours
+                Number(date.getHours(currentTime)) >= Number(schedule.hours)
                   ? date.getDate(currentTime) + 1
                   : date.getDate(currentTime);
 
@@ -264,7 +265,7 @@ describe('Test CounterManager', () => {
               };
 
               const expectedHour =
-                date.getMinutes(currentTime) >= schedule.minutes
+                Number(date.getMinutes(currentTime)) >= Number(schedule.minutes)
                   ? date.getHours(currentTime) + 1
                   : date.getHours(currentTime);
 

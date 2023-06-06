@@ -6,16 +6,17 @@ import {
 import { ConfigManager } from '../../../../ConfigManager';
 import emptyDefaultConfig from '../../../../../../_mdclight/runtime-files/templates/empty.json';
 import {
+  IConfig,
   IDataSinkConfig,
   IDataSourceConfig,
-  IGeneralConfig
+  IGeneralConfig,
+  IMessengerServerConfig
 } from '../../../../ConfigManager/interfaces';
 import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../../../EventBus';
 import { MTConnectAdapter } from '../../../Adapter/MTConnectAdapter';
 import { MessengerManager } from '../../../MessengerManager';
 import { DataPointCache } from '../../../../DatapointCache';
-import { LogLevel } from '../../../../Logger/interfaces';
 
 jest.mock('fs');
 jest.mock('winston');
@@ -65,7 +66,10 @@ afterEach(() => {
 describe('Test MTConnectDataSink', () => {
   const PORT = 7881;
   const mtConnectConfig = { listenerPort: PORT };
-  const messengerManager = new MessengerManager({});
+  const messengerManager = new MessengerManager({
+    configManager: {} as Readonly<ConfigManager>,
+    messengerConfig: {} as IMessengerServerConfig
+  });
   test('should add data item', async () => {
     const dataSinkConfig: IDataSinkConfig = {
       protocol: DataSinkProtocols.MTCONNECT,
@@ -101,8 +105,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should map bool values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(LogLevel.DEBUG),
-      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -165,8 +169,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should map enum values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(LogLevel.DEBUG),
-      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -255,8 +259,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('should not change string or number values', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(LogLevel.DEBUG),
-      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSourceConfig: IDataSourceConfig = {
@@ -352,8 +356,8 @@ describe('Test MTConnectDataSink', () => {
 
   test('with initialization value is set to 0', async () => {
     const config = new ConfigManager({
-      errorEventsBus: new EventBus(LogLevel.DEBUG),
-      lifecycleEventsBus: new EventBus(LogLevel.DEBUG)
+      errorEventsBus: new EventBus(),
+      lifecycleEventsBus: new EventBus()
     });
 
     const dataSinkConfig: IDataSinkConfig = {

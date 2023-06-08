@@ -8,7 +8,6 @@ let dataPointCache: DataPointCache;
 
 /**
  * Set ConfigManager to make accessible for local function
- * @param {ConfigManager} config
  */
 export function setConfigManager(config: ConfigManager) {
   configManager = config;
@@ -16,7 +15,6 @@ export function setConfigManager(config: ConfigManager) {
 
 /**
  * Set DataPointCache to make accessible for local function
- * @param {DataPointCache} cache
  */
 export function setDataPointCache(cache: DataPointCache) {
   dataPointCache = cache;
@@ -24,8 +22,6 @@ export function setDataPointCache(cache: DataPointCache) {
 
 /**
  * Get livedata for VDPs
- * @param  {Request} request
- * @param  {Response} response
  */
 function livedataVirtualDataPointsGetHandler(
   request: Request,
@@ -59,38 +55,6 @@ function livedataVirtualDataPointsGetHandler(
   response.status(200).json(payload);
 }
 
-/**
- * Get livedata for VDPs by VDP id
- * @param  {Request} request
- * @param  {Response} response
- */
-function livedataVirtualDataPointGetHandler(
-  request: Request,
-  response: Response
-): void {
-  const value = dataPointCache.getLastestValue(request.params.id);
-  const timeseriesIncluded = request.query.timeseries === 'true';
-
-  if (!value) {
-    response.status(404).send();
-
-    return;
-  }
-
-  const payload: any = {
-    dataPointId: request.params.id,
-    value: value.value,
-    timestamp: Math.round(new Date(value.ts).getTime() / 1000)
-  };
-
-  if (timeseriesIncluded) {
-    payload.timeseries = dataPointCache.getTimeSeries(request.params.id);
-  }
-
-  response.status(200).json(payload);
-}
-
 export const livedataVirtualDataPointsHandlers = {
-  livedataVirtualDataPointsGet: livedataVirtualDataPointsGetHandler,
-  livedataVirtualDataPointGet: livedataVirtualDataPointGetHandler
+  livedataVirtualDataPointsGetHandler
 };

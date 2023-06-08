@@ -1,74 +1,38 @@
-import { Request, Response } from 'express';
-import * as uuid from 'uuid';
-
-import { AuthManager } from '../../../../AuthManager';
+import { Response } from 'express';
+import { AuthManager, Request } from '../../../../AuthManager';
 
 let authManager: AuthManager;
 
-export function setAuthManager(auth: AuthManager) {
+export function setAuthManager(auth: AuthManager): void {
   authManager = auth;
 }
 
 /**
  * Login POST Handler
- * @param  {Request} request
- * @param  {Response} response
  */
-function loginPostHandler(request: Request, response: Response) {
+function loginPostHandler(
+  request: Request,
+  response: Response
+): Promise<Response> {
   if (!request.body.userName || !request.body.password) {
-    response.status(400).json({ message: 'Wrong Data!' });
-    return;
+    return Promise.resolve(
+      response.status(400).json({ message: 'Wrong Data!' })
+    );
   }
 
-  authManager
+  return authManager
     .login(request.body.userName, request.body.password)
     .then((payload) => response.status(200).json(payload))
     .catch((error) => response.status(400).json({ message: error.message }));
 }
 
 /**
- * Send Reset Link POST Handler
- * @param  {Request} request
- * @param  {Response} response
+ * Change Password POST Handler
  */
-function sendResetLinkPostHandler(request: Request, response: Response) {
-  const passwordResetToken = uuid.v4();
-
-  // TODO: implement reset link post handler
-  response.status(200).send();
-}
-
-/**
- * Verify Reset Password Token POST Handler
- * @param  {Request} request
- * @param  {Response} response
- */
-function verifyResetPasswordTokenPostHandler(
+async function changePasswordPostHandler(
   request: Request,
   response: Response
-) {
-  // TODO: implement verify reset token post handler
-
-  response.status(200).send();
-}
-
-/**
- * Reset Password POST Handler
- * @param  {Request} request
- * @param  {Response} response
- */
-function resetPasswordPostHandler(request: Request, response: Response) {
-  // TODO: implement reset password post handler
-
-  response.status(200).send();
-}
-
-/**
- * Change Password POST Handler
- * @param  {Request} request
- * @param  {Response} response
- */
-async function changePasswordPostHandler(request: Request, response: Response) {
+): Promise<void> {
   authManager
     .changePassword(
       request.user.userName,
@@ -80,9 +44,6 @@ async function changePasswordPostHandler(request: Request, response: Response) {
 }
 
 export const authHandlers = {
-  loginPost: loginPostHandler,
-  sendResetLinkPost: sendResetLinkPostHandler,
-  verifyResetPasswordTokenPost: verifyResetPasswordTokenPostHandler,
-  resetPasswordPost: resetPasswordPostHandler,
-  changePasswordPost: changePasswordPostHandler
+  loginPostHandler,
+  changePasswordPostHandler
 };

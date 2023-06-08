@@ -13,16 +13,14 @@ let configManager: ConfigManager;
 /**
  * Set ConfigManager to make accessible for local function
  */
-export function setConfigManager(config: ConfigManager) {
+export function setConfigManager(config: ConfigManager): void {
   configManager = config;
 }
 
 /**
  * Handles download requests of the config file.
- * @param  {Request} request
- * @param  {Response} response
  */
-function backupGetHandle(request: Request, response: Response): void {
+function backupGetHandler(request: Request, response: Response): void {
   try {
     const config = configManager?.config;
     if (!config) {
@@ -37,16 +35,14 @@ function backupGetHandle(request: Request, response: Response): void {
     });
     fs.createReadStream(configManager.configPath).pipe(response);
   } catch (err) {
-    winston.error(`backupGetHandle error due to ${JSON.stringify(err)}`);
+    winston.error(`backupGetHandle error due to ${err}`);
   }
 }
 
 /**
  * Handles upload requests of a new config file
- * @param  {Request} request
- * @param  {Response} response
  */
-async function backupPostHandle(
+async function backupPostHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -56,7 +52,7 @@ async function backupPostHandle(
     winston.error('Backup restore failed. No file provided!');
 
     response.status(400).json({ message: 'No config file provided!' });
-    return;
+    return Promise.resolve();
   }
 
   try {
@@ -71,7 +67,7 @@ async function backupPostHandle(
 }
 
 /**
- * Bundle logs into zip archiv and send it with response
+ * Bundle logs into zip archive and send it with response
  */
 async function logsGetHandler(
   request: Request,
@@ -163,7 +159,7 @@ async function logsGetHandler(
 }
 
 export const backupHandlers = {
-  backupGet: backupGetHandle,
-  backupPost: backupPostHandle,
-  logsGet: logsGetHandler
+  backupGetHandler,
+  backupPostHandler,
+  logsGetHandler
 };

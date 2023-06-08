@@ -1,21 +1,17 @@
 import { ConfigManager } from '../../../../../ConfigManager';
-import { Request, response, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { Request, Response } from 'express';
 
 let configManager: ConfigManager;
 
 /**
  * Set ConfigManager to make accessible for local function
- * @param  {ConfigManager} config
  */
-export function setConfigManager(config: ConfigManager) {
+export function setConfigManager(config: ConfigManager): void {
   configManager = config;
 }
 
 /**
  * Gets Terms and Conditions
- * @param  {Request} request
- * @param  {Response} response
  */
 async function termsAndConditionsGetHandler(
   request: Request,
@@ -31,8 +27,6 @@ async function termsAndConditionsGetHandler(
 
 /**
  * Accepts Terms and Conditions
- * @param  {Request} request
- * @param  {Response} response
  */
 async function termsAndConditionsPostHandler(
   request: Request,
@@ -48,6 +42,6 @@ async function termsAndConditionsPostHandler(
 }
 
 export const termsAndConditionsHandlers = {
-  termsAndConditionsGet: termsAndConditionsGetHandler,
-  termsAndConditionsPost: termsAndConditionsPostHandler
+  termsAndConditionsGetHandler,
+  termsAndConditionsPostHandler
 };

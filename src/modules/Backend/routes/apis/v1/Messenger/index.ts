@@ -23,24 +23,20 @@ interface IMessengerServerConfigResponse
 
 /**
  * Set ConfigManager to make accessible for local function
- * @param  {ConfigManager} manager
  */
-export function setConfigManager(manager: ConfigManager) {
+export function setConfigManager(manager: ConfigManager): void {
   configManager = manager;
 }
 
 /**
  * Set DataSinksManager to make accessible for local function
- * @param {DataSinksManager} manager
  */
-export function setDataSinksManager(manager: DataSinksManager) {
+export function setDataSinksManager(manager: DataSinksManager): void {
   dataSinksManager = manager;
 }
 
 /**
  * Returns current server configuration.
- * @param  {Request} request
- * @param  {Response} response
  */
 function messengerConfigurationGetHandler(
   request: Request,
@@ -70,8 +66,6 @@ function messengerConfigurationGetHandler(
 
 /**
  * Updates current server configuration
- * @param  {Request} request
- * @param  {Response} response
  */
 async function messengerConfigurationPostHandler(
   request: Request,
@@ -112,10 +106,11 @@ async function messengerConfigurationPostHandler(
 
 /**
  * Returns the current status of server
- * @param  {Request} request
- * @param  {Response} response
  */
-async function messengerStatusGetHandler(request: Request, response: Response) {
+async function messengerStatusGetHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   try {
     await dataSinksManager.messengerManager.checkStatus();
 

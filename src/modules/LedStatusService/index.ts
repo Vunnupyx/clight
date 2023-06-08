@@ -94,29 +94,38 @@ export class LedStatusService {
     const logPrefix = `${LedStatusService.name}::checkUserLED1`;
 
     winston.debug(`${logPrefix} start checking.`);
-
-    if (this.isConfigured()) {
-      if (this.getDataSourcesConnected() && this.getDataSinksConnected()) {
-        this.setLed1State('connected');
+    try {
+      if (this.isConfigured()) {
+        if (this.getDataSourcesConnected() && this.getDataSinksConnected()) {
+          this.setLed1State('connected');
+        } else {
+          this.setLed1State('configured');
+        }
       } else {
-        this.setLed1State('configured');
+        // not configured
+        this.setLed1State('not_configured');
       }
-    } else {
-      // not configured
+    } catch (error) {
+      winston.error(`${logPrefix} error checking USER LED 1: ${error}`);
+      // set to not configured
       this.setLed1State('not_configured');
     }
   }
 
   private getConfiguredSources = (): DataSourceProtocols[] => {
-    return this.configManager.config?.dataSources
-      ?.filter((source) => source.enabled && source.dataPoints?.length > 0)
-      .map((source) => source.protocol);
+    return (
+      this.configManager.config?.dataSources
+        ?.filter((source) => source.enabled && source.dataPoints?.length > 0)
+        ?.map((source) => source.protocol) || []
+    );
   };
 
   private getConfiguredSinks = (): DataSinkProtocols[] => {
-    return this.configManager.config?.dataSinks
-      ?.filter((sink) => sink.enabled && sink.dataPoints.length > 0)
-      .map((sink) => sink.protocol);
+    return (
+      this.configManager.config?.dataSinks
+        ?.filter((sink) => sink.enabled && sink.dataPoints.length > 0)
+        ?.map((sink) => sink.protocol) || []
+    );
   };
 
   private getConfiguredMappings = (): IDataPointMapping[] => {

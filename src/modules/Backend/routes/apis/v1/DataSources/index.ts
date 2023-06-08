@@ -32,17 +32,15 @@ let dataSourcesManager: DataSourcesManager;
 
 /**
  * Set ConfigManager to make accessible for local function
- * @param {ConfigManager} manager
  */
-export function setConfigManager(manager: ConfigManager) {
+export function setConfigManager(manager: ConfigManager): void {
   configManager = manager;
 }
 
 /**
  * Set dataSourcesManager to make accessible for local function
- * @param {DataSourcesManager} manager
  */
-export function setDataSourcesManager(manager: DataSourcesManager) {
+export function setDataSourcesManager(manager: DataSourcesManager): void {
   dataSourcesManager = manager;
 }
 
@@ -50,14 +48,14 @@ export function setDataSourcesManager(manager: DataSourcesManager) {
  * Checks if given protocol is a valid data source protocol
  */
 function isValidProtocol(protocol: any): boolean {
-  return Object.values(DataSourceProtocols).includes(protocol);
+  return (
+    typeof protocol === 'string' &&
+    Object.values(DataSourceProtocols).includes(protocol as DataSourceProtocols)
+  );
 }
 
 /**
  * Handle all requests for the list of datasources.
- * @param  {Request} request
- * @param  {Response} response
- *
  */
 function getAllDataSourcesHandler(request: Request, response: Response): void {
   const SUPPORTED_DATA_SOURCE_PROTOCOLS = [
@@ -77,8 +75,6 @@ function getAllDataSourcesHandler(request: Request, response: Response): void {
 
 /**
  * Handle all get requests for a specific datasource.
- * @param  {Request} request
- * @param  {Response} response
  */
 function getSingleDataSourceHandler(
   request: Request,
@@ -97,8 +93,6 @@ function getSingleDataSourceHandler(
 /**
  * Handle all patch requests for modifying a specific datasource.
  * Only enabling and disabling is allowed.
- * @param  {Request} request
- * @param  {Response} response
  */
 async function patchSingleDataSourceHandler(
   request: Request,
@@ -174,10 +168,11 @@ async function patchSingleDataSourceHandler(
 
 /**
  * Return all datapoints of the selected datasource
- * @param  {Request} request
- * @param  {Response} response
  */
-function getAllDatapointsHandler(request: Request, response: Response): void {
+function getAllDataSourceDatapointsHandler(
+  request: Request,
+  response: Response
+): void {
   if (!isValidProtocol(request.params.datasourceProtocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
@@ -191,12 +186,9 @@ function getAllDatapointsHandler(request: Request, response: Response): void {
 }
 
 /**
- * @async
  * Bulk dataPoint changes
- * @param  {Request} request
- * @param  {Response} response
  */
-async function patchAllDatapointsHandler(
+async function patchAllDataSourceDatapointsHandler(
   request: Request,
   response: Response
 ): Promise<void> {
@@ -217,7 +209,7 @@ async function patchAllDatapointsHandler(
     );
     if (!dataSource) {
       winston.warn(
-        `patchAllDatapointsHandler:: data source is not defined for protocol ${protocol}`
+        `patchAllDataSourceDatapointsHandler:: data source is not defined for protocol ${protocol}`
       );
       response.status(404).send();
       return Promise.resolve();
@@ -231,157 +223,11 @@ async function patchAllDatapointsHandler(
     await configManager.configChangeCompleted();
     response.status(200).send();
   } catch (err) {
-    winston.warn(`patchAllDatapointsHandler:: error due to ${err}`);
+    winston.warn(`patchAllDataSourceDatapointsHandler:: error due to ${err}`);
     response
       .status(400)
       .json({ error: 'Cannot change datapoints. Try again!' });
   }
-}
-
-/**
- * Insert a new datapoint
- * @param  {Request} request
- * @param  {Response} response
- */
-async function postSingleDatapointHandler(
-  request: Request,
-  response: Response
-): Promise<void> {
-  const protocol = request.params.datasourceProtocol;
-  const newDataPoint = request.body as IDataPointConfig;
-
-  if (!isValidProtocol(protocol) || !isValidDataSourceDatapoint(newDataPoint)) {
-    response.status(400).json({ error: 'Input not valid.' });
-    return Promise.resolve();
-  }
-
-  const config = configManager.config;
-  const dataSource = config?.dataSources?.find(
-    (source) => source.protocol === protocol
-  );
-  if (!dataSource) {
-    winston.warn(
-      `postSingleDatapointHandler:: data source is not defined for protocol ${protocol}`
-    );
-    response.status(404).send();
-    return Promise.resolve();
-  }
-  dataSource.dataPoints.push({ ...newDataPoint, readFrequency: 1000 });
-  configManager.config = config;
-  await configManager.configChangeCompleted();
-  response.status(200).json({
-    created: newDataPoint,
-    href: `${request.originalUrl}/${newDataPoint.id}`
-  });
-}
-
-/**
- * Returns datapoint selected by datasourceid and datapointid
- * @param  {Request} request
- * @param  {Response} response
- */
-function getSingleDatapointHandler(request: Request, response: Response): void {
-  if (!isValidProtocol(request.params.datasourceProtocol)) {
-    response.status(400).json({ error: 'Protocol not valid.' });
-    return;
-  }
-  const dataSource = configManager.config?.dataSources?.find(
-    (source) => source.protocol === request.params.datasourceProtocol
-  );
-  const point = dataSource?.dataPoints?.find(
-    (point) => point.id === request.params.datapointId
-  );
-  response.status(dataSource && point ? 200 : 404).json(point);
-}
-
-/**
- * Deletes a datapoint selected by datasourceid and datapointid
- * @param  {Request} request
- * @param  {Response} response
- */
-async function deleteSingleDatapointHandler(
-  request: Request,
-  response: Response
-): Promise<void> {
-  const protocol = request.params.datasourceProtocol;
-  if (
-    !isValidProtocol(protocol) ||
-    typeof request.params.dataPointId !== 'string'
-  ) {
-    response.status(400).json({ error: 'Input not valid.' });
-    return Promise.resolve();
-  }
-  const config = configManager.config;
-  const dataSource = config?.dataSources?.find(
-    (source) => source.protocol === protocol
-  );
-  if (!dataSource) {
-    winston.warn(
-      `postSingleDatapointHandler:: data source is not defined for protocol ${protocol}`
-    );
-    response.status(404).send();
-    return Promise.resolve();
-  }
-  const index = dataSource?.dataPoints?.findIndex(
-    (point) => point.id === request.params.datapointId
-  );
-  const point = dataSource?.dataPoints[index];
-  if (index >= 0) {
-    dataSource.dataPoints.splice(index, 1);
-    configManager.config = config;
-    await configManager.configChangeCompleted();
-  }
-
-  response
-    .status(dataSource && point ? 200 : 404)
-    .json(dataSource && index >= 0 ? { deleted: point } : null);
-}
-
-/**
- * Overwrite a datapoint selected by datasourceid and datapointid
- * @param  {Request} request
- * @param  {Response} response
- */
-async function patchSingleDatapointHandler(
-  request: Request,
-  response: Response
-): Promise<void> {
-  const protocol = request.params.datasourceProtocol;
-  const updatedDatapoint = request.body as IDataPointConfig;
-
-  if (
-    !isValidProtocol(protocol) ||
-    !isValidDataSourceDatapoint(updatedDatapoint) ||
-    typeof request.params.dataPointId !== 'string'
-  ) {
-    response.status(400).json({ error: 'Input not valid.' });
-    return Promise.resolve();
-  }
-  const config = configManager.config;
-  const dataSource = config?.dataSources?.find(
-    (source) => source.protocol === request.params.datasourceProtocol
-  );
-  const index = dataSource?.dataPoints?.findIndex(
-    (point) => point.id === request.params.datapointId
-  ) as number;
-  if (dataSource && index >= 0) {
-    dataSource.dataPoints.splice(index, 1);
-
-    const dataPoint = dataSource?.dataPoints?.find(
-      (point) => point.id === request.params.datapointId
-    );
-
-    const newData = { ...dataPoint, ...updatedDatapoint };
-    dataSource.dataPoints.push(newData);
-    configManager.config = config;
-    await configManager.configChangeCompleted();
-    response.status(200).json({
-      changed: newData,
-      href: `/api/v1/datasources/${request.params.datasourceId}/dataPoints/${newData.id}`
-    });
-    return;
-  }
-  response.status(404).send();
 }
 
 /**
@@ -392,7 +238,7 @@ async function patchSingleDatapointHandler(
 function getSingleDataSourceStatusHandler(
   request: Request,
   response: Response
-) {
+): void {
   if (!isValidProtocol(request.params.datasourceProtocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
@@ -425,7 +271,7 @@ function getSingleDataSourceStatusHandler(
       showMTConnectConnectivityWarning =
         mtConnectDataSource.showConnectivityWarning;
     }
-  } catch (e) {
+  } catch {
     status = LifecycleEventStatus.Unavailable;
   }
 
@@ -437,7 +283,10 @@ function getSingleDataSourceStatusHandler(
 /**
  * Pings data sources and sends the delay to UI
  */
-async function pingDataSourceHandler(request: Request, response: Response) {
+async function pingDataSourceHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const logPrefix = `Backend::DataSources::pingDataSource`;
   let datasourceProtocol = request.params
     .datasourceProtocol as DataSourceProtocols;
@@ -539,19 +388,14 @@ async function pingDataSourceHandler(request: Request, response: Response) {
 
 export const dataSourceHandlers = {
   // Single DataSource
-  dataSourceGet: getSingleDataSourceHandler,
-  dataSourceGetStatus: getSingleDataSourceStatusHandler,
-  dataSourcePatch: patchSingleDataSourceHandler,
+  getSingleDataSourceHandler,
+  getSingleDataSourceStatusHandler,
+  patchSingleDataSourceHandler,
   // Multiple DataSources
-  dataSourcesGet: getAllDataSourcesHandler,
-  // Single data point
-  dataSourcesPostDatapoint: postSingleDatapointHandler,
-  dataSourcesGetDatapoint: getSingleDatapointHandler,
-  dataSourcesDeleteDatapoint: deleteSingleDatapointHandler,
-  dataSourcesPatchDatapoint: patchSingleDatapointHandler,
+  getAllDataSourcesHandler,
   // Multiple data points
-  dataSourcesPatchAllDatapoints: patchAllDatapointsHandler,
-  dataSourcesGetDatapoints: getAllDatapointsHandler,
+  patchAllDataSourceDatapointsHandler,
+  getAllDataSourceDatapointsHandler,
   // ping to data source
-  dataSourceGetPing: pingDataSourceHandler
+  pingDataSourceHandler
 };

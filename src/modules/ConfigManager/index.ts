@@ -952,7 +952,9 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   restoreConfigFile(configFile) {
     const buffer = configFile.data;
 
-    this.config = JSON.parse(buffer.toString());
+    this._config = JSON.parse(buffer.toString());
+    this.setupDefaultDataSources();
+    this.config = this._config;
   }
 
   /**

@@ -106,8 +106,11 @@ async function patchSingleDataSourceHandler(
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol;
-
-  Object.keys(request.body).forEach((entry) => {
+  if (protocol === DataSourceProtocols.MTCONNECT) {
+    allowed.push('machineName');
+  }
+  // for instead of forEach because return does not stop forEach loop
+  for (let entry of Object.keys(request.body)) {
     if (!allowed.includes(entry)) {
       winston.warn(
         `dataSourcePatchHandler tried to change property: ${entry}. Not allowed`
@@ -117,17 +120,13 @@ async function patchSingleDataSourceHandler(
       });
       return Promise.resolve();
     }
-  });
+  }
 
   const updatedDataSource: IDataSourceConfig = {
     dataPoints: [],
     ...request.body,
     protocol
   };
-
-  if (protocol === DataSourceProtocols.MTCONNECT) {
-    allowed.push('machineName');
-  }
 
   if (!isValidProtocol(protocol) || !isValidDataSource(updatedDataSource)) {
     if (!isValidProtocol(protocol))

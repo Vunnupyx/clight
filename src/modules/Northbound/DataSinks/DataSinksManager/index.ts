@@ -224,7 +224,9 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Returns data sink by protocol
    */
-  public getDataSinkByProto(protocol: DataSinkProtocols | string) {
+  public getDataSinkByProto(
+    protocol: DataSinkProtocols | string
+  ): DataSink | undefined {
     return this.dataSinks.find((sink) => sink.protocol === protocol);
   }
 

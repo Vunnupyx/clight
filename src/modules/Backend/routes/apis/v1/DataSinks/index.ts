@@ -454,7 +454,7 @@ function getSingleDataSinkStatusHandler(request: Request, response: Response) {
   try {
     status = dataSinksManager
       .getDataSinkByProto(request.params.datasinkProtocol)
-      .getCurrentStatus();
+      ?.getCurrentStatus();
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;
   }

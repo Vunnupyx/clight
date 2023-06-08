@@ -954,6 +954,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
     this._config = JSON.parse(buffer.toString());
     this.setupDefaultDataSources();
+    this.setupDefaultDataSinks();
     this.config = this._config;
   }
 

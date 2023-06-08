@@ -155,7 +155,7 @@ export interface IDataSinkDataPointConfig {
   mandatory?: true; //only used inside frontend
 }
 export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
+  type: 'anonymous' | 'userpassword';
   userName?: string;
   password?: string;
 }

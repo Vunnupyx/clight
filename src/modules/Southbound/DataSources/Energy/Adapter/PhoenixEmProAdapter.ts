@@ -17,7 +17,7 @@ import { isValidIpOrHostname } from '../../../../Utilities';
  */
 export class PhoenixEmProAdapter {
   public hostConnectivityState = IHostConnectivityState.UNKNOWN;
-  private hostname;
+  private hostname: string | null;
   private allMeasurementsEndpoint = '/api/v1/measurements';
   private allMetersEndpoint = '/api/v1/meters';
   private allInformationEndpoint = '/api/v1/information';
@@ -29,15 +29,22 @@ export class PhoenixEmProAdapter {
       ? this.connection?.ipAddr?.startsWith('http')
         ? this.connection?.ipAddr
         : `http://${this.connection?.ipAddr}`
-      : '';
+      : null;
+  }
+
+  public get isReady() {
+    return typeof this.hostname === 'string' && this.hostname?.length > 0;
   }
 
   /**
    * Tests connectivity to given hostname
    */
-  public async testHostConnectivity() {
+  public async testHostConnectivity(): Promise<void> {
     const logPrefix = `${PhoenixEmProAdapter.name}::testHostConnectivity`;
 
+    if (!this.isReady) {
+      return Promise.resolve();
+    }
     try {
       const result = await this.performApiCall(
         'GET',
@@ -49,7 +56,7 @@ export class PhoenixEmProAdapter {
       }
     } catch (err) {
       winston.warn(
-        `${logPrefix} error connecting to Phoenix EMpro host at ${this.hostname}`
+        `${logPrefix} error connecting to Phoenix EMpro host at ${this.hostname}, error: ${err}`
       );
       this.hostConnectivityState = IHostConnectivityState.ERROR;
     }
@@ -62,6 +69,9 @@ export class PhoenixEmProAdapter {
   public getAllDatapoints(): Promise<Array<IMeasurement>> {
     const logPrefix = `${PhoenixEmProAdapter.name}::readAllDatapoints`;
     return new Promise(async (resolve, reject) => {
+      if (!this.isReady) {
+        return reject(new Error('Hostname is not valid'));
+      }
       let resultArray: IMeasurement[] = [];
       let hasMeasurementReadingError = false;
       let hasMeterReadingError = false;
@@ -187,6 +197,9 @@ export class PhoenixEmProAdapter {
       const putEndpoint = `/api/v1/measurement-system-control/tariff-number?value=${newTariffNo}`;
 
       try {
+        if (!this.isReady) {
+          return reject(new Error('Hostname is not valid'));
+        }
         const result: IEmProTariffChangeResponse = await this.performApiCall(
           'PUT',
           `${this.hostname}${putEndpoint}`
@@ -227,6 +240,9 @@ export class PhoenixEmProAdapter {
         return reject(new Error('Datapoint not found'));
       }
       try {
+        if (!this.isReady) {
+          return reject(new Error('Hostname is not valid'));
+        }
         const measurement = await this.performApiCall(
           'GET',
           `${this.hostname}${EMPRO_GET_ENDPOINTS[dataPointAddress]}`
@@ -260,6 +276,9 @@ export class PhoenixEmProAdapter {
     const logPrefix = `${PhoenixEmProAdapter.name}::getCurrentTariff`;
     return new Promise(async (resolve, reject) => {
       try {
+        if (!this.isReady) {
+          return reject(new Error('Hostname is not valid'));
+        }
         const result = await this.performApiCall(
           'GET',
           `${this.hostname}${EMPRO_GET_ENDPOINTS['tariff-number']}`

@@ -64,10 +64,18 @@ export class EnergyDataSource extends DataSource {
       );
       return;
     }
-    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
     this.phoenixEemClient = new PhoenixEmProAdapter(
       connection as IEnergyDataSourceConnection
     );
+
+    if (!this.phoenixEemClient.isReady) {
+      winston.warn(
+        `${logPrefix} skipped start of Energy data source due to not valid hostname`
+      );
+      return;
+    }
+
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     try {
       await this.phoenixEemClient.testHostConnectivity();

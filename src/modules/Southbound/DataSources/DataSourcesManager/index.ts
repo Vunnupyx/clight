@@ -7,7 +7,8 @@ import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
 import { IDataSourcesManagerParams } from './interfaces';
 import {
   DataSourceProtocols,
-  ILifecycleEvent
+  ILifecycleEvent,
+  LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
 import { IDataSourceMeasurementEvent } from '../interfaces';
@@ -18,6 +19,7 @@ import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
 import { EnergyDataSource } from '../Energy';
 import { MTConnectDataSource } from '../MTConnect';
+import { IDataSourceLifecycleEvent } from '../interfaces';
 
 interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
@@ -36,6 +38,10 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private virtualDataPointManager: VirtualDataPointManager;
   private dataAddedDuringRestart = false;
   private dataSinksRestartPending = false;
+  private mtConnectConnectionErrorResetTimer: NodeJS.Timeout | null = null;
+  private MTCONNECT_CONNECTIVITY_WARNING_RESET_INTERVAL = 30 * 60 * 1000;
+
+  public mtConnectLastConnectionErrorTimestamp: number | null = null;
 
   constructor(params: IDataSourcesManagerParams) {
     super();
@@ -176,6 +182,44 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   };
 
   /**
+   * Sets and resets warning for the MTConnect data source connectivity warning as needed
+   */
+  private checkMtConnectConnectivityWarningStatus(
+    lifeCycleEvent: ILifecycleEvent
+  ): void {
+    if (lifeCycleEvent.type === LifecycleEventStatus.ConnectionError) {
+      this.mtConnectLastConnectionErrorTimestamp = Date.now();
+      if (this.mtConnectConnectionErrorResetTimer)
+        clearTimeout(this.mtConnectConnectionErrorResetTimer);
+
+      this.mtConnectConnectionErrorResetTimer = setTimeout(() => {
+        if (
+          this.dataSources.find(
+            (source) => source.protocol === DataSourceProtocols.MTCONNECT
+          )?.currentStatus === LifecycleEventStatus.Connected
+        ) {
+          this.mtConnectLastConnectionErrorTimestamp = null;
+        }
+      }, this.MTCONNECT_CONNECTIVITY_WARNING_RESET_INTERVAL);
+    } else if (
+      lifeCycleEvent.type === LifecycleEventStatus.Connected &&
+      this.mtConnectLastConnectionErrorTimestamp
+    ) {
+      if (
+        this.mtConnectLastConnectionErrorTimestamp &&
+        this.mtConnectLastConnectionErrorTimestamp <
+          Date.now() - this.MTCONNECT_CONNECTIVITY_WARNING_RESET_INTERVAL
+      ) {
+        if (this.mtConnectConnectionErrorResetTimer) {
+          clearTimeout(this.mtConnectConnectionErrorResetTimer);
+          this.mtConnectConnectionErrorResetTimer = null;
+        }
+        this.mtConnectLastConnectionErrorTimestamp = null;
+      }
+    }
+  }
+
+  /**
    * Published lifecycle events
    * @param  {ILifecycleEvent} lifeCycleEvent
    * @returns void
@@ -183,6 +227,15 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
     const logPrefix = `${DataSourcesManager.name}::onLifecycleEvent`;
     winston.verbose(`${logPrefix}`);
+
+    const isEventFromMtConnectDataSource: boolean =
+      (lifeCycleEvent as IDataSourceLifecycleEvent)?.dataSource &&
+      (lifeCycleEvent as IDataSourceLifecycleEvent).dataSource?.protocol ===
+        DataSourceProtocols.MTCONNECT;
+
+    if (isEventFromMtConnectDataSource) {
+      this.checkMtConnectConnectivityWarningStatus(lifeCycleEvent);
+    }
 
     this.lifecycleBus.push(lifeCycleEvent);
   };

@@ -800,7 +800,13 @@ export class VirtualDataPointManager {
 
     // Start the timeout for callback function to check if there are enough rising edges etc. within the timeframe
     setTimeout(() => {
-      this.processBlinkDetection(config.id, currentValue);
+      try {
+        this.processBlinkDetection(config.id, currentValue);
+      } catch (error) {
+        winston.error(
+          `${logPrefix} error while processing blink detection: ${error}`
+        );
+      }
     }, timeframe);
 
     return null;

@@ -81,7 +81,7 @@ async function patchSingleDataSinkHandler(
   response: Response
 ): Promise<void> {
   let allowed = ['enabled', 'auth', 'customDataPoints'];
-  const protocol = request.params.datasinkProtocol;
+  const protocol = request.params.datasinkProtocol as DataSinkProtocols;
   const updatedDataSink = request.body as IDataSinkConfig;
 
   if (!isValidProtocol(protocol) || !isValidDataSink(updatedDataSink)) {
@@ -93,9 +93,6 @@ async function patchSingleDataSinkHandler(
   let dataSink = config?.dataSinks?.find(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
-
-  // If protocol is s7 it´s not allowed to change auth prop,
-  if (protocol === 's7') allowed = ['enabled'];
 
   // If protocol is datahub it´s allowed to change only datahub,
   if (protocol === 'datahub') allowed = ['datahub'];
@@ -163,7 +160,7 @@ async function patchAllDataSinkDatapointsHandler(
   response: Response
 ): Promise<void> {
   try {
-    const protocol = request.params.datasinkProtocol;
+    const protocol = request.params.datasinkProtocol as DataSinkProtocols;
     const newDataPointsArray = request.body as IDataSinkDataPointConfig[];
 
     if (

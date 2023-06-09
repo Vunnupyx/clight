@@ -80,12 +80,13 @@ function getSingleDataSourceHandler(
   request: Request,
   response: Response
 ): void {
-  if (!isValidProtocol(request.params.datasourceProtocol)) {
+  const protocol = request.params.datasourceProtocol as DataSourceProtocols;
+  if (!isValidProtocol(protocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
   const dataSource = configManager.config?.dataSources?.find(
-    (source) => source.protocol === request.params.datasourceProtocol
+    (source) => source.protocol === protocol
   );
   response.status(dataSource ? 200 : 404).json(dataSource);
 }
@@ -99,7 +100,7 @@ async function patchSingleDataSourceHandler(
   response: Response
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
-  const protocol = request.params.datasourceProtocol;
+  const protocol = request.params.datasourceProtocol as DataSourceProtocols;
 
   Object.keys(request.body).forEach((entry) => {
     if (!allowed.includes(entry)) {
@@ -173,12 +174,13 @@ function getAllDataSourceDatapointsHandler(
   request: Request,
   response: Response
 ): void {
-  if (!isValidProtocol(request.params.datasourceProtocol)) {
+  const protocol = request.params.datasourceProtocol as DataSourceProtocols;
+  if (!isValidProtocol(protocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
   const dataSource = configManager.config?.dataSources?.find(
-    (source) => source.protocol === request.params.datasourceProtocol
+    (source) => source.protocol === protocol
   );
   response.status(dataSource ? 200 : 404).json({
     dataPoints: dataSource?.dataPoints
@@ -193,7 +195,7 @@ async function patchAllDataSourceDatapointsHandler(
   response: Response
 ): Promise<void> {
   try {
-    const protocol = request.params.datasourceProtocol;
+    const protocol = request.params.datasourceProtocol as DataSourceProtocols;
     const newDataPointsArray = request.body as IDataPointConfig[];
 
     if (
@@ -205,7 +207,7 @@ async function patchAllDataSourceDatapointsHandler(
     }
 
     let dataSource = configManager.config?.dataSources?.find(
-      (source) => source.protocol === request.params.datasourceProtocol
+      (source) => source.protocol === protocol
     );
     if (!dataSource) {
       winston.warn(
@@ -239,7 +241,9 @@ function getSingleDataSourceStatusHandler(
   request: Request,
   response: Response
 ): void {
-  if (!isValidProtocol(request.params.datasourceProtocol)) {
+  const protocol = request.params.datasourceProtocol as DataSourceProtocols;
+
+  if (!isValidProtocol(protocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
@@ -255,18 +259,16 @@ function getSingleDataSourceStatusHandler(
 
   try {
     status = dataSourcesManager
-      .getDataSourceByProto(request.params.datasourceProtocol)
+      .getDataSourceByProto(protocol)
       ?.getCurrentStatus();
-    if (request.params.datasourceProtocol === DataSourceProtocols.ENERGY) {
+    if (protocol === DataSourceProtocols.ENERGY) {
       const energyDataSource = dataSourcesManager.getDataSourceByProto(
-        request.params.datasourceProtocol
+        protocol
       ) as EnergyDataSource;
       emProTariffNumber = energyDataSource.getCurrentTariffNumber();
-    } else if (
-      request.params.datasourceProtocol === DataSourceProtocols.MTCONNECT
-    ) {
+    } else if (protocol === DataSourceProtocols.MTCONNECT) {
       const mtConnectDataSource = dataSourcesManager.getDataSourceByProto(
-        request.params.datasourceProtocol
+        protocol
       ) as MTConnectDataSource;
       showMTConnectConnectivityWarning =
         mtConnectDataSource.showConnectivityWarning;

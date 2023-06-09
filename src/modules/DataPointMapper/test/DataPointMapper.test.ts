@@ -4,7 +4,6 @@ import {
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '..';
 import { ConfigManager } from '../../ConfigManager';
-import emptyDefaultConfig from '../../../../_mdclight/runtime-files/templates/empty.json';
 import { EventBus } from '../../EventBus';
 import {
   DataSinkProtocols,
@@ -51,7 +50,6 @@ describe('Test DataPointMapper', () => {
       ]
     };
     config.config = {
-      ...emptyDefaultConfig,
       dataSources: [dataSource],
       dataSinks: [dataSink],
       mapping: [

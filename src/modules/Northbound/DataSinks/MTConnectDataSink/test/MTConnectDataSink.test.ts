@@ -4,9 +4,7 @@ import {
   DataSourceProtocols
 } from '../../../../../common/interfaces';
 import { ConfigManager } from '../../../../ConfigManager';
-import emptyDefaultConfig from '../../../../../../_mdclight/runtime-files/templates/empty.json';
 import {
-  IConfig,
   IDataSinkConfig,
   IDataSourceConfig,
   IGeneralConfig,
@@ -131,7 +129,6 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     config.config = {
-      ...emptyDefaultConfig,
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
       mapping: [{ source: 'source', target: 'target', id: '' }]
@@ -208,7 +205,6 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     config.config = {
-      ...emptyDefaultConfig,
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
       mapping: [
@@ -303,7 +299,6 @@ describe('Test MTConnectDataSink', () => {
       ]
     };
     config.config = {
-      ...emptyDefaultConfig,
       dataSinks: [dataSinkConfig],
       dataSources: [dataSourceConfig],
       mapping: [

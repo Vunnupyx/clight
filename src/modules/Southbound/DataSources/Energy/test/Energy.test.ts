@@ -15,12 +15,14 @@ jest.mock('../../../../SyncScheduler', () => ({
     getInstance: () => mockSyncSchedulerInstance
   }
 }));
+const mockChangeTariffFn = jest.fn((tariffNo: ITariffNumbers) =>
+  Promise.resolve(tariffNo)
+);
 jest.mock('../Adapter/PhoenixEmProAdapter', () => {
   return {
     PhoenixEmProAdapter: jest.fn().mockImplementation(() => ({
-      changeTariff: jest.fn((tariffNo: ITariffNumbers) =>
-        Promise.resolve(tariffNo)
-      ),
+      isReady: true,
+      changeTariff: mockChangeTariffFn,
       testHostConnectivity: jest.fn(),
       hostConnectivityState: IHostConnectivityState.OK
     }))
@@ -66,18 +68,8 @@ describe('EnergyDataSource', () => {
     ])(
       'Machine status change to $newStatus triggers tariff update to:$expectedTariffNo',
       async ({ newStatus, expectedTariffNo }) => {
-        const changeTariffMock = new Promise((res) => res(''));
-
-        jest.mock('../Adapter/PhoenixEmProAdapter', () => {
-          return {
-            PhoenixEmProAdapter: jest.fn().mockImplementation(() => ({
-              changeTariff: jest.fn().mockImplementation(() => changeTariffMock)
-            }))
-          };
-        });
-
         await vdpEnergyCallback(newStatus);
-        expect(changeTariffMock).toHaveBeenCalledWith(expectedTariffNo);
+        expect(mockChangeTariffFn).toHaveBeenCalledWith(expectedTariffNo);
       }
     );
 

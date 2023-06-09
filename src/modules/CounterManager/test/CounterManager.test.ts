@@ -4,6 +4,7 @@ import * as date from 'date-fns';
 
 jest.mock('winston');
 jest.mock('fs');
+jest.mock('../../SyncScheduler');
 
 const configManagerMock = {
   //id kann weg

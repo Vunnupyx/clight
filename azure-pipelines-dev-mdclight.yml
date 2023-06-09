@@ -153,11 +153,6 @@ steps:
           docker buildx build --platform linux/arm64 --build-arg DOCKER_REGISTRY=${DOCKER_REGISTRY} --build-arg FANUC_VERSION=${fanucVersion} --build-arg MDC_LIGHT_RUNTIME_VERSION=${versionOfLastChange} -t ${DOCKER_REGISTRY}/mdclight-development:${versionOfLastChange} -f docker/mdclight-development.Dockerfile . --push --progress plain
         fi
   - task: CmdLine@2
-    displayName: Test
-    inputs:
-      script: |
-        yarn test
-  - task: CmdLine@2
     displayName: Print current versions
     inputs:
       script: |

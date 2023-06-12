@@ -7,20 +7,24 @@ let dataPointCache: DataPointCache;
 
 /**
  * Set ConfigManager to make accessible for local function
+ * @param {ConfigManager} config
  */
-export function setConfigManager(config: ConfigManager): void {
+export function setConfigManager(config: ConfigManager) {
   configManager = config;
 }
 
 /**
  * Set DataPointCache to make accessible for local function
+ * @param {DataPointCache} cache
  */
-export function setDataPointCache(cache: DataPointCache): void {
+export function setDataPointCache(cache: DataPointCache) {
   dataPointCache = cache;
 }
 
 /**
  * Get Livedata for DataSink DataPoints
+ * @param  {Request} request
+ * @param  {Response} response
  */
 function livedataDataSinkDataPointsGetHandler(
   request: Request,
@@ -68,5 +72,5 @@ function livedataDataSinkDataPointsGetHandler(
 }
 
 export const livedataDataSinksHandlers = {
-  livedataDataSinkDataPointsGetHandler
+  livedataDataSinkDataPointsGet: livedataDataSinkDataPointsGetHandler
 };

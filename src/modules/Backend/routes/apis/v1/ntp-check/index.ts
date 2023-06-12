@@ -43,33 +43,32 @@ interface ICheckedNTPEntry {
 
 /**
  * Route handler for /check-ntp
+ * @param req Express request object
+ * @param res Express response object
  */
-async function ntpCheckGetHandler(
-  request: Request,
-  response: Response
-): Promise<void> {
+async function getCheckedNTPServer(req: Request, res: Response) {
   const logPrefix = `getCheckedNTPServer::/check-ntp`;
 
-  const ntpList = Array.isArray(request.query.addresses)
-    ? (request.query.addresses as Array<string>)
-    : typeof request.query.addresses === 'string'
-    ? [request.query.addresses]
+  const ntpList = Array.isArray(req.query.addresses)
+    ? (req.query.addresses as Array<string>)
+    : typeof req.query.addresses === 'string'
+    ? [req.query.addresses]
     : undefined;
 
   winston.verbose(`${logPrefix} route called. Query: ${ntpList}`);
   if (!ntpList) {
-    response.status(400).json({
+    res.status(400).json({
       msg: 'Error: Invalid query parameters'
     });
     return;
   }
   await ntpCheck(ntpList)
     .then((checkedList) => {
-      response.status(200).json(checkedList);
+      res.status(200).json(checkedList);
       return;
     })
     .catch((err) => {
-      response.status(500).json({
+      res.status(500).json({
         msg: 'Internal server error'
       });
     });
@@ -77,10 +76,14 @@ async function ntpCheckGetHandler(
 
 /**
  * Update Network Config
+ * @param request request object from ntp
+ * @param response
  */
 async function ntpCheck(
   ntpArray: Array<string>
 ): Promise<Array<ICheckedNTPEntry>> {
+  const logPrefix = `ntpCheck`;
+
   const validated = ntpArray.map<ICheckedNTPEntry>((ntpEntry: string) => {
     const ntpListEntry = {
       address: ntpEntry,
@@ -115,6 +118,8 @@ async function ntpCheck(
 
 /**
  * Check if is a valid ip.
+ * @param toCheck Address to check
+ * @returns
  */
 function isIpAddress(toCheck: string): boolean {
   const ipAddressRegex = new RegExp(
@@ -125,6 +130,8 @@ function isIpAddress(toCheck: string): boolean {
 
 /**
  * Check if is a valid hostname.
+ * @param toCheck Address to check
+ * @returns
  */
 function isHostname(toCheck: string): boolean {
   const hostnameRegex = new RegExp(
@@ -206,7 +213,9 @@ function testNTPServer(server: string): Promise<boolean> {
 }
 
 /**
- * Check if a request can be send over any interface. Response as true means interface is enabled and connected
+ * Check if a request can be send over any interface.
+ *
+ * @returns Is any interface enabled and connected ?
  */
 async function checkInterfaces(): Promise<boolean> {
   const logPrefix = `NTPCheck::checkInterfaces`;
@@ -274,5 +283,5 @@ async function checkInterfaces(): Promise<boolean> {
 }
 
 export const ntpCheckHandlers = {
-  ntpCheckGetHandler
+  checkNTPGet: getCheckedNTPServer
 };

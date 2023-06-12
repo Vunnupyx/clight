@@ -15,6 +15,7 @@ COPY package.json tsconfig.json jest.config.js ./
 RUN yarn install
 
 COPY src src
+COPY _mdclight _mdclight
 
 RUN yarn test
 RUN yarn build

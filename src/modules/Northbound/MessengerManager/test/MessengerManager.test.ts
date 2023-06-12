@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { MessengerManager } from '..';
+import emptyDefaultConfig from '../../../../../_mdclight/runtime-files/templates/empty.json';
 import { ConfigManager } from '../../../ConfigManager';
 import { EventBus } from '../../../EventBus';
 import { DataSinkProtocols } from '../../../../common/interfaces';
@@ -36,14 +37,20 @@ describe('MessengerManager', () => {
   beforeEach(() => {
     //@ts-ignore
     configManager._config = {
-      //@ts-ignore
+      ...emptyDefaultConfig,
       general: {
+        ...emptyDefaultConfig.general,
+        //@ts-ignore
         serialNumber: SERIALNUMBER
       },
       dataSinks: [
+        //@ts-ignore
+        ...emptyDefaultConfig.dataSinks,
         {
+          //@ts-ignore
           protocol: DataSinkProtocols.MTCONNECT,
           enabled: true,
+          //@ts-ignore
           dataPoints: []
         }
       ]
@@ -140,14 +147,20 @@ describe('MessengerManager', () => {
       );
     //@ts-ignore
     configManager._config = {
+      ...emptyDefaultConfig,
       general: {
+        ...emptyDefaultConfig.general,
         //@ts-ignore
         serialNumber: undefined
       },
       dataSinks: [
+        //@ts-ignore
+        ...emptyDefaultConfig.dataSinks,
         {
+          //@ts-ignore
           protocol: DataSinkProtocols.MTCONNECT,
           enabled: true,
+          //@ts-ignore
           dataPoints: []
         }
       ]

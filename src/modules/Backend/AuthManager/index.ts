@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request as ExpressRequest, Response } from 'express';
 import { hash, compare } from 'bcryptjs';
 
 import { ConfigManager } from '../../ConfigManager';
@@ -15,10 +15,8 @@ interface UserTokenPayload {
   userName: string;
 }
 
-declare module 'express' {
-  export interface Request {
-    user: UserTokenPayload;
-  }
+export interface Request extends ExpressRequest {
+  user?: UserTokenPayload;
 }
 
 export class AuthManager {

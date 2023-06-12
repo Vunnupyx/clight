@@ -92,7 +92,7 @@ export class SourceDataPointService {
 
       if (this._store.snapshot.touched) {
         await this.httpService.patch(
-          `/datasources/${datasourceProtocol}/datapoints`,
+          `/datasources/${datasourceProtocol}/dataPoints`,
           this._store.snapshot.dataPoints
         );
 
@@ -360,7 +360,7 @@ export class SourceDataPointService {
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
     const { dataPoints } = await this.httpService.get<{
       dataPoints: SourceDataPoint[];
-    }>(`/datasources/${datasourceProtocol}/datapoints`);
+    }>(`/datasources/${datasourceProtocol}/dataPoints`);
 
     this._store.patchState((state) => {
       state.dataPoints = dataPoints;

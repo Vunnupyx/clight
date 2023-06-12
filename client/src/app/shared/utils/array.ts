@@ -4,9 +4,7 @@ export function flatArray<T = any>(array: T[][]): T[] {
 
 export function mapOrder<T>(array: T[], order: string[], key: string): T[] {
   array.sort((a, b) => {
-    //@ts-ignore TBD
     let A = a[key];
-    //@ts-ignore TBD
     let B = b[key];
 
     if (order.indexOf(A) > order.indexOf(B)) {

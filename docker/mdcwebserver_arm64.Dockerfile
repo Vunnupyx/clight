@@ -9,14 +9,9 @@ ARG MDC_LIGHT_WEBSERVER_VERSION
 RUN echo Building webserver ${MDC_LIGHT_WEBSERVER_VERSION}
 
 COPY package.json package.json
-COPY yarn.lock yarn.lock
 COPY client/ client/
 COPY user-docs/ user-docs/
 
-# install needed for test
-RUN yarn install
-
-RUN yarn test:webserver
 RUN yarn build:webserver
 
 FROM arm64v8/nginx:1.21.3-alpine

@@ -11,14 +11,12 @@ FROM node:14.21.2-alpine as builder
 
 WORKDIR /app
 
-COPY package.json tsconfig.json jest.config.js ./
-RUN yarn install
+COPY package.json tsconfig.json ./
+RUN npm install
 
 COPY src src
-COPY _mdclight _mdclight
-
-RUN yarn test
-RUN yarn build
+RUN npm run test
+RUN npm run build
 
 # TODO! Use fanuc image as soons its implemented
 # FROM ${DOCKER_REGISTRY}/mdclight-fanuc:${FANUC_VERSION}

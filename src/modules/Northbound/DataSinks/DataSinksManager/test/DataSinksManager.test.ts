@@ -14,6 +14,7 @@ jest.mock('../../../MessengerManager');
 
 const mockSinkConstructor = {
   init: jest.fn(),
+  on: jest.fn(),
   onMeasurements: { bind: jest.fn() },
   onLifecycleEvent: { bind: jest.fn() },
   shutdown: jest.fn().mockResolvedValue([]),

@@ -46,6 +46,7 @@ describe('MessengerManager', () => {
         //@ts-ignore
         ...emptyDefaultConfig.dataSinks,
         {
+          //@ts-ignore
           protocol: DataSinkProtocols.MTCONNECT,
           enabled: true,
           //@ts-ignore
@@ -154,6 +155,7 @@ describe('MessengerManager', () => {
         //@ts-ignore
         ...emptyDefaultConfig.dataSinks,
         {
+          //@ts-ignore
           protocol: DataSinkProtocols.MTCONNECT,
           enabled: true,
           //@ts-ignore

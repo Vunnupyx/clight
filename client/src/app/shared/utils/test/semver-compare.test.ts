@@ -1,4 +1,3 @@
-//@ts-ignore
 import { compareSemanticVersion } from '..';
 
 describe('Semantic Version Comparison', () => {

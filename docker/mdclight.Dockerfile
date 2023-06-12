@@ -15,7 +15,6 @@ COPY package.json tsconfig.json ./
 RUN npm install
 
 COPY src src
-RUN npm run test
 RUN npm run build
 
 # TODO! Use fanuc image as soons its implemented

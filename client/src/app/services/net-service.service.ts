@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { from, interval, Observable } from 'rxjs';
 
 import { ConfigurationAgentHttpService } from 'app/shared';
 import { Status, Store, StoreFactory } from 'app/shared/state';
 import { errorHandler } from 'app/shared/utils';
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeMap } from 'rxjs/operators';
 import { CentralServer, NetServiceStatus } from 'app/models';
 import { HttpClient } from '@angular/common/http';
 
@@ -80,6 +81,16 @@ export class NetServiceService {
     }
   }
 
+  /**
+   * Triggers every 2 seconds /netservice/status
+   * @returns Observable
+   */
+  setPeriodicStatusCheckTimer(): Observable<void> {
+    return interval(2000).pipe(
+      mergeMap(() => from(this.getNetServiceStatus()))
+    );
+  }
+
   async getNetServiceStatus() {
     this._store.patchState((state) => {
       state.status = Status.Loading;
@@ -94,6 +105,8 @@ export class NetServiceService {
         state.status = Status.Ready;
         state.netServiceStatus = response;
       });
+
+      await this.getStatusIcon(response.StatusIcon);
     } catch (err) {
       this._store.patchState((state) => {
         state.status = Status.Ready;

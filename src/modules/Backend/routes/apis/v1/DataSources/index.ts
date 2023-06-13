@@ -430,7 +430,7 @@ function getSingleDataSourceStatusHandler(
         request.params.datasourceProtocol
       ) as MTConnectDataSource;
       showMTConnectConnectivityWarning =
-        mtConnectDataSource.showConnectivityWarning;
+        !!dataSourcesManager.mtConnectLastConnectionErrorTimestamp;
     }
   } catch (e) {
     status = LifecycleEventStatus.Unavailable;

@@ -6,7 +6,6 @@ import {
   IComponentStream,
   IEntriesObject,
   IEntry,
-  IHostConnectivityState,
   IMTConnectMeasurement,
   IMTConnectStreamError,
   IMTConnectStreamResponse,
@@ -26,19 +25,12 @@ import { isValidIpOrHostname } from '../../../Utilities';
  */
 export class MTConnectDataSource extends DataSource {
   protected name = MTConnectDataSource.name;
-  public showConnectivityWarning = false;
-
   private dataPoints: IDataPointConfig[];
   private nextSequenceNumber: number | null = null;
   private lastSequenceNumber: number | null = null;
   private requestCount = 1;
   private hostname = '';
-  private hostConnectivityState: IHostConnectivityState =
-    IHostConnectivityState.UNKNOWN;
-  private lastFailedConnectivityTimestamp: number | null = null;
-
   private DATAPOINT_READ_INTERVAL = 1000;
-  private SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL = 30 * 60 * 1000;
 
   constructor(params: IDataSourceParams) {
     super(params);
@@ -84,17 +76,17 @@ export class MTConnectDataSource extends DataSource {
       );
       return;
     }
-    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
+    if (this.currentStatus !== LifecycleEventStatus.Reconnecting)
+      this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     try {
       await this.testHostConnectivity();
 
-      if (this.hostConnectivityState === IHostConnectivityState.OK) {
+      if (this.currentStatus === LifecycleEventStatus.Connected) {
         if (this.reconnectTimeoutId) {
           clearTimeout(this.reconnectTimeoutId);
           this.reconnectTimeoutId = null;
         }
-        this.updateCurrentStatus(LifecycleEventStatus.Connected);
         winston.info(
           `${logPrefix} successfully connected to MT Connect Source`
         );
@@ -106,7 +98,7 @@ export class MTConnectDataSource extends DataSource {
           this.setupLogCycle();
         }
       } else {
-        throw new Error(`Host status:${this.hostConnectivityState}`);
+        throw new Error(`Host status:${this.currentStatus}`);
       }
     } catch (error) {
       winston.error(`${logPrefix} ${(error as Error)?.message}`);
@@ -449,14 +441,6 @@ export class MTConnectDataSource extends DataSource {
         return reject(new Error(err));
       }
       try {
-        if (
-          this.lastFailedConnectivityTimestamp &&
-          this.lastFailedConnectivityTimestamp <
-            Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
-        ) {
-          this.showConnectivityWarning = false;
-        }
-
         const fetchUrl =
           endpoint === '/sample'
             ? `${this.hostname}${endpoint}?from=${nextSequence}&count=${this.requestCount}`
@@ -474,16 +458,19 @@ export class MTConnectDataSource extends DataSource {
           format: 'object',
           group: true
         });
-        this.hostConnectivityState = IHostConnectivityState.OK;
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
+
         // TODO type cast xmlObj from XMLSerializedAsObject
         //@ts-ignore
         return resolve(xmlObj);
       } catch (e) {
-        this.hostConnectivityState = IHostConnectivityState.ERROR;
-        this.showConnectivityWarning = true;
-        this.lastFailedConnectivityTimestamp = Date.now();
+        this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
         const err = `${logPrefix} unexpected error occurred while fetching XML response: ${
-          (e as Error)?.message
+          e as Error
         }`;
         winston.error(err);
         return reject(new Error(err));
@@ -503,16 +490,12 @@ export class MTConnectDataSource extends DataSource {
         timeout: 5000
       });
 
-      if (
-        this.lastFailedConnectivityTimestamp &&
-        this.lastFailedConnectivityTimestamp <
-          Date.now() - this.SHOW_CONNECTIVITY_WARNING_RESET_INTERVAL
-      ) {
-        this.showConnectivityWarning = false;
-      }
-
       if (response.ok) {
-        this.hostConnectivityState = IHostConnectivityState.OK;
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       } else {
         throw new Error('Response not OK');
       }
@@ -520,9 +503,7 @@ export class MTConnectDataSource extends DataSource {
       winston.warn(
         `${logPrefix} error connecting to MTConnect Agent at ${this.hostname}, err: ${err}`
       );
-      this.showConnectivityWarning = true;
-      this.lastFailedConnectivityTimestamp = Date.now();
-      this.hostConnectivityState = IHostConnectivityState.ERROR;
+      this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
     }
   }
 }

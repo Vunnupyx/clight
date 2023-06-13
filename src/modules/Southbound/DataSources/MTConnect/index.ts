@@ -6,7 +6,6 @@ import {
   IComponentStream,
   IEntriesObject,
   IEntry,
-  IHostConnectivityState,
   IMTConnectMeasurement,
   IMTConnectStreamError,
   IMTConnectStreamResponse,
@@ -77,7 +76,8 @@ export class MTConnectDataSource extends DataSource {
       );
       return;
     }
-    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
+    if (this.currentStatus !== LifecycleEventStatus.Reconnecting)
+      this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     try {
       await this.testHostConnectivity();

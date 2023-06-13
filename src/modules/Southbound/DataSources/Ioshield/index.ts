@@ -14,7 +14,7 @@ import {
 export class IoshieldDataSource extends DataSource {
   protected name = IoshieldDataSource.name;
 
-  mraaClient: Iot2050MraaDI10 | Iot2050MraaDI2AI5;
+  mraaClient: Iot2050MraaDI10 | Iot2050MraaDI2AI5 | null = null;
 
   /**
    * Initializes ioshield data source, sets up driver and validates configuration
@@ -80,6 +80,7 @@ export class IoshieldDataSource extends DataSource {
       });
 
     try {
+      if (!this.mraaClient) throw new Error('mraa client is undefined');
       const digitalInputValues = await this.mraaClient.getDigitalValues();
       const analogInputValues = await this.mraaClient.getAnalogValues();
 

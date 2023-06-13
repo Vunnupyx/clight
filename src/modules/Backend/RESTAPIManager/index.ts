@@ -3,7 +3,7 @@ import winston from 'winston';
 import fileUpload from 'express-fileupload';
 import proxy from 'express-http-proxy';
 import { ConfigManager } from '../../ConfigManager';
-import { IRestApiConfig, IRuntimeConfig } from '../../ConfigManager/interfaces';
+import { IRestApiConfig } from '../../ConfigManager/interfaces';
 import { RoutesManager } from '../RoutesManager';
 import { json as jsonParser } from 'body-parser';
 import { DataSourcesManager } from '../../Southbound/DataSources/DataSourcesManager';
@@ -26,11 +26,11 @@ interface RestApiManagerOptions {
  * Manage express server implementation.
  */
 export class RestApiManager {
-  private port: number;
-  private config: IRestApiConfig;
+  private port: number | null = null;
+  private config: IRestApiConfig | null = null;
   private readonly expressApp: Express = express();
   private options: RestApiManagerOptions;
-  private routeManager: RoutesManager;
+  private routeManager: RoutesManager | null = null;
   private static className: string;
 
   constructor(options: RestApiManagerOptions) {
@@ -52,7 +52,9 @@ export class RestApiManager {
     winston.info(`${logPrefix} Initializing rest api`);
 
     this.config = this.options.configManager.runtimeConfig.restApi;
-    this.port = Number.parseInt(process.env.PORT) || this.config.port || 5000;
+    this.port = process.env.PORT
+      ? Number.parseInt(process.env.PORT)
+      : this.config.port ?? 5000;
 
     const authManager = new AuthManager(this.options.configManager);
 
@@ -99,8 +101,7 @@ export class RestApiManager {
           }
 
           const isAuthenticated = authManager.verifyJWTAuth({
-            withPasswordChangeDetection: true,
-            withBooleanResponse: true
+            withPasswordChangeDetection: true
           })(req, res);
 
           if (!isAuthenticated) {
@@ -134,7 +135,9 @@ export class RestApiManager {
                 );
               } catch (error) {
                 winston.error(
-                  `${logPrefix} Device commissioning finished, but factory reset could not be performed due to ${error?.message}`
+                  `${logPrefix} Device commissioning finished, but factory reset could not be performed due to ${
+                    (error as Error)?.message
+                  }`
                 );
               }
             } else {
@@ -149,8 +152,10 @@ export class RestApiManager {
         },
         proxyReqOptDecorator: (proxyReqOpts) => {
           // Update headers
-          delete proxyReqOpts.headers['Authorization'];
-          delete proxyReqOpts.headers['authorization'];
+          if (proxyReqOpts?.headers) {
+            delete proxyReqOpts.headers['Authorization'];
+            delete proxyReqOpts.headers['authorization'];
+          }
           return proxyReqOpts;
         },
         proxyReqPathResolver: (req) => {

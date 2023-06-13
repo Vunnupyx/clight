@@ -84,12 +84,13 @@ function getSingleDataSourceHandler(
   request: Request,
   response: Response
 ): void {
-  if (!isValidProtocol(request.params.datasourceProtocol)) {
+  const protocol = request.params.datasourceProtocol as DataSourceProtocols;
+  if (!isValidProtocol(protocol)) {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
   const dataSource = configManager.config?.dataSources?.find(
-    (source) => source.protocol === request.params.datasourceProtocol
+    (source) => source.protocol === protocol
   );
   response.status(dataSource ? 200 : 404).json(dataSource);
 }
@@ -105,7 +106,7 @@ async function patchSingleDataSourceHandler(
   response: Response
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
-  const protocol = request.params.datasourceProtocol;
+  const protocol = request.params.datasourceProtocol as DataSourceProtocols;
   if (protocol === DataSourceProtocols.MTCONNECT) {
     allowed.push('machineName');
   }
@@ -158,12 +159,14 @@ async function patchSingleDataSourceHandler(
   let changedDatasource = { ...dataSource, ...updatedDataSource };
 
   const config = configManager.config;
-  config.dataSources = [
-    ...config.dataSources.filter(
-      (dataSource) => dataSource.protocol !== protocol
-    ),
-    changedDatasource
-  ];
+  if (config) {
+    config.dataSources = [
+      ...config.dataSources.filter(
+        (dataSource) => dataSource.protocol !== protocol
+      ),
+      changedDatasource
+    ];
+  }
   configManager.config = config;
   await configManager.configChangeCompleted();
   response.status(200).json(changedDatasource);
@@ -198,7 +201,7 @@ async function patchAllDatapointsHandler(
   response: Response
 ): Promise<void> {
   try {
-    const protocol = request.params.datasourceProtocol;
+    const protocol = request.params.datasourceProtocol as DataSourceProtocols;
     const newDataPointsArray = request.body as IDataPointConfig[];
 
     if (
@@ -210,7 +213,7 @@ async function patchAllDatapointsHandler(
     }
 
     let dataSource = configManager.config?.dataSources?.find(
-      (source) => source.protocol === request.params.datasourceProtocol
+      (source) => source.protocol === protocol
     );
     if (!dataSource) {
       winston.warn(
@@ -220,11 +223,10 @@ async function patchAllDatapointsHandler(
       return Promise.resolve();
     }
     dataSource = { ...dataSource, dataPoints: newDataPointsArray };
-    configManager.changeConfig(
-      'update',
+    configManager.updateInConfig<'dataSources', IDataSourceConfig>(
       'dataSources',
       dataSource,
-      (item) => item.protocol
+      (item) => item.protocol === dataSource?.protocol
     );
     await configManager.configChangeCompleted();
     response.status(200).send();
@@ -283,7 +285,7 @@ function getSingleDatapointHandler(request: Request, response: Response): void {
     response.status(400).json({ error: 'Protocol not valid.' });
     return;
   }
-  const dataSource = configManager.config.dataSources.find(
+  const dataSource = configManager.config?.dataSources?.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const point = dataSource?.dataPoints?.find(
@@ -356,12 +358,12 @@ async function patchSingleDatapointHandler(
     return Promise.resolve();
   }
   const config = configManager.config;
-  const dataSource = config.dataSources.find(
+  const dataSource = config?.dataSources?.find(
     (source) => source.protocol === request.params.datasourceProtocol
   );
   const index = dataSource?.dataPoints?.findIndex(
     (point) => point.id === request.params.datapointId
-  );
+  ) as number;
   if (dataSource && index >= 0) {
     dataSource.dataPoints.splice(index, 1);
 
@@ -408,7 +410,7 @@ function getSingleDataSourceStatusHandler(
   try {
     status = dataSourcesManager
       .getDataSourceByProto(request.params.datasourceProtocol)
-      .getCurrentStatus();
+      ?.getCurrentStatus();
     if (request.params.datasourceProtocol === DataSourceProtocols.ENERGY) {
       const energyDataSource = dataSourcesManager.getDataSourceByProto(
         request.params.datasourceProtocol
@@ -513,7 +515,7 @@ async function pingDataSourceHandler(request: Request, response: Response) {
 
   try {
     let timeStart = Date.now();
-    await pingSocketPromise(port, ipOrHostname, PING_TIMEOUT);
+    await pingSocketPromise(port!, ipOrHostname, PING_TIMEOUT);
     const delay = Date.now() - timeStart;
     winston.debug(
       `${logPrefix} successful ping for ${datasourceProtocol} at ${ipOrHostname}:${port} with ${delay}ms delay.`

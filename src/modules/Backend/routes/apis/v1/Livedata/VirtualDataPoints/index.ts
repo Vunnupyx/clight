@@ -31,7 +31,7 @@ function livedataVirtualDataPointsGetHandler(
   request: Request,
   response: Response
 ): void {
-  const dataPoints = configManager.config.virtualDataPoints;
+  const dataPoints = configManager.config?.virtualDataPoints;
   const timeseriesIncluded = request.query.timeseries === 'true';
 
   const payload = dataPoints

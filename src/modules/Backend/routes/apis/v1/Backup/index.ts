@@ -1,4 +1,4 @@
-import { ConfigManager } from '../../../../../ConfigManager';
+import { ConfigManager, mdcLightFolder } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import fs from 'fs';
@@ -50,7 +50,7 @@ async function backupPostHandle(
   request: Request,
   response: Response
 ): Promise<void> {
-  const configFile = (request.files as any)?.config;
+  const configFile = (request.files as any)?.config as { data: Buffer };
 
   if (!configFile) {
     winston.error('Backup restore failed. No file provided!');
@@ -88,10 +88,7 @@ async function logsGetHandler(
 
   const outFileName = `${hostname}-${dateString}.zip`;
   const logFolderPath = '/mdclight/logs';
-  const configPath = path.join(
-    process.env.MDC_LIGHT_FOLDER || process.cwd(),
-    '/config/config.json'
-  );
+  const configPath = path.join(mdcLightFolder, '/config/config.json');
   const inputPaths = `${logFolderPath}/*log ${configPath}`;
   const outPath = '/mdclight/logs/out';
   const zipCommand = `mkdir -p ${outPath} && zip -j -0 ${outPath}/${outFileName} ${inputPaths}`;
@@ -150,7 +147,7 @@ async function logsGetHandler(
   try {
     stream = fs.createReadStream(`${outPath}/${outFileName}`);
   } catch (err) {
-    winston.error(`${logPrefix} error during read file due to ${err?.msg}`);
+    winston.error(`${logPrefix} error during read file due to ${err}`);
     saveDelete();
     response.status(500).send('Internal server error. Please try again later.');
     return;

@@ -155,9 +155,12 @@ export class OPCUADataSink extends DataSink {
     }
   }
 
-  protected processDataPointValue(dataPointId, value) {
-    const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
-    this.setNodeValue(node, value);
+  protected processDataPointValue(dataPointId: string, value: string | number) {
+    const nodeAddress = this.findNodeAddress(dataPointId);
+    if (nodeAddress) {
+      const node = this.opcuaNodes[nodeAddress];
+      if (node) this.setNodeValue(node, value);
+    }
   }
 
   public onLifecycleEvent(event: ILifecycleEvent): Promise<void> {
@@ -211,7 +214,7 @@ export class OPCUADataSink extends DataSink {
   /**
    * Find address of a node by datapoint id. For changing the opcua value.
    */
-  private findNodeAddress(dataPointId: string): string {
-    return this.config.dataPoints.find((dp) => dp.id === dataPointId).address;
+  private findNodeAddress(dataPointId: string): string | undefined {
+    return this.config.dataPoints.find((dp) => dp.id === dataPointId)?.address;
   }
 }

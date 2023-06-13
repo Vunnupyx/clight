@@ -1,4 +1,6 @@
-const dataHubAdapterMock = {
+const dataHubAdapterMock: {
+  [key: string]: boolean | jest.Mock;
+} = {
   isRunning: true,
   running: true,
   getDesiredProps: jest.fn(),
@@ -26,7 +28,7 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
   };
 });
 
-function log(m) {
+function log(m: any) {
   //console.log(m)
 }
 
@@ -57,10 +59,14 @@ jest.doMock('../../../../DataPointMapper', () => {
 
 import {
   IDataHubConfig,
-  IDataSinkConfig
+  IDataSinkConfig,
+  IGeneralConfig
 } from '../../../../ConfigManager/interfaces';
 import { DataHubDataSink, DataHubDataSinkOptions } from '..';
-import { LifecycleEventStatus } from '../../../../../common/interfaces';
+import {
+  DataSinkProtocols,
+  LifecycleEventStatus
+} from '../../../../../common/interfaces';
 import { DataPointCache } from '../../../../DatapointCache';
 
 jest.mock('../../../../DatapointCache');
@@ -68,9 +74,16 @@ jest.mock('../../../../DatapointCache');
  * GLOBAL MOCKS
  */
 const configMock: IDataSinkConfig = {
-  protocol: 'datahub',
+  protocol: DataSinkProtocols.DATAHUB,
   enabled: true,
   dataPoints: []
+};
+
+const generalConfigMock: IGeneralConfig = {
+  manufacturer: '',
+  serialNumber: '',
+  model: '',
+  control: ''
 };
 
 const runTimeConfigMock: IDataHubConfig = {
@@ -97,6 +110,7 @@ describe('DataHubDataSink', () => {
   let datasinkUUT: DataHubDataSink;
   let dataHubDataSinkOptions: DataHubDataSinkOptions = {
     mapping: [],
+    generalConfig: generalConfigMock,
     dataSinkConfig: configMock,
     runTimeConfig: runTimeConfigMock,
     termsAndConditionsAccepted: true,
@@ -237,6 +251,7 @@ describe('DataHubDataSink', () => {
         }
       ]);
 
+      //@ts-ignore
       dataHubAdapterMock.getDesiredProps.mockImplementation(() => {
         return {
           services: {

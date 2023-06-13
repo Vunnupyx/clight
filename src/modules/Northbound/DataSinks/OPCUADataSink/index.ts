@@ -1,17 +1,13 @@
 import winston from 'winston';
 import {
   DataSinkProtocols,
-  DataSourceLifecycleEventTypes,
   ILifecycleEvent,
   LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import { OPCUAAdapter } from '../../Adapter/OPCUAAdapter';
 import { Variant, UAVariable, LocalizedText, DataType } from 'node-opcua';
-import {
-  IGeneralConfig,
-  IOPCUAConfig
-} from '../../../ConfigManager/interfaces';
+import { IOPCUAConfig } from '../../../ConfigManager/interfaces';
 
 type OPCUANodeDict = {
   [key: string]: UAVariable;
@@ -19,7 +15,6 @@ type OPCUANodeDict = {
 
 export interface IOPCUADataSinkOptions extends IDataSinkOptions {
   runtimeConfig: IOPCUAConfig;
-  generalConfig: IGeneralConfig;
 }
 /**
  * Implementation of the OPCDataSink.
@@ -30,16 +25,14 @@ export class OPCUADataSink extends DataSink {
   private opcuaNodes: OPCUANodeDict = {};
   protected _protocol = DataSinkProtocols.OPCUA;
   protected name = OPCUADataSink.name;
-  private generalConfig: IGeneralConfig;
 
   constructor(options: IOPCUADataSinkOptions) {
     super(options);
     this.opcuaAdapter = new OPCUAAdapter({
       dataSinkConfig: options.dataSinkConfig,
-      generalConfig: options.generalConfig,
+      generalConfig: this.generalConfig,
       runtimeConfig: options.runtimeConfig
     });
-    this.generalConfig = options.generalConfig;
   }
 
   public async init(): Promise<OPCUADataSink> {
@@ -162,9 +155,12 @@ export class OPCUADataSink extends DataSink {
     }
   }
 
-  protected processDataPointValue(dataPointId, value) {
-    const node = this.opcuaNodes[this.findNodeAddress(dataPointId)];
-    this.setNodeValue(node, value);
+  protected processDataPointValue(dataPointId: string, value: string | number) {
+    const nodeAddress = this.findNodeAddress(dataPointId);
+    if (nodeAddress) {
+      const node = this.opcuaNodes[nodeAddress];
+      if (node) this.setNodeValue(node, value);
+    }
   }
 
   public onLifecycleEvent(event: ILifecycleEvent): Promise<void> {
@@ -173,23 +169,23 @@ export class OPCUADataSink extends DataSink {
 
     // Check for OPCUA Error Messages
     switch (event.type) {
-      case DataSourceLifecycleEventTypes.Connecting: {
+      case LifecycleEventStatus.Connecting: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.Connected: {
+      case LifecycleEventStatus.Connected: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.ConnectionError: {
+      case LifecycleEventStatus.ConnectionError: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.Disconnected: {
+      case LifecycleEventStatus.Disconnected: {
         // TODO: To be implemented
         break;
       }
-      case DataSourceLifecycleEventTypes.Reconnecting: {
+      case LifecycleEventStatus.Reconnecting: {
         // TODO: To be implemented
         break;
       }
@@ -218,7 +214,7 @@ export class OPCUADataSink extends DataSink {
   /**
    * Find address of a node by datapoint id. For changing the opcua value.
    */
-  private findNodeAddress(dataPointId: string): string {
-    return this.config.dataPoints.find((dp) => dp.id === dataPointId).address;
+  private findNodeAddress(dataPointId: string): string | undefined {
+    return this.config.dataPoints.find((dp) => dp.id === dataPointId)?.address;
   }
 }

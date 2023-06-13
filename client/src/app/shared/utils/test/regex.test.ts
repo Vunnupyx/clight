@@ -48,7 +48,9 @@ describe('Frontend Regex Test', () => {
     ])(
       '$input -> result should be: $expectedResult',
       ({ input, expectedResult }) => {
-        expect(new RegExp(HOST_REGEX).test(input)).toBe(expectedResult);
+        expect(new RegExp(HOST_REGEX).test(input as string)).toBe(
+          expectedResult
+        );
       }
     );
   });
@@ -130,7 +132,7 @@ describe('Frontend Regex Test', () => {
     ])(
       '$input -> result should be: $expectedResult',
       ({ input, expectedResult }) => {
-        expect(new RegExp(IP_REGEX).test(input)).toBe(expectedResult);
+        expect(new RegExp(IP_REGEX).test(input as string)).toBe(expectedResult);
       }
     );
   });
@@ -204,7 +206,9 @@ describe('Frontend Regex Test', () => {
     ])(
       '$input -> result should be: $expectedResult',
       ({ input, expectedResult }) => {
-        expect(new RegExp(NETMASK_REGEX).test(input)).toBe(expectedResult);
+        expect(new RegExp(NETMASK_REGEX).test(input as string)).toBe(
+          expectedResult
+        );
       }
     );
   });
@@ -317,7 +321,9 @@ describe('Frontend Regex Test', () => {
     ])(
       '$input -> result should be: $expectedResult',
       ({ input, expectedResult }) => {
-        expect(new RegExp(EMAIL_REGEX).test(input)).toBe(expectedResult);
+        expect(new RegExp(EMAIL_REGEX).test(input as string)).toBe(
+          expectedResult
+        );
       }
     );
   });

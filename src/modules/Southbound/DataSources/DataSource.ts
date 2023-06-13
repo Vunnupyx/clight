@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+import TypedEmitter from 'typed-emitter';
+import { v4 } from 'uuid';
 
 import { IDataSourceConfig } from '../../ConfigManager/interfaces';
 import {
@@ -6,8 +8,8 @@ import {
   IDataSourceMeasurementEvent,
   IDataSourceParams,
   IMeasurement,
-  IDataSourceDataPointLifecycleEvent,
-  DataPointEventTypes
+  DataPointEventTypes,
+  IDataSourceLifecycleEvent
 } from './interfaces';
 import {
   DataSourceProtocols,
@@ -25,23 +27,31 @@ type DataPointReadErrorSummary = {
   count: number;
 };
 
+interface IDataSourceEvents {
+  [DataSourceEventTypes.Lifecycle]: (event: ILifecycleEvent) => void;
+  [DataSourceEventTypes.Measurement]: (
+    measurements: IDataSourceMeasurementEvent[]
+  ) => void;
+  [DataPointEventTypes.Lifecycle]: (event: ILifecycleEvent) => void;
+}
+
 /**
  * Implements data source
  */
-export abstract class DataSource extends EventEmitter {
+export abstract class DataSource extends (EventEmitter as new () => TypedEmitter<IDataSourceEvents>) {
   protected name = DataSource.name;
 
   protected config: IDataSourceConfig;
   protected level = EventLevels.DataSource;
-  protected reconnectTimeoutId: Timeout = null;
+  protected reconnectTimeoutId: Timeout | null = null;
   protected RECONNECT_TIMEOUT =
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
-  public timestamp: number;
+  public timestamp: number | null = null;
   public protocol: DataSourceProtocols;
+  public currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected scheduler: SynchronousIntervalScheduler;
-  protected readSchedulerListenerId: number;
-  protected logSchedulerListenerId: number;
-  protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
+  protected readSchedulerListenerId: number | null = null;
+  protected logSchedulerListenerId: number | null = null;
   protected termsAndConditionsAccepted = false;
   protected processedDataPointCount = 0;
   protected dataPointReadErrors: DataPointReadErrorSummary[] = [];
@@ -62,9 +72,12 @@ export abstract class DataSource extends EventEmitter {
   /**
    * Compares given config with the current data source config to determine if data source should be restarted or not
    */
-  configEqual(config: IDataSourceConfig, termsAndConditions: boolean) {
+  configEqual(
+    config: IDataSourceConfig | undefined,
+    termsAndConditions: boolean
+  ) {
     return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
+      JSON.stringify(this.config ?? {}) === JSON.stringify(config ?? {}) &&
       this.termsAndConditionsAccepted === termsAndConditions
     );
   }
@@ -82,7 +95,13 @@ export abstract class DataSource extends EventEmitter {
       `${logPrefix} current state updated from ${this.currentStatus} to ${newState}.`
     );
     this.currentStatus = newState;
-    this.emit(DataSourceEventTypes.Lifecycle, newState);
+
+    this.emit(DataSourceEventTypes.Lifecycle, {
+      dataSource: { protocol: this.protocol },
+      type: newState,
+      level: EventLevels.DataSource,
+      id: v4()
+    });
   }
 
   /**
@@ -179,8 +198,10 @@ export abstract class DataSource extends EventEmitter {
     const logPrefix = `${this.name}::shutdown`;
     winston.info(`${logPrefix} shutdown triggered`);
 
-    this.scheduler.removeListener(this.readSchedulerListenerId);
-    this.scheduler.removeListener(this.logSchedulerListenerId);
+    if (this.readSchedulerListenerId)
+      this.scheduler.removeListener(this.readSchedulerListenerId);
+    if (this.logSchedulerListenerId)
+      this.scheduler.removeListener(this.logSchedulerListenerId);
     await this.disconnect();
   }
 
@@ -226,16 +247,7 @@ export abstract class DataSource extends EventEmitter {
    */
   protected onDataPointLifecycle = (
     lifecycleEvent: IBaseLifecycleEvent
-  ): void => {
-    const { protocol } = this.config;
-    const DPLifecycleEvent: IDataSourceDataPointLifecycleEvent = {
-      dataSource: {
-        protocol
-      },
-      ...lifecycleEvent
-    };
-    this.submitDataPointLifecycle(DPLifecycleEvent);
-  };
+  ): void => {};
 
   /**
    * Emits process data as a native {@link Event}

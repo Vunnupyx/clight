@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
+import winston from 'winston';
 
 import { ConfigManager } from '../../../../../ConfigManager';
-import winston from 'winston';
 import { DataSinksManager } from '../../../../../Northbound/DataSinks/DataSinksManager';
 import { DataSinkProtocols } from '../../../../../../common/interfaces';
 import { DataHubDataSink } from '../../../../../Northbound/DataSinks/DataHubDataSink';
@@ -12,7 +12,6 @@ let dataSinksManager: DataSinksManager;
 
 /**
  * Set ConfigManager to make accessible for local function
- * @param configMng
  */
 export function setConfigManager(configMng: ConfigManager): void {
   configManager = configMng;
@@ -20,7 +19,6 @@ export function setConfigManager(configMng: ConfigManager): void {
 
 /**
  * Set datahub module client to use in routes
- * @param client
  */
 export function setDataSinksManager(client: DataSinksManager): void {
   dataSinksManager = client;
@@ -28,8 +26,6 @@ export function setDataSinksManager(client: DataSinksManager): void {
 
 /**
  * Get System Info
- * @param  {Request} request
- * @param  {Response} response
  */
 async function systemInfoGetHandler(request: Request, response: Response) {
   const systemInfo = await configManager.getSystemInformation();
@@ -38,10 +34,6 @@ async function systemInfoGetHandler(request: Request, response: Response) {
 
 /**
  * Helper function to handle dev environment. Log information and set response status and msg
- *
- * @param response  express response object
- * @param logPrefix for logging
- * @returns         boolean value
  */
 function isDevEnvironment(response: Response, logPrefix: string): boolean {
   if (process.env.NODE_ENV === 'development') {
@@ -59,17 +51,21 @@ function isDevEnvironment(response: Response, logPrefix: string): boolean {
  * Return available MDCL versions higher than the currently installed.
  * Update information are requested from azure backend.
  */
-async function getMDCLUpdates(request: Request, response: Response) {
-  const logPrefix = `SystemInfo::getMDCLUpdates`;
+async function systemInfoUpdateGetHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  const logPrefix = `SystemInfo::systemInfoUpdateGetHandler`;
   winston.info(`${logPrefix} routes handler called.`);
 
   if (isDevEnvironment(response, logPrefix)) return;
 
   if (!dataSinksManager) {
     winston.warn(`${logPrefix} called but no module client is available.`);
-    return response.status(500).json({
+    response.status(500).json({
       msg: `No CelosXChange connection available.`
     });
+    return;
   }
   // find datahub
   const datahubSink = dataSinksManager.getDataSinkByProto(
@@ -77,16 +73,18 @@ async function getMDCLUpdates(request: Request, response: Response) {
   );
   if (!(datahubSink instanceof DataHubDataSink)) {
     winston.warn(`${logPrefix} called but no module client is available.`);
-    return response.status(500).json({
+    response.status(500).json({
       msg: `No CelosXChange connection available.`
     });
+    return;
   }
   let datahubAdapter = datahubSink.getAdapter();
   if (!datahubAdapter && !configManager?.config?.termsAndConditions?.accepted) {
     winston.warn(`${logPrefix} called but no terms and conditions accepted`);
-    return response.status(403).json({
+    response.status(403).json({
       error: 'Terms and conditions not accepted.'
     });
+    return;
   } else if (!datahubAdapter) {
     winston.warn(`${logPrefix} called but no module client available`);
 
@@ -104,9 +102,10 @@ async function getMDCLUpdates(request: Request, response: Response) {
       winston.warn(
         `${logPrefix} failed to connect to azure iot hub after 2 minutes`
       );
-      return response.status(403).json({
+      response.status(403).json({
         error: 'Could not connect to azure iot hub.'
       });
+      return;
     }
   }
 
@@ -116,8 +115,11 @@ async function getMDCLUpdates(request: Request, response: Response) {
 /**
  * Trigger update mechanism of mdclight docker images.
  */
-async function updateMdcl(request: Request, response: Response) {
-  const logPrefix = `SystemInfo::updateMdcl`;
+async function systemInfoUpdatePostHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  const logPrefix = `SystemInfo::systemInfoUpdatePostHandler`;
   winston.info(`${logPrefix} routes handler called.`);
 
   if (isDevEnvironment(response, logPrefix)) return;
@@ -131,16 +133,18 @@ async function updateMdcl(request: Request, response: Response) {
   }
   if (typeof request.body.baseLayerVersion === 'undefined') {
     winston.warn(`${logPrefix} called without baseLayerVersion information`);
-    return response
+    response
       .status(400)
       .json({ error: 'No version information in request found.' });
+    return;
   }
 
   if (!dataSinksManager) {
     winston.warn(`${logPrefix} called but no module client is available.`);
-    return response.status(500).json({
+    response.status(500).json({
       msg: `No CelosXChange connection available.`
     });
+    return;
   }
   // find datahub
   const datahubSink = dataSinksManager.getDataSinkByProto(
@@ -148,17 +152,19 @@ async function updateMdcl(request: Request, response: Response) {
   );
   if (!(datahubSink instanceof DataHubDataSink)) {
     winston.warn(`${logPrefix} called but no module client is available.`);
-    return response.status(500).json({
+    response.status(500).json({
       msg: `No CelosXChange connection available.`
     });
+    return;
   }
 
   let datahubAdapter = datahubSink.getAdapter();
   if (!datahubAdapter && !configManager?.config?.termsAndConditions?.accepted) {
     winston.warn(`${logPrefix} called but no terms and conditions accepted`);
-    return response.status(403).json({
+    response.status(403).json({
       error: 'Terms and conditions not accepted.'
     });
+    return;
   } else if (!datahubAdapter) {
     winston.warn(`${logPrefix} called but no module client available`);
     // TODO Make event driven, don't use polling
@@ -175,9 +181,10 @@ async function updateMdcl(request: Request, response: Response) {
       winston.warn(
         `${logPrefix} failed to connect to azure iot hub after 2 minutes`
       );
-      return response.status(403).json({
+      response.status(403).json({
         error: 'Could not connect to azure iot hub.'
       });
+      return;
     }
   }
 
@@ -186,10 +193,11 @@ async function updateMdcl(request: Request, response: Response) {
 
 /**
  * Performs factory reset
- * @param request HTTP Request
- * @param response
  */
-async function systemFactoryResetHandler(request: Request, response: Response) {
+async function systemInfoFactoryResetHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
   const logPrefix = `systemInfo::systemFactoryResetHandler`;
   winston.info(`${logPrefix} factory reset requested`);
 
@@ -197,17 +205,17 @@ async function systemFactoryResetHandler(request: Request, response: Response) {
     await configManager.factoryResetConfiguration();
     winston.info(`${logPrefix} factory reset successfully done`);
     response.status(200).send();
-  } catch (e) {
+  } catch (error) {
     winston.error(
-      `systemFactoryResetHandler:: Error performing factory reset: ${e?.message}`
+      `systemFactoryResetHandler:: Error performing factory reset: ${error}`
     );
     response.sendStatus(500);
   }
 }
 
 export const systemInfoHandlers = {
-  systemInfoGet: systemInfoGetHandler,
-  updateGet: getMDCLUpdates,
-  updateMDCL: updateMdcl,
-  systemFactoryReset: systemFactoryResetHandler
+  systemInfoGetHandler,
+  systemInfoUpdateGetHandler,
+  systemInfoUpdatePostHandler,
+  systemInfoFactoryResetHandler
 };

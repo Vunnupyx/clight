@@ -14,7 +14,8 @@ export enum VirtualDataPointOperationType {
   EQUAL = 'equal',
   UNEQUAL = 'unequal',
   CALCULATION = 'calculation',
-  SET_TARIFF = 'setTariff'
+  SET_TARIFF = 'setTariff',
+  BLINK_DETECTION = 'blink-detection'
 }
 
 export class VirtualDataPoint {
@@ -28,6 +29,7 @@ export class VirtualDataPoint {
   comparativeValue?: string;
   enabled?: boolean;
   resetSchedules?: VirtualDataPointSchedule[];
+  blinkSettings?: VirtualDataPointBlinkSettings;
 }
 
 export enum VirtualDataPointErrorType {
@@ -107,3 +109,9 @@ export interface VirtualDataPointScheduleWithDay
 
 export type VirtualDataPointSchedule = VirtualDataPointScheduleWithDate &
   VirtualDataPointScheduleWithDay;
+
+export interface VirtualDataPointBlinkSettings {
+  timeframe: number;
+  risingEdges: number;
+  linkedBlinkDetections: string[];
+}

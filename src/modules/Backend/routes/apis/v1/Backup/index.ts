@@ -1,7 +1,8 @@
-import { ConfigManager } from '../../../../../ConfigManager';
+import { ConfigManager, mdcLightFolder } from '../../../../../ConfigManager';
 import { Request, Response } from 'express';
 import winston from 'winston';
 import fs from 'fs';
+import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { System } from '../../../../../System';
@@ -12,16 +13,14 @@ let configManager: ConfigManager;
 /**
  * Set ConfigManager to make accessible for local function
  */
-export function setConfigManager(config: ConfigManager) {
+export function setConfigManager(config: ConfigManager): void {
   configManager = config;
 }
 
 /**
  * Handles download requests of the config file.
- * @param  {Request} request
- * @param  {Response} response
  */
-function backupGetHandle(request: Request, response: Response): void {
+function backupGetHandler(request: Request, response: Response): void {
   try {
     const config = configManager?.config;
     if (!config) {
@@ -36,26 +35,24 @@ function backupGetHandle(request: Request, response: Response): void {
     });
     fs.createReadStream(configManager.configPath).pipe(response);
   } catch (err) {
-    winston.error(`backupGetHandle error due to ${JSON.stringify(err)}`);
+    winston.error(`backupGetHandle error due to ${err}`);
   }
 }
 
 /**
  * Handles upload requests of a new config file
- * @param  {Request} request
- * @param  {Response} response
  */
-async function backupPostHandle(
+async function backupPostHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const configFile = (request.files as any)?.config;
+  const configFile = (request.files as any)?.config as { data: Buffer };
 
   if (!configFile) {
     winston.error('Backup restore failed. No file provided!');
 
     response.status(400).json({ message: 'No config file provided!' });
-    return;
+    return Promise.resolve();
   }
 
   try {
@@ -70,7 +67,7 @@ async function backupPostHandle(
 }
 
 /**
- * Bundle logs into zip archiv and send it with response
+ * Bundle logs into zip archive and send it with response
  */
 async function logsGetHandler(
   request: Request,
@@ -87,9 +84,10 @@ async function logsGetHandler(
 
   const outFileName = `${hostname}-${dateString}.zip`;
   const logFolderPath = '/mdclight/logs';
-  const inputPaths = `${logFolderPath}/*log`;
+  const configPath = path.join(mdcLightFolder, '/config/config.json');
+  const inputPaths = `${logFolderPath}/*log ${configPath}`;
   const outPath = '/mdclight/logs/out';
-  const zipCommand = `mkdir -p ${outPath} && zip -0 -r ${outPath}/${outFileName} ${inputPaths}`;
+  const zipCommand = `mkdir -p ${outPath} && zip -j -0 ${outPath}/${outFileName} ${inputPaths}`;
 
   /**
    * Deletes all log archives inside the log folder
@@ -145,7 +143,7 @@ async function logsGetHandler(
   try {
     stream = fs.createReadStream(`${outPath}/${outFileName}`);
   } catch (err) {
-    winston.error(`${logPrefix} error during read file due to ${err?.msg}`);
+    winston.error(`${logPrefix} error during read file due to ${err}`);
     saveDelete();
     response.status(500).send('Internal server error. Please try again later.');
     return;
@@ -158,7 +156,7 @@ async function logsGetHandler(
 }
 
 export const backupHandlers = {
-  backupGet: backupGetHandle,
-  backupPost: backupPostHandle,
-  logsGet: logsGetHandler
+  backupGetHandler,
+  backupPostHandler,
+  logsGetHandler
 };

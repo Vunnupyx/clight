@@ -174,7 +174,13 @@
         color="primary"
         type="button"
         class="btn-sm"
-        [disabled]="!isTouchedTable || isLoading || isEditing"
+        [disabled]="
+          !isTouchedTable ||
+          isLoading ||
+          isEditing ||
+          (dataSink?.protocol === Protocol.OPC &&
+            connection?.status === DataSinkConnectionStatus.Connecting)
+        "
         (click)="onApply()"
       >
         {{ 'settings-data-sink.ApplyChanges' | translate }}
@@ -248,6 +254,7 @@
       [rows]="datapointRows"
       rowHeight="auto"
       columnMode="flex"
+      [messages]="{ emptyMessage: 'common.NoTableData' | translate }"
     >
       <ngx-datatable-column
         [name]="'settings-data-sink.Name' | translate"

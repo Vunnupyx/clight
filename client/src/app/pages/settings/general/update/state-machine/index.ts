@@ -19,7 +19,9 @@ export class StateMachine {
     private onStateChange = (newState: string, endReason?: string) => {},
     private initialState = 'INIT',
     private isInfiniteLoop = false
-  ) {}
+  ) {
+    this.currentState = this.initialState;
+  }
 
   /**
    * Starts the state machine with initial state and runs through the states using transitions

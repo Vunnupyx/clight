@@ -38,6 +38,10 @@ import {
 } from './set-schedules-modal/set-schedules-modal.component';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { ToastrService } from 'ngx-toastr';
+import {
+  SetBlinkSettingsModalComponent,
+  SetBlinkSettingsModalData
+} from './set-blink-settings-modal/set-blink-settings-modal.component';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -105,12 +109,21 @@ export class VirtualDataPointComponent implements OnInit {
     {
       value: VirtualDataPointOperationType.SET_TARIFF,
       text: 'virtual-data-point-operation-type.SetTariff'
+    },
+    {
+      value: VirtualDataPointOperationType.BLINK_DETECTION,
+      text: 'virtual-data-point-operation-type.BlinkDetection'
     }
   ];
 
   unsavedRow?: VirtualDataPoint;
   unsavedRowIndex: number | undefined;
   liveData: ObjectMap<DataPointLiveData> = {};
+  defaultBlinkSettings = {
+    timeframe: 10000,
+    risingEdges: 3,
+    linkedBlinkDetections: []
+  };
 
   filterSourceStr: string = '';
 
@@ -292,6 +305,21 @@ export class VirtualDataPointComponent implements OnInit {
       };
     }
 
+    if (
+      this.unsavedRow?.operationType === 'blink-detection' &&
+      !this.unsavedRow?.blinkSettings
+    ) {
+      this.unsavedRow.blinkSettings = { ...this.defaultBlinkSettings };
+    }
+
+    if (
+      Array.isArray(this.unsavedRow.sources) &&
+      this.unsavedRow.sources.length &&
+      !this.isAbleToSelectMultipleSources(this.unsavedRow?.operationType)
+    ) {
+      this.unsavedRow.sources = [this.unsavedRow.sources[0]];
+    }
+
     if (this.unsavedRow!.id) {
       this.virtualDataPointService
         .updateDataPoint(this.unsavedRow?.id!, this.unsavedRow!)
@@ -417,23 +445,17 @@ export class VirtualDataPointComponent implements OnInit {
     ].includes(operationType!);
   }
 
-  onSetEnumeration(virtualPoint: VirtualDataPoint) {
+  async onSetEnumeration(virtualPoint: VirtualDataPoint) {
     if (!virtualPoint.enumeration) {
       virtualPoint.enumeration = { items: [] };
     }
 
-    const protocol = this.sourceDataPointService.getProtocol(
-      virtualPoint.sources![0]
-    );
-
-    this.sourceDataPointService.getSourceDataPointsAll();
-    this.sourceDataPointService.getLiveDataForDataPoints(protocol, 'true');
+    await this.sourceDataPointService.getSourceDataPointsAll();
 
     const dialogRef = this.dialog.open(SetEnumerationModalComponent, {
       data: {
         enumeration: clone(virtualPoint.enumeration),
         sources: virtualPoint.sources,
-        protocol,
         isSetTariffType:
           virtualPoint.operationType ===
           VirtualDataPointOperationType.SET_TARIFF
@@ -552,13 +574,40 @@ export class VirtualDataPointComponent implements OnInit {
     });
   }
 
-  onOperationTypeChange(newOperationType) {
-    if (this.unsavedRow) {
-      this.unsavedRow.sources = this.unsavedRow.sources
-        ? [this.unsavedRow.sources[0]]
-        : [];
-      this.unsavedRow.operationType = newOperationType;
+  onSetBlinkSettings(virtualPoint: VirtualDataPoint) {
+    if (!virtualPoint.blinkSettings) {
+      virtualPoint.blinkSettings = { ...this.defaultBlinkSettings };
     }
+
+    const dataPointsWithBlinkDetection = this.datapointRows.filter(
+      (x) =>
+        x.operationType === VirtualDataPointOperationType.BLINK_DETECTION &&
+        x.id !== virtualPoint.id
+    );
+
+    const dialogRef = this.dialog.open<
+      SetBlinkSettingsModalComponent,
+      SetBlinkSettingsModalData
+    >(SetBlinkSettingsModalComponent, {
+      data: {
+        blinkSettings: { ...virtualPoint.blinkSettings },
+        dataPointsWithBlinkDetection
+      },
+      width: '700px'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (!virtualPoint.id) {
+          virtualPoint.blinkSettings = result.blinkSettings;
+          return;
+        }
+
+        this.virtualDataPointService.updateDataPoint(virtualPoint.id, {
+          blinkSettings: result.blinkSettings
+        });
+      }
+    });
   }
 
   isAbleToSelectMultipleSources(

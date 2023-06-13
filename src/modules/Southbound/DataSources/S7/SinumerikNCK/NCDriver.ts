@@ -51,7 +51,7 @@ interface NCKObjectLevel {
  */
 export default class SinumerikNCKProtocolDriver {
   private timeout: number = 60000;
-  private tcpClient: any;
+  private tcpClient: net.Socket | null = null;
 
   private connectionState = ConnectionState.NOT_CONNECTED;
   private ISO_CONNECT_REQUEST = Buffer.from([
@@ -97,9 +97,9 @@ export default class SinumerikNCKProtocolDriver {
   private REQUEST_MAX_PARALLEL = 8;
   private REQUEST_MAX_PDU = 960;
 
-  private ncVariableBuffer: NCItem;
-  private dataReadResolveCallback: any;
-  private dataReadRejectCallback: any;
+  private ncVariableBuffer: NCItem | null = null;
+  private dataReadResolveCallback: (arg0: any) => void = () => {};
+  private dataReadRejectCallback: (arg0: any) => void = () => {};
 
   /**
    * Create NCK driver Instance
@@ -112,7 +112,13 @@ export default class SinumerikNCKProtocolDriver {
    */
   public setConnectionTimeout(timeout: number): void {
     this.timeout = timeout;
-    this.tcpClient.setTimeout(this.timeout);
+    if (this.tcpClient) {
+      this.tcpClient.setTimeout(this.timeout);
+    } else {
+      winston.warn(
+        `NCDriver::setConnectionTimeout trying to set timeout for tcp client but tcp client is null`
+      );
+    }
   }
 
   /**
@@ -168,6 +174,8 @@ export default class SinumerikNCKProtocolDriver {
     const logPrefix = `${SinumerikNCKProtocolDriver.name}::connectTCP`;
 
     return new Promise((resolve, reject) => {
+      if (!this.tcpClient) return reject('no TCP client');
+
       const timeout = setTimeout(() => {
         try {
           if (this.tcpClient) this.tcpClient.removeAllListeners('connect');
@@ -184,9 +192,9 @@ export default class SinumerikNCKProtocolDriver {
         return;
       }, 5000);
 
-      this.tcpClient.on('error', (e) => {
+      this.tcpClient.on('error', (error) => {
         clearTimeout(timeout);
-        reject(e);
+        reject(error);
         return;
       });
       this.tcpClient.on('connect', () => {
@@ -207,8 +215,11 @@ export default class SinumerikNCKProtocolDriver {
   private async connectISO(rack: number = 0, slot: number = 4): Promise<void> {
     const logPrefix = `${SinumerikNCKProtocolDriver.name}::connectISO`;
     return new Promise((resolve, reject) => {
+      if (!this.tcpClient) return reject('no TCP client');
+
       const timeout = setTimeout(() => {
         try {
+          if (!this.tcpClient) throw new Error('no TCP client');
           this.tcpClient.removeAllListeners('data');
         } catch (e) {
           winston.error(
@@ -233,9 +244,12 @@ export default class SinumerikNCKProtocolDriver {
 
       this.tcpClient.on(
         'data',
-        ((data) => {
+        ((data: Buffer) => {
           clearTimeout(timeout);
-          this.tcpClient.removeAllListeners('data');
+          if (this.tcpClient) {
+            this.tcpClient.removeAllListeners('data');
+          }
+
           if (this.checkConnectISOResponseOk(data)) {
             winston.debug(`${logPrefix} ISO connected successfully!`);
             resolve();
@@ -258,7 +272,11 @@ export default class SinumerikNCKProtocolDriver {
     const logPrefix = `${SinumerikNCKProtocolDriver.name}::negotiatePDU`;
 
     return new Promise((resolve, reject) => {
+      if (!this.tcpClient) return reject('no TCP client');
+
       const timeout = setTimeout(() => {
+        if (!this.tcpClient) return reject('no TCP client');
+
         this.tcpClient.removeAllListeners('data');
         reject(
           new Error(
@@ -277,9 +295,11 @@ export default class SinumerikNCKProtocolDriver {
 
       this.tcpClient.on(
         'data',
-        ((data) => {
+        ((data: Buffer) => {
           clearTimeout(timeout);
-          this.tcpClient.removeAllListeners('data');
+          if (this.tcpClient) {
+            this.tcpClient.removeAllListeners('data');
+          }
 
           const parsedData = this.parsePDUResponse(data);
 
@@ -289,8 +309,9 @@ export default class SinumerikNCKProtocolDriver {
               `Received fast acknowledge, not implemented!, packet: ${data}`
             );
           } else if (
+            typeof parsedData !== 'string' &&
             parsedData[4] + 1 + 12 + parsedData.readInt16BE(13) ===
-            parsedData.readInt16BE(2) - 4
+              parsedData.readInt16BE(2) - 4
           ) {
             // valid the length of the package:
             // ISO_Length + ISO_LengthItself + S7Com_Header + S7Com_Header_ParameterLength === TPKT_Length-4
@@ -316,28 +337,39 @@ export default class SinumerikNCKProtocolDriver {
             winston.debug(
               `${logPrefix} Received PDU Response - max PDU size: ${maxPDU}, max parallel connections: ${maxParallel}`
             );
-            this.tcpClient.on(
-              'data',
-              ((data) => {
-                this.parseResponse(data);
-              }).bind(this)
-            );
+            if (this.tcpClient) {
+              this.tcpClient.on(
+                'data',
+                ((data: Buffer) => {
+                  this.parseResponse(data);
+                }).bind(this)
+              );
+            } else {
+              winston.warn(
+                `${logPrefix} trying to set listener on tcp client but tcp client is null`
+              );
+            }
           } else {
-            winston.error(`${logPrefix} INVALID Telegram received`);
-            winston.error(
-              `${logPrefix} Byte 0 (header): ${data[0]} - should be 0x03, Byte 5 (header): ${data[5]} - should be 0x0F`
-            );
-            winston.error(
-              `${logPrefix} INVALID PDU RESPONSE or CONNECTION REFUSED - DISCONNECTING`
-            );
-            winston.error(
-              `${logPrefix} TPKT length from header is ${data.readInt16BE(
-                2
-              )}, buffer length: ${data.length}, COTP length: ${data.readUInt8(
-                4
-              )}, data[6]: ${data[6]}`
-            );
-            winston.error(`${logPrefix} Packet: ${data.toString('hex')}`);
+            try {
+              winston.error(`${logPrefix} INVALID Telegram received`);
+              winston.error(
+                `${logPrefix} Byte 0 (header): ${data?.[0]} - should be 0x03, Byte 5 (header): ${data?.[5]} - should be 0x0F`
+              );
+              winston.error(
+                `${logPrefix} INVALID PDU RESPONSE or CONNECTION REFUSED - DISCONNECTING`
+              );
+              winston.error(
+                `${logPrefix} TPKT length from header is ${data?.readInt16BE(
+                  2
+                )}, buffer length: ${
+                  data.length
+                }, COTP length: ${data?.readUInt8(4)}, data[6]: ${data?.[6]}`
+              );
+              winston.error(`${logPrefix} Packet: ${data?.toString('hex')}`);
+            } catch (error) {
+              winston.error(`${logPrefix} ${error}`);
+              reject();
+            }
             reject();
           }
           resolve();
@@ -390,9 +422,11 @@ export default class SinumerikNCKProtocolDriver {
       (requestPacket[NC_BLOCK_POINTER] = this.ncVariableBuffer.ncVar.blockType);
     requestPacket[NC_LINECOUNT_POINTER] = this.ncVariableBuffer.ncVar.numOfLine;
 
-    this.tcpClient.write(requestPacket);
+    if (this.tcpClient) {
+      this.tcpClient.write(requestPacket);
+    }
     return await new Promise(
-      ((resolve, reject) => {
+      ((resolve: (value: unknown) => void, reject: (reason?: any) => void) => {
         const timeout = setTimeout(() => {
           reject(
             new Error(
@@ -411,7 +445,7 @@ export default class SinumerikNCKProtocolDriver {
           clearTimeout(timeout);
           reject(error);
         };
-      }).bind(this)
+      }).bind(this) //TBD is this bind needed?
     );
   }
 
@@ -503,6 +537,8 @@ export default class SinumerikNCKProtocolDriver {
    */
   private parseResponse(data: Buffer) {
     try {
+      if (!this.ncVariableBuffer)
+        throw new Error('No NC Variable Buffer available');
       this.ncVariableBuffer.byteBuffer = this.processS7ResponsePacket(data);
       this.processS7ReadItem(this.ncVariableBuffer);
       this.dataReadResolveCallback(this.ncVariableBuffer.value);
@@ -624,7 +660,7 @@ export default class SinumerikNCKProtocolDriver {
     const logPrefix = `${SinumerikNCKProtocolDriver.name}::disconnect`;
 
     return new Promise((resolve, reject) => {
-      let shutdownTimeoutId;
+      let shutdownTimeoutId: NodeJS.Timeout;
 
       if (!this.tcpClient) {
         resolve();
@@ -640,7 +676,7 @@ export default class SinumerikNCKProtocolDriver {
           winston.debug(
             `${logPrefix} NCK Driver: Successfully destroyed socket on disconnect`
           );
-          delete this.tcpClient;
+          this.tcpClient = null;
           clearTimeout(shutdownTimeoutId);
         }
         resolve();
@@ -654,11 +690,19 @@ export default class SinumerikNCKProtocolDriver {
 
       shutdownTimeoutId = setTimeout(() => {
         if (this.tcpClient) {
-          this.tcpClient.destroy();
-          winston.debug(
-            `${logPrefix} NCK Driver: Timeout while waiting for socket disconnect.`
-          );
-          delete this.tcpClient;
+          try {
+            this.tcpClient.destroy();
+            winston.debug(
+              `${logPrefix} NCK Driver: Timeout while waiting for socket disconnect.`
+            );
+            this.tcpClient = null;
+          } catch (error) {
+            winston.error(
+              `${logPrefix} error while shutting down nck client: ${error}`
+            );
+            reject();
+            return;
+          }
         }
         resolve();
         return;

@@ -1,12 +1,12 @@
 import fs from 'fs';
-import child_process from 'child_process';
+import child_process, { ChildProcess } from 'child_process';
 import { TLSKeyManager } from '..';
 
 jest.mock('child_process');
 jest.mock('fs');
 jest.mock('path');
 
-function log(m) {
+function log(m: any) {
   //console.log(m);
 }
 
@@ -37,7 +37,7 @@ describe('TLS Key Manager', () => {
     jest
       .spyOn(child_process, 'spawn')
       .mockImplementationOnce((command, callback) => ({
-        on: (type, cb) => (type === 'close' ? cb(0) : {}),
+        on: (type, cb) => (type === 'close' ? cb(0, null) : {}) as ChildProcess,
         //@ts-ignore
         stdout: {
           on: jest.fn()
@@ -58,7 +58,7 @@ describe('TLS Key Manager', () => {
     jest
       .spyOn(child_process, 'spawn')
       .mockImplementationOnce((command, callback) => ({
-        on: (type, cb) => (type === 'close' ? cb(0) : {}),
+        on: (type, cb) => (type === 'close' ? cb(0, null) : {}) as ChildProcess,
         //@ts-ignore
         stdout: {
           on: jest.fn()
@@ -83,7 +83,10 @@ describe('TLS Key Manager', () => {
     jest
       .spyOn(child_process, 'spawn')
       .mockImplementationOnce((command, callback) => ({
-        on: (type, cb) => (type === 'error' ? cb(new Error('some error')) : {}),
+        on: (type, cb) =>
+          (type === 'error'
+            ? cb(new Error('some error'), null)
+            : {}) as ChildProcess,
         //@ts-ignore
         stdout: {
           on: jest.fn()
@@ -98,7 +101,7 @@ describe('TLS Key Manager', () => {
       await tlsKeyManager.generateKeys();
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
-      expect(e.message).toMatch('some error');
+      expect((e as Error).message).toMatch('some error');
     }
   });
 });

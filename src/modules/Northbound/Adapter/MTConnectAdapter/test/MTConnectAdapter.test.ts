@@ -29,7 +29,7 @@ const mockNet = {
   }
 };
 
-function log(m) {
+function log(m: any) {
   //console.log(m);
 }
 

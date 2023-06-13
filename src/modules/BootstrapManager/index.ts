@@ -1,5 +1,4 @@
 import winston from 'winston';
-import fetch from 'node-fetch';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
 import { EventBus, MeasurementEventBus } from '../EventBus';
 import {
@@ -9,7 +8,6 @@ import {
   ILifecycleEvent
 } from '../../common/interfaces';
 import { ConfigManager } from '../ConfigManager';
-import { LogLevel } from '../Logger/interfaces';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataPointCache } from '../DatapointCache';
 import { VirtualDataPointManager } from '../VirtualDataPointManager';
@@ -37,9 +35,11 @@ export class BootstrapManager {
   private tlsKeyManager: TLSKeyManager;
 
   constructor() {
-    this.errorEventsBus = new EventBus<IErrorEvent>(LogLevel.ERROR);
-    this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(LogLevel.INFO);
-    this.measurementsEventsBus = new MeasurementEventBus(LogLevel.DEBUG);
+    this.errorEventsBus = new EventBus<IErrorEvent>('ErrorEventBus');
+    this.lifecycleEventsBus = new EventBus<ILifecycleEvent>(
+      'LifecycleEventBus'
+    );
+    this.measurementsEventsBus = new MeasurementEventBus('MeasurementEventBus');
 
     this.configManager = new ConfigManager({
       errorEventsBus: this.errorEventsBus,
@@ -50,7 +50,8 @@ export class BootstrapManager {
 
     this.virtualDataPointManager = new VirtualDataPointManager({
       configManager: this.configManager,
-      cache: this.dataPointCache
+      cache: this.dataPointCache,
+      measurementsBus: this.measurementsEventsBus
     });
 
     this.dataSinksManager = new DataSinksManager({
@@ -73,7 +74,9 @@ export class BootstrapManager {
 
     this.ledManager = new LedStatusService(
       this.configManager,
-      this.dataSourcesManager
+      this.dataSourcesManager,
+      this.dataSinksManager,
+      this.lifecycleEventsBus
     );
 
     this.configManager.dataSourcesManager = this.dataSourcesManager;
@@ -95,10 +98,10 @@ export class BootstrapManager {
    */
   public async start() {
     try {
-      await this.ledManager.init();
       this.setupKillEvents();
 
       await this.tlsKeyManager.generateKeys();
+      await this.ledManager.init();
       await this.configManager.init();
       const regIdButtonEvent = this.hwEvents.registerCallback(async () => {
         try {
@@ -106,7 +109,7 @@ export class BootstrapManager {
           await this.ledManager.turnOffLeds();
           await ConfigurationAgentManager.systemRestart();
         } catch (e) {
-          winston.error(`Device factory reset error: ${e?.message}`);
+          winston.error(`Device factory reset error: ${e}`);
         }
       });
       // Activate watcher
@@ -160,14 +163,14 @@ export class BootstrapManager {
     process.on('unhandledRejection', this.rejectionHandler.bind(this));
   }
 
-  private exceptionHandler(e) {
+  private exceptionHandler(e: Error) {
     winston.error(`Exiting due unhandled exception.`);
     winston.error(e.stack);
     this.ledManager.runTimeStatus(false);
     process.exit(1);
   }
 
-  private rejectionHandler(reason, promise) {
+  private rejectionHandler(reason: unknown, promise: Promise<unknown>) {
     winston.error(
       `Exiting due unhandled rejection at: ${JSON.stringify(
         promise
@@ -177,7 +180,7 @@ export class BootstrapManager {
     process.exit(1);
   }
 
-  private signalHandler(signal) {
+  private signalHandler(signal: NodeJS.Signals) {
     winston.error(`Received signal ${signal}.`);
     this.ledManager.runTimeStatus(false);
 

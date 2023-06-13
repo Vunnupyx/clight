@@ -19,6 +19,7 @@ import {
   MTConnectDataSink
 } from '../MTConnectDataSink';
 import { OPCUADataSink } from '../OPCUADataSink';
+import { DataSinkEventTypes } from '../../../Southbound/DataSources/interfaces';
 
 interface IDataSinkManagerEvents {
   dataSinksRestarted: (error: Error | null) => void;
@@ -58,13 +59,19 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         this.init();
       } catch (err) {
         winston.error(
-          `Error initializing DataSinksManager after configsLoaded due to:${err?.message}`
+          `Error initializing DataSinksManager after configsLoaded due to:${
+            (err as Error)?.message
+          }`
         );
       }
     });
     this.configManager.on('configChange', this.configChangeHandler.bind(this));
     this.lifecycleBus = params.lifecycleBus;
     this.measurementsBus = params.measurementsBus;
+    this.messengerManager = new MessengerManager({
+      configManager: this.configManager,
+      messengerConfig: this.configManager.config?.messenger
+    });
   }
 
   private async init(): Promise<DataSinksManager> {
@@ -84,7 +91,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    * Shutdown all available data sinks.
    */
   public async shutdownAllDataSinks(): Promise<void> {
-    const shutdownFn = [];
+    const shutdownFn: Promise<void>[] = [];
     this.dataSinks.forEach(async (dataSink) => {
       this.disconnectDataSinkFromBus(dataSink);
       shutdownFn.push(dataSink.shutdown());
@@ -120,25 +127,24 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     const logPrefix = `${DataSinksManager.#className}::createDataSinks`;
     winston.info(`${logPrefix} creating ${protocol} data sink`);
 
-    if (protocol === DataSinkProtocols.MTCONNECT) {
-      this.messengerManager = new MessengerManager({
-        configManager: this.configManager,
-        messengerConfig: this.configManager.config.messenger
-      });
-    }
     const sink = this.dataSourceFactory(protocol);
 
-    // It must be pushed before initialization, to prevent double initialization
-    this.dataSinks.push(sink);
+    if (sink) {
+      // It must be pushed before initialization, to prevent double initialization
+      this.dataSinks.push(sink);
 
-    await sink.init();
+      sink.on(DataSinkEventTypes.Lifecycle, this.onLifecycleEvent);
+      await sink.init();
 
-    this.connectDataSinksToBus(sink);
-    winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
+      this.connectDataSinksToBus(sink);
+      winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
+    }
   }
 
-  private findDataSinkConfig(protocol: DataSinkProtocols): IDataSinkConfig {
-    return this.configManager.config.dataSinks.find(
+  private findDataSinkConfig(
+    protocol: DataSinkProtocols
+  ): IDataSinkConfig | undefined {
+    return this.configManager.config?.dataSinks?.find(
       (sink) => sink.protocol === protocol
     );
   }
@@ -167,15 +173,25 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.lifecycleBus.removeEventListener(`${sink.protocol}_onLifeCycleEvent`);
   }
 
-  private dataSourceFactory(protocol): DataSink {
+  private dataSourceFactory(protocol: DataSinkProtocols): DataSink | undefined {
+    const logPrefix = `${DataSinksManager.name}::dataSourceFactory`;
+
+    const dataSinkConfig = this.findDataSinkConfig(protocol);
+    if (!dataSinkConfig) {
+      winston.info(
+        `${logPrefix} data sink '${protocol}' is not found in config, skipping spawning it.`
+      );
+      return undefined;
+    }
     switch (protocol) {
       case DataSinkProtocols.DATAHUB: {
         const dataHubDataSinkOptions: DataHubDataSinkOptions = {
-          mapping: this.configManager.config.mapping,
-          dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.DATAHUB),
+          mapping: this.configManager.config?.mapping,
+          dataSinkConfig,
+          generalConfig: this.configManager.config?.general,
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           dataPointCache: this.dataPointCache
         };
 
@@ -183,11 +199,12 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
       case DataSinkProtocols.MTCONNECT: {
         const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
-          mapping: this.configManager.config.mapping,
-          dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.MTCONNECT),
+          mapping: this.configManager.config?.mapping,
+          dataSinkConfig,
+          generalConfig: this.configManager.config?.general,
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           messengerManager: this.messengerManager,
           dataPointCache: this.dataPointCache
         };
@@ -195,12 +212,12 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
       case DataSinkProtocols.OPCUA: {
         return new OPCUADataSink({
-          mapping: this.configManager.config.mapping,
-          dataSinkConfig: this.findDataSinkConfig(DataSinkProtocols.OPCUA),
-          generalConfig: this.configManager.config.general,
+          mapping: this.configManager.config?.mapping,
+          dataSinkConfig,
+          generalConfig: this.configManager.config?.general,
           runtimeConfig: this.configManager.runtimeConfig.opcua,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           dataPointCache: this.dataPointCache
         });
       }
@@ -213,7 +230,9 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
   /**
    * Returns data sink by protocol
    */
-  public getDataSinkByProto(protocol: DataSinkProtocols | string) {
+  public getDataSinkByProto(
+    protocol: DataSinkProtocols | string
+  ): DataSink | undefined {
     return this.dataSinks.find((sink) => sink.protocol === protocol);
   }
 
@@ -231,14 +250,17 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     winston.info(`${logPrefix} reloading data sinks.`);
 
-    const shutdownFunctions = [];
+    const shutdownFunctions: Promise<void>[] = [];
 
     this.dataSinks.forEach((sink) => {
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
-          this.configManager.config.mapping,
-          this.configManager.config.termsAndConditions.accepted
+          this.configManager.config?.mapping,
+          this.configManager.config?.termsAndConditions?.accepted,
+          {
+            generalConfig: this.configManager.config?.general
+          }
         )
       ) {
         winston.info(
@@ -262,7 +284,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
     });
 
-    let err: Error = null;
+    let err: Error;
     await Promise.allSettled(shutdownFunctions)
       .then((results) => {
         winston.info(`${logPrefix} data sinks disconnected.`);
@@ -273,7 +295,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       })
       .then(() => {
         winston.info(`${logPrefix} reinitializing data sinks.`);
-        this.init();
+        return this.init();
       })
       .then(() => {
         winston.info(`${logPrefix} data sinks restarted successfully.`);
@@ -293,4 +315,16 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         }
       });
   }
+
+  /**
+   * Published lifecycle events
+   * @param  {ILifecycleEvent} lifeCycleEvent
+   * @returns void
+   */
+  private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
+    const logPrefix = `${DataSinksManager.name}::onLifecycleEvent`;
+    winston.verbose(`${logPrefix}`);
+
+    this.lifecycleBus.push(lifeCycleEvent);
+  };
 }

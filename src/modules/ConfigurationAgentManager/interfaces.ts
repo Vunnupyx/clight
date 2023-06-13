@@ -7,7 +7,7 @@ interface ICosNetworkIPSettings {
 }
 
 export interface ICosNetworkAdapterSetting {
-  id: string;
+  id: 'enoX1' | 'enoX2';
   displayName: string;
   enabled: boolean;
   ipv4Settings: ICosNetworkIPSettings[];
@@ -48,4 +48,15 @@ export type ICosSystemRestartResponse = {};
 export interface ICosResponseError {
   message: string;
   error: string;
+}
+
+export type ICosLedsList = string[];
+export interface IMachineInfo {
+  Serial: string;
+  Model: string;
+  ControlType: string;
+  ControlManufacturer: string;
+  Manufacturer: string;
+  Source: string;
+  Timestamp: string;
 }

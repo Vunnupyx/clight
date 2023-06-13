@@ -5,7 +5,7 @@ import {
   ICosNetworkAdapterStatus
 } from '../interfaces';
 
-function log(m) {
+function log(m: any) {
   //console.log(m);
 }
 
@@ -236,12 +236,12 @@ describe('ConfigurationAgentManager', () => {
 
     test('no id given to get single network adapter setting', async () => {
       try {
-        let id;
+        let id: any;
         const result =
-          await ConfigurationAgentManager.getSingleNetworkAdapterSetting(id);
+          await ConfigurationAgentManager.getSingleNetworkAdapterSetting(id!);
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
-        expect(e.message).toBe('Adapter Id not correct');
+        expect((e as Error).message).toBe('Adapter Id not correct');
       }
     });
 
@@ -275,12 +275,12 @@ describe('ConfigurationAgentManager', () => {
 
     test('no id given to get single network adapter status', async () => {
       try {
-        let id;
+        let id: any;
         const result =
-          await ConfigurationAgentManager.getSingleNetworkAdapterStatus(id);
+          await ConfigurationAgentManager.getSingleNetworkAdapterStatus(id!);
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
-        expect(e.message).toBe('Adapter Id not correct');
+        expect((e as Error).message).toBe('Adapter Id not correct');
       }
     });
 

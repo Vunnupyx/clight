@@ -92,11 +92,11 @@ export class SourceDataPointService {
 
       if (this._store.snapshot.touched) {
         await this.httpService.patch(
-          `/datasources/${datasourceProtocol}/dataPoints`,
+          `/datasources/${datasourceProtocol}/datapoints`,
           this._store.snapshot.dataPoints
         );
 
-        this._getDataPoints(datasourceProtocol);
+        await this._getDataPoints(datasourceProtocol);
       }
 
       this._store.patchState((state) => {
@@ -125,6 +125,9 @@ export class SourceDataPointService {
    * @returns
    */
   async ping(protocol: DataSourceProtocol | undefined): Promise<string> {
+    this._store.patchState((state) => {
+      state.status = Status.Loading;
+    });
     if (protocol === undefined) protocol = DataSourceProtocol.S7;
     const errorHandler = () => {
       this.toastr.error(
@@ -138,6 +141,20 @@ export class SourceDataPointService {
     return this.httpService
       .get(`/datasources/${protocol}/ping`)
       .then((res) => {
+        this._store.patchState((state) => {
+          state.status = Status.Ready;
+        });
+        if (res?.error?.msg?.includes('disabled')) {
+          this.toastr.error(
+            this.translate.instant('settings-data-source-point.HostDisabled')
+          );
+          return;
+        } else if (res?.error?.msg) {
+          this.toastr.error(
+            this.translate.instant('settings-data-source-point.HostUnreachable')
+          );
+          return;
+        }
         this.toastr.success(
           this.translate.instant(
             `settings-data-source-point.ConnectionAvailableWithDelay`
@@ -148,6 +165,9 @@ export class SourceDataPointService {
         return res.delay;
       })
       .catch(() => {
+        this._store.patchState((state) => {
+          state.status = Status.Ready;
+        });
         return errorHandler();
       });
   }
@@ -340,7 +360,7 @@ export class SourceDataPointService {
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
     const { dataPoints } = await this.httpService.get<{
       dataPoints: SourceDataPoint[];
-    }>(`/datasources/${datasourceProtocol}/datapoints`);
+    }>(`/datasources/${datasourceProtocol}/dataPoints`);
 
     this._store.patchState((state) => {
       state.dataPoints = dataPoints;

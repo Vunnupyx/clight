@@ -5,7 +5,6 @@ import { MTConnectAdapter } from '../../Adapter/MTConnectAdapter';
 import { DataSink, IDataSinkOptions } from '../DataSink';
 import {
   DataSinkProtocols,
-  DataSourceLifecycleEventTypes,
   ILifecycleEvent,
   LifecycleEventStatus,
   MTConnectDataItemTypes
@@ -34,14 +33,14 @@ export interface IMTConnectDataSinkOptions extends IDataSinkOptions {
 export class MTConnectDataSink extends DataSink {
   private mtcAdapter: MTConnectAdapter;
   private static scheduler: SynchronousIntervalScheduler;
-  private static schedulerListenerId: number = null;
+  private static schedulerListenerId: number | null = null;
   private dataItems: DataItemDict = {};
   private messengerManager: MessengerManager;
   protected _protocol = DataSinkProtocols.MTCONNECT;
   protected name = MTConnectDataSink.name;
 
   // scheduler iteration count
-  private runTime: DataItem;
+  private runTime: DataItem | null = null;
 
   // private system: Condition;
   // private logic1: Condition;
@@ -92,7 +91,8 @@ export class MTConnectDataSink extends DataSink {
     if (!MTConnectDataSink.schedulerListenerId) {
       MTConnectDataSink.schedulerListenerId =
         MTConnectDataSink.scheduler.addListener([1000], async () => {
-          this.runTime.value = (this.runTime.value as number) + 1;
+          if (this.runTime)
+            this.runTime.value = (this.runTime.value as number) + 1;
           await this.mtcAdapter.sendChanged();
         });
     }
@@ -141,7 +141,7 @@ export class MTConnectDataSink extends DataSink {
     });
   }
 
-  protected processDataPointValue(dataPointId, value) {
+  protected processDataPointValue(dataPointId: string, value: string | number) {
     const dataItem = this.dataItems[dataPointId];
 
     if (!dataItem) return;
@@ -163,18 +163,15 @@ export class MTConnectDataSink extends DataSink {
     const shutdownFunctions = [];
     this.disconnect();
 
-    MTConnectDataSink.scheduler.removeListener(
-      MTConnectDataSink.schedulerListenerId
-    );
-    MTConnectDataSink.schedulerListenerId = null;
+    if (MTConnectDataSink.schedulerListenerId) {
+      MTConnectDataSink.scheduler.removeListener(
+        MTConnectDataSink.schedulerListenerId
+      );
+      MTConnectDataSink.schedulerListenerId = null;
+    }
+    shutdownFunctions.push(this.mtcAdapter.shutdown());
 
-    Object.getOwnPropertyNames(this).forEach((prop) => {
-      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
-      if (this[prop].close) shutdownFunctions.push(this[prop].close());
-
-      // delete this[prop]; // TODO Why was this required?
-    });
-
+    winston.verbose(`${logPrefix} Waiting for shutdown.`);
     return Promise.all(shutdownFunctions)
       .then(() => {
         winston.info(`${logPrefix} successfully.`);
@@ -189,7 +186,7 @@ export class MTConnectDataSink extends DataSink {
    * Disconnects all data items and set status to unavailable.
    * TODO: Why adapter is not disconnected?
    */
-  public disconnect() {
+  public async disconnect(): Promise<void> {
     Object.keys(this.dataItems).forEach((key) => {
       this.dataItems[key].unavailable();
     });

@@ -7,7 +7,8 @@ import { EventBus, MeasurementEventBus } from '../../../EventBus/index';
 import { IDataSourcesManagerParams } from './interfaces';
 import {
   DataSourceProtocols,
-  ILifecycleEvent
+  ILifecycleEvent,
+  LifecycleEventStatus
 } from '../../../../common/interfaces';
 import { DataPointCache } from '../../../DatapointCache';
 import { IDataSourceMeasurementEvent } from '../interfaces';
@@ -18,6 +19,7 @@ import { S7DataSource } from '../S7';
 import { IoshieldDataSource } from '../Ioshield';
 import { EnergyDataSource } from '../Energy';
 import { MTConnectDataSource } from '../MTConnect';
+import { IDataSourceLifecycleEvent } from '../interfaces';
 
 interface IDataSourceManagerEvents {
   dataSourcesRestarted: (error: Error | null) => void;
@@ -36,6 +38,10 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private virtualDataPointManager: VirtualDataPointManager;
   private dataAddedDuringRestart = false;
   private dataSinksRestartPending = false;
+  private mtConnectConnectionErrorResetTimer: NodeJS.Timeout | null = null;
+  private MTCONNECT_CONNECTIVITY_WARNING_RESET_INTERVAL = 30 * 60 * 1000;
+
+  public mtConnectLastConnectionErrorTimestamp: number | null = null;
 
   constructor(params: IDataSourcesManagerParams) {
     super();
@@ -111,10 +117,19 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
    * @returns void
    */
   public async spawnDataSource(protocol: DataSourceProtocols): Promise<void> {
+    const logPrefix = `${DataSourcesManager.name}::spawnDataSource`;
+
+    const sourceConfig = this.findDataSourceConfig(protocol);
+    if (!sourceConfig) {
+      winston.info(
+        `${logPrefix} data source '${protocol}' is not found in config, skipping spawning it.`
+      );
+      return;
+    }
     const params: IDataSourceParams = {
-      config: this.findDataSourceConfig(protocol),
+      config: sourceConfig,
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config?.termsAndConditions?.accepted
     };
 
     const dataSource = this.dataSourceFactory(params);
@@ -129,8 +144,8 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
 
   private findDataSourceConfig(
     protocol: DataSourceProtocols
-  ): IDataSourceConfig {
-    return this.configManager.config.dataSources.find(
+  ): IDataSourceConfig | undefined {
+    return this.configManager.config?.dataSources?.find(
       (sink) => sink.protocol === protocol
     );
   }
@@ -167,18 +182,70 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   };
 
   /**
+   * Sets and resets warning for the MTConnect data source connectivity warning as needed
+   */
+  private checkMtConnectConnectivityWarningStatus(
+    lifeCycleEvent: ILifecycleEvent
+  ): void {
+    if (lifeCycleEvent.type === LifecycleEventStatus.ConnectionError) {
+      this.mtConnectLastConnectionErrorTimestamp = Date.now();
+      if (this.mtConnectConnectionErrorResetTimer)
+        clearTimeout(this.mtConnectConnectionErrorResetTimer);
+
+      this.mtConnectConnectionErrorResetTimer = setTimeout(() => {
+        if (
+          this.dataSources.find(
+            (source) => source.protocol === DataSourceProtocols.MTCONNECT
+          )?.currentStatus === LifecycleEventStatus.Connected
+        ) {
+          this.mtConnectLastConnectionErrorTimestamp = null;
+        }
+      }, this.MTCONNECT_CONNECTIVITY_WARNING_RESET_INTERVAL);
+    } else if (
+      lifeCycleEvent.type === LifecycleEventStatus.Connected &&
+      this.mtConnectLastConnectionErrorTimestamp
+    ) {
+      if (
+        this.mtConnectLastConnectionErrorTimestamp &&
+        this.mtConnectLastConnectionErrorTimestamp <
+          Date.now() - this.MTCONNECT_CONNECTIVITY_WARNING_RESET_INTERVAL
+      ) {
+        if (this.mtConnectConnectionErrorResetTimer) {
+          clearTimeout(this.mtConnectConnectionErrorResetTimer);
+          this.mtConnectConnectionErrorResetTimer = null;
+        }
+        this.mtConnectLastConnectionErrorTimestamp = null;
+      }
+    }
+  }
+
+  /**
    * Published lifecycle events
    * @param  {ILifecycleEvent} lifeCycleEvent
    * @returns void
    */
   private onLifecycleEvent = (lifeCycleEvent: ILifecycleEvent): void => {
+    const logPrefix = `${DataSourcesManager.name}::onLifecycleEvent`;
+    winston.verbose(`${logPrefix}`);
+
+    const isEventFromMtConnectDataSource: boolean =
+      (lifeCycleEvent as IDataSourceLifecycleEvent)?.dataSource &&
+      (lifeCycleEvent as IDataSourceLifecycleEvent).dataSource?.protocol ===
+        DataSourceProtocols.MTCONNECT;
+
+    if (isEventFromMtConnectDataSource) {
+      this.checkMtConnectConnectivityWarningStatus(lifeCycleEvent);
+    }
+
     this.lifecycleBus.push(lifeCycleEvent);
   };
 
   /**
    * Returns the datasource object by its protocol
    */
-  public getDataSourceByProto(protocol: DataSourceProtocols | string) {
+  public getDataSourceByProto(
+    protocol: DataSourceProtocols | string
+  ): DataSource | undefined {
     return this.dataSources.find((src) => src.protocol === protocol);
   }
 
@@ -192,20 +259,20 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private configChangeHandler(): Promise<void> {
     if (this.dataSinksRestartPending) {
       this.dataAddedDuringRestart = true;
-      return;
+      return Promise.resolve();
     }
     this.dataSinksRestartPending = true;
     const logPrefix = `${DataSourcesManager.name}::configChangeHandler`;
 
     winston.info(`${logPrefix} reloading necessary datasources.`);
 
-    const shutdownFns = [];
+    const shutdownFns: Promise<void>[] = [];
     this.dataSources.forEach((source) => {
       // Shut down data sources with a changed configuration
       if (
         !source.configEqual(
           this.findDataSourceConfig(source.protocol),
-          this.configManager.config.termsAndConditions.accepted
+          this.configManager.config?.termsAndConditions?.accepted
         )
       ) {
         winston.info(
@@ -223,8 +290,8 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
       }
     });
 
-    let err: Error = null;
-    Promise.allSettled(shutdownFns)
+    let err: Error;
+    return Promise.allSettled(shutdownFns)
       .then((results) => {
         winston.debug(`${logPrefix} datasources disconnected.`);
         results.forEach((result) => {

@@ -61,7 +61,7 @@ export class NetworkService {
           proxy: x.proxy,
           ntp:
             x.ntp?.host && x.ntp?.timestamp
-              ? { ...x.ntp, ntpEnabled: !!x.ntp[0] }
+              ? { ...x.ntp, ntpEnabled: !!x.ntp.host[0] }
               : undefined
         })
       ),

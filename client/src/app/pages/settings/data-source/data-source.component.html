@@ -107,7 +107,7 @@
               </div>
               <div class="row d-flex align-items-center">
                 <div class="text-nowrap col-12 col-md-5 pb-20">
-                  {{ 'settings-data-source.Hostname' | translate }}
+                  {{ 'settings-data-source.Host' | translate }}
                 </div>
                 <mat-form-field class="col-12 col-md-7">
                   <input
@@ -198,7 +198,7 @@
             <form #form="ngForm">
               <div class="row d-flex align-items-center">
                 <div class="text-nowrap col-12 col-md-5 pb-20">
-                  {{ 'settings-data-source.IPAddress' | translate }}
+                  {{ 'settings-data-source.Host' | translate }}
                 </div>
                 <mat-form-field class="col-12 col-md-7">
                   <input
@@ -206,7 +206,7 @@
                     name="ipAddress"
                     #ipAddr="ngModel"
                     [ngModel]="dataSource?.connection?.ipAddr"
-                    [pattern]="ipRegex"
+                    [pattern]="ipOrHostRegex"
                     [required]="true"
                     (ngModelChange)="updateIpAddress(form.valid, $event)"
                   />
@@ -321,7 +321,17 @@
         *ngIf="connection && dataSource?.protocol !== Protocol.IOShield"
       >
         <div class="mt-25">
-          {{ 'settings-data-source.Connection' | translate }}
+          <mat-icon
+            class="color-warning"
+            *ngIf="connection.showMTConnectConnectivityWarning"
+            svgIcon="mdc:warning"
+            [matTooltip]="
+              'settings-data-source.MTConnectConnectivityWarningText'
+                | translate
+            "
+            matTooltipPosition="above"
+          ></mat-icon
+          >{{ 'settings-data-source.Connection' | translate }}
         </div>
 
         <div
@@ -527,7 +537,7 @@
             <h3>{{ 'settings-data-source.DataPoints' | translate }}</h3>
             <button
               type="button"
-              [disabled]="isEditing"
+              [disabled]="isEditing || isLoading"
               mat-mini-fab
               color="primary"
               class="wh-32 border-round ml-15"
@@ -546,6 +556,7 @@
         [rows]="datapointRows"
         rowHeight="auto"
         columnMode="flex"
+        [messages]="{ emptyMessage: 'common.NoTableData' | translate }"
       >
         <ngx-datatable-column
           [name]="'settings-data-source.Name' | translate"

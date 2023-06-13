@@ -1,16 +1,17 @@
-type SubscriberById = { [key: number]: (id: number) => void };
-type SubscribersForInterval = { [key: number]: SubscriberById };
+import winston from 'winston';
+type SubscriberById = { [key: string]: (id: number[]) => void };
+type SubscribersForInterval = { [key: string]: SubscriberById };
 
 /**
  * Implements a (globally) synchronous interval scheduler
  */
 export class SynchronousIntervalScheduler {
-  private static instance: SynchronousIntervalScheduler;
+  private static instance: SynchronousIntervalScheduler | undefined;
 
   private subscribers: SubscribersForInterval = {};
   private lastAssignedSubId = 0;
   private internalCycleInterval: ReturnType<typeof setInterval>;
-  private internalCycleLastExecution: { [key: number]: number } = {};
+  private internalCycleLastExecution: { [key: string]: number } = {};
 
   /**
    * Sets up the internal scheduler loop
@@ -24,25 +25,36 @@ export class SynchronousIntervalScheduler {
    */
   public shutdown() {
     clearInterval(this.internalCycleInterval);
-    SynchronousIntervalScheduler.instance = undefined; // TBD: If after shutdown a Scheduler instance is taken, it will not start the timer otherwise
+    SynchronousIntervalScheduler.instance = undefined;
   }
 
   /**
    * Scheduler main loop, called with limited timer resolution
    */
   private cycle() {
-    Object.keys(this.subscribers).forEach((key) => {
-      const now = Date.now();
-      const currentInterval = parseInt(key, 10);
-      const lastRun = this.internalCycleLastExecution[key] || 0;
+    const logPrefix = `${SynchronousIntervalScheduler.name}::cycle`;
+    try {
+      Object.keys(this.subscribers).forEach((key) => {
+        const now = Date.now();
+        const currentInterval = parseInt(key, 10);
+        const lastRun = this.internalCycleLastExecution[key] || 0;
 
-      if (now - lastRun >= currentInterval) {
-        Object.keys(this.subscribers[key]).forEach((subscriberId) => {
-          this.subscribers[key][subscriberId]([currentInterval]);
-        });
-        this.internalCycleLastExecution[key] = now;
-      }
-    });
+        if (now - lastRun >= currentInterval) {
+          Object.keys(this.subscribers[key]).forEach((subscriberId) => {
+            try {
+              this.subscribers[key][subscriberId]([currentInterval]);
+            } catch (error) {
+              winston.error(
+                `${logPrefix} ${subscriberId} with current interval ${currentInterval} returns error : ${error}`
+              );
+            }
+          });
+          this.internalCycleLastExecution[key] = now;
+        }
+      });
+    } catch (error) {
+      winston.error(`${logPrefix} Error in sync scheduler cycle: ${error}`);
+    }
   }
 
   /**
@@ -52,8 +64,8 @@ export class SynchronousIntervalScheduler {
    * @returns
    */
   public addListener(
-    cycleIntervals: Array<number>,
-    callback: (interval: number) => void
+    cycleIntervals: number[],
+    callback: (interval: number[]) => void
   ): number {
     this.lastAssignedSubId += 1;
     cycleIntervals.forEach((cycleInterval) => {

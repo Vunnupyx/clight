@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "Abbrechen",
-    "LanguageDocumentationPath": "/de"
+    "LanguageDocumentationPath": "/de",
+    "NoTableData": "Fügen Sie zunächst einen Datenpunkt hinzu, um die Daten hier zu sehen",
+    "NoTableDataMapping": "Fügen Sie zunächst ein Mapping hinzu, um die Daten hier zu sehen",
+    "NoTableDataSchedule": "Fügen Sie zunächst einen Zeitplan hinzu, um die Daten hier zu sehen"
   },
   "commissioning": {
     "Welcome": "Willkommen bei IoTconnector flex",
@@ -20,6 +23,7 @@
     "Disconnected": "Getrennt",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Komponenten",
+    "SkipCommissioning": "Inbetriebnahme überspringen",
     "FinishCommissioning": "Inbetriebnahme beenden",
     "FinishError": "Die Inbetriebnahme konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut",
     "RegisteredError": "Bereitstellung fehlgeschlagen",
@@ -33,6 +37,7 @@
     "VirtualDataPoints": "Virtuelle Datenpunkte",
     "DataMapping": "Mapping",
     "DataSinks": "Anwendungs Schnittstellen",
+    "NetService": "NETservice",
     "Network": "Netzwerk",
     "SystemInformation": "System Informationen",
     "ChangePassword": "Passwort Ändern",
@@ -148,7 +153,7 @@
     "RestartDevice": "Gerät neustarten",
     "RestartNow": "Neustarten",
     "RestartDeviceTitle": "Gerät neustarten",
-    "RestartDeviceText": "Wollen Sie das Gerät wirklich neustarten? Das Gerät ist danach für ca. 2 Minuten nicht verfügbar.",
+    "RestartDeviceText": "Wollen Sie das Gerät wirklich neustarten? Das Gerät ist danach bis zu 5 Minuten nicht verfügbar.",
     "RestartDeviceSuccess": "Das Gerät wurde erfolgreich neugestartet!",
     "RestartDeviceError": "Das Gerät konnte nicht neugestartet werden.",
     "BackupDownloadError": "Es könnte keine Sicherung der Konfiguration heruntergeladen werden. Versuchen Sie es später erneut!",
@@ -176,7 +181,7 @@
     "Enabled": "Aktiviert",
     "MachineName": "Machine Name",
     "IPAddress": "IP Adresse",
-    "Hostname": "Hostname",
+    "Host": "Host",
     "Connection": "Verbindungsstatus",
     "Running": "Verbunden",
     "Disconnected": "Nicht verbunden",
@@ -205,6 +210,7 @@
     "SoftwareVersion": "Software Version",
     "BTSSString": "BTSS String",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es später erneut.",
+    "MTConnectConnectivityWarningText": "Es gab Probleme mit der Verbindung zum Host. Bitte überprüfen Sie Ihre Netzwerkeinstellungen oder den Host.",
     "Tabs": {
       "s7": "SIEMENS",
       "mtconnect": "MTConnect",
@@ -214,9 +220,13 @@
     "Livedata": {
       "ioshield": {
         "0": "0 (Aus)",
-        "1": "1 (An)",
-        "2": "2 (Blinken)"
+        "1": "1 (An)"
       }
+    },
+    "BlinkingStatus": {
+      "0": "0 (Aus)",
+      "1": "1 (An)",
+      "2": "2 (Blinken)"
     },
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen speichern",
@@ -268,7 +278,7 @@
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Bitte versuchen Sie es später erneut!",
     "DiscardChanges": "Änderungen verwerfen",
     "ApplyChanges": "Änderungen übernehmen",
-    "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits verhanden.",
+    "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "SetSchedules": "Zeitpläne erstellen",
     "AddSchedule": "Zeitplan einfügen",
     "ScheduleName": "Zeitplan Name",
@@ -291,7 +301,12 @@
     "Formula": "Formel",
     "UnexpectedError": "Die Änderungen wurden nicht übernommen. Bitte versuchen Sie es erneut!",
     "WrongVdpsOrder": "'{{SourceId}}' kann nicht als Quelle für '{{ErrorId}}' genutzt werden. Virtuelle Datenpunkte können nur nach ihrer Definition genutzt werden!",
-    "SetTariffEnum": "Mapping für Maschinenzustand setzen"
+    "SetTariffEnum": "Mapping für Maschinenzustand setzen",
+    "SetBlinkSettings": "Blinkerkennung Einstellungen",
+    "Timeframe": "Zeitfenster",
+    "RisingEdges": "Steigende Flanken",
+    "LinkedBlinkDetections": "Verlinkte Blinkerkennungen",
+    "NoOtherBlinkDetectionVDPsAvailable": "Es gibt keine anderen VDPs mit dem Typ Blinkerkennung zur Auswahl"
   },
   "virtual-data-point-operation-type": {
     "And": "Und",
@@ -307,14 +322,16 @@
     "Unequal": "Ungleich",
     "Enumeration": "Enumeration",
     "Calculation": "Kalkulation",
-    "SetTariff": "Energie Tariff Setzen"
+    "SetTariff": "Energie Tariff Setzen",
+    "BlinkDetection": "Blinkerkennung"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Die Datenpunkte wurden erfolgreich aktualisiert!",
     "BulkError": "Die Datenpunkte konnten nicht aktualisiert werden. Versuchen Sie es bitte später erneut!",
     "LoadError": "Die Datenpunkte konnten nicht geladen werden. Versuchen Sie es bitte später erneut!",
     "ConnectionAvailableWithDelay": "Verbindung verfügbar mit einer Verzögerung von: ",
-    "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen."
+    "HostUnreachable": "Steuerung nicht erreichbar. Bitte überprüfen Sie die Einstellungen.",
+    "HostDisabled": "Datenquelle ist deaktiviert. Bitte überprüfen Sie die Einstellungen."
   },
   "settings-data-sink": {
     "DataSink": "Anwendungsschnittstelle",
@@ -394,6 +411,7 @@
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Passwort",
+    "DuplicatedName": "Ein Datenpunkt mit dem selben Namen ist bereits vorhanden",
     "DuplicatedAddress": "Doppelte Adresse sind nicht erlaubt.",
     "HasDataMapping": "Der Datenpunkt ist mit einem Quelldatenpunkt verbunden",
     "OpcUaVariables": "OPC UA Variablen",
@@ -484,6 +502,33 @@
     "UpdateAdapterSuccess": "Netzwerkadapter wurde erfolgreich aktualisiert",
     "UpdateTimestampSuccess": "Zeiteinstellung wurde erfolgreich aktualisiert"
   },
+  "net-service": {
+    "NetService": "NETservice",
+    "StartNetService": "Start NETservice",
+    "WhatIsNetService": "What is NETservice?",
+    "Status": "Status",
+    "NetServiceSiteControl": "NETservice Site Control",
+    "CentralServerConnection": "Central Server Connection",
+    "ConnectedClients": "Connected Clients",
+    "UpdateStatus": "Update Status",
+    "FacilityTree": "Facility Tree",
+    "CentralServerConfiguration": "Central Server Configuration",
+    "ResetFacilityTree": "Reset Facility Tree",
+    "URL": "URL",
+    "Port": "Port",
+    "ApplyChanges": "Apply Changes",
+    "UpdateError": "Failed to update. Try again later",
+    "FacilityTreeResetSuccess": "Facility tree has been reset successfully!",
+    "CentralServerSaveSuccess": "Central Server has been saved successfully!",
+    "Running": "Running",
+    "Stopped": "Stopped",
+    "Unknown": "Unknown",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "NoUpdate": "No update",
+    "ClientUpdating": "Client updating",
+    "SiteControlUpdating": "Site control updating"
+  },
   "system-information": {
     "SystemInformation": "System Informationen",
     "UpdateSystem": "Systemaktualisierung",
@@ -516,7 +561,15 @@
     "FactoryResetNow": "Gerät auf Werkseinstellungen zurücksetzen",
     "FactoryResetDeviceTitle": "Zurücksetzen auf Werkseinstellungen",
     "FactoryResetDeviceText": "Sind Sie sicher, dass Sie fortfahren möchten? Dies kann dazu führen, dass Ihr Gerät anschließend nicht mehr erreichbar ist!",
-    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!"
+    "FactoryResetSuccess": "Zurücksetzen auf die Werkseinstellungen erfolgreich durchgeführt!",
+    "MachineInformation": "Gerät Informationen",
+    "Serial": "Serialnummer",
+    "ControlManufacturer": "Steuerung Hersteller",
+    "Manufacturer": "Hersteller",
+    "Source": "Quelle",
+    "ControlType": "Steuerung Typ",
+    "Model": "Modell",
+    "Unknown": "Unbekannt"
   },
   "prompt": {
     "warningText": "Es gibt ungespeicherte Änderungen, möchten Sie wirklich fortfahren?"

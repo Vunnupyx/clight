@@ -74,9 +74,9 @@ export class System {
         (await ConfigurationAgentManager.getSystemVersions()) as ICosSystemVersions;
       const osVersion = versions?.find((v) => v.Name === 'COS')?.Version;
       return osVersion || 'unknown';
-    } catch (e) {
+    } catch (error) {
       winston.error('Error reading OS version!');
-      winston.error(e.message);
+      winston.error(error);
       return 'unknown';
     }
   }

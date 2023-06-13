@@ -1,9 +1,6 @@
 import winston from 'winston';
 import { DataSource } from '../DataSource';
-import {
-  DataSourceLifecycleEventTypes,
-  LifecycleEventStatus
-} from '../../../../common/interfaces';
+import { LifecycleEventStatus } from '../../../../common/interfaces';
 import { IDataPointConfig } from '../../../ConfigManager/interfaces';
 import { IMeasurement } from '../interfaces';
 import {
@@ -17,7 +14,7 @@ import {
 export class IoshieldDataSource extends DataSource {
   protected name = IoshieldDataSource.name;
 
-  mraaClient: Iot2050MraaDI10 | Iot2050MraaDI2AI5;
+  mraaClient: Iot2050MraaDI10 | Iot2050MraaDI2AI5 | null = null;
 
   /**
    * Initializes ioshield data source, sets up driver and validates configuration
@@ -83,6 +80,7 @@ export class IoshieldDataSource extends DataSource {
       });
 
     try {
+      if (!this.mraaClient) throw new Error('mraa client is undefined');
       const digitalInputValues = await this.mraaClient.getDigitalValues();
       const analogInputValues = await this.mraaClient.getAnalogValues();
 

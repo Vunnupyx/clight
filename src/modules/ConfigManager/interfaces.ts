@@ -1,4 +1,5 @@
 import {
+  DataSinkProtocols,
   DataSourceProtocols,
   IErrorEvent,
   ILifecycleEvent
@@ -139,22 +140,24 @@ export function isValidDataSource(obj: any): obj is IDataSourceConfig {
   );
 }
 
-// type MapItem = {
-//   [key: string]: "string";
-// };
-export type ITargetDataMap = object;
+export type IDataSinkMap = {
+  [key: string]: string;
+};
+export type IVdpThreshold = {
+  [key: string]: number;
+};
 
 export interface IDataSinkDataPointConfig {
   id: string;
   address: string;
   name: string;
   type?: IMTConnectDataPointTypes | TDataHubDataPointType;
-  map?: ITargetDataMap;
+  map?: IDataSinkMap;
   initialValue?: string | number;
   mandatory?: true; //only used inside frontend
 }
 export interface IOpcuaAuth {
-  type: 'none' | 'userpassword';
+  type: 'anonymous' | 'userpassword';
   userName?: string;
   password?: string;
 }
@@ -201,7 +204,7 @@ export interface IMessengerMetadata {
 
 export interface IDataSinkConfig {
   dataPoints: IDataSinkDataPointConfig[];
-  protocol: string;
+  protocol: DataSinkProtocols;
   enabled: boolean;
   auth?: IOpcuaAuth;
   customDataPoints?: IOpcuaCustomDataPoint[];
@@ -305,6 +308,12 @@ export interface EnumOperationEntry {
   source: string;
   returnValueIfTrue: string;
 }
+
+export interface BlinkSettings {
+  timeframe: number;
+  risingEdges: number;
+  linkedBlinkDetections: string[];
+}
 export interface IVirtualDataPointConfig {
   id: string;
   sources: string[];
@@ -322,12 +331,14 @@ export interface IVirtualDataPointConfig {
     | 'equal'
     | 'unequal'
     | 'calculation'
-    | 'setTariff';
-  thresholds?: ITargetDataMap;
+    | 'setTariff'
+    | 'blink-detection';
+  thresholds?: IVdpThreshold;
   enumeration?: {
     defaultValue?: string;
     items: EnumOperationEntry[];
   };
+  blinkSettings?: BlinkSettings;
   comparativeValue?: string | number;
   resetSchedules?: ScheduleDescription[];
   formula?: string;
@@ -364,7 +375,7 @@ export interface TermsAndConditionsConfig {
 
 export interface IConfig {
   dataSources: IDataSourceConfig[];
-  dataSinks: Array<IDataSinkConfig>;
+  dataSinks: IDataSinkConfig[];
   virtualDataPoints: IVirtualDataPointConfig[];
   messenger: IMessengerServerConfig;
   mapping: IDataPointMapping[];

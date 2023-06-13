@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "Cancel",
-    "LanguageDocumentationPath": ""
+    "LanguageDocumentationPath": "",
+    "NoTableData": "First add a data point to see data here",
+    "NoTableDataMapping": "First add a mapping to see data here",
+    "NoTableDataSchedule": "First add a schedule to see data here"
   },
   "commissioning": {
     "Welcome": "Welcome to IoTconnector flex",
@@ -20,6 +23,7 @@
     "Disconnected": "Disconnected",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Components",
+    "SkipCommissioning": "Skip commissioning",
     "FinishCommissioning": "Finish commissioning",
     "FinishError": "Failed to finish commissioning. Please try again later",
     "RegisteredError": "Failed to provisioned",
@@ -33,6 +37,7 @@
     "VirtualDataPoints": "Virtual Data Points",
     "DataMapping": "Data Mapping",
     "DataSinks": "Application Interfaces",
+    "NetService": "NETservice",
     "Network": "Network",
     "SystemInformation": "System Information",
     "ChangePassword": "Change Password",
@@ -148,7 +153,7 @@
     "RestartDevice": "Restart device",
     "RestartNow": "Restart now",
     "RestartDeviceTitle": "Restart device",
-    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for about 1 minute.",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for up to 5 minutes.",
     "RestartDeviceSuccess": "Device has been restarted successfully!",
     "RestartDeviceError": "Failed to restart device.",
     "BackupDownloadError": "Could not download backup. Please try again!",
@@ -176,7 +181,7 @@
     "Enabled": "Enabled",
     "MachineName": "Machine Name",
     "IPAddress": "IP Address",
-    "Hostname": "Hostname",
+    "Host": "Host",
     "Connection": "Connection",
     "Running": "Running",
     "Disconnected": "Disconnected",
@@ -205,6 +210,7 @@
     "SoftwareVersion": "Software Version",
     "BTSSString": "BTSS String",
     "LoadError": "Failed to load data sources. Try again later",
+    "MTConnectConnectivityWarningText": "There has been connectivity problems to the host. Please check your network settings or the host.",
     "Tabs": {
       "s7": "SIEMENS",
       "mtconnect": "MTConnect",
@@ -214,9 +220,13 @@
     "Livedata": {
       "ioshield": {
         "0": "0 (Off)",
-        "1": "1 (On)",
-        "2": "2 (Blinking)"
+        "1": "1 (On)"
       }
+    },
+    "BlinkingStatus": {
+      "0": "0 (Off)",
+      "1": "1 (On)",
+      "2": "2 (Blinking)"
     },
     "DiscardChanges": "Discard Changes",
     "ApplyChanges": "Apply Changes",
@@ -291,7 +301,12 @@
     "Formula": "Formula",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
     "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
-    "SetTariffEnum": "Set Machine Status Mapping"
+    "SetTariffEnum": "Set Machine Status Mapping",
+    "SetBlinkSettings": "Set Blink Settings",
+    "Timeframe": "Timeframe",
+    "RisingEdges": "Rising Edges",
+    "LinkedBlinkDetections": "Linked Blink Detections",
+    "NoOtherBlinkDetectionVDPsAvailable": "There are no other VDPs with the type Blink Detection to choose from"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -307,14 +322,16 @@
     "Unequal": "Unequal",
     "Enumeration": "Enumeration",
     "Calculation": "Calculation",
-    "SetTariff": "Set Energy Tariff"
+    "SetTariff": "Set Energy Tariff",
+    "BlinkDetection": "Blink Detection"
   },
   "settings-data-source-point": {
     "BulkSuccess": "Changes have been applied successfully!",
     "BulkError": "Changes have not been applied. Please, try again!",
     "LoadError": "Failed to load source data points. Try again later",
     "ConnectionAvailableWithDelay": "Connection available with a delay of: ",
-    "HostUnreachable": "Host unreachable please check IP configuration"
+    "HostUnreachable": "Host unreachable please check data source configuration",
+    "HostDisabled": "Data source is disabled, please check data source settings."
   },
   "settings-data-sink": {
     "DataSink": "Application Interface",
@@ -394,6 +411,7 @@
     "Status": "Status",
     "Registration": "Registration",
     "Password": "Password",
+    "DuplicatedName": "You are not allowed to duplicate names",
     "DuplicatedAddress": "You are not allowed to duplicate addresses",
     "HasDataMapping": "Data point is mapped to a source",
     "OpcUaVariables": "OPC UA Variables",
@@ -484,6 +502,33 @@
     "UpdateAdapterSuccess": "Updated network adapter successfully",
     "UpdateTimestampSuccess": "Updated time configuration successfully"
   },
+  "net-service": {
+    "NetService": "NETservice",
+    "StartNetService": "Start NETservice",
+    "WhatIsNetService": "What is NETservice?",
+    "Status": "Status",
+    "NetServiceSiteControl": "NETservice Site Control",
+    "CentralServerConnection": "Central Server Connection",
+    "ConnectedClients": "Connected Clients",
+    "UpdateStatus": "Update Status",
+    "FacilityTree": "Facility Tree",
+    "CentralServerConfiguration": "Central Server Configuration",
+    "ResetFacilityTree": "Reset Facility Tree",
+    "URL": "URL",
+    "Port": "Port",
+    "ApplyChanges": "Apply Changes",
+    "UpdateError": "Failed to update. Try again later",
+    "FacilityTreeResetSuccess": "Facility tree has been reset successfully!",
+    "CentralServerSaveSuccess": "Central Server has been saved successfully!",
+    "Running": "Running",
+    "Stopped": "Stopped",
+    "Unknown": "Unknown",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "NoUpdate": "No update",
+    "ClientUpdating": "Client updating",
+    "SiteControlUpdating": "Site control updating"
+  },
   "system-information": {
     "SystemInformation": "System Information",
     "UpdateSystem": "Update System",
@@ -516,7 +561,15 @@
     "FactoryResetNow": "Reset device to factory settings",
     "FactoryResetDeviceTitle": "Perform Factory Reset",
     "FactoryResetDeviceText": "Are you sure you want to continue? This may cause your device to be unreachable afterwards!",
-    "FactoryResetSuccess": "Factory reset performed successfully!"
+    "FactoryResetSuccess": "Factory reset performed successfully!",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "Manufacturer": "Manufacturer",
+    "Source": "Source",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Unknown": "unknown"
   },
   "prompt": {
     "warningText": "You have unsaved changes, do you really want to continue?"

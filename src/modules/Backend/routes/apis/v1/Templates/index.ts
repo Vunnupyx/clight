@@ -13,38 +13,33 @@ let dataSinksManager: DataSinksManager;
 
 /**
  * Set ConfigManager to make accessible for local function
- * @param  {ConfigManager} manager
  */
-export function setConfigManager(manager: ConfigManager) {
+export function setConfigManager(manager: ConfigManager): void {
   configManager = manager;
 }
 
 /**
  * Set dataSourcesManager to make accessible for local function
- * @param  {DataSourcesManager} manager
  */
-export function setDataSourcesManager(manager: DataSourcesManager) {
+export function setDataSourcesManager(manager: DataSourcesManager): void {
   dataSourcesManager = manager;
 }
 
 /**
  * Set dataSinksManager to make accessible for local function
- * @param  {DataSinksManager} manager
  */
-export function setDataSinksManager(manager: DataSinksManager) {
+export function setDataSinksManager(manager: DataSinksManager): void {
   dataSinksManager = manager;
 }
 
 /**
  * Handle all requests for the list of templates.
- * @param  {Request} request
- * @param  {Response} response
  */
 function templatesGetHandler(request: Request, response: Response): void {
   const payload = {
-    templates: configManager.defaultTemplates.templates,
-    currentTemplate: configManager.config.quickStart.currentTemplate,
-    currentTemplateName: configManager.config.quickStart.currentTemplateName
+    templates: configManager.defaultTemplates?.templates,
+    currentTemplate: configManager.config?.quickStart?.currentTemplate,
+    currentTemplateName: configManager.config?.quickStart?.currentTemplateName
   };
 
   response.status(200).json(payload);
@@ -52,12 +47,10 @@ function templatesGetHandler(request: Request, response: Response): void {
 
 /**
  * Returns the current status of the templates completion
- * @param  {Request} request
- * @param  {Response} response
  */
 function templatesGetStatusHandler(request: Request, response: Response) {
   const { completed, currentTemplate, currentTemplateName } =
-    configManager.config.quickStart;
+    configManager.config?.quickStart;
 
   response
     .status(200)
@@ -66,8 +59,6 @@ function templatesGetStatusHandler(request: Request, response: Response) {
 
 /**
  * Handle POST apply templates request
- * @param  {Request} request
- * @param  {Response} response
  */
 async function templatesApplyPostHandler(
   request: Request,
@@ -92,12 +83,11 @@ async function templatesSkipPostHandler(
   response: Response
 ): Promise<void> {
   configManager.config = {
-    ...configManager.config,
+    ...(configManager.config ?? {}),
     quickStart: {
       completed: true,
-      currentTemplate: configManager.config.quickStart.currentTemplate || null,
-      currentTemplateName:
-        configManager.config.quickStart.currentTemplateName || null
+      currentTemplate: configManager.config?.quickStart?.currentTemplate,
+      currentTemplateName: configManager.config?.quickStart?.currentTemplateName
     }
   };
 

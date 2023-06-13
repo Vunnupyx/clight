@@ -6,7 +6,6 @@ import {
   IComponentStream,
   IEntriesObject,
   IEntry,
-  IHostConnectivityState,
   IMTConnectMeasurement,
   IMTConnectStreamError,
   IMTConnectStreamResponse,
@@ -27,13 +26,10 @@ import { isValidIpOrHostname } from '../../../Utilities';
 export class MTConnectDataSource extends DataSource {
   protected name = MTConnectDataSource.name;
   private dataPoints: IDataPointConfig[];
-  private nextSequenceNumber: number;
-  private lastSequenceNumber: number;
+  private nextSequenceNumber: number | null = null;
+  private lastSequenceNumber: number | null = null;
   private requestCount = 1;
   private hostname = '';
-  private hostConnectivityState: IHostConnectivityState =
-    IHostConnectivityState.UNKNOWN;
-
   private DATAPOINT_READ_INTERVAL = 1000;
 
   constructor(params: IDataSourceParams) {
@@ -80,14 +76,17 @@ export class MTConnectDataSource extends DataSource {
       );
       return;
     }
-    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
+    if (this.currentStatus !== LifecycleEventStatus.Reconnecting)
+      this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     try {
       await this.testHostConnectivity();
 
-      if (this.hostConnectivityState === IHostConnectivityState.OK) {
-        clearTimeout(this.reconnectTimeoutId);
-        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+      if (this.currentStatus === LifecycleEventStatus.Connected) {
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
         winston.info(
           `${logPrefix} successfully connected to MT Connect Source`
         );
@@ -99,15 +98,19 @@ export class MTConnectDataSource extends DataSource {
           this.setupLogCycle();
         }
       } else {
-        throw new Error(`Host status:${this.hostConnectivityState}`);
+        throw new Error(`Host status:${this.currentStatus}`);
       }
     } catch (error) {
-      winston.error(`${logPrefix} ${error?.message}`);
+      winston.error(`${logPrefix} ${(error as Error)?.message}`);
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
-        this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
-        this.init();
+        try {
+          this.updateCurrentStatus(LifecycleEventStatus.Reconnecting);
+          this.init();
+        } catch (error) {
+          winston.error(`${logPrefix} error in reconnecting: ${error}`);
+        }
       }, this.RECONNECT_TIMEOUT);
       return;
     }
@@ -135,7 +138,10 @@ export class MTConnectDataSource extends DataSource {
     const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
-    clearTimeout(this.reconnectTimeoutId);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
@@ -159,7 +165,7 @@ export class MTConnectDataSource extends DataSource {
     const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
     const response = await this.getMTConnectAgentXMLResponseAsObject(
       '/sample',
-      this.nextSequenceNumber
+      this.nextSequenceNumber ?? 0
     );
 
     if ((response as IMTConnectStreamError).MTConnectError) {
@@ -168,29 +174,24 @@ export class MTConnectDataSource extends DataSource {
       const errorMessage: string = (response as IMTConnectStreamError)
         .MTConnectError?.Errors?.Error?.['#'];
 
-      if (errorMessage.includes('must be greater than')) {
+      if (
+        errorMessage.includes('must be greater than') ||
+        errorMessage.includes('must be less than')
+      ) {
         // Runtime is behind, should sync to next possible firstSequence and must quickly read to catch up to actual nextSequenceNumber
-        // This should not happen as varying request count always stays in sync
-
-        const newFirstSequenceNumber = parseInt(
-          errorMessage.trim().split('must be greater than ')[1]
-        );
-        winston.warn(
-          `${logPrefix} current sequence number ${this.nextSequenceNumber} is less than minimum allowed. Updating next sequence number to:${newFirstSequenceNumber}`
-        );
-
-        this.nextSequenceNumber = newFirstSequenceNumber;
-      } else if (errorMessage.includes('must be less than')) {
+        // OR
         // Runtime is too fast, should sync back to last value
         // This should not happen as varying request count always stays in sync
-        const newSequenceNumber = parseInt(
-          errorMessage.trim().split('must be less than ')[1]
-        );
-        winston.warn(
-          `${logPrefix} current sequence ${this.nextSequenceNumber} is more than maximum allowed. Updating next sequence number to:${newSequenceNumber}`
-        );
 
-        this.nextSequenceNumber = newSequenceNumber;
+        // new first sequence number is the number that is written in the error message as the minimum number. Regex extracts the number
+        const newSequenceNumber = errorMessage.match(/\d+/g)?.[0] ?? '0';
+        this.nextSequenceNumber = parseInt(newSequenceNumber);
+
+        winston.warn(
+          `${logPrefix} current sequence number ${this.nextSequenceNumber} is ${
+            errorMessage.includes('must be greater than') ? 'less' : 'more'
+          } than minimum allowed. Updating next sequence number to:${newSequenceNumber}`
+        );
       } else {
         winston.warn(`${logPrefix} ${errorMessage}`);
       }
@@ -311,7 +312,7 @@ export class MTConnectDataSource extends DataSource {
         keyToUse = 'Samples';
         break;
       default:
-        break;
+        return;
     }
     let arrayToProcess: IMeasurementData[] = [];
 
@@ -345,9 +346,9 @@ export class MTConnectDataSource extends DataSource {
         statistic,
         timestamp
       } = detailObject['@'] ?? {};
-      const value = detailObject['#'];
+      const value = detailObject['#'] ?? '';
       // In some cases Entry can be present instead of a value
-      let entries: IEntry[];
+      let entries: IEntry[] = [];
       let entriesObject: IEntriesObject = {};
 
       if (detailObject.Entry) {
@@ -356,8 +357,8 @@ export class MTConnectDataSource extends DataSource {
           : [detailObject.Entry];
 
         entries.forEach((entry) => {
-          const keyName = entry['@key'] ?? entry['@']?.key;
-          const keyValue = entry['#'];
+          const keyName = entry['@key'] ?? entry['@']?.key ?? '';
+          const keyValue = entry['#'] ?? '';
 
           if (entry.Cell) {
             if (!entriesObject[keyName]) {
@@ -367,7 +368,9 @@ export class MTConnectDataSource extends DataSource {
             cells?.forEach((cellInfo) => {
               const cellKeyName = cellInfo['@key'];
               const cellValue = cellInfo['#'];
-              entriesObject[keyName][cellKeyName] = cellValue;
+              (entriesObject[keyName] as { [key: string]: string })[
+                cellKeyName
+              ] = cellValue;
             });
           } else {
             entriesObject[keyName] = keyValue;
@@ -379,7 +382,7 @@ export class MTConnectDataSource extends DataSource {
         id: dataItemId,
         duration,
         statistic,
-        name: detailObject.name,
+        name: detailObject.name ?? '',
         sequence,
         assetType,
         subType,
@@ -455,11 +458,20 @@ export class MTConnectDataSource extends DataSource {
           format: 'object',
           group: true
         });
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
+
         // TODO type cast xmlObj from XMLSerializedAsObject
         //@ts-ignore
         return resolve(xmlObj);
       } catch (e) {
-        const err = `${logPrefix} unexpected error occurred while fetching XML response: ${e?.message}`;
+        this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
+        const err = `${logPrefix} unexpected error occurred while fetching XML response: ${
+          e as Error
+        }`;
         winston.error(err);
         return reject(new Error(err));
       }
@@ -479,7 +491,11 @@ export class MTConnectDataSource extends DataSource {
       });
 
       if (response.ok) {
-        this.hostConnectivityState = IHostConnectivityState.OK;
+        this.updateCurrentStatus(LifecycleEventStatus.Connected);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       } else {
         throw new Error('Response not OK');
       }
@@ -487,7 +503,7 @@ export class MTConnectDataSource extends DataSource {
       winston.warn(
         `${logPrefix} error connecting to MTConnect Agent at ${this.hostname}, err: ${err}`
       );
-      this.hostConnectivityState = IHostConnectivityState.ERROR;
+      this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
     }
   }
 }

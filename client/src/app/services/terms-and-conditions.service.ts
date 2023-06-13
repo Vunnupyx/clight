@@ -6,7 +6,7 @@ import { filter, map } from 'rxjs/operators';
 import { Status, Store, StoreFactory } from '../shared/state';
 import { HttpService } from '../shared';
 import { errorHandler } from '../shared/utils';
-
+import { CommissioningService } from 'app/services';
 export class TermsAndConditionsState {
   status!: Status;
   text!: string;
@@ -33,7 +33,8 @@ export class TermsAndConditionsService {
     storeFactory: StoreFactory<TermsAndConditionsState>,
     private httpService: HttpService,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private commissioningService: CommissioningService
   ) {
     this._store = storeFactory.startFrom(this._emptyState());
   }
@@ -45,13 +46,16 @@ export class TermsAndConditionsService {
         accepted: boolean;
       }>(`/terms-and-conditions`, { params: { lang } } as any);
 
+      const isCommissioningSkipped =
+        await this.commissioningService.isSkipped();
+
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.text = response.text;
-        state.accepted = response.accepted;
+        state.accepted = isCommissioningSkipped || response.accepted;
       });
 
-      return response.accepted;
+      return isCommissioningSkipped || response.accepted;
     } catch (err) {
       this.toastr.error(this.translate.instant('quick-start.TermsLoadError'));
       errorHandler(err);

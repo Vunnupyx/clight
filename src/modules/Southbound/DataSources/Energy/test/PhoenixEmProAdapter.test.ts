@@ -143,7 +143,7 @@ describe('PhoenixEmProAdapter', () => {
       try {
         await emProClient.getAllDatapoints();
       } catch (e) {
-        expect(e.message).toBe('Could not read any values');
+        expect((e as Error).message).toBe('Could not read any values');
       }
     });
   });
@@ -192,7 +192,7 @@ describe('PhoenixEmProAdapter', () => {
             method: 'GET'
           })
         );
-        expect(e.message).toBe('reason');
+        expect((e as Error).message).toBe('reason');
       }
     });
   });
@@ -305,7 +305,7 @@ describe('PhoenixEmProAdapter', () => {
             method: 'GET'
           })
         );
-        expect(e.message).toBe('reason');
+        expect((e as Error).message).toBe('reason');
       }
     });
   });
@@ -344,7 +344,7 @@ describe('PhoenixEmProAdapter', () => {
         await emProClient.changeTariff(tariff as any);
       } catch (e) {
         expect(mockedFetch).not.toHaveBeenCalled();
-        expect(e.message).toBe('Wrong tariff number');
+        expect((e as Error).message).toBe('Wrong tariff number');
       }
     });
 
@@ -366,7 +366,7 @@ describe('PhoenixEmProAdapter', () => {
             method: 'PUT'
           })
         );
-        expect(e.message).toBe('errMessage');
+        expect((e as Error).message).toBe('errMessage');
       }
     });
 
@@ -384,7 +384,7 @@ describe('PhoenixEmProAdapter', () => {
             method: 'PUT'
           })
         );
-        expect(e.message).toBe('reason');
+        expect((e as Error).message).toBe('reason');
       }
     });
   });

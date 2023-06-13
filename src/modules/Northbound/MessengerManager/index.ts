@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import winston from 'winston';
+import { DataSinkProtocols } from '../../../common/interfaces';
 import { ConfigManager } from '../../ConfigManager';
 import {
   IMessengerMetadata,
@@ -8,6 +9,7 @@ import {
 } from '../../ConfigManager/interfaces';
 import { System } from '../../System';
 import { areObjectsEqual, isValidIpOrHostname } from '../../Utilities';
+import { Response } from 'node-fetch';
 
 interface IMachineCatalog {
   name: string;
@@ -30,21 +32,24 @@ export class MessengerManager {
     registration: 'unknown',
     registrationErrorReason: null
   };
-  public messengerConfig: IMessengerServerConfig;
+  public messengerConfig: IMessengerServerConfig | null = null;
 
-  private configManager: ConfigManager;
-  private loginToken: string;
-  private invalidHostTimer: NodeJS.Timer;
-  private registeredMachineId: string;
-  private machineCatalog: Array<IMachineCatalog>;
-  private defaultTimezoneId: number;
-  private organizationUnits: Array<IOrganizationUnit>;
-  private timezones: ITimezone;
-  private hostname: string;
+  private configManager: Readonly<ConfigManager>;
+  private loginToken: string | null = null;
+  private invalidHostTimer: NodeJS.Timer | null = null;
+  private registeredMachineId: string | null = null;
+  private machineCatalog: Array<IMachineCatalog> | null = null;
+  private defaultTimezoneId: number | null = null;
+  private organizationUnits: Array<IOrganizationUnit> | null = null;
+  private timezones: ITimezone | null = null;
+  private hostname: string | null = null;
   protected name = MessengerManager.name;
 
-  constructor(options) {
-    this.messengerConfig = options.messengerConfig;
+  constructor(options: {
+    configManager: Readonly<ConfigManager>;
+    messengerConfig: IMessengerServerConfig;
+  }) {
+    if (options.messengerConfig) this.messengerConfig = options.messengerConfig;
     this.configManager = options.configManager;
     this.configManager.on('configChange', this.handleConfigChange.bind(this));
   }
@@ -59,11 +64,18 @@ export class MessengerManager {
     }
     winston.debug(`${logPrefix} Messenger Manager is initializing`);
 
+    if (!this.isMTConnectApplicationInterfaceEnabled()) {
+      winston.debug(
+        `${logPrefix} MT Connect Application Interface is not enabled, skipping Messenger setup.`
+      );
+      return;
+    }
+
     if (
       this.messengerConfig &&
-      this.messengerConfig.hostname?.length > 0 &&
-      this.messengerConfig.username?.length > 0 &&
-      this.messengerConfig.password?.length > 0
+      this.messengerConfig.hostname &&
+      this.messengerConfig.username &&
+      this.messengerConfig.password
     ) {
       winston.debug(`${logPrefix} Messenger configuration is available.`);
       await this.checkStatus();
@@ -116,8 +128,8 @@ export class MessengerManager {
     }
     await this.readMetadataFromMessenger();
     if (
-      this.configManager.config.general.serialNumber === '' ||
-      !this.configManager.config.general.serialNumber
+      this.configManager.config?.general?.serialNumber === '' ||
+      !this.configManager.config?.general?.serialNumber
     ) {
       this.serverStatus.registration = 'error';
       this.serverStatus.registrationErrorReason = 'missing_serial';
@@ -125,7 +137,7 @@ export class MessengerManager {
     }
     if (
       this.messengerConfig.model &&
-      !this.machineCatalog.find((m) => m.id === this.messengerConfig.model)
+      !this.machineCatalog?.find((m) => m.id === this.messengerConfig?.model)
     ) {
       this.serverStatus.registration = 'error';
       this.serverStatus.registrationErrorReason = 'invalid_model';
@@ -133,8 +145,8 @@ export class MessengerManager {
     }
     if (
       this.messengerConfig.organization &&
-      !this.organizationUnits.find(
-        (m) => m.id === this.messengerConfig.organization
+      !this.organizationUnits?.find(
+        (m) => m.id === this.messengerConfig?.organization
       )
     ) {
       this.serverStatus.registration = 'error';
@@ -143,7 +155,7 @@ export class MessengerManager {
     }
     if (
       this.messengerConfig.timezone &&
-      !this.timezones[`${this.messengerConfig.timezone}`]
+      !this.timezones?.[`${this.messengerConfig.timezone}`]
     ) {
       this.serverStatus.registration = 'error';
       this.serverStatus.registrationErrorReason = 'invalid_timezone';
@@ -171,15 +183,18 @@ export class MessengerManager {
     await this.readMetadataFromMessenger();
 
     let metadataData: IMessengerMetadata = {
-      organizations: this.organizationUnits,
-      models: this.machineCatalog.map((machine) => ({
-        id: machine.id,
-        name: machine.name
-      })),
-      timezones: Object.entries(this.timezones).map(([id, name]) => ({
-        id: Number(id),
-        name
-      }))
+      organizations: this.organizationUnits ?? [],
+      models:
+        this.machineCatalog?.map((machine) => ({
+          id: machine.id,
+          name: machine.name
+        })) ?? [],
+      timezones: this.timezones
+        ? Object.entries(this.timezones).map(([id, name]) => ({
+            id: Number(id),
+            name
+          }))
+        : []
     };
 
     return metadataData;
@@ -215,21 +230,25 @@ export class MessengerManager {
       if (response.ok) {
         this.serverStatus.registration = 'not_registered';
         this.serverStatus.registrationErrorReason = null;
-        const machinesList = await response?.json();
+        const machinesList: {
+          Id: string;
+          SerialNumber: string;
+          IpAddress: string;
+        }[] = await response?.json();
         if (machinesList) {
           let listOfRegisteredMachinesInMessenger = machinesList;
           const matchingRegisteredMachineFromMessenger =
             listOfRegisteredMachinesInMessenger.find?.(
               (registeredMachine) =>
                 registeredMachine.SerialNumber ===
-                this.configManager.config.general.serialNumber
+                this.configManager.config?.general?.serialNumber
             );
 
           const otherMachinesWithSameIP =
             listOfRegisteredMachinesInMessenger.find?.(
               (registeredMachine) =>
                 registeredMachine.SerialNumber !==
-                  this.configManager.config.general.serialNumber &&
+                  this.configManager.config?.general?.serialNumber &&
                 registeredMachine.IpAddress?.toLowerCase() ===
                   this.hostname?.toLowerCase()
             );
@@ -301,7 +320,9 @@ export class MessengerManager {
               }
             } catch (err) {
               winston.warn(
-                `${logPrefix} Error getting detail info for matching machine: ${err.message}`
+                `${logPrefix} Error getting detail info for matching machine: ${
+                  (err as Error).message
+                }`
               );
             }
           }
@@ -332,7 +353,7 @@ export class MessengerManager {
     }
 
     try {
-      let response;
+      let response: Response = {} as Response; // default value in case try catch block below fails to get a response
       await Promise.race([
         new Promise<void>(async (resolve, reject) => {
           if (!this.invalidHostTimer) {
@@ -361,23 +382,23 @@ export class MessengerManager {
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                  User: this.messengerConfig.username,
-                  Pass: this.messengerConfig.password
+                  User: this.messengerConfig?.username,
+                  Pass: this.messengerConfig?.password
                 })
               }
             );
-            clearTimeout(this.invalidHostTimer);
+            if (this.invalidHostTimer) clearTimeout(this.invalidHostTimer);
             this.invalidHostTimer = null;
             resolve();
           } catch (err) {
-            clearTimeout(this.invalidHostTimer);
+            if (this.invalidHostTimer) clearTimeout(this.invalidHostTimer);
             this.invalidHostTimer = null;
-            if (err.message?.includes('ECONNREFUSED')) {
+            if ((err as Error).message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
               this.serverStatus.registration = 'unknown';
             }
             winston.warn(
-              `${logPrefix} Error with login request: ${err.message}`
+              `${logPrefix} Error with login request: ${(err as Error).message}`
             );
             reject();
           }
@@ -391,7 +412,7 @@ export class MessengerManager {
           this.serverStatus.server = 'available';
         }
       } else {
-        if (response.status === 401 || response.status === 403) {
+        if (response?.status === 401 || response.status === 403) {
           this.serverStatus.server = 'invalid_auth';
           this.serverStatus.registration = 'unknown';
           winston.debug(`${logPrefix} Invalid Auth`);
@@ -400,9 +421,7 @@ export class MessengerManager {
           this.serverStatus.registration = 'unknown';
           winston.debug(`${logPrefix} Invalid Host`);
         } else {
-          winston.warn(
-            `${logPrefix}  Unhandled response status ${response.status} ${response.statusText} ${response}`
-          );
+          winston.warn(`${logPrefix}  Unhandled response: ${response}`);
         }
       }
     } catch (err) {
@@ -446,19 +465,25 @@ export class MessengerManager {
                 }
               }
             );
-            if (response.ok) {
-              const data = await response?.json();
+            if (response?.ok) {
+              const data = await response.json();
               if (data.err || data.erd) {
                 winston.warn(
                   `${logPrefix} Error reading machine catalog. data.err:${data.err} data.erd:${data.erd}`
                 );
                 //TBD
               }
-              this.machineCatalog = data.msg.map((machine) => ({
-                name: machine.Name,
-                id: machine.Id,
-                imageFileName: machine.ImageFileName
-              }));
+              this.machineCatalog = data.msg.map(
+                (machine: {
+                  Name: string;
+                  Id: string;
+                  ImageFileName: string;
+                }) => ({
+                  name: machine.Name,
+                  id: machine.Id,
+                  imageFileName: machine.ImageFileName
+                })
+              );
               winston.debug(`${logPrefix} Machine Catalog read successfully.`);
             } else {
               await this.responseNotOKHandler(
@@ -468,7 +493,7 @@ export class MessengerManager {
             }
             resolve();
           } catch (err) {
-            if (err.message?.includes('ECONNREFUSED')) {
+            if ((err as Error).message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
               this.serverStatus.registration = 'unknown';
             }
@@ -516,7 +541,7 @@ export class MessengerManager {
             }
             resolve();
           } catch (err) {
-            if (err.message?.includes('ECONNREFUSED')) {
+            if ((err as Error).message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
               this.serverStatus.registration = 'unknown';
             }
@@ -553,10 +578,12 @@ export class MessengerManager {
                 );
                 //TBD
               }
-              this.organizationUnits = data.msg.map((org) => ({
-                name: org.Name,
-                id: org.Id
-              }));
+              this.organizationUnits = data.msg.map(
+                (org: { Name: string; Id: string }) => ({
+                  name: org.Name,
+                  id: org.Id
+                })
+              );
 
               winston.debug(
                 `${logPrefix} Organization Units read successfully.`
@@ -569,7 +596,7 @@ export class MessengerManager {
             }
             resolve();
           } catch (err) {
-            if (err.message?.includes('ECONNREFUSED')) {
+            if ((err as Error).message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
               this.serverStatus.registration = 'unknown';
             }
@@ -615,7 +642,7 @@ export class MessengerManager {
             }
             resolve();
           } catch (err) {
-            if (err.message?.includes('ECONNREFUSED')) {
+            if ((err as Error).message?.includes('ECONNREFUSED')) {
               this.serverStatus.server = 'invalid_host';
               this.serverStatus.registration = 'unknown';
             }
@@ -642,12 +669,12 @@ export class MessengerManager {
     }
 
     if (
-      !this.messengerConfig.name ||
-      this.messengerConfig.name === '' ||
-      !this.messengerConfig.organization ||
-      this.messengerConfig.organization === '' ||
-      !this.messengerConfig.model ||
-      !this.messengerConfig.timezone
+      !this.messengerConfig?.name ||
+      this.messengerConfig?.name === '' ||
+      !this.messengerConfig?.organization ||
+      this.messengerConfig?.organization === '' ||
+      !this.messengerConfig?.model ||
+      !this.messengerConfig?.timezone
     ) {
       winston.debug(
         `${logPrefix} Cannot register machine because metadata is missing to start registration.`
@@ -671,12 +698,12 @@ export class MessengerManager {
         Id: isUpdating ? this.registeredMachineId : undefined,
         ChannelNumber: 1, // By default 0, but then Messenger UI doesn't let user to update anything because Messenger UI always sends channel id 1 and ids mismatch.
         MachineName: this.messengerConfig.name,
-        SerialNumber: this.configManager.config.general.serialNumber,
-        LicenseNumber: this.configManager.config.general.serialNumber,
+        SerialNumber: this.configManager.config?.general?.serialNumber,
+        LicenseNumber: this.configManager.config?.general?.serialNumber,
         MachineCatalogId: this.messengerConfig.model,
         MachineImage: `/adm/api/machinecatalog/image/${
-          this.machineCatalog.find(
-            (machine) => machine.id === this.messengerConfig.model
+          this.machineCatalog?.find(
+            (machine) => machine.id === this.messengerConfig?.model
           )?.imageFileName
         }`,
         TimeZoneId: this.messengerConfig.timezone ?? this.defaultTimezoneId,
@@ -705,7 +732,7 @@ export class MessengerManager {
           }
         }
       );
-      if (response.ok) {
+      if (response?.ok) {
         const data = await response?.json();
 
         if (typeof data === 'string') {
@@ -737,14 +764,16 @@ export class MessengerManager {
   /**
    * Handles errors from Messenger server
    */
-  private async responseNotOKHandler(response, logPrefix) {
-    const errorMessage = JSON.parse(await response.text())?.ExceptionMessage;
+  private async responseNotOKHandler(response: Response, logPrefix: string) {
+    const errorMessage =
+      JSON.parse(await response?.text())?.ExceptionMessage ??
+      'undefined response';
 
     winston.warn(
-      `${logPrefix} Error in response: [${response.status} ${response.statusText}] ${errorMessage}`
+      `${logPrefix} Error in response: [${response?.status} ${response?.statusText}] ${errorMessage}`
     );
 
-    if (response.status === 401 || response.status === 403) {
+    if (response?.status === 401 || response?.status === 403) {
       this.serverStatus.server = 'invalid_auth';
       this.serverStatus.registration = 'unknown';
       if (response.status === 401 && this.loginToken) {
@@ -759,12 +788,27 @@ export class MessengerManager {
   }
 
   /**
+   * Checks whether the MTConnect application interface is enabled
+   */
+  private isMTConnectApplicationInterfaceEnabled(): boolean {
+    return !!this.configManager.config?.dataSinks?.find(
+      (dataSink) => dataSink.protocol === DataSinkProtocols.MTCONNECT
+    )?.enabled;
+  }
+
+  /**
    * Handles changes in config
    */
   public async handleConfigChange() {
     const logPrefix = `${this.name}::handleConfigChange`;
-    const newMessengerConfig = this.configManager.config.messenger;
+    const newMessengerConfig = this.configManager.config?.messenger;
 
+    if (!this.isMTConnectApplicationInterfaceEnabled()) {
+      winston.debug(
+        `${logPrefix} MTConnect Application Interface is disabled, therefore skipping Messenger setup.`
+      );
+      return;
+    }
     if (
       areObjectsEqual(newMessengerConfig, this.messengerConfig) &&
       this.serverStatus.registrationErrorReason !== 'missing_serial'
@@ -789,12 +833,13 @@ export class MessengerManager {
     }
     //Config changed
     if (
-      this.messengerConfig.hostname !== newMessengerConfig.hostname ||
-      this.messengerConfig.username !== newMessengerConfig.username ||
-      this.messengerConfig.password !== newMessengerConfig.password
+      !this.messengerConfig ||
+      this.messengerConfig?.hostname !== newMessengerConfig.hostname ||
+      this.messengerConfig?.username !== newMessengerConfig.username ||
+      this.messengerConfig?.password !== newMessengerConfig.password
     ) {
       // status must be reset
-      clearTimeout(this.invalidHostTimer);
+      if (this.invalidHostTimer) clearTimeout(this.invalidHostTimer);
       this.invalidHostTimer = null;
       this.serverStatus.registration = 'unknown';
       this.serverStatus.server = 'not_configured';

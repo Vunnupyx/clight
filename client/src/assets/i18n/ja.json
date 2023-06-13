@@ -2,7 +2,10 @@
   "common": {
     "OK": "OK",
     "Cancel": "キャンセル",
-    "LanguageDocumentationPath": "/jp"
+    "LanguageDocumentationPath": "/jp",
+    "NoTableData": "First add a data point to see data here",
+    "NoTableDataMapping": "First add a mapping to see data here",
+    "NoTableDataSchedule": "First add a schedule to see data here"
   },
   "commissioning": {
     "Welcome": "Welcome to IoTconnector flex",
@@ -20,6 +23,7 @@
     "Disconnected": "Disconnected",
     "CELOSXchange": "CELOS Xchange",
     "SoftwareComponents": "Software Components",
+    "SkipCommissioning": "Skip commissioning",
     "FinishCommissioning": "Finish commissioning",
     "FinishError": "Failed to finish commissioning. Please try again later",
     "RegisteredError": "Failed to provisioned",
@@ -33,6 +37,7 @@
     "VirtualDataPoints": "仮想データポイント",
     "DataMapping": "データマッピング",
     "DataSinks": "アプリケーションインタフェース",
+    "NetService": "NETservice",
     "Network": "ネットワーク",
     "SystemInformation": "システム情報",
     "ChangePassword": "パスワード変更",
@@ -148,7 +153,7 @@
     "RestartDevice": "デバイス初期化",
     "RestartNow": "再起動",
     "RestartDeviceTitle": "デバイス再起動",
-    "RestartDeviceText": "デバイスを再起動しますか？再起動にかかる約1分間はデバイスにアクセスできません。",
+    "RestartDeviceText": "Are you sure you want to continue? During the reboot, the device will be unreachable for up to 5 minutes.",
     "RestartDeviceSuccess": "デバイスを再起動しました。",
     "RestartDeviceError": "デバイス再起動に失敗しました。",
     "BackupDownloadError": "バックアップをダウンロードできません。時間をおいて再試行してください。",
@@ -176,7 +181,7 @@
     "Enabled": "有効",
     "MachineName": "Machine Name",
     "IPAddress": "IPアドレス",
-    "Hostname": "ホスト名",
+    "Host": "Host",
     "Connection": "接続中",
     "Running": "実行中",
     "Disconnected": "切断",
@@ -205,6 +210,7 @@
     "SoftwareVersion": "ソフトウェアバージョン",
     "BTSSString": "BTSS文字列",
     "LoadError": "データソースの読み込みに失敗しました。時間をおいて再試行してください。",
+    "MTConnectConnectivityWarningText": "There has been connectivity problems to the host. Please check your network settings or the host.",
     "Tabs": {
       "s7": "SIEMENS",
       "mtconnect": "MTConnect",
@@ -214,9 +220,13 @@
     "Livedata": {
       "ioshield": {
         "0": "0 (オフ)",
-        "1": "1 (オン)",
-        "2": "2 (点滅)"
+        "1": "1 (オン)"
       }
+    },
+    "BlinkingStatus": {
+      "0": "0 (オフ)",
+      "1": "1 (オン)",
+      "2": "2 (点滅)"
     },
     "DiscardChanges": "変更を破棄",
     "ApplyChanges": "変更を適用",
@@ -291,7 +301,12 @@
     "Formula": "式",
     "UnexpectedError": "Changes have not been applied. Please, try again!",
     "WrongVdpsOrder": "'{{SourceId}}' cannot be used as input for '{{ErrorId}}'. Virtual data points can only be used after they are defined!",
-    "SetTariffEnum": "Set Machine Status Mapping"
+    "SetTariffEnum": "Set Machine Status Mapping",
+    "SetBlinkSettings": "Set Blink Settings",
+    "Timeframe": "Timeframe",
+    "RisingEdges": "Rising Edges",
+    "LinkedBlinkDetections": "Linked Blink Detections",
+    "NoOtherBlinkDetectionVDPsAvailable": "There are no other VDPs with the type Blink Detection to choose from"
   },
   "virtual-data-point-operation-type": {
     "And": "And",
@@ -307,14 +322,16 @@
     "Unequal": "異なる",
     "Enumeration": "列挙",
     "Calculation": "計算",
-    "SetTariff": "Set Energy Tariff"
+    "SetTariff": "Set Energy Tariff",
+    "BlinkDetection": "Blink Detection"
   },
   "settings-data-source-point": {
     "BulkSuccess": "変更が適用されました。",
     "BulkError": "変更下適用できません。再試行してください。",
     "LoadError": "ソースデータポンとが読み込めません。再試行してください。",
     "ConnectionAvailableWithDelay": "の応答時間で接続可能。 ",
-    "HostUnreachable": "ホストに到達できません。IP設定を確認してください。"
+    "HostUnreachable": "Host unreachable please check data source configuration",
+    "HostDisabled": "Data source is disabled, please check data source settings."
   },
   "settings-data-sink": {
     "DataSink": "データシンク",
@@ -394,6 +411,7 @@
     "Status": "状態",
     "Registration": "登録",
     "Password": "パスワード",
+    "DuplicatedName": "名前が重複しています",
     "DuplicatedAddress": "アドレスが重複しています",
     "HasDataMapping": "ソースにデータポイントがマップされています",
     "OpcUaVariables": "OPC UA変数",
@@ -484,6 +502,33 @@
     "UpdateAdapterSuccess": "ネットワーク設定を更新しました",
     "UpdateTimestampSuccess": "時刻設定を更新しました"
   },
+  "net-service": {
+    "NetService": "NETservice",
+    "StartNetService": "Start NETservice",
+    "WhatIsNetService": "What is NETservice?",
+    "Status": "Status",
+    "NetServiceSiteControl": "NETservice Site Control",
+    "CentralServerConnection": "Central Server Connection",
+    "ConnectedClients": "Connected Clients",
+    "UpdateStatus": "Update Status",
+    "FacilityTree": "Facility Tree",
+    "CentralServerConfiguration": "Central Server Configuration",
+    "ResetFacilityTree": "Reset Facility Tree",
+    "URL": "URL",
+    "Port": "Port",
+    "ApplyChanges": "Apply Changes",
+    "UpdateError": "Failed to update. Try again later",
+    "FacilityTreeResetSuccess": "Facility tree has been reset successfully!",
+    "CentralServerSaveSuccess": "Central Server has been saved successfully!",
+    "Running": "Running",
+    "Stopped": "Stopped",
+    "Unknown": "Unknown",
+    "Connected": "Connected",
+    "Disconnected": "Disconnected",
+    "NoUpdate": "No update",
+    "ClientUpdating": "Client updating",
+    "SiteControlUpdating": "Site control updating"
+  },
   "system-information": {
     "SystemInformation": "システム情報",
     "UpdateSystem": "システムの更新",
@@ -516,7 +561,15 @@
     "FactoryResetNow": "デバイスの設定を工場出荷状態にリセットします",
     "FactoryResetDeviceTitle": "工場初期化実行",
     "FactoryResetDeviceText": "処理を続けますか？ネットワーク設定も初期化されますので、現在のネットワーク環境では接続ができなくなる可能性があります",
-    "FactoryResetSuccess": "工場初期化が完了しました"
+    "FactoryResetSuccess": "工場初期化が完了しました",
+    "MachineInformation": "Machine information",
+    "Serial": "Serial",
+    "ControlManufacturer": "Control Manufacturer",
+    "Manufacturer": "Manufacturer",
+    "Source": "Source",
+    "ControlType": "Control Type",
+    "Model": "Model",
+    "Unknown": "unknown"
   },
   "prompt": {
     "warningText": "保存されていない変更があります。このまま続けますか？"

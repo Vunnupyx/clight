@@ -10,13 +10,11 @@ interface PinStatus {
 }
 export enum PinState {
   OFF = 0,
-  ON = 1,
-  BLINKING = 2
+  ON = 1
 }
 interface PinData {
   raw: boolean;
   oldRaw: boolean;
-  lastRisingEdges: number[];
   processedState: PinState;
   label: string;
 }
@@ -38,8 +36,6 @@ export class Iot2050Mraa {
       '/sys/bus/iio/devices/iio:device0/in_voltage2_raw'
     )
   ];
-  // Maximum time (ms) between the last three edges for detecting the state as blinking
-  private BLINKING_MAX_TIME_BETWEEN_EDGES = 2250; // 0,5Hz + tolerance
   private childProcesses: Array<number> = [];
 
   protected pinData: { [key: string]: PinData } = {};
@@ -63,17 +59,18 @@ export class Iot2050Mraa {
         { shell: true, detached: true }
       );
       mraaGpio.stdout.on('data', this.monitorCallback.bind(this));
-      this.childProcesses[pin] = mraaGpio;
+      this.childProcesses[Number(pin)] = mraaGpio;
     }
-    setInterval(this.monitorBlinkingState.bind(this), 500);
   }
 
   /**
-   * Get current pin states (ON, OFF or BLINKING)
+   * Get current pin states (ON or OFF)
    * @returns dictionary of pin labels with current pin states as values
    */
   public async getDigitalValues(): Promise<{ [label: string]: PinState }> {
-    let labeledValues = {};
+    let labeledValues: {
+      [key: string]: PinState;
+    } = {};
     for (const key of Object.keys(this.pinData)) {
       const label = this.pinData[key].label;
       const value = this.pinData[key].processedState;
@@ -87,7 +84,9 @@ export class Iot2050Mraa {
    * @returns dictionary of pin labels with current pin states as values
    */
   public async getAnalogValues(): Promise<{ [label: string]: number }> {
-    let labeledValues = {};
+    let labeledValues: {
+      [key: string]: PinState;
+    } = {};
     for (let i = 0; i < this.ANALOG_PIN_LABELS.length; i++) {
       const label = this.ANALOG_PIN_LABELS[i];
       const address = this.ANALOG_READ_ADDRESSES[i];
@@ -112,7 +111,7 @@ export class Iot2050Mraa {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
       if (board.indexOf('SIMATIC IOT2050') >= 0) return '';
     } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
+      if ((e as { code?: string }).code !== 'ENOENT') throw e;
     }
     return 'src/modules/Iot2050MraaDI10';
   }
@@ -128,29 +127,15 @@ export class Iot2050Mraa {
       newState = this.parseOutput(data.toString());
     } catch (e) {
       winston.error(
-        `${logPrefix} error parsing mraa-gpio output: ${e.message}`
+        `${logPrefix} error parsing mraa-gpio output: ${(e as Error)?.message}`
       );
       return;
     }
 
-    // Detect rising edge
-    if (!this.pinData[newState.pin].raw && newState.state) {
-      this.pinData[newState.pin].lastRisingEdges.unshift(Date.now());
-      this.pinData[newState.pin].lastRisingEdges.pop();
-    }
     this.pinData[newState.pin].raw = newState.state;
-  }
-
-  private monitorBlinkingState() {
-    for (const key of Object.keys(this.pinData)) {
-      if (Math.min(...this.pinData[key].lastRisingEdges) > Date.now() - 10000) {
-        this.pinData[key].processedState = PinState.BLINKING;
-      } else if (this.pinData[key].raw) {
-        this.pinData[key].processedState = PinState.ON;
-      } else {
-        this.pinData[key].processedState = PinState.OFF;
-      }
-    }
+    this.pinData[newState.pin].processedState = this.pinData[newState.pin].raw
+      ? PinState.ON
+      : PinState.OFF;
   }
 
   /**
@@ -189,70 +174,60 @@ export class Iot2050MraaDI10 extends Iot2050Mraa {
     4: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI0'
     },
     5: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI1'
     },
     6: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI2'
     },
     7: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI3'
     },
     8: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI4'
     },
     9: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI5'
     },
     10: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI6'
     },
     11: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI7'
     },
     12: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI8'
     },
     13: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI9'
     }
@@ -263,35 +238,30 @@ export class Iot2050MraaDI2AI5 extends Iot2050Mraa {
     4: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI4'
     },
     9: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI3'
     },
     10: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI2'
     },
     11: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI1'
     },
     12: {
       raw: false,
       oldRaw: false,
-      lastRisingEdges: [0, 0, 0],
       processedState: PinState.OFF,
       label: 'DI0'
     }

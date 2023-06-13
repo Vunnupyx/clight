@@ -101,13 +101,19 @@
               type="text"
               class="w-100"
               [matTooltip]="
-                'settings-virtual-data-point.DuplicatedName' | translate
+                isDuplicatingName()
+                  ? ('settings-virtual-data-point.DuplicatedName' | translate)
+                  : ('settings-virtual-data-point.InvalidName' | translate)
               "
               matTooltipPosition="above"
-              [matTooltipDisabled]="!isDuplicatingName()"
+              [matTooltipDisabled]="
+                !isDuplicatingName() && isDataPointNameValid(unsavedRow.name)
+              "
               [ngModel]="value"
               (ngModelChange)="unsavedRow.name = $event"
-              [class.border-danger]="isDuplicatingName()"
+              [class.border-danger]="
+                isDuplicatingName() || !isDataPointNameValid(unsavedRow.name)
+              "
               autofocus
             />
           </ng-template>
@@ -287,14 +293,32 @@
                     [(ngModel)]="filterSourceStr"
                   ></ngx-mat-select-search>
                 </mat-option>
-                <mat-option *ngFor="let s of dataSourcesFiltered" [value]="s.id"
+                <mat-option
+                  *ngFor="let s of dataSourcesFiltered"
+                  [value]="s.id"
+                  [matTooltip]="
+                    'settings-virtual-data-point.SourceUsedInFormula'
+                      | translate
+                  "
+                  matTooltipPosition="above"
+                  [matTooltipDisabled]="!unsavedRow?.formula?.includes(s.id)"
+                  [disabled]="unsavedRow?.formula?.includes(s.id)"
                   >{{ getDataSourceDataPointPrefix(s.id) }}
                   {{ s.name }}</mat-option
                 >
                 <mat-option
                   *ngFor="let s of previousVirtualPointsFiltered"
                   [value]="s.id"
-                  [disabled]="getRowIndex(s.id) > rowIndex"
+                  [matTooltip]="
+                    'settings-virtual-data-point.SourceUsedInFormula'
+                      | translate
+                  "
+                  matTooltipPosition="above"
+                  [matTooltipDisabled]="!unsavedRow?.formula?.includes(s.id)"
+                  [disabled]="
+                    getRowIndex(s.id) > rowIndex ||
+                    unsavedRow?.formula?.includes(s.id)
+                  "
                   >{{ getVirtualDataPointPrefix() }} {{ s.name }}</mat-option
                 >
               </mat-select>

@@ -291,6 +291,17 @@
             class="w-100"
             [ngModel]="value"
             (ngModelChange)="unsavedRow.name = $event"
+            [class.border-danger]="
+              isDuplicatingName() || !isDataPointNameValid(unsavedRow.name)
+            "
+            matTooltipPosition="above"
+            [matTooltip]="
+              isDuplicatingName()
+                ? ('settings-data-sink.DuplicatedName' | translate)
+                : !isDataPointNameValid(unsavedRow.name)
+                ? ('settings-data-sink.InvalidName' | translate)
+                : ''
+            "
             autofocus
           />
         </ng-template>

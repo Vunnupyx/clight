@@ -92,7 +92,7 @@ export class SourceDataPointService {
 
       if (this._store.snapshot.touched) {
         await this.httpService.patch(
-          `/datasources/${datasourceProtocol}/dataPoints`,
+          `/datasources/${datasourceProtocol}/datapoints`,
           this._store.snapshot.dataPoints
         );
 

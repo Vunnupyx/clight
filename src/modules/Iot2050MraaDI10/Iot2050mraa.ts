@@ -59,7 +59,7 @@ export class Iot2050Mraa {
         { shell: true, detached: true }
       );
       mraaGpio.stdout.on('data', this.monitorCallback.bind(this));
-      this.childProcesses[pin] = mraaGpio;
+      this.childProcesses[Number(pin)] = mraaGpio;
     }
   }
 
@@ -68,7 +68,9 @@ export class Iot2050Mraa {
    * @returns dictionary of pin labels with current pin states as values
    */
   public async getDigitalValues(): Promise<{ [label: string]: PinState }> {
-    let labeledValues = {};
+    let labeledValues: {
+      [key: string]: PinState;
+    } = {};
     for (const key of Object.keys(this.pinData)) {
       const label = this.pinData[key].label;
       const value = this.pinData[key].processedState;
@@ -82,7 +84,9 @@ export class Iot2050Mraa {
    * @returns dictionary of pin labels with current pin states as values
    */
   public async getAnalogValues(): Promise<{ [label: string]: number }> {
-    let labeledValues = {};
+    let labeledValues: {
+      [key: string]: PinState;
+    } = {};
     for (let i = 0; i < this.ANALOG_PIN_LABELS.length; i++) {
       const label = this.ANALOG_PIN_LABELS[i];
       const address = this.ANALOG_READ_ADDRESSES[i];
@@ -107,7 +111,7 @@ export class Iot2050Mraa {
       const board = await fs.readFile('/sys/firmware/devicetree/base/model');
       if (board.indexOf('SIMATIC IOT2050') >= 0) return '';
     } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
+      if ((e as { code?: string }).code !== 'ENOENT') throw e;
     }
     return 'src/modules/Iot2050MraaDI10';
   }
@@ -123,7 +127,7 @@ export class Iot2050Mraa {
       newState = this.parseOutput(data.toString());
     } catch (e) {
       winston.error(
-        `${logPrefix} error parsing mraa-gpio output: ${e.message}`
+        `${logPrefix} error parsing mraa-gpio output: ${(e as Error)?.message}`
       );
       return;
     }

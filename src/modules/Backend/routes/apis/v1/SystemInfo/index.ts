@@ -199,7 +199,7 @@ async function systemFactoryResetHandler(request: Request, response: Response) {
     response.status(200).send();
   } catch (e) {
     winston.error(
-      `systemFactoryResetHandler:: Error performing factory reset: ${e?.message}`
+      `systemFactoryResetHandler:: Error performing factory reset: ${e}`
     );
     response.sendStatus(500);
   }

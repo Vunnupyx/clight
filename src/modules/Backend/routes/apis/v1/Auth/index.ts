@@ -1,4 +1,5 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { Request } from '../../../../AuthManager';
 import * as uuid from 'uuid';
 
 import { AuthManager } from '../../../../AuthManager';
@@ -71,7 +72,7 @@ function resetPasswordPostHandler(request: Request, response: Response) {
 async function changePasswordPostHandler(request: Request, response: Response) {
   authManager
     .changePassword(
-      request.user.userName,
+      request.user?.userName!,
       request.body.oldPassword,
       request.body.newPassword
     )

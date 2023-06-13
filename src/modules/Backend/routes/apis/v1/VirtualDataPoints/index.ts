@@ -55,6 +55,7 @@ async function postSingleVdpHandler(
     }
     if (
       newVdp.operationType === 'counter' &&
+      newVdp.resetSchedules &&
       newVdp.resetSchedules?.length > 0
     ) {
       for (const [index, resetEntry] of newVdp.resetSchedules.entries()) {
@@ -62,7 +63,10 @@ async function postSingleVdpHandler(
         newVdp.resetSchedules[index].lastReset = undefined;
       }
     }
-    configManager.changeConfig('insert', 'virtualDataPoints', newVdp);
+    configManager.insertIntoConfig<
+      'virtualDataPoints',
+      IVirtualDataPointConfig
+    >('virtualDataPoints', newVdp, (item) => item.id === newVdp.id);
     await configManager.configChangeCompleted();
     response.status(200).json({
       created: newVdp,
@@ -97,7 +101,7 @@ async function patchAllVdpsHandler(
     }
 
     configManager.config = {
-      ...configManager.config,
+      ...(configManager.config ?? {}),
       virtualDataPoints: newVdpArray
     };
     await configManager.configChangeCompleted();
@@ -131,8 +135,13 @@ async function deleteSingleVdpHandler(
   const vdp = configManager?.config?.virtualDataPoints?.find(
     (point) => point.id === request.params.id
   );
-  configManager.changeConfig('delete', 'virtualDataPoints', vdp.id);
-  await configManager.configChangeCompleted();
+  if (vdp) {
+    configManager.deleteFromConfig<
+      'virtualDataPoints',
+      IVirtualDataPointConfig
+    >('virtualDataPoints', (item) => item.id === vdp.id);
+    await configManager.configChangeCompleted();
+  }
   response.status(vdp ? 200 : 404).json({
     deleted: vdp
   });
@@ -156,14 +165,10 @@ async function patchSingleVdpHandler(
       if (!isValidVdp(newVdp)) {
         throw new Error();
       }
-      configManager.changeConfig(
-        'update',
+      configManager.updateInConfig<
         'virtualDataPoints',
-        newVdp,
-        (vdp) => {
-          return (vdp.id = newVdp.id);
-        }
-      );
+        IVirtualDataPointConfig
+      >('virtualDataPoints', newVdp, (item) => item.id === newVdp.id);
       await configManager.configChangeCompleted();
     }
     response.status(200).json({

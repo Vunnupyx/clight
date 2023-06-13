@@ -1,5 +1,4 @@
 import { EnergyDataSource } from '..';
-import fetch from 'node-fetch';
 import { IHostConnectivityState, ITariffNumbers } from '../interfaces';
 import { IDataSourceParams } from '../../interfaces';
 import { DataSourceProtocols } from '../../../../../common/interfaces';
@@ -16,12 +15,14 @@ jest.mock('../../../../SyncScheduler', () => ({
     getInstance: () => mockSyncSchedulerInstance
   }
 }));
+const mockChangeTariffFn = jest.fn((tariffNo: ITariffNumbers) =>
+  Promise.resolve(tariffNo)
+);
 jest.mock('../Adapter/PhoenixEmProAdapter', () => {
   return {
     PhoenixEmProAdapter: jest.fn().mockImplementation(() => ({
-      changeTariff: jest.fn((tariffNo: ITariffNumbers) =>
-        Promise.resolve(tariffNo)
-      ),
+      isReady: true,
+      changeTariff: mockChangeTariffFn,
       testHostConnectivity: jest.fn(),
       hostConnectivityState: IHostConnectivityState.OK
     }))
@@ -42,7 +43,7 @@ const virtualDpManager = jest.createMockFromModule(
   '../../../../VirtualDataPointManager'
 ) as VirtualDataPointManager;
 
-let vdpEnergyCallback;
+let vdpEnergyCallback: Function;
 
 describe('EnergyDataSource', () => {
   beforeEach(async () => {
@@ -67,8 +68,8 @@ describe('EnergyDataSource', () => {
     ])(
       'Machine status change to $newStatus triggers tariff update to:$expectedTariffNo',
       async ({ newStatus, expectedTariffNo }) => {
-        let result: ITariffNumbers = await vdpEnergyCallback(newStatus);
-        expect(result).toBe(expectedTariffNo);
+        await vdpEnergyCallback(newStatus);
+        expect(mockChangeTariffFn).toHaveBeenCalledWith(expectedTariffNo);
       }
     );
 
@@ -81,9 +82,10 @@ describe('EnergyDataSource', () => {
         };
       });
       try {
+        //@ts-ignore
         await energyDataSource.handleMachineStatusChange('running');
       } catch (e) {
-        expect(e.message).toBe('reason');
+        expect((e as Error).message).toBe('reason');
       }
     });
   });

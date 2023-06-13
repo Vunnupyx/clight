@@ -29,7 +29,10 @@ async function deviceInfosPatchHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const newData = { ...configManager.config.general, ...request.body };
+  const newData = {
+    ...(configManager.config?.general ?? {}),
+    ...(request.body ?? {})
+  };
 
   await configManager.saveConfig({ general: request.body });
   await configManager.configChangeCompleted();

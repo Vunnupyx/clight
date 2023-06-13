@@ -2,10 +2,15 @@ import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
 import * as date from 'date-fns';
-import { ConfigManager } from '../ConfigManager';
+import { ConfigManager, mdcLightFolder } from '../ConfigManager';
 import { IVirtualDataPointConfig } from '../ConfigManager/interfaces';
 import { DataPointCache } from '../DatapointCache';
-import { CounterDict, Day, ScheduleDescription, timerDict } from './interfaces';
+import {
+  CounterDict,
+  ScheduleDescription,
+  ScheduleTimeDataType,
+  timerDict
+} from './interfaces';
 import { SynchronousIntervalScheduler } from '../SyncScheduler';
 
 /**
@@ -14,10 +19,9 @@ import { SynchronousIntervalScheduler } from '../SyncScheduler';
 export class CounterManager {
   private persist = true;
   private counters: CounterDict = {};
-  private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
-  private configFolder = path.join(this.mdcFolder, '/config');
+  private configFolder = path.join(mdcLightFolder, '/config');
   private counterStoragePath = path.join(this.configFolder, '/counters.json');
-  private schedulerChecker: SynchronousIntervalScheduler;
+  private schedulerChecker: SynchronousIntervalScheduler | null = null;
   private startedTimers: timerDict = {};
   private schedulerCheckerInterval = 1000 * 60 * 5; // 5Min
 
@@ -90,7 +94,10 @@ export class CounterManager {
    * Rest counter to zero
    * @param counterId identifier of the vdp counter
    */
-  public reset(counterId: string, schedulingIndex: number = undefined): void {
+  public reset(
+    counterId: string,
+    schedulingIndex: number | undefined = undefined
+  ): void {
     const logPrefix = `CounterManager::reset`;
 
     winston.debug(`${logPrefix} started for id: ${counterId}`);
@@ -99,10 +106,13 @@ export class CounterManager {
       return;
     }
     this.counters[counterId] = 0;
-    if (schedulingIndex) {
-      this.configManager.config.virtualDataPoints.find(
+    if (typeof schedulingIndex === 'number') {
+      const counterVdp = this.configManager.config?.virtualDataPoints?.find(
         (vdp) => vdp.id === counterId
-      ).resetSchedules[schedulingIndex].lastReset = Date.now();
+      );
+      if (counterVdp?.resetSchedules) {
+        counterVdp.resetSchedules[schedulingIndex].lastReset = Date.now();
+      }
     }
 
     this.cache.resetValue(counterId, 0);
@@ -122,51 +132,59 @@ export class CounterManager {
   private checkMissedResets() {
     const logPrefix = `${this.constructor.name}::checkMissedResets`;
     winston.debug(`${logPrefix} started.`);
-    const counterEntries = this.configManager.config.virtualDataPoints.filter(
-      (vdp) => {
-        return (
-          vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
-        );
-      }
-    );
-    for (const counter of counterEntries) {
-      const id = counter?.sources?.[0];
+    try {
+      const counterEntries =
+        this.configManager.config?.virtualDataPoints?.filter((vdp) => {
+          return (
+            vdp.operationType === 'counter' && vdp.resetSchedules?.length !== 0
+          );
+        });
+      for (const counter of counterEntries) {
+        const id = counter?.sources?.[0];
 
-      if (counter?.resetSchedules?.entries()) {
-        for (const [index, configEntry] of counter?.resetSchedules?.entries()) {
-          const nextDate = CounterManager.calcNextTrigger(
-            configEntry,
-            new Date()
-          );
-          const nextNextDate = CounterManager.calcNextTrigger(
-            configEntry,
-            new Date(nextDate)
-          );
-          const interval = nextNextDate.getTime() - nextDate.getTime();
-          const lastDate = nextDate.getTime() - interval;
+        if (counter?.resetSchedules?.entries()) {
+          for (const [
+            index,
+            configEntry
+          ] of counter?.resetSchedules?.entries()) {
+            const nextDate = CounterManager.calcNextTrigger(
+              configEntry,
+              new Date()
+            );
+            const nextNextDate = CounterManager.calcNextTrigger(
+              configEntry,
+              new Date(nextDate)
+            );
+            const interval = nextNextDate.getTime() - nextDate.getTime();
+            const lastDate = nextDate.getTime() - interval;
 
-          if (lastDate < configEntry.created) {
-            // No reset missed because timer is younger
+            if (lastDate < configEntry.created) {
+              // No reset missed because timer is younger
+              winston.debug(
+                `${logPrefix} ignore reset because timer is younger as last trigger date.`
+              );
+              continue;
+            }
+            if (lastDate === configEntry?.lastReset) {
+              // last reset correct done
+              winston.debug(
+                `${logPrefix} ignore reset because last reset was successfully.`
+              );
+              continue;
+            }
             winston.debug(
-              `${logPrefix} ignore reset because timer is younger as last trigger date.`
+              `${logPrefix} reset for counter '${id}' because last reset was skipped.`
             );
-            continue;
+            this.reset(id, index);
           }
-          if (lastDate === configEntry?.lastReset) {
-            // last reset correct done
-            winston.debug(
-              `${logPrefix} ignore reset because last reset was successfully.`
-            );
-            continue;
-          }
-          winston.debug(
-            `${logPrefix} reset for counter '${id}' because last reset was skipped.`
-          );
-          this.reset(id, index);
         }
       }
+      winston.debug(`${logPrefix} done.`);
+    } catch (error) {
+      winston.error(
+        `${logPrefix} Error while checking missed counter resets: ${error}`
+      );
     }
-    winston.debug(`${logPrefix} done.`);
   }
 
   /**
@@ -289,9 +307,9 @@ export class CounterManager {
   private static calcWithDate(
     scheduleData: ScheduleDescription,
     currentDate: Date
-  ) {
+  ): Date {
     const logPrefix = `${this.constructor.name}::calcWithDate`;
-    const timeData = {
+    const timeData: ScheduleTimeDataType = {
       year: currentDate.getFullYear(),
       month:
         scheduleData.month === 'Every'
@@ -299,7 +317,7 @@ export class CounterManager {
           : scheduleData.month - 1,
       date:
         //@ts-ignore
-        scheduleData.date
+        scheduleData.date && scheduleData.date !== 'Every'
           ? //@ts-ignore
             scheduleData.date
           : currentDate.getDate(),
@@ -327,8 +345,9 @@ export class CounterManager {
       // increase every entries with one and check if new date is in future
       for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
         // Ignore non 'Every' entries but there is no year entry
+        //@ts-ignore date does not exists on ScheduleDescription
         if (scheduleData[entry] !== 'Every' && entry !== 'year') continue;
-        timeData[entry] += 1;
+        timeData[entry as Partial<keyof ScheduleTimeDataType>] += 1;
         dateFromScheduling = new Date(
           timeData.year,
           timeData.month,
@@ -351,7 +370,7 @@ export class CounterManager {
           // New date is in future, break out for loop
           return dateFromScheduling;
         }
-        timeData[entry] -= 1;
+        timeData[entry as Partial<keyof ScheduleTimeDataType>] -= 1;
       }
       winston.error(
         `${logPrefix} no next date found for: ${JSON.stringify(scheduleData)}`
@@ -363,8 +382,8 @@ export class CounterManager {
   private static calcWithDay(
     scheduleData: ScheduleDescription,
     currentDate: Date
-  ) {
-    const timeData = {
+  ): Date {
+    const timeData: ScheduleTimeDataType = {
       year: currentDate.getFullYear(),
       month:
         scheduleData.month === 'Every'
@@ -431,14 +450,15 @@ export class CounterManager {
         for (const entry of ['minutes', 'hours', 'date', 'month', 'year']) {
           // Ignore non 'Every' entries
           if (
+            //@ts-ignore date does not exists on ScheduleDescription
             ((entry !== 'date' && scheduleData[entry] !== 'Every') ||
-              //@ts-ignore
+              //@ts-ignore day does not exists on ScheduleDescription
               (entry === 'date' && scheduleData.day !== 'Every')) &&
             entry !== 'year'
           ) {
             continue;
           }
-          timeData[entry] += 1;
+          timeData[entry as Partial<keyof ScheduleTimeDataType>] += 1;
           dateFromScheduling = new Date(
             timeData.year,
             timeData.month,
@@ -453,7 +473,7 @@ export class CounterManager {
             // New date is in future, break out for loop
             return dateFromScheduling;
           }
-          timeData[entry] -= 1;
+          timeData[entry as Partial<keyof ScheduleTimeDataType>] -= 1;
         }
       }
       return dateFromScheduling;

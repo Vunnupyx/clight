@@ -41,11 +41,15 @@ export function unique<T>(array: T[], selector: (item: T) => any): T[] {
  * @returns boolean
  */
 export function areObjectsEqual(
-  object1: object,
-  object2: object,
+  object1: any,
+  object2: any,
   ignoreKeys: string[] = []
 ): boolean {
-  if (Object.keys(object1 ?? {}).length !== Object.keys(object2 ?? {}).length) {
+  if (
+    typeof object1 !== 'object' ||
+    typeof object2 !== 'object' ||
+    Object.keys(object1 ?? {}).length !== Object.keys(object2 ?? {}).length
+  ) {
     return false;
   }
   let hasChange = false;
@@ -75,7 +79,7 @@ export function areObjectsEqual(
  * http:// or https:// in the beginning of hostname,
  * as user can paste the hostname together with http
  */
-export function isValidIpOrHostname(textInput: string): boolean {
+export function isValidIpOrHostname(textInput: any): boolean {
   if (!textInput || typeof textInput !== 'string') {
     return false;
   }
@@ -121,4 +125,45 @@ export function pingSocketPromise(
       reject(e);
     }
   });
+}
+
+export function insertToArrayIfNotExists<EntryType>(
+  array: EntryType[],
+  entry: EntryType,
+  validatorFn?: (arg0: EntryType) => boolean
+): void {
+  const index = array.findIndex((item) =>
+    validatorFn ? validatorFn(item) : item === entry
+  );
+  if (index < 0) {
+    //inserts entry if not exists
+    array.push(entry);
+  }
+}
+
+export function deleteFromArray<EntryType>(
+  array: EntryType[],
+  validatorFn: (arg0: EntryType) => boolean
+): void {
+  const index = array.findIndex((item) => validatorFn(item));
+  if (index < 0) {
+    throw Error(`No Entry found`);
+  } else {
+    // Removes entry
+    array.splice(index, 1);
+  }
+}
+
+export function updateItemInArray<EntryType>(
+  array: EntryType[],
+  entry: EntryType,
+  validatorFn: (arg0: EntryType) => boolean
+): void {
+  const index = array.findIndex((item) => validatorFn(item));
+  if (index < 0) {
+    throw Error(`No Entry found`);
+  } else {
+    //Replaces entry
+    array.splice(index, 1, entry);
+  }
 }

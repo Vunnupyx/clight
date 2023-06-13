@@ -1,4 +1,6 @@
-const dataHubAdapterMock = {
+const dataHubAdapterMock: {
+  [key: string]: boolean | jest.Mock;
+} = {
   isRunning: true,
   running: true,
   getDesiredProps: jest.fn(),
@@ -26,7 +28,7 @@ jest.doMock('../../../Adapter/DataHubAdapter', () => {
   };
 });
 
-function log(m) {
+function log(m: any) {
   //console.log(m)
 }
 
@@ -249,6 +251,7 @@ describe('DataHubDataSink', () => {
         }
       ]);
 
+      //@ts-ignore
       dataHubAdapterMock.getDesiredProps.mockImplementation(() => {
         return {
           services: {

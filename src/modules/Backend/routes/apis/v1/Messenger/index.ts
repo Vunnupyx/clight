@@ -46,7 +46,7 @@ function messengerConfigurationGetHandler(
   request: Request,
   response: Response
 ): void {
-  const currentConfig = configManager.config.messenger;
+  const currentConfig = configManager.config?.messenger;
 
   let payload: IMessengerServerConfigResponse = {
     hostname: null,
@@ -61,7 +61,9 @@ function messengerConfigurationGetHandler(
   if (currentConfig) {
     payload = {
       ...currentConfig,
-      password: currentConfig.password?.length > 0
+      password: currentConfig.password
+        ? currentConfig.password?.length > 0
+        : false
     };
   }
 

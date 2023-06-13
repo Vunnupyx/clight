@@ -11,7 +11,7 @@ import {
   IDataSinkConfig,
   IGeneralConfig,
   IProxyConfig,
-  ITargetDataMap
+  IDataSinkMap
 } from '../../ConfigManager/interfaces';
 import { DataPointMapper } from '../../DataPointMapper';
 import {
@@ -50,7 +50,7 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
   protected mappingConfig: IDataPointMapping[];
   protected dataPointMapper: DataPointMapper;
   protected dataPointCache: DataPointCache;
-  protected readonly _protocol: DataSinkProtocols;
+  protected readonly _protocol!: DataSinkProtocols;
   protected currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected enabled = false;
   protected termsAndConditionsAccepted = false;
@@ -74,19 +74,19 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
    * Compares given config with the current data sink config to determine if data source should be restarted or not
    */
   configEqual(
-    config: IDataSinkConfig,
+    config: IDataSinkConfig | undefined,
     mappingConfig: IDataPointMapping[],
     termsAndConditions: boolean,
     optionalConfigs?: OptionalConfigs
   ) {
     return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
+      JSON.stringify(this.config ?? {}) === JSON.stringify(config ?? {}) &&
       JSON.stringify(this.mappingConfig) === JSON.stringify(mappingConfig) &&
       this.termsAndConditionsAccepted === termsAndConditions &&
-      (config.protocol !== DataSinkProtocols.OPCUA ||
-        (config.protocol === DataSinkProtocols.OPCUA &&
+      (config?.protocol !== DataSinkProtocols.OPCUA ||
+        (config?.protocol === DataSinkProtocols.OPCUA &&
           JSON.stringify(this.generalConfig) ===
-            JSON.stringify(optionalConfigs.generalConfig)))
+            JSON.stringify(optionalConfigs?.generalConfig)))
     );
   }
 
@@ -127,11 +127,11 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     if (this.config.dataPoints.length < 1) return;
     interface IEvent {
       mapValue?: string;
-      map?: ITargetDataMap;
+      map?: IDataSinkMap;
       value: number | string | boolean;
     }
 
-    let mappedTargetEvents = [];
+    let mappedTargetEvents: IDataSourceMeasurementEvent[] = [];
 
     // Group events by their target, to use for target data points, depending on more than one source data point
     const eventsByTarget: {
@@ -165,7 +165,9 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     });
     this.dataPointCache.update(mappedTargetEvents);
 
-    let dataPoints = {};
+    let dataPoints: {
+      [key: string]: string | number | boolean;
+    } = {};
     Object.keys(eventsByTarget).forEach((target) => {
       const events = eventsByTarget[target];
 
@@ -184,8 +186,8 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
         const triggeredEvents = events.filter((e) => e.value);
 
         const sortedEvents = triggeredEvents.sort((a, b) => {
-          const mapValueA = parseInt(a.mapValue, 10);
-          const mapValueB = parseInt(b.mapValue, 10);
+          const mapValueA = parseInt(a?.mapValue ?? '0', 10);
+          const mapValueB = parseInt(b?.mapValue ?? '0', 10);
 
           if (mapValueA < mapValueB) return -1;
           if (mapValueA > mapValueB) return 1;
@@ -197,7 +199,7 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
       }
 
       if (!setEvent) return;
-      let value;
+      let value: number | string | boolean;
 
       if (typeof setEvent.mapValue !== 'undefined' && setEvent.map) {
         value = setEvent.map[setEvent.mapValue];
@@ -227,7 +229,9 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     this.processDataPointValues(dataPoints);
   }
 
-  protected processDataPointValues(obj) {
+  protected processDataPointValues(obj: {
+    [key: string]: number | string | boolean;
+  }) {
     Object.keys(obj).forEach((key) => {
       try {
         this.processDataPointValue(key, obj[key]);
@@ -235,7 +239,10 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
     });
   }
 
-  protected abstract processDataPointValue(dataPointId, value): void;
+  protected abstract processDataPointValue(
+    dataPointId: string,
+    value: number | string | boolean
+  ): void;
 
   /**
    * Each data sink should handle lifecycle events
@@ -250,12 +257,12 @@ export abstract class DataSink extends (EventEmitter as new () => TypedEmitter<I
   /**
    * Shuts down the data source
    */
-  public abstract shutdown();
+  public abstract shutdown(): Promise<void>;
 
   /**
    * Should disconnect the data source and clean up all connection resources
    */
-  public abstract disconnect();
+  public abstract disconnect(): Promise<void>;
 
   /**
    * Returns the current status of the data sink

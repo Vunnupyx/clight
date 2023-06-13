@@ -1,6 +1,5 @@
-import { promises as fs } from 'fs';
 import winston from 'winston';
-import { ChildProcess, spawn } from 'child_process';
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 
 type GpioReturn = {
   type: 'Buffer';
@@ -14,8 +13,8 @@ type GpioReturn = {
 export default class IoT2050HardwareEvents {
   #buttonPressedTriggerTimeMs = 5000;
   #userButtonGpioPin = 20;
-  #fistEventTS: number = null;
-  #child: ChildProcess = null;
+  #fistEventTS: number = 0;
+  #child: ChildProcessWithoutNullStreams | null = null;
   #initData = false;
   #callbacks: Function[] = [];
   #unusedSlots: number[] = [];
@@ -64,7 +63,7 @@ export default class IoT2050HardwareEvents {
     if (this.#unusedSlots.length === 0) {
       return this.#callbacks.push(callback) - 1;
     }
-    const index = this.#unusedSlots.shift();
+    const index = this.#unusedSlots.shift() as number;
     this.#callbacks[index] = callback;
     return index;
   }
@@ -114,20 +113,20 @@ export default class IoT2050HardwareEvents {
         }
       });
     }
-    this.#fistEventTS = null;
+    this.#fistEventTS = 0;
   }
 
   /**
    * Restart child process if crashes because of error
    */
-  private async errorHandler(stderr) {
+  private async errorHandler(stderr: Error) {
     const logPrefix = `${this.constructor.name}::errorHandler`;
     winston.error(
       `${logPrefix} received error from process due to ${JSON.stringify(
         stderr
       )}`
     );
-    if (this.#child.exitCode) {
+    if (this.#child && this.#child.exitCode) {
       await this.watchUserButtonLongPress();
     }
   }

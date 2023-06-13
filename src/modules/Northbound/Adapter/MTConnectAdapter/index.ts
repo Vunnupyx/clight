@@ -15,9 +15,9 @@ export interface Socket extends net.Socket {
 export class MTConnectAdapter {
   protected name = MTConnectAdapter.name;
   private TIMEOUT = 10000;
-  private server: net.Server;
+  private server: net.Server | null = null;
   private clients: Socket[] = [];
-  private _running: boolean;
+  private _running: boolean = false;
   private dataItems: DataItem[] = [];
 
   constructor(private mtConfig: IMTConnectConfig) {}
@@ -264,10 +264,16 @@ export class MTConnectAdapter {
   public async stop(): Promise<void> {
     if (this._running) {
       return new Promise((resolve) => {
-        this.server.close(() => {
-          this._running = false;
-          resolve();
-        });
+        if (this.server) {
+          this.server.close(() => {
+            this._running = false;
+            resolve();
+          });
+        } else {
+          winston.warn(
+            `${MTConnectAdapter.name}::stop requested server stop but server is undefined`
+          );
+        }
       });
     }
     return;
@@ -276,19 +282,26 @@ export class MTConnectAdapter {
   public shutdown(): Promise<void> {
     const logPrefix = `${MTConnectAdapter.name}::shutdown`;
     winston.debug(`${logPrefix} triggered.`);
-    const shutdownFunctions = [];
+    const shutdownFunctions: Promise<any>[] = [];
     this.clients.forEach((sock) => {
+      let socketEndPromise: Promise<void> = new Promise((resolve, reject) => {
+        sock.end();
+        resolve();
+      });
       sock.removeAllListeners();
-      shutdownFunctions.push(sock.end());
+      shutdownFunctions.push(socketEndPromise);
     });
 
-    Object.getOwnPropertyNames(this).forEach((prop) => {
-      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
-      if (this[prop].removeAllListeners)
-        shutdownFunctions.push(this[prop].removeAllListeners());
-      if (this[prop].close) shutdownFunctions.push(this[prop].close());
-      delete this[prop];
-    });
+    const serverShutdownPromise: Promise<void> = new Promise(
+      async (resolve, reject) => {
+        if (this.server?.removeAllListeners) this.server.removeAllListeners();
+        if (this.server?.close) await this.server.close();
+        this.server = null;
+        resolve();
+      }
+    );
+
+    shutdownFunctions.push(serverShutdownPromise);
 
     return Promise.all(shutdownFunctions)
       .then(() => {

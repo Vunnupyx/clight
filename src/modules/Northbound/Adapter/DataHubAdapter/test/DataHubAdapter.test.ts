@@ -41,7 +41,9 @@ const deviceRegistrationStateMock = {
   status: 'assigned'
 };
 
-const dataHubClientMock = {
+const dataHubClientMock: {
+  [key: string]: jest.Mock;
+} = {
   on: jest.fn().mockImplementation(() => {
     return dataHubClientMock;
   }),
@@ -56,7 +58,7 @@ const dataHubClientMock = {
   getTwin: jest.fn().mockReturnValue(twinMock)
 };
 
-function log(m) {
+function log(m: any) {
   // console.log(m);
 }
 

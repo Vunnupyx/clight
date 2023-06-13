@@ -2077,7 +2077,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["none", "userpassword"]
+          "enum": ["anonymous", "userpassword"]
         },
         "userName": {
           "type": "string"

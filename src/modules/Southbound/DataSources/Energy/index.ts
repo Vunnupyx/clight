@@ -10,12 +10,19 @@ import {
   IEnergyDataSourceConnection
 } from '../../../ConfigManager/interfaces';
 
+interface TariffStatusMapping {
+  unknown: '0';
+  STANDBY: '1';
+  READY_FOR_PROCESSING: '2';
+  WARM_UP: '3';
+  PROCESSING: '4';
+}
 /**
  * Implementation of Energy data source
  */
 export class EnergyDataSource extends DataSource {
   protected name = EnergyDataSource.name;
-  private phoenixEemClient: PhoenixEmProAdapter;
+  private phoenixEemClient: PhoenixEmProAdapter | null = null;
   private virtualDataPointManager: VirtualDataPointManager;
   private dataPoints: IDataPointConfig[];
   private ENERGY_DATAPOINT_READING_CYCLE = 15000;
@@ -57,10 +64,18 @@ export class EnergyDataSource extends DataSource {
       );
       return;
     }
-    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
     this.phoenixEemClient = new PhoenixEmProAdapter(
       connection as IEnergyDataSourceConnection
     );
+
+    if (!this.phoenixEemClient.isReady) {
+      winston.warn(
+        `${logPrefix} skipped start of Energy data source due to not valid hostname`
+      );
+      return;
+    }
+
+    this.updateCurrentStatus(LifecycleEventStatus.Connecting);
 
     try {
       await this.phoenixEemClient.testHostConnectivity();
@@ -69,7 +84,10 @@ export class EnergyDataSource extends DataSource {
         this.phoenixEemClient.hostConnectivityState ===
         IHostConnectivityState.OK
       ) {
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
         this.updateCurrentStatus(LifecycleEventStatus.Connected);
         winston.info(
           `${logPrefix} successfully connected to Phoenix EEM client`
@@ -85,7 +103,7 @@ export class EnergyDataSource extends DataSource {
         );
       }
     } catch (error) {
-      winston.error(`${logPrefix} ${error?.message}`);
+      winston.error(`${logPrefix} ${(error as Error)?.message}`);
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
@@ -111,6 +129,7 @@ export class EnergyDataSource extends DataSource {
     this.readCycleCount = this.readCycleCount + 1;
 
     try {
+      if (!this.phoenixEemClient) throw new Error('client is not defined');
       const readings = await this.phoenixEemClient.getAllDatapoints();
 
       const measurements: IMeasurement[] = [];
@@ -143,7 +162,10 @@ export class EnergyDataSource extends DataSource {
     const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
-    clearTimeout(this.reconnectTimeoutId);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
@@ -152,6 +174,8 @@ export class EnergyDataSource extends DataSource {
    * @return {string}
    */
   public getCurrentTariffNumber(): string {
+    if (!this.phoenixEemClient) throw new Error('client is not defined');
+
     return this.phoenixEemClient.currentTariff;
   }
 
@@ -161,10 +185,12 @@ export class EnergyDataSource extends DataSource {
    * not processed in VDP side
    * @param newStatus
    */
-  public async handleMachineStatusChange(newStatus): Promise<ITariffNumbers> {
+  public async handleMachineStatusChange(
+    newStatus: keyof TariffStatusMapping
+  ): Promise<void> {
     const logPrefix = `${this.name}::handleMachineStatusChange`;
 
-    const tariffStatusMapping = {
+    const tariffStatusMapping: TariffStatusMapping = {
       unknown: '0',
       STANDBY: '1',
       READY_FOR_PROCESSING: '2',
@@ -181,16 +207,18 @@ export class EnergyDataSource extends DataSource {
     }
 
     try {
+      if (!this.phoenixEemClient) throw new Error('client is not defined');
       const changeResult = await this.phoenixEemClient.changeTariff(
         newTariffNo
       );
       if (changeResult) {
         winston.debug(`${logPrefix} EEM Tariff changed to: ${newTariffNo}`);
-        return newTariffNo;
       }
     } catch (e) {
       winston.warn(
-        `${logPrefix} Error occurred while changing tariff: ${e?.message}`
+        `${logPrefix} Error occurred while changing tariff: ${
+          (e as Error)?.message
+        }`
       );
     }
   }

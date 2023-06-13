@@ -17,7 +17,7 @@ import { isValidIpOrHostname } from '../../../../Utilities';
  */
 export class PhoenixEmProAdapter {
   public hostConnectivityState = IHostConnectivityState.UNKNOWN;
-  private hostname;
+  private hostname: string | null;
   private allMeasurementsEndpoint = '/api/v1/measurements';
   private allMetersEndpoint = '/api/v1/meters';
   private allInformationEndpoint = '/api/v1/information';
@@ -29,15 +29,22 @@ export class PhoenixEmProAdapter {
       ? this.connection?.ipAddr?.startsWith('http')
         ? this.connection?.ipAddr
         : `http://${this.connection?.ipAddr}`
-      : '';
+      : null;
+  }
+
+  public get isReady() {
+    return typeof this.hostname === 'string' && this.hostname?.length > 0;
   }
 
   /**
    * Tests connectivity to given hostname
    */
-  public async testHostConnectivity() {
+  public async testHostConnectivity(): Promise<void> {
     const logPrefix = `${PhoenixEmProAdapter.name}::testHostConnectivity`;
 
+    if (!this.isReady) {
+      return Promise.resolve();
+    }
     try {
       const result = await this.performApiCall(
         'GET',
@@ -49,7 +56,7 @@ export class PhoenixEmProAdapter {
       }
     } catch (err) {
       winston.warn(
-        `${logPrefix} error connecting to Phoenix EMpro host at ${this.hostname}`
+        `${logPrefix} error connecting to Phoenix EMpro host at ${this.hostname}, error: ${err}`
       );
       this.hostConnectivityState = IHostConnectivityState.ERROR;
     }
@@ -62,6 +69,9 @@ export class PhoenixEmProAdapter {
   public getAllDatapoints(): Promise<Array<IMeasurement>> {
     const logPrefix = `${PhoenixEmProAdapter.name}::readAllDatapoints`;
     return new Promise(async (resolve, reject) => {
+      if (!this.isReady) {
+        return reject(new Error('Hostname is not valid'));
+      }
       let resultArray: IMeasurement[] = [];
       let hasMeasurementReadingError = false;
       let hasMeterReadingError = false;
@@ -86,7 +96,9 @@ export class PhoenixEmProAdapter {
         }
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading all measurements: ${e?.message || e}`
+          `${logPrefix} Error reading all measurements: ${
+            (e as Error)?.message || e
+          }`
         );
         hasMeasurementReadingError = true;
       }
@@ -107,7 +119,7 @@ export class PhoenixEmProAdapter {
         }
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading all meters: ${e?.message || e}`
+          `${logPrefix} Error reading all meters: ${(e as Error)?.message || e}`
         );
         hasMeterReadingError = true;
       }
@@ -130,7 +142,9 @@ export class PhoenixEmProAdapter {
         }
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading device information: ${e?.message || e}`
+          `${logPrefix} Error reading device information: ${
+            (e as Error)?.message || e
+          }`
         );
         hasDeviceInformationReadingError = true;
       }
@@ -149,7 +163,9 @@ export class PhoenixEmProAdapter {
         });
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading current tariff: ${e?.message || e}`
+          `${logPrefix} Error reading current tariff: ${
+            (e as Error)?.message || e
+          }`
         );
         hasTariffReadingError = true;
       }
@@ -181,6 +197,9 @@ export class PhoenixEmProAdapter {
       const putEndpoint = `/api/v1/measurement-system-control/tariff-number?value=${newTariffNo}`;
 
       try {
+        if (!this.isReady) {
+          return reject(new Error('Hostname is not valid'));
+        }
         const result: IEmProTariffChangeResponse = await this.performApiCall(
           'PUT',
           `${this.hostname}${putEndpoint}`
@@ -198,7 +217,9 @@ export class PhoenixEmProAdapter {
           return reject(new Error(result?.error));
         }
       } catch (e) {
-        winston.warn(`${logPrefix} Error changing tariff: ${e?.message || e}`);
+        winston.warn(
+          `${logPrefix} Error changing tariff: ${(e as Error)?.message || e}`
+        );
         return reject(e);
       }
     });
@@ -209,7 +230,7 @@ export class PhoenixEmProAdapter {
    * @param dataPointAddress Address field of the data point
    * @returns {Promise<IMeasurement>}
    */
-  public getSingleDataPoint(dataPointAddress): Promise<IMeasurement> {
+  public getSingleDataPoint(dataPointAddress: string): Promise<IMeasurement> {
     const logPrefix = `${PhoenixEmProAdapter.name}::getSingleDataPoint`;
     return new Promise(async (resolve, reject) => {
       if (!EMPRO_GET_ENDPOINTS[dataPointAddress]) {
@@ -219,6 +240,9 @@ export class PhoenixEmProAdapter {
         return reject(new Error('Datapoint not found'));
       }
       try {
+        if (!this.isReady) {
+          return reject(new Error('Hostname is not valid'));
+        }
         const measurement = await this.performApiCall(
           'GET',
           `${this.hostname}${EMPRO_GET_ENDPOINTS[dataPointAddress]}`
@@ -234,7 +258,7 @@ export class PhoenixEmProAdapter {
         return resolve(result);
       } catch (e) {
         winston.warn(
-          `${logPrefix} Error reading data point: ${e?.message || e}`
+          `${logPrefix} Error reading data point: ${(e as Error)?.message || e}`
         );
         return reject(e);
       }
@@ -252,6 +276,9 @@ export class PhoenixEmProAdapter {
     const logPrefix = `${PhoenixEmProAdapter.name}::getCurrentTariff`;
     return new Promise(async (resolve, reject) => {
       try {
+        if (!this.isReady) {
+          return reject(new Error('Hostname is not valid'));
+        }
         const result = await this.performApiCall(
           'GET',
           `${this.hostname}${EMPRO_GET_ENDPOINTS['tariff-number']}`
@@ -264,7 +291,9 @@ export class PhoenixEmProAdapter {
             : '0'
         );
       } catch (e) {
-        winston.warn(`${logPrefix} Error reading tariff: ${e?.message || e}`);
+        winston.warn(
+          `${logPrefix} Error reading tariff: ${(e as Error)?.message || e}`
+        );
         return reject(e);
       }
     });
@@ -302,9 +331,11 @@ export class PhoenixEmProAdapter {
       } catch (e) {
         this.hostConnectivityState = IHostConnectivityState.ERROR;
         winston.error(
-          `${logPrefix} unexpected error occurred while making API call: ${e?.message}`
+          `${logPrefix} unexpected error occurred while making API call: ${
+            (e as Error)?.message
+          }`
         );
-        return reject(new Error(e?.message || 'Unexpected Error'));
+        return reject(new Error((e as Error)?.message || 'Unexpected Error'));
       }
     });
   }

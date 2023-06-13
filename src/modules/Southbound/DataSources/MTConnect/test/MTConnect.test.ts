@@ -1,9 +1,11 @@
 import { MTConnectDataSource } from '..';
 import fetch from 'node-fetch';
 import { IMTConnectDataSourceConnection } from '../../../../ConfigManager/interfaces';
-import { DataSourceProtocols } from '../../../../../common/interfaces';
+import {
+  DataSourceProtocols,
+  LifecycleEventStatus
+} from '../../../../../common/interfaces';
 import { IDataSourceParams } from '../../interfaces';
-import { IHostConnectivityState } from '../interfaces';
 import {
   mockCurrentResponse,
   mockSampleResponse,
@@ -113,9 +115,8 @@ describe('MTConnectDataSource', () => {
           Promise.resolve(new Response(JSON.stringify({})))
         );
         await mtconnectDataSource.init();
-        //@ts-ignore
-        expect(mtconnectDataSource.hostConnectivityState).toBe(
-          IHostConnectivityState.OK
+        expect(mtconnectDataSource.currentStatus).toBe(
+          LifecycleEventStatus.Connected
         );
         expect(
           //@ts-ignore
@@ -129,11 +130,13 @@ describe('MTConnectDataSource', () => {
         jest.useFakeTimers();
         mockedFetch.mockResolvedValueOnce(Promise.reject(new Response()));
         await mtconnectDataSource.init();
+        expect(mtconnectDataSource.currentStatus).toBe(
+          LifecycleEventStatus.ConnectionError
+        );
         jest.runAllTimers();
 
-        //@ts-ignore
-        expect(mtconnectDataSource.hostConnectivityState).toBe(
-          IHostConnectivityState.ERROR
+        expect(mtconnectDataSource.currentStatus).toBe(
+          LifecycleEventStatus.Reconnecting
         );
         expect(
           //@ts-ignore

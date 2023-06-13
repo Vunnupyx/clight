@@ -55,7 +55,7 @@ export class DataPointService {
     try {
       const { dataPoints } = await this.httpService.get<{
         dataPoints: DataPoint[];
-      }>(`/datasinks/${protocol}/dataPoints`);
+      }>(`/datasinks/${protocol}/datapoints`);
       this._store.patchState((state) => {
         state.dataPoints = dataPoints;
         state.status = Status.Ready;
@@ -175,7 +175,7 @@ export class DataPointService {
 
       if (this._store.snapshot.touched) {
         await this.httpService.patch(
-          `/datasinks/${protocol}/dataPoints`,
+          `/datasinks/${protocol}/datapoints`,
           this._store.snapshot.dataPoints
         );
       }

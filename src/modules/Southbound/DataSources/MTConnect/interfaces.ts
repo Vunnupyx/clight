@@ -1,11 +1,5 @@
 import { IMTConnectDataPointTypes } from '../../../ConfigManager/interfaces';
 
-export enum IHostConnectivityState {
-  UNKNOWN = 'unknown',
-  OK = 'ok',
-  ERROR = 'error'
-}
-
 interface ICell {
   '@key': string;
   '#': string;

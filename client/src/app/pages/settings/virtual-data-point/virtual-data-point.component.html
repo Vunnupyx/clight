@@ -78,6 +78,7 @@
           cellClass="input-cell"
           [minWidth]="120"
           [maxWidth]="400"
+          [sortable]="false"
         >
           <ng-template
             ngx-datatable-cell-template
@@ -123,6 +124,7 @@
           cellClass="input-cell"
           [minWidth]="120"
           [maxWidth]="400"
+          [sortable]="false"
         >
           <ng-template ngx-datatable-header-template let-sort="sortFn">
             <span class="pointer" (click)="sort()">{{
@@ -263,6 +265,7 @@
           cellClass="input-cell"
           [minWidth]="120"
           [maxWidth]="400"
+          [sortable]="false"
         >
           <ng-template
             ngx-datatable-cell-template

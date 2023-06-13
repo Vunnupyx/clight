@@ -196,8 +196,8 @@ export const factoryConfig: IConfig = {
   mapping: [],
   quickStart: {
     completed: false,
-    currentTemplate: null,
-    currentTemplateName: null
+    currentTemplate: undefined,
+    currentTemplateName: undefined
   },
   termsAndConditions: {
     accepted: false

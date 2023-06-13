@@ -6,7 +6,7 @@ export type TNorthBoundErrorTypes = 'STATUS_ERROR' | 'NOT_REGISTERED';
  * Automatic log to winston.error()
  */
 export class NorthBoundError extends Error {
-  protected code: string;
+  protected code: TNorthBoundErrorTypes | undefined;
 
   constructor(msg: string, code?: TNorthBoundErrorTypes) {
     super(msg);
@@ -23,7 +23,11 @@ export type TAdapterErrorTypes =
   | 'INVALID_CREDENTIALS';
 
 export class AdapterError extends NorthBoundError {
-  constructor(msg, code?, public type: TAdapterErrorTypes = undefined) {
+  constructor(
+    msg: string,
+    code?: TNorthBoundErrorTypes,
+    public type: TAdapterErrorTypes | undefined = undefined
+  ) {
     super(msg, code);
   }
 }

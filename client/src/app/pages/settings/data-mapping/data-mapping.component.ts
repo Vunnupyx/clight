@@ -301,6 +301,26 @@ export class DataMappingComponent implements OnInit, OnDestroy {
     }
   }
 
+  compareTarget = (rowA: string, rowB: string) => {
+    const nameA = this.getDataPoint(rowA)?.name.toLowerCase();
+    const nameB = this.getDataPoint(rowB)?.name.toLowerCase();
+
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+
+    return 0;
+  };
+
+  compareSource = (rowA: string, rowB: string) => {
+    const nameA = this.getSourceDataPoint(rowA)?.name.toLowerCase();
+    const nameB = this.getSourceDataPoint(rowB)?.name.toLowerCase();
+
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+
+    return 0;
+  };
+
   ngOnDestroy() {
     this.sub && this.sub.unsubscribe();
   }

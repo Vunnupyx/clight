@@ -82,10 +82,17 @@ async function patchSingleDataSinkHandler(
 ): Promise<void> {
   let allowed = ['enabled', 'auth', 'customDataPoints'];
   const protocol = request.params.datasinkProtocol as DataSinkProtocols;
-  const updatedDataSink = request.body as IDataSinkConfig;
 
-  if (!isValidProtocol(protocol) || !isValidDataSink(updatedDataSink)) {
-    response.status(400).json({ error: 'Input not valid.' });
+  // If protocol is datahub it´s allowed to change only datahub,
+  if (protocol === 'datahub') allowed = ['datahub'];
+
+  const incomingConfig = request.body as Omit<
+    IDataSinkConfig,
+    'dataPoints' | 'protocol'
+  >;
+
+  if (!isValidProtocol(protocol)) {
+    response.status(400).json({ error: 'Protocol not valid.' });
     return Promise.resolve();
   }
 
@@ -94,9 +101,6 @@ async function patchSingleDataSinkHandler(
     (sink) => sink.protocol === request.params.datasinkProtocol
   );
 
-  // If protocol is datahub it´s allowed to change only datahub,
-  if (protocol === 'datahub') allowed = ['datahub'];
-
   if (!dataSink) {
     winston.warn(
       `patchSingleDataSinkHandler error due to datasink with protocol ${protocol} not found.`
@@ -104,7 +108,7 @@ async function patchSingleDataSinkHandler(
     response.status(404).send();
     return Promise.resolve();
   }
-  for (const entry of Object.keys(updatedDataSink)) {
+  for (const entry of Object.keys(incomingConfig)) {
     if (!allowed.includes(entry)) {
       winston.warn(
         `patchSingleDataSinkHandler tried to change property: ${entry}. Not allowed`
@@ -118,38 +122,41 @@ async function patchSingleDataSinkHandler(
 
   if (
     protocol === 'opcua' &&
-    updatedDataSink.auth &&
-    updatedDataSink.auth.type === 'anonymous'
+    incomingConfig.auth &&
+    incomingConfig.auth.type === 'anonymous'
   ) {
-    delete updatedDataSink.auth.userName;
-    delete updatedDataSink.auth.password;
+    delete incomingConfig.auth.userName;
+    delete incomingConfig.auth.password;
   }
 
   if (
-    updatedDataSink.auth &&
-    'type' in updatedDataSink.auth &&
-    'userName' in updatedDataSink.auth &&
-    'password' in updatedDataSink.auth &&
-    typeof updatedDataSink.auth.password === 'string'
+    incomingConfig.auth &&
+    'type' in incomingConfig.auth &&
+    'userName' in incomingConfig.auth &&
+    'password' in incomingConfig.auth &&
+    typeof incomingConfig.auth.password === 'string'
   ) {
-    updatedDataSink.auth.password = await hash(
-      updatedDataSink.auth.password,
-      10
-    );
+    incomingConfig.auth.password = await hash(incomingConfig.auth.password, 10);
   } else {
     winston.warn(
       `dataSinkPatchHandler tried to change property: auth .Infos missing.`
     );
   }
 
-  dataSink = { ...dataSink, ...updatedDataSink };
+  const updatedDataSink: IDataSinkConfig = { ...dataSink, ...incomingConfig };
+
+  if (!isValidDataSink(updatedDataSink)) {
+    response.status(400).json({ error: 'Input not valid.' });
+    return Promise.resolve();
+  }
+
   configManager.updateInConfig<'dataSinks', IDataSinkConfig>(
     'dataSinks',
-    dataSink,
-    (item) => item.protocol === dataSink?.protocol
+    updatedDataSink,
+    (item) => item.protocol === updatedDataSink?.protocol
   );
   await configManager.configChangeCompleted();
-  response.status(200).json(dataSink);
+  response.status(200).json(updatedDataSink);
 }
 
 /**

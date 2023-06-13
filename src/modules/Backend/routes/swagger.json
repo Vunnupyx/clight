@@ -62,7 +62,7 @@
       "get": {
         "security": [],
         "tags": ["health"],
-        "operationId": "healthCheckGet",
+        "operationId": "healthCheckGetHandler",
         "description": "",
         "parameters": [],
         "responses": {
@@ -84,7 +84,7 @@
       "post": {
         "security": [],
         "tags": ["auth"],
-        "operationId": "loginPost",
+        "operationId": "loginPostHandler",
         "description": "Login in system",
         "parameters": [
           {
@@ -120,7 +120,7 @@
             "jwtNoPasswordChangeDetection": []
           }
         ],
-        "operationId": "changePasswordPost",
+        "operationId": "changePasswordPostHandler",
         "description": "Changes password",
         "parameters": [
           {
@@ -152,7 +152,7 @@
         "tags": ["datasource"],
         "description": "Returns all available datasources of the runtime",
         "parameters": [],
-        "operationId": "dataSourcesGet",
+        "operationId": "getAllDataSourcesHandler",
         "responses": {
           "200": {
             "description": "A list of all available datasources.",
@@ -175,7 +175,7 @@
       ],
       "get": {
         "tags": ["datasource"],
-        "operationId": "dataSourceGet",
+        "operationId": "getSingleDataSourceHandler",
         "responses": {
           "200": {
             "description": "Request dateSource with given ID",
@@ -189,7 +189,7 @@
         "tags": ["datasource"],
         "summary": "change datasource",
         "description": "Only for toggling enabled property and change of connection",
-        "operationId": "dataSourcePatch",
+        "operationId": "patchSingleDataSourceHandler",
         "parameters": [
           {
             "name": "changeObject",
@@ -222,7 +222,7 @@
       ],
       "get": {
         "tags": ["datasource"],
-        "operationId": "dataSourceGetStatus",
+        "operationId": "getSingleDataSourceStatusHandler",
         "responses": {
           "200": {
             "description": "Request status of selected dateSource.",
@@ -245,7 +245,7 @@
       ],
       "get": {
         "tags": ["datasource"],
-        "operationId": "dataSourceGetPing",
+        "operationId": "pingDataSourceHandler",
         "responses": {
           "200": {
             "description": "Request status of selected dateSource.",
@@ -268,7 +268,7 @@
         }
       }
     },
-    "/datasources/{datasourceProtocol}/dataPoints": {
+    "/datasources/{datasourceProtocol}/datapoints": {
       "parameters": [
         {
           "name": "datasourceProtocol",
@@ -280,7 +280,7 @@
       ],
       "get": {
         "tags": ["datasource"],
-        "operationId": "dataSourcesGetDatapoints",
+        "operationId": "getAllDataSourceDatapointsHandler",
         "description": "Returns a list of dataPoints of this datasource",
         "responses": {
           "200": {
@@ -306,51 +306,11 @@
           }
         }
       },
-      "post": {
-        "tags": ["datasource"],
-        "operationId": "dataSourcesPostDatapoint",
-        "description": "Create a new datapoint for the selected datasource.",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "newDatapoint",
-            "description": "New datapoint to create",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/sourcedatapoint"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The new created datapoint",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "created": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/sourcedatapoint"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                },
-                "href": {
-                  "type": "string",
-                  "format": "uri"
-                }
-              }
-            }
-          }
-        }
-      },
       "patch": {
         "tags": ["datasource"],
         "summary": "change bulk datasource datapoints",
         "description": "",
-        "operationId": "dataSourcesPatchAllDatapoints",
+        "operationId": "patchAllDataSourceDatapointsHandler",
         "parameters": [
           {
             "name": "newDatapointArray",
@@ -376,113 +336,11 @@
         }
       }
     },
-    "/datasources/{datasourceProtocol}/dataPoints/{datapointId}": {
-      "parameters": [
-        {
-          "name": "datasourceProtocol",
-          "in": "path",
-          "description": "id of the datasource",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "datapointId",
-          "in": "path",
-          "description": "id of the datapoint",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "get": {
-        "tags": ["datasource"],
-        "operationId": "dataSourcesGetDatapoint",
-        "description": "returns a datapoint with given id",
-        "responses": {
-          "200": {
-            "description": "returns a datapoint with given id",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/sourcedatapoint"
-                },
-                {
-                  "$ref": "#/definitions/uuid"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["datasource"],
-        "operationId": "dataSourcesDeleteDatapoint",
-        "description": "Delete the datapoint selected by id",
-        "responses": {
-          "200": {
-            "description": "Successfully deleted datapoint",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "deleted": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/sourcedatapoint"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["datasource"],
-        "operationId": "dataSourcesPatchDatapoint",
-        "description": "overwrite datapoint with selected id",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "changedDatapoint",
-            "required": true,
-            "description": "The new datapoint",
-            "schema": {
-              "$ref": "#/definitions/sourcedatapoint"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Overwritten datapoint",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "changed": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/sourcedatapoint"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                },
-                "href": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/datasinks": {
       "get": {
         "tags": ["datasinks"],
         "description": "Returns all available datesinks of the runtime",
-        "operationId": "dataSinksGet",
+        "operationId": "getAllDataSinksHandler",
         "parameters": [],
         "responses": {
           "200": {
@@ -515,24 +373,11 @@
           "type": "string"
         }
       ],
-      "get": {
-        "tags": ["datasinks"],
-        "operationId": "dataSinkGet",
-        "summary": "Get datasink object by id",
-        "responses": {
-          "200": {
-            "description": "Datasink object",
-            "schema": {
-              "$ref": "#/definitions/dataSinkType"
-            }
-          }
-        }
-      },
       "patch": {
         "tags": ["datasinks"],
         "summary": "change datasink",
         "description": "Only for toggling enabled property and change of auth",
-        "operationId": "dataSinkPatch",
+        "operationId": "patchSingleDataSinkHandler",
         "parameters": [
           {
             "name": "changeObject",
@@ -564,7 +409,7 @@
       ],
       "get": {
         "tags": ["datasinks"],
-        "operationId": "dataSinkGetStatus",
+        "operationId": "getSingleDataSinkStatusHandler",
         "responses": {
           "200": {
             "description": "Current status of the selected datasink.",
@@ -575,7 +420,7 @@
         }
       }
     },
-    "/datasinks/{datasinkProtocol}/dataPoints": {
+    "/datasinks/{datasinkProtocol}/datapoints": {
       "parameters": [
         {
           "name": "datasinkProtocol",
@@ -586,7 +431,7 @@
       ],
       "get": {
         "tags": ["datasinks"],
-        "operationId": "dataSinksDataPointsGet",
+        "operationId": "getAllDataSinkDatapointsHandler",
         "responses": {
           "200": {
             "description": "Return list of dataPoints",
@@ -596,50 +441,11 @@
           }
         }
       },
-      "post": {
-        "tags": ["datasinks"],
-        "operationId": "dataSinksDataPointsPost",
-        "parameters": [
-          {
-            "name": "dataPoint",
-            "in": "body",
-            "description": "New Datapoint object",
-            "schema": {
-              "$ref": "#/definitions/dataPointType"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Response of a new created dataPoint",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "created": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/dataPointType"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                },
-                "href": {
-                  "type": "string",
-                  "description": "url for direct resource access",
-                  "format": "uri"
-                }
-              }
-            }
-          }
-        }
-      },
       "patch": {
         "tags": ["datasinks"],
         "summary": "change all datasink datapoints",
         "description": "",
-        "operationId": "dataSinksPatchDatapoint",
+        "operationId": "patchAllDataSinkDatapointsHandler",
         "parameters": [
           {
             "name": "newDatapointArray",
@@ -665,102 +471,11 @@
         }
       }
     },
-    "/datasinks/{datasinkProtocol}/dataPoints/{dataPointId}": {
-      "parameters": [
-        {
-          "name": "datasinkProtocol",
-          "in": "path",
-          "description": "id of the datapoint to get",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "dataPointId",
-          "in": "path",
-          "description": "id of the datapoint to get",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "get": {
-        "tags": ["datasinks"],
-        "operationId": "dataSinksDataPointGet",
-        "responses": {
-          "200": {
-            "description": "All available Datapoints of selected sink",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/dataPointType"
-                },
-                {
-                  "$ref": "#/definitions/uuid"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["datasinks"],
-        "operationId": "dataSinksDataPointPatch",
-        "parameters": [
-          {
-            "name": "patchData",
-            "in": "body",
-            "description": "DataPoint object with changed properties",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dataPointType"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Response of a change request for a datapoint with given id",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/dataPointType"
-                },
-                {
-                  "$ref": "#/definitions/uuid"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["datasinks"],
-        "operationId": "dataSinksDataPointDelete",
-        "responses": {
-          "200": {
-            "description": "Delete a datapoint by id and return the deleted item.",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "deleted": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/dataPointType"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/vdps": {
       "get": {
         "tags": ["virtual datapoints"],
         "description": "Return a list of virtual datapoints",
-        "operationId": "vdpsGet",
+        "operationId": "getAllVdpsHandler",
         "responses": {
           "200": {
             "description": "List of virtual datapoints.",
@@ -795,52 +510,11 @@
           }
         }
       },
-      "post": {
-        "tags": ["virtual datapoints"],
-        "description": "Add a virtual datapoint to the runtime",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "newVDP",
-            "description": "New virtual datapoint",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/virtualDataPointType"
-            }
-          }
-        ],
-        "operationId": "vdpPost",
-        "responses": {
-          "200": {
-            "description": "Successfully create a virtual datapoint resource",
-            "schema": {
-              "required": ["created", "href"],
-              "type": "object",
-              "properties": {
-                "created": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/virtualDataPointType"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                },
-                "href": {
-                  "type": "string",
-                  "format": "uri"
-                }
-              }
-            }
-          }
-        }
-      },
       "patch": {
         "tags": ["virtual datapoints"],
         "summary": "replace all VDPs",
         "description": "",
-        "operationId": "vdpsPatch",
+        "operationId": "patchAllVdpsHandler",
         "parameters": [
           {
             "name": "vdpArray",
@@ -896,52 +570,9 @@
           "required": true
         }
       ],
-      "get": {
-        "tags": ["virtual datapoints"],
-        "operationId": "vdpGet",
-        "responses": {
-          "200": {
-            "description": "Returns a virtual datapoint",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/virtualDataPointType"
-                },
-                {
-                  "$ref": "#/definitions/uuid"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["virtual datapoints"],
-        "operationId": "vdpDelete",
-        "responses": {
-          "200": {
-            "description": "Delete virtual datapoint with given id.",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "deleted": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/virtualDataPointType"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
       "patch": {
         "tags": ["virtual datapoints"],
-        "operationId": "vdpPatch",
+        "operationId": "patchSingleVdpHandler",
         "parameters": [
           {
             "name": "patched virtual datapoint",
@@ -982,7 +613,7 @@
     "/backup": {
       "get": {
         "tags": ["backup"],
-        "operationId": "backupGet",
+        "operationId": "backupGetHandler",
         "produces": ["application/x-binary"],
         "responses": {
           "200": {
@@ -996,7 +627,7 @@
       },
       "post": {
         "tags": ["backup"],
-        "operationId": "backupPost",
+        "operationId": "backupPostHandler",
         "consumes": ["multipart/form-data"],
         "parameters": [
           {
@@ -1020,7 +651,7 @@
     "/logs": {
       "get": {
         "tags": ["/logs"],
-        "operationId": "logsGet",
+        "operationId": "logsGetHandler",
         "produce": ["application/x-binary"],
         "responses": {
           "200": {
@@ -1036,7 +667,7 @@
     "/mappings": {
       "get": {
         "tags": ["mappings"],
-        "operationId": "mappingsGet",
+        "operationId": "getAllMappingsHandler",
         "responses": {
           "200": {
             "description": "List of all available mappings",
@@ -1046,41 +677,11 @@
           }
         }
       },
-      "post": {
-        "tags": ["mappings"],
-        "operationId": "mapPost",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "newMapping",
-            "description": "new mapping object",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/map"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully created new mapping",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/map"
-                },
-                {
-                  "$ref": "#/definitions/uuid"
-                }
-              ]
-            }
-          }
-        }
-      },
       "patch": {
         "tags": ["mappings"],
         "summary": "change bulk mappings",
         "description": "",
-        "operationId": "patchMappings",
+        "operationId": "patchAllMappingsHandler",
         "parameters": [
           {
             "name": "newMappingsArray",
@@ -1108,97 +709,11 @@
         }
       }
     },
-    "/mappings/{mapId}": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "mapId",
-          "required": true,
-          "type": "string",
-          "description": "parameter for selection of the map"
-        }
-      ],
-      "get": {
-        "tags": ["mappings"],
-        "operationId": "mapGet",
-        "description": "Return a single mapping object",
-        "responses": {
-          "200": {
-            "description": "The requested mapping object",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/map"
-                },
-                {
-                  "$ref": "#/definitions/uuid"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["mappings"],
-        "operationId": "mapPatch",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "updatedMapping",
-            "description": "updated mapping object",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/map"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully updated mapping",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/map"
-                },
-                {
-                  "$ref": "#/definitions/uuid"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["mappings"],
-        "operationId": "mapDelete",
-        "description": "Delete the selected map",
-        "responses": {
-          "200": {
-            "description": "Successfully delete mapping",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "deleted": {
-                  "allOf": [
-                    {
-                      "$ref": "#/definitions/map"
-                    },
-                    {
-                      "$ref": "#/definitions/uuid"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/deviceInfos": {
       "get": {
         "tags": ["deviceInfos"],
         "description": "Get device information",
-        "operationId": "deviceInfosGet",
+        "operationId": "deviceInfosGetHandler",
         "responses": {
           "200": {
             "description": "Returns all information about the connected device",
@@ -1210,7 +725,7 @@
       },
       "patch": {
         "tags": ["deviceInfos"],
-        "operationId": "deviceInfosPatch",
+        "operationId": "deviceInfosPatchHandler",
         "parameters": [
           {
             "in": "body",
@@ -1251,7 +766,7 @@
       "get": {
         "tags": ["livedata"],
         "description": "Get livedata for dataSource dataPoints",
-        "operationId": "livedataDataSourceDataPointsGet",
+        "operationId": "livedataDataSourceDataPointsGetHandler",
         "responses": {
           "200": {
             "description": "Returns all information about the livedata for dataSource dataPoints",
@@ -1264,44 +779,6 @@
                   }
                 ]
               }
-            }
-          }
-        }
-      }
-    },
-    "/livedata/datasource/{datasourceProtocol}/{dataPointId}": {
-      "parameters": [
-        {
-          "name": "datasourceProtocol",
-          "in": "path",
-          "description": "id of the dataSource to get",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "dataPointId",
-          "in": "path",
-          "description": "id of the datapoint to get",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "timeseries",
-          "in": "query",
-          "description": "should include timeseries",
-          "required": false,
-          "type": "boolean"
-        }
-      ],
-      "get": {
-        "tags": ["livedata"],
-        "description": "Get livedata for dataSource dataPoint",
-        "operationId": "livedataDataSourceDataPointGet",
-        "responses": {
-          "200": {
-            "description": "Returns all information about the livedata for dataSource dataPoint",
-            "schema": {
-              "$ref": "#/definitions/livedataItem"
             }
           }
         }
@@ -1327,7 +804,7 @@
       "get": {
         "tags": ["livedata"],
         "description": "Get livedata for dataSink dataPoints",
-        "operationId": "livedataDataSinkDataPointsGet",
+        "operationId": "livedataDataSinkDataPointsGetHandler",
         "responses": {
           "200": {
             "description": "Returns all information about the livedata for dataSink dataPoints",
@@ -1358,7 +835,7 @@
       "get": {
         "tags": ["livedata"],
         "description": "Get livedata for vdps",
-        "operationId": "livedataVirtualDataPointsGet",
+        "operationId": "livedataVirtualDataPointsGetHandler",
         "responses": {
           "200": {
             "description": "Returns all information about the livedata for vdps",
@@ -1376,42 +853,11 @@
         }
       }
     },
-    "/livedata/vdps/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "id of vdp",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "timeseries",
-          "in": "query",
-          "description": "should include timeseries",
-          "required": false,
-          "type": "boolean"
-        }
-      ],
-      "get": {
-        "tags": ["livedata"],
-        "description": "Get livedata for vdp",
-        "operationId": "livedataVirtualDataPointGet",
-        "responses": {
-          "200": {
-            "description": "Returns all information about the livedata for vdp",
-            "schema": {
-              "$ref": "#/definitions/livedataItem"
-            }
-          }
-        }
-      }
-    },
     "/systemInfo": {
       "get": {
         "tags": ["systemInfo"],
         "description": "Get system information",
-        "operationId": "systemInfoGet",
+        "operationId": "systemInfoGetHandler",
         "responses": {
           "200": {
             "description": "Returns all information about the system",
@@ -1433,7 +879,7 @@
       "post": {
         "tags": ["systemInfo"],
         "description": "Perform factory reset",
-        "operationId": "systemFactoryReset",
+        "operationId": "systemInfoFactoryResetHandler",
         "responses": {
           "200": {
             "description": "Factory reset performed successfully"
@@ -1445,7 +891,7 @@
       "get": {
         "tags": ["systemInfo"],
         "description": "Trigger azure function 'get-mdclight-updates' and return all available updates.",
-        "operationId": "updateGet",
+        "operationId": "systemInfoUpdateGetHandler",
         "responses": {
           "200": {
             "description": "Update Found",
@@ -1523,7 +969,7 @@
       "post": {
         "tags": ["systemInfo"],
         "description": "Trigger azure function 'update-mdclight-version'.",
-        "operationId": "updateMDCL",
+        "operationId": "systemInfoUpdatePostHandler",
         "parameters": [
           {
             "in": "body",
@@ -1630,7 +1076,7 @@
         ],
         "tags": ["terms-and-conditions"],
         "description": "Get terms-and-conditions by lang",
-        "operationId": "termsAndConditionsGet",
+        "operationId": "termsAndConditionsGetHandler",
         "responses": {
           "200": {
             "description": "Returns all information about the templates",
@@ -1659,7 +1105,7 @@
         ],
         "tags": ["terms-and-conditions"],
         "description": "Accept terms-and-conditions",
-        "operationId": "termsAndConditionsPost",
+        "operationId": "termsAndConditionsPostHandler",
         "responses": {
           "200": {
             "description": "Returns all information about the templates"
@@ -1790,7 +1236,7 @@
       "get": {
         "tags": [],
         "description": "Route check if all given NTP server entries are valid IP oder hostnames and check if all are currently available for Backend.",
-        "operationId": "checkNTPGet",
+        "operationId": "ntpCheckGetHandler",
         "parameters": [
           {
             "name": "addresses",

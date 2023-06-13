@@ -129,7 +129,7 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
     const params: IDataSourceParams = {
       config: sourceConfig,
       termsAndConditionsAccepted:
-        this.configManager.config.termsAndConditions.accepted
+        this.configManager.config?.termsAndConditions?.accepted
     };
 
     const dataSource = this.dataSourceFactory(params);
@@ -144,8 +144,8 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
 
   private findDataSourceConfig(
     protocol: DataSourceProtocols
-  ): IDataSourceConfig {
-    return this.configManager.config.dataSources.find(
+  ): IDataSourceConfig | undefined {
+    return this.configManager.config?.dataSources?.find(
       (sink) => sink.protocol === protocol
     );
   }
@@ -243,7 +243,9 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   /**
    * Returns the datasource object by its protocol
    */
-  public getDataSourceByProto(protocol: DataSourceProtocols | string) {
+  public getDataSourceByProto(
+    protocol: DataSourceProtocols | string
+  ): DataSource | undefined {
     return this.dataSources.find((src) => src.protocol === protocol);
   }
 
@@ -257,20 +259,20 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
   private configChangeHandler(): Promise<void> {
     if (this.dataSinksRestartPending) {
       this.dataAddedDuringRestart = true;
-      return;
+      return Promise.resolve();
     }
     this.dataSinksRestartPending = true;
     const logPrefix = `${DataSourcesManager.name}::configChangeHandler`;
 
     winston.info(`${logPrefix} reloading necessary datasources.`);
 
-    const shutdownFns = [];
+    const shutdownFns: Promise<void>[] = [];
     this.dataSources.forEach((source) => {
       // Shut down data sources with a changed configuration
       if (
         !source.configEqual(
           this.findDataSourceConfig(source.protocol),
-          this.configManager.config.termsAndConditions.accepted
+          this.configManager.config?.termsAndConditions?.accepted
         )
       ) {
         winston.info(
@@ -288,8 +290,8 @@ export class DataSourcesManager extends (EventEmitter as new () => TypedEmitter<
       }
     });
 
-    let err: Error = null;
-    Promise.allSettled(shutdownFns)
+    let err: Error;
+    return Promise.allSettled(shutdownFns)
       .then((results) => {
         winston.debug(`${logPrefix} datasources disconnected.`);
         results.forEach((result) => {

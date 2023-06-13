@@ -59,7 +59,9 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
         this.init();
       } catch (err) {
         winston.error(
-          `Error initializing DataSinksManager after configsLoaded due to:${err?.message}`
+          `Error initializing DataSinksManager after configsLoaded due to:${
+            (err as Error)?.message
+          }`
         );
       }
     });
@@ -89,7 +91,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
    * Shutdown all available data sinks.
    */
   public async shutdownAllDataSinks(): Promise<void> {
-    const shutdownFn = [];
+    const shutdownFn: Promise<void>[] = [];
     this.dataSinks.forEach(async (dataSink) => {
       this.disconnectDataSinkFromBus(dataSink);
       shutdownFn.push(dataSink.shutdown());
@@ -127,18 +129,22 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     const sink = this.dataSourceFactory(protocol);
 
-    // It must be pushed before initialization, to prevent double initialization
-    this.dataSinks.push(sink);
+    if (sink) {
+      // It must be pushed before initialization, to prevent double initialization
+      this.dataSinks.push(sink);
 
-    sink.on(DataSinkEventTypes.Lifecycle, this.onLifecycleEvent);
-    await sink.init();
+      sink.on(DataSinkEventTypes.Lifecycle, this.onLifecycleEvent);
+      await sink.init();
 
-    this.connectDataSinksToBus(sink);
-    winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
+      this.connectDataSinksToBus(sink);
+      winston.info(`${logPrefix} ${sink.protocol} DataSink created.`);
+    }
   }
 
-  private findDataSinkConfig(protocol: DataSinkProtocols): IDataSinkConfig {
-    return this.configManager.config.dataSinks.find(
+  private findDataSinkConfig(
+    protocol: DataSinkProtocols
+  ): IDataSinkConfig | undefined {
+    return this.configManager.config?.dataSinks?.find(
       (sink) => sink.protocol === protocol
     );
   }
@@ -167,7 +173,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
     this.lifecycleBus.removeEventListener(`${sink.protocol}_onLifeCycleEvent`);
   }
 
-  private dataSourceFactory(protocol): DataSink {
+  private dataSourceFactory(protocol: DataSinkProtocols): DataSink | undefined {
     const logPrefix = `${DataSinksManager.name}::dataSourceFactory`;
 
     const dataSinkConfig = this.findDataSinkConfig(protocol);
@@ -175,17 +181,17 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       winston.info(
         `${logPrefix} data sink '${protocol}' is not found in config, skipping spawning it.`
       );
-      return;
+      return undefined;
     }
     switch (protocol) {
       case DataSinkProtocols.DATAHUB: {
         const dataHubDataSinkOptions: DataHubDataSinkOptions = {
-          mapping: this.configManager.config.mapping,
+          mapping: this.configManager.config?.mapping,
           dataSinkConfig,
-          generalConfig: this.configManager.config.general,
+          generalConfig: this.configManager.config?.general,
           runTimeConfig: this.configManager.runtimeConfig.datahub,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           dataPointCache: this.dataPointCache
         };
 
@@ -193,12 +199,12 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
       case DataSinkProtocols.MTCONNECT: {
         const mtConnectDataSinkOptions: IMTConnectDataSinkOptions = {
-          mapping: this.configManager.config.mapping,
+          mapping: this.configManager.config?.mapping,
           dataSinkConfig,
-          generalConfig: this.configManager.config.general,
+          generalConfig: this.configManager.config?.general,
           mtConnectConfig: this.configManager.runtimeConfig.mtconnect,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           messengerManager: this.messengerManager,
           dataPointCache: this.dataPointCache
         };
@@ -206,12 +212,12 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
       case DataSinkProtocols.OPCUA: {
         return new OPCUADataSink({
-          mapping: this.configManager.config.mapping,
+          mapping: this.configManager.config?.mapping,
           dataSinkConfig,
-          generalConfig: this.configManager.config.general,
+          generalConfig: this.configManager.config?.general,
           runtimeConfig: this.configManager.runtimeConfig.opcua,
           termsAndConditionsAccepted:
-            this.configManager.config.termsAndConditions.accepted,
+            this.configManager.config?.termsAndConditions?.accepted,
           dataPointCache: this.dataPointCache
         });
       }
@@ -242,16 +248,16 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
 
     winston.info(`${logPrefix} reloading data sinks.`);
 
-    const shutdownFunctions = [];
+    const shutdownFunctions: Promise<void>[] = [];
 
     this.dataSinks.forEach((sink) => {
       if (
         !sink.configEqual(
           this.findDataSinkConfig(sink.protocol),
-          this.configManager.config.mapping,
-          this.configManager.config.termsAndConditions.accepted,
+          this.configManager.config?.mapping,
+          this.configManager.config?.termsAndConditions?.accepted,
           {
-            generalConfig: this.configManager.config.general
+            generalConfig: this.configManager.config?.general
           }
         )
       ) {
@@ -276,7 +282,7 @@ export class DataSinksManager extends (EventEmitter as new () => TypedEventEmitt
       }
     });
 
-    let err: Error = null;
+    let err: Error;
     await Promise.allSettled(shutdownFunctions)
       .then((results) => {
         winston.info(`${logPrefix} data sinks disconnected.`);

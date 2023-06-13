@@ -139,7 +139,7 @@ export class LedStatusService {
   private getDataSinksConnected = (): boolean => {
     return this.getConfiguredSinks().some(
       (sink) =>
-        this.dataSinksManager.getDataSinkByProto(sink).getCurrentStatus() ===
+        this.dataSinksManager.getDataSinkByProto(sink)?.getCurrentStatus() ===
         LifecycleEventStatus.Connected
     );
   };

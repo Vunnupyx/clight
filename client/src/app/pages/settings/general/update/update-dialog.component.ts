@@ -30,8 +30,8 @@ export class UpdateDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<any, UpdateDialogResult>,
     @Inject(MAT_DIALOG_DATA) private data: any,
     private translate: TranslateService,
-    private configurationAgentHttpMockupService: ConfigurationAgentHttpService,
-    private httpMockupService: HttpService
+    private configurationAgentHttpService: ConfigurationAgentHttpService,
+    private httpService: HttpService
   ) {}
 
   get currentStateText(): string {
@@ -76,8 +76,8 @@ export class UpdateDialogComponent implements OnInit {
     this.checkingForUpdates = true;
     this.checkTimeout();
     this.updateManager = new UpdateManager(
-      this.httpMockupService,
-      this.configurationAgentHttpMockupService,
+      this.httpService,
+      this.configurationAgentHttpService,
       this.onStateChange.bind(this)
     );
     await this.updateManager.start();

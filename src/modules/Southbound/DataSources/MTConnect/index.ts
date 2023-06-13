@@ -27,8 +27,8 @@ import { isValidIpOrHostname } from '../../../Utilities';
 export class MTConnectDataSource extends DataSource {
   protected name = MTConnectDataSource.name;
   private dataPoints: IDataPointConfig[];
-  private nextSequenceNumber: number;
-  private lastSequenceNumber: number;
+  private nextSequenceNumber: number | null = null;
+  private lastSequenceNumber: number | null = null;
   private requestCount = 1;
   private hostname = '';
   private DATAPOINT_READ_INTERVAL = 1000;
@@ -83,7 +83,10 @@ export class MTConnectDataSource extends DataSource {
       await this.testHostConnectivity();
 
       if (this.currentStatus === LifecycleEventStatus.Connected) {
-        if (this.reconnectTimeoutId) clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
         winston.info(
           `${logPrefix} successfully connected to MT Connect Source`
         );
@@ -98,7 +101,7 @@ export class MTConnectDataSource extends DataSource {
         throw new Error(`Host status:${this.currentStatus}`);
       }
     } catch (error) {
-      winston.error(`${logPrefix} ${error?.message}`);
+      winston.error(`${logPrefix} ${(error as Error)?.message}`);
 
       this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
       this.reconnectTimeoutId = setTimeout(() => {
@@ -135,7 +138,10 @@ export class MTConnectDataSource extends DataSource {
     const logPrefix = `${this.name}::disconnect`;
     winston.debug(`${logPrefix} triggered.`);
 
-    clearTimeout(this.reconnectTimeoutId);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
   }
 
@@ -159,7 +165,7 @@ export class MTConnectDataSource extends DataSource {
     const logPrefix = `${MTConnectDataSource.name}::getSampleResponse`;
     const response = await this.getMTConnectAgentXMLResponseAsObject(
       '/sample',
-      this.nextSequenceNumber
+      this.nextSequenceNumber ?? 0
     );
 
     if ((response as IMTConnectStreamError).MTConnectError) {
@@ -306,7 +312,7 @@ export class MTConnectDataSource extends DataSource {
         keyToUse = 'Samples';
         break;
       default:
-        break;
+        return;
     }
     let arrayToProcess: IMeasurementData[] = [];
 
@@ -340,9 +346,9 @@ export class MTConnectDataSource extends DataSource {
         statistic,
         timestamp
       } = detailObject['@'] ?? {};
-      const value = detailObject['#'];
+      const value = detailObject['#'] ?? '';
       // In some cases Entry can be present instead of a value
-      let entries: IEntry[];
+      let entries: IEntry[] = [];
       let entriesObject: IEntriesObject = {};
 
       if (detailObject.Entry) {
@@ -351,8 +357,8 @@ export class MTConnectDataSource extends DataSource {
           : [detailObject.Entry];
 
         entries.forEach((entry) => {
-          const keyName = entry['@key'] ?? entry['@']?.key;
-          const keyValue = entry['#'];
+          const keyName = entry['@key'] ?? entry['@']?.key ?? '';
+          const keyValue = entry['#'] ?? '';
 
           if (entry.Cell) {
             if (!entriesObject[keyName]) {
@@ -362,7 +368,9 @@ export class MTConnectDataSource extends DataSource {
             cells?.forEach((cellInfo) => {
               const cellKeyName = cellInfo['@key'];
               const cellValue = cellInfo['#'];
-              entriesObject[keyName][cellKeyName] = cellValue;
+              (entriesObject[keyName] as { [key: string]: string })[
+                cellKeyName
+              ] = cellValue;
             });
           } else {
             entriesObject[keyName] = keyValue;
@@ -374,7 +382,7 @@ export class MTConnectDataSource extends DataSource {
         id: dataItemId,
         duration,
         statistic,
-        name: detailObject.name,
+        name: detailObject.name ?? '',
         sequence,
         assetType,
         subType,
@@ -451,14 +459,19 @@ export class MTConnectDataSource extends DataSource {
           group: true
         });
         this.updateCurrentStatus(LifecycleEventStatus.Connected);
-        if (this.reconnectTimeoutId) clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
 
         // TODO type cast xmlObj from XMLSerializedAsObject
         //@ts-ignore
         return resolve(xmlObj);
       } catch (e) {
         this.updateCurrentStatus(LifecycleEventStatus.ConnectionError);
-        const err = `${logPrefix} unexpected error occurred while fetching XML response: ${e?.message}`;
+        const err = `${logPrefix} unexpected error occurred while fetching XML response: ${
+          e as Error
+        }`;
         winston.error(err);
         return reject(new Error(err));
       }
@@ -479,7 +492,10 @@ export class MTConnectDataSource extends DataSource {
 
       if (response.ok) {
         this.updateCurrentStatus(LifecycleEventStatus.Connected);
-        if (this.reconnectTimeoutId) clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       } else {
         throw new Error('Response not OK');
       }

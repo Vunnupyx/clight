@@ -30,7 +30,7 @@ function livedataDataSinkDataPointsGetHandler(
   request: Request,
   response: Response
 ): void {
-  const dataSink = configManager.config.dataSinks.find(
+  const dataSink = configManager.config?.dataSinks?.find(
     (ds) => ds.protocol === request.params.datasinkProtocol
   );
 

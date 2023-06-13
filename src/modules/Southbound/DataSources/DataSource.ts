@@ -43,15 +43,15 @@ export abstract class DataSource extends (EventEmitter as new () => TypedEmitter
 
   protected config: IDataSourceConfig;
   protected level = EventLevels.DataSource;
-  protected reconnectTimeoutId: Timeout = null;
+  protected reconnectTimeoutId: Timeout | null = null;
   protected RECONNECT_TIMEOUT =
     Number(process.env.dataSource_RECONNECT_TIMEOUT) || 10000;
-  public timestamp: number;
+  public timestamp: number | null = null;
   public protocol: DataSourceProtocols;
   public currentStatus: LifecycleEventStatus = LifecycleEventStatus.Disabled;
   protected scheduler: SynchronousIntervalScheduler;
-  protected readSchedulerListenerId: number;
-  protected logSchedulerListenerId: number;
+  protected readSchedulerListenerId: number | null = null;
+  protected logSchedulerListenerId: number | null = null;
   protected termsAndConditionsAccepted = false;
   protected processedDataPointCount = 0;
   protected dataPointReadErrors: DataPointReadErrorSummary[] = [];
@@ -72,9 +72,12 @@ export abstract class DataSource extends (EventEmitter as new () => TypedEmitter
   /**
    * Compares given config with the current data source config to determine if data source should be restarted or not
    */
-  configEqual(config: IDataSourceConfig, termsAndConditions: boolean) {
+  configEqual(
+    config: IDataSourceConfig | undefined,
+    termsAndConditions: boolean
+  ) {
     return (
-      JSON.stringify(this.config) === JSON.stringify(config) &&
+      JSON.stringify(this.config ?? {}) === JSON.stringify(config ?? {}) &&
       this.termsAndConditionsAccepted === termsAndConditions
     );
   }
@@ -195,8 +198,10 @@ export abstract class DataSource extends (EventEmitter as new () => TypedEmitter
     const logPrefix = `${this.name}::shutdown`;
     winston.info(`${logPrefix} shutdown triggered`);
 
-    this.scheduler.removeListener(this.readSchedulerListenerId);
-    this.scheduler.removeListener(this.logSchedulerListenerId);
+    if (this.readSchedulerListenerId)
+      this.scheduler.removeListener(this.readSchedulerListenerId);
+    if (this.logSchedulerListenerId)
+      this.scheduler.removeListener(this.logSchedulerListenerId);
     await this.disconnect();
   }
 

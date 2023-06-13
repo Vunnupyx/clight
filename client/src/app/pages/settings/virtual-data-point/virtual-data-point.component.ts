@@ -42,6 +42,7 @@ import {
   SetBlinkSettingsModalComponent,
   SetBlinkSettingsModalData
 } from './set-blink-settings-modal/set-blink-settings-modal.component';
+import { isDataPointNameValid } from 'app/shared/utils/validity-checker';
 
 @Component({
   selector: 'app-virtual-data-point',
@@ -126,6 +127,7 @@ export class VirtualDataPointComponent implements OnInit {
   };
 
   filterSourceStr: string = '';
+  isDataPointNameValid = isDataPointNameValid;
 
   sub = new Subscription();
 

@@ -14,6 +14,7 @@ jest.mock('../../../MessengerManager');
 
 const mockSinkConstructor = {
   init: jest.fn(),
+  on: jest.fn(),
   onMeasurements: { bind: jest.fn() },
   onLifecycleEvent: { bind: jest.fn() },
   shutdown: jest.fn().mockResolvedValue([]),
@@ -52,7 +53,7 @@ jest.mock('../../../../EventBus', () => {
   };
 });
 
-let dataSinksManager;
+let dataSinksManager: DataSinksManager;
 const mockConfigManager = new ConfigManager({
   errorEventsBus: new EventBus(),
   lifecycleEventsBus: new EventBus()
@@ -86,6 +87,7 @@ describe('DataSinksManager', () => {
     } as IConfig;
   });
   test('Spawns data sinks at init', async () => {
+    //@ts-ignore
     await dataSinksManager.init();
 
     expect(mockSinkConstructor.init).toHaveBeenCalledTimes(3);
@@ -101,14 +103,18 @@ describe('DataSinksManager', () => {
   });
 
   test('Restarts data sinks after config change', async () => {
+    //@ts-ignore
     await dataSinksManager.init();
     //mockReturnValueOnce is needed as otherwise spyOn calls the original function too!
     const initSpy = jest
+      //@ts-ignore
       .spyOn(dataSinksManager, 'init')
+      //@ts-ignore
       .mockReturnValueOnce('');
     //mockReturnValueOnce is needed as otherwise spyOn calls the original function too!
     const emitSpy = jest
       .spyOn(dataSinksManager, 'emit')
+      //@ts-ignore
       .mockReturnValueOnce('');
 
     //@ts-ignore
@@ -121,23 +127,29 @@ describe('DataSinksManager', () => {
       mockMeasurementEventBusConstructor.removeEventListener
     ).toHaveBeenCalledTimes(3);
     expect(initSpy).toHaveBeenCalledTimes(1);
-    expect(emitSpy).toHaveBeenCalledWith('dataSinksRestarted', null);
+    expect(emitSpy).toHaveBeenCalledWith('dataSinksRestarted', undefined);
   });
 
   test('Handles second config change request while already restarting', async () => {
+    //@ts-ignore
     await dataSinksManager.init();
+    //@ts-ignore
     const initSpy = jest.spyOn(dataSinksManager, 'init');
     const emitSpy = jest
       .spyOn(dataSinksManager, 'emit')
+      //@ts-ignore
       .mockReturnValueOnce('');
 
     //@ts-ignore
     const firstCall = dataSinksManager.configChangeHandler();
+    //@ts-ignore
     const secondCall = dataSinksManager.configChangeHandler();
 
     //mockReturnValueOnce is needed as otherwise spyOn calls the original function too!
     const changeHandlerSpy = jest
+      //@ts-ignore
       .spyOn(dataSinksManager, 'configChangeHandler')
+      //@ts-ignore
       .mockReturnValueOnce('');
 
     await firstCall;
@@ -156,6 +168,7 @@ describe('DataSinksManager', () => {
   });
 
   test('shutdownAllDataSinks works properly', async () => {
+    //@ts-ignore
     await dataSinksManager.init();
     await dataSinksManager.shutdownAllDataSinks();
 

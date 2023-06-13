@@ -1,5 +1,6 @@
 import { VirtualDataPointManager } from '..';
 import { ConfigManager } from '../../ConfigManager';
+import { EventsById } from '../../DatapointCache';
 import { MeasurementEventBus, EventBus } from '../../EventBus';
 import { IDataSourceMeasurementEvent } from '../../Southbound/DataSources/interfaces';
 
@@ -12,9 +13,9 @@ jest.mock('../../ConfigManager');
 jest.mock('../../SyncScheduler');
 
 class mockCache {
-  private dataPoints = {};
+  private dataPoints: EventsById = {};
 
-  update(events) {
+  update(events: IDataSourceMeasurementEvent[]) {
     events?.forEach((event) => {
       const lastEvent = this.getCurrentEvent(event.measurement.id);
       this.dataPoints[event.measurement.id] = {
@@ -34,7 +35,7 @@ class mockCache {
       };
     });
   }
-  getCurrentEvent(id) {
+  getCurrentEvent(id: string) {
     return this.dataPoints[id]?.event;
   }
 
@@ -44,7 +45,7 @@ class mockCache {
     ];
   }
 
-  hasChanged(id) {
+  hasChanged(id: string) {
     return this.dataPoints[id]?.changed;
   }
 

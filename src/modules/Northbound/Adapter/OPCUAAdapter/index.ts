@@ -22,6 +22,7 @@ import path from 'path';
 import { compare } from 'bcryptjs';
 import { System } from '../../../System';
 import { create } from 'xmlbuilder2';
+import { mdcLightFolder } from '../../../ConfigManager';
 
 interface IOPCUAAdapterOptions {
   dataSinkConfig: IDataSinkConfig;
@@ -36,15 +37,15 @@ export class OPCUAAdapter {
   private dataSinkConfig: IOPCUAAdapterOptions['dataSinkConfig'];
   private generalConfig: IOPCUAAdapterOptions['generalConfig'];
 
-  private auth: boolean;
-  private users: IUser[];
+  private allowAnonymous: boolean;
+  private users: IUser[] = [] as IUser[];
 
-  private server: OPCUAServer;
+  private server: OPCUAServer | null = null;
   private _running = false;
   private nodesetDir: string;
 
-  private userManager: UserManagerOptions;
-  private serverCertificateManager: OPCUACertificateManager;
+  private userManager: UserManagerOptions | null = null;
+  private serverCertificateManager: OPCUACertificateManager | null = null;
   private system: System;
 
   static readonly className = OPCUAAdapter.name;
@@ -55,20 +56,27 @@ export class OPCUAAdapter {
     this.dataSinkConfig = options.dataSinkConfig;
     this.generalConfig = options.generalConfig;
     this.system = new System();
+    this.nodesetDir = path.join(mdcLightFolder, 'config/tmpnodesets');
 
     if (!this.dataSinkConfig.auth) {
       // Enable anonymous if no auth infos are found
-      this.auth = true;
+      this.allowAnonymous = true;
     } else {
-      this.auth =
+      this.allowAnonymous =
         this.dataSinkConfig.auth.type !== 'userpassword' ? true : false;
-    }
-    this.users = [
-      {
-        userName: this.dataSinkConfig?.auth?.userName,
-        password: this.dataSinkConfig?.auth?.password
+
+      if (
+        this.dataSinkConfig.auth.userName &&
+        this.dataSinkConfig.auth.password
+      ) {
+        this.users = [
+          {
+            userName: this.dataSinkConfig?.auth?.userName,
+            password: this.dataSinkConfig?.auth?.password
+          }
+        ];
       }
-    ];
+    }
   }
 
   public get isRunning() {
@@ -95,8 +103,10 @@ export class OPCUAAdapter {
   /**
    * As data types for custom data points in config file are written in lowercase, this function looks up the right value for OPC UA usage
    */
-  private lookupDataType(dataType) {
-    const lookupEnum = {
+  private lookupDataType(dataType: string) {
+    const lookupEnum: {
+      [key: string]: string;
+    } = {
       string: 'String',
       boolean: 'Boolean',
       double: 'Double',
@@ -112,16 +122,9 @@ export class OPCUAAdapter {
    * Rewrites all xml nodesets into tmp folder and replaces static texts like the machineName
    */
   private async setupNodesets() {
-    this.nodesetDir = path.join(
-      process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      'config/tmpnodesets'
-    );
     await fs.rm(this.nodesetDir, { recursive: true, force: true });
     await fs.copy(
-      path.join(
-        process.env.MDC_LIGHT_FOLDER || process.cwd(),
-        this.opcuaRuntimeConfig.nodesetDir
-      ),
+      path.join(mdcLightFolder, this.opcuaRuntimeConfig.nodesetDir),
       this.nodesetDir
     );
     const files = (await fs.readdir(this.nodesetDir)) as string[];
@@ -158,12 +161,12 @@ export class OPCUAAdapter {
 
           const allUAVariables = xmlFileReadAsObject['UANodeSet']['#']
             .filter((x: any) => x['UAVariable'])
-            .map((x) => x['UAVariable'])
+            .map((x: any) => x['UAVariable'])
             .flat();
 
           const hostname = await this.system.getHostname();
           for (const customConfig of this.dataSinkConfig.customDataPoints) {
-            let isExistingNodeId = allUAVariables.find((x) =>
+            let isExistingNodeId = allUAVariables.find((x: any) =>
               x['@NodeId'].endsWith(customConfig.address)
             );
             if (isExistingNodeId) {
@@ -249,6 +252,9 @@ export class OPCUAAdapter {
       winston.debug(errorMsg);
       return Promise.resolve();
     }
+    if (!this.server)
+      return Promise.reject(new NorthBoundError('OPC UA server is undefined'));
+
     return this.server
       .start()
       .then(() => this.system.getHostname())
@@ -287,10 +293,7 @@ export class OPCUAAdapter {
     const hostname = await this.system.getHostname();
 
     const applicationUri = `urn:${hostname}`;
-    const certificateFolder = path.join(
-      process.env.MDC_LIGHT_FOLDER || process.cwd(),
-      '/certs'
-    );
+    const certificateFolder = path.join(mdcLightFolder, '/certs');
     const certificateFile = path.join(
       certificateFolder,
       'server_certificate.pem'
@@ -331,7 +334,7 @@ export class OPCUAAdapter {
       isValidUserAsync: async (
         userName: string,
         password: string,
-        cb: (any, bool) => void
+        cb: (err: Error | null, isAuthorized?: boolean) => void
       ): Promise<void> => {
         const user = this.users.find((user) => userName === user.userName);
         if (!user) {
@@ -350,7 +353,7 @@ export class OPCUAAdapter {
     this.server = new OPCUAServer({
       ...{
         ...this.opcuaRuntimeConfig,
-        ...{ allowAnonymous: this.auth },
+        ...{ allowAnonymous: this.allowAnonymous },
         serverInfo: {
           applicationUri
         }
@@ -405,6 +408,10 @@ export class OPCUAAdapter {
       return Promise.resolve();
     }
 
+    if (!this.server)
+      return Promise.reject(
+        new NorthBoundError('Stop requested but OPC UA server is undefined')
+      );
     return this.server
       .shutdown(timeoutMs || OPCUAAdapter.shutdownTimeoutMs)
       .then(() => {
@@ -422,7 +429,7 @@ export class OPCUAAdapter {
   public async findNode(nodeIdentifier: NodeIdLike): Promise<BaseNode | null> {
     const logPrefix = `${OPCUAAdapter.className}::findNode`;
     const nodeIdentifierWithHostname = `ns=7;s=${await this.system.getHostname()}.${nodeIdentifier}`;
-    const node = this.server.engine.addressSpace.findNode(
+    const node = this.server?.engine?.addressSpace?.findNode(
       nodeIdentifierWithHostname
     );
 
@@ -444,15 +451,19 @@ export class OPCUAAdapter {
 
   public shutdown(): Promise<void> {
     const logPrefix = `${OPCUAAdapter.name}::shutdown`;
-    const shutdownFunctions = [];
+    const shutdownFunctions: Promise<any>[] = [];
     winston.debug(`${logPrefix} triggered.`);
-    Object.getOwnPropertyNames(this).forEach((prop) => {
-      if (this[prop].shutdown) shutdownFunctions.push(this[prop].shutdown());
-      if (this[prop].removeAllListeners)
-        shutdownFunctions.push(this[prop].removeAllListeners());
-      if (this[prop].close) shutdownFunctions.push(this[prop].close());
-      delete this[prop];
-    });
+
+    const serverShutdownPromise: Promise<void> = new Promise(
+      async (resolve, reject) => {
+        if (this.server?.removeAllListeners) this.server.removeAllListeners();
+        if (this.server?.shutdown) await this.server.shutdown();
+        this.server = null;
+        resolve();
+      }
+    );
+    shutdownFunctions.push(serverShutdownPromise);
+
     return (
       Promise.all(shutdownFunctions)
         .then(() => {

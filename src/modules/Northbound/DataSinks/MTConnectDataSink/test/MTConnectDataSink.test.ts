@@ -6,9 +6,11 @@ import {
 import { ConfigManager } from '../../../../ConfigManager';
 import emptyDefaultConfig from '../../../../../../_mdclight/runtime-files/templates/empty.json';
 import {
+  IConfig,
   IDataSinkConfig,
   IDataSourceConfig,
-  IGeneralConfig
+  IGeneralConfig,
+  IMessengerServerConfig
 } from '../../../../ConfigManager/interfaces';
 import { IDataSourceMeasurementEvent } from '../../../../Southbound/DataSources/interfaces';
 import { EventBus } from '../../../../EventBus';
@@ -64,7 +66,10 @@ afterEach(() => {
 describe('Test MTConnectDataSink', () => {
   const PORT = 7881;
   const mtConnectConfig = { listenerPort: PORT };
-  const messengerManager = new MessengerManager({});
+  const messengerManager = new MessengerManager({
+    configManager: {} as Readonly<ConfigManager>,
+    messengerConfig: {} as IMessengerServerConfig
+  });
   test('should add data item', async () => {
     const dataSinkConfig: IDataSinkConfig = {
       protocol: DataSinkProtocols.MTCONNECT,

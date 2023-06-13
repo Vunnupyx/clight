@@ -10,7 +10,7 @@ import { IMeasurement } from '../interfaces';
 import SinumerikNCK from './SinumerikNCK/NCDriver';
 
 interface S7DataPointsWithError {
-  datapoints: Array<any>;
+  datapoints: NodeS7.ReadValues;
   error: boolean;
 }
 
@@ -61,7 +61,7 @@ export class S7DataSource extends DataSource {
 
   private nckEnabled = false;
 
-  private client = null;
+  private client: NodeS7 | null = null;
   private nckClient = new SinumerikNCK();
 
   get nckSlot() {
@@ -132,7 +132,10 @@ export class S7DataSource extends DataSource {
             this.nckSlot
           )
         ]);
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       } else if (nckDataPointsConfigured && !plcDataPointsConfigured) {
         winston.debug(`${logPrefix} Connecting to NCK only`);
         await this.nckClient.connect(
@@ -141,11 +144,17 @@ export class S7DataSource extends DataSource {
           undefined,
           this.nckSlot
         );
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       } else if (plcDataPointsConfigured && !nckDataPointsConfigured) {
         winston.debug(`${logPrefix} Connecting to PLC only`);
         await this.connectPLC();
-        clearTimeout(this.reconnectTimeoutId);
+        if (this.reconnectTimeoutId) {
+          clearTimeout(this.reconnectTimeoutId);
+          this.reconnectTimeoutId = null;
+        }
       }
     } catch (error) {
       winston.error(`${logPrefix} ${JSON.stringify(error)}`);
@@ -177,8 +186,11 @@ export class S7DataSource extends DataSource {
   private readPlcData(): Promise<S7DataPointsWithError> {
     return new Promise((resolve, reject) => {
       if (this.getPlcAddresses().length === 0)
-        resolve({ datapoints: [], error: null });
+        resolve({ datapoints: {}, error: false });
       try {
+        if (!this.client) {
+          throw new Error('client not defined');
+        }
         const timeoutId = setTimeout(
           () =>
             reject(
@@ -210,7 +222,7 @@ export class S7DataSource extends DataSource {
       try {
         dp.value = await this.nckClient.readVariableBTSS(address);
       } catch (error) {
-        dp.error = error.toString();
+        dp.error = (error as Error).toString();
       }
       results.push(dp);
     }
@@ -328,11 +340,14 @@ export class S7DataSource extends DataSource {
         // Prevent to add nck data point with an undefined value in case we have no nck connection
         if (dp.type === 'nck' && !this.nckEnabled) continue;
 
-        let value,
-          error = null;
+        let value: any = undefined;
+        let error: string | undefined = undefined;
+
         if (dp.type === 's7') {
           value = plcResults.datapoints[dp.address];
-          error = this.checkS7Error(plcResults.error, value);
+          error = this.checkS7Error(plcResults.error, value)
+            ? 's7error'
+            : undefined;
 
           if (!error) allS7DpError = false;
         } else if (dp.type === 'nck') {
@@ -376,7 +391,9 @@ export class S7DataSource extends DataSource {
 
       if (measurements.length > 0) this.onDataPointMeasurement(measurements);
     } catch (e) {
-      winston.error(`S7DataSource Error: ${e.message} / ${JSON.stringify(e)}`);
+      winston.error(
+        `S7DataSource Error: ${(e as Error).message} / ${JSON.stringify(e)}`
+      );
     }
     this.cycleActive = false;
   }
@@ -455,7 +472,10 @@ export class S7DataSource extends DataSource {
     this.isDisconnected = true;
     this.updateCurrentStatus(LifecycleEventStatus.Disconnected);
 
-    clearTimeout(this.reconnectTimeoutId);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         winston.warn(`${logPrefix} closing s7 connection timed out after 5s`);

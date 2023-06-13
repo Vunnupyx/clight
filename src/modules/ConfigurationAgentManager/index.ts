@@ -75,7 +75,9 @@ export class ConfigurationAgentManager {
       winston.error(
         `${logPrefix} got error response for ${url} : ${JSON.stringify(e)}`
       );
-      return Promise.reject(new Error(e));
+      return Promise.reject(
+        new Error((e as Error)?.message ?? JSON.stringify(e))
+      );
     }
   }
 

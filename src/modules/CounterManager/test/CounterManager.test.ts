@@ -254,6 +254,38 @@ describe('Test CounterManager', () => {
               expect(next.toISOString()).toBe(scheduleDate.toISOString());
             });
 
+            it('every DATE and every month', () => {
+              const schedule: ScheduleDescription = {
+                month: 'Every',
+                date: 'Every',
+                hours: 3,
+                minutes: 0,
+                seconds: 0,
+                lastReset: undefined,
+                created: Date.now()
+              };
+
+              const expectedDate =
+                date.getHours(currentTime) >= schedule.hours
+                  ? date.getDate(currentTime) + 1
+                  : date.getDate(currentTime);
+
+              const scheduleDate = new Date(
+                date.getYear(currentTime),
+                date.getMonth(currentTime),
+                expectedDate,
+                schedule.hours as number,
+                schedule.minutes as number,
+                schedule.seconds as number
+              );
+              //@ts-ignore
+              const next = CounterManager.calcNextTrigger(
+                schedule,
+                currentTime
+              );
+              expect(next.toISOString()).toBe(scheduleDate.toISOString());
+            });
+
             it('every day & month & hour', () => {
               const schedule: ScheduleDescription = {
                 month: 'Every',

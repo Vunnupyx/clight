@@ -1,10 +1,11 @@
 import fs from 'fs';
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import winston from 'winston';
 import path from 'path';
+import { mdcLightFolder } from '../ConfigManager';
 
 export class TLSKeyManager {
-  private PATH = path.join(process.env.MDC_LIGHT_FOLDER, 'sslkeys');
+  private PATH = path.join(mdcLightFolder, 'sslkeys');
 
   public async generateKeys(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -21,10 +22,10 @@ export class TLSKeyManager {
               winston.debug(`${logPrefix} failed to generate SSL keys`);
               winston.error(JSON.stringify(err));
               reject(err);
-              return;
+              return undefined;
             }
             resolve();
-            return;
+            return undefined;
           }
         );
       } else {
@@ -36,15 +37,18 @@ export class TLSKeyManager {
 
   private opensslWrapper(
     params: string | Array<string>,
-    callback = (err: Error | string, stderr: string, stdout: string) =>
-      undefined
+    callback = (
+      err: Error | string | null,
+      stderr: string | null,
+      stdout: string | null
+    ) => undefined
   ): void {
-    const stdout = [];
-    const stderr = [];
+    const stdout: any[] = [];
+    const stderr: any[] = [];
 
     let parameters =
       typeof params === 'string'
-        ? params.match(/(?:[^\s"]+|"[^"]*")+/g) //Regex preserves the quoted substring.
+        ? params.match(/(?:[^\s"]+|"[^"]*")+/g) ?? [] //Regex preserves the quoted substring.
         : params;
 
     if (parameters[0] === 'openssl') {
@@ -81,7 +85,11 @@ export class TLSKeyManager {
       if (closeStatusCode === 0) {
         callback(null, stderr.toString(), stdout.toString());
       } else {
-        callback(new Error(closeSignal), stderr.toString(), stdout.toString());
+        callback(
+          new Error(closeSignal as string),
+          stderr.toString(),
+          stdout.toString()
+        );
       }
     });
   }

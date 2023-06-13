@@ -10,7 +10,7 @@ const mockOpcuaServerShutdown = jest
   .fn()
   .mockImplementation(() => Promise.resolve());
 
-function log(m) {
+function log(m: any) {
   //console.log(m)
 }
 const winstonMock = {
@@ -54,7 +54,7 @@ const OPCUAServerMock = {
   initialized: false,
   engine: {
     addressSpace: {
-      findNode: (nodeId) => !nodeId.endsWith('notfound') && { nodeId }
+      findNode: (nodeId: string) => !nodeId.endsWith('notfound') && { nodeId }
     }
   },
   endpoints: [

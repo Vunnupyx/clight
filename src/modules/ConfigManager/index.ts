@@ -2,7 +2,6 @@ import { promises as promisefs } from 'fs';
 import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
 import { promisify } from 'util';
 import { generateKeyPair } from 'crypto';
 import fetch from 'node-fetch';
@@ -29,6 +28,7 @@ import {
   IAuthUsersConfig,
   IDefaultTemplate,
   IMessengerServerConfig,
+  IDataPointMapping,
   IVirtualDataPointConfig
 } from './interfaces';
 import TypedEmitter from 'typed-emitter';
@@ -36,7 +36,12 @@ import winston from 'winston';
 import { System } from '../System';
 import { DataSinksManager } from '../Northbound/DataSinks/DataSinksManager';
 import { DataSourcesManager } from '../Southbound/DataSources/DataSourcesManager';
-import { areObjectsEqual } from '../Utilities';
+import {
+  areObjectsEqual,
+  deleteFromArray,
+  insertToArrayIfNotExists,
+  updateItemInArray
+} from '../Utilities';
 import { factoryConfig } from './factoryConfig';
 import { runtimeConfig } from './runtimeConfig';
 import { ConfigurationAgentManager } from '../ConfigurationAgentManager';
@@ -50,6 +55,8 @@ interface IConfigManagerEvents {
 }
 
 type ChangeOperation = 'insert' | 'update' | 'delete';
+
+export const mdcLightFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
 
 const defaultS7DataSource: IDataSourceConfig = {
   dataPoints: [],
@@ -114,12 +121,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
 
   public isDeviceCommissioned = false;
 
-  private mdcFolder = process.env.MDC_LIGHT_FOLDER || process.cwd();
-  private configFolder = path.join(this.mdcFolder, '/config');
-  private keyFolder = path.join(this.mdcFolder, 'jwtkeys');
-  private sslFolder = path.join(this.mdcFolder, 'sslkeys');
-  private runtimeFolder = path.join(this.mdcFolder, 'runtime-files');
-  private certificateFolder = path.join(this.mdcFolder, 'certs');
+  private configFolder = path.join(mdcLightFolder, '/config');
+  private keyFolder = path.join(mdcLightFolder, 'jwtkeys');
+  private sslFolder = path.join(mdcLightFolder, 'sslkeys');
+  private runtimeFolder = path.join(mdcLightFolder, 'runtime-files');
+  private certificateFolder = path.join(mdcLightFolder, 'certs');
 
   private configName = 'config.json';
   private authUsersConfigName = 'auth.json';
@@ -127,23 +133,23 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   private publicKeyName = 'jwtRS256.key.pub';
 
   private _runtimeConfig: IRuntimeConfig;
-  private _config: IConfig;
-  private _defaultTemplates: IDefaultTemplates;
+  private _config: IConfig = {} as IConfig;
+  private _defaultTemplates: IDefaultTemplates | null = null;
   private _authConfig: IAuthConfig;
   private _authUsers: IAuthUsersConfig;
-  #resolveConfigChanged = null;
-  #configChangeCompletedPromise = null;
+  #resolveConfigChanged: null | ((value: void) => void) = null;
+  #configChangeCompletedPromise: null | Promise<unknown> = null;
   private pendingEvents: string[] = [];
 
   private readonly errorEventsBus: EventBus<IErrorEvent>;
   private readonly lifecycleEventsBus: EventBus<ILifecycleEvent>;
-  private _dataSinksManager: DataSinksManager;
-  private _dataSourcesManager: DataSourcesManager;
+  private _dataSinksManager: DataSinksManager | null = null;
+  private _dataSourcesManager: DataSourcesManager | null = null;
 
   private static className: string = ConfigManager.name;
 
   public get config(): IConfig {
-    return this._config;
+    return this._config ?? ({} as IConfig);
   }
 
   public set config(config: IConfig) {
@@ -166,7 +172,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   }
 
   public get defaultTemplates(): IDefaultTemplates {
-    return this._defaultTemplates;
+    return this._defaultTemplates ?? ({} as IDefaultTemplates);
   }
 
   public get authUsers(): IAuthUser[] {
@@ -189,8 +195,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this._runtimeConfig = runtimeConfig;
 
     this._authConfig = {
-      secret: null,
-      public: null
+      secret: '',
+      public: ''
     };
 
     this._authUsers = {
@@ -208,14 +214,16 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this.isDeviceCommissioned =
       await ConfigurationAgentManager.getCommissioningStatus();
     if (!factoryReset) {
-      this._dataSinksManager.on(
-        'dataSinksRestarted',
-        this.onDataSinksRestarted.bind(this)
-      );
-      this._dataSourcesManager.on(
-        'dataSourcesRestarted',
-        this.onDataSourcesRestarted.bind(this)
-      );
+      if (this._dataSinksManager)
+        this._dataSinksManager.on(
+          'dataSinksRestarted',
+          this.onDataSinksRestarted.bind(this)
+        );
+      if (this._dataSourcesManager)
+        this._dataSourcesManager.on(
+          'dataSourcesRestarted',
+          this.onDataSourcesRestarted.bind(this)
+        );
     } else {
       winston.warn(`${logPrefix} Factory reset requested`);
 
@@ -304,11 +312,11 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     this._config = {
       ...this._config,
       dataSources: [
-        ...this._config.dataSources,
+        ...(this._config?.dataSources ?? []),
         // Add missing sources
         ...sources.filter(
           (source) =>
-            !this._config.dataSources.some(
+            !this._config?.dataSources?.some(
               (x) => x.protocol === source.protocol
             )
         )
@@ -474,9 +482,10 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Applies template settings.
    */
   public applyTemplate(templateFileName: string) {
-    const template = this._defaultTemplates.templates.find(
-      (x) => x.id === templateFileName
-    );
+    const template: IDefaultTemplate =
+      this._defaultTemplates?.templates?.find(
+        (x) => x.id === templateFileName
+      ) ?? ({} as IDefaultTemplate);
 
     this._config = {
       ...this._config,
@@ -484,7 +493,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       quickStart: {
         completed: true,
         currentTemplate: templateFileName,
-        currentTemplateName: template.name
+        currentTemplateName: template?.name
       }
     };
 
@@ -604,7 +613,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    */
   private loadConfig<ConfigType>(
     configName: string,
-    defaultConfig: any
+    defaultConfig: ConfigType
   ): Promise<ConfigType> {
     const logPrefix = `${ConfigManager.className}::loadConfig`;
     const configPath = path.join(this.configFolder, configName);
@@ -627,7 +636,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         );
       })
       .then((file) => {
-        return JSON.parse(file);
+        return JSON.parse(file) as ConfigType;
       })
       .catch((error) => {
         winston.error(
@@ -637,8 +646,8 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       })
       .then((parsedFile) => {
         // Make a copy of the defaultConfig to avoid overwriting it
-        const mergedFile = this.mergeDeep(
-          JSON.parse(JSON.stringify(defaultConfig)),
+        const mergedFile = this.mergeDeep<ConfigType>(
+          JSON.parse(JSON.stringify(defaultConfig)) as ConfigType,
           parsedFile
         );
         return mergedFile;
@@ -672,14 +681,18 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
         publicKey
       };
     } catch (err) {
-      return null;
+      winston.error(`${logPrefix} error loading JWT key pair, ${err}`);
+      return {
+        privateKey: '',
+        publicKey: ''
+      };
     }
   }
 
   /**
    * Loads default template by filename
    */
-  private async loadTemplate(templateName) {
+  private async loadTemplate(templateName: string) {
     try {
       const configPath = path.join(
         this.runtimeFolder,
@@ -725,18 +738,21 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * @param item
    * @returns {boolean}
    */
-  private isObject(item) {
+  private isObject(item: any): boolean {
     return item && typeof item === 'object' && !Array.isArray(item);
   }
 
   /**
    * Deep merge two objects.
    */
-  private mergeDeep(target: object, ...sources: object[]) {
+  private mergeDeep<ConfigType>(
+    target: ConfigType,
+    ...sources: ConfigType[]
+  ): ConfigType {
     if (!sources.length) return target;
     const source = sources.shift();
 
-    if (this.isObject(target) && this.isObject(source)) {
+    if (target && source && this.isObject(target) && this.isObject(source)) {
       for (const key in source) {
         if (this.isObject(source[key])) {
           if (!target[key]) Object.assign(target, { [key]: {} });
@@ -762,11 +778,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
       ...config.messenger,
       ...incomingMessengerConfig,
       password:
+        incomingMessengerConfig.password &&
         incomingMessengerConfig.password?.length > 0
           ? incomingMessengerConfig.password
           : config.messenger.password
     };
     if (
+      newMessengerConfig.hostname &&
       newMessengerConfig.hostname.length > 5 &&
       !newMessengerConfig.hostname.startsWith('http://') &&
       !newMessengerConfig.hostname.startsWith('https://')
@@ -775,7 +793,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     }
     if (
       areObjectsEqual(newMessengerConfig, config.messenger) &&
-      this._dataSinksManager.messengerManager.serverStatus.registration ===
+      this._dataSinksManager?.messengerManager?.serverStatus?.registration ===
         'registered'
     ) {
       winston.debug(
@@ -789,74 +807,96 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
     await this.configChangeCompleted();
   }
 
-  /**
-   * change the config with a given object or change it.
-   */
-  public changeConfig<
-    Category extends keyof IConfig,
-    DataType extends IConfig[Category]
+  /** Inserts an object into the config, for example adding a new mapping to list of Mappings */
+  public insertIntoConfig<
+    Category extends keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >,
+    DataType extends IConfig[keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >][number]
   >(
-    operation: ChangeOperation,
     configCategory: Category,
-    // @ts-ignore // TODO Remove ts-ignore
-    data: DataType[number] | string,
-    // @ts-ignore // TODO Remove ts-ignore
-    selector: (item: DataType[number]) => string = (item) => item.id
+    data: DataType,
+    validatorFn: (item: DataType) => boolean
   ) {
-    const logPrefix = `${this.constructor.name}::changeConfig`;
-    if (operation === 'delete' && typeof data !== 'string')
-      throw new Error(`${logPrefix} error due try to delete without id.`); // Combination actually not defined in type def.
-
-    const categoryArray = this.config[configCategory];
-
-    if (!Array.isArray(categoryArray)) return;
-
-    switch (operation) {
-      case 'insert': {
-        if (typeof data !== 'string') {
-          // @ts-ignore TODO: Fix data type
-          const index = categoryArray.findIndex(
-            (entry) => selector(entry) === selector(data)
-          );
-          if (index < 0) {
-            //@ts-ignore
-            categoryArray.push(data);
-          }
-        }
-        break;
-      }
-      case 'update': {
-        if (typeof data === 'string' || isDataPointMapping(data))
-          throw new Error();
-        // @ts-ignore
-        const index = categoryArray.findIndex(
-          (entry) => selector(entry) === selector(data)
-        );
-        if (index < 0) throw Error(`No Entry found`); //TODO:
-        const change = categoryArray[index];
-        categoryArray.splice(index, 1);
-        //@ts-ignore
-        categoryArray.push(data);
-        break;
-      }
-      case 'delete': {
-        const index = categoryArray.findIndex(
-          (entry) => selector(entry) === data
-        );
-        if (index < 0) throw Error(`No Entry found`); //TODO:
-        const change = categoryArray[index];
-        categoryArray.splice(index, 1);
-        break;
-      }
-      default: {
-        throw new Error();
-      }
+    const logPrefix = `${ConfigManager.name}::${this.insertIntoConfig.name}`;
+    try {
+      const categoryArray = this.config[configCategory] as DataType[];
+      if (!Array.isArray(categoryArray)) return;
+      insertToArrayIfNotExists<DataType>(categoryArray, data, validatorFn);
+      /**
+       * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+       * This setter already includes this.saveConfigToFile();
+       */
+      this.config = this.config;
+    } catch (error) {
+      winston.error(
+        `${logPrefix} error while updating from ${configCategory} config: ${error}`
+      );
     }
-    /**
-     * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
-     * This setter already includes this.saveConfigToFile();
-     */
-    this.config = this.config;
+  }
+
+  /** Updates an existing object in the config, for example renaming a VDP in the list of VDPs */
+  public updateInConfig<
+    Category extends keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >,
+    DataType extends IConfig[keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >][number]
+  >(
+    configCategory: Category,
+    data: DataType,
+    validatorFn: (item: DataType) => boolean
+  ) {
+    const logPrefix = `${ConfigManager.name}::${this.updateInConfig.name}`;
+    try {
+      const categoryArray = this.config[configCategory] as DataType[];
+      if (!Array.isArray(categoryArray)) return;
+      updateItemInArray<DataType>(categoryArray, data, validatorFn);
+      /**
+       * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+       * This setter already includes this.saveConfigToFile();
+       */
+      this.config = this.config;
+    } catch (error) {
+      winston.error(
+        `${logPrefix} error while updating from ${configCategory} config: ${error}`
+      );
+    }
+  }
+
+  /** Deletes an object from the config, for example removing a mapping from list of Mappings */
+  public deleteFromConfig<
+    Category extends keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >,
+    DataType extends IConfig[keyof Omit<
+      IConfig,
+      'general' | 'quickStart' | 'termsAndConditions' | 'messenger'
+    >][number]
+  >(configCategory: Category, validatorFn: (item: DataType) => boolean) {
+    const logPrefix = `${ConfigManager.name}::${this.deleteFromConfig.name}`;
+    try {
+      const categoryArray = this.config[configCategory] as DataType[];
+      if (!Array.isArray(categoryArray)) return;
+      deleteFromArray<DataType>(categoryArray, validatorFn);
+      /**
+       * This.config gets mutated directly above but to check for potentially outdated VDP and mappings it should be saved again.
+       * This setter already includes this.saveConfigToFile();
+       */
+      this.config = this.config;
+    } catch (error) {
+      winston.error(
+        `${logPrefix} error while deleting from ${configCategory} config: ${error}`
+      );
+    }
   }
 
   /**
@@ -892,17 +932,17 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * @param obj full or partial config object to use for saving
    * @param replace True would replace existing config with given obj. Default is false and it merges obj and existing config
    */
-  public saveConfig(
-    obj: Partial<IConfig> = null,
-    replace = false
-  ): Promise<void> {
+  public saveConfig(obj: Partial<IConfig>, replace = false): Promise<void> {
     const logPrefix = `${ConfigManager.className}::saveConfig`;
 
     if (obj) {
       if (replace) {
         this._config = obj as IConfig;
       } else {
-        this._config = this.mergeDeep(this._config, obj);
+        this._config = this.mergeDeep<Partial<IConfig>>(
+          this._config,
+          obj
+        ) as IConfig;
       }
     }
 
@@ -949,7 +989,7 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
   /**
    * Save configFile content into config
    */
-  restoreConfigFile(configFile) {
+  restoreConfigFile(configFile: { data: Buffer }): void {
     const buffer = configFile.data;
 
     this._config = JSON.parse(buffer.toString());
@@ -1108,13 +1148,13 @@ export class ConfigManager extends (EventEmitter as new () => TypedEmitter<IConf
    * Waits for restarting events after an configuration change. Timeout if not all events were fired in 60sec
    * @returns
    */
-  public configChangeCompleted(): Promise<void> {
+  public configChangeCompleted(): Promise<unknown> {
     const logPrefix = `${ConfigManager.className}::configChangeCompleted`;
 
     if (this.#configChangeCompletedPromise)
       return this.#configChangeCompletedPromise;
 
-    if (this.pendingEvents.length === 0) return;
+    if (this.pendingEvents.length === 0) return Promise.resolve();
 
     this.#configChangeCompletedPromise = Promise.race([
       new Promise<void>((resolve, reject) => {

@@ -25,6 +25,13 @@ import {
 } from '../../../../../ConfigManager/interfaces';
 import { MTConnectDataSource } from '../../../../../Southbound/DataSources/MTConnect';
 
+// See: https://github.com/Microsoft/TypeScript/issues/25760#issuecomment-1250630403
+type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
+type IncomingDataSourceConfig = Optional<
+  Omit<IDataSourceConfig, 'dataPoints'>,
+  'type' | 'protocol'
+>; // It does not have dataPoints and the rest are optional, only enabled is required
+
 const name = 'DataSourceAPIHandler';
 
 let configManager: ConfigManager;
@@ -107,8 +114,9 @@ async function patchSingleDataSourceHandler(
 ): Promise<void> {
   const allowed = ['connection', 'enabled', 'softwareVersion', 'type'];
   const protocol = request.params.datasourceProtocol as DataSourceProtocols;
+  const incomingConfig = request.body as IncomingDataSourceConfig; //see data-source-service.ts in client/
 
-  Object.keys(request.body).forEach((entry) => {
+  Object.keys(incomingConfig).forEach((entry) => {
     if (!allowed.includes(entry)) {
       winston.warn(
         `dataSourcePatchHandler tried to change property: ${entry}. Not allowed`
@@ -120,15 +128,26 @@ async function patchSingleDataSourceHandler(
     }
   });
 
-  const updatedDataSource: IDataSourceConfig = {
-    dataPoints: [],
-    ...request.body,
-    protocol
-  };
-
   if (protocol === DataSourceProtocols.MTCONNECT) {
     allowed.push('machineName');
   }
+
+  const dataSource = configManager.config?.dataSources?.find(
+    (source) => source.protocol === protocol
+  );
+  if (!dataSource) {
+    winston.warn(
+      `patchSingleDataSourceHandler:: data source is not defined for protocol ${protocol}`
+    );
+    response.status(404).send();
+    return Promise.resolve();
+  }
+
+  let updatedDataSource: IDataSourceConfig = {
+    ...dataSource,
+    ...incomingConfig,
+    protocol
+  };
 
   if (!isValidProtocol(protocol) || !isValidDataSource(updatedDataSource)) {
     if (!isValidProtocol(protocol))
@@ -146,31 +165,18 @@ async function patchSingleDataSourceHandler(
     return Promise.resolve();
   }
 
-  const dataSource = configManager.config?.dataSources?.find(
-    (source) => source.protocol === protocol
-  );
-  if (!dataSource) {
-    winston.warn(
-      `patchSingleDataSourceHandler:: data source is not defined for protocol ${protocol}`
-    );
-    response.status(404).send();
-    return Promise.resolve();
-  }
-
-  let changedDatasource = { ...dataSource, ...updatedDataSource };
-
   const config = configManager.config;
   if (config) {
     config.dataSources = [
       ...config.dataSources.filter(
         (dataSource) => dataSource.protocol !== protocol
       ),
-      changedDatasource
+      updatedDataSource
     ];
   }
   configManager.config = config;
   await configManager.configChangeCompleted();
-  response.status(200).json(changedDatasource);
+  response.status(200).json(updatedDataSource);
 }
 
 /**

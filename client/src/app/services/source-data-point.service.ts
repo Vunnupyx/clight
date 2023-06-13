@@ -360,7 +360,7 @@ export class SourceDataPointService {
   private async _getDataPoints(datasourceProtocol: DataSourceProtocol) {
     const { dataPoints } = await this.httpService.get<{
       dataPoints: SourceDataPoint[];
-    }>(`/datasources/${datasourceProtocol}/datapoints`);
+    }>(`/datasources/${datasourceProtocol}/dataPoints`);
 
     this._store.patchState((state) => {
       state.dataPoints = dataPoints;

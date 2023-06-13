@@ -26,11 +26,9 @@ type LogEntry = {
   log: string;
 };
 
+type LogSummaryKeys = 'error' | 'warn' | 'info' | 'debug';
 type LogSummary = {
-  error: LogEntry[];
-  warn: LogEntry[];
-  info: LogEntry[];
-  debug: LogEntry[];
+  [key in LogSummaryKeys]: LogEntry[];
 };
 
 type VdpValidityStatus = {
@@ -43,9 +41,9 @@ type VdpValidityStatus = {
 type BlinkingStatus = {
   [id: string]: {
     isBlinking: boolean;
-    blinkStartTimestamp: number;
-    blinkEndTimestamp: number;
-    lastResetTimestamp: number;
+    blinkStartTimestamp: number | null;
+    blinkEndTimestamp: number | null;
+    lastResetTimestamp: number | null;
     lastValueBeforeReset: null | boolean;
     valueAfterBlinkEnd: null | boolean;
     sourceValues: {
@@ -62,12 +60,12 @@ type BlinkingStatus = {
 export class VirtualDataPointManager {
   private configManager: ConfigManager;
   private measurementBus: MeasurementEventBus;
-  private config: IVirtualDataPointConfig[] = null;
+  private config: IVirtualDataPointConfig[] | null = null;
   private cache: DataPointCache;
   private counters: CounterManager;
   private blinkingStatus: BlinkingStatus = {};
   private scheduler: SynchronousIntervalScheduler;
-  private logSchedulerListenerId: number;
+  private logSchedulerListenerId: number | null = null;
   private DEFAULT_BLINK_DETECTION_TIMEFRAME = 10000;
   private DEFAULT_BLINK_DETECTION_RISING_EDGES = 3;
   private logSummary: LogSummary = {
@@ -76,7 +74,7 @@ export class VirtualDataPointManager {
     info: [],
     debug: []
   };
-  private energyMachineStatusChangeCallback: Function;
+  private energyMachineStatusChangeCallback: Function = () => {};
 
   private static className: string = VirtualDataPointManager.name;
 
@@ -100,10 +98,10 @@ export class VirtualDataPointManager {
     const logPrefix = `${VirtualDataPointManager.className}::updateConfig`;
     winston.debug(`${logPrefix} refreshing config`);
 
-    this.config = this.configManager.config.virtualDataPoints;
+    this.config = this.configManager.config?.virtualDataPoints;
     // Update blinking status object if any blink-detection VDP is deleted
     for (let vdpId of Object.keys(this.blinkingStatus)) {
-      if (!this.config.find((vdp) => vdp.id === vdpId)) {
+      if (!this.config?.find((vdp) => vdp.id === vdpId)) {
         //If VDP is deleted, then remove the blinking status information as well
         delete this.blinkingStatus[vdpId];
       }
@@ -131,16 +129,18 @@ export class VirtualDataPointManager {
   protected printSummaryLogs(): void {
     const logPrefix = `${VirtualDataPointManager.className}::logSummary`;
 
-    Object.keys(this.logSummary).forEach((level: keyof LogSummary) => {
-      if (this.logSummary[level].length > 0) {
-        for (const entry of this.logSummary[level]) {
-          winston[level](
-            `${logPrefix} Count: ${entry.count} Log: ${entry.log}`
-          );
+    (Object.keys(this.logSummary) as LogSummaryKeys[]).forEach(
+      (level: LogSummaryKeys) => {
+        if (this.logSummary[level].length > 0) {
+          for (const entry of this.logSummary[level]) {
+            winston[level](
+              `${logPrefix} Count: ${entry.count} Log: ${entry.log}`
+            );
+          }
+          this.logSummary[level] = [];
         }
-        this.logSummary[level] = [];
       }
-    });
+    );
   }
 
   /**
@@ -179,7 +179,7 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private calculation(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): number | null {
     const logPrefix = `VirtualDataPointManager::calculation`;
@@ -207,10 +207,12 @@ export class VirtualDataPointManager {
     try {
       let variableReplacedFormula = config.formula;
       sourceEvents.forEach((sourceEvent) => {
-        variableReplacedFormula = variableReplacedFormula.replace(
-          new RegExp(sourceEvent.measurement.id, 'g'),
-          sourceEvent.measurement.value.toString()
-        );
+        if (sourceEvent) {
+          variableReplacedFormula = variableReplacedFormula.replace(
+            new RegExp(sourceEvent.measurement.id, 'g'),
+            sourceEvent.measurement.value.toString()
+          );
+        }
       });
       // Replace true with 1 and false with 0
       variableReplacedFormula = variableReplacedFormula
@@ -236,7 +238,7 @@ export class VirtualDataPointManager {
         return number(result.toFixed(4));
       }
     } catch (err) {
-      this.addSummaryLog('error', `${logPrefix} ${err.message}`);
+      this.addSummaryLog('error', `${logPrefix} ${(err as Error).message}`);
       return null;
     }
   }
@@ -249,7 +251,7 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private and(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): boolean | null {
     if (sourceEvents.length < 2) {
@@ -260,9 +262,10 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    let retValue = this.toBoolean(sourceEvents[0].measurement.value);
+    let retValue = this.toBoolean(sourceEvents[0]?.measurement?.value ?? 0);
     for (let i = 1; i < sourceEvents.length; i++) {
-      retValue = retValue && this.toBoolean(sourceEvents[i].measurement.value);
+      retValue =
+        retValue && this.toBoolean(sourceEvents[i]?.measurement?.value ?? 0);
     }
 
     return retValue;
@@ -277,7 +280,7 @@ export class VirtualDataPointManager {
    * @returns true if it is greater, false if not and null if something went wrong.
    */
   private greater(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig,
     equal: boolean = false
   ): boolean | null {
@@ -302,7 +305,7 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    const value = sourceEvents[0].measurement.value;
+    const value = sourceEvents[0]?.measurement?.value;
 
     let result: boolean;
     switch (typeof value) {
@@ -349,7 +352,7 @@ export class VirtualDataPointManager {
    * @returns true if it is smaller, false if not and null if something went wrong.
    */
   private smaller(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig,
     equal: boolean = false
   ): boolean | null {
@@ -374,8 +377,8 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    const value = sourceEvents[0].measurement.value;
-    let result: boolean;
+    const value = sourceEvents[0]?.measurement?.value;
+
     switch (typeof value) {
       case 'number': {
         // Correct method to compare
@@ -421,7 +424,7 @@ export class VirtualDataPointManager {
    * @returns true if it is equal, false if not and null if something went wrong.
    */
   private equal(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): boolean | null {
     const logPrefix = `${this.constructor.name}::equal`;
@@ -432,7 +435,7 @@ export class VirtualDataPointManager {
       );
       return null;
     }
-    const value = sourceEvents[0].measurement.value;
+    const value = sourceEvents[0]?.measurement?.value;
     const compare = config.comparativeValue;
 
     if (!compare) {
@@ -490,7 +493,7 @@ export class VirtualDataPointManager {
    * @returns true if it is unequal, false if not and null if something went wrong.
    */
   private unequal(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): boolean | null {
     const compare = config?.comparativeValue;
@@ -509,7 +512,7 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private or(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): boolean | null {
     if (sourceEvents.length < 2) {
@@ -520,9 +523,10 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    let retValue = this.toBoolean(sourceEvents[0].measurement.value);
+    let retValue = this.toBoolean(sourceEvents[0]?.measurement?.value ?? 0);
     for (let i = 1; i < sourceEvents.length; i++) {
-      retValue = retValue || this.toBoolean(sourceEvents[i].measurement.value);
+      retValue =
+        retValue || this.toBoolean(sourceEvents[i]?.measurement?.value ?? 0);
     }
 
     return retValue;
@@ -536,7 +540,7 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private not(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): boolean | null {
     if (sourceEvents.length !== 1) {
@@ -547,7 +551,7 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    return !this.toBoolean(sourceEvents[0].measurement.value);
+    return !this.toBoolean(sourceEvents[0]?.measurement?.value ?? 0);
   }
 
   /**
@@ -558,7 +562,7 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private count(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): number | null {
     if (sourceEvents.length !== 1) {
@@ -569,8 +573,9 @@ export class VirtualDataPointManager {
       return null;
     }
 
-    const measurement = sourceEvents[0].measurement;
+    const measurement = sourceEvents[0]?.measurement;
     if (
+      measurement &&
       this.toBoolean(measurement.value) &&
       this.cache.hasChanged(measurement.id)
     ) {
@@ -589,7 +594,7 @@ export class VirtualDataPointManager {
    * @returns string
    */
   private enumeration(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): string | null {
     const logPrefix = `${this.constructor.name}::enumeration`;
@@ -612,9 +617,9 @@ export class VirtualDataPointManager {
     }
 
     // Iterate over sorted by high prio array
-    for (const entry of config.enumeration.items.sort((a, b) => {
+    for (const entry of config.enumeration!.items?.sort((a, b) => {
       return a.priority - b.priority;
-    })) {
+    }) ?? []) {
       const hit = !!sourceEvents.find((event) => {
         // winston.debug(
         //   `${logPrefix} searching for entry ${entry.source} found ${event.measurement.id}`
@@ -643,7 +648,7 @@ export class VirtualDataPointManager {
    * @returns string
    */
   private setTariff(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): string | null {
     const value = this.enumeration(sourceEvents, config);
@@ -665,7 +670,7 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private thresholds(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): number | string | null {
     if (sourceEvents.length !== 1) {
@@ -680,15 +685,17 @@ export class VirtualDataPointManager {
 
     const thresholds = (Object.keys(config.thresholds) || [])
       .map((key) => config.thresholds?.[key])
-      .sort((a, b) => a - b)
+      .sort((a, b) => a! - b!)
       .reverse();
 
     const activeThreshold = thresholds.find(
-      (x) => sourceEvents[0].measurement.value > x
+      (x) =>
+        typeof x !== 'undefined' &&
+        Number(sourceEvents[0]?.measurement?.value) > x
     );
 
     const value = (Object.keys(config.thresholds) || []).find(
-      (key) => config.thresholds[key] === activeThreshold
+      (key) => config.thresholds![key] === activeThreshold
     );
     if (typeof value === 'undefined') {
       return null;
@@ -711,7 +718,7 @@ export class VirtualDataPointManager {
    *  - After linked signal's first rising edge per timeframe, main signal is reset (cannot have blinking) for a timeframe long. The last value before reset is kept for timeframe long.
    */
   private detectBlinking(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
   ): null {
     const logPrefix = `${this.constructor.name}::detectBlinking`;
@@ -726,7 +733,9 @@ export class VirtualDataPointManager {
     }
 
     const currentTimestamp = Date.now();
-    const currentValue = this.toBoolean(sourceEvents[0]?.measurement?.value);
+    const currentValue = this.toBoolean(
+      sourceEvents[0]?.measurement?.value ?? 0
+    );
     const timeframe = Number(
       config.blinkSettings?.timeframe ?? this.DEFAULT_BLINK_DETECTION_TIMEFRAME
     );
@@ -782,6 +791,7 @@ export class VirtualDataPointManager {
       // If value after blinking end has been saved and more than timeframe amount of time has passed, reset it
       if (
         typeof status.valueAfterBlinkEnd === 'boolean' &&
+        status.blinkEndTimestamp &&
         currentTimestamp - status.blinkEndTimestamp >= timeframe
       ) {
         status.valueAfterBlinkEnd = null;
@@ -823,6 +833,8 @@ export class VirtualDataPointManager {
     currentValue: boolean,
     timeframe: number
   ): void {
+    if (!this.config) return;
+
     // Find all VDPs that are linked to this one (which means this one could reset them)
     const affectedOtherBlinkDetectionVDPs = this.config.filter(
       (vdp) =>
@@ -890,6 +902,8 @@ export class VirtualDataPointManager {
     const status = this.blinkingStatus[id];
     if (!status) return;
 
+    if (!this.config) return;
+
     // Read VDP config from main config, in case it changed before this function is called
     const config = this.config.find((vdp) => vdp.id === id);
     if (!config) return;
@@ -953,11 +967,11 @@ export class VirtualDataPointManager {
     // has not been reset in this timeframe and
     // blink start is already detected above and
     // current time is ahead of the start of blinkStartTimestamp
-    let blinkDetected =
+    let blinkDetected: boolean =
       !status.blinkEndTimestamp &&
       hasEnoughRisingEdges &&
       !wasResetInThisTimeframe &&
-      status.blinkStartTimestamp &&
+      !!status.blinkStartTimestamp &&
       currentTimestamp >= status.blinkStartTimestamp;
 
     // Detects if it has been blinking and now the conditions are not fulfilled so blinking is stopped
@@ -1031,9 +1045,9 @@ export class VirtualDataPointManager {
    * @returns boolean
    */
   private calculateValue(
-    sourceEvents: IDataSourceMeasurementEvent[],
+    sourceEvents: (IDataSourceMeasurementEvent | undefined)[],
     config: IVirtualDataPointConfig
-  ): IMeasurement['value'] {
+  ): IMeasurement['value'] | null {
     switch (config.operationType) {
       case 'and':
         return this.and(sourceEvents, config);

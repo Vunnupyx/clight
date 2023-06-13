@@ -55,7 +55,7 @@ async function patchAllVdpsHandler(
     }
 
     configManager.config = {
-      ...configManager.config,
+      ...(configManager.config ?? {}),
       virtualDataPoints: newVdpArray
     };
     await configManager.configChangeCompleted();
@@ -83,14 +83,10 @@ async function patchSingleVdpHandler(
       if (!isValidVdp(newVdp)) {
         throw new Error();
       }
-      configManager.changeConfig(
-        'update',
+      configManager.updateInConfig<
         'virtualDataPoints',
-        newVdp,
-        (vdp) => {
-          return (vdp.id = newVdp.id);
-        }
-      );
+        IVirtualDataPointConfig
+      >('virtualDataPoints', newVdp, (item) => item.id === newVdp.id);
       await configManager.configChangeCompleted();
     }
     response.status(200).json({

@@ -84,7 +84,7 @@ async function ntpCheck(
   const validated = ntpArray.map<ICheckedNTPEntry>((ntpEntry: string) => {
     const ntpListEntry = {
       address: ntpEntry,
-      reachable: null,
+      reachable: false,
       valid: false
     };
 

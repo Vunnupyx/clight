@@ -35,7 +35,7 @@ async function changePasswordPostHandler(
 ): Promise<void> {
   authManager
     .changePassword(
-      request.user.userName,
+      request.user?.userName!,
       request.body.oldPassword,
       request.body.newPassword
     )

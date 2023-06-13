@@ -40,7 +40,7 @@ async function patchAllMappingsHandler(
     }
 
     configManager.config = {
-      ...configManager.config,
+      ...(configManager.config ?? {}),
       mapping: newMappings
     };
     await configManager.configChangeCompleted();

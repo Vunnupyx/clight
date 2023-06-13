@@ -109,7 +109,7 @@ export class BootstrapManager {
           await this.ledManager.turnOffLeds();
           await ConfigurationAgentManager.systemRestart();
         } catch (e) {
-          winston.error(`Device factory reset error: ${e?.message}`);
+          winston.error(`Device factory reset error: ${e}`);
         }
       });
       // Activate watcher
@@ -163,14 +163,14 @@ export class BootstrapManager {
     process.on('unhandledRejection', this.rejectionHandler.bind(this));
   }
 
-  private exceptionHandler(e) {
+  private exceptionHandler(e: Error) {
     winston.error(`Exiting due unhandled exception.`);
     winston.error(e.stack);
     this.ledManager.runTimeStatus(false);
     process.exit(1);
   }
 
-  private rejectionHandler(reason, promise) {
+  private rejectionHandler(reason: unknown, promise: Promise<unknown>) {
     winston.error(
       `Exiting due unhandled rejection at: ${JSON.stringify(
         promise
@@ -180,7 +180,7 @@ export class BootstrapManager {
     process.exit(1);
   }
 
-  private signalHandler(signal) {
+  private signalHandler(signal: NodeJS.Signals) {
     winston.error(`Received signal ${signal}.`);
     this.ledManager.runTimeStatus(false);
 

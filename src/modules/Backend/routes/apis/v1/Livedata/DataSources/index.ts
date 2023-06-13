@@ -26,7 +26,7 @@ function livedataDataSourceDataPointsGetHandler(
   request: Request,
   response: Response
 ): void {
-  const dataSource = configManager.config.dataSources.find(
+  const dataSource = configManager.config?.dataSources?.find(
     (ds) => ds.protocol === request.params.datasourceProtocol
   );
 

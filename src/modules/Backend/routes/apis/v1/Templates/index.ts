@@ -37,9 +37,9 @@ export function setDataSinksManager(manager: DataSinksManager): void {
  */
 function templatesGetHandler(request: Request, response: Response): void {
   const payload = {
-    templates: configManager.defaultTemplates.templates,
-    currentTemplate: configManager.config.quickStart.currentTemplate,
-    currentTemplateName: configManager.config.quickStart.currentTemplateName
+    templates: configManager.defaultTemplates?.templates,
+    currentTemplate: configManager.config?.quickStart?.currentTemplate,
+    currentTemplateName: configManager.config?.quickStart?.currentTemplateName
   };
 
   response.status(200).json(payload);
@@ -50,7 +50,7 @@ function templatesGetHandler(request: Request, response: Response): void {
  */
 function templatesGetStatusHandler(request: Request, response: Response) {
   const { completed, currentTemplate, currentTemplateName } =
-    configManager.config.quickStart;
+    configManager.config?.quickStart;
 
   response
     .status(200)
@@ -83,12 +83,11 @@ async function templatesSkipPostHandler(
   response: Response
 ): Promise<void> {
   configManager.config = {
-    ...configManager.config,
+    ...(configManager.config ?? {}),
     quickStart: {
       completed: true,
-      currentTemplate: configManager.config.quickStart.currentTemplate || null,
-      currentTemplateName:
-        configManager.config.quickStart.currentTemplateName || null
+      currentTemplate: configManager.config?.quickStart?.currentTemplate,
+      currentTemplateName: configManager.config?.quickStart?.currentTemplateName
     }
   };
 

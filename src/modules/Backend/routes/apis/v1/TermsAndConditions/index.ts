@@ -21,7 +21,7 @@ async function termsAndConditionsGetHandler(
     text: await configManager.getTermsAndConditions(
       request.query.lang as string
     ),
-    accepted: configManager.config.termsAndConditions.accepted
+    accepted: configManager.config?.termsAndConditions?.accepted
   });
 }
 

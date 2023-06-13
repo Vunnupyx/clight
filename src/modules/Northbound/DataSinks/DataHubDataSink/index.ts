@@ -13,6 +13,7 @@ import {
   TDataHubDataPointType
 } from '../../../ConfigManager/interfaces';
 import { NorthBoundError } from '../../../../common/errors';
+import { IDataSinkDataPointConfig } from '../../../ConfigManager/interfaces';
 
 export interface DataHubDataSinkOptions extends IDataSinkOptions {
   runTimeConfig: IDataHubConfig;
@@ -35,7 +36,7 @@ export class DataHubDataSink extends DataSink {
   protected _protocol = DataSinkProtocols.DATAHUB;
   #datahubAdapter: DataHubAdapter;
   #signalGroups: ISignalGroups;
-  public initialized: this = null;
+  public initialized: this | null = null;
   options: DataHubDataSinkOptions;
 
   public constructor(options: DataHubDataSinkOptions) {
@@ -52,7 +53,7 @@ export class DataHubDataSink extends DataSink {
    * Returns datahub adapter
    * @returns
    */
-  public getAdapter(): DataHubAdapter {
+  public getAdapter(): DataHubAdapter | null {
     if (this.initialized) {
       return this.#datahubAdapter;
     }
@@ -66,7 +67,9 @@ export class DataHubDataSink extends DataSink {
   /**
    * Send data to data hub via data hub adapter object.
    */
-  protected processDataPointValues(dataPointsObj): void {
+  protected processDataPointValues(dataPointsObj: {
+    [key: string]: number | string | boolean;
+  }): void {
     const logPrefix = `${DataHubDataSink.name}::processDataPointValue`;
 
     if (!this.#datahubAdapter?.running) {
@@ -90,7 +93,7 @@ export class DataHubDataSink extends DataSink {
       []
     );
 
-    const allDatapoints = [];
+    const allDatapoints: string[] = [];
     activeServices.forEach((service) => {
       if (!this.#signalGroups[service]) {
         winston.error(
@@ -107,11 +110,14 @@ export class DataHubDataSink extends DataSink {
     const uniqueDatapoints = Array.from(new Set(allDatapoints));
 
     for (const id of Object.keys(dataPointsObj)) {
-      const { type, address } = this.config.dataPoints.find(
-        (dp) => dp.id === id
-      );
-      if (uniqueDatapoints.includes(address)) {
-        data[type].push({ [address]: dataPointsObj[id] });
+      const { type, address } =
+        this.config.dataPoints.find((dp) => dp.id === id) ??
+        ({} as IDataSinkDataPointConfig);
+
+      if (type && uniqueDatapoints.includes(address)) {
+        data[type as TDataHubDataPointType].push({
+          [address]: dataPointsObj[id]
+        });
       }
     }
 
@@ -169,8 +175,8 @@ export class DataHubDataSink extends DataSink {
         if (error instanceof NorthBoundError) {
           this.enabled = false;
           this.updateCurrentStatus(LifecycleEventStatus.Unavailable);
-          return this;
         }
+        return this;
       });
   }
 
@@ -181,7 +187,6 @@ export class DataHubDataSink extends DataSink {
     const logPrefix = `${this.name}::shutdown`;
     return this.#datahubAdapter
       .shutdown()
-      .then(() => (this.#datahubAdapter = null))
       .then(() => {
         winston.info(`${logPrefix} successful.`);
       })

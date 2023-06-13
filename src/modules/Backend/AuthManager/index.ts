@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request as ExpressRequest, Response } from 'express';
 import { hash, compare } from 'bcryptjs';
 
 import { ConfigManager } from '../../ConfigManager';
@@ -15,10 +15,8 @@ interface UserTokenPayload {
   userName: string;
 }
 
-declare module 'express' {
-  export interface Request {
-    user: UserTokenPayload;
-  }
+export interface Request extends ExpressRequest {
+  user?: UserTokenPayload;
 }
 
 export class AuthManager {
@@ -97,31 +95,29 @@ export class AuthManager {
    * @returns {Function} callback
    */
   verifyJWTAuth({
-    withPasswordChangeDetection,
-    withBooleanResponse
+    withPasswordChangeDetection
   }: {
     withPasswordChangeDetection: boolean;
-    withBooleanResponse?: boolean;
   }) {
     const logPrefix = `${AuthManager.className}::verifyJWTAuth`;
 
-    return (request: Request, response: Response, next?: NextFunction) => {
+    return (
+      request: Request,
+      response: Response,
+      next?: NextFunction
+    ): boolean => {
       const header = request.headers['authorization'];
 
       // If device is not commissioned, password change is ignored as user is skipping the commissioning temporarily^
       if (!this.configManager.isDeviceCommissioned) {
-        if (withBooleanResponse) {
-          return true;
-        } else {
-          next();
-          return;
-        }
+        if (next) next();
+        return true;
       }
       if (!header) {
         response
           .status(403)
           .json({ message: 'Authorization token is required!' });
-        return;
+        return false;
       }
 
       try {
@@ -135,27 +131,23 @@ export class AuthManager {
           (auth) => auth.userName === user.userName
         );
 
-        if (withPasswordChangeDetection && loggedUser.passwordChangeRequired) {
+        if (withPasswordChangeDetection && loggedUser?.passwordChangeRequired) {
           response
             .status(403)
             .json({ message: 'Change default password is required!' });
-          return;
+          return false;
         }
 
         request.user = user;
-        if (withBooleanResponse) {
-          return true;
-        } else {
-          next();
-        }
+
+        if (next) next();
+        return true;
       } catch (err) {
         winston.error(
           `${logPrefix} jwt vaidation failed. ${JSON.stringify(err)}`
         );
         response.status(401).json({ message: 'Unauthorized!' });
-        if (withBooleanResponse) {
-          return false;
-        }
+        return false;
       }
     };
   }

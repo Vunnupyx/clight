@@ -9,8 +9,40 @@ title: Changelog
 ### Added
 
 - [DIGMDCLGHT-21](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-21) Adds Fanuc data source
+- [DIGMDCLGHT-363](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-363) Adds template for DMG MORI Sprint32 Series
 - [DIGMDCLGHT-412](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-412) Breaking Change: Replaces data point blinking logic with flexible blinking configuration
 - [DIGMDCLGHT-426](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-426) Adds MTConnect Agent as data source
+- [DIGMDCLGHT-439](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-439) Adds description about STAT LED to user documentation
+- [DIGMDCLGHT-447](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-447) Adds NETservice page to see status, access NETservice and adjust configuration
+- [DIGMDCLGHT-476](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-476) Adds support for testing connectivity to specific ports of the host
+
+### Changed
+
+- [DIGMDCLGHT-442](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-442) Implements CELOS LED Service for managing LEDs on the device
+- [DIGMDCLGHT-432](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-432) Displays connection problem warning related to MTConnect Agent as data source
+- [DIGMDCLGHT-450](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-450) Adds configuration file to exported logs
+- [DIGMDCLGHT-460](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-460) Adds support for hostname besides IP addresses for applicable data sources
+- [DIGMDCLGHT-472](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-472) Changes restart waiting logic in the UI
+- [DIGMDCLGHT-495](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-495) Adds support for loading older version backups
+
+### Fixed
+
+- [DIGMDCLGHT-373](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-373) Fixes netmask input validation
+- [DIGMDCLGHT-407](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-407) Fixes VDP Calculation in certain cases
+- [DIGMDCLGHT-425](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-425) Fixes OPC UA Server startup process
+- [DIGMDCLGHT-466](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-466) Fixes displaying connection status for data sources
+- [DIGMDCLGHT-469](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-469) Fixes restart of OPC UA server after editing machine information on General page
+- [DIGMDCLGHT-473](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-473) Fixes displaying non supported data sources if config file includes
+- [DIGMDCLGHT-474](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-474) Fixes pinging disabled data sources
+- [DIGMDCLGHT-475](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-475) Fixes entering already in use OPC UA node ids
+- [DIGMDCLGHT-477](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-477) Fixes restart process of data sources
+- [DIGMDCLGHT-487](https://jira.app.dmgmori.com/browse/DIGMDCLGHT-487) Fixes display of VDP sources when operation changes
+
+## [3.0.13]
+
+### Fixes
+
+- [DIGSRVWRLD-249](https://jira.app.dmgmori.com/browse/DIGSRVWRLD-249) Fixed a bug were a specific counter reset schedule crashes the runtime
 
 ## [3.0.12]
 

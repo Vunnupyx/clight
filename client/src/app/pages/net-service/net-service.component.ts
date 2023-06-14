@@ -53,11 +53,9 @@ export class NetServiceComponent implements OnInit {
       )
     );
 
-    this.netServiceService
-      .getNetServiceStatus()
-      .then(() =>
-        this.netServiceService.getStatusIcon(this.netServiceStatus.StatusIcon)
-      );
+    this.sub.add(
+      this.netServiceService.setPeriodicStatusCheckTimer().subscribe()
+    );
   }
 
   openNETServiceLogin() {

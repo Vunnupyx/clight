@@ -4,7 +4,8 @@ export enum DataSourceProtocol {
   S7 = 's7',
   MTConnect = 'mtconnect',
   IOShield = 'ioshield',
-  Energy = 'energy'
+  Energy = 'energy',
+  OPC = 'opcua'
 }
 
 export enum DataSourceSoftwareVersion {
@@ -24,7 +25,8 @@ export enum DataSourceConnectionStatus {
   Reconnecting = 'reconnecting',
   ConnectionError = 'failedtoconnect',
   Unavailable = 'unavailable', // in case of status can't be loaded
-  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted'
+  TermsAndConditionsNotAccepted = 'termsandconditionsnotaccepted',
+  UntrustedCertificate = 'untrustedcertificate'
 }
 
 export class DataSourceConnection {
@@ -62,6 +64,17 @@ export enum EnergyTypes {
   PhoenixEMpro = 'PhoenixEMpro'
 }
 
+export enum DataSourceAuthType {
+  Anonymous = 'anonymous',
+  UserAndPass = 'user/pass'
+}
+
+export class DataSourceAuth {
+  type!: DataSourceAuthType;
+  userName?: string;
+  password?: string;
+}
+
 export class DataSource {
   type?: S7Types | MTConnectTypes | IOShieldTypes | EnergyTypes;
   connection?: Connection;
@@ -70,5 +83,6 @@ export class DataSource {
   id?: string;
   machineName?: string;
   protocol?: DataSourceProtocol;
+  auth?: DataSourceAuth;
   softwareVersion?: string;
 }

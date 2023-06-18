@@ -259,6 +259,108 @@
               </div>
             </div>
           </ng-container>
+          <ng-container *ngSwitchCase="'opcua'">
+            <form #form="ngForm">
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
+                  {{ 'settings-data-source.Host' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="hostname"
+                    #ipAddr="ngModel"
+                    [ngModel]="dataSource?.connection?.hostname"
+                    [pattern]="ipOrHostRegex"
+                    [required]="true"
+                    (ngModelChange)="updateHostname(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
+                  {{ 'settings-data-source.Port' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="port"
+                    #port="ngModel"
+                    [ngModel]="dataSource?.connection?.port"
+                    [pattern]="portRegex"
+                    [required]="true"
+                    (ngModelChange)="updatePort(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+            </form>
+            <div class="row d-flex align-items-center">
+              <div class="col-12 col-md-5 pb-20">
+                <label>{{
+                  'settings-data-sink.OPCUAAuthenticationLevel' | translate
+                }}</label>
+              </div>
+              <div class="col-12 col-md-7">
+                <mat-form-field>
+                  <mat-select
+                    disableOptionCentering="true"
+                    [(ngModel)]="auth.type"
+                    (ngModelChange)="
+                      $event === DataSourceAuthType.Anonymous && onSaveAuth()
+                    "
+                  >
+                    <mat-option [value]="DataSourceAuthType.Anonymous">{{
+                      'settings-data-sink.AuthenticationLevels.anonymous'
+                        | translate
+                    }}</mat-option>
+                    <mat-option [value]="DataSourceAuthType.UserAndPass">{{
+                      'settings-data-sink.AuthenticationLevels.user/pass'
+                        | translate
+                    }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="auth.type === DataSourceAuthType.UserAndPass">
+              <div class="row d-flex align-items-center">
+                <div class="col-12 col-md-5 pb-20">
+                  <label>{{
+                    'settings-data-sink.OPCUAServerUsername' | translate
+                  }}</label>
+                </div>
+                <div class="col-12 col-md-7">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      name="OPCUAServerUsername"
+                      [(ngModel)]="auth.userName"
+                      autocomplete="off"
+                      (focusout)="onSaveAuth()"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="col-12 col-md-5 pb-20">
+                  <label>{{
+                    'settings-data-sink.OPCUAServerPassword' | translate
+                  }}</label>
+                </div>
+                <div class="col-12 col-md-7">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      name="OPCUAServerPassword"
+                      type="password"
+                      [(ngModel)]="auth.password"
+                      autocomplete="off"
+                      (focusout)="onSaveAuth()"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </ng-container>
 
         <div *ngIf="false">
@@ -406,6 +508,13 @@
                       | translate
                   }}
                 </ng-container>
+                <ng-container
+                  *ngSwitchCase="
+                    DataSourceConnectionStatus.UntrustedCertificate
+                  "
+                >
+                  {{ 'settings-data-source.UntrustedCertificate' | translate }}
+                </ng-container>
               </ng-container>
             </div>
             <small style="color: #999">{{
@@ -485,6 +594,14 @@
                 "
               >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.UntrustedCertificate"
+              >
+                <mat-icon
+                  class="color-warning"
+                  svgIcon="mdc:warning"
+                ></mat-icon>
               </ng-container>
             </ng-container>
           </div>
@@ -608,7 +725,10 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          *ngIf="dataSource?.protocol != Protocol.IOShield"
+          *ngIf="
+            dataSource?.protocol != Protocol.IOShield &&
+            dataSource?.protocol != Protocol.OPC
+          "
           [name]="'settings-data-source.Type' | translate"
           prop="type"
           [flexGrow]="1"

@@ -942,14 +942,18 @@
                       class="w-100"
                       [ngModel]="value"
                       (ngModelChange)="
-                        unsavedRow && (unsavedRow.address = $event)
+                        unsavedRow && (unsavedRow.address = $event.trim())
                       "
+                      [pattern]="nonSpaceRegex"
                       [matTooltip]="
                         'settings-data-source.DuplicatedAddress' | translate
                       "
                       matTooltipPosition="above"
                       [matTooltipDisabled]="!isDuplicatingField('address')"
-                      [class.border-danger]="isDuplicatingField('address')"
+                      [class.border-danger]="
+                        isDuplicatingField('address') ||
+                        hasSpaceCharacter(unsavedRow.address)
+                      "
                     />
                   </ng-template>
                 </ng-container>
@@ -1014,6 +1018,7 @@
               <mat-button-toggle
                 (click)="
                   !isDuplicatingField('name') &&
+                    !hasSpaceCharacter(unsavedRow.address) &&
                     !isDuplicatingField('address') &&
                     unsavedRow.name?.length > 0 &&
                     unsavedRow.address?.length > 0 &&
@@ -1025,6 +1030,7 @@
                 [disabled]="
                   isDuplicatingField('name') ||
                   isDuplicatingField('address') ||
+                  hasSpaceCharacter(unsavedRow.address) ||
                   unsavedRow.name?.length === 0 ||
                   !unsavedRow.name ||
                   unsavedRow.address?.length === 0 ||

@@ -27,7 +27,12 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import { HOST_REGEX, IP_REGEX, PORT_REGEX } from 'app/shared/utils/regex';
+import {
+  HOST_REGEX,
+  IP_REGEX,
+  NON_SPACE_REGEX,
+  PORT_REGEX
+} from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,6 +89,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   ipRegex = IP_REGEX;
   portRegex = PORT_REGEX;
   ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
+  nonSpaceRegex = NON_SPACE_REGEX;
   dsFormValid = true;
   showCertificateTrustDialog = false;
   isDataPointNameValid = isDataPointNameValid;
@@ -347,6 +353,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
         dp.id !== editableId
       );
     });
+  }
+
+  hasSpaceCharacter(text) {
+    return !new RegExp(this.nonSpaceRegex).test(text);
   }
 
   onAdd() {

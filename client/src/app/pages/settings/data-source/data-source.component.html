@@ -412,7 +412,14 @@
           color="primary"
           type="button"
           class="btn-sm"
-          [disabled]="!isTouchedTable || isLoading || !dsFormValid || isEditing"
+          [disabled]="
+            !isTouchedTable ||
+            isLoading ||
+            !dsFormValid ||
+            isEditing ||
+            connection.status === DataSourceConnectionStatus.Connecting ||
+            connection.status === DataSourceConnectionStatus.Reconnecting
+          "
           (click)="onApply()"
         >
           {{ 'settings-data-source.ApplyChanges' | translate }}

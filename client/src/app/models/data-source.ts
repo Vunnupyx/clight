@@ -66,7 +66,7 @@ export enum EnergyTypes {
 
 export enum DataSourceAuthType {
   Anonymous = 'anonymous',
-  UserAndPass = 'user/pass'
+  UserAndPass = 'userpassword'
 }
 
 export class DataSourceAuth {

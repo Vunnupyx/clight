@@ -846,7 +846,9 @@
           [minWidth]="120"
         >
           <ng-template ngx-datatable-cell-template let-row="row">
-            <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
+            <span
+              *ngIf="liveData && liveData?.[row.id] && connection.status === DataSourceConnectionStatus.Connected; else noLiveData"
+            >
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
                   {{ getLiveDataTextForIoShield(row) }}

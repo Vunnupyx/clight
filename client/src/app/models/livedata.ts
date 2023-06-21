@@ -3,7 +3,7 @@ export interface TimeSeriesValue {
   value: boolean | number | string;
 }
 
-export enum OpcauaErrorReasons {
+export enum OpcuaErrorReasons {
   UnexpectedError = 'unexpected_error',
   WrongNodeId = 'wrong_nodeid'
 }
@@ -15,5 +15,5 @@ export class DataPointLiveData {
   description?: string;
   timestamp!: number;
   timeseries?: TimeSeriesValue[];
-  errorReason?: OpcauaErrorReasons;
+  errorReason?: OpcuaErrorReasons;
 }

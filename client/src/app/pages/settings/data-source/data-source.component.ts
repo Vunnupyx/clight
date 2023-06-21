@@ -543,6 +543,19 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       obj.address === ENERGY_TARIFF_NUMBER_DP_ADDRESS
     );
   }
+  getLiveDataErrorReasonText(errorReason) {
+    const translationKey = `settings-data-source.LiveDataErrorReason.${errorReason}`;
+    const result = this.translate.instant(translationKey);
+    if (result === translationKey) {
+      //Translation not found
+      return this.translate.instant(
+        'settings-data-source.LiveDataErrorReason.LivedataError'
+      );
+    } else {
+      //Translation found
+      return result;
+    }
+  }
 
   getTariffText() {
     const tariffNumberDatapoint = this.datapointRows.find((dp) =>

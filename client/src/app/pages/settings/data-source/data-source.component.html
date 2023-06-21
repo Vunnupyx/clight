@@ -855,6 +855,24 @@
                   {{ liveData?.[row.id]?.value }}
                   {{ liveData?.[row.id]?.unit }}
                 </ng-container>
+                <ng-container *ngSwitchCase="Protocol.OPC">
+                  <ng-container
+                    *ngIf="liveData[row.id]?.errorReason; else noLiveDataError"
+                  >
+                    <span
+                      class="color-danger"
+                      [matTooltip]="
+                        getLiveDataErrorReasonText(liveData[row.id].errorReason)
+                      "
+                      matTooltipPosition="above"
+                    >
+                      <mat-icon svgIcon="mdc:info"></mat-icon>
+                    </span>
+                  </ng-container>
+                  <ng-template #noLiveDataError>
+                    {{ liveData?.[row.id]?.value }}
+                  </ng-template>
+                </ng-container>
                 <ng-container *ngSwitchDefault>
                   {{ liveData?.[row.id]?.value }}
                 </ng-container>

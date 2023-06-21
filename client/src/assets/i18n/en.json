@@ -250,6 +250,10 @@
       "4": "Processing",
       "Unknown": "Unknown"
     },
+    "LiveDataErrorReason": {
+      "unexpected_error": "There was an unexpected error while reading data point",
+      "wrong_nodeid": "This address is wrong or does not exist."
+    },
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
       "user/pass": "User/Password"

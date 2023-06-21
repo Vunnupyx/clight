@@ -5,7 +5,7 @@ export interface TimeSeriesValue {
 
 export enum OpcauaErrorReasons {
   UnexpectedError = 'unexpected_error',
-  InvalidAddress = 'invalid_address'
+  WrongNodeId = 'wrong_nodeid'
 }
 
 export class DataPointLiveData {

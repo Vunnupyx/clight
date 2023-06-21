@@ -256,7 +256,7 @@
     },
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
-      "user/pass": "User/Password"
+      "userpassword": "User/Password"
     }
   },
   "settings-virtual-data-point": {
@@ -392,7 +392,7 @@
     "AlreadyExistDataPoint": "This item is already added!",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
-      "user/pass": "User/Password"
+      "userpassword": "User/Password"
     },
     "Tabs": {
       "mtconnect": "MTConnect",

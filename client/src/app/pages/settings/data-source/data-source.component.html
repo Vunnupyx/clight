@@ -312,12 +312,12 @@
                     "
                   >
                     <mat-option [value]="DataSourceAuthType.Anonymous">{{
-                      'settings-data-sink.AuthenticationLevels.anonymous'
-                        | translate
+                      'settings-data-sink.AuthenticationLevels.' +
+                        DataSourceAuthType.Anonymous | translate
                     }}</mat-option>
                     <mat-option [value]="DataSourceAuthType.UserAndPass">{{
-                      'settings-data-sink.AuthenticationLevels.user/pass'
-                        | translate
+                      'settings-data-sink.AuthenticationLevels.' +
+                        DataSourceAuthType.UserAndPass | translate
                     }}</mat-option>
                   </mat-select>
                 </mat-form-field>

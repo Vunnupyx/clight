@@ -3,19 +3,21 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import {
+  Connection,
   DataPointLiveData,
   DataSource,
+  DataSourceAuth,
+  DataSourceAuthType,
   DataSourceConnection,
   DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
-  IOShieldTypes,
-  S7Types,
   EnergyTypes,
-  SourceDataPoint,
-  SourceDataPointType,
+  IOShieldTypes,
   MTConnectTypes,
-  Connection
+  S7Types,
+  SourceDataPoint,
+  SourceDataPointType
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
@@ -25,7 +27,7 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
+import { HOST_REGEX, IP_REGEX, PORT_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,6 +48,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   MTConnectTypes = MTConnectTypes;
   IOShieldTypes = IOShieldTypes;
   EnergyTypes = EnergyTypes;
+  DataSourceAuthType = DataSourceAuthType;
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;
@@ -63,6 +66,12 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     ...new Array(2).fill(0).map((_, i) => `AI${i}`)
   ];
 
+  auth: DataSourceAuth = {
+    type: DataSourceAuthType.Anonymous,
+    userName: '',
+    password: ''
+  };
+
   unsavedRow?: SourceDataPoint;
   unsavedRowIndex: number | undefined;
 
@@ -76,6 +85,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   portRegex = PORT_REGEX;
   ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
   dsFormValid = true;
+  showCertificateTrustDialog = false;
   isDataPointNameValid = isDataPointNameValid;
 
   filterDigitalInputAddressStr = '';
@@ -216,6 +226,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.dataSource = obj;
     this.dataSourceIndex = this.dataSourceList?.indexOf(obj) || 0;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
+
+    if (obj.auth) {
+      this.auth = clone(obj.auth);
+    }
 
     if (this.statusSub) {
       this.statusSub.unsubscribe();
@@ -477,6 +491,26 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
+  onSaveAuth() {
+    if (
+      this.dataSource?.auth?.type === this.auth.type &&
+      this.auth.userName &&
+      this.dataSource?.auth?.userName === this.auth.userName &&
+      this.auth.password &&
+      this.dataSource?.auth?.password === this.auth.password
+    ) {
+      return;
+    }
+    const newAuth = (
+      this.auth.type === DataSourceAuthType.Anonymous
+        ? { type: this.auth.type }
+        : this.auth
+    ) as DataSourceAuth;
+    this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
+      auth: newAuth
+    });
+  }
+
   onDiscard() {
     return this.sourceDataPointService.revert();
   }
@@ -531,10 +565,42 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   private onConnection(x: DataSourceConnection | undefined) {
+    if (!x) return;
+
     this.connection = x;
+
+    if (x.status) {
+      this.verifyCertificate(x.status);
+    }
   }
 
   private onDataPointsLiveData(x: ObjectMap<DataPointLiveData>) {
     this.liveData = x;
+  }
+
+  private verifyCertificate(status: DataSourceConnectionStatus) {
+    if (
+      !this.showCertificateTrustDialog &&
+      status === DataSourceConnectionStatus.UntrustedCertificate
+    ) {
+      this.showCertificateTrustDialog = true;
+
+      const title = this.translate.instant(
+        'settings-data-source.UntrustedCertificate'
+      );
+      const message = this.translate.instant(
+        'settings-data-source.UntrustedCertificateMessage'
+      );
+
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: new ConfirmDialogModel(title, message)
+      });
+
+      dialogRef.afterClosed().subscribe((dialogResult) => {
+        if (!dialogResult) {
+          return;
+        }
+      });
+    }
   }
 }

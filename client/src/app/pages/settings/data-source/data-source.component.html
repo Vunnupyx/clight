@@ -129,6 +129,7 @@
                   <input
                     matInput
                     name="port"
+                    type="number"
                     #port="ngModel"
                     [ngModel]="dataSource?.connection?.port"
                     [pattern]="portRegex"
@@ -259,6 +260,109 @@
               </div>
             </div>
           </ng-container>
+          <ng-container *ngSwitchCase="'opcua'">
+            <form #form="ngForm">
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
+                  {{ 'settings-data-source.Host' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="hostname"
+                    #ipAddr="ngModel"
+                    [ngModel]="dataSource?.connection?.hostname"
+                    [pattern]="ipOrHostRegex"
+                    [required]="true"
+                    (ngModelChange)="updateHostname(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="text-nowrap col-12 col-md-5 pb-20">
+                  {{ 'settings-data-source.Port' | translate }}
+                </div>
+                <mat-form-field class="col-12 col-md-7">
+                  <input
+                    matInput
+                    name="port"
+                    type="number"
+                    #port="ngModel"
+                    [ngModel]="dataSource?.connection?.port"
+                    [pattern]="portRegex"
+                    [required]="true"
+                    (ngModelChange)="updatePort(form.valid, $event)"
+                  />
+                </mat-form-field>
+              </div>
+            </form>
+            <div class="row d-flex align-items-center">
+              <div class="col-12 col-md-5 pb-20">
+                <label>{{
+                  'settings-data-sink.OPCUAAuthenticationLevel' | translate
+                }}</label>
+              </div>
+              <div class="col-12 col-md-7">
+                <mat-form-field>
+                  <mat-select
+                    disableOptionCentering="true"
+                    [(ngModel)]="auth.type"
+                    (ngModelChange)="
+                      $event === DataSourceAuthType.Anonymous && onSaveAuth()
+                    "
+                  >
+                    <mat-option [value]="DataSourceAuthType.Anonymous">{{
+                      'settings-data-sink.AuthenticationLevels.' +
+                        DataSourceAuthType.Anonymous | translate
+                    }}</mat-option>
+                    <mat-option [value]="DataSourceAuthType.UserAndPass">{{
+                      'settings-data-sink.AuthenticationLevels.' +
+                        DataSourceAuthType.UserAndPass | translate
+                    }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div *ngIf="auth.type === DataSourceAuthType.UserAndPass">
+              <div class="row d-flex align-items-center">
+                <div class="col-12 col-md-5 pb-20">
+                  <label>{{
+                    'settings-data-sink.OPCUAServerUsername' | translate
+                  }}</label>
+                </div>
+                <div class="col-12 col-md-7">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      name="OPCUAServerUsername"
+                      [(ngModel)]="auth.userName"
+                      autocomplete="off"
+                      (focusout)="onSaveAuth()"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="col-12 col-md-5 pb-20">
+                  <label>{{
+                    'settings-data-sink.OPCUAServerPassword' | translate
+                  }}</label>
+                </div>
+                <div class="col-12 col-md-7">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      name="OPCUAServerPassword"
+                      type="password"
+                      [(ngModel)]="auth.password"
+                      autocomplete="off"
+                      (focusout)="onSaveAuth()"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </ng-container>
 
         <div *ngIf="false">
@@ -310,7 +414,14 @@
           color="primary"
           type="button"
           class="btn-sm"
-          [disabled]="!isTouchedTable || isLoading || !dsFormValid || isEditing"
+          [disabled]="
+            !isTouchedTable ||
+            isLoading ||
+            !dsFormValid ||
+            isEditing ||
+            connection.status === DataSourceConnectionStatus.Connecting ||
+            connection.status === DataSourceConnectionStatus.Reconnecting
+          "
           (click)="onApply()"
         >
           {{ 'settings-data-source.ApplyChanges' | translate }}
@@ -406,6 +517,13 @@
                       | translate
                   }}
                 </ng-container>
+                <ng-container
+                  *ngSwitchCase="
+                    DataSourceConnectionStatus.UntrustedCertificate
+                  "
+                >
+                  {{ 'settings-data-source.UntrustedCertificate' | translate }}
+                </ng-container>
               </ng-container>
             </div>
             <small style="color: #999">{{
@@ -485,6 +603,14 @@
                 "
               >
                 <mat-icon class="color-danger" svgIcon="mdc:error"></mat-icon>
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="DataSourceConnectionStatus.UntrustedCertificate"
+              >
+                <mat-icon
+                  class="color-warning"
+                  svgIcon="mdc:warning"
+                ></mat-icon>
               </ng-container>
             </ng-container>
           </div>
@@ -608,7 +734,10 @@
           </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column
-          *ngIf="dataSource?.protocol != Protocol.IOShield"
+          *ngIf="
+            dataSource?.protocol != Protocol.IOShield &&
+            dataSource?.protocol != Protocol.OPC
+          "
           [name]="'settings-data-source.Type' | translate"
           prop="type"
           [flexGrow]="1"
@@ -717,7 +846,9 @@
           [minWidth]="120"
         >
           <ng-template ngx-datatable-cell-template let-row="row">
-            <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
+            <span
+              *ngIf="liveData && liveData?.[row.id] && connection.status === DataSourceConnectionStatus.Connected; else noLiveData"
+            >
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
                   {{ getLiveDataTextForIoShield(row) }}
@@ -725,6 +856,24 @@
                 <ng-container *ngSwitchCase="Protocol.Energy">
                   {{ liveData?.[row.id]?.value }}
                   {{ liveData?.[row.id]?.unit }}
+                </ng-container>
+                <ng-container *ngSwitchCase="Protocol.OPC">
+                  <ng-container
+                    *ngIf="liveData[row.id]?.errorReason; else noLiveDataError"
+                  >
+                    <span
+                      class="color-danger"
+                      [matTooltip]="
+                        getLiveDataErrorReasonText(liveData[row.id].errorReason)
+                      "
+                      matTooltipPosition="above"
+                    >
+                      <mat-icon svgIcon="mdc:info"></mat-icon>
+                    </span>
+                  </ng-container>
+                  <ng-template #noLiveDataError>
+                    {{ liveData?.[row.id]?.value }}
+                  </ng-template>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                   {{ liveData?.[row.id]?.value }}
@@ -813,14 +962,18 @@
                       class="w-100"
                       [ngModel]="value"
                       (ngModelChange)="
-                        unsavedRow && (unsavedRow.address = $event)
+                        unsavedRow && (unsavedRow.address = $event.trim())
                       "
+                      [pattern]="nonSpaceRegex"
                       [matTooltip]="
                         'settings-data-source.DuplicatedAddress' | translate
                       "
                       matTooltipPosition="above"
                       [matTooltipDisabled]="!isDuplicatingField('address')"
-                      [class.border-danger]="isDuplicatingField('address')"
+                      [class.border-danger]="
+                        isDuplicatingField('address') ||
+                        hasSpaceCharacter(unsavedRow.address)
+                      "
                     />
                   </ng-template>
                 </ng-container>
@@ -885,6 +1038,7 @@
               <mat-button-toggle
                 (click)="
                   !isDuplicatingField('name') &&
+                    !hasSpaceCharacter(unsavedRow.address) &&
                     !isDuplicatingField('address') &&
                     unsavedRow.name?.length > 0 &&
                     unsavedRow.address?.length > 0 &&
@@ -896,6 +1050,7 @@
                 [disabled]="
                   isDuplicatingField('name') ||
                   isDuplicatingField('address') ||
+                  hasSpaceCharacter(unsavedRow.address) ||
                   unsavedRow.name?.length === 0 ||
                   !unsavedRow.name ||
                   unsavedRow.address?.length === 0 ||

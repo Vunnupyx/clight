@@ -31,7 +31,8 @@ const DATA_SOURCES_ORDER = [
   DataSourceProtocol.S7,
   DataSourceProtocol.MTConnect,
   DataSourceProtocol.IOShield,
-  DataSourceProtocol.Energy
+  DataSourceProtocol.Energy,
+  DataSourceProtocol.OPC
 ];
 
 @Injectable()
@@ -146,6 +147,10 @@ export class DataSourceService {
 
     if (ds.type) {
       payload.type = ds.type;
+    }
+
+    if (ds.auth) {
+      payload.auth = ds.auth;
     }
 
     if (protocol === DataSourceProtocol.MTConnect) {

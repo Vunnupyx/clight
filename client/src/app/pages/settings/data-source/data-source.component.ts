@@ -27,7 +27,12 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import { HOST_REGEX, IP_REGEX, PORT_REGEX } from 'app/shared/utils/regex';
+import {
+  HOST_REGEX,
+  IP_REGEX,
+  NON_SPACE_REGEX,
+  PORT_REGEX
+} from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,6 +89,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   ipRegex = IP_REGEX;
   portRegex = PORT_REGEX;
   ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
+  nonSpaceRegex = NON_SPACE_REGEX;
   dsFormValid = true;
   showCertificateTrustDialog = false;
   isDataPointNameValid = isDataPointNameValid;
@@ -349,6 +355,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
+  hasSpaceCharacter(text) {
+    return !new RegExp(this.nonSpaceRegex).test(text);
+  }
+
   onAdd() {
     if (!this.datapointRows) {
       return;
@@ -532,6 +542,19 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       obj.type === SourceDataPointType.Device &&
       obj.address === ENERGY_TARIFF_NUMBER_DP_ADDRESS
     );
+  }
+  getLiveDataErrorReasonText(errorReason) {
+    const translationKey = `settings-data-source.LiveDataErrorReason.${errorReason}`;
+    const result = this.translate.instant(translationKey);
+    if (result === translationKey) {
+      //Translation not found
+      return this.translate.instant(
+        'settings-data-source.LiveDataErrorReason.LivedataError'
+      );
+    } else {
+      //Translation found
+      return result;
+    }
   }
 
   getTariffText() {

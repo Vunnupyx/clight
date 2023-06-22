@@ -129,6 +129,7 @@
                   <input
                     matInput
                     name="port"
+                    type="number"
                     #port="ngModel"
                     [ngModel]="dataSource?.connection?.port"
                     [pattern]="portRegex"
@@ -285,6 +286,7 @@
                   <input
                     matInput
                     name="port"
+                    type="number"
                     #port="ngModel"
                     [ngModel]="dataSource?.connection?.port"
                     [pattern]="portRegex"
@@ -310,12 +312,12 @@
                     "
                   >
                     <mat-option [value]="DataSourceAuthType.Anonymous">{{
-                      'settings-data-sink.AuthenticationLevels.anonymous'
-                        | translate
+                      'settings-data-sink.AuthenticationLevels.' +
+                        DataSourceAuthType.Anonymous | translate
                     }}</mat-option>
                     <mat-option [value]="DataSourceAuthType.UserAndPass">{{
-                      'settings-data-sink.AuthenticationLevels.user/pass'
-                        | translate
+                      'settings-data-sink.AuthenticationLevels.' +
+                        DataSourceAuthType.UserAndPass | translate
                     }}</mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -412,7 +414,14 @@
           color="primary"
           type="button"
           class="btn-sm"
-          [disabled]="!isTouchedTable || isLoading || !dsFormValid || isEditing"
+          [disabled]="
+            !isTouchedTable ||
+            isLoading ||
+            !dsFormValid ||
+            isEditing ||
+            connection.status === DataSourceConnectionStatus.Connecting ||
+            connection.status === DataSourceConnectionStatus.Reconnecting
+          "
           (click)="onApply()"
         >
           {{ 'settings-data-source.ApplyChanges' | translate }}
@@ -837,7 +846,9 @@
           [minWidth]="120"
         >
           <ng-template ngx-datatable-cell-template let-row="row">
-            <span *ngIf="liveData && liveData?.[row.id]; else noLiveData">
+            <span
+              *ngIf="liveData && liveData?.[row.id] && connection.status === DataSourceConnectionStatus.Connected; else noLiveData"
+            >
               <ng-container [ngSwitch]="dataSource?.protocol">
                 <ng-container *ngSwitchCase="Protocol.IOShield">
                   {{ getLiveDataTextForIoShield(row) }}
@@ -845,6 +856,24 @@
                 <ng-container *ngSwitchCase="Protocol.Energy">
                   {{ liveData?.[row.id]?.value }}
                   {{ liveData?.[row.id]?.unit }}
+                </ng-container>
+                <ng-container *ngSwitchCase="Protocol.OPC">
+                  <ng-container
+                    *ngIf="liveData[row.id]?.errorReason; else noLiveDataError"
+                  >
+                    <span
+                      class="color-danger"
+                      [matTooltip]="
+                        getLiveDataErrorReasonText(liveData[row.id].errorReason)
+                      "
+                      matTooltipPosition="above"
+                    >
+                      <mat-icon svgIcon="mdc:info"></mat-icon>
+                    </span>
+                  </ng-container>
+                  <ng-template #noLiveDataError>
+                    {{ liveData?.[row.id]?.value }}
+                  </ng-template>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
                   {{ liveData?.[row.id]?.value }}
@@ -933,14 +962,18 @@
                       class="w-100"
                       [ngModel]="value"
                       (ngModelChange)="
-                        unsavedRow && (unsavedRow.address = $event)
+                        unsavedRow && (unsavedRow.address = $event.trim())
                       "
+                      [pattern]="nonSpaceRegex"
                       [matTooltip]="
                         'settings-data-source.DuplicatedAddress' | translate
                       "
                       matTooltipPosition="above"
                       [matTooltipDisabled]="!isDuplicatingField('address')"
-                      [class.border-danger]="isDuplicatingField('address')"
+                      [class.border-danger]="
+                        isDuplicatingField('address') ||
+                        hasSpaceCharacter(unsavedRow.address)
+                      "
                     />
                   </ng-template>
                 </ng-container>
@@ -1005,6 +1038,7 @@
               <mat-button-toggle
                 (click)="
                   !isDuplicatingField('name') &&
+                    !hasSpaceCharacter(unsavedRow.address) &&
                     !isDuplicatingField('address') &&
                     unsavedRow.name?.length > 0 &&
                     unsavedRow.address?.length > 0 &&
@@ -1016,6 +1050,7 @@
                 [disabled]="
                   isDuplicatingField('name') ||
                   isDuplicatingField('address') ||
+                  hasSpaceCharacter(unsavedRow.address) ||
                   unsavedRow.name?.length === 0 ||
                   !unsavedRow.name ||
                   unsavedRow.address?.length === 0 ||

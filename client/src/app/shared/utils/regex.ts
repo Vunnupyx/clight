@@ -36,5 +36,3 @@ export const NETMASK_REGEX =
 export const NUMBER_ONLY_REGEX = '^[\\d]+$';
 export const DATAPOINT_NOT_ACCEPTED_CHARTS_REGEX =
   '^[^\\%\\&\\+\\-\\?\\*\\/\\!\\"\\\'\\s]+$';
-
-export const NON_SPACE_REGEX = '^[^\\s]+$';

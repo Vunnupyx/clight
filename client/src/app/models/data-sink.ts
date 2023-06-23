@@ -8,7 +8,7 @@ export enum DataSinkProtocol {
 
 export enum DataSinkAuthType {
   Anonymous = 'anonymous',
-  UserAndPass = 'userpassword'
+  UserAndPass = 'user/pass'
 }
 
 export class DataSinkAuth {

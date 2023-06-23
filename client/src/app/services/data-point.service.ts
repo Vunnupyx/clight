@@ -183,6 +183,7 @@ export class DataPointService {
       this._store.patchState((state) => {
         state.status = Status.Ready;
         state.touched = false;
+        state.originalDataPoints = clone(state.dataPoints);
       });
 
       this.toastr.success(

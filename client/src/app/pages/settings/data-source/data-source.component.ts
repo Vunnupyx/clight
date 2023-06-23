@@ -3,21 +3,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import {
-  Connection,
   DataPointLiveData,
   DataSource,
-  DataSourceAuth,
-  DataSourceAuthType,
   DataSourceConnection,
   DataSourceConnectionStatus,
   DataSourceProtocol,
   DataSourceSoftwareVersion,
-  EnergyTypes,
   IOShieldTypes,
-  MTConnectTypes,
   S7Types,
+  EnergyTypes,
   SourceDataPoint,
-  SourceDataPointType
+  SourceDataPointType,
+  MTConnectTypes,
+  Connection
 } from 'app/models';
 import { DataSourceService, SourceDataPointService } from 'app/services';
 import {
@@ -27,12 +25,7 @@ import {
 import { PromptService } from 'app/shared/services/prompt.service';
 import { Status } from 'app/shared/state';
 import { clone, ObjectMap } from 'app/shared/utils';
-import {
-  HOST_REGEX,
-  IP_REGEX,
-  NON_SPACE_REGEX,
-  PORT_REGEX
-} from 'app/shared/utils/regex';
+import { IP_REGEX, PORT_REGEX, HOST_REGEX } from 'app/shared/utils/regex';
 import { Subscription } from 'rxjs';
 import { SelectTypeModalComponent } from './select-type-modal/select-type-modal.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -53,7 +46,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   MTConnectTypes = MTConnectTypes;
   IOShieldTypes = IOShieldTypes;
   EnergyTypes = EnergyTypes;
-  DataSourceAuthType = DataSourceAuthType;
 
   dataSourceList?: DataSource[];
   dataSource?: DataSource;
@@ -71,12 +63,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     ...new Array(2).fill(0).map((_, i) => `AI${i}`)
   ];
 
-  auth: DataSourceAuth = {
-    type: DataSourceAuthType.Anonymous,
-    userName: '',
-    password: ''
-  };
-
   unsavedRow?: SourceDataPoint;
   unsavedRowIndex: number | undefined;
 
@@ -89,9 +75,7 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   ipRegex = IP_REGEX;
   portRegex = PORT_REGEX;
   ipOrHostRegex = `${IP_REGEX}|${HOST_REGEX}`;
-  nonSpaceRegex = NON_SPACE_REGEX;
   dsFormValid = true;
-  showCertificateTrustDialog = false;
   isDataPointNameValid = isDataPointNameValid;
 
   filterDigitalInputAddressStr = '';
@@ -233,10 +217,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     this.dataSourceIndex = this.dataSourceList?.indexOf(obj) || 0;
     this.sourceDataPointService.getDataPoints(obj.protocol!);
 
-    if (obj.auth) {
-      this.auth = clone(obj.auth);
-    }
-
     if (this.statusSub) {
       this.statusSub.unsubscribe();
     }
@@ -353,10 +333,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
         dp.id !== editableId
       );
     });
-  }
-
-  hasSpaceCharacter(text) {
-    return !new RegExp(this.nonSpaceRegex).test(text);
   }
 
   onAdd() {
@@ -501,26 +477,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSaveAuth() {
-    if (
-      this.dataSource?.auth?.type === this.auth.type &&
-      this.auth.userName &&
-      this.dataSource?.auth?.userName === this.auth.userName &&
-      this.auth.password &&
-      this.dataSource?.auth?.password === this.auth.password
-    ) {
-      return;
-    }
-    const newAuth = (
-      this.auth.type === DataSourceAuthType.Anonymous
-        ? { type: this.auth.type }
-        : this.auth
-    ) as DataSourceAuth;
-    this.dataSourceService.updateDataSource(this.dataSource?.protocol!, {
-      auth: newAuth
-    });
-  }
-
   onDiscard() {
     return this.sourceDataPointService.revert();
   }
@@ -542,19 +498,6 @@ export class DataSourceComponent implements OnInit, OnDestroy {
       obj.type === SourceDataPointType.Device &&
       obj.address === ENERGY_TARIFF_NUMBER_DP_ADDRESS
     );
-  }
-  getLiveDataErrorReasonText(errorReason) {
-    const translationKey = `settings-data-source.LiveDataErrorReason.${errorReason}`;
-    const result = this.translate.instant(translationKey);
-    if (result === translationKey) {
-      //Translation not found
-      return this.translate.instant(
-        'settings-data-source.LiveDataErrorReason.LivedataError'
-      );
-    } else {
-      //Translation found
-      return result;
-    }
   }
 
   getTariffText() {
@@ -588,42 +531,10 @@ export class DataSourceComponent implements OnInit, OnDestroy {
   }
 
   private onConnection(x: DataSourceConnection | undefined) {
-    if (!x) return;
-
     this.connection = x;
-
-    if (x.status) {
-      this.verifyCertificate(x.status);
-    }
   }
 
   private onDataPointsLiveData(x: ObjectMap<DataPointLiveData>) {
     this.liveData = x;
-  }
-
-  private verifyCertificate(status: DataSourceConnectionStatus) {
-    if (
-      !this.showCertificateTrustDialog &&
-      status === DataSourceConnectionStatus.UntrustedCertificate
-    ) {
-      this.showCertificateTrustDialog = true;
-
-      const title = this.translate.instant(
-        'settings-data-source.UntrustedCertificate'
-      );
-      const message = this.translate.instant(
-        'settings-data-source.UntrustedCertificateMessage'
-      );
-
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: new ConfirmDialogModel(title, message)
-      });
-
-      dialogRef.afterClosed().subscribe((dialogResult) => {
-        if (!dialogResult) {
-          return;
-        }
-      });
-    }
   }
 }

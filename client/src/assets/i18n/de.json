@@ -195,8 +195,6 @@
     "Disabled": "Deaktiviert",
     "Unavailable": "Nicht verfügbar",
     "TermsAndConditionsNotAccepted": "AGBs nicht akzeptiert",
-    "UntrustedCertificate": "Untrusted Certificate",
-    "UntrustedCertificateMessage": "Do you want to trust this certificate?",
     "ServiceState": "Status",
     "DataPoints": "Datenpunkte",
     "SelectAVariable": "Wählen Sie einen Datenpunkt",
@@ -217,8 +215,7 @@
       "s7": "SIEMENS",
       "mtconnect": "MTConnect",
       "ioshield": "Input Modul",
-      "energy": "Energy",
-      "opcua": "OPC UA"
+      "energy": "Energy"
     },
     "Livedata": {
       "ioshield": {
@@ -249,14 +246,6 @@
       "3": "Warmlauf",
       "4": "Verarbeitung",
       "Unknown": "Unbekannt"
-    },
-    "LiveDataErrorReason": {
-      "unexpected_error": "Beim Lesen des Datenpunktes ist ein unerwarteter Fehler aufgetreten",
-      "wrong_nodeid": "Die Adresse hat einen Fehler oder existiert nicht."
-    },
-    "AuthenticationLevels": {
-      "anonymous": "Anonymous",
-      "userpassword": "User/Password"
     }
   },
   "settings-virtual-data-point": {
@@ -392,7 +381,7 @@
     "AlreadyExistDataPoint": "Der Datenpunkt ist bereits vorhanden.",
     "AuthenticationLevels": {
       "anonymous": "Anonym",
-      "userpassword": "Benutzername/Passwort"
+      "user/pass": "Benutzername/Passwort"
     },
     "Tabs": {
       "mtconnect": "MTConnect",

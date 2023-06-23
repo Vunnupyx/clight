@@ -195,6 +195,8 @@
     "Disabled": "無効",
     "Unavailable": "使用不可",
     "TermsAndConditionsNotAccepted": "規約を承認していません",
+    "UntrustedCertificate": "Untrusted Certificate",
+    "UntrustedCertificateMessage": "Do you want to trust this certificate?",
     "ServiceState": "サービス状態",
     "DataPoints": "データポイント",
     "SelectAVariable": "変数を選択",
@@ -215,7 +217,8 @@
       "s7": "SIEMENS",
       "mtconnect": "MTConnect",
       "ioshield": "デジタル入力",
-      "energy": "電力量"
+      "energy": "電力量",
+      "opcua": "OPC UA"
     },
     "Livedata": {
       "ioshield": {
@@ -246,6 +249,14 @@
       "3": "Warm Up",
       "4": "Processing",
       "Unknown": "不定"
+    },
+    "LiveDataErrorReason": {
+      "unexpected_error": "There was an unexpected error while reading data point",
+      "wrong_nodeid": "This address is wrong or does not exist."
+    },
+    "AuthenticationLevels": {
+      "anonymous": "Anonymous",
+      "userpassword": "User/Password"
     }
   },
   "settings-virtual-data-point": {
@@ -381,7 +392,7 @@
     "AlreadyExistDataPoint": "このアイテムは既に登録されています。",
     "AuthenticationLevels": {
       "anonymous": "Anonymous",
-      "user/pass": "ユーザ名/パスワード"
+      "userpassword": "ユーザ名/パスワード"
     },
     "Tabs": {
       "mtconnect": "MTConnect",

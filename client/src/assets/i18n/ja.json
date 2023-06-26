@@ -323,9 +323,9 @@
     "NoOtherBlinkDetectionVDPsAvailable": "There are no other VDPs with the type Blink Detection to choose from"
   },
   "virtual-data-point-operation-type": {
-    "And": "And",
-    "Or": "Or",
-    "Not": "Not",
+    "And": "かつ",
+    "Or": "または",
+    "Not": "ではない",
     "Counter": "カウンタ",
     "Thresholds": "閾値",
     "Greater": "超えて",
@@ -336,7 +336,7 @@
     "Unequal": "異なる",
     "Enumeration": "列挙",
     "Calculation": "計算",
-    "SetTariff": "Set Energy Tariff",
+    "SetTariff": "電力量通信量設定",
     "BlinkDetection": "Blink Detection"
   },
   "settings-data-source-point": {
